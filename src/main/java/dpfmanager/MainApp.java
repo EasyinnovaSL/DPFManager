@@ -17,14 +17,8 @@ import javafx.stage.Stage;
  * The Class MainApp.
  */
 public class MainApp extends Application {
-    
-    /*
-     * Javadoc asdf asd
-     * 
-     *  asdfasdf
-     * asdf asd fasd fa
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
+  /** The Constant LOG. */
+  private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
 
   /**
    * The main method.
@@ -32,39 +26,30 @@ public class MainApp extends Application {
    * @param args the arguments
    * @throws Exception the exception
    */
-    public static void main(final String[] args) throws Exception {
-	launch(args);
-    }
+  public static void main(final String[] args) throws Exception {
+    launch(args);
+  }
 
-    /*
-     * Javadoc asdf asd
-     * 
-     * @see javafx.application.Application#start(javafx.stage.Stage) asdfasdf
-     * asdf asd fasd fa
-     * 
-     */
-   
-    public final void start(final Stage stage) throws Exception {
+  public final void start(final Stage stage) throws Exception {
 
-	LOG.info("Starting Hello JavaFX and Maven demonstration application");
+    LOG.info("Starting Hello JavaFX and Maven demonstration application");
 
-	String fxmlFile = "/fxml/hellov.fxml";
-	LOG.debug("Loading FXML for main view from: {}", fxmlFile);
-	FXMLLoader loader = new FXMLLoader();
-	Parent rootNode =
-		(Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+    String fxmlFile = "/fxml/hellov.fxml";
+    LOG.debug("Loading FXML for main view from: {}", fxmlFile);
+    FXMLLoader loader = new FXMLLoader();
+    Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
 
-	LOG.debug("Showing JFX scene");
-	GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-	
-	final int width = 1439;
-	final int height = gd.getDisplayMode().getHeight()-75;
-	
-	Scene scene = new Scene(rootNode, width, height);
-	scene.getStylesheets().add("/styles/stylesv.css");
-		
-	stage.setTitle("Hello JavaFX and Maven");
-	stage.setScene(scene);
-	stage.show();
-    }
+    LOG.debug("Showing JFX scene");
+    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+    final int width = 1439;
+    final int height = gd.getDisplayMode().getHeight() - 75;
+
+    Scene scene = new Scene(rootNode, width, height);
+    scene.getStylesheets().add("/styles/stylesv.css");
+
+    stage.setTitle("Hello JavaFX and Maven");
+    stage.setScene(scene);
+    stage.show();
+  }
 }

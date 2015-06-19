@@ -11,59 +11,59 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 /**
+ * Class Hello
+ * 
  * @author Easy
- *
  */
 public class HelloController {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-	    .getLogger(HelloController.class);
+  /** The Constant LOG. */
+  private static final Logger LOG = LoggerFactory.getLogger(HelloController.class);
 
-    /** The first name field. */
-    @FXML
-    private TextField firstNameField;
+  /** The first name field. */
+  @FXML
+  private TextField firstNameField;
 
-    /** The last name field. */
-    @FXML
-    private TextField lastNameField;
+  /** The last name field. */
+  @FXML
+  private TextField lastNameField;
 
-    /** The message label. */
-    @FXML
-    private Label messageLabel;
+  /** The message label. */
+  @FXML
+  private Label messageLabel;
 
-    /**
-     * 
-     */
-    public final void sayHello() {
+  /**
+   * Say hello.
+   */
+  public final void sayHello() {
 
-	String firstName = firstNameField.getText();
-	String lastName = lastNameField.getText();
+    String firstName = firstNameField.getText();
+    String lastName = lastNameField.getText();
 
-	StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder();
 
-	if (!StringUtils.isEmpty(firstName)) {
-	    builder.append(firstName);
-	}
-
-	if (!StringUtils.isEmpty(lastName)) {
-	    if (builder.length() > 0) {
-		builder.append(" ");
-	    }
-	    builder.append(lastName);
-	}
-
-	if (builder.length() > 0) {
-	    String name = builder.toString();
-	    LOG.debug("Saying hello to " + name);
-	    messageLabel.setText("Hello " + name);
-	    
-	} else {
-	    LOG.debug("Neither first name nor last "
-	    	+ "name was set, saying hello to anonymous person asdfasd");
-	    messageLabel.setText("Hello mysterious person");
-	}
+    if (!StringUtils.isEmpty(firstName)) {
+      builder.append(firstName);
     }
+
+    if (!StringUtils.isEmpty(lastName)) {
+      if (builder.length() > 0) {
+        builder.append(" ");
+      }
+      builder.append(lastName);
+    }
+
+    if (builder.length() > 0) {
+      String name = builder.toString();
+      LOG.debug("Saying hello to " + name);
+      messageLabel.setText("Hello " + name);
+
+    } else {
+      LOG.debug("Neither first name nor last "
+          + "name was set, saying hello to anonymous person asdfasd");
+      messageLabel.setText("Hello mysterious person");
+    }
+  }
 
     /**
      * @param hello
