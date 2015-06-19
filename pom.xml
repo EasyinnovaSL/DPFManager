@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- The Basics -->
+	<groupId>com.easyinnova</groupId>
+	<artifactId>dpf_manager</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+
+	<!-- More Project Information -->
+	<name>dpf_manager</name>
+	<description>Dpf manager is a ... </description>
+	<url>http://DPFmanager</url>
+	<inceptionYear>2015</inceptionYear>
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 3.0</name>
+			<url>https://www.gnu.org/licenses/gpl.txt</url>
+			<distribution>repo</distribution>
+		</license>
+		<license>
+			<name>Mozilla Public License, Version 2.0</name>
+			<url>https://www.mozilla.org/MPL/2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<organization>
+		<name>easyinnova</name>
+		<url>http://www.easyinnova.com/</url>
+	</organization>
+	<developers>
+		<developer>
+			<name>Xavier Tarrés</name>
+			<email>xavitarres@easyinnova.com</email>
+			<url>https://github.com/XaviTarres</url>
+			<id>XaviTarres</id>
+		</developer>
+	</developers>
+	<contributors>
+		
+	</contributors>
+
+	
+
+	<properties>
+		<slf4j.version>1.6.1</slf4j.version>
+
+	</properties>
+
+	<dependencies>
+
+
+		<dependency>
+			<groupId>javafx</groupId>
+			<artifactId>jfxrt</artifactId>
+			<version>${java.version}</version>
+			<scope>system</scope>
+			<systemPath>${java.home}/lib/ext/jfxrt.jar</systemPath>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout-javafx</artifactId>
+			<version>4.2</version>
+		</dependency>
+
+		
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+		<!-- Logging -->
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<!-- Build Settings -->
+	<build>
+
+		<finalName>dpf_manager</finalName>
+
+		<plugins>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-compiler-plugin</artifactId> 
+				<version>3.3</version> <configuration> <source>1.7</source> <target>1.7</target> 
+				</configuration> </plugin> -->
+			<plugin>
+				<groupId>com.zenjava</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<!--<version>2.0</version>-->
+				 <version>8.1.2</version> 
+
+				<configuration>
+					<!-- <nativeOutputDir>./bin/</nativeOutputDir> -->
+					<nativeReleaseVersion>1.0.0</nativeReleaseVersion>
+					<deployDir>./src/main/resources/installers</deployDir>
+					<mainClass>dpfmanager.MainApp</mainClass>
+					<allPermissions>true</allPermissions>
+					<!-- only required if signing the jar file <keyStoreAlias>example-user</keyStoreAlias> 
+						<keyStorePassword>example-password</keyStorePassword> -->
+					<allPermissions>true</allPermissions>
+
+				</configuration>
+			  <executions>
+					<execution>
+						<goals>
+							<goal>native</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.15</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>6.1.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.4</version>
+				<configuration>
+					<linkXref>true</linkXref>
+					<sourceEncoding>utf-8</sourceEncoding>
+					<rulesets>
+						<ruleset>/rulesets/java/basic.xml</ruleset>
+						<ruleset>/rulesets/java/braces.xml</ruleset>
+						<ruleset>/rulesets/java/clone.xml</ruleset>
+						<ruleset>/rulesets/java/codesize.xml</ruleset>
+						<ruleset>/rulesets/java/comments.xml</ruleset>
+						<ruleset>/rulesets/java/controversial.xml</ruleset>
+						<ruleset>/rulesets/java/coupling.xml</ruleset>
+						<ruleset>/rulesets/java/design.xml</ruleset>
+						<ruleset>/rulesets/java/empty.xml</ruleset>
+						<ruleset>/rulesets/java/finalizers.xml</ruleset>
+						<ruleset>/rulesets/java/imports.xml</ruleset>
+						<ruleset>/rulesets/java/junit.xml</ruleset>
+						<ruleset>/rulesets/java/naming.xml</ruleset>
+						<ruleset>/rulesets/java/optimizations.xml</ruleset>
+						<ruleset>/rulesets/java/strictexception.xml</ruleset>
+						<ruleset>/rulesets/java/strings.xml</ruleset>
+						<ruleset>/rulesets/java/sunsecure.xml</ruleset>
+						<ruleset>/rulesets/java/typeresolution.xml</ruleset>
+						<ruleset>/rulesets/java/unnecessary.xml</ruleset>
+						<ruleset>/rulesets/java/unusedcode.xml</ruleset>
+					</rulesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.15</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>checkstyle</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+
+		</plugins>
+	</reporting>
+
+
+
+
+</project>
