@@ -2,20 +2,16 @@ package dpfmanager;
 
 
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.*;
-import java.awt.font.*;
-import java.util.concurrent.locks.*;
-import java.util.concurrent.locks.*;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 /**
- * @author Easy asdfasd
+ * @author Easy
  *
  */
 public class HelloController {
