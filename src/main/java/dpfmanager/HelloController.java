@@ -65,56 +65,54 @@ public class HelloController {
     }
   }
 
-    /**
-     * @param hello
-     *            asdf asdf
-     */
-    public final void doingnothing(final String hello) {
-	String doing;
-	String nothing;
+  /**
+   * @param hello asdf asdf
+   */
+  public final void doingnothing(final String hello) {
+    String doing;
+    String nothing;
 
-	nothing = "asdfasf";
-	String merda = "merda";
-	String holla = "asd";
+    nothing = "asdfasf";
+    String merda = "merda";
+    String holla = "asd";
+  }
+
+  /**
+   * @param hello asdfa sdf
+   * @return asdfas df
+   */
+  public final String doingnothing2(final String hello) {
+    String doing;
+    String nothing;
+
+    nothing = "asdfasf";
+    return nothing;
+  }
+
+  /**
+   * @param tePermisEdicio asdf
+   * @return asdf
+   */
+  public boolean noTePermisEdicio(Integer tePermisEdicio) {
+
+    if (tePermisEdicio.equals(0)) {
+      return tePermisEdicio.equals(0);
+    } else if (tePermisEdicio.equals(1)) {
+      return !tePermisEdicio.equals(1);
+    } else {
+      return false;
     }
+  }
 
-    /**
-     * @param hello
-     *            asdfa sdf
-     * @return asdfas df
-     */
-    public final String doingnothing2(final String hello) {
-	String doing;
-	String nothing;
+  public boolean noTePermisEdicioaltre(int tePermisEdicio) {
 
-	nothing = "asdfasf";
-	return nothing;
+    if (tePermisEdicio == 0) {
+      return (tePermisEdicio == 0);
+    } else if (tePermisEdicio == 1) {
+      return !(tePermisEdicio == 1);
+    } else {
+      return false;
     }
-    
-    /**
-     * @param tePermisEdicio asdf
-     * @return asdf
-     */
-    public boolean noTePermisEdicio(Integer tePermisEdicio) {
-	
-	  if (tePermisEdicio.equals(0)) {
-	   return tePermisEdicio.equals(0);
-	  } else if (tePermisEdicio.equals(1)) {
-	   return !tePermisEdicio.equals(1);
-	  } else {
-	   return false;
-	  }
-    } 
-    
-    public boolean noTePermisEdicioaltre(int tePermisEdicio) {
-	
-	  if (tePermisEdicio == 0) {
-	   return (tePermisEdicio == 0);
-	  } else if (tePermisEdicio == 1) {
-	   return !(tePermisEdicio == 1);
-	  } else {
-	   return false;
-	  }
-  } 
-	
+  }
+
 }

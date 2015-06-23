@@ -3,6 +3,8 @@ package dpfmanager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dpfmanager.shell.modules.interfaces.CommandLine;
+
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
@@ -27,11 +29,26 @@ public class MainApp extends Application {
    * @throws Exception the exception
    */
   public static void main(final String[] args) throws Exception {
-    launch(args);
+    // System.console().printf("Hi guy");
+    if (args.length == 0) {
+      // GUI
+      launch(args);
+    } else {
+      // Command Line
+      CommandLine cl = new CommandLine(args);
+      cl.launch();
+      // Platform.exit();
+    }
   }
 
+  /**
+   * The main method.
+   *
+   * @param stage the stage
+   * @throws Exception the exception
+   */
+  @Override
   public final void start(final Stage stage) throws Exception {
-
     LOG.info("Starting Hello JavaFX and Maven demonstration application");
 
     String fxmlFile = "/fxml/hellov.fxml";
@@ -48,7 +65,7 @@ public class MainApp extends Application {
     Scene scene = new Scene(rootNode, width, height);
     scene.getStylesheets().add("/styles/stylesv.css");
 
-    stage.setTitle("Hello JavaFX and Maven");
+    stage.setTitle("DPFManager");
     stage.setScene(scene);
     stage.show();
   }
