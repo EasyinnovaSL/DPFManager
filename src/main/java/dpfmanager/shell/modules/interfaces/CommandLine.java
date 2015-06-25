@@ -2,12 +2,16 @@ package dpfmanager.shell.modules.interfaces;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffObject;
+import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.reader.BaselineProfile;
 import com.easyinnova.tiff.reader.TiffEPProfile;
 import com.easyinnova.tiff.reader.TiffReader;
 
+import dpfmanager.ReportGenerator;
+
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 /**
@@ -39,13 +43,13 @@ public class CommandLine implements UserInterface {
     boolean argsError = false;
     while (idx < args.length && !argsError) {
       String arg = args[idx];
-      if (arg == "-o") {
+      if (arg.equals("-o")) {
         if (idx + 1 < args.length) {
           outputFile = args[++idx];
         } else {
           argsError = true;
         }
-      } else if (arg == "-help") {
+      } else if (arg.equals("-help")) {
         displayHelp();
         break;
       } else if (arg.startsWith("-")) {
@@ -54,15 +58,15 @@ public class CommandLine implements UserInterface {
       } else {
         // File or directory to process
         File file = new File(arg);
-        if (file.isFile()) {
-          files.add(arg);
-        } else if (file.isDirectory()) {
+        if (file.isDirectory()) {
           File[] listOfFiles = file.listFiles();
           for (int j = 0; j < listOfFiles.length; j++) {
             if (listOfFiles[j].isFile()) {
               files.add(listOfFiles[j].getPath());
             }
           }
+        } else {
+          files.add(arg);
         }
       }
       idx++;
@@ -72,17 +76,19 @@ public class CommandLine implements UserInterface {
       displayHelp();
     } else {
       // Process files
+      String internalReportFolder = ReportGenerator.createReportPath();
       for (final String filename : files) {
         System.out.println("Processing file " + filename);
         TiffReader tr = new TiffReader();
         int result = tr.readFile(filename);
-        if (outputFile == null)
+        if (outputFile == null) {
           reportResults(tr, result);
-        else
-          reportResultsXML(tr, result, outputFile);
+        } else {
+          reportResultsXml(tr, result, outputFile, internalReportFolder);
+        }
       }
+      ReportGenerator.makeSummaryReport(internalReportFolder);
     }
-    // System.out.println("Bye");
   }
 
   /**
@@ -162,8 +168,10 @@ public class CommandLine implements UserInterface {
    * @param tiffreader the tiff reader
    * @param result the result
    * @param xmlfile the xml file
+   * @param internalReportFolder the internal report folder
    */
-  private static void reportResultsXML(TiffReader tiffreader, int result, String xmlfile) {
+  private static void reportResultsXml(TiffReader tiffreader, int result, String xmlfile,
+      String internalReportFolder) {
     String filename = tiffreader.getFilename();
     TiffDocument to = tiffreader.getModel();
 
@@ -176,51 +184,16 @@ public class CommandLine implements UserInterface {
         System.out.println("IO Exception in file '" + filename + "'");
         break;
       case 0:
-        if (tiffreader.getValidation().correct) {
-          // The file is correct
-          System.out.println("Everything ok in file '" + filename + "'");
-          System.out.println("IFDs: " + to.getIfdCount());
-          System.out.println("SubIFDs: " + to.getSubIfdCount());
-
-          to.printMetadata();
-          BaselineProfile bp = new BaselineProfile(to);
-          bp.validate();
-          bp.getValidation().printErrors();
-          TiffEPProfile bpep = new TiffEPProfile(to);
-          bpep.validate();
-          bpep.getValidation().printErrors();
-
-          int nifd = 1;
-          for (TiffObject o : to.getImageIfds()) {
-            IFD ifd = (IFD) o;
-            if (ifd != null) {
-              System.out.println("IFD " + nifd++ + " TAGS:");
-              ifd.printTags();
-            }
-          }
-          nifd = 1;
-          for (TiffObject o : to.getSubIfds()) {
-            IFD ifd = (IFD) o;
-            if (ifd != null) {
-              System.out.println("SubIFD " + nifd++ + " TAGS:");
-              ifd.printTags();
-            }
-          }
-        } else {
-          // The file is not correct
-          System.out.println("Errors in file '" + filename + "'");
-          if (to != null) {
-            System.out.println("IFDs: " + to.getIfdCount());
-            System.out.println("SubIFDs: " + to.getSubIfdCount());
-
-            // int index = 0;
-            to.printMetadata();
-            BaselineProfile bp = new BaselineProfile(to);
-            bp.validate();
-          }
-          tiffreader.getValidation().printErrors();
+        ValidationResult val = tiffreader.getValidation();
+        ReportGenerator rg = new ReportGenerator(to, val);
+        rg.generateXml(xmlfile);
+        System.out.println("Report '" + xmlfile + "' created");
+        try {
+          String reportName = ReportGenerator.getReportName(internalReportFolder, tiffreader);
+          Files.copy(new File(xmlfile).toPath(), new File(reportName).toPath());
+        } catch (Exception ex) {
+          System.out.println("Error generating internal report");
         }
-        tiffreader.getValidation().printWarnings();
         break;
       default:
         System.out.println("Unknown result (" + result + ") in file '" + filename + "'");
