@@ -1,17 +1,18 @@
 package dpfmanager.shell.modules.interfaces;
 
+import com.easyinnova.tiff.model.ReadIccConfigIOException;
+import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffObject;
 import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
-import com.easyinnova.tiff.reader.BaselineProfile;
-import com.easyinnova.tiff.reader.TiffEPProfile;
+import com.easyinnova.tiff.profiles.BaselineProfile;
+import com.easyinnova.tiff.profiles.TiffEPProfile;
 import com.easyinnova.tiff.reader.TiffReader;
 
 import dpfmanager.ReportGenerator;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
 
 /**
@@ -79,12 +80,19 @@ public class CommandLine implements UserInterface {
       String internalReportFolder = ReportGenerator.createReportPath();
       for (final String filename : files) {
         System.out.println("Processing file " + filename);
-        TiffReader tr = new TiffReader();
-        int result = tr.readFile(filename);
-        if (outputFile == null) {
-          reportResults(tr, result);
-        } else {
-          reportResultsXml(tr, result, outputFile, internalReportFolder);
+        try {
+          TiffReader tr = new TiffReader();
+          int result = tr.readFile(filename);
+          if (outputFile == null) {
+            reportResults(tr, result);
+          } else {
+            reportResultsXml(tr, result, outputFile);
+          }
+          internalReport(tr, result, internalReportFolder);
+        } catch (ReadTagsIOException e) {
+          System.out.println("Error loading Tiff library dependencies");
+        } catch (ReadIccConfigIOException e) {
+          System.out.println("Error loading Tiff library dependencies");
         }
       }
       ReportGenerator.makeSummaryReport(internalReportFolder);
@@ -168,14 +176,12 @@ public class CommandLine implements UserInterface {
    * @param tiffreader the tiff reader
    * @param result the result
    * @param xmlfile the xml file
-   * @param internalReportFolder the internal report folder
    */
-  private static void reportResultsXml(TiffReader tiffreader, int result, String xmlfile,
-      String internalReportFolder) {
+  private static void reportResultsXml(TiffReader tiffreader, int result, String xmlfile) {
     String filename = tiffreader.getFilename();
     TiffDocument to = tiffreader.getModel();
 
-    // Display results human readable
+    // Save results into XML file
     switch (result) {
       case -1:
         System.out.println("File '" + filename + "' does not exist");
@@ -188,12 +194,38 @@ public class CommandLine implements UserInterface {
         ReportGenerator rg = new ReportGenerator(to, val);
         rg.generateXml(xmlfile);
         System.out.println("Report '" + xmlfile + "' created");
-        try {
-          String reportName = ReportGenerator.getReportName(internalReportFolder, tiffreader);
-          Files.copy(new File(xmlfile).toPath(), new File(reportName).toPath());
-        } catch (Exception ex) {
-          System.out.println("Error generating internal report");
-        }
+        break;
+      default:
+        System.out.println("Unknown result (" + result + ") in file '" + filename + "'");
+        break;
+    }
+  }
+
+  /**
+   * Report the results of the reading process to the console.
+   *
+   * @param tiffreader the tiff reader
+   * @param result the result
+   * @param folder the internal report folder
+   */
+  private static void internalReport(TiffReader tiffreader, int result, String folder) {
+    String filename = tiffreader.getFilename();
+    TiffDocument to = tiffreader.getModel();
+
+    // Save results into XML file
+    switch (result) {
+      case -1:
+        System.out.println("File '" + filename + "' does not exist");
+        break;
+      case -2:
+        System.out.println("IO Exception in file '" + filename + "'");
+        break;
+      case 0:
+        ValidationResult val = tiffreader.getValidation();
+        ReportGenerator rg = new ReportGenerator(to, val);
+        String reportName = ReportGenerator.getReportName(folder, tiffreader);
+        rg.generateXml(reportName);
+        System.out.println("Internal report '" + reportName + "' created");
         break;
       default:
         System.out.println("Unknown result (" + result + ") in file '" + filename + "'");

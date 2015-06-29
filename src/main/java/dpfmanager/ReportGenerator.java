@@ -84,16 +84,19 @@ public class ReportGenerator {
    * @return the string
    */
   public static String createReportPath() {
+    // reports folder
     String path = "reports";
     File theDir = new File(path);
     if (!theDir.exists()) {
       theDir.mkdir();
     }
+    // date folder
     path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
     theDir = new File(path);
     if (!theDir.exists()) {
       theDir.mkdir();
     }
+    // index folder
     int index = 1;
     File file = new File(path + "/" + index);
     while (file.exists()) {
@@ -135,7 +138,7 @@ public class ReportGenerator {
     }
     ifdNode.appendChild(el);
 
-    // Image
+    // SubImage
     el = doc.createElement("hasSubIfd");
     if (ifd.getsubIFD() != null) {
       el.setTextContent("yes");
@@ -250,7 +253,7 @@ public class ReportGenerator {
   }
 
   /**
-   * Gets the report name.
+   * Gets the report name of a given tiff file.
    *
    * @param internalReportFolder the internal report folder
    * @param tiffreader the tiffreader
@@ -290,6 +293,7 @@ public class ReportGenerator {
 
       Element individualreports = doc.createElement("individualreports");
       globalreport.appendChild(individualreports);
+
       // Individual reports
       File dir = new File(internalReportFolder);
       File[] listOfFiles = dir.listFiles();

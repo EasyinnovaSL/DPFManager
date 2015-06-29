@@ -29,7 +29,6 @@ public class MainApp extends Application {
    * @throws Exception the exception
    */
   public static void main(final String[] args) throws Exception {
-    // System.console().printf("Hi guy");
     if (args.length == 0) {
       // GUI
       launch(args);
