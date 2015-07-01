@@ -9,6 +9,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,15 +30,7 @@ public class MainApp extends Application {
    * @throws Exception the exception
    */
   public static void main(final String[] args) throws Exception {
-    if (args.length == 0) {
-      // GUI
-      launch(args);
-    } else {
-      // Command Line
-      CommandLine cl = new CommandLine(args);
-      cl.launch();
-      // Platform.exit();
-    }
+    launch(args);
   }
 
   /**
@@ -48,24 +41,36 @@ public class MainApp extends Application {
    */
   @Override
   public final void start(final Stage stage) throws Exception {
-    LOG.info("Starting Hello JavaFX and Maven demonstration application");
+    Parameters params = getParameters();
+    if (params.getRaw().size() > 0) {
+      // Command Line
+      System.out.println("HH");
+      LOG.warn("Hola");
+      CommandLine cl = new CommandLine(params);
+      cl.launch();
+      Platform.exit();
+    } else {
+      // GUI
+      LOG.info("Starting Hello JavaFX and Maven demonstration application");
 
-    String fxmlFile = "/fxml/hellov.fxml";
-    LOG.debug("Loading FXML for main view from: {}", fxmlFile);
-    FXMLLoader loader = new FXMLLoader();
-    Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+      String fxmlFile = "/fxml/hellov.fxml";
+      LOG.debug("Loading FXML for main view from: {}", fxmlFile);
+      FXMLLoader loader = new FXMLLoader();
+      Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
 
-    LOG.debug("Showing JFX scene");
-    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+      LOG.debug("Showing JFX scene");
+      GraphicsDevice gd =
+          GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
-    final int width = 1439;
-    final int height = gd.getDisplayMode().getHeight() - 75;
+      final int width = 1439;
+      final int height = gd.getDisplayMode().getHeight() - 75;
 
-    Scene scene = new Scene(rootNode, width, height);
-    scene.getStylesheets().add("/styles/stylesv.css");
+      Scene scene = new Scene(rootNode, width, height);
+      scene.getStylesheets().add("/styles/stylesv.css");
 
-    stage.setTitle("DPFManager");
-    stage.setScene(scene);
-    stage.show();
+      stage.setTitle("DPFManager");
+      stage.setScene(scene);
+      stage.show();
+    }
   }
 }

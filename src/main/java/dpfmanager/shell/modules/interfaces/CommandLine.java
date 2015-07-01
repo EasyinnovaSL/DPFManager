@@ -14,6 +14,9 @@ import dpfmanager.ReportGenerator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+
+import javafx.application.Application.Parameters;
 
 /**
  * The Class CommandLine.
@@ -21,15 +24,15 @@ import java.util.ArrayList;
 public class CommandLine implements UserInterface {
 
   /** The args. */
-  String[] args;
+  List<String> args;
 
   /**
    * Instantiates a new command line.
    *
    * @param args the args
    */
-  public CommandLine(String[] args) {
-    this.args = args;
+  public CommandLine(Parameters args) {
+    this.args = args.getRaw();
   }
 
   /**
@@ -42,11 +45,11 @@ public class CommandLine implements UserInterface {
     // Reads the parameters
     int idx = 0;
     boolean argsError = false;
-    while (idx < args.length && !argsError) {
-      String arg = args[idx];
+    while (idx < args.size() && !argsError) {
+      String arg = args.get(idx);
       if (arg.equals("-o")) {
-        if (idx + 1 < args.length) {
-          outputFile = args[++idx];
+        if (idx + 1 < args.size()) {
+          outputFile = args.get(++idx);
         } else {
           argsError = true;
         }
