@@ -31,16 +31,17 @@
 
 package dpfmanager;
 
+import main.java.com.easyinnova.tiff.model.TiffDocument;
+import main.java.com.easyinnova.tiff.model.ValidationEvent;
+import main.java.com.easyinnova.tiff.model.ValidationResult;
+import main.java.com.easyinnova.tiff.model.types.IFD;
+import main.java.com.easyinnova.tiff.reader.TiffReader;
+
 import org.apache.commons.lang.time.FastDateFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationEvent;
-import com.easyinnova.tiff.model.ValidationResult;
-import com.easyinnova.tiff.model.types.IFD;
-import com.easyinnova.tiff.reader.TiffReader;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.util.Date;
@@ -151,9 +152,9 @@ public class ReportGenerator {
   }
 
   /**
-   * Generate xml.
+   * Generate report xml.
    *
-   * @param xmlfile the xmlfile
+   * @param xmlfile the file name.
    */
   public void generateXml(String xmlfile) {
     try {
@@ -163,7 +164,7 @@ public class ReportGenerator {
       Element report = doc.createElement("report");
       doc.appendChild(report);
 
-      // Tiff structure
+      // tiff structure
       Element tiffStructureElement = doc.createElement("tiff_structure");
       Element ifdTree = doc.createElement("ifdTree");
       IFD ifd = tiffModel.getFirstIFD();
@@ -180,12 +181,20 @@ public class ReportGenerator {
       tiffStructureElement.appendChild(ifdTree);
       report.appendChild(tiffStructureElement);
 
+      // basic info
+      Element infoElement = doc.createElement("width");
+      infoElement.setTextContent(tiffModel.getMetadataSingleString("ImageWidth"));
+      report.appendChild(infoElement);
+      infoElement = doc.createElement("height");
+      infoElement.setTextContent(tiffModel.getMetadataSingleString("ImageLength"));
+      report.appendChild(infoElement);
+
       // implementation checker
       Element implementationCheckerElement = doc.createElement("implementation_checker");
       report.appendChild(implementationCheckerElement);
-      Element results = doc.createElement("results");
 
       // errors
+      Element results = doc.createElement("results");
       List<ValidationEvent> errors = validation.getErrors();
       for (int i = 0; i < errors.size(); i++) {
         ValidationEvent value = errors.get(i);
@@ -298,6 +307,8 @@ public class ReportGenerator {
       File dir = new File(internalReportFolder);
       File[] listOfFiles = dir.listFiles();
       int nreports = 0;
+      int nreportsok = 0;
+      int nreportsko = 0;
       for (int j = 0; j < listOfFiles.length; j++) {
         if (listOfFiles[j].isFile()) {
           File xmlFile = listOfFiles[j];
@@ -306,16 +317,45 @@ public class ReportGenerator {
           Document doc2 = builder.parse(xmlFile);
           Node node = doc2.getChildNodes().item(0);
           Node newNode = doc.importNode(node, true);
+
+          boolean ok = true;
+          NodeList results = doc2.getElementsByTagName("result");
+          if (results != null && results.getLength() > 0) {
+            for (int i = 0; i < results.getLength(); i++) {
+              NodeList subList = results.item(i).getChildNodes();
+              if (subList != null && subList.getLength() > 0) {
+                for (int k = 0; k < subList.getLength(); k++) {
+                  if (subList.item(k).getNodeName().equals("level")) {
+                    if (subList.item(k).getTextContent().equals("critical")) {
+                      ok = false;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
           individualreports.appendChild(newNode);
           nreports++;
+          if (ok) {
+            nreportsok++;
+          } else {
+            nreportsko++;
+          }
         }
       }
 
       // Statistics
       Element stats = doc.createElement("stats");
       globalreport.appendChild(stats);
-      Element el = doc.createElement("reportscount");
+      Element el = doc.createElement("reports_count");
       el.setTextContent("" + nreports);
+      stats.appendChild(el);
+      el = doc.createElement("valid_files");
+      el.setTextContent("" + nreportsok);
+      stats.appendChild(el);
+      el = doc.createElement("invalid_files");
+      el.setTextContent("" + nreportsko);
       stats.appendChild(el);
 
       // write the content into xml file

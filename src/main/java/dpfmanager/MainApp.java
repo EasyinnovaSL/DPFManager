@@ -44,8 +44,6 @@ public class MainApp extends Application {
     Parameters params = getParameters();
     if (params.getRaw().size() > 0) {
       // Command Line
-      System.out.println("HH");
-      LOG.warn("Hola");
       CommandLine cl = new CommandLine(params);
       cl.launch();
       Platform.exit();

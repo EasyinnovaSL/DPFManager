@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 /**
- * Class Hello
+ * Class Hello.
  * 
  * @author Easy
  */
