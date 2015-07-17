@@ -1,13 +1,6 @@
 package dpfmanager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dpfmanager.shell.modules.interfaces.CommandLine;
-
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -15,12 +8,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+
 
 /**
  * The Class MainApp.
  */
 public class MainApp extends Application {
-  /** The Constant LOG. */
+  /**
+   * The Constant LOG.
+   */
   private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
 
   /**

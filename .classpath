@@ -12,6 +12,6 @@
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.16/log4j-1.2.16.jar"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="var" path="M2_REPO/com/easyinnova/tifflibrary4java/1.0-SNAPSHOT/tifflibrary4java-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/easyinnova/tifflibrary4java/0.3/tifflibrary4java-0.3.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

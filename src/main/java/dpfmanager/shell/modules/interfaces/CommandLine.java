@@ -1,41 +1,40 @@
 package dpfmanager.shell.modules.interfaces;
 
 
-import main.java.com.easyinnova.conformancechecker.ConformanceChecker;
-import main.java.com.easyinnova.tiff.model.ReadIccConfigIOException;
-import main.java.com.easyinnova.tiff.model.ReadTagsIOException;
-import main.java.com.easyinnova.tiff.model.TiffDocument;
-import main.java.com.easyinnova.tiff.model.TiffObject;
-import main.java.com.easyinnova.tiff.model.ValidationResult;
-import main.java.com.easyinnova.tiff.model.types.IFD;
-import main.java.com.easyinnova.tiff.profiles.BaselineProfile;
-import main.java.com.easyinnova.tiff.profiles.TiffEPProfile;
-import main.java.com.easyinnova.tiff.reader.TiffReader;
+import dpfmanager.ReportGenerator;
+import javafx.application.Application.Parameters;
+
+import com.easyinnova.conformancechecker.TiffConformanceChecker;
+import com.easyinnova.tiff.model.ReadIccConfigIOException;
+import com.easyinnova.tiff.model.ReadTagsIOException;
+import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.TiffObject;
+import com.easyinnova.tiff.model.ValidationResult;
+import com.easyinnova.tiff.model.types.IFD;
+import com.easyinnova.tiff.profiles.BaselineProfile;
+import com.easyinnova.tiff.profiles.TiffEPProfile;
+import com.easyinnova.tiff.reader.TiffReader;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
-import dpfmanager.ReportGenerator;
-
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.application.Application.Parameters;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * The Class CommandLine.
  */
 public class CommandLine implements UserInterface {
 
-  /** The args. */
+  /**
+   * The args.
+   */
   List<String> args;
 
   /**
@@ -104,18 +103,30 @@ public class CommandLine implements UserInterface {
   }
 
   /**
+   * Load xml from string.
+   *
+   * @param xml the xml
+   * @return the document
+   * @throws Exception the exception
+   */
+  private Document loadXmlFromString(String xml) throws Exception {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    InputSource is = new InputSource(new StringReader(xml));
+    return builder.parse(is);
+  }
+
+  /**
    * Read conformance checker.
    */
   private void readConformanceChecker() {
-    String xml = ConformanceChecker.getConformanceCheckerOptions();
+    String xml = TiffConformanceChecker.getConformanceCheckerOptions();
 
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
     factory.setNamespaceAware(true);
-    DocumentBuilder builder;
     try {
-      builder = factory.newDocumentBuilder();
-      Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+      Document doc = loadXmlFromString(xml);
 
       NodeList name = doc.getElementsByTagName("name");
       if (name != null && name.getLength() > 0) {
@@ -147,9 +158,9 @@ public class CommandLine implements UserInterface {
           String stdName = "";
           String desc = "";
           for (int j = 0; j < nodes.getLength(); j++) {
-            if (nodes.item(j).getLocalName() == "name") {
+            if (nodes.item(j).getNodeName().equals("name")) {
               stdName = nodes.item(j).getTextContent();
-            } else if (nodes.item(j).getLocalName() == "description") {
+            } else if (nodes.item(j).getNodeName().equals("description")) {
               desc = nodes.item(j).getTextContent();
             }
           }
@@ -157,7 +168,7 @@ public class CommandLine implements UserInterface {
         }
       }
 
-    } catch (ParserConfigurationException | SAXException | IOException e) {
+    } catch (Exception e) {
       System.out.println("Failed communication with conformance checker: " + e.getMessage());
     }
   }
@@ -165,8 +176,8 @@ public class CommandLine implements UserInterface {
   /**
    * Process a Tiff file.
    *
-   * @param filename the filename
-   * @param outputFile the output file
+   * @param filename             the filename
+   * @param outputFile           the output file
    * @param internalReportFolder the internal report folder
    */
   private void processFile(String filename, String outputFile, String internalReportFolder) {
@@ -190,7 +201,7 @@ public class CommandLine implements UserInterface {
    * Report the results of the reading process to the console.
    *
    * @param tiffReader the tiff reader
-   * @param result the result
+   * @param result     the result
    */
   private static void reportResults(TiffReader tiffReader, int result) {
     String filename = tiffReader.getFilename();
@@ -261,8 +272,8 @@ public class CommandLine implements UserInterface {
    * Report the results of the reading process to the console.
    *
    * @param tiffreader the tiff reader
-   * @param result the result
-   * @param xmlfile the xml file
+   * @param result     the result
+   * @param xmlfile    the xml file
    */
   private static void reportResultsXml(TiffReader tiffreader, int result, String xmlfile) {
     String filename = tiffreader.getFilename();
@@ -292,8 +303,8 @@ public class CommandLine implements UserInterface {
    * Report the results of the reading process to the console.
    *
    * @param tiffreader the tiff reader
-   * @param result the result
-   * @param folder the internal report folder
+   * @param result     the result
+   * @param folder     the internal report folder
    */
   private static void internalReport(TiffReader tiffreader, int result, String folder) {
     String filename = tiffreader.getFilename();

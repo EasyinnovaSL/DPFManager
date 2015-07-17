@@ -1,34 +1,41 @@
 package dpfmanager;
 
 
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-
 /**
  * Class Hello.
- * 
+ *
  * @author Easy
  */
 public class HelloController {
 
-  /** The Constant LOG. */
+  /**
+   * The Constant LOG.
+   */
   private static final Logger LOG = LoggerFactory.getLogger(HelloController.class);
 
-  /** The first name field. */
+  /**
+   * The first name field.
+   */
   @FXML
   private TextField firstNameField;
 
-  /** The last name field. */
+  /**
+   * The last name field.
+   */
   @FXML
   private TextField lastNameField;
 
-  /** The message label. */
+  /**
+   * The message label.
+   */
   @FXML
   private Label messageLabel;
 
