@@ -107,7 +107,7 @@
 		<dependency>
 		  <groupId>com.easyinnova</groupId>
 		  <artifactId>tifflibrary4java</artifactId>
-		  <version>0.4</version>
+		  <version>0.5</version>
 		</dependency>
 
 	</dependencies>
@@ -165,6 +165,16 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>2.3</version>
 
@@ -174,7 +184,6 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.4</version>
 				<configuration>
-					<linkXref>true</linkXref>
 					<sourceEncoding>utf-8</sourceEncoding>
 					<rulesets>
 						<ruleset>/rulesets/java/basic.xml</ruleset>
