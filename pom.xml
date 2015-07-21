@@ -107,7 +107,7 @@
 		<dependency>
 		  <groupId>com.easyinnova</groupId>
 		  <artifactId>tifflibrary4java</artifactId>
-		  <version>0.5</version>
+		  <version>0.6</version>
 		</dependency>
 
 	</dependencies>
