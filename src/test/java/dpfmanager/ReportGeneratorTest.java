@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 public class ReportGeneratorTest extends TestCase {
 
   public void testCreateReportPath() throws Exception {
+    String internalReportFolder = ReportGenerator.createReportPath();
 
   }
 
