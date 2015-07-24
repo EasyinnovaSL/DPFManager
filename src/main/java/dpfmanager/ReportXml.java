@@ -208,9 +208,20 @@ public class ReportXml {
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       DOMSource source = new DOMSource(doc);
-      StreamResult result = new StreamResult(new File(xmlfile));
+      
+      File file = new File(xmlfile);
+      StreamResult result = new StreamResult(file);
 
       transformer.transform(source, result);
+
+      // To json
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      StringWriter writer = new StringWriter();
+      transformer.transform(new DOMSource(doc), new StreamResult(writer));
+
+      String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
+      xmlToJson(output, jsonfile);
+      file.delete();
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {

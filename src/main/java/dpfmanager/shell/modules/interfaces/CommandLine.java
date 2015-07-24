@@ -39,6 +39,9 @@ public class CommandLine implements UserInterface {
    */
   List<String> args;
 
+  /** The allowed extensions. */
+  List<String> allowedExtensions;
+
   /**
    * Instantiates a new command line.
    *
@@ -46,6 +49,7 @@ public class CommandLine implements UserInterface {
    */
   public CommandLine(Parameters args) {
     this.args = args.getRaw();
+    allowedExtensions = new ArrayList<String>();
   }
 
   /**
@@ -104,7 +108,7 @@ public class CommandLine implements UserInterface {
         individuals.add(ir);
       }
       //Global report
-      ReportGenerator.generateSummaryReport(internalReportFolder, individuals);
+      ReportGenerator.makeSummaryReport(internalReportFolder, individuals);
     }
   }
 
@@ -152,6 +156,7 @@ public class CommandLine implements UserInterface {
               System.out.print(", ");
             }
             System.out.print(subList.item(0).getNodeValue());
+            allowedExtensions.add(subList.item(0).getNodeValue());
           }
         }
       }
@@ -186,8 +191,118 @@ public class CommandLine implements UserInterface {
    * @param outputFile           the output file
    * @param internalReportFolder the internal report folder
    */
-  private IndividualReport processFile(String filename, 
-      String outputFile, String internalReportFolder) {
+  private IndividualReport processFile(String filename, String outputFile, String internalReportFolder) {
+    if (filename.toLowerCase().endsWith(".zip")) {
+      // Zip File
+      try {
+        ZipFile zipFile = new ZipFile(filename);
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+          ZipEntry entry = entries.nextElement();
+          if (isTiff(entry.getName())) {
+            InputStream stream = zipFile.getInputStream(entry);
+            String filename2 = createTempFile(entry.getName(), stream);
+            processTiffFile(filename2, outputFile, internalReportFolder);
+            File file = new File(filename2);
+            file.delete();
+          }
+        }
+        zipFile.close();
+      } catch (Exception ex) {
+        System.out.println("Error reading zip file");
+      }
+    } else if (isTiff(filename)) {
+      // File
+      processTiffFile(filename,  outputFile, internalReportFolder);
+    } else if (isUrl(filename)) {
+      // URL
+      try {
+        InputStream input = new java.net.URL(filename).openStream();
+        String filename2 = createTempFile(filename, input);
+        processTiffFile(filename2, outputFile, internalReportFolder);
+        File file = new File(filename2);
+        file.delete();
+      } catch (Exception ex) {
+        System.out.println("Error in URL " + filename);
+      }
+    } else {
+      // Anything else
+      System.out.println("File " + filename + " is not Tiff");
+    }
+    return null;
+  }
+
+  /**
+   * Creates the temp file.
+   *
+   * @param name the name
+   * @param stream the stream
+   * @return the string
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  private String createTempFile(String name, InputStream stream) throws IOException {
+    String filename2 = name + "2";
+    if (filename2.contains("/")) {
+      filename2 = filename2.substring(filename2.lastIndexOf("/") + 1);
+    }
+    while (new File(filename2).isFile()) {
+      filename2 += "x";
+    }
+    File targetFile = new File(filename2);
+    OutputStream outStream = new FileOutputStream(targetFile);
+    byte[] buffer = new byte[8 * 1024];
+    int bytesRead;
+    while ((bytesRead = stream.read(buffer)) != -1) {
+      outStream.write(buffer, 0, bytesRead);
+    }
+    outStream.close();
+    return filename2;
+  }
+
+  /**
+   * Checks if is url.
+   *
+   * @param filename the filename
+   * @return true, if is url
+   */
+  private boolean isUrl(String filename) {
+    boolean ok = true;
+    try {
+      new java.net.URL(filename);
+    } catch (Exception ex) {
+      ok = false;
+    }
+    return ok;
+  }
+
+  /**
+   * Checks if is tiff.
+   *
+   * @param filename the filename
+   * @return true, if is tiff
+   */
+  private boolean isTiff(String filename) {
+    boolean isTiff = false;
+    for (String extension : allowedExtensions) {
+      if (filename.toLowerCase().endsWith(extension.toLowerCase())) {
+        isTiff = true;
+      }
+    }
+    return isTiff;
+  }
+
+  /**
+   * Process tiff file.
+   *
+   * @param fileName the filename
+   * @param realFilename the real filename
+   * @param outputFile the output file
+   * @param internalReportFolder the internal report folder
+   * @throws ReadTagsIOException the read tags io exception
+   * @throws ReadIccConfigIOException the read icc config io exception
+   */
+  private static void processTiffFile(String filename, String outputFile, String internalReportFolder) 
+      throws ReadTagsIOException, ReadIccConfigIOException {
     try {
       TiffReader tr = new TiffReader();
       int result = tr.readFile(filename);
@@ -221,7 +336,10 @@ public class CommandLine implements UserInterface {
     } catch (ReadIccConfigIOException e) {
       System.out.println("Error loading Tiff library dependencies");
     }
-    return null;
+  }
+
+  private boolean aadssa() {
+    return true;
   }
 
   /**

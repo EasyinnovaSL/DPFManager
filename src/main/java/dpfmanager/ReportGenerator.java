@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -158,7 +159,7 @@ public class ReportGenerator {
    * @param internalReportFolder the internal report folder
    * @param individuals the individual reports list
    */
-  public static void generateSummaryReport(String internalReportFolder, 
+  public static void makeSummaryReport(String internalReportFolder, 
       ArrayList<IndividualReport> individuals) {
     GlobalReport gr = new GlobalReport();
     for (final IndividualReport individual : individuals) {
@@ -170,6 +171,29 @@ public class ReportGenerator {
     String htmlfile = internalReportFolder + "summary.html";
     ReportXml.parseGlobal(xmlfile, gr);
     ReportHtml.parseGlobal(htmlfile, gr);
+  }
+
+  /**
+   * Xml to json.
+   *
+   * @param xml the xml
+   * @throws Exception the exception
+   */
+  private static void xmlToJson(String xml, String jsonFilename) throws Exception {
+    CamelContext context = new DefaultCamelContext();
+    XmlJsonDataFormat xmlJsonFormat = new XmlJsonDataFormat();
+    xmlJsonFormat.setEncoding("UTF-8");
+    context.addRoutes(
+        new RouteBuilder() {
+          public void configure() {
+            from("direct:marshal").marshal(xmlJsonFormat).to("file:"+jsonFilename);
+          }
+        }
+    );
+    ProducerTemplate template = context.createProducerTemplate();
+    context.start();
+    template.sendBody("direct:marshal", xml);
+    context.stop();
   }
 }
 
