@@ -100,11 +100,21 @@
             <artifactId>camel-core</artifactId>
             <version>2.15.2</version>
         </dependency>
-		
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-xmljson</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+		<dependency>
+			<groupId>xom</groupId>
+			<artifactId>xom</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+
 		<dependency>
 		  <groupId>com.easyinnova</groupId>
 		  <artifactId>tifflibrary4java</artifactId>
-		  <version>0.6</version>
+		  <version>0.7</version>
 		</dependency>
 	</dependencies>
 
