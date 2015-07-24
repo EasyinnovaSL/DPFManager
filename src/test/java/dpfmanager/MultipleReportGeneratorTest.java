@@ -1,7 +1,5 @@
 package dpfmanager;
 
-import javafx.application.Platform;
-
 import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
@@ -15,7 +13,7 @@ import java.util.Date;
 /**
  * Created by Easy on 20/07/2015.
  */
-public class ReportGeneratorTest extends TestCase {
+public class MultipleReportGeneratorTest extends TestCase {
   TiffReader tr;
 
   /**
@@ -32,15 +30,17 @@ public class ReportGeneratorTest extends TestCase {
     assertEquals(ok, true);
   }
 
-  public void testReports1() throws Exception {
+
+  public void testReports2() throws Exception {
     String[] args = new String[1];
-    args[0] = "D:/workspacePREFORMA/Tiff-Library-4J/src/test/resources/Small/Bilevel.tif";
+    args[0] = "D:/workspacePREFORMA/Tiff-Library-4J/src/test/resources/Small/";
+
     MainApp.main(args);
     String path = getPath();
-
     File directori = new File(path);
-    assertEquals(directori.list().length, 2);
-    Platform.exit();
+    assertEquals(directori.list().length, 7);
+
+
   }
 
   private String getPath() {
