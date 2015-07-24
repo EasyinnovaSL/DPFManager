@@ -4,10 +4,16 @@ import com.easyinnova.tiff.model.ValidationEvent;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
+//import org.apache.camel.CamelContext;
+//import org.apache.camel.ProducerTemplate;
+//import org.apache.camel.builder.RouteBuilder;
+//import org.apache.camel.impl.DefaultCamelContext;
+//import org.apache.camel.model.dataformat.XmlJsonDataFormat;
+//import org.apache.commons.lang.time.FastDateFormat;
 
 import java.io.File;
+//import java.io.StringWriter;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -39,7 +45,7 @@ public class ReportXml {
 
     // Number
     el = doc.createElement("number");
-    el.setTextContent("" + (index+1));
+    el.setTextContent("" + (index + 1));
     ifdNode.appendChild(el);
 
     // Image
@@ -157,9 +163,10 @@ public class ReportXml {
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       DOMSource source = new DOMSource(doc);
-      StreamResult result = new StreamResult(new File(xmlfile));
-
+      File file = new File(xmlfile);
+      StreamResult result = new StreamResult(file.getPath());
       transformer.transform(source, result);
+      
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {
@@ -211,17 +218,17 @@ public class ReportXml {
       
       File file = new File(xmlfile);
       StreamResult result = new StreamResult(file);
-
       transformer.transform(source, result);
 
       // To json
-      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      /*transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       StringWriter writer = new StringWriter();
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
 
       String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
-      xmlToJson(output, jsonfile);
-      file.delete();
+      xmlToJson(output, xmlfile + ".json");
+      file.delete();*/
+      
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {
@@ -230,5 +237,28 @@ public class ReportXml {
       e.printStackTrace();
     }
   }
+  
+  /**
+   * Xml to json.
+   *
+   * @param xml the xml
+   * @throws Exception the exception
+   */
+//  private static void xmlToJson(String xml, String jsonFilename) throws Exception {
+//    CamelContext context = new DefaultCamelContext();
+//    XmlJsonDataFormat xmlJsonFormat = new XmlJsonDataFormat();
+//    xmlJsonFormat.setEncoding("UTF-8");
+//    context.addRoutes(
+//        new RouteBuilder() {
+//          public void configure() {
+//            from("direct:marshal").marshal(xmlJsonFormat).to("file:" + jsonFilename);
+//          }
+//        }
+//    );
+//    ProducerTemplate template = context.createProducerTemplate();
+//    context.start();
+//    template.sendBody("direct:marshal", xml);
+//    context.stop();
+//  }
   
 }

@@ -1,41 +1,23 @@
 package dpfmanager;
 
-import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationResult;
-import com.easyinnova.tiff.model.types.IFD;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 public class GlobalReport {
 
   /** The list of all individual reports. */
   private List<IndividualReport> reports;
 
-  /** Total reports. */
-  private int nreports;
-  
   /** Number of valid reports. */
   private int nreportsok;
   
   /** Number of failed reports. */
   private int nreportsko;
   
-  public GlobalReport(){
+  /**
+   * Instantiates a new global report.
+   */
+  public GlobalReport() {
     reports = new ArrayList<IndividualReport>();
     nreportsok = 0;
     nreportsko = 0;

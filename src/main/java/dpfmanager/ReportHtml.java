@@ -6,8 +6,6 @@ import com.easyinnova.tiff.model.TiffObject;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.types.IFD;
 
-import org.apache.commons.lang.time.FastDateFormat;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,11 +17,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.transform.stream.StreamResult;
 
 /**
  * The Class ReportHtml.
@@ -31,7 +24,7 @@ import javax.xml.transform.stream.StreamResult;
 public class ReportHtml {
 
   /**
-   * Read the file of the path
+   * Read the file of the path.
    *
    * @param path the path to read.
    * @return the content of the file in path
@@ -59,6 +52,13 @@ public class ReportHtml {
     return text;
   }
   
+  /**
+   * Copy a file or directory from source to target.
+   *
+   * @param sourceLocation the source path.
+   * @param targetLocation the target path.
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
   private static void copy(File sourceLocation, File targetLocation) throws IOException {
     if (sourceLocation.isDirectory()) {
       copyDirectory(sourceLocation, targetLocation);
@@ -67,6 +67,13 @@ public class ReportHtml {
     }
   }
   
+  /**
+   * Copy a directory from source to target.
+   *
+   * @param source the source path.
+   * @param target the target path.
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
   private static void copyDirectory(File source, File target) throws IOException {
     if (!target.exists()) {
       target.mkdir();
@@ -75,7 +82,15 @@ public class ReportHtml {
       copy(new File(source, f), new File(target, f));
     }
   }
+
   
+  /**
+   * Copy file.
+   *
+   * @param source the source
+   * @param target the target
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
   private static void copyFile(File source, File target) throws IOException {        
     try (
       InputStream in = new FileInputStream(source);
@@ -90,10 +105,10 @@ public class ReportHtml {
   }
 
   /**
-   * Copy the folder path into the folder of the file name
+   * Copy folder.
    *
-   * @param path the path to copy from.
-   * @param name the name of the file inside the path to copy.
+   * @param path the path
+   * @param name the name
    */
   private static void copyFolder(String path, String name) {
     File nameFile = new File(name);
@@ -114,52 +129,65 @@ public class ReportHtml {
   }
   
   /**
+   * Insert html folder.
+   *
+   * @param file the file
+   * @return the string
+   */
+  private static String insertHtmlFolder(String file) {
+    String name = file.substring(file.lastIndexOf("/") + 1, file.length());
+    return file.replace(name, "html/" + name);
+  }
+  
+  /**
    * Parse an individual report to HTML.
    *
+   * @param outputfile the outputfile
    * @param ir the individual report.
    */
   public static void parseIndividual(String outputfile, IndividualReport ir) {
-    String tPath = "resources/templates/individual.html";
+    String templatePath = "resources/templates/individual.html";
     String htmlFolder = "resources/html/";
     copyFolder(htmlFolder,outputfile);
+    outputfile = insertHtmlFolder(outputfile);
     
-    String htmlBody = readFile(tPath);
+    String htmlBody = readFile(templatePath);
     
     //Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##",ir.getFileName());
-    int ep_err = ir.getErrors().size();
-    int ep_war = ir.getWarnings().size();
-    if (ep_err > 0) {
+    int epErr = ir.getErrors().size();
+    int epWar = ir.getWarnings().size();
+    if (epErr > 0) {
       htmlBody = htmlBody.replaceAll("##EP_OK##", "none");
       htmlBody = htmlBody.replaceAll("##EP_ERR##", "block");
       htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "block");
-    } else if (ep_war > 0) {
+      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "");
+    } else if (epWar > 0) {
       htmlBody = htmlBody.replaceAll("##EP_OK##", "none");
       htmlBody = htmlBody.replaceAll("##EP_ERR##", "none");
       htmlBody = htmlBody.replaceAll("##EP_WAR##", "block");
-      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "block");
+      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "");
     } else {
       htmlBody = htmlBody.replaceAll("##EP_OK##", "block");
       htmlBody = htmlBody.replaceAll("##EP_ERR##", "none");
       htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "display: none;");
     }
     
     //Errors
     String clas = "success";
-    if (ep_err > 0) {
+    if (epErr > 0) {
       clas = "error";
     }
-    htmlBody = htmlBody.replaceAll("##U_EP_ERR_N##", "" + ep_err);
+    htmlBody = htmlBody.replaceAll("##U_EP_ERR_N##", "" + epErr);
     htmlBody = htmlBody.replaceAll("##U_EP_ERR_CLASS##", clas);
     
     //Warnings
     clas = "success";
-    if (ep_war > 0) {
+    if (epWar > 0) {
       clas = "warning";
     }
-    htmlBody = htmlBody.replaceAll("##U_EP_WAR##", "" + ep_war);
+    htmlBody = htmlBody.replaceAll("##U_EP_WAR##", "" + epWar);
     htmlBody = htmlBody.replaceAll("##U_EP_WAR_CLASS##", clas);
     
     
@@ -220,19 +248,33 @@ public class ReportHtml {
     htmlBody = htmlBody.replaceAll("##UL##", ul);
     
     //Finish, write to html file
-    htmlBody = htmlBody.replaceAll("\\.\\./", "");
+    htmlBody = htmlBody.replaceAll("\\.\\./html/", "");
     ReportHtml.writeToFile(outputfile, htmlBody);
   }
   
+  /**
+   * Calculate percent.
+   *
+   * @param ir the ir
+   * @return the int
+   */
   private static int calculatePercent(IndividualReport ir) {
     Double rest = 100.0 - ir.getErrors().size() * 12.5;
-    if (rest < 0.0){
+    if (rest < 0.0) {
       rest = 0.0;
     }
     return rest.intValue();
   }
   
-  private static String generateCssColor(int index, IndividualReport ir, String path){
+  /**
+   * Generate css color.
+   *
+   * @param index the index
+   * @param ir the ir
+   * @param path the path
+   * @return the string
+   */
+  private static String generateCssColor(int index, IndividualReport ir, String path) {
     String css = readFile(path);
     css = css.replace("##INDEX##" , "" + index); 
     if (ir.getErrors().size() > 0) {
@@ -245,17 +287,33 @@ public class ReportHtml {
     return css;
   }
   
-  private static String generateCssRotation(String path, int start, int val){
+  /**
+   * Generate css rotation.
+   *
+   * @param path the path
+   * @param start the start
+   * @param val the val
+   * @return the string
+   */
+  private static String generateCssRotation(String path, int start, int val) {
     String css = readFile(path);
     css = css.replaceAll("##START##", "" + start);
     css = css.replaceAll("##VAL##", "" + val);
     return css;
   }
   
-  private static String replacesChart(String body, int angle, int rAngle){
+  /**
+   * Replaces chart.
+   *
+   * @param body the body
+   * @param angle the angle
+   * @param rAngle the r angle
+   * @return the string
+   */
+  private static String replacesChart(String body, int angle, int reverseAngle) {
     body = body.replace("##VAL1##", "" + angle);
     body = body.replace("##START2##", "" + angle);
-    body = body.replace("##VAL2##", "" + rAngle);
+    body = body.replace("##VAL2##", "" + reverseAngle);
     if (angle > 180) {
       body = body.replace("##BIG1##", "big");
       body = body.replace("##BIG2##", "");
@@ -269,12 +327,12 @@ public class ReportHtml {
   /**
    * Parse a global report to XML format.
    *
-   * @param xmlfile the file name.
-   * @param ir the individual report.
+   * @param outputfile the outputfile
+   * @param gr the gr
    */
   public static void parseGlobal(String outputfile, GlobalReport gr) {
-    String tPath = "resources/templates/global.html";
-    String iPath = "resources/templates/image.html";
+    String templatePath = "resources/templates/global.html";
+    String imagePath = "resources/templates/image.html";
     String pcPath = "resources/templates/pie-color.css";
     String prPath = "resources/templates/pie-rotation.css";
     String htmlFolder = "resources/html/";
@@ -285,7 +343,7 @@ public class ReportHtml {
     // Parse individual Reports
     int index = 0;
     for (IndividualReport ir : gr.getIndividualReports()) {
-      String imageBody = readFile(iPath);
+      String imageBody = readFile(imagePath);
       //Basic
       int percent = calculatePercent(ir);
       imageBody = imageBody.replace("##PERCENT##", "" + percent);
@@ -293,7 +351,7 @@ public class ReportHtml {
       imageBody = imageBody.replace("##IMG_NAME##", "" + ir.getFileName());
       imageBody = imageBody.replace("##ERR_N##", "" + ir.getErrors().size());
       imageBody = imageBody.replace("##WAR_N##", "" + ir.getWarnings().size());
-      imageBody = imageBody.replace("##HREF##", ir.getFileName() + ".html");
+      imageBody = imageBody.replace("##HREF##", "html/" + ir.getFileName() + ".html");
       if (ir.getErrors().size() > 0) {
         imageBody = imageBody.replace("##ERR_C##", "error");
       } else {
@@ -321,11 +379,11 @@ public class ReportHtml {
       
       //Percent Chart
       int angle = percent * 360 / 100;
-      int rAngle = 360 - angle;
-      imageBody = replacesChart(imageBody, angle, rAngle);
+      int reverseAngle = 360 - angle;
+      imageBody = replacesChart(imageBody, angle, reverseAngle);
       String css = generateCssColor(index, ir, pcPath);
       css += generateCssRotation(prPath, 0, angle);
-      css += generateCssRotation(prPath, angle, rAngle);
+      css += generateCssRotation(prPath, angle, reverseAngle);
       imageBody = imageBody.replace("##CSS##",css);
       
       //TO-DO
@@ -338,7 +396,7 @@ public class ReportHtml {
     
     //Parse the sumary report
     //numbers
-    String htmlBody = readFile(tPath);
+    String htmlBody = readFile(templatePath);
     Double doub = 1.0 * gr.getReportsOk() / gr.getReportsCount() * 100.0;
     int globalPercent = doub.intValue();
     htmlBody = htmlBody.replace("##PERCENT##", "" + globalPercent);
@@ -364,12 +422,13 @@ public class ReportHtml {
       cssG = cssG.replace("##SECOND##" , "#F2F2F2");    //Draker White
     }
     int angleG = globalPercent * 360 / 100;
-    int rAngleG = 360 - angleG;
-    cssG += " " + generateCssRotation(prPath, 0, rAngleG) + " " + generateCssRotation(prPath, rAngleG, angleG);
+    int reverseAngleG = 360 - angleG;
+    cssG += " " + generateCssRotation(prPath, 0, reverseAngleG) 
+        + " " + generateCssRotation(prPath, reverseAngleG, angleG);
     htmlBody = htmlBody.replaceAll("##ANGLE##", "" + angleG);
-    htmlBody = htmlBody.replaceAll("##RANGLE##", "" + rAngleG);
+    htmlBody = htmlBody.replaceAll("##RANGLE##", "" + reverseAngleG);
     htmlBody = htmlBody.replace("##CSS##", "" + cssG);
-    if (rAngleG > 180) {
+    if (reverseAngleG > 180) {
       htmlBody = htmlBody.replaceAll("##BIG1##", "big");
       htmlBody = htmlBody.replaceAll("##BIG2##", "");
     } else {
@@ -389,8 +448,8 @@ public class ReportHtml {
   /**
    * Parse a global report to XML format.
    *
-   * @param xmlfile the file name.
-   * @param ir the individual report.
+   * @param outputfile the outputfile
+   * @param body the body
    */
   public static void writeToFile(String outputfile, String body) {
     PrintWriter writer = null;

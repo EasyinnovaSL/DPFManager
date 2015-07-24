@@ -19,56 +19,17 @@
 
 package dpfmanager;
 
-import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationEvent;
-import com.easyinnova.tiff.model.ValidationResult;
-import com.easyinnova.tiff.model.types.IFD;
-import com.easyinnova.tiff.reader.TiffReader;
-
 import org.apache.commons.lang.time.FastDateFormat;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.io.StringWriter;
 import java.util.Date;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 /**
  * The Class ReportGenerator.
  */
 public class ReportGenerator {
-
-  /** The tiff model. */
-  private TiffDocument tiffModel;
-
-  /** The validation. */
-  private ValidationResult validation;
   
-  /**
-   * Default constructor.
-   *
-   * @param tiffModel the tiff model
-   * @param val the val
-   */
-  public ReportGenerator(TiffDocument tiffModel, ValidationResult val) {
-    this.tiffModel = tiffModel;
-    validation = val;
-  }
-
   /**
    * Creates the report path.
    *
@@ -119,12 +80,12 @@ public class ReportGenerator {
    * Gets the report name of a given tiff file.
    *
    * @param internalReportFolder the internal report folder
-   * @param tiffreader the tiffreader
+   * @param realFilename the real file name
    * @return the report name
    */
-  public static String getReportName(String internalReportFolder, TiffReader tiffreader) {
+  public static String getReportName(String internalReportFolder, String realFilename) {
     String reportName =
-        internalReportFolder + new File(tiffreader.getFilename()).getName();
+        internalReportFolder + new File(realFilename).getName();
     File file = new File(reportName);
     int index = 0;
     while (file.exists()) {
@@ -132,8 +93,8 @@ public class ReportGenerator {
       String ext = getFileType(reportName);
       reportName =
           internalReportFolder
-              + new File(tiffreader.getFilename().substring(0,
-              tiffreader.getFilename().lastIndexOf("."))
+              + new File(realFilename.substring(0,
+                  realFilename.lastIndexOf("."))
               + index + ext).getName();
       file = new File(reportName);
     }
@@ -143,7 +104,7 @@ public class ReportGenerator {
   /**
    * Make individual report.
    *
-   * @param outputfile the output file name
+   * @param reportName the output file name
    * @param ir the individual report
    */
   public static void generateIndividualReport(String reportName, IndividualReport ir) {
@@ -161,39 +122,18 @@ public class ReportGenerator {
    */
   public static void makeSummaryReport(String internalReportFolder, 
       ArrayList<IndividualReport> individuals) {
-    GlobalReport gr = new GlobalReport();
-    for (final IndividualReport individual : individuals) {
-      gr.addIndividual(individual);
+    if (individuals.size() > 0) {
+      GlobalReport gr = new GlobalReport();
+      for (final IndividualReport individual : individuals) {
+        gr.addIndividual(individual);
+      }
+      gr.generate();
+      
+      String xmlfile = internalReportFolder + "summary.xml";
+      String htmlfile = internalReportFolder + "summary.html";
+      ReportXml.parseGlobal(xmlfile, gr);
+      ReportHtml.parseGlobal(htmlfile, gr);
     }
-    gr.generate();
-    
-    String xmlfile = internalReportFolder + "summary.xml";
-    String htmlfile = internalReportFolder + "summary.html";
-    ReportXml.parseGlobal(xmlfile, gr);
-    ReportHtml.parseGlobal(htmlfile, gr);
-  }
-
-  /**
-   * Xml to json.
-   *
-   * @param xml the xml
-   * @throws Exception the exception
-   */
-  private static void xmlToJson(String xml, String jsonFilename) throws Exception {
-    CamelContext context = new DefaultCamelContext();
-    XmlJsonDataFormat xmlJsonFormat = new XmlJsonDataFormat();
-    xmlJsonFormat.setEncoding("UTF-8");
-    context.addRoutes(
-        new RouteBuilder() {
-          public void configure() {
-            from("direct:marshal").marshal(xmlJsonFormat).to("file:"+jsonFilename);
-          }
-        }
-    );
-    ProducerTemplate template = context.createProducerTemplate();
-    context.start();
-    template.sendBody("direct:marshal", xml);
-    context.stop();
   }
 }
 

@@ -3,21 +3,21 @@
 <head>
 	<title>##IMG_NAME##</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<link rel="stylesheet" type="text/css" href="../html/individual.css">
-	<link rel="stylesheet" type="text/css" href="../html/default.css">
-	<link rel="stylesheet" type="text/css" href="../html/font-awesome.css">
+	<link rel="stylesheet" type="text/css" href="../html/css/individual.css">
+	<link rel="stylesheet" type="text/css" href="../html/css/default.css">
+	<link rel="stylesheet" type="text/css" href="../html/css/font-awesome.css">
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 </head>
 <body>
 	<div class="header">
 		<div class="logo">
-			<img src="html/logo.png" alt="Logo" />
+			<img src="../html/img/logo.png" alt="Logo" />
 		</div>
 		<h1>SINGLE FILE REPORT</h1>
 	
 		<div id="basic_info">
 			<div class="preview left">
-				<img src="html/logo.png" alt="preview" />
+				<img src="../html/img/logo.png" alt="preview" />
 			</div>
 			<div id="info" class="left">
 				<h2>##IMG_NAME##</h2>
@@ -70,7 +70,7 @@
 		<div class="row">
 			<h4><i class="fa fa-check-square-o"></i>  TIFF/EP conformance</h4>
 			<span style="margin-left: 20px; display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conform to TIFF/EP</span>
-			<table style="display: ##EP_ERR-WAR##;" class="CustomTable3">
+			<table style="##EP_ERR-WAR## width: 50%;" class="CustomTable3">
 		        <tr>
 		            <th class="bold">Type</th>
 		            <th class="bold">Description</th>
@@ -80,7 +80,7 @@
 		</div>
 	</div>
 	<div id="footer" class="center">
-		<a href="summary.html" class="button">Back</a>
+		<a href="../summary.html" class="button">Back</a>
 	</div>
 </body>
 </html>
