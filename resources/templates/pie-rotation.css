@@ -1,0 +1,15 @@
+/* Rotations */
+.pie[data-start="##START##"] {
+	-moz-transform: rotate(##START##deg);
+	-ms-transform: rotate(##START##deg);
+	-webkit-transform: rotate(##START##deg);
+	-o-transform: rotate(##START##deg);
+	transform:rotate(##START##deg);
+}
+.pie[data-value="##VAL##"]:BEFORE {
+	-moz-transform: rotate(##VALL##deg);
+	-ms-transform: rotate(##VAL##deg);
+	-webkit-transform: rotate(##VAL##deg);
+	-o-transform: rotate(##VAL##deg);
+	transform:rotate(##VAL##deg);
+}

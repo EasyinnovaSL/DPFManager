@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>##IMG_NAME##</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link rel="stylesheet" type="text/css" href="../html/individual.css">
+	<link rel="stylesheet" type="text/css" href="../html/default.css">
+	<link rel="stylesheet" type="text/css" href="../html/font-awesome.css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+</head>
+<body>
+	<div class="header">
+		<div class="logo">
+			<img src="html/logo.png" alt="Logo" />
+		</div>
+		<h1>SINGLE FILE REPORT</h1>
+	
+		<div id="basic_info">
+			<div class="preview left">
+				<img src="html/logo.png" alt="preview" />
+			</div>
+			<div id="info" class="left">
+				<h2>##IMG_NAME##</h2>
+				<span style="display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conform to TIFF/EP</span>
+				<span style="display: ##EP_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conform to TIFF/EP, BUT it has some warnings</span>
+				<span style="display: ##EP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to TIFF/EP</span>
+<!-- 				<span style="display: ##CP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file passes the policy checker</span> -->
+<!-- 				<span style="display: ##CP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT pass the policy checker</span> -->
+				<br>
+                <table class="CustomTable">
+                    <tr>
+                        <td></td>
+                        <td >TIFF/EP</td>
+                        <td></td>
+<!--                         <td>Policy checker</td> -->
+                    </tr>
+                    <tr>
+                        <td>Fixed</td>
+                        <td class="##F_EP_ERR_CLASS##">##F_EP_ERR## errors</td>
+                        <td class="##F_EP_WAR_CLASS##">##F_EP_WAR## warnings</td>
+<!--                         <td class="##F_PC_CLASS##">##F_PC## errors</td> -->
+                    </tr>
+                    <tr>
+                        <td>Unsolved</td>
+                        <td class="##U_EP_ERR_CLASS##">##U_EP_ERR_N## errors</td>
+                        <td class="##U_EP_WAR_CLASS##">##U_EP_WAR## warnings</td>
+<!--                         <td class="##U_PC_CLASS##">##U_PCR## errors</td> -->
+                    </tr>
+                </table>
+			</div>
+		</div>
+	</div>
+	<div class="content container">
+		<div class="row container">
+			<div class="box-l left">
+				<h4><i class="fa fa-tags"></i>  Tags</h4>
+				<table class="CustomTable3">
+			        <tr>
+			            <th class="bold">Tag</th>
+			            <th class="bold">Value</th>
+			        </tr>
+			        ##ROWS_TAGS##
+				</table>
+			</div>
+			<div class="box-r left">
+				<h4>File structure</h4>
+				##UL##
+			</div>
+		</div>
+		<div class="row">
+			<h4><i class="fa fa-check-square-o"></i>  TIFF/EP conformance</h4>
+			<span style="margin-left: 20px; display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conform to TIFF/EP</span>
+			<table style="display: ##EP_ERR-WAR##;" class="CustomTable3">
+		        <tr>
+		            <th class="bold">Type</th>
+		            <th class="bold">Description</th>
+		        </tr>
+		        ##ROWS_EP##
+			</table>
+		</div>
+	</div>
+	<div id="footer" class="center">
+		<a href="summary.html" class="button">Back</a>
+	</div>
+</body>
+</html>

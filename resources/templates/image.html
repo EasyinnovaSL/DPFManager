@@ -1,0 +1,32 @@
+<style>##CSS##</style>
+<div class="image_row container" onclick="javascript:location.href='##HREF##'">
+	<div class="preview left">
+		<img src="html/logo.png" alt="preview" />
+	</div>
+	<div class="details container left">
+		<span class="info-dark bold left img-title">##IMG_NAME##</span>
+		<table class="CustomTable2 left">
+		    <tr>
+		        <th colspan="2" class="">TIFF/EP</th>
+		        <td width=10px></td>
+<!-- 		        <th class="">Policy checker</th> -->
+		    </tr>
+		    <tr>
+		        <td class="##ERR_C##">##ERR_N## errors</td>
+		        <td class="##WAR_C##">##WAR_N## warnings</td>
+		        <td></td>
+<!-- 		        <td class="##CP_C##">##CP_N## errors</td> -->
+		    </tr>
+		</table>
+	</div>
+	<div class="score left">
+		<div data-index="##INDEX##" class="small-chart left">
+			<div class="pie ##BIG1##" data-start="0" data-value="##VAL1##"></div>
+			<div class="pie ##BIG2##" data-start="##START2##" data-value="##VAL2##"></div>
+		</div>
+		<div style="margin-top:29px;" class="left">
+			<span class="##CLASS## bold">##RESULT## <font class="warning bold" style="display: ##DISPLAY_WAR##;">with warnings</font></span>
+			<span class="info-dark bold">Score ##PERCENT##%</span>
+		</div>
+	</div>
+</div>
