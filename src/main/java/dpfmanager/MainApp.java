@@ -1,18 +1,19 @@
 package dpfmanager;
 
 import dpfmanager.shell.modules.interfaces.CommandLine;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-
 
 /**
  * The Class MainApp.
