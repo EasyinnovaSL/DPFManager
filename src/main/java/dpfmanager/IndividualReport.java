@@ -47,6 +47,9 @@ public class IndividualReport {
   /* The file name */
   private String filename;
 
+  /* The file path */
+  private String filepath;
+
   /* The ifdNode count */
   private int ifdCount;
 
@@ -72,22 +75,13 @@ public class IndividualReport {
   private TiffDocument tiffModel;
 
   /**
-   * Default constructor.
-   *
-   */
-  public IndividualReport() {
-    filename = "";
-    ifdCount = 0;
-    listIsimg = new ArrayList<Boolean>();
-    listHasSubIfd = new ArrayList<Boolean>();
-  }
-
-  /**
    * Constructor + generate.
    *
    */
-  public IndividualReport(String name, TiffDocument tiffModel, ValidationResult validation) {
+  public IndividualReport(String name, String path, TiffDocument tiffModel,
+      ValidationResult validation) {
     filename = name;
+    filepath = path;
     ifdCount = 0;
     listIsimg = new ArrayList<Boolean>();
     listHasSubIfd = new ArrayList<Boolean>();
@@ -109,6 +103,15 @@ public class IndividualReport {
    */
   public String getFileName() {
     return filename;
+  }
+
+  /**
+   * Get file path.
+   *
+   * @return filepath
+   */
+  public String getFilePath() {
+    return filepath;
   }
 
   /**

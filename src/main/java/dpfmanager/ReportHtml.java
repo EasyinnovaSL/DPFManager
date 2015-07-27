@@ -37,12 +37,16 @@ import com.easyinnova.tiff.model.TiffObject;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.types.IFD;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import javax.imageio.ImageIO;
 
 /**
  * The Class ReportHtml.
@@ -145,8 +149,17 @@ public class ReportHtml {
     String htmlFolder = "resources/html/";
     copyFolder(htmlFolder, outputfile);
     outputfile = insertHtmlFolder(outputfile);
+    String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
     String htmlBody = ReportGenerator.readFile(templatePath);
+
+    // Image
+    String imgPath = "img/" + ir.getFileName() + ".jpg";
+    boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
+    if (!check) {
+      imgPath = "img/noise.jpg";
+    }
+    htmlBody = htmlBody.replace("##IMG_PATH##", imgPath);
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
@@ -247,6 +260,32 @@ public class ReportHtml {
     ReportGenerator.writeToFile(outputfile, htmlBody);
   }
 
+  private static boolean tiff2Jpg(String inputfile, String outputfile) {
+    BufferedImage image = null;
+    try {
+      File input = new File(inputfile);
+      image = ImageIO.read(input);
+
+      double factor = 1.0;
+      int width = image.getWidth();
+      if (width > 500) {
+        factor = 500.0 / width;
+      }
+      int height = (int) (image.getHeight() * factor);
+      width = (int) (width * factor);
+
+      BufferedImage convertedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+      Graphics2D graphic = convertedImage.createGraphics();
+      graphic.drawImage(image, 0, 0, width, height, null);
+      graphic.dispose();
+
+      ImageIO.write(convertedImage, "jpg", new File(outputfile));
+    } catch (IOException e) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * Calculate percent.
    *
@@ -322,8 +361,8 @@ public class ReportHtml {
   /**
    * Parse a global report to XML format.
    *
-   * @param outputfile the outputfile
-   * @param gr the gr
+   * @param outputfile the output file.
+   * @param gr the global report.
    */
   public static void parseGlobal(String outputfile, GlobalReport gr) {
     String templatePath = "resources/templates/global.html";
@@ -332,6 +371,7 @@ public class ReportHtml {
     String prPath = "resources/templates/pie-rotation.css";
     String htmlFolder = "resources/html/";
     copyFolder(htmlFolder, outputfile);
+    String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
 
     String imagesBody = "";
@@ -339,6 +379,15 @@ public class ReportHtml {
     int index = 0;
     for (IndividualReport ir : gr.getIndividualReports()) {
       String imageBody = ReportGenerator.readFile(imagePath);
+
+      // Image
+      String imgPath = "html/img/" + ir.getFileName() + ".jpg";
+      boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
+      if (!check) {
+        imgPath = "html/img/noise.jpg";
+      }
+      imageBody = imageBody.replace("##IMG_PATH##", imgPath);
+
       // Basic
       int percent = calculatePercent(ir);
       imageBody = imageBody.replace("##PERCENT##", "" + percent);
@@ -385,6 +434,7 @@ public class ReportHtml {
       imageBody = imageBody.replace("##CP_N##", "0");
       imageBody = imageBody.replace("##CP_C##", "success");
       // END TO-DO
+
       imagesBody += imageBody;
       index++;
     }

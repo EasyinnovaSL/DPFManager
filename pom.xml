@@ -65,6 +65,11 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
+		<dependency>
+			<groupId>it.geosolutions.jaiext.rescale</groupId>
+			<artifactId>jt-rescale</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Logging -->
 
@@ -117,7 +122,15 @@
 		  <version>0.7</version>
 		</dependency>
 	</dependencies>
-
+	
+	<repositories>
+		<repository>
+			<id>geosolutions</id>
+			<name>GeoSolutions Repository</name>
+			<url>http://maven.geo-solutions.it</url>
+		</repository>
+	</repositories>
+  
 	<!-- Build Settings -->
 	<build>
 

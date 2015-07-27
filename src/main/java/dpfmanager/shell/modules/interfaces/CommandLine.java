@@ -140,7 +140,7 @@ public class CommandLine implements UserInterface {
       displayHelp();
     } else {
       reportGenerator = new ReportGenerator();
-      reportGenerator.setReportsFormats(true, true, true);
+      reportGenerator.setReportsFormats(false, false, true);
       // Process files
       ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
       String internalReportFolder = ReportGenerator.createReportPath();
@@ -384,7 +384,7 @@ public class CommandLine implements UserInterface {
           String name =
               realFilename.substring(realFilename.lastIndexOf(File.separator) + 1,
                   realFilename.length());
-          IndividualReport ir = new IndividualReport(name, to, val);
+          IndividualReport ir = new IndividualReport(name, filename, to, val);
           if (outputFile == null) {
             reportResults(name, to, val);
           } else {

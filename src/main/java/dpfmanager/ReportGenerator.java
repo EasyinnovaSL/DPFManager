@@ -180,7 +180,7 @@ public class ReportGenerator {
   /**
    * Delete the file or folder and it subs folders / files.
    * 
-   * @param folder the folder
+   * @param file the file or folder to remove
    */
   public static void deleteFileOrFolder(File file) {
     File[] files = file.listFiles();
@@ -252,7 +252,7 @@ public class ReportGenerator {
       String output = null;
       String xmlfile = internalReportFolder + "summary.xml";
       String jsonFile = internalReportFolder + "summary.json";
-      String htmlfile = internalReportFolder + "index.html";
+      String htmlfile = internalReportFolder + "report.html";
       if (xml) {
         output = ReportXml.parseGlobal(xmlfile, gr);
       }
