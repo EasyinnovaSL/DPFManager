@@ -1,5 +1,3 @@
-@CHARSET "ISO-8859-1";
-
 /*
 	Basic info
 */
@@ -11,11 +9,11 @@
 }
 
 #info_text{
-	width: 60%;
+	width: 40%;
 }
 
 #info_chart{
-	width: 40%;
+	width: 60%;
 }
 
 .middle-chart{

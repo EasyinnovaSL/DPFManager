@@ -1,3 +1,34 @@
+/**
+ * <h1>ReportGenerator.java</h1>
+ * <p>
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version; or, at your choice, under the terms of the
+ * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p>
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License and the Mozilla Public License for more details.
+ * </p>
+ * <p>
+ * You should have received a copy of the GNU General Public License and the Mozilla Public License
+ * along with this program. If not, see <a
+ * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
+ * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
+ * </p>
+ * <p>
+ * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
+ * </p>
+ * <p>
+ * © 2015 Easy Innova, SL
+ * </p>
+ *
+ * @author Adrià Llorens Martinez
+ * @version 1.0
+ * @since 23/6/2015
+ */
+
 package dpfmanager;
 
 import com.easyinnova.tiff.model.ValidationEvent;
@@ -5,15 +36,8 @@ import com.easyinnova.tiff.model.ValidationEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-//import org.apache.camel.CamelContext;
-//import org.apache.camel.ProducerTemplate;
-//import org.apache.camel.builder.RouteBuilder;
-//import org.apache.camel.impl.DefaultCamelContext;
-//import org.apache.camel.model.dataformat.XmlJsonDataFormat;
-//import org.apache.commons.lang.time.FastDateFormat;
-
 import java.io.File;
-//import java.io.StringWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -68,7 +92,7 @@ public class ReportXml {
 
     return ifdNode;
   }
-  
+
   /**
    * Parse an individual report to XML format.
    *
@@ -81,13 +105,13 @@ public class ReportXml {
     // tiff structure
     Element tiffStructureElement = doc.createElement("tiff_structure");
     Element ifdTree = doc.createElement("ifdTree");
-    for (int index = 0 ; index < ir.getIfdCount() ; index++) {
+    for (int index = 0; index < ir.getIfdCount(); index++) {
       Element ifdNode = createIfdNode(doc, ir, index);
       ifdTree.appendChild(ifdNode);
     }
     tiffStructureElement.appendChild(ifdTree);
     report.appendChild(tiffStructureElement);
-    
+
     // basic info
     Element infoElement = doc.createElement("width");
     infoElement.setTextContent(ir.getWidth());
@@ -139,17 +163,18 @@ public class ReportXml {
       results.appendChild(warning);
     }
     implementationCheckerElement.appendChild(results);
-    
+
     return report;
   }
-  
+
   /**
    * Parse an individual report to XML format.
    *
    * @param xmlfile the file name.
    * @param ir the individual report.
+   * @return the XML string generated.
    */
-  public static void parseIndividual(String xmlfile, IndividualReport ir) {
+  public static String parseIndividual(String xmlfile, IndividualReport ir) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -166,21 +191,30 @@ public class ReportXml {
       File file = new File(xmlfile);
       StreamResult result = new StreamResult(file.getPath());
       transformer.transform(source, result);
-      
+
+      // To String
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      StringWriter writer = new StringWriter();
+      transformer.transform(new DOMSource(doc), new StreamResult(writer));
+      String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
+      return output;
+
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {
       tfe.printStackTrace();
     }
+    return "";
   }
-  
+
   /**
    * Parse a global report to XML format.
    *
    * @param xmlfile the file name.
    * @param gr the global report.
+   * @return the XML string generated
    */
-  public static void parseGlobal(String xmlfile, GlobalReport gr) {
+  public static String parseGlobal(String xmlfile, GlobalReport gr) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -215,20 +249,18 @@ public class ReportXml {
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       DOMSource source = new DOMSource(doc);
-      
+
       File file = new File(xmlfile);
       StreamResult result = new StreamResult(file);
       transformer.transform(source, result);
 
-      // To json
-      /*transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      // To String
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       StringWriter writer = new StringWriter();
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
-
       String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
-      xmlToJson(output, xmlfile + ".json");
-      file.delete();*/
-      
+      return output;
+
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {
@@ -236,29 +268,7 @@ public class ReportXml {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    return "";
   }
-  
-  /**
-   * Xml to json.
-   *
-   * @param xml the xml
-   * @throws Exception the exception
-   */
-//  private static void xmlToJson(String xml, String jsonFilename) throws Exception {
-//    CamelContext context = new DefaultCamelContext();
-//    XmlJsonDataFormat xmlJsonFormat = new XmlJsonDataFormat();
-//    xmlJsonFormat.setEncoding("UTF-8");
-//    context.addRoutes(
-//        new RouteBuilder() {
-//          public void configure() {
-//            from("direct:marshal").marshal(xmlJsonFormat).to("file:" + jsonFilename);
-//          }
-//        }
-//    );
-//    ProducerTemplate template = context.createProducerTemplate();
-//    context.start();
-//    template.sendBody("direct:marshal", xml);
-//    context.stop();
-//  }
-  
+
 }

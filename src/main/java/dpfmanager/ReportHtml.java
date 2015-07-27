@@ -1,3 +1,34 @@
+/**
+ * <h1>ReportGenerator.java</h1>
+ * <p>
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version; or, at your choice, under the terms of the
+ * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p>
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License and the Mozilla Public License for more details.
+ * </p>
+ * <p>
+ * You should have received a copy of the GNU General Public License and the Mozilla Public License
+ * along with this program. If not, see <a
+ * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
+ * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
+ * </p>
+ * <p>
+ * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
+ * </p>
+ * <p>
+ * © 2015 Easy Innova, SL
+ * </p>
+ *
+ * @author Adrià Llorens Martinez
+ * @version 1.0
+ * @since 23/6/2015
+ */
+
 package dpfmanager;
 
 import com.easyinnova.tiff.model.Metadata;
@@ -6,52 +37,18 @@ import com.easyinnova.tiff.model.TiffObject;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.types.IFD;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 
 /**
  * The Class ReportHtml.
  */
 public class ReportHtml {
 
-  /**
-   * Read the file of the path.
-   *
-   * @param path the path to read.
-   * @return the content of the file in path
-   */
-  private static String readFile(String path) {
-    BufferedReader br;
-    String text = "";
-    try {
-      br = new BufferedReader(new FileReader(path));
-      StringBuilder sb = new StringBuilder();
-      String line = br.readLine();
-
-      while (line != null) {
-        sb.append(line);
-        sb.append(System.lineSeparator());
-        line = br.readLine();
-      }
-      text = sb.toString();
-      br.close();
-    } catch (FileNotFoundException e) {
-      System.out.println("Template for html not found.");
-    } catch (IOException e) {
-      System.out.println("Error reading " + path);
-    }
-    return text;
-  }
-  
   /**
    * Copy a file or directory from source to target.
    *
@@ -66,7 +63,7 @@ public class ReportHtml {
       copyFile(sourceLocation, targetLocation);
     }
   }
-  
+
   /**
    * Copy a directory from source to target.
    *
@@ -83,7 +80,7 @@ public class ReportHtml {
     }
   }
 
-  
+
   /**
    * Copy file.
    *
@@ -91,11 +88,9 @@ public class ReportHtml {
    * @param target the target
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  private static void copyFile(File source, File target) throws IOException {        
-    try (
-      InputStream in = new FileInputStream(source);
-      OutputStream out = new FileOutputStream(target)
-    ) {
+  private static void copyFile(File source, File target) throws IOException {
+    try (InputStream in = new FileInputStream(source);
+        OutputStream out = new FileOutputStream(target)) {
       byte[] buf = new byte[1024];
       int length;
       while ((length = in.read(buf)) > 0) {
@@ -113,21 +108,21 @@ public class ReportHtml {
   private static void copyFolder(String path, String name) {
     File nameFile = new File(name);
     String absolutePath = nameFile.getAbsolutePath();
-    String srcDir = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator));
-    
+    String srcDir = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+
     File source = new File(path);
     File target = new File(srcDir + "/html");
     if (!target.exists()) {
       target.mkdir();
     }
-  
+
     try {
       copyDirectory(source, target);
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
-  
+
   /**
    * Insert html folder.
    *
@@ -138,7 +133,7 @@ public class ReportHtml {
     String name = file.substring(file.lastIndexOf("/") + 1, file.length());
     return file.replace(name, "html/" + name);
   }
-  
+
   /**
    * Parse an individual report to HTML.
    *
@@ -148,13 +143,13 @@ public class ReportHtml {
   public static void parseIndividual(String outputfile, IndividualReport ir) {
     String templatePath = "resources/templates/individual.html";
     String htmlFolder = "resources/html/";
-    copyFolder(htmlFolder,outputfile);
+    copyFolder(htmlFolder, outputfile);
     outputfile = insertHtmlFolder(outputfile);
-    
-    String htmlBody = readFile(templatePath);
-    
-    //Basic info
-    htmlBody = htmlBody.replace("##IMG_NAME##",ir.getFileName());
+
+    String htmlBody = ReportGenerator.readFile(templatePath);
+
+    // Basic info
+    htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
     int epErr = ir.getErrors().size();
     int epWar = ir.getWarnings().size();
     if (epErr > 0) {
@@ -173,26 +168,26 @@ public class ReportHtml {
       htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
       htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "display: none;");
     }
-    
-    //Errors
+
+    // Errors
     String clas = "success";
     if (epErr > 0) {
       clas = "error";
     }
     htmlBody = htmlBody.replaceAll("##U_EP_ERR_N##", "" + epErr);
     htmlBody = htmlBody.replaceAll("##U_EP_ERR_CLASS##", clas);
-    
-    //Warnings
+
+    // Warnings
     clas = "success";
     if (epWar > 0) {
       clas = "warning";
     }
     htmlBody = htmlBody.replaceAll("##U_EP_WAR##", "" + epWar);
     htmlBody = htmlBody.replaceAll("##U_EP_WAR_CLASS##", clas);
-    
-    
-    
-    //TO-DO, actually never fix nothing || no policy checker
+
+
+
+    // TO-DO, actually never fix nothing || no policy checker
     htmlBody = htmlBody.replaceAll("##U_PC_CLASS##", "success");
     htmlBody = htmlBody.replaceAll("##U_PCR##", "" + 0);
     htmlBody = htmlBody.replaceAll("##CP_OK##", "none");
@@ -203,10 +198,10 @@ public class ReportHtml {
     htmlBody = htmlBody.replaceAll("##F_EP_ERR##", "0");
     htmlBody = htmlBody.replaceAll("##F_EP_WAR##", "0");
     htmlBody = htmlBody.replaceAll("##F_PC##", "0");
-    //End TO-DO
-   
-    //Full Description
-    //Errors and warnings
+    // End TO-DO
+
+    // Full Description
+    // Errors and warnings
     String row;
     String rows = "";
     for (ValidationEvent val : ir.getErrors()) {
@@ -214,7 +209,7 @@ public class ReportHtml {
       row = row.replace("##TEXT##", val.getDescription());
       rows += row;
     }
-    
+
     for (ValidationEvent val : ir.getWarnings()) {
       row = "<tr><td class=\"bold warning\">Warning</td><td>##TEXT##</td></tr>";
       row = row.replace("##TEXT##", val.getDescription());
@@ -222,7 +217,7 @@ public class ReportHtml {
     }
     htmlBody = htmlBody.replaceAll("##ROWS_EP##", rows);
 
-    //Taggs list
+    // Taggs list
     rows = "";
     Metadata meta = ir.getTiffModel().getMetadata();
     for (String key : meta.keySet()) {
@@ -232,8 +227,8 @@ public class ReportHtml {
       rows += row;
     }
     htmlBody = htmlBody.replaceAll("##ROWS_TAGS##", rows);
-    
-    //File Structure
+
+    // File Structure
     String ul = "<ul>";
     TiffDocument td = ir.getTiffModel();
     for (TiffObject object : td.getIfds()) {
@@ -246,12 +241,12 @@ public class ReportHtml {
     }
     ul += "</ul>";
     htmlBody = htmlBody.replaceAll("##UL##", ul);
-    
-    //Finish, write to html file
+
+    // Finish, write to html file
     htmlBody = htmlBody.replaceAll("\\.\\./html/", "");
-    ReportHtml.writeToFile(outputfile, htmlBody);
+    ReportGenerator.writeToFile(outputfile, htmlBody);
   }
-  
+
   /**
    * Calculate percent.
    *
@@ -265,7 +260,7 @@ public class ReportHtml {
     }
     return rest.intValue();
   }
-  
+
   /**
    * Generate css color.
    *
@@ -275,18 +270,18 @@ public class ReportHtml {
    * @return the string
    */
   private static String generateCssColor(int index, IndividualReport ir, String path) {
-    String css = readFile(path);
-    css = css.replace("##INDEX##" , "" + index); 
+    String css = ReportGenerator.readFile(path);
+    css = css.replace("##INDEX##", "" + index);
     if (ir.getErrors().size() > 0) {
-      css = css.replace("##FIRST##" , "#CCCCCC");   //Light Grey
-      css = css.replace("##SECOND##" , "red");
+      css = css.replace("##FIRST##", "#CCCCCC"); // Light Grey
+      css = css.replace("##SECOND##", "red");
     } else {
-      css = css.replace("##FIRST##" , "#66CC66");   //Green
-      css = css.replace("##SECOND##" , "#66CC66");  //Green
+      css = css.replace("##FIRST##", "#66CC66"); // Green
+      css = css.replace("##SECOND##", "#66CC66"); // Green
     }
     return css;
   }
-  
+
   /**
    * Generate css rotation.
    *
@@ -296,12 +291,12 @@ public class ReportHtml {
    * @return the string
    */
   private static String generateCssRotation(String path, int start, int val) {
-    String css = readFile(path);
+    String css = ReportGenerator.readFile(path);
     css = css.replaceAll("##START##", "" + start);
     css = css.replaceAll("##VAL##", "" + val);
     return css;
   }
-  
+
   /**
    * Replaces chart.
    *
@@ -323,7 +318,7 @@ public class ReportHtml {
     }
     return body;
   }
-  
+
   /**
    * Parse a global report to XML format.
    *
@@ -336,18 +331,18 @@ public class ReportHtml {
     String pcPath = "resources/templates/pie-color.css";
     String prPath = "resources/templates/pie-rotation.css";
     String htmlFolder = "resources/html/";
-    copyFolder(htmlFolder,outputfile);
-    
-    
+    copyFolder(htmlFolder, outputfile);
+
+
     String imagesBody = "";
     // Parse individual Reports
     int index = 0;
     for (IndividualReport ir : gr.getIndividualReports()) {
-      String imageBody = readFile(imagePath);
-      //Basic
+      String imageBody = ReportGenerator.readFile(imagePath);
+      // Basic
       int percent = calculatePercent(ir);
       imageBody = imageBody.replace("##PERCENT##", "" + percent);
-      imageBody = imageBody.replace("##INDEX##" , "" + index); 
+      imageBody = imageBody.replace("##INDEX##", "" + index);
       imageBody = imageBody.replace("##IMG_NAME##", "" + ir.getFileName());
       imageBody = imageBody.replace("##ERR_N##", "" + ir.getErrors().size());
       imageBody = imageBody.replace("##WAR_N##", "" + ir.getWarnings().size());
@@ -362,8 +357,8 @@ public class ReportHtml {
       } else {
         imageBody = imageBody.replace("##WAR_C##", "success");
       }
-      
-      //Percent Info
+
+      // Percent Info
       if (percent == 100) {
         imageBody = imageBody.replace("##CLASS##", "success");
         imageBody = imageBody.replace("##RESULT##", "Passed");
@@ -371,32 +366,32 @@ public class ReportHtml {
         imageBody = imageBody.replace("##CLASS##", "error");
         imageBody = imageBody.replace("##RESULT##", "Failed");
       }
-      if (ir.getWarnings().size() > 0 ) {
+      if (ir.getWarnings().size() > 0) {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "inline-block");
       } else {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "none");
       }
-      
-      //Percent Chart
+
+      // Percent Chart
       int angle = percent * 360 / 100;
       int reverseAngle = 360 - angle;
       imageBody = replacesChart(imageBody, angle, reverseAngle);
       String css = generateCssColor(index, ir, pcPath);
       css += generateCssRotation(prPath, 0, angle);
       css += generateCssRotation(prPath, angle, reverseAngle);
-      imageBody = imageBody.replace("##CSS##",css);
-      
-      //TO-DO
+      imageBody = imageBody.replace("##CSS##", css);
+
+      // TO-DO
       imageBody = imageBody.replace("##CP_N##", "0");
       imageBody = imageBody.replace("##CP_C##", "success");
-      //END TO-DO
+      // END TO-DO
       imagesBody += imageBody;
       index++;
     }
-    
-    //Parse the sumary report
-    //numbers
-    String htmlBody = readFile(templatePath);
+
+    // Parse the sumary report
+    // numbers
+    String htmlBody = ReportGenerator.readFile(templatePath);
     Double doub = 1.0 * gr.getReportsOk() / gr.getReportsCount() * 100.0;
     int globalPercent = doub.intValue();
     htmlBody = htmlBody.replace("##PERCENT##", "" + globalPercent);
@@ -411,20 +406,21 @@ public class ReportHtml {
       htmlBody = htmlBody.replace("##OK_C##", "info-white");
       htmlBody = htmlBody.replace("##KO_C##", "error");
     }
-    //Chart
-    String cssG = readFile(pcPath);
-    cssG = cssG.replace("##INDEX##" , "global"); 
+    // Chart
+    String cssG = ReportGenerator.readFile(pcPath);
+    cssG = cssG.replace("##INDEX##", "global");
     if (gr.getReportsOk() >= gr.getReportsKo()) {
-      cssG = cssG.replace("##FIRST##" , "#F2F2F2");     //Draker White
-      cssG = cssG.replace("##SECOND##" , "#66CC66");    //Green
+      cssG = cssG.replace("##FIRST##", "#F2F2F2"); // Draker White
+      cssG = cssG.replace("##SECOND##", "#66CC66"); // Green
     } else {
-      cssG = cssG.replace("##FIRST##" , "red");         //Red
-      cssG = cssG.replace("##SECOND##" , "#F2F2F2");    //Draker White
+      cssG = cssG.replace("##FIRST##", "red"); // Red
+      cssG = cssG.replace("##SECOND##", "#F2F2F2"); // Draker White
     }
     int angleG = globalPercent * 360 / 100;
     int reverseAngleG = 360 - angleG;
-    cssG += " " + generateCssRotation(prPath, 0, reverseAngleG) 
-        + " " + generateCssRotation(prPath, reverseAngleG, angleG);
+    cssG +=
+        " " + generateCssRotation(prPath, 0, reverseAngleG) + " "
+            + generateCssRotation(prPath, reverseAngleG, angleG);
     htmlBody = htmlBody.replaceAll("##ANGLE##", "" + angleG);
     htmlBody = htmlBody.replaceAll("##RANGLE##", "" + reverseAngleG);
     htmlBody = htmlBody.replace("##CSS##", "" + cssG);
@@ -435,35 +431,13 @@ public class ReportHtml {
       htmlBody = htmlBody.replaceAll("##BIG1##", "");
       htmlBody = htmlBody.replaceAll("##BIG2##", "big");
     }
-    
-    //TO-DO
+
+    // TO-DO
     htmlBody = htmlBody.replace("##OK_PC##", "0");
     htmlBody = htmlBody.replace("##OK_EP##", "0");
-    //END TO-DO
-    
+    // END TO-DO
+
     htmlBody = htmlBody.replaceAll("\\.\\./", "");
-    writeToFile(outputfile,htmlBody);
-  }
-  
-  /**
-   * Parse a global report to XML format.
-   *
-   * @param outputfile the outputfile
-   * @param body the body
-   */
-  public static void writeToFile(String outputfile, String body) {
-    PrintWriter writer = null;
-    try {
-      writer = new PrintWriter(outputfile, "UTF-8");
-      writer.println(body);
-    } catch (FileNotFoundException e) {
-      System.out.println("File not found exception");
-    } catch (UnsupportedEncodingException e) {
-      System.out.println("UnsupportedEncodingException exception");
-    } finally {
-      if (writer != null) {
-        writer.close();
-      }
-    }
+    ReportGenerator.writeToFile(outputfile, htmlBody);
   }
 }

@@ -1,3 +1,34 @@
+/**
+ * <h1>ReportGenerator.java</h1>
+ * <p>
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version; or, at your choice, under the terms of the
+ * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p>
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License and the Mozilla Public License for more details.
+ * </p>
+ * <p>
+ * You should have received a copy of the GNU General Public License and the Mozilla Public License
+ * along with this program. If not, see <a
+ * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
+ * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
+ * </p>
+ * <p>
+ * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
+ * </p>
+ * <p>
+ * © 2015 Easy Innova, SL
+ * </p>
+ *
+ * @author Easy Innova
+ * @version 1.0
+ * @since 23/6/2015
+ */
+
 package dpfmanager.shell.modules.interfaces;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
@@ -47,6 +78,9 @@ public class CommandLine implements UserInterface {
 
   /** The allowed extensions. */
   List<String> allowedExtensions;
+
+  /** The Reports Generator. */
+  ReportGenerator reportGenerator;
 
   /**
    * Instantiates a new command line.
@@ -100,10 +134,13 @@ public class CommandLine implements UserInterface {
       }
       idx++;
     }
+
     if (argsError) {
       // Shows the program usage
       displayHelp();
     } else {
+      reportGenerator = new ReportGenerator();
+      reportGenerator.setReportsFormats(true, true, true);
       // Process files
       ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
       String internalReportFolder = ReportGenerator.createReportPath();
@@ -115,15 +152,15 @@ public class CommandLine implements UserInterface {
           individuals.addAll(indReports);
         }
       }
-      //Global report
-      ReportGenerator.makeSummaryReport(internalReportFolder, individuals);
+      // Global report
+      reportGenerator.makeSummaryReport(internalReportFolder, individuals);
     }
   }
 
   /**
-   * Load xml from string.
+   * Load XML from string.
    *
-   * @param xml the xml
+   * @param xml the XML
    * @return the document
    * @throws Exception the exception
    */
@@ -195,12 +232,12 @@ public class CommandLine implements UserInterface {
   /**
    * Process a Tiff file.
    *
-   * @param filename             the filename
-   * @param outputFile           the output file
+   * @param filename the filename
+   * @param outputFile the output file
    * @param internalReportFolder the internal report folder
    */
-  private List<IndividualReport> processFile(
-      String filename, String outputFile, String internalReportFolder) {
+  private List<IndividualReport> processFile(String filename, String outputFile,
+      String internalReportFolder) {
     List<IndividualReport> indReports = new ArrayList<IndividualReport>();
     IndividualReport ir = null;
     if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
@@ -243,7 +280,7 @@ public class CommandLine implements UserInterface {
     } else if (isTiff(filename)) {
       // File
       try {
-        ir = processTiffFile(filename,  filename, outputFile, internalReportFolder);
+        ir = processTiffFile(filename, filename, outputFile, internalReportFolder);
         if (ir != null) {
           indReports.add(ir);
         }
@@ -326,9 +363,8 @@ public class CommandLine implements UserInterface {
    * @throws ReadTagsIOException the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  private static IndividualReport processTiffFile(
-      String filename, String realFilename, String outputFile, String internalReportFolder) 
-      throws ReadTagsIOException, ReadIccConfigIOException {
+  private IndividualReport processTiffFile(String filename, String realFilename, String outputFile,
+      String internalReportFolder) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
       TiffReader tr = new TiffReader();
       int result = tr.readFile(filename);
@@ -342,11 +378,11 @@ public class CommandLine implements UserInterface {
         case 0:
           TiffDocument to = tr.getModel();
           ValidationResult val = tr.getValidation();
-//          String name = tr.getFilename()
-//              .substring(tr.getFilename().lastIndexOf(File.separator) + 1,
-//                  tr.getFilename().length());
-          String name = realFilename
-              .substring(realFilename.lastIndexOf(File.separator) + 1,
+          // String name = tr.getFilename()
+          // .substring(tr.getFilename().lastIndexOf(File.separator) + 1,
+          // tr.getFilename().length());
+          String name =
+              realFilename.substring(realFilename.lastIndexOf(File.separator) + 1,
                   realFilename.length());
           IndividualReport ir = new IndividualReport(name, to, val);
           if (outputFile == null) {
@@ -373,7 +409,7 @@ public class CommandLine implements UserInterface {
    * Report the results of the reading process to the console.
    *
    * @param tiffReader the tiff reader
-   * @param result     the result
+   * @param result the result
    */
   private static void reportResults(String filename, TiffDocument to, ValidationResult val) {
     // Display results human readable
@@ -428,11 +464,11 @@ public class CommandLine implements UserInterface {
    * Report the results of the reading process to the console.
    *
    * @param tiffreader the tiff reader
-   * @param result     the result
-   * @param xmlfile    the xml file
+   * @param result the result
+   * @param xmlfile the xml file
    */
-  private static void reportResultsXml(IndividualReport ir, String outputFile) {
-    ReportGenerator.generateIndividualReport(outputFile, ir);
+  private void reportResultsXml(IndividualReport ir, String outputFile) {
+    reportGenerator.generateIndividualReport(outputFile, ir);
     System.out.println("Report '" + outputFile + "' created");
   }
 
@@ -441,12 +477,12 @@ public class CommandLine implements UserInterface {
    *
    * @param ir the individual report
    * @param tiffreader the tiff reader
-   * @param folder     the internal report folder
+   * @param folder the internal report folder
    */
-  private static void internalReport(
-      IndividualReport ir, TiffReader tiffreader, String realFilename, String folder) {
+  private void internalReport(IndividualReport ir, TiffReader tiffreader, String realFilename,
+      String folder) {
     String outputfile = ReportGenerator.getReportName(folder, realFilename);
-    ReportGenerator.generateIndividualReport(outputfile, ir);
+    reportGenerator.generateIndividualReport(outputfile, ir);
     System.out.println("Internal report '" + outputfile + "' created");
   }
 
