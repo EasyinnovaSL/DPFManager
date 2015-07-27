@@ -7,6 +7,7 @@ import com.easyinnova.tiff.reader.TiffReader;
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.time.FastDateFormat;
+import org.junit.After;
 import org.junit.Before;
 
 import java.io.File;
@@ -30,6 +31,11 @@ public class ReportGeneratorTest extends TestCase {
       ok = false;
     }
     assertEquals(ok, true);
+  }
+
+  @After
+  public static void afterClass() {
+    Platform.exit();
   }
 
   public void testReports1() throws Exception {

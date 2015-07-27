@@ -1,12 +1,14 @@
 package dpfmanager;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 
 import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.time.FastDateFormat;
+import org.junit.After;
 import org.junit.Before;
 
 import java.io.File;
@@ -32,6 +34,10 @@ public class MultipleReportGeneratorTest extends TestCase {
     assertEquals(ok, true);
   }
 
+  @After
+  public static void afterClass() {
+    Platform.exit();
+  }
 
   public void testReports2() throws Exception {
     String[] args = new String[1];
