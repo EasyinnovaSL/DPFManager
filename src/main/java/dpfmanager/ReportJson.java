@@ -50,7 +50,7 @@ public class ReportJson {
    * XML to JSON.
    *
    * @param xml the XML
-   * @throws Exception the exception
+   * @param jsonFilename the json filename
    */
   public static void xmlToJson(String xml, String jsonFilename) {
     CamelContext context = new DefaultCamelContext();
@@ -81,7 +81,7 @@ public class ReportJson {
   /**
    * Get the JSON string into the file inside the folderPath.
    *
-   * @param jsonFilename the file name
+   * @param folderPath the folder path
    * @return the JSON string
    */
   private static String getJsonString(String folderPath) {

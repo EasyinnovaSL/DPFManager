@@ -180,7 +180,7 @@ public class ReportGenerator {
   /**
    * Delete the file or folder and it subs folders / files.
    * 
-   * @param file the file or folder to remove
+   * @param file the file/folder
    */
   public static void deleteFileOrFolder(File file) {
     File[] files = file.listFiles();

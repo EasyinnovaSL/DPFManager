@@ -59,7 +59,7 @@ public class ReportXml {
    * Creates the ifd node.
    *
    * @param doc the doc
-   * @param ifd the ifd
+   * @param ir the ir
    * @param index the index
    * @return the element
    */
@@ -96,8 +96,9 @@ public class ReportXml {
   /**
    * Parse an individual report to XML format.
    *
-   * @param xmlfile the file name.
+   * @param doc the doc
    * @param ir the individual report.
+   * @return the element
    */
   private static Element buildReportIndividual(Document doc, IndividualReport ir) {
     Element report = doc.createElement("new_report");

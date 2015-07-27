@@ -128,6 +128,8 @@ public class IndividualReport {
   /**
    * Generate the report information.
    *
+   * @param tiffModel the tiff model
+   * @param validation the validation
    */
   public void generate(TiffDocument tiffModel, ValidationResult validation) {
     this.tiffModel = tiffModel;
