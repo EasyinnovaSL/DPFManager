@@ -1,5 +1,7 @@
 package dpfmanager;
 
+import javafx.application.Application;
+
 import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
@@ -33,14 +35,12 @@ public class MultipleReportGeneratorTest extends TestCase {
 
   public void testReports2() throws Exception {
     String[] args = new String[1];
-    args[0] = "D:/workspacePREFORMA/Tiff-Library-4J/src/test/resources/Small/";
+    args[0] = "src/test/resources/Small/";
 
     MainApp.main(args);
     String path = getPath();
     File directori = new File(path);
     assertEquals(directori.list().length, 7);
-
-
   }
 
   private String getPath() {
