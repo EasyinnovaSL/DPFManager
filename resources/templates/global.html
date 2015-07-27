@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Summary report</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link rel="stylesheet" type="text/css" href="../html/css/global.css">
+	<link rel="stylesheet" type="text/css" href="../html/css/default.css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+</head>
+<body>
+	<div class="header">
+		<div class="logo">
+			<img src="../html/img/logo.png" alt="Logo" />
+		</div>
+		<h1>MULTIFILE REPORT</h1>
+	
+		<h3>##COUNT## files processed</h3>
+		<div id="basic_info" class="container">
+			<div id="info_text" class="left">
+				<table class="CustomTable">
+                    <tr>
+                        <td class="success border-bot">##OK##</td>
+                        <td class="success border-bot">conforms to TIFF/EP and policy checker</td>
+                    </tr>
+                    <tr>
+                        <td class="info border-bot">##OK_EP##</td>
+                        <td class="info border-bot">conforms to TIFF/EP only</td>
+                    </tr>
+                    <tr>
+                        <td class="info">##OK_PC##</td>
+                        <td class="info">conforms to policy checker only</td>
+                    </tr>
+                </table>
+			</div>
+			<div id="info_chart" class="container left">
+				<style>##CSS##</style>
+				<div data-index="global" class="left middle-chart">
+					<div class="pie ##BIG1## pie-mid" data-start="0" data-value="##RANGLE##"></div>
+					<div class="pie ##BIG2## pie-mid" data-start="##RANGLE##" data-value="##ANGLE##"></div>
+				</div>
+				<div style="margin-top:42px;" class="left">
+					<span class="##OK_C##">##OK## passed</span>
+				<span class="##KO_C##">##KO## failed</span>
+				<span class="info-dark">Global score ##PERCENT##%</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="content container">
+		##IMAGES_LIST##
+	</div>
+	<div id="footer" class="center">
+		<a href="#" class="button">Back</a>
+	</div>
+</body>
+</html>

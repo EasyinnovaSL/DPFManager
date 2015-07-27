@@ -1,5 +1,35 @@
-package dpfmanager.shell.modules.interfaces;
+/**
+ * <h1>ReportGenerator.java</h1>
+ * <p>
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version; or, at your choice, under the terms of the
+ * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p>
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License and the Mozilla Public License for more details.
+ * </p>
+ * <p>
+ * You should have received a copy of the GNU General Public License and the Mozilla Public License
+ * along with this program. If not, see <a
+ * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
+ * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
+ * </p>
+ * <p>
+ * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
+ * </p>
+ * <p>
+ * © 2015 Easy Innova, SL
+ * </p>
+ *
+ * @author Easy Innova
+ * @version 1.0
+ * @since 23/6/2015
+ */
 
+package dpfmanager.shell.modules.interfaces;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -11,6 +41,7 @@ import com.easyinnova.tiff.profiles.BaselineProfile;
 import com.easyinnova.tiff.profiles.TiffEPProfile;
 import com.easyinnova.tiff.reader.TiffReader;
 
+import dpfmanager.IndividualReport;
 import dpfmanager.ReportGenerator;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
@@ -47,6 +78,9 @@ public class CommandLine implements UserInterface {
 
   /** The allowed extensions. */
   List<String> allowedExtensions;
+
+  /** The Reports Generator. */
+  ReportGenerator reportGenerator;
 
   /**
    * Instantiates a new command line.
@@ -100,24 +134,33 @@ public class CommandLine implements UserInterface {
       }
       idx++;
     }
+
     if (argsError) {
       // Shows the program usage
       displayHelp();
     } else {
+      reportGenerator = new ReportGenerator();
+      reportGenerator.setReportsFormats(true, true, true);
       // Process files
+      ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
       String internalReportFolder = ReportGenerator.createReportPath();
       for (final String filename : files) {
+        System.out.println("");
         System.out.println("Processing file " + filename);
-        processFile(filename, outputFile, internalReportFolder);
+        List<IndividualReport> indReports = processFile(filename, outputFile, internalReportFolder);
+        if (indReports.size() > 0) {
+          individuals.addAll(indReports);
+        }
       }
-      ReportGenerator.makeSummaryReport(internalReportFolder);
+      // Global report
+      reportGenerator.makeSummaryReport(internalReportFolder, individuals);
     }
   }
 
   /**
-   * Load xml from string.
+   * Load XML from string.
    *
-   * @param xml the xml
+   * @param xml the XML
    * @return the document
    * @throws Exception the exception
    */
@@ -189,54 +232,66 @@ public class CommandLine implements UserInterface {
   /**
    * Process a Tiff file.
    *
-   * @param filename             the filename
-   * @param outputFile           the output file
+   * @param filename the filename
+   * @param outputFile the output file
    * @param internalReportFolder the internal report folder
    */
-  private void processFile(String filename, String outputFile, String internalReportFolder) {
-    try {
-      if (filename.toLowerCase().endsWith(".zip")) {
-        // Zip File
-        try {
-          ZipFile zipFile = new ZipFile(filename);
-          Enumeration<? extends ZipEntry> entries = zipFile.entries();
-          while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            if (isTiff(entry.getName())) {
-              InputStream stream = zipFile.getInputStream(entry);
-              String filename2 = createTempFile(entry.getName(), stream);
-              processTiffFile(filename2, entry.getName(), outputFile, internalReportFolder);
-              File file = new File(filename2);
-              file.delete();
+  private List<IndividualReport> processFile(String filename, String outputFile,
+      String internalReportFolder) {
+    List<IndividualReport> indReports = new ArrayList<IndividualReport>();
+    IndividualReport ir = null;
+    if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
+      // Zip File
+      try {
+        ZipFile zipFile = new ZipFile(filename);
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+          ZipEntry entry = entries.nextElement();
+          if (isTiff(entry.getName())) {
+            InputStream stream = zipFile.getInputStream(entry);
+            String filename2 = createTempFile(entry.getName(), stream);
+            ir = processTiffFile(filename2, filename2, outputFile, internalReportFolder);
+            if (ir != null) {
+              indReports.add(ir);
             }
+            File file = new File(filename2);
+            file.delete();
           }
-          zipFile.close();
-        } catch (Exception ex) {
-          System.out.println("Error reading zip file");
         }
-      } else if (isTiff(filename)) {
-        // File
-        processTiffFile(filename, filename, outputFile, internalReportFolder);
-      } else if (isUrl(filename)) {
-        // URL
-        try {
-          InputStream input = new java.net.URL(filename).openStream();
-          String filename2 = createTempFile(filename, input);
-          processTiffFile(filename2, filename, outputFile, internalReportFolder);
-          File file = new File(filename2);
-          file.delete();
-        } catch (Exception ex) {
-          System.out.println("Error in URL " + filename);
-        }
-      } else {
-        // Anything else
-        System.out.println("File " + filename + " is not Tiff");
+        zipFile.close();
+      } catch (Exception ex) {
+        System.out.println("Error reading zip file");
       }
-    } catch (ReadTagsIOException e) {
-      System.out.println("Error loading Tiff library dependencies");
-    } catch (ReadIccConfigIOException e) {
-      System.out.println("Error loading Tiff library dependencies");
+    } else if (isUrl(filename)) {
+      // URL
+      try {
+        InputStream input = new java.net.URL(filename).openStream();
+        String filename2 = createTempFile(filename, input);
+        filename = java.net.URLDecoder.decode(filename, "UTF-8");
+        ir = processTiffFile(filename2, filename, outputFile, internalReportFolder);
+        if (ir != null) {
+          indReports.add(ir);
+        }
+        File file = new File(filename2);
+        file.delete();
+      } catch (Exception ex) {
+        System.out.println("Error in URL " + filename);
+      }
+    } else if (isTiff(filename)) {
+      // File
+      try {
+        ir = processTiffFile(filename, filename, outputFile, internalReportFolder);
+        if (ir != null) {
+          indReports.add(ir);
+        }
+      } catch (Exception ex) {
+        System.out.println("Error in File " + filename);
+      }
+    } else {
+      // Anything else
+      System.out.println("File " + filename + " is not Tiff");
     }
+    return indReports;
   }
 
   /**
@@ -308,154 +363,126 @@ public class CommandLine implements UserInterface {
    * @throws ReadTagsIOException the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  private static void processTiffFile(String fileName, String realFilename, String outputFile,
+  private IndividualReport processTiffFile(String filename, String realFilename, String outputFile,
       String internalReportFolder) throws ReadTagsIOException, ReadIccConfigIOException {
-    TiffReader tr = new TiffReader();
-    int result = tr.readFile(fileName);
-    if (outputFile == null) {
-      reportResults(tr, realFilename, result);
-    } else {
-      reportResultsXml(tr, fileName, result, outputFile);
+    try {
+      TiffReader tr = new TiffReader();
+      int result = tr.readFile(filename);
+      switch (result) {
+        case -1:
+          System.out.println("File '" + filename + "' does not exist");
+          break;
+        case -2:
+          System.out.println("IO Exception in file '" + filename + "'");
+          break;
+        case 0:
+          TiffDocument to = tr.getModel();
+          ValidationResult val = tr.getValidation();
+          // String name = tr.getFilename()
+          // .substring(tr.getFilename().lastIndexOf(File.separator) + 1,
+          // tr.getFilename().length());
+          String name =
+              realFilename.substring(realFilename.lastIndexOf(File.separator) + 1,
+                  realFilename.length());
+          IndividualReport ir = new IndividualReport(name, to, val);
+          if (outputFile == null) {
+            reportResults(name, to, val);
+          } else {
+            reportResultsXml(ir, outputFile);
+          }
+          internalReport(ir, tr, realFilename, internalReportFolder);
+          return ir;
+        default:
+          System.out.println("Unknown result (" + result + ") in file '" + filename + "'");
+          break;
+      }
+    } catch (ReadTagsIOException e) {
+      System.out.println("Error loading Tiff library dependencies");
+    } catch (ReadIccConfigIOException e) {
+      System.out.println("Error loading Tiff library dependencies");
     }
-    internalReport(tr, fileName, result, realFilename, internalReportFolder);
+    return null;
   }
 
   /**
    * Report the results of the reading process to the console.
    *
    * @param tiffReader the tiff reader
-   * @param realFilename the real filename
    * @param result the result
    */
-  private static void reportResults(TiffReader tiffReader, String realFilename, int result) {
-    String filename = realFilename;
-    TiffDocument to = tiffReader.getModel();
-
+  private static void reportResults(String filename, TiffDocument to, ValidationResult val) {
     // Display results human readable
-    switch (result) {
-      case -1:
-        System.out.println("File '" + filename + "' does not exist");
-        break;
-      case -2:
-        System.out.println("IO Exception in file '" + filename + "'");
-        break;
-      case 0:
-        if (tiffReader.getValidation().correct) {
-          // The file is correct
-          System.out.println("Everything ok in file '" + filename + "'");
-          System.out.println("IFDs: " + to.getIfdCount());
-          System.out.println("SubIFDs: " + to.getSubIfdCount());
+    if (val.correct) {
+      // The file is correct
+      System.out.println("Everything ok in file '" + filename + "'");
+      System.out.println("IFDs: " + to.getIfdCount());
+      System.out.println("SubIFDs: " + to.getSubIfdCount());
 
-          to.printMetadata();
-          BaselineProfile bp = new BaselineProfile(to);
-          bp.validate();
-          bp.getValidation().printErrors();
-          TiffEPProfile bpep = new TiffEPProfile(to);
-          bpep.validate();
-          bpep.getValidation().printErrors();
+      to.printMetadata();
+      BaselineProfile bp = new BaselineProfile(to);
+      bp.validate();
+      bp.getValidation().printErrors();
+      TiffEPProfile bpep = new TiffEPProfile(to);
+      bpep.validate();
+      bpep.getValidation().printErrors();
 
-          int nifd = 1;
-          for (TiffObject o : to.getImageIfds()) {
-            IFD ifd = (IFD) o;
-            if (ifd != null) {
-              System.out.println("IFD " + nifd++ + " TAGS:");
-              ifd.printTags();
-            }
-          }
-          nifd = 1;
-          for (TiffObject o : to.getSubIfds()) {
-            IFD ifd = (IFD) o;
-            if (ifd != null) {
-              System.out.println("SubIFD " + nifd++ + " TAGS:");
-              ifd.printTags();
-            }
-          }
-        } else {
-          // The file is not correct
-          System.out.println("Errors in file '" + filename + "'");
-          if (to != null) {
-            System.out.println("IFDs: " + to.getIfdCount());
-            System.out.println("SubIFDs: " + to.getSubIfdCount());
-
-            // int index = 0;
-            to.printMetadata();
-            BaselineProfile bp = new BaselineProfile(to);
-            bp.validate();
-          }
-          tiffReader.getValidation().printErrors();
+      int nifd = 1;
+      for (TiffObject o : to.getImageIfds()) {
+        IFD ifd = (IFD) o;
+        if (ifd != null) {
+          System.out.println("IFD " + nifd++ + " TAGS:");
+          ifd.printTags();
         }
-        tiffReader.getValidation().printWarnings();
-        break;
-      default:
-        System.out.println("Unknown result (" + result + ") in file '" + filename + "'");
-        break;
+      }
+      nifd = 1;
+      for (TiffObject o : to.getSubIfds()) {
+        IFD ifd = (IFD) o;
+        if (ifd != null) {
+          System.out.println("SubIFD " + nifd++ + " TAGS:");
+          ifd.printTags();
+        }
+      }
+    } else {
+      // The file is not correct
+      System.out.println("Errors in file '" + filename + "'");
+      if (to != null) {
+        System.out.println("IFDs: " + to.getIfdCount());
+        System.out.println("SubIFDs: " + to.getSubIfdCount());
+
+        // int index = 0;
+        to.printMetadata();
+        BaselineProfile bp = new BaselineProfile(to);
+        bp.validate();
+      }
+      val.printErrors();
     }
+    val.printWarnings();
   }
 
   /**
    * Report the results of the reading process to the console.
    *
    * @param tiffreader the tiff reader
-   * @param filename the filename
    * @param result the result
    * @param xmlfile the xml file
    */
-  private static void reportResultsXml(TiffReader tiffreader, String filename, int result,
-      String xmlfile) {
-    TiffDocument to = tiffreader.getModel();
-
-    // Save results into XML file
-    switch (result) {
-      case -1:
-        System.out.println("File '" + filename + "' does not exist");
-        break;
-      case -2:
-        System.out.println("IO Exception in file '" + filename + "'");
-        break;
-      case 0:
-        ValidationResult val = tiffreader.getValidation();
-        ReportGenerator rg = new ReportGenerator(to, val, ReportGenerator.ReportFormat.Xml);
-        rg.generateXml(xmlfile);
-        System.out.println("Report '" + xmlfile + "' created");
-        break;
-      default:
-        System.out.println("Unknown result (" + result + ") in file '" + filename + "'");
-        break;
-    }
+  private void reportResultsXml(IndividualReport ir, String outputFile) {
+    reportGenerator.generateIndividualReport(outputFile, ir);
+    System.out.println("Report '" + outputFile + "' created");
   }
 
   /**
    * Report the results of the reading process to the console.
    *
+   * @param ir the individual report
    * @param tiffreader the tiff reader
-   * @param filename the filename
-   * @param result the result
-   * @param realFilename the real filename
    * @param folder the internal report folder
    */
-  private static void internalReport(TiffReader tiffreader, String filename, int result,
-      String realFilename, String folder) {
-    TiffDocument to = tiffreader.getModel();
-
-    // Save results into XML file
-    switch (result) {
-      case -1:
-        // System.out.println("File '" + filename + "' does not exist");
-        break;
-      case -2:
-        // System.out.println("IO Exception in file '" + filename + "'");
-        break;
-      case 0:
-        ValidationResult val = tiffreader.getValidation();
-        ReportGenerator rg = new ReportGenerator(to, val, ReportGenerator.ReportFormat.Xml);
-        String reportName = ReportGenerator.getReportName(folder, realFilename);
-        rg.generateXml(reportName);
-        System.out.println("Internal report '" + reportName + "' created");
-        break;
-      default:
-        System.out.println("Unknown result (" + result + ") in file '" + filename + "'");
-        break;
-    }
+  private void internalReport(IndividualReport ir, TiffReader tiffreader, String realFilename,
+      String folder) {
+    String outputfile = ReportGenerator.getReportName(folder, realFilename);
+    reportGenerator.generateIndividualReport(outputfile, ir);
+    System.out.println("Internal report '" + outputfile + "' created");
   }
 
   /**
