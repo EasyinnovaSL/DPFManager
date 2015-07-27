@@ -3,3 +3,5 @@
 /doc/
 reports/
 .idea/
+.classpath
+.settings/
