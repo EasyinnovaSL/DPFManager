@@ -320,10 +320,6 @@ public class CommandLine implements UserInterface {
     internalReport(tr, fileName, result, realFilename, internalReportFolder);
   }
 
-  private boolean aadssa() {
-    return true;
-  }
-
   /**
    * Report the results of the reading process to the console.
    *
@@ -400,10 +396,12 @@ public class CommandLine implements UserInterface {
    * Report the results of the reading process to the console.
    *
    * @param tiffreader the tiff reader
-   * @param result     the result
-   * @param xmlfile    the xml file
+   * @param filename the filename
+   * @param result the result
+   * @param xmlfile the xml file
    */
-  private static void reportResultsXml(TiffReader tiffreader, String filename, int result, String xmlfile) {
+  private static void reportResultsXml(TiffReader tiffreader, String filename, int result,
+      String xmlfile) {
     TiffDocument to = tiffreader.getModel();
 
     // Save results into XML file
@@ -430,12 +428,13 @@ public class CommandLine implements UserInterface {
    * Report the results of the reading process to the console.
    *
    * @param tiffreader the tiff reader
+   * @param filename the filename
    * @param result the result
    * @param realFilename the real filename
    * @param folder the internal report folder
    */
-  private static void internalReport(TiffReader tiffreader, String filename, int result, String realFilename,
-      String folder) {
+  private static void internalReport(TiffReader tiffreader, String filename, int result,
+      String realFilename, String folder) {
     TiffDocument to = tiffreader.getModel();
 
     // Save results into XML file
