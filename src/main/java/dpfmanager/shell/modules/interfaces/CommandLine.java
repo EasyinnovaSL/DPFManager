@@ -235,6 +235,7 @@ public class CommandLine implements UserInterface {
    * @param filename the filename
    * @param outputFile the output file
    * @param internalReportFolder the internal report folder
+   * @return the list
    */
   private List<IndividualReport> processFile(String filename, String outputFile,
       String internalReportFolder) {
@@ -356,10 +357,11 @@ public class CommandLine implements UserInterface {
   /**
    * Process tiff file.
    *
-   * @param fileName the filename
+   * @param filename the filename
    * @param realFilename the real filename
    * @param outputFile the output file
    * @param internalReportFolder the internal report folder
+   * @return the individual report
    * @throws ReadTagsIOException the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
@@ -407,8 +409,9 @@ public class CommandLine implements UserInterface {
   /**
    * Report the results of the reading process to the console.
    *
-   * @param tiffReader the tiff reader
-   * @param result the result
+   * @param filename the filename
+   * @param to the to
+   * @param val the val
    */
   private static void reportResults(String filename, TiffDocument to, ValidationResult val) {
     // Display results human readable
@@ -462,9 +465,8 @@ public class CommandLine implements UserInterface {
   /**
    * Report the results of the reading process to the console.
    *
-   * @param tiffreader the tiff reader
-   * @param result the result
-   * @param xmlfile the xml file
+   * @param ir the ir
+   * @param outputFile the output file
    */
   private void reportResultsXml(IndividualReport ir, String outputFile) {
     reportGenerator.generateIndividualReport(outputFile, ir);
@@ -476,6 +478,7 @@ public class CommandLine implements UserInterface {
    *
    * @param ir the individual report
    * @param tiffreader the tiff reader
+   * @param realFilename the real filename
    * @param folder the internal report folder
    */
   private void internalReport(IndividualReport ir, TiffReader tiffreader, String realFilename,

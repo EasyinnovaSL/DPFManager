@@ -180,7 +180,7 @@ public class ReportGenerator {
   /**
    * Delete the file or folder and it subs folders / files.
    * 
-   * @param folder the folder
+   * @param file the file/folder
    */
   public static void deleteFileOrFolder(File file) {
     File[] files = file.listFiles();
@@ -241,7 +241,8 @@ public class ReportGenerator {
    * @param internalReportFolder the internal report folder
    * @param individuals the individual reports list
    */
-  public void makeSummaryReport(String internalReportFolder, ArrayList<IndividualReport> individuals) {
+  public void makeSummaryReport(String internalReportFolder,
+                                ArrayList<IndividualReport> individuals) {
     if (individuals.size() > 0) {
       GlobalReport gr = new GlobalReport();
       for (final IndividualReport individual : individuals) {

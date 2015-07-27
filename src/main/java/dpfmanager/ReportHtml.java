@@ -302,7 +302,7 @@ public class ReportHtml {
    *
    * @param body the body
    * @param angle the angle
-   * @param rAngle the r angle
+   * @param reverseAngle the reverse angle
    * @return the string
    */
   private static String replacesChart(String body, int angle, int reverseAngle) {

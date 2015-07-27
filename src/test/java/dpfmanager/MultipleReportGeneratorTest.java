@@ -1,5 +1,6 @@
 package dpfmanager;
 
+import dpfmanager.shell.modules.interfaces.CommandLine;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -12,7 +13,10 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Easy on 20/07/2015.
@@ -34,19 +38,38 @@ public class MultipleReportGeneratorTest extends TestCase {
     assertEquals(ok, true);
   }
 
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
-
   public void testReports2() throws Exception {
     String[] args = new String[1];
     args[0] = "src/test/resources/Small/";
 
-    MainApp.main(args);
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
     String path = getPath();
     File directori = new File(path);
-    assertEquals(directori.list().length, 7);
+    assertEquals(16, directori.list().length);
   }
 
   private String getPath() {

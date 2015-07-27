@@ -34,6 +34,9 @@ package dpfmanager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Class GlobalReport.
+ */
 public class GlobalReport {
 
   /** The list of all individual reports. */
@@ -107,6 +110,7 @@ public class GlobalReport {
   /**
    * Get the list of the individual reports.
    *
+   * @return the individual reports
    */
   public List<IndividualReport> getIndividualReports() {
     return reports;
