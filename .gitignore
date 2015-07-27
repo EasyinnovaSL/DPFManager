@@ -2,6 +2,6 @@
 /target/
 /doc/
 reports/
-src/test/resources/
 .idea/
+.classpath
 .settings/

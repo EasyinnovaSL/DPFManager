@@ -34,7 +34,7 @@ public class ReportGeneratorTest extends TestCase {
 
   public void testReports1() throws Exception {
     String[] args = new String[1];
-    args[0] = "D:/workspacePREFORMA/Tiff-Library-4J/src/test/resources/Small/Bilevel.tif";
+    args[0] = "src/test/resources/Small/Bilevel.tif";
     MainApp.main(args);
     String path = getPath();
 

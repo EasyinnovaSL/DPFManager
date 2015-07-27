@@ -404,7 +404,6 @@ public class CommandLine implements UserInterface {
     return null;
   }
 
-
   /**
    * Report the results of the reading process to the console.
    *
