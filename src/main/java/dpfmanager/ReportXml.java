@@ -101,7 +101,7 @@ public class ReportXml {
    * @return the element
    */
   private static Element buildReportIndividual(Document doc, IndividualReport ir) {
-    Element report = doc.createElement("new_report");
+    Element report = doc.createElement("report");
 
     // tiff structure
     Element tiffStructureElement = doc.createElement("tiff_structure");
@@ -220,7 +220,7 @@ public class ReportXml {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
       Document doc = docBuilder.newDocument();
-      Element globalreport = doc.createElement("globalreport_new");
+      Element globalreport = doc.createElement("globalreport");
       doc.appendChild(globalreport);
 
       Element individualreports = doc.createElement("individualreports");
