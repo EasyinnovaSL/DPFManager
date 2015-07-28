@@ -69,7 +69,7 @@ public class MultipleReportGeneratorTest extends TestCase {
 
     String path = getPath();
     File directori = new File(path);
-    assertEquals(16, directori.list().length);
+    assertEquals(7, directori.list().length);
   }
 
   private String getPath() {
