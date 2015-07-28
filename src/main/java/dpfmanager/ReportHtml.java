@@ -367,14 +367,13 @@ public class ReportHtml {
   public static void parseGlobal(String outputfile, GlobalReport gr) {
     String templatePath = "resources/templates/global.html";
     String imagePath = "resources/templates/image.html";
-    String pcPath = "resources/templates/pie-color.css";
-    String prPath = "resources/templates/pie-rotation.css";
     String htmlFolder = "resources/html/";
     copyFolder(htmlFolder, outputfile);
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
 
     String imagesBody = "";
+    String pieFunctions = "";
     // Parse individual Reports
     int index = 0;
     for (IndividualReport ir : gr.getIndividualReports()) {
@@ -424,11 +423,13 @@ public class ReportHtml {
       // Percent Chart
       int angle = percent * 360 / 100;
       int reverseAngle = 360 - angle;
-      imageBody = replacesChart(imageBody, angle, reverseAngle);
-      String css = generateCssColor(index, ir, pcPath);
-      css += generateCssRotation(prPath, 0, angle);
-      css += generateCssRotation(prPath, angle, reverseAngle);
-      imageBody = imageBody.replace("##CSS##", css);
+      String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
+      if (ir.getErrors().size() > 0) {
+        functionPie += ", '#CCCCCC', 'red'); ";
+      } else {
+        functionPie += ", '#66CC66', '#66CC66'); ";
+      }
+      pieFunctions += functionPie;
 
       // TO-DO
       imageBody = imageBody.replace("##CP_N##", "0");
@@ -444,8 +445,8 @@ public class ReportHtml {
     String htmlBody = ReportGenerator.readFile(templatePath);
     Double doub = 1.0 * gr.getReportsOk() / gr.getReportsCount() * 100.0;
     int globalPercent = doub.intValue();
-    htmlBody = htmlBody.replace("##PERCENT##", "" + globalPercent);
     htmlBody = htmlBody.replace("##IMAGES_LIST##", imagesBody);
+    htmlBody = htmlBody.replace("##PERCENT##", "" + globalPercent);
     htmlBody = htmlBody.replace("##COUNT##", "" + gr.getReportsCount());
     htmlBody = htmlBody.replaceAll("##OK##", "" + gr.getReportsOk());
     htmlBody = htmlBody.replace("##KO##", "" + gr.getReportsKo());
@@ -456,31 +457,20 @@ public class ReportHtml {
       htmlBody = htmlBody.replace("##OK_C##", "info-white");
       htmlBody = htmlBody.replace("##KO_C##", "error");
     }
+
     // Chart
-    String cssG = ReportGenerator.readFile(pcPath);
-    cssG = cssG.replace("##INDEX##", "global");
-    if (gr.getReportsOk() >= gr.getReportsKo()) {
-      cssG = cssG.replace("##FIRST##", "#F2F2F2"); // Draker White
-      cssG = cssG.replace("##SECOND##", "#66CC66"); // Green
-    } else {
-      cssG = cssG.replace("##FIRST##", "red"); // Red
-      cssG = cssG.replace("##SECOND##", "#F2F2F2"); // Draker White
-    }
     int angleG = globalPercent * 360 / 100;
     int reverseAngleG = 360 - angleG;
-    cssG +=
-        " " + generateCssRotation(prPath, 0, reverseAngleG) + " "
-            + generateCssRotation(prPath, reverseAngleG, angleG);
-    htmlBody = htmlBody.replaceAll("##ANGLE##", "" + angleG);
-    htmlBody = htmlBody.replaceAll("##RANGLE##", "" + reverseAngleG);
-    htmlBody = htmlBody.replace("##CSS##", "" + cssG);
-    if (reverseAngleG > 180) {
-      htmlBody = htmlBody.replaceAll("##BIG1##", "big");
-      htmlBody = htmlBody.replaceAll("##BIG2##", "");
+    String functionPie = "plotPie('pie-global', " + reverseAngleG + ", " + angleG;
+    if (gr.getReportsOk() >= gr.getReportsKo()) {
+      functionPie += ", '#F2F2F2', '#66CC66'); ";
     } else {
-      htmlBody = htmlBody.replaceAll("##BIG1##", "");
-      htmlBody = htmlBody.replaceAll("##BIG2##", "big");
+      functionPie += ", 'red', '#F2F2F2'); ";
     }
+    pieFunctions += functionPie;
+
+    // All charts calls
+    htmlBody = htmlBody.replaceAll("##PLOT##", pieFunctions);
 
     // TO-DO
     htmlBody = htmlBody.replace("##OK_PC##", "0");

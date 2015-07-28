@@ -3,54 +3,107 @@
 <head>
 	<title>Summary report</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<link rel="stylesheet" type="text/css" href="../html/css/global.css">
+	<link rel="stylesheet" type="text/css" href="../html/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="../html/css/default.css">
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 </head>
 <body>
-	<div class="header">
-		<div class="logo">
-			<img src="../html/img/logo.png" alt="Logo" />
+	<div class="row header">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4"></div>
+				<div class="col-md-4">
+					<img src="../html/img/logo.png" alt="Logo" />
+				</div>
+				<div class="col-md-4"></div>
+			</div>
+			
+			<div class="row bot30-sm bot50">
+				<h1>MULTIFILE REPORT</h1>
+				<h3>##COUNT## files processed</h3>
+			</div>
+			
+			<div class="row bot50">
+				<div class="col-md-2"></div>
+				<div class="col-md-5 bot30-sm">
+					<table class="center-table CustomTable">
+	                    <tr>
+	                        <td class="success border-bot">##OK##</td>
+	                        <td class="success border-bot">conforms to TIFF/EP and policy checker</td>
+	                    </tr>
+	                    <tr>
+	                        <td class="info border-bot">##OK_EP##</td>
+	                        <td class="info border-bot">conforms to TIFF/EP only</td>
+	                    </tr>
+	                    <tr>
+	                        <td class="info">##OK_PC##</td>
+	                        <td class="info">conforms to policy checker only</td>
+	                    </tr>
+	                </table>
+				</div>
+				<div class="col-md-4">
+					<div class="chart-center">
+						<div class="pie" id="pie-global" style="max-width: 120px; min-height:120px;"></div>
+						<div class="pie-info">
+							<div class="success ##OK_C##">##OK## passed</div>
+							<div class="error ##KO_C##">##KO## failed</div>
+							<div class="info bold">Global score ##PERCENT##%</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
 		</div>
-		<h1>MULTIFILE REPORT</h1>
+	</div>
+
+	<div class="row main">
+		<div class="container">
+			##IMAGES_LIST##
+		</div>
+	</div>
 	
-		<h3>##COUNT## files processed</h3>
-		<div id="basic_info" class="container">
-			<div id="info_text" class="left">
-				<table class="CustomTable" style="display:none;">
-                    <tr>
-                        <td class="success border-bot">##OK##</td>
-                        <td class="success border-bot">conforms to TIFF/EP and policy checker</td>
-                    </tr>
-                    <tr>
-                        <td class="info border-bot">##OK_EP##</td>
-                        <td class="info border-bot">conforms to TIFF/EP only</td>
-                    </tr>
-                    <tr>
-                        <td class="info">##OK_PC##</td>
-                        <td class="info">conforms to policy checker only</td>
-                    </tr>
-                </table>
-			</div>
-			<div id="info_chart" class="container left">
-				<style>##CSS##</style>
-				<div data-index="global" class="left middle-chart">
-					<div class="pie ##BIG1## pie-mid" data-start="0" data-value="##RANGLE##"></div>
-					<div class="pie ##BIG2## pie-mid" data-start="##RANGLE##" data-value="##ANGLE##"></div>
-				</div>
-				<div style="margin-top:42px;" class="left">
-					<span class="##OK_C##">##OK## passed</span>
-				<span class="##KO_C##">##KO## failed</span>
-				<span class="info-dark">Global score ##PERCENT##%</span>
-				</div>
-			</div>
+	<div class="row footer">
+		<div class="container text-center top20 bot20">
+			<a href="#" class="button">Back</a>
 		</div>
 	</div>
-	<div class="content container">
-		##IMAGES_LIST##
-	</div>
-	<div id="footer" class="center">
-		<a href="#" class="button">Back</a>
-	</div>
+	
+<!-- 	Java Script -->
+	<script src="../html/js/jquery-1.9.1.min.js"></script>
+	<script src="../html/js/jquery.flot.min.js"></script>
+	<script src="../html/js/jquery.flot.pie.min.js"></script>
+	
+	<script type="text/javascript">
+	$(function() {  
+		##PLOT##
+// 		plotPie('pie-global', 50, 50, 'green', 'yellow');
+// 		plotPie('pie-1', 40, 60, 'green', 'yellow');
+	})
+      
+	$( window ).resize(function() {
+		##PLOT##
+// 		plotPie('pie-global', 50, 50, 'green', 'yellow');
+// 		plotPie('pie-1', 40, 60, 'green', 'yellow');
+	});
+      
+	function plotPie(name, angle1, angle2, color1, color2){
+		var data = [
+			{ label: "First",  data: angle1, color: color1},
+			{ label: "Second",  data: angle2, color: color2},
+		];
+    	        
+		var placeholder = $('#'+name);
+		$.plot(placeholder, data, {  
+			series: {
+				pie: {
+					show: true,
+					label: { show: false },
+					stroke: { width: 0 }
+				}
+			},
+			legend: { show: false }
+		});
+	}
+    </script>
 </body>
 </html>

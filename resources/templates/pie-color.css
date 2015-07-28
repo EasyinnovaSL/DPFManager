@@ -1,9 +1,0 @@
-/* Colors */
-div[data-index="##INDEX##"] > .pie:nth-of-type(1):BEFORE,
-div[data-index="##INDEX##"] > .pie:nth-of-type(1):AFTER {
-	background-color: ##FIRST##;	
-}
-div[data-index="##INDEX##"] > .pie:nth-of-type(2):AFTER,
-div[data-index="##INDEX##"] > .pie:nth-of-type(2):BEFORE {
-	background-color: ##SECOND##;	
-}
