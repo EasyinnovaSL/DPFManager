@@ -100,6 +100,9 @@ public class CommandLine implements UserInterface {
     String outputFile = null;
 
     readConformanceChecker();
+    boolean xml = true;
+    boolean json = false;
+    boolean html = false;
 
     // Reads the parameters
     int idx = 0;
@@ -114,6 +117,16 @@ public class CommandLine implements UserInterface {
         }
       } else if (arg.equals("-help")) {
         displayHelp();
+        break;
+      } else if (arg.equals("-reportformat")) {
+        if (idx + 1 < args.size()) {
+          String formats = args.get(++idx);
+          xml = formats.contains("xml");
+          json = formats.contains("json");
+          html = formats.contains("html");
+        } else {
+          argsError = true;
+        }
         break;
       } else if (arg.startsWith("-")) {
         // unknown option
@@ -140,7 +153,7 @@ public class CommandLine implements UserInterface {
       displayHelp();
     } else {
       reportGenerator = new ReportGenerator();
-      reportGenerator.setReportsFormats(true, true, true);
+      reportGenerator.setReportsFormats(xml, json, html);
       // Process files
       ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
       String internalReportFolder = ReportGenerator.createReportPath();
@@ -482,7 +495,7 @@ public class CommandLine implements UserInterface {
    * @param folder the internal report folder
    */
   private void internalReport(IndividualReport ir, TiffReader tiffreader, String realFilename,
-      String folder) {
+                              String folder) {
     String outputfile = ReportGenerator.getReportName(folder, realFilename);
     reportGenerator.generateIndividualReport(outputfile, ir);
     System.out.println("Internal report '" + outputfile + "' created");
@@ -494,5 +507,6 @@ public class CommandLine implements UserInterface {
   static void displayHelp() {
     System.out.println("Usage: dpfmanager [options] <file1> <file2> ... <fileN>");
     System.out.println("Options: -help displays help");
+    System.out.println("         -reportformat xml,json,html (default: xml)");
   }
 }
