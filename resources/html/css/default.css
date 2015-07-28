@@ -326,7 +326,7 @@ h4 i{
 	color: #66CC66;
 }
 
-.hover-white:hover{
-	background-color: white;
+.hover-row:hover{
+	background-color: rgba(0, 106, 255, 0.08);;
 }
 

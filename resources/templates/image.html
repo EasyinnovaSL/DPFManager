@@ -1,37 +1,41 @@
-<div class="row hover-white top20  bot30" style="cursor: pointer;" onclick="javascript:location.href='##HREF##'">
+<div class="row top20  bot30" >
 	<div class="col-md-2"></div>
-	<div class="col-md-2">
-		<img src="##IMG_PATH##" alt="preview" />
-	</div>
-	<div class="col-md-6">
-		<div class="row">
-			<div class="col-md-12">
-				<p class="info-dark bold top10 text-center-sm">##IMG_NAME##</p>
+	<div class="col-md-8">
+		<div class="row hover-row" style="cursor: pointer;" onclick="javascript:location.href='##HREF##'">
+			<div class="col-md-3">
+				<img src="##IMG_PATH##" alt="preview" />
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-5">
-				<table class="center-table CustomTable2">
-				    <tr>
-				        <th colspan="2" class="">Baseline</th>
-				        <td width=10px></td>
-		<!-- 		        <th class="">Policy checker</th> -->
-				    </tr>
-				    <tr>
-				        <td class="##ERR_C##">##ERR_N## errors</td>
-				        <td class="##WAR_C##">##WAR_N## warnings</td>
-				        <td></td>
-		<!-- 		        <td class="##CP_C##">##CP_N## errors</td> -->
-				    </tr>
-				</table>
-			</div>
-			<div class="col-md-1"></div>
-			<div class="col-md-6">
-				<div class="chart">
-					<div class="pie" id="pie-##INDEX##" style="max-width: 75px; min-height: 75px;"></div>
-					<div class="pie-info">
-						<div class="##CLASS## bold">##RESULT## <font class="warning bold" style="display: ##DISPLAY_WAR##;">with warnings</font></div>
-						<div class="info-dark bold">Score ##PERCENT##%</div>
+			<div class="col-md-9">
+				<div class="row">
+					<div class="col-md-12">
+						<p class="info-dark bold top10 text-center-sm">##IMG_NAME##</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-5">
+						<table class="center-table CustomTable2">
+						    <tr>
+						        <th colspan="2" class="">Baseline</th>
+						        <td width=10px></td>
+				<!-- 		        <th class="">Policy checker</th> -->
+						    </tr>
+						    <tr>
+						        <td class="##ERR_C##">##ERR_N## errors</td>
+						        <td class="##WAR_C##">##WAR_N## warnings</td>
+						        <td></td>
+				<!-- 		        <td class="##CP_C##">##CP_N## errors</td> -->
+						    </tr>
+						</table>
+					</div>
+					<div class="col-md-1"></div>
+					<div class="col-md-6">
+						<div class="chart">
+							<div class="pie" id="pie-##INDEX##" style="max-width: 75px; min-height: 75px;"></div>
+							<div class="pie-info">
+								<div class="##CLASS## bold">##RESULT## <font class="warning bold" style="display: ##DISPLAY_WAR##;">with warnings</font></div>
+								<div class="info-dark bold">Score ##PERCENT##%</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

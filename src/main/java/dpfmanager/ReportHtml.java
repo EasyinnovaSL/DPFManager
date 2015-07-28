@@ -301,64 +301,6 @@ public class ReportHtml {
   }
 
   /**
-   * Generate css color.
-   *
-   * @param index the index
-   * @param ir the ir
-   * @param path the path
-   * @return the string
-   */
-  private static String generateCssColor(int index, IndividualReport ir, String path) {
-    String css = ReportGenerator.readFile(path);
-    css = css.replace("##INDEX##", "" + index);
-    if (ir.getErrors().size() > 0) {
-      css = css.replace("##FIRST##", "#CCCCCC"); // Light Grey
-      css = css.replace("##SECOND##", "red");
-    } else {
-      css = css.replace("##FIRST##", "#66CC66"); // Green
-      css = css.replace("##SECOND##", "#66CC66"); // Green
-    }
-    return css;
-  }
-
-  /**
-   * Generate css rotation.
-   *
-   * @param path the path
-   * @param start the start
-   * @param val the val
-   * @return the string
-   */
-  private static String generateCssRotation(String path, int start, int val) {
-    String css = ReportGenerator.readFile(path);
-    css = css.replaceAll("##START##", "" + start);
-    css = css.replaceAll("##VAL##", "" + val);
-    return css;
-  }
-
-  /**
-   * Replaces chart.
-   *
-   * @param body the body
-   * @param angle the angle
-   * @param reverseAngle the reverse angle
-   * @return the string
-   */
-  private static String replacesChart(String body, int angle, int reverseAngle) {
-    body = body.replace("##VAL1##", "" + angle);
-    body = body.replace("##START2##", "" + angle);
-    body = body.replace("##VAL2##", "" + reverseAngle);
-    if (angle > 180) {
-      body = body.replace("##BIG1##", "big");
-      body = body.replace("##BIG2##", "");
-    } else {
-      body = body.replace("##BIG1##", "");
-      body = body.replace("##BIG2##", "big");
-    }
-    return body;
-  }
-
-  /**
    * Parse a global report to XML format.
    *
    * @param outputfile the output file.
