@@ -178,6 +178,13 @@ public class ReportHtml {
     ReportGenerator.writeToFile(outputfile, htmlBody);
   }
 
+  /**
+   * Tiff2 jpg.
+   *
+   * @param inputfile the inputfile
+   * @param outputfile the outputfile
+   * @return true, if successful
+   */
   private static boolean tiff2Jpg(String inputfile, String outputfile) {
     File outfile = new File(outputfile);
     if (outfile.exists()) {
