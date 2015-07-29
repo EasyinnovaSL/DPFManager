@@ -45,30 +45,19 @@ import dpfmanager.IndividualReport;
 import dpfmanager.ReportGenerator;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
-import org.apache.commons.net.PrintCommandListener;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPSClient;
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemOptions;
-import org.apache.commons.vfs2.Selectors;
-import org.apache.commons.vfs2.impl.StandardFileSystemManager;
-import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -181,99 +170,14 @@ public class CommandLine implements UserInterface {
 
       // Send report over FTP (only for alpha testing)
       try {
-        //sendFtp(reportGenerator, summaryXmlFile);
-        //startFTP(summaryXmlFile, "summary.xml");
+        // sendFtp(reportGenerator, summaryXmlFile);
+        // startFTP(summaryXmlFile, "summary.xml");
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
   }
 
-  /**
-   * Send ftp.
-   *
-   * @param reportGenerator the report generator
-   * @param summaryXmlFile the summary xml file
-   */
-  private void sendFtp(ReportGenerator reportGenerator, String summaryXmlFile) throws NoSuchAlgorithmException {
-    String sFTP = "84.88.145.109";
-    String sUser = "preformaapp";
-    String sPassword = "2.eX#lh>";
-    FTPSClient client = new FTPSClient();
-
-    FileInputStream fis = null;
-
-    try {
-      client.connect(sFTP);
-      client.login(sUser, sPassword);
-      fis = new FileInputStream(summaryXmlFile);
-      client.storeFile(summaryXmlFile, fis);
-      client.logout();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        if (fis != null) {
-          fis.close();
-        }
-        client.disconnect();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  public boolean startFTP(String summaryXmlFile, String fileToFTP){
-    StandardFileSystemManager manager = new StandardFileSystemManager();
-
-    try {
-
-      String serverAddress = "84.88.145.109";
-      String userId = "preformaapp";
-      String password = "2.eX#lh>";
-      String remoteDirectory = "";
-
-      //check if the file exists
-      String filepath = summaryXmlFile;
-      File file = new File(filepath);
-      if (!file.exists())
-        throw new RuntimeException("Error. Local file not found");
-
-      //Initializes the file manager
-      manager.init();
-
-      //Setup our SFTP configuration
-      FileSystemOptions opts = new FileSystemOptions();
-      SftpFileSystemConfigBuilder.getInstance().setStrictHostKeyChecking(
-          opts, "no");
-      SftpFileSystemConfigBuilder.getInstance().setUserDirIsRoot(opts, true);
-      SftpFileSystemConfigBuilder.getInstance().setTimeout(opts, 10000);
-
-      //Create the SFTP URI using the host name, userid, password,  remote path and file name
-      String sftpUri = "sftp://" + userId + ":" + password +  "@" + serverAddress + "/" +
-          remoteDirectory + fileToFTP;
-
-      // Create local file object
-      FileObject localFile = manager.resolveFile(file.getAbsolutePath());
-
-      // Create remote file object
-      FileObject remoteFile = manager.resolveFile(sftpUri, opts);
-
-      // Copy local file to sftp server
-      remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
-      System.out.println("File upload successful");
-
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-      return false;
-    }
-    finally {
-      manager.close();
-    }
-
-    return true;
-  }
 
   /**
    * Load XML from string.

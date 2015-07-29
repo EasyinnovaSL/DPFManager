@@ -40,11 +40,7 @@ import com.easyinnova.tiff.model.types.IFD;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -52,80 +48,6 @@ import javax.imageio.ImageIO;
  * The Class ReportHtml.
  */
 public class ReportHtml {
-
-  /**
-   * Copy a file or directory from source to target.
-   *
-   * @param sourceLocation the source path.
-   * @param targetLocation the target path.
-   * @throws IOException Signals that an I/O exception has occurred.
-   */
-  private static void copy(File sourceLocation, File targetLocation) throws IOException {
-    if (sourceLocation.isDirectory()) {
-      copyDirectory(sourceLocation, targetLocation);
-    } else {
-      copyFile(sourceLocation, targetLocation);
-    }
-  }
-
-  /**
-   * Copy a directory from source to target.
-   *
-   * @param source the source path.
-   * @param target the target path.
-   * @throws IOException Signals that an I/O exception has occurred.
-   */
-  private static void copyDirectory(File source, File target) throws IOException {
-    if (!target.exists()) {
-      target.mkdir();
-    }
-    for (String f : source.list()) {
-      copy(new File(source, f), new File(target, f));
-    }
-  }
-
-
-  /**
-   * Copy file.
-   *
-   * @param source the source
-   * @param target the target
-   * @throws IOException Signals that an I/O exception has occurred.
-   */
-  private static void copyFile(File source, File target) throws IOException {
-    try (InputStream in = new FileInputStream(source);
-        OutputStream out = new FileOutputStream(target)) {
-      byte[] buf = new byte[1024];
-      int length;
-      while ((length = in.read(buf)) > 0) {
-        out.write(buf, 0, length);
-      }
-    }
-  }
-
-  /**
-   * Copy folder.
-   *
-   * @param path the path
-   * @param name the name
-   */
-  private static void copyFolder(String path, String name) {
-    File nameFile = new File(name);
-    String absolutePath = nameFile.getAbsolutePath();
-    String srcDir = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
-
-    File source = new File(path);
-    File target = new File(srcDir + "/html");
-    if (!target.exists()) {
-      target.mkdir();
-    }
-
-    try {
-      copyDirectory(source, target);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
 
   /**
    * Insert html folder.
@@ -145,9 +67,7 @@ public class ReportHtml {
    * @param ir the individual report.
    */
   public static void parseIndividual(String outputfile, IndividualReport ir) {
-    String templatePath = "resources/templates/individual.html";
-    String htmlFolder = "resources/html/";
-    copyFolder(htmlFolder, outputfile);
+    String templatePath = "./src/main/resources/templates/individual.html";
     outputfile = insertHtmlFolder(outputfile);
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
@@ -307,10 +227,8 @@ public class ReportHtml {
    * @param gr the global report.
    */
   public static void parseGlobal(String outputfile, GlobalReport gr) {
-    String templatePath = "resources/templates/global.html";
-    String imagePath = "resources/templates/image.html";
-    String htmlFolder = "resources/html/";
-    copyFolder(htmlFolder, outputfile);
+    String templatePath = "./src/main/resources/templates/global.html";
+    String imagePath = "./src/main/resources/templates/image.html";
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
 
