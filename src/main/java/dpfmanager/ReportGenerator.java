@@ -42,6 +42,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -174,9 +175,12 @@ public class ReportGenerator {
           boolean found = false;
           while ((zipFile = zip.getNextEntry()) != null && !found) {
             if (zipFile.getName().endsWith(name)) {
-              byte[] bytes = new byte[(int) zipFile.getSize()];
-              zip.read(bytes, 0, bytes.length);
-              text = new String(bytes, "UTF-8");
+              BufferedReader br = new BufferedReader(new InputStreamReader(zip));
+              String line = br.readLine();
+              while (line != null) {
+                text += line;
+                line = br.readLine();
+              }
               found = true;
             }
             zip.closeEntry();
