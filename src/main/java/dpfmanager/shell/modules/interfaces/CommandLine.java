@@ -105,14 +105,14 @@ public class CommandLine implements UserInterface {
     String outputFile = null;
 
     boolean xml = true;
-    boolean json = false;
-    boolean html = false;
+    boolean json = true;
+    boolean html = true;
 
     List<String> params = new ArrayList<String>();
     for (String s : args) {
       params.add(s);
     }
-    if (params.size()==0) {
+    if (params.size() == 0) {
       params.add(".");
     }
 
@@ -136,7 +136,8 @@ public class CommandLine implements UserInterface {
           xml = formats.contains("xml");
           json = formats.contains("json");
           html = formats.contains("html");
-          String result = formats.replace("xml","").replace("json", "").replace("html","").replace(",","");
+          String result =
+              formats.replace("xml", "").replace("json", "").replace("html", "").replace(",", "");
           if (result.length() > 0) {
             System.out.println("Incorrect report formats");
             argsError = true;

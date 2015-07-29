@@ -44,39 +44,43 @@ import java.util.List;
  */
 public class IndividualReport {
 
-  /* The file name */
+  /** The file name. */
   private String filename;
 
-  /* The file path */
+  /** The file path. */
   private String filepath;
 
-  /* The ifdNode count */
+  /** The ifdNode count. */
   private int ifdCount;
 
-  /* The isimg list */
+  /** The isimg list. */
   private List<Boolean> listIsimg;
 
-  /* The hasSubIfd list */
+  /** The hasSubIfd list. */
   private List<Boolean> listHasSubIfd;
 
-  /* The Tiff width */
+  /** The Tiff width. */
   private String width;
 
-  /* The Tiff height */
+  /** The Tiff height. */
   private String height;
 
-  /* The errors list */
+  /** The errors list. */
   private List<ValidationEvent> errors;
 
-  /* The warning list */
+  /** The warning list. */
   private List<ValidationEvent> warnings;
 
-  /* The Tiff Document object */
+  /** The Tiff Document object. */
   private TiffDocument tiffModel;
 
   /**
    * Constructor + generate.
    *
+   * @param name the name
+   * @param path the path
+   * @param tiffModel the tiff model
+   * @param validation the validation
    */
   public IndividualReport(String name, String path, TiffDocument tiffModel,
       ValidationResult validation) {
@@ -91,6 +95,7 @@ public class IndividualReport {
   /**
    * Set file name.
    *
+   * @param name the new file name
    */
   public void setFileName(String name) {
     filename = name;

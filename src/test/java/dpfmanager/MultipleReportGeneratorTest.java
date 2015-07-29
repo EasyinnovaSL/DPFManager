@@ -38,14 +38,18 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   public void testReports2() throws Exception {
-    String[] args = new String[1];
+    String[] args = new String[3];
     args[0] = "src/test/resources/Small/";
+    args[1] = "-reportformat";
+    args[2] = "xml";
 
     Application.Parameters params = new Application.Parameters() {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
         return listRaw;
       }
 
@@ -53,6 +57,8 @@ public class MultipleReportGeneratorTest extends TestCase {
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
         return listRaw;
       }
 

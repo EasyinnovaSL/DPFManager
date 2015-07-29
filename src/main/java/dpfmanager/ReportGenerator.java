@@ -174,6 +174,8 @@ public class ReportGenerator {
           boolean found = false;
           while ((zipFile = zip.getNextEntry()) != null && !found) {
             if (zipFile.getName().endsWith(name)) {
+              System.out.println("zip:" + zipFile.getName());
+              System.out.println("name:" + name);
               byte[] bytes = new byte[(int) zipFile.getSize()];
               zip.read(bytes, 0, bytes.length);
               text = new String(bytes, "UTF-8");
