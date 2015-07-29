@@ -111,6 +111,17 @@
 			<version>2.15.2</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-vfs2</artifactId>
+			<version>2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
 			<groupId>xom</groupId>
 			<artifactId>xom</artifactId>
 			<version>1.2.5</version>
@@ -150,7 +161,7 @@
 					<deployDir>./src/main/resources/installers</deployDir>
 					<mainClass>dpfmanager.MainApp</mainClass>
 					<allPermissions>true</allPermissions>
-					<!-- only required if signing the jar file <keyStoreAlias>example-user</keyStoreAlias> 
+					<!-- only required if signing the jar file <keyStoreAlias>example-user</keyStoreAlias>
 						<keyStorePassword>example-password</keyStorePassword> -->
 			  </configuration>
 			  <executions>

@@ -240,32 +240,33 @@ public class ReportGenerator {
    *
    * @param internalReportFolder the internal report folder
    * @param individuals the individual reports list
+   * @return the string
    */
-  public void makeSummaryReport(String internalReportFolder, ArrayList<IndividualReport> individuals) {
-    if (individuals.size() > 0) {
-      GlobalReport gr = new GlobalReport();
-      for (final IndividualReport individual : individuals) {
-        gr.addIndividual(individual);
-      }
-      gr.generate();
-
-      String output = null;
-      String xmlfile = internalReportFolder + "summary.xml";
-      String jsonFile = internalReportFolder + "summary.json";
-      String htmlfile = internalReportFolder + "report.html";
-      if (xml) {
-        output = ReportXml.parseGlobal(xmlfile, gr);
-      }
-      if (html) {
-        ReportHtml.parseGlobal(htmlfile, gr);
-      }
-      if (json && output == null) {
-        output = ReportXml.parseGlobal(xmlfile, gr);
-        ReportJson.xmlToJson(output, jsonFile);
-        ReportGenerator.deleteFileOrFolder(new File(xmlfile));
-      } else if (json) {
-        ReportJson.xmlToJson(output, jsonFile);
-      }
+  public String makeSummaryReport(String internalReportFolder,
+      ArrayList<IndividualReport> individuals) {
+    GlobalReport gr = new GlobalReport();
+    for (final IndividualReport individual : individuals) {
+      gr.addIndividual(individual);
     }
+    gr.generate();
+
+    String output = null;
+    String xmlfile = internalReportFolder + "summary.xml";
+    String jsonFile = internalReportFolder + "summary.json";
+    String htmlfile = internalReportFolder + "report.html";
+    if (xml) {
+      output = ReportXml.parseGlobal(xmlfile, gr);
+    }
+    if (html) {
+      ReportHtml.parseGlobal(htmlfile, gr);
+    }
+    if (json && output == null) {
+      output = ReportXml.parseGlobal(xmlfile, gr);
+      ReportJson.xmlToJson(output, jsonFile);
+      ReportGenerator.deleteFileOrFolder(new File(xmlfile));
+    } else if (json) {
+      ReportJson.xmlToJson(output, jsonFile);
+    }
+    return xmlfile;
   }
 }
