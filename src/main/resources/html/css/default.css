@@ -1,6 +1,7 @@
 body{
     font-family: 'Roboto', sans-serif;
 	font-weight: 400;
+	background-color: #303030;
 }
 
 img {
@@ -152,6 +153,10 @@ img {
 .button:active {
 	position:relative;
 	top:1px;
+}
+.button:focus{
+	text-decoration: none;
+	color: #ffffff;
 }
 
 /* File Structure list */

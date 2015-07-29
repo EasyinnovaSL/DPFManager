@@ -33,15 +33,27 @@ package dpfmanager;
 
 import org.apache.commons.lang.time.FastDateFormat;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * The Class ReportGenerator.
@@ -129,29 +141,53 @@ public class ReportGenerator {
   /**
    * Read the file of the path.
    *
-   * @param path the path to read.
+   * @param pathStr the file path to read.
    * @return the content of the file in path
    */
-  public static String readFile(String path) {
-    BufferedReader br;
+  public static String readFile(String pathStr) {
     String text = "";
+    Path path = Paths.get(pathStr);
     try {
-      br = new BufferedReader(new FileReader(path));
-      StringBuilder sb = new StringBuilder();
-      String line = br.readLine();
+      if (Files.exists(path)) {
+        // Look in current dir
+        BufferedReader br = new BufferedReader(new FileReader(pathStr));
+        StringBuilder sb = new StringBuilder();
+        String line = br.readLine();
 
-      while (line != null) {
-        sb.append(line);
-        sb.append(System.lineSeparator());
-        line = br.readLine();
+        while (line != null) {
+          sb.append(line);
+          sb.append(System.lineSeparator());
+          line = br.readLine();
+        }
+        text = sb.toString();
+        br.close();
+      } else {
+        // Look in JAR
+        CodeSource src = ReportGenerator.class.getProtectionDomain().getCodeSource();
+        if (src != null) {
+          URL jar = src.getLocation();
+          ZipInputStream zip;
+
+          zip = new ZipInputStream(jar.openStream());
+          ZipEntry zipFile;
+          boolean found = false;
+          while ((zipFile = zip.getNextEntry()) != null && !found) {
+            if (zipFile.getName().endsWith("/global.html")) {
+              byte[] bytes = new byte[(int) zipFile.getSize()];
+              zip.read(bytes, 0, bytes.length);
+              text = new String(bytes, "UTF-8");
+              found = true;
+            }
+            zip.closeEntry();
+          }
+        }
       }
-      text = sb.toString();
-      br.close();
     } catch (FileNotFoundException e) {
-      System.out.println("Template for html not found.");
+      System.out.println("Template for html not found in dir.");
     } catch (IOException e) {
-      System.out.println("Error reading " + path);
+      System.out.println("Error reading " + pathStr);
     }
+
     return text;
   }
 
@@ -197,7 +233,7 @@ public class ReportGenerator {
   }
 
   /**
-   * Make full report.
+   * Set the output formats.
    *
    * @param xml the XML boolean.
    * @param json the JSON boolean.
@@ -207,6 +243,132 @@ public class ReportGenerator {
     this.xml = xml;
     this.json = json;
     this.html = html;
+  }
+
+  /**
+   * Copy a file or directory from source to target.
+   *
+   * @param sourceLocation the source path.
+   * @param targetLocation the target path.
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  private static void copy(File sourceLocation, File targetLocation) throws IOException {
+    if (sourceLocation.isDirectory()) {
+      copyDirectory(sourceLocation, targetLocation);
+    } else {
+      copyFile(sourceLocation, targetLocation);
+    }
+  }
+
+  /**
+   * Copy a directory from source to target.
+   *
+   * @param source the source path.
+   * @param target the target path.
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  private static void copyDirectory(File source, File target) throws IOException {
+    if (!target.exists()) {
+      target.mkdir();
+    }
+    for (String f : source.list()) {
+      copy(new File(source, f), new File(target, f));
+    }
+  }
+
+
+  /**
+   * Copy file.
+   *
+   * @param source the source
+   * @param target the target
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  private static void copyFile(File source, File target) throws IOException {
+    try (InputStream in = new FileInputStream(source);
+        OutputStream out = new FileOutputStream(target)) {
+      byte[] buf = new byte[1024];
+      int length;
+      while ((length = in.read(buf)) > 0) {
+        out.write(buf, 0, length);
+      }
+    }
+  }
+
+  /**
+   * Extracts a zip entry (file entry).
+   * 
+   * @param zipIn the zip input stream
+   * @param filePath the file path
+   * @throws IOException exception
+   */
+  private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+    byte[] bytesIn = new byte[4096];
+    int read = 0;
+    while ((read = zipIn.read(bytesIn)) != -1) {
+      bos.write(bytesIn, 0, read);
+    }
+    bos.close();
+  }
+
+  /**
+   * Copies the HTML folder to the reports folder.
+   *
+   * @param name the name
+   */
+  private void copyHtmlFolder(String name) {
+    // Get the target folder
+    File nameFile = new File(name);
+    String absolutePath = nameFile.getAbsolutePath();
+    String targetPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+    File target = new File(targetPath + File.separator + "html");
+    if (!target.exists()) {
+      target.mkdir();
+
+      // Copy the html folder to target
+      String pathStr = "./src/main/resources/html";
+      Path path = Paths.get(pathStr);
+      if (Files.exists(path)) {
+        // Look in current dir
+        File folder = new File(pathStr);
+        if (folder.exists() && folder.isDirectory()) {
+          try {
+            copyDirectory(folder, target);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      } else {
+        // Look in JAR
+        CodeSource src = ReportGenerator.class.getProtectionDomain().getCodeSource();
+        if (src != null) {
+          URL jar = src.getLocation();
+          ZipInputStream zip;
+          try {
+            zip = new ZipInputStream(jar.openStream());
+            ZipEntry zipFile;
+            while ((zipFile = zip.getNextEntry()) != null) {
+              if (zipFile.getName().startsWith("html/")) {
+                String filePath = targetPath + File.separator + zipFile.getName();
+                if (!zipFile.isDirectory()) {
+                  // if the entry is a file, extracts it
+                  extractFile(zip, filePath);
+                } else {
+                  // if the entry is a directory, make the directory
+                  File dir = new File(filePath);
+                  dir.mkdir();
+                }
+              }
+              zip.closeEntry();
+            }
+          } catch (IOException e) {
+            System.out.println("Exception!");
+            e.printStackTrace();
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -224,6 +386,7 @@ public class ReportGenerator {
       output = ReportXml.parseIndividual(reportNameXml, ir);
     }
     if (html) {
+      copyHtmlFolder(reportNameHtml);
       ReportHtml.parseIndividual(reportNameHtml, ir);
     }
     if (json && output == null) {
@@ -259,6 +422,7 @@ public class ReportGenerator {
       ReportJson.xmlToJson(output, jsonFile);
     }
     if (html) {
+      copyHtmlFolder(htmlfile);
       ReportHtml.parseGlobal(htmlfile, gr);
     }
     if (!xml) {
