@@ -146,6 +146,7 @@ public class ReportGenerator {
    */
   public static String readFile(String pathStr) {
     String text = "";
+    String name = pathStr.substring(pathStr.lastIndexOf("/") + 1, pathStr.length());
     Path path = Paths.get(pathStr);
     try {
       if (Files.exists(path)) {
@@ -172,7 +173,7 @@ public class ReportGenerator {
           ZipEntry zipFile;
           boolean found = false;
           while ((zipFile = zip.getNextEntry()) != null && !found) {
-            if (zipFile.getName().endsWith("/global.html")) {
+            if (zipFile.getName().endsWith(name)) {
               byte[] bytes = new byte[(int) zipFile.getSize()];
               zip.read(bytes, 0, bytes.length);
               text = new String(bytes, "UTF-8");
