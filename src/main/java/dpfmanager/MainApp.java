@@ -74,12 +74,7 @@ public class MainApp extends Application {
   @Override
   public final void start(final Stage stage) throws Exception {
     Parameters params = getParameters();
-    if (params.getRaw().size() > 0) {
-      // Command Line
-      CommandLine cl = new CommandLine(params);
-      cl.launch();
-      Platform.exit();
-    } else {
+    if (params.getRaw().size() == 1 && params.getRaw().get(0) == "-gui") {
       // GUI
       LOG.info("Starting Hello JavaFX and Maven demonstration application");
 
@@ -101,6 +96,11 @@ public class MainApp extends Application {
       stage.setTitle("DPFManager");
       stage.setScene(scene);
       stage.show();
+    } else {
+      // Command Line
+      CommandLine cl = new CommandLine(params);
+      cl.launch();
+      Platform.exit();
     }
   }
 }

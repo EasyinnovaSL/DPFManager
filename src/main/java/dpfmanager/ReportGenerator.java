@@ -254,19 +254,16 @@ public class ReportGenerator {
     String xmlfile = internalReportFolder + "summary.xml";
     String jsonFile = internalReportFolder + "summary.json";
     String htmlfile = internalReportFolder + "report.html";
-    if (xml) {
-      output = ReportXml.parseGlobal(xmlfile, gr);
+    output = ReportXml.parseGlobal(xmlfile, gr);
+    if (json) {
+      ReportJson.xmlToJson(output, jsonFile);
     }
     if (html) {
       ReportHtml.parseGlobal(htmlfile, gr);
     }
-    if (json && output == null) {
-      output = ReportXml.parseGlobal(xmlfile, gr);
-      ReportJson.xmlToJson(output, jsonFile);
+    if (!xml) {
       ReportGenerator.deleteFileOrFolder(new File(xmlfile));
-    } else if (json) {
-      ReportJson.xmlToJson(output, jsonFile);
     }
-    return xmlfile;
+    return output;
   }
 }
