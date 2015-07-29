@@ -118,8 +118,6 @@ public class ReportHtml {
     htmlBody = htmlBody.replaceAll("##U_EP_WAR##", "" + epWar);
     htmlBody = htmlBody.replaceAll("##U_EP_WAR_CLASS##", clas);
 
-
-
     // TO-DO, actually never fix nothing || no policy checker
     htmlBody = htmlBody.replaceAll("##U_PC_CLASS##", "success");
     htmlBody = htmlBody.replaceAll("##U_PCR##", "" + 0);
@@ -164,7 +162,7 @@ public class ReportHtml {
     // File Structure
     String ul = "<ul>";
     TiffDocument td = ir.getTiffModel();
-    for (TiffObject object : td.getIfds()) {
+    for (TiffObject object : td.getImageIfds()) {
       IFD ifd = (IFD) object;
       ul += "<li><i class=\"fa fa-file-o\"></i> " + ifd.toString();
       if (ifd.getsubIFD() != null) {
@@ -181,6 +179,10 @@ public class ReportHtml {
   }
 
   private static boolean tiff2Jpg(String inputfile, String outputfile) {
+    File outfile = new File(outputfile);
+    if (outfile.exists()) {
+      return true;
+    }
     BufferedImage image = null;
     try {
       File input = new File(inputfile);
