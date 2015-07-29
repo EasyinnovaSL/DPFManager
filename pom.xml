@@ -49,13 +49,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>javafx</groupId>
-			<artifactId>jfxrt</artifactId>
-			<version>${java.version}</version>
-			<scope>system</scope>
-			<systemPath>${java.home}/lib/ext/jfxrt.jar</systemPath>
-		</dependency>
-		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout-javafx</artifactId>
 			<version>4.2</version>
@@ -111,16 +104,11 @@
 			<version>2.15.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-vfs2</artifactId>
-			<version>2.0</version>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-ftp</artifactId>
+			<version>2.15.2</version>
 		</dependency>
 
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>
-			<version>2.0</version>
-		</dependency>
 		<dependency>
 			<groupId>xom</groupId>
 			<artifactId>xom</artifactId>
@@ -130,7 +118,7 @@
 		<dependency>
 		  <groupId>com.easyinnova</groupId>
 		  <artifactId>tifflibrary4java</artifactId>
-		  <version>1.0-SNAPSHOT</version>
+		  <version>0.7</version>
 		</dependency>
 	</dependencies>
 	

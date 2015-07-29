@@ -45,6 +45,10 @@ import dpfmanager.IndividualReport;
 import dpfmanager.ReportGenerator;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -55,6 +59,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -99,35 +104,46 @@ public class CommandLine implements UserInterface {
     ArrayList<String> files = new ArrayList<String>();
     String outputFile = null;
 
-    readConformanceChecker();
     boolean xml = true;
     boolean json = false;
     boolean html = false;
 
+    List<String> params = new ArrayList<String>();
+    for (String s : args) {
+      params.add(s);
+    }
+    if (params.size()==0) {
+      params.add(".");
+    }
+
     // Reads the parameters
     int idx = 0;
     boolean argsError = false;
-    while (idx < args.size() && !argsError) {
-      String arg = args.get(idx);
+    while (idx < params.size() && !argsError) {
+      String arg = params.get(idx);
       if (arg.equals("-o")) {
-        if (idx + 1 < args.size()) {
-          outputFile = args.get(++idx);
+        if (idx + 1 < params.size()) {
+          outputFile = params.get(++idx);
         } else {
           argsError = true;
         }
       } else if (arg.equals("-help")) {
-        displayHelp();
+        argsError = true;
         break;
       } else if (arg.equals("-reportformat")) {
-        if (idx + 1 < args.size()) {
-          String formats = args.get(++idx);
+        if (idx + 1 < params.size()) {
+          String formats = params.get(++idx);
           xml = formats.contains("xml");
           json = formats.contains("json");
           html = formats.contains("html");
+          String result = formats.replace("xml","").replace("json", "").replace("html","").replace(",","");
+          if (result.length() > 0) {
+            System.out.println("Incorrect report formats");
+            argsError = true;
+          }
         } else {
           argsError = true;
         }
-        break;
       } else if (arg.startsWith("-")) {
         // unknown option
         argsError = true;
@@ -151,7 +167,11 @@ public class CommandLine implements UserInterface {
     if (argsError) {
       // Shows the program usage
       displayHelp();
+    } else if (files.size() == 0) {
+      System.out.println("No files specified.");
     } else {
+      readConformanceChecker();
+
       reportGenerator = new ReportGenerator();
       reportGenerator.setReportsFormats(xml, json, html);
       // Process files
@@ -166,18 +186,45 @@ public class CommandLine implements UserInterface {
         }
       }
       // Global report
-      String summaryXmlFile = reportGenerator.makeSummaryReport(internalReportFolder, individuals);
+      String summaryXml = reportGenerator.makeSummaryReport(internalReportFolder, individuals);
 
       // Send report over FTP (only for alpha testing)
       try {
-        // sendFtp(reportGenerator, summaryXmlFile);
-        // startFTP(summaryXmlFile, "summary.xml");
+        sendFtpCamel(reportGenerator, summaryXml);
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
   }
 
+  /**
+   * Send ftp.
+   *
+   * @param reportGenerator the report generator
+   * @param summaryXml the summary xml
+   * @throws NoSuchAlgorithmException the no such algorithm exception
+   */
+  private void sendFtpCamel(ReportGenerator reportGenerator, String summaryXml)
+      throws NoSuchAlgorithmException {
+    String ftp = "84.88.145.109";
+    String user = "preformaapp";
+    String password = "2.eX#lh>";
+
+    CamelContext context = new DefaultCamelContext();
+    try {
+      context.addRoutes(new RouteBuilder() {
+        public void configure() {
+          from("direct:sendFtp").to("sftp://" + user + "@" + ftp + "/?password=" + password);
+        }
+      });
+      ProducerTemplate template = context.createProducerTemplate();
+      context.start();
+      template.sendBody("direct:sendFtp", summaryXml);
+      context.stop();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   /**
    * Load XML from string.
@@ -312,7 +359,7 @@ public class CommandLine implements UserInterface {
       }
     } else {
       // Anything else
-      System.out.println("File " + filename + " is not Tiff");
+      System.out.println("File " + filename + " does not exist or is not a Tiff");
     }
     return indReports;
   }
@@ -402,9 +449,6 @@ public class CommandLine implements UserInterface {
         case 0:
           TiffDocument to = tr.getModel();
           ValidationResult val = tr.getValidation();
-          // String name = tr.getFilename()
-          // .substring(tr.getFilename().lastIndexOf(File.separator) + 1,
-          // tr.getFilename().length());
           String name =
               realFilename.substring(realFilename.lastIndexOf(File.separator) + 1,
                   realFilename.length());
@@ -516,6 +560,7 @@ public class CommandLine implements UserInterface {
   static void displayHelp() {
     System.out.println("Usage: dpfmanager [options] <file1> <file2> ... <fileN>");
     System.out.println("Options: -help displays help");
+    System.out.println("         -gui graphical interface");
     System.out.println("         -reportformat xml,json,html (default: xml)");
   }
 }
