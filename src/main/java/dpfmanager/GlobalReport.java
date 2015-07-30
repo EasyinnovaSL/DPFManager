@@ -42,6 +42,12 @@ public class GlobalReport {
   /** The list of all individual reports. */
   private List<IndividualReport> reports;
 
+  /** Number of valid EP. */
+  private int nReportsOnlyBl;
+
+  /** Number of valid Baseline. */
+  private int nReportsOnlyEp;
+
   /** Number of valid reports. */
   private int nreportsok;
 
@@ -55,6 +61,8 @@ public class GlobalReport {
     reports = new ArrayList<IndividualReport>();
     nreportsok = 0;
     nreportsko = 0;
+    nReportsOnlyBl = 0;
+    nReportsOnlyEp = 0;
   }
 
   /**
@@ -72,10 +80,14 @@ public class GlobalReport {
    */
   public void generate() {
     for (final IndividualReport ir : reports) {
-      if (ir.getErrors().size() > 0) {
-        nreportsko++;
-      } else {
+      if (ir.getBaselineErrors().size() == 0 && ir.getEPErrors().size() == 0) {
         nreportsok++;
+      } else if (ir.getBaselineErrors().size() > 0 && ir.getEPErrors().size() > 0) {
+        nreportsko++;
+      } else if (ir.getEPErrors().size() > 0) {
+        nReportsOnlyEp++;
+      } else {
+        nReportsOnlyBl++;
       }
     }
   }
@@ -105,6 +117,24 @@ public class GlobalReport {
    */
   public int getReportsKo() {
     return nreportsko;
+  }
+
+  /**
+   * Get the count of correct reports.
+   *
+   * @return nReportsOnlyBl
+   */
+  public int getReportsBl() {
+    return nReportsOnlyBl;
+  }
+
+  /**
+   * Get the count of reports with some error.
+   *
+   * @return nReportsOnlyEp
+   */
+  public int getReportsEp() {
+    return nReportsOnlyEp;
   }
 
   /**
