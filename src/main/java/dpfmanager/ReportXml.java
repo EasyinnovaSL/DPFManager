@@ -94,6 +94,53 @@ public class ReportXml {
   }
 
   /**
+   * Adds the errors warnings.
+   *
+   * @param doc the doc
+   * @param results the results
+   * @param errors the errors
+   * @param warnings the warnings
+   */
+  private static void addErrorsWarnings(Document doc, Element results,
+      List<ValidationEvent> errors, List<ValidationEvent> warnings) {
+    // errors
+    for (int i = 0; i < errors.size(); i++) {
+      ValidationEvent value = errors.get(i);
+      Element error = doc.createElement("result");
+
+      // level
+      Element level = doc.createElement("level");
+      level.setTextContent("critical");
+      error.appendChild(level);
+
+      // msg
+      Element msg = doc.createElement("msg");
+      msg.setTextContent(value.getDescription());
+      error.appendChild(msg);
+
+      results.appendChild(error);
+    }
+
+    // warnings
+    for (int i = 0; i < warnings.size(); i++) {
+      ValidationEvent value = warnings.get(i);
+      Element warning = doc.createElement("result");
+
+      // level
+      Element level = doc.createElement("level");
+      level.setTextContent("warning");
+      warning.appendChild(level);
+
+      // msg
+      Element msg = doc.createElement("msg");
+      msg.setTextContent(value.getDescription());
+      warning.appendChild(msg);
+
+      results.appendChild(warning);
+    }
+  }
+
+  /**
    * Parse an individual report to XML format.
    *
    * @param doc the doc
@@ -125,44 +172,27 @@ public class ReportXml {
     Element implementationCheckerElement = doc.createElement("implementation_checker");
     report.appendChild(implementationCheckerElement);
 
-    // errors
-    Element results = doc.createElement("results");
+    // Baseline
+    Element results = doc.createElement("results_baseline");
     List<ValidationEvent> errors = ir.getBaselineErrors();
-    for (int i = 0; i < errors.size(); i++) {
-      ValidationEvent value = errors.get(i);
-      Element error = doc.createElement("result");
-
-      // level
-      Element level = doc.createElement("level");
-      level.setTextContent("critical");
-      error.appendChild(level);
-
-      // msg
-      Element msg = doc.createElement("msg");
-      msg.setTextContent(value.getDescription());
-      error.appendChild(msg);
-
-      results.appendChild(error);
-    }
-
-    // warnings
     List<ValidationEvent> warnings = ir.getBaselineWarnings();
-    for (int i = 0; i < warnings.size(); i++) {
-      ValidationEvent value = warnings.get(i);
-      Element warning = doc.createElement("result");
+    addErrorsWarnings(doc, results, errors, warnings);
+    implementationCheckerElement.appendChild(results);
 
-      // level
-      Element level = doc.createElement("level");
-      level.setTextContent("warning");
-      warning.appendChild(level);
+    // TiffEP
+    results = doc.createElement("results_tiffep");
+    errors = ir.getEPErrors();
+    warnings = ir.getEPWarnings();
+    addErrorsWarnings(doc, results, errors, warnings);
+    implementationCheckerElement.appendChild(results);
 
-      // msg
-      Element msg = doc.createElement("msg");
-      msg.setTextContent(value.getDescription());
-      warning.appendChild(msg);
-
-      results.appendChild(warning);
-    }
+    // Total
+    results = doc.createElement("results_tiffep");
+    errors = ir.getBaselineErrors();
+    errors.addAll(ir.getEPErrors());
+    warnings = ir.getBaselineWarnings();
+    warnings.addAll(ir.getEPWarnings());
+    addErrorsWarnings(doc, results, errors, warnings);
     implementationCheckerElement.appendChild(results);
 
     return report;

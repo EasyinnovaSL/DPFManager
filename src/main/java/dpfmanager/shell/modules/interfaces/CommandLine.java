@@ -187,7 +187,6 @@ public class CommandLine implements UserInterface {
         }
       }
       // Global report
-      System.out.println("Making Summary");
       String summaryXml = reportGenerator.makeSummaryReport(internalReportFolder, individuals);
 
       // Send report over FTP (only for alpha testing)

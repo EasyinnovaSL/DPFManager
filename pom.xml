@@ -146,7 +146,7 @@
 			  <configuration>
 					<!-- <nativeOutputDir>./bin/</nativeOutputDir> -->
 					<nativeReleaseVersion>1.0.0</nativeReleaseVersion>
-					<deployDir>./src/main/resources/installers</deployDir>
+					<deployDir>./src/main/deploy</deployDir>
 					<mainClass>dpfmanager.MainApp</mainClass>
 					<allPermissions>true</allPermissions>
 					<!-- only required if signing the jar file <keyStoreAlias>example-user</keyStoreAlias>
