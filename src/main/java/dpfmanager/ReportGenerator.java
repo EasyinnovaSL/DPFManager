@@ -384,22 +384,19 @@ public class ReportGenerator {
    */
   public void generateIndividualReport(String reportName, IndividualReport ir) {
     String output = null;
-    String reportNameXml = reportName + ".xml";
-    String reportNameJson = reportName + ".json";
-    String reportNameHtml = reportName + ".html";
-    if (xml) {
-      output = ReportXml.parseIndividual(reportNameXml, ir);
-    }
+    String xmlfile = reportName + ".xml";
+    String jsonFile = reportName + ".json";
+    String htmlfile = reportName + ".html";
+    output = ReportXml.parseIndividual(xmlfile, ir);
     if (html) {
-      copyHtmlFolder(reportNameHtml);
-      ReportHtml.parseIndividual(reportNameHtml, ir);
+      copyHtmlFolder(htmlfile);
+      ReportHtml.parseIndividual(htmlfile, ir);
     }
-    if (json && output == null) {
-      output = ReportXml.parseIndividual(reportNameXml, ir);
-      ReportJson.xmlToJson(output, reportNameJson);
-      ReportGenerator.deleteFileOrFolder(new File(reportNameXml));
-    } else if (json) {
-      ReportJson.xmlToJson(output, reportNameJson);
+    if (json) {
+      ReportJson.xmlToJson(output, jsonFile);
+    }
+    if (!xml) {
+      ReportGenerator.deleteFileOrFolder(new File(xmlfile));
     }
   }
 
@@ -423,12 +420,12 @@ public class ReportGenerator {
     String jsonFile = internalReportFolder + "summary.json";
     String htmlfile = internalReportFolder + "report.html";
     output = ReportXml.parseGlobal(xmlfile, gr);
-    if (json) {
-      ReportJson.xmlToJson(output, jsonFile);
-    }
     if (html) {
       copyHtmlFolder(htmlfile);
       ReportHtml.parseGlobal(htmlfile, gr);
+    }
+    if (json) {
+      ReportJson.xmlToJson(output, jsonFile);
     }
     if (!xml) {
       ReportGenerator.deleteFileOrFolder(new File(xmlfile));
