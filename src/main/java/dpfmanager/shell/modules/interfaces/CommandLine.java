@@ -187,6 +187,7 @@ public class CommandLine implements UserInterface {
         }
       }
       // Global report
+      System.out.println("Making Summary");
       String summaryXml = reportGenerator.makeSummaryReport(internalReportFolder, individuals);
 
       // Send report over FTP (only for alpha testing)
@@ -449,7 +450,12 @@ public class CommandLine implements UserInterface {
           break;
         case 0:
           TiffDocument to = tr.getModel();
-          ValidationResult val = tr.getValidation();
+
+          TiffEPProfile bpep = new TiffEPProfile(to);
+          bpep.validate();
+
+          ValidationResult val = tr.getBaselineValidation();
+
           String name =
               realFilename.substring(realFilename.lastIndexOf(File.separator) + 1,
                   realFilename.length());
@@ -488,13 +494,11 @@ public class CommandLine implements UserInterface {
       System.out.println("IFDs: " + to.getIfdCount());
       System.out.println("SubIFDs: " + to.getSubIfdCount());
 
-      to.printMetadata();
+      //to.printMetadata();
       BaselineProfile bp = new BaselineProfile(to);
       bp.validate();
-      bp.getValidation().printErrors();
       TiffEPProfile bpep = new TiffEPProfile(to);
       bpep.validate();
-      bpep.getValidation().printErrors();
 
       int nifd = 1;
       for (TiffObject o : to.getImageIfds()) {
@@ -520,9 +524,11 @@ public class CommandLine implements UserInterface {
         System.out.println("SubIFDs: " + to.getSubIfdCount());
 
         // int index = 0;
-        to.printMetadata();
+        //to.printMetadata();
         BaselineProfile bp = new BaselineProfile(to);
         bp.validate();
+        TiffEPProfile bpep = new TiffEPProfile(to);
+        bpep.validate();
       }
       val.printErrors();
     }

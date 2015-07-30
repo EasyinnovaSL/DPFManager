@@ -189,6 +189,7 @@ public class ReportXml {
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       DOMSource source = new DOMSource(doc);
+
       File file = new File(xmlfile);
       StreamResult result = new StreamResult(file.getPath());
       transformer.transform(source, result);
@@ -252,7 +253,7 @@ public class ReportXml {
       DOMSource source = new DOMSource(doc);
 
       File file = new File(xmlfile);
-      StreamResult result = new StreamResult(file);
+      StreamResult result = new StreamResult(file.getPath());
       transformer.transform(source, result);
 
       // To String
@@ -271,5 +272,4 @@ public class ReportXml {
     }
     return "";
   }
-
 }

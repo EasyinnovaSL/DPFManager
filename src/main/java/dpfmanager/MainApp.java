@@ -74,7 +74,7 @@ public class MainApp extends Application {
   @Override
   public final void start(final Stage stage) throws Exception {
     Parameters params = getParameters();
-    if (params.getRaw().size() == 1 && params.getRaw().get(0) == "-gui") {
+    if (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui")) {
       // GUI
       LOG.info("Starting Hello JavaFX and Maven demonstration application");
 
