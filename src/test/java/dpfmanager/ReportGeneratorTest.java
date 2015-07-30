@@ -24,6 +24,11 @@ import java.util.Map;
 public class ReportGeneratorTest extends TestCase {
   TiffReader tr;
 
+  @After
+  public static void afterClass() {
+    Platform.exit();
+  }
+
   /**
    * Pre test.
    */
@@ -38,21 +43,16 @@ public class ReportGeneratorTest extends TestCase {
     assertEquals(ok, true);
   }
 
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
-
   public void testReports1() throws Exception {
     String[] args = new String[3];
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-reportformat";
     args[2] = "xml";
 
-    Application.Parameters params=new Application.Parameters() {
+    Application.Parameters params = new Application.Parameters() {
       @Override
       public List<String> getRaw() {
-        ArrayList<String> listRaw=new ArrayList<String>();
+        ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
         listRaw.add(args[1]);
         listRaw.add(args[2]);
@@ -61,7 +61,7 @@ public class ReportGeneratorTest extends TestCase {
 
       @Override
       public List<String> getUnnamed() {
-        ArrayList<String> listRaw=new ArrayList<String>();
+        ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
         listRaw.add(args[1]);
         listRaw.add(args[2]);
