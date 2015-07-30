@@ -142,6 +142,7 @@ public class IndividualReport {
    *
    * @param tiffModel the tiff model
    * @param validation the validation
+   * @param epValidation the ep validation
    */
   public void generate(TiffDocument tiffModel, ValidationResult validation,
       ValidationResult epValidation) {
