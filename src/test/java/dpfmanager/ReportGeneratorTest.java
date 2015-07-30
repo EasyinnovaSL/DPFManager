@@ -75,7 +75,43 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(6, directori.list().length);
+    assertEquals(5, directori.list().length);
+    Platform.exit();
+  }
+
+  public void testReports2() throws Exception {
+    String[] args = new String[1];
+    args[0] = "src/test/resources/Small";
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(16, directori.list().length);
     Platform.exit();
   }
 
