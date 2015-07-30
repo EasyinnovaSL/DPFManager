@@ -43,10 +43,10 @@ public class GlobalReport {
   private List<IndividualReport> reports;
 
   /** Number of valid EP. */
-  private int nReportsOnlyBl;
+  private int reportsOnlyBl;
 
   /** Number of valid Baseline. */
-  private int nReportsOnlyEp;
+  private int reportsOnlyEp;
 
   /** Number of valid reports. */
   private int nreportsok;
@@ -61,8 +61,8 @@ public class GlobalReport {
     reports = new ArrayList<IndividualReport>();
     nreportsok = 0;
     nreportsko = 0;
-    nReportsOnlyBl = 0;
-    nReportsOnlyEp = 0;
+    reportsOnlyBl = 0;
+    reportsOnlyEp = 0;
   }
 
   /**
@@ -82,12 +82,13 @@ public class GlobalReport {
     for (final IndividualReport ir : reports) {
       if (ir.getBaselineErrors().size() == 0 && ir.getEPErrors().size() == 0) {
         nreportsok++;
-      } else if (ir.getBaselineErrors().size() > 0 && ir.getEPErrors().size() > 0) {
-        nreportsko++;
-      } else if (ir.getEPErrors().size() > 0) {
-        nReportsOnlyEp++;
       } else {
-        nReportsOnlyBl++;
+        nreportsko++;
+      }
+      if (ir.getEPErrors().size() == 0 && ir.getBaselineErrors().size() > 0) {
+        reportsOnlyEp++;
+      } else if (ir.getBaselineErrors().size() == 0 && ir.getEPErrors().size() > 0) {
+        reportsOnlyBl++;
       }
     }
   }
@@ -125,7 +126,7 @@ public class GlobalReport {
    * @return nReportsOnlyBl
    */
   public int getReportsBl() {
-    return nReportsOnlyBl;
+    return reportsOnlyBl;
   }
 
   /**
@@ -134,7 +135,7 @@ public class GlobalReport {
    * @return nReportsOnlyEp
    */
   public int getReportsEp() {
-    return nReportsOnlyEp;
+    return reportsOnlyEp;
   }
 
   /**
