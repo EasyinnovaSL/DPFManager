@@ -127,7 +127,7 @@ public class ReportXml {
 
     // errors
     Element results = doc.createElement("results");
-    List<ValidationEvent> errors = ir.getErrors();
+    List<ValidationEvent> errors = ir.getBaselineErrors();
     for (int i = 0; i < errors.size(); i++) {
       ValidationEvent value = errors.get(i);
       Element error = doc.createElement("result");
@@ -146,7 +146,7 @@ public class ReportXml {
     }
 
     // warnings
-    List<ValidationEvent> warnings = ir.getWarnings();
+    List<ValidationEvent> warnings = ir.getBaselineWarnings();
     for (int i = 0; i < warnings.size(); i++) {
       ValidationEvent value = warnings.get(i);
       Element warning = doc.createElement("result");

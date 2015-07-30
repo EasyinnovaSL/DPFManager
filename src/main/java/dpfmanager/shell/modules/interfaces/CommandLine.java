@@ -453,14 +453,15 @@ public class CommandLine implements UserInterface {
           TiffEPProfile bpep = new TiffEPProfile(to);
           bpep.validate();
 
-          ValidationResult val = tr.getBaselineValidation();
+          ValidationResult baselineVal = tr.getBaselineValidation();
+          ValidationResult epValidation = tr.getTiffEPValidation();
 
           String name =
               realFilename.substring(realFilename.lastIndexOf(File.separator) + 1,
                   realFilename.length());
-          IndividualReport ir = new IndividualReport(name, filename, to, val);
+          IndividualReport ir = new IndividualReport(name, filename, to, baselineVal, epValidation);
           if (outputFile == null) {
-            reportResults(name, to, val);
+            reportResults(name, to, baselineVal);
           } else {
             reportResultsXml(ir, outputFile);
           }
@@ -493,7 +494,7 @@ public class CommandLine implements UserInterface {
       System.out.println("IFDs: " + to.getIfdCount());
       System.out.println("SubIFDs: " + to.getSubIfdCount());
 
-      //to.printMetadata();
+      // to.printMetadata();
       BaselineProfile bp = new BaselineProfile(to);
       bp.validate();
       TiffEPProfile bpep = new TiffEPProfile(to);
@@ -523,7 +524,7 @@ public class CommandLine implements UserInterface {
         System.out.println("SubIFDs: " + to.getSubIfdCount());
 
         // int index = 0;
-        //to.printMetadata();
+        // to.printMetadata();
         BaselineProfile bp = new BaselineProfile(to);
         bp.validate();
         TiffEPProfile bpep = new TiffEPProfile(to);

@@ -65,11 +65,17 @@ public class IndividualReport {
   /** The Tiff height. */
   private String height;
 
-  /** The errors list. */
-  private List<ValidationEvent> errors;
+  /** The baseline errors list. */
+  private List<ValidationEvent> errorsBl;
 
-  /** The warning list. */
-  private List<ValidationEvent> warnings;
+  /** The baseline warning list. */
+  private List<ValidationEvent> warningsBl;
+
+  /** The Tiff EP errors list. */
+  private List<ValidationEvent> errorsEp;
+
+  /** The Tiff EP warning list. */
+  private List<ValidationEvent> warningsEp;
 
   /** The Tiff Document object. */
   private TiffDocument tiffModel;
@@ -79,17 +85,18 @@ public class IndividualReport {
    *
    * @param name the name
    * @param path the path
-   * @param tiffModel the tiff model
-   * @param validation the validation
+   * @param tiffModel the TIFF model
+   * @param baselineValidation the validation
+   * @param epValidation the validation
    */
   public IndividualReport(String name, String path, TiffDocument tiffModel,
-      ValidationResult validation) {
+      ValidationResult baselineValidation, ValidationResult epValidation) {
     filename = name;
     filepath = path;
     ifdCount = 0;
     listIsimg = new ArrayList<Boolean>();
     listHasSubIfd = new ArrayList<Boolean>();
-    generate(tiffModel, validation);
+    generate(tiffModel, baselineValidation, epValidation);
   }
 
   /**
@@ -136,7 +143,8 @@ public class IndividualReport {
    * @param tiffModel the tiff model
    * @param validation the validation
    */
-  public void generate(TiffDocument tiffModel, ValidationResult validation) {
+  public void generate(TiffDocument tiffModel, ValidationResult validation,
+      ValidationResult epValidation) {
     this.tiffModel = tiffModel;
     // tiff structure
     IFD ifd = tiffModel.getFirstIFD();
@@ -153,8 +161,11 @@ public class IndividualReport {
     height = tiffModel.getMetadataSingleString("ImageLength");
 
     // errors & warnings
-    errors = validation.getErrors();
-    warnings = validation.getWarnings();
+    errorsBl = validation.getErrors();
+    warningsBl = validation.getWarnings();
+    errorsEp = epValidation.getErrors();
+    warningsEp = epValidation.getWarnings();
+
   }
 
   /**
@@ -209,8 +220,8 @@ public class IndividualReport {
    *
    * @return the errors
    */
-  public List<ValidationEvent> getErrors() {
-    return errors;
+  public List<ValidationEvent> getBaselineErrors() {
+    return errorsBl;
   }
 
   /**
@@ -218,8 +229,26 @@ public class IndividualReport {
    *
    * @return the warnings
    */
-  public List<ValidationEvent> getWarnings() {
-    return warnings;
+  public List<ValidationEvent> getBaselineWarnings() {
+    return warningsBl;
+  }
+
+  /**
+   * Get errors list.
+   *
+   * @return the errors
+   */
+  public List<ValidationEvent> getEPErrors() {
+    return errorsEp;
+  }
+
+  /**
+   * Get warnings list.
+   *
+   * @return the warnings
+   */
+  public List<ValidationEvent> getEPWarnings() {
+    return warningsEp;
   }
 
   /**

@@ -83,8 +83,8 @@ public class ReportHtml {
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
-    int epErr = ir.getErrors().size();
-    int epWar = ir.getWarnings().size();
+    int epErr = ir.getEPErrors().size();
+    int epWar = ir.getEPWarnings().size();
     if (epErr > 0) {
       htmlBody = htmlBody.replaceAll("##EP_OK##", "none");
       htmlBody = htmlBody.replaceAll("##EP_ERR##", "block");
@@ -135,13 +135,13 @@ public class ReportHtml {
     // Errors and warnings
     String row;
     String rows = "";
-    for (ValidationEvent val : ir.getErrors()) {
+    for (ValidationEvent val : ir.getEPErrors()) {
       row = "<tr><td class=\"bold error\">Error</td><td>##TEXT##</td></tr>";
       row = row.replace("##TEXT##", val.getDescription());
       rows += row;
     }
 
-    for (ValidationEvent val : ir.getWarnings()) {
+    for (ValidationEvent val : ir.getEPWarnings()) {
       row = "<tr><td class=\"bold warning\">Warning</td><td>##TEXT##</td></tr>";
       row = row.replace("##TEXT##", val.getDescription());
       rows += row;
@@ -222,7 +222,7 @@ public class ReportHtml {
    * @return the int
    */
   private static int calculatePercent(IndividualReport ir) {
-    Double rest = 100.0 - ir.getErrors().size() * 12.5;
+    Double rest = 100.0 - ir.getEPErrors().size() * 12.5;
     if (rest < 0.0) {
       rest = 0.0;
     }
@@ -261,15 +261,15 @@ public class ReportHtml {
       imageBody = imageBody.replace("##PERCENT##", "" + percent);
       imageBody = imageBody.replace("##INDEX##", "" + index);
       imageBody = imageBody.replace("##IMG_NAME##", "" + ir.getFileName());
-      imageBody = imageBody.replace("##ERR_N##", "" + ir.getErrors().size());
-      imageBody = imageBody.replace("##WAR_N##", "" + ir.getWarnings().size());
+      imageBody = imageBody.replace("##ERR_N##", "" + ir.getEPErrors().size());
+      imageBody = imageBody.replace("##WAR_N##", "" + ir.getEPWarnings().size());
       imageBody = imageBody.replace("##HREF##", "html/" + ir.getFileName() + ".html");
-      if (ir.getErrors().size() > 0) {
+      if (ir.getEPErrors().size() > 0) {
         imageBody = imageBody.replace("##ERR_C##", "error");
       } else {
         imageBody = imageBody.replace("##ERR_C##", "success");
       }
-      if (ir.getWarnings().size() > 0) {
+      if (ir.getEPWarnings().size() > 0) {
         imageBody = imageBody.replace("##WAR_C##", "warning");
       } else {
         imageBody = imageBody.replace("##WAR_C##", "success");
@@ -283,7 +283,7 @@ public class ReportHtml {
         imageBody = imageBody.replace("##CLASS##", "error");
         imageBody = imageBody.replace("##RESULT##", "Failed");
       }
-      if (ir.getWarnings().size() > 0) {
+      if (ir.getEPWarnings().size() > 0) {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "inline-block");
       } else {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "none");
@@ -293,7 +293,7 @@ public class ReportHtml {
       int angle = percent * 360 / 100;
       int reverseAngle = 360 - angle;
       String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
-      if (ir.getErrors().size() > 0) {
+      if (ir.getEPErrors().size() > 0) {
         functionPie += ", '#CCCCCC', 'red'); ";
       } else {
         functionPie += ", '#66CC66', '#66CC66'); ";
