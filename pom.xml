@@ -118,7 +118,7 @@
 		<dependency>
 		  <groupId>com.easyinnova</groupId>
 		  <artifactId>tifflibrary4java</artifactId>
-		  <version>0.7</version>
+		  <version>0.9</version>
 		</dependency>
 	</dependencies>
 	
@@ -142,11 +142,11 @@
 			<plugin>
 			  <groupId>com.zenjava</groupId>
 			  <artifactId>javafx-maven-plugin</artifactId>
-			  <version>8.1.2</version> 
+			  <version>8.1.2</version>
 			  <configuration>
 					<!-- <nativeOutputDir>./bin/</nativeOutputDir> -->
 					<nativeReleaseVersion>1.0.0</nativeReleaseVersion>
-					<deployDir>./src/main/resources/installers</deployDir>
+					<deployDir>./src/main/deploy</deployDir>
 					<mainClass>dpfmanager.MainApp</mainClass>
 					<allPermissions>true</allPermissions>
 					<!-- only required if signing the jar file <keyStoreAlias>example-user</keyStoreAlias>
