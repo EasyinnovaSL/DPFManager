@@ -80,14 +80,14 @@ public class GlobalReport {
    */
   public void generate() {
     for (final IndividualReport ir : reports) {
-      if (ir.getBaselineErrors().size() == 0 && ir.getEPErrors().size() == 0) {
+      if (ir.getBaselineErrors().size() == 0 && ir.getEpErrors().size() == 0) {
         nreportsok++;
       } else {
         nreportsko++;
       }
-      if (ir.getEPErrors().size() == 0 && ir.getBaselineErrors().size() > 0) {
+      if (ir.getEpErrors().size() == 0 && ir.getBaselineErrors().size() > 0) {
         reportsOnlyEp++;
-      } else if (ir.getBaselineErrors().size() == 0 && ir.getEPErrors().size() > 0) {
+      } else if (ir.getBaselineErrors().size() == 0 && ir.getEpErrors().size() > 0) {
         reportsOnlyBl++;
       }
     }

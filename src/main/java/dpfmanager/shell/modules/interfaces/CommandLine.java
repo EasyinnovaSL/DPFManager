@@ -102,7 +102,7 @@ public class CommandLine implements UserInterface {
    */
   public void launch() {
     ArrayList<String> files = new ArrayList<String>();
-    String outputFile = null;
+    String outputFolder = null;
 
     boolean xml = true;
     boolean json = true;
@@ -123,7 +123,17 @@ public class CommandLine implements UserInterface {
       String arg = params.get(idx);
       if (arg.equals("-o")) {
         if (idx + 1 < params.size()) {
-          outputFile = params.get(++idx);
+          outputFolder = params.get(++idx);
+          File tmp = new File(outputFolder);
+          if (!tmp.exists()) {
+            if (!tmp.mkdir()) {
+              System.out.println("Cannot create the output folder. Ignoring ouput path.");
+              outputFolder = null;
+            }
+          } else if (!tmp.isDirectory()) {
+            System.out.println("The output path must be a directory. Ignoring output path.");
+            outputFolder = null;
+          }
         } else {
           argsError = true;
         }
@@ -181,13 +191,14 @@ public class CommandLine implements UserInterface {
       for (final String filename : files) {
         System.out.println("");
         System.out.println("Processing file " + filename);
-        List<IndividualReport> indReports = processFile(filename, outputFile, internalReportFolder);
+        List<IndividualReport> indReports = processFile(filename, internalReportFolder);
         if (indReports.size() > 0) {
           individuals.addAll(indReports);
         }
       }
       // Global report
-      String summaryXml = reportGenerator.makeSummaryReport(internalReportFolder, individuals);
+      String summaryXml =
+          reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder);
 
       // Send report over FTP (only for alpha testing)
       try {
@@ -307,8 +318,7 @@ public class CommandLine implements UserInterface {
    * @param internalReportFolder the internal report folder
    * @return the list
    */
-  private List<IndividualReport> processFile(String filename, String outputFile,
-      String internalReportFolder) {
+  private List<IndividualReport> processFile(String filename, String internalReportFolder) {
     List<IndividualReport> indReports = new ArrayList<IndividualReport>();
     IndividualReport ir = null;
     if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
@@ -321,7 +331,7 @@ public class CommandLine implements UserInterface {
           if (isTiff(entry.getName())) {
             InputStream stream = zipFile.getInputStream(entry);
             String filename2 = createTempFile(entry.getName(), stream);
-            ir = processTiffFile(filename2, filename2, outputFile, internalReportFolder);
+            ir = processTiffFile(filename2, filename2, internalReportFolder);
             if (ir != null) {
               indReports.add(ir);
             }
@@ -339,7 +349,7 @@ public class CommandLine implements UserInterface {
         InputStream input = new java.net.URL(filename).openStream();
         String filename2 = createTempFile(filename, input);
         filename = java.net.URLDecoder.decode(filename, "UTF-8");
-        ir = processTiffFile(filename2, filename, outputFile, internalReportFolder);
+        ir = processTiffFile(filename2, filename, internalReportFolder);
         if (ir != null) {
           indReports.add(ir);
         }
@@ -351,7 +361,7 @@ public class CommandLine implements UserInterface {
     } else if (isTiff(filename)) {
       // File
       try {
-        ir = processTiffFile(filename, filename, outputFile, internalReportFolder);
+        ir = processTiffFile(filename, filename, internalReportFolder);
         if (ir != null) {
           indReports.add(ir);
         }
@@ -435,7 +445,7 @@ public class CommandLine implements UserInterface {
    * @throws ReadTagsIOException the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  private IndividualReport processTiffFile(String filename, String realFilename, String outputFile,
+  private IndividualReport processTiffFile(String filename, String realFilename,
       String internalReportFolder) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
       TiffReader tr = new TiffReader();
@@ -459,11 +469,7 @@ public class CommandLine implements UserInterface {
           String pathNorm = realFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, filename, to, baselineVal, epValidation);
-          if (outputFile == null) {
-            reportResults(name, to, baselineVal);
-          } else {
-            reportResultsXml(ir, outputFile);
-          }
+          // reportResults(name, to, baselineVal);
           internalReport(ir, tr, realFilename, internalReportFolder);
           return ir;
         default:
@@ -537,17 +543,6 @@ public class CommandLine implements UserInterface {
   /**
    * Report the results of the reading process to the console.
    *
-   * @param ir the ir
-   * @param outputFile the output file
-   */
-  private void reportResultsXml(IndividualReport ir, String outputFile) {
-    reportGenerator.generateIndividualReport(outputFile, ir);
-    System.out.println("Report '" + outputFile + "' created");
-  }
-
-  /**
-   * Report the results of the reading process to the console.
-   *
    * @param ir the individual report
    * @param tiffreader the tiff reader
    * @param realFilename the real filename
@@ -566,7 +561,9 @@ public class CommandLine implements UserInterface {
   static void displayHelp() {
     System.out.println("Usage: dpfmanager [options] <file1> <file2> ... <fileN>");
     System.out.println("Options: -help displays help");
-    System.out.println("         -gui graphical interface");
-    System.out.println("         -reportformat xml,json,html (default: xml)");
+    System.out.println("         -o path: Specifies the report output folder.");
+    // System.out.println("         -gui: Launches graphical interface");
+    System.out.println("         -reportformat (xml, json or html): "
+        + "Specifies the report format. Default set to all reports.");
   }
 }
