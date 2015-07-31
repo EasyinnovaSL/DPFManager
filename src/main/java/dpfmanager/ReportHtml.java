@@ -40,7 +40,6 @@ import com.easyinnova.tiff.model.types.IFD;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -250,7 +249,7 @@ public class ReportHtml {
       graphic.dispose();
 
       ImageIO.write(convertedImage, "jpg", new File(outputfile));
-    } catch (IOException e) {
+    } catch (Exception e) {
       return false;
     }
     return true;
@@ -263,7 +262,7 @@ public class ReportHtml {
    * @return the int
    */
   private static int calculatePercent(IndividualReport ir) {
-    Double rest = 100.0 - ir.getEPErrors().size() * 12.5;
+    Double rest = 100.0 - (ir.getEPErrors().size() + ir.getBaselineErrors().size()) * 7.5;
     if (rest < 0.0) {
       rest = 0.0;
     }
@@ -338,7 +337,7 @@ public class ReportHtml {
         imageBody = imageBody.replace("##CLASS##", "error");
         imageBody = imageBody.replace("##RESULT##", "Failed");
       }
-      if (ir.getEPWarnings().size() > 0) {
+      if (ir.getEPWarnings().size() + ir.getBaselineWarnings().size() > 0) {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "inline-block");
       } else {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "none");
@@ -348,7 +347,7 @@ public class ReportHtml {
       int angle = percent * 360 / 100;
       int reverseAngle = 360 - angle;
       String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
-      if (ir.getEPErrors().size() > 0) {
+      if ((ir.getEPErrors().size() + ir.getBaselineErrors().size()) > 0) {
         functionPie += ", '#CCCCCC', 'red'); ";
       } else {
         functionPie += ", '#66CC66', '#66CC66'); ";
