@@ -79,7 +79,7 @@ public class StatisticsGeneratorTest extends TestCase {
     String path = getPath();
     String xmlFile = path + "/summary.xml";
     String jsonFile = path + "/summary.json";
-    String htmlFile = path + "/index.html";
+    String htmlFile = path + "/report.html";
 
     assertXML(xmlFile, 1);
     assertJSON(jsonFile, 1);
@@ -119,7 +119,7 @@ public class StatisticsGeneratorTest extends TestCase {
     String path = getPath();
     String xmlFile = path + "/summary.xml";
     String jsonFile = path + "/summary.json";
-    String htmlFile = path + "/index.html";
+    String htmlFile = path + "/report.html";
 
     assertXML(xmlFile, 6);
     assertJSON(jsonFile, 6);
@@ -186,8 +186,8 @@ public class StatisticsGeneratorTest extends TestCase {
     if (nList != null && nList.getLength() > 0) {
       Element el = (Element) nList.item(0);
       assertEquals(getIntValue(el, "reports_count"), files);
-      assertEquals(getIntValue(el, "valid_files"), files);
-      assertEquals(getIntValue(el, "invalid_files"), 0);
+      assertEquals(getIntValue(el, "valid_files"), 0);
+      assertEquals(getIntValue(el, "invalid_files"), files);
     }
   }
 
@@ -207,9 +207,9 @@ public class StatisticsGeneratorTest extends TestCase {
           if (valor.equalsIgnoreCase("reports_count")) {
             assertEquals(jsonReader.nextInt(), files);
           } else if (valor.equalsIgnoreCase("valid_files")) {
-            assertEquals(jsonReader.nextInt(), files);
-          } else if (valor.equalsIgnoreCase("invalid_files")) {
             assertEquals(jsonReader.nextInt(), 0);
+          } else if (valor.equalsIgnoreCase("invalid_files")) {
+            assertEquals(jsonReader.nextInt(), files);
           } else {
             jsonReader.skipValue();
           }
@@ -228,13 +228,13 @@ public class StatisticsGeneratorTest extends TestCase {
     File htmlFile = new File(html);
     org.jsoup.nodes.Document doc = Jsoup.parse(htmlFile, "UTF-8");
 
-    String info = "info_chart";
+    String info = "pie-global";
     String filesTotal = "h3";
 
     Elements fileNum = doc.getElementsByAttributeValue("id", info);
     Elements fileTotal = doc.getElementsByTag(filesTotal);
 
     assertEquals(fileTotal.text(), files + " files processed");
-    assertEquals(fileNum.text(), files + " passed 0 failed Global score 100%");
+    assertEquals(fileNum.get(0).parent().text(), "0 passed " + files + " failed Global score 0%");
   }
 }
