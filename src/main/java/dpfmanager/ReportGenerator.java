@@ -430,7 +430,7 @@ public class ReportGenerator {
    * @return the string
    */
   public String makeSummaryReport(String internalReportFolder,
-      ArrayList<IndividualReport> individuals, String outputFolder) {
+      ArrayList<IndividualReport> individuals, String outputFolder, boolean silence) {
     GlobalReport gr = new GlobalReport();
     for (final IndividualReport individual : individuals) {
       gr.addIndividual(individual);
@@ -445,7 +445,9 @@ public class ReportGenerator {
     if (html) {
       copyHtmlFolder(htmlFileStr);
       ReportHtml.parseGlobal(htmlFileStr, gr);
-      showToUser(htmlFileStr);
+      if (!silence) {
+        showToUser(htmlFileStr);
+      }
     }
     if (json) {
       ReportJson.xmlToJson(output, jsonFileStr);
@@ -461,8 +463,10 @@ public class ReportGenerator {
       String targetPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
       try {
         copy(new File(targetPath), outFolder);
-        Desktop desktop = Desktop.getDesktop();
-        desktop.open(outFolder);
+        if (!silence) {
+          Desktop desktop = Desktop.getDesktop();
+          desktop.open(outFolder);
+        }
       } catch (IOException e) {
         System.out.println("Cannot copy the report folder to the output path.");
       }
