@@ -49,13 +49,15 @@ public class StatisticsGeneratorTest extends TestCase {
   }
 
   public void testStatistics() throws Exception {
-    String[] args = new String[1];
+    String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
     Application.Parameters params = new Application.Parameters() {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
+        listRaw.add(args[1]);
         return listRaw;
       }
 
@@ -63,6 +65,7 @@ public class StatisticsGeneratorTest extends TestCase {
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
+        listRaw.add(args[1]);
         return listRaw;
       }
 
@@ -88,13 +91,15 @@ public class StatisticsGeneratorTest extends TestCase {
   }
 
   public void testStatistics2() throws Exception {
-    String[] args = new String[1];
+    String[] args = new String[2];
     args[0] = "src/test/resources/Small/";
+    args[1] = "-s";
     Application.Parameters params = new Application.Parameters() {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
+        listRaw.add(args[1]);
         return listRaw;
       }
 
@@ -102,6 +107,7 @@ public class StatisticsGeneratorTest extends TestCase {
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
+        listRaw.add(args[1]);
         return listRaw;
       }
 
