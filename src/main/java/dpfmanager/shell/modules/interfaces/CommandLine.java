@@ -107,6 +107,7 @@ public class CommandLine implements UserInterface {
     boolean xml = true;
     boolean json = true;
     boolean html = true;
+    boolean silence = false;
 
     List<String> params = new ArrayList<String>();
     for (String s : args) {
@@ -127,16 +128,21 @@ public class CommandLine implements UserInterface {
           File tmp = new File(outputFolder);
           if (!tmp.exists()) {
             if (!tmp.mkdir()) {
-              System.out.println("Cannot create the output folder. Ignoring ouput path.");
+              System.out.println("Cannot create the output folder. Ignoring ouput folder.");
               outputFolder = null;
             }
           } else if (!tmp.isDirectory()) {
-            System.out.println("The output path must be a directory. Ignoring output path.");
+            System.out.println("The output path must be a directory. Ignoring output folder.");
+            outputFolder = null;
+          } else if (tmp.listFiles().length > 0) {
+            System.out.println("The output folder must be empty. Ignoring ouput folder.");
             outputFolder = null;
           }
         } else {
           argsError = true;
         }
+      } else if (arg.equals("-s")) {
+        silence = true;
       } else if (arg.equals("-help")) {
         argsError = true;
         break;
@@ -198,7 +204,8 @@ public class CommandLine implements UserInterface {
       }
       // Global report
       String summaryXml =
-          reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder);
+          reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
+              silence);
 
       // Send report over FTP (only for alpha testing)
       try {
