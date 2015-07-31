@@ -112,8 +112,8 @@ public class ReportHtml {
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
-    int epErr = ir.getEPErrors().size();
-    int epWar = ir.getEPWarnings().size();
+    int epErr = ir.getEpErrors().size();
+    int epWar = ir.getEpWarnings().size();
     int blErr = ir.getBaselineErrors().size();
     int blWar = ir.getBaselineWarnings().size();
     htmlBody = replaceErrorsCount(htmlBody, "EP", epErr, epWar);
@@ -169,8 +169,8 @@ public class ReportHtml {
     htmlBody = htmlBody.replaceAll("##ROWS_BL##", rows);
 
     // Errors and warnings EP
-    rows = generateRows("Error", ir.getEPErrors());
-    rows += generateRows("Warning", ir.getEPWarnings());
+    rows = generateRows("Error", ir.getEpErrors());
+    rows += generateRows("Warning", ir.getEpWarnings());
     htmlBody = htmlBody.replaceAll("##ROWS_EP##", rows);
 
     // Taggs list
@@ -262,7 +262,7 @@ public class ReportHtml {
    * @return the int
    */
   private static int calculatePercent(IndividualReport ir) {
-    Double rest = 100.0 - (ir.getEPErrors().size() + ir.getBaselineErrors().size()) * 7.5;
+    Double rest = 100.0 - (ir.getEpErrors().size() + ir.getBaselineErrors().size()) * 7.5;
     if (rest < 0.0) {
       rest = 0.0;
     }
@@ -316,14 +316,14 @@ public class ReportHtml {
         imageBody = imageBody.replace("##WAR_C##", "success");
       }
       // Tiff/EP errors
-      imageBody = imageBody.replace("##ERR_EP_N##", "" + ir.getEPErrors().size());
-      imageBody = imageBody.replace("##WAR_EP_N##", "" + ir.getEPWarnings().size());
-      if (ir.getEPErrors().size() > 0) {
+      imageBody = imageBody.replace("##ERR_EP_N##", "" + ir.getEpErrors().size());
+      imageBody = imageBody.replace("##WAR_EP_N##", "" + ir.getEpWarnings().size());
+      if (ir.getEpErrors().size() > 0) {
         imageBody = imageBody.replace("##ERR_EP_C##", "error");
       } else {
         imageBody = imageBody.replace("##ERR_EP_C##", "success");
       }
-      if (ir.getEPWarnings().size() > 0) {
+      if (ir.getEpWarnings().size() > 0) {
         imageBody = imageBody.replace("##WAR_EP_C##", "warning");
       } else {
         imageBody = imageBody.replace("##WAR_EP_C##", "success");
@@ -337,7 +337,7 @@ public class ReportHtml {
         imageBody = imageBody.replace("##CLASS##", "error");
         imageBody = imageBody.replace("##RESULT##", "Failed");
       }
-      if (ir.getEPWarnings().size() + ir.getBaselineWarnings().size() > 0) {
+      if (ir.getEpWarnings().size() + ir.getBaselineWarnings().size() > 0) {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "inline-block");
       } else {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "none");
@@ -347,7 +347,7 @@ public class ReportHtml {
       int angle = percent * 360 / 100;
       int reverseAngle = 360 - angle;
       String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
-      if ((ir.getEPErrors().size() + ir.getBaselineErrors().size()) > 0) {
+      if ((ir.getEpErrors().size() + ir.getBaselineErrors().size()) > 0) {
         functionPie += ", '#CCCCCC', 'red'); ";
       } else {
         functionPie += ", '#66CC66', '#66CC66'); ";

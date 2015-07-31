@@ -182,8 +182,8 @@ public class ReportXml {
 
     // TiffEP
     results = doc.createElement("results_tiffep");
-    errors = ir.getEPErrors();
-    warnings = ir.getEPWarnings();
+    errors = ir.getEpErrors();
+    warnings = ir.getEpWarnings();
     addErrorsWarnings(doc, results, errors, warnings);
     implementationCheckerElement.appendChild(results);
 
@@ -191,9 +191,9 @@ public class ReportXml {
     results = doc.createElement("results_tiffep");
     errors = new ArrayList<ValidationEvent>();
     errors.addAll(ir.getBaselineErrors());
-    errors.addAll(ir.getEPErrors());
+    errors.addAll(ir.getEpErrors());
     warnings = ir.getBaselineWarnings();
-    warnings.addAll(ir.getEPWarnings());
+    warnings.addAll(ir.getEpWarnings());
     addErrorsWarnings(doc, results, errors, warnings);
     implementationCheckerElement.appendChild(results);
 
