@@ -17,14 +17,6 @@
     <orderEntry type="library" name="Maven: com.miglayout:miglayout-javafx:4.2" level="project" />
     <orderEntry type="library" name="Maven: com.miglayout:miglayout-core:4.2" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
-    <orderEntry type="library" name="Maven: it.geosolutions.jaiext.rescale:jt-rescale:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: it.geosolutions.jaiext.iterators:jt-iterators:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: it.geosolutions.jaiext.utilities:jt-utilities:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: javax.media:jai_core:1.1.3" level="project" />
-    <orderEntry type="library" name="Maven: javax.media:jai_codec:1.1.3" level="project" />
-    <orderEntry type="library" name="Maven: javax.media:jai_imageio:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.jaitools:jt-utils:1.3.1" level="project" />
-    <orderEntry type="library" name="Maven: com.vividsolutions:jts:1.12" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.1" level="project" />
