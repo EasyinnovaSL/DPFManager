@@ -24,6 +24,11 @@ import java.util.Map;
 public class ReportGeneratorTest extends TestCase {
   TiffReader tr;
 
+  @After
+  public static void afterClass() {
+    Platform.exit();
+  }
+
   /**
    * Pre test.
    */
@@ -38,24 +43,15 @@ public class ReportGeneratorTest extends TestCase {
     assertEquals(ok, true);
   }
 
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
-
   public void testReports1() throws Exception {
-    String[] args = new String[3];
+    String[] args = new String[1];
     args[0] = "src/test/resources/Small/Bilevel.tif";
-    args[1] = "-reportformat";
-    args[2] = "xml";
 
     Application.Parameters params=new Application.Parameters() {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw=new ArrayList<String>();
         listRaw.add(args[0]);
-        listRaw.add(args[1]);
-        listRaw.add(args[2]);
         return listRaw;
       }
 
@@ -63,8 +59,6 @@ public class ReportGeneratorTest extends TestCase {
       public List<String> getUnnamed() {
         ArrayList<String> listRaw=new ArrayList<String>();
         listRaw.add(args[0]);
-        listRaw.add(args[1]);
-        listRaw.add(args[2]);
         return listRaw;
       }
 
@@ -81,7 +75,43 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(2, directori.list().length);
+    assertEquals(5, directori.list().length);
+    Platform.exit();
+  }
+
+  public void testReports2() throws Exception {
+    String[] args = new String[1];
+    args[0] = "src/test/resources/Small";
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(16, directori.list().length);
     Platform.exit();
   }
 

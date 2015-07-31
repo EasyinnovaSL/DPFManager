@@ -456,9 +456,8 @@ public class CommandLine implements UserInterface {
           ValidationResult baselineVal = tr.getBaselineValidation();
           ValidationResult epValidation = tr.getTiffEPValidation();
 
-          String name =
-              realFilename.substring(realFilename.lastIndexOf(File.separator) + 1,
-                  realFilename.length());
+          String pathNorm = realFilename.replaceAll("\\\\", "/");
+          String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, filename, to, baselineVal, epValidation);
           if (outputFile == null) {
             reportResults(name, to, baselineVal);
