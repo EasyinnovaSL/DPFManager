@@ -33,6 +33,7 @@ package dpfmanager;
 
 import org.apache.commons.lang.time.FastDateFormat;
 
+import java.awt.Desktop;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -423,6 +425,19 @@ public class ReportGenerator {
     if (html) {
       copyHtmlFolder(htmlfile);
       ReportHtml.parseGlobal(htmlfile, gr);
+      // Show to user
+      if (Desktop.isDesktopSupported()) {
+        try {
+          String fullHtmlPath = new File(htmlfile).getAbsolutePath();
+          fullHtmlPath = fullHtmlPath.replaceAll("\\\\", "/");
+          Desktop.getDesktop().browse(new URI(fullHtmlPath));
+        } catch (Exception e) {
+          e.printStackTrace();
+          System.out.println("Error opening the bowser with the global report." + e.getMessage());
+        }
+      } else {
+        System.out.println("Desktop services not suported.");
+      }
     }
     if (json) {
       ReportJson.xmlToJson(output, jsonFile);
@@ -430,6 +445,7 @@ public class ReportGenerator {
     if (!xml) {
       ReportGenerator.deleteFileOrFolder(new File(xmlfile));
     }
+
     return output;
   }
 }
