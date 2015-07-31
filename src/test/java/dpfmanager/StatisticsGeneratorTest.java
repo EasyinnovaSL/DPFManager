@@ -235,6 +235,6 @@ public class StatisticsGeneratorTest extends TestCase {
     Elements fileTotal = doc.getElementsByTag(filesTotal);
 
     assertEquals(fileTotal.text(), files + " files processed");
-    assertEquals(fileNum.text(), "0 passed " + files + " failed Global score 100%");
+    assertEquals(fileNum.get(0).parent().text(), "0 passed " + files + " failed Global score 0%");
   }
 }
