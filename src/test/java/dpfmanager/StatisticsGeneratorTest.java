@@ -127,9 +127,9 @@ public class StatisticsGeneratorTest extends TestCase {
     String jsonFile = path + "/summary.json";
     String htmlFile = path + "/report.html";
 
-    assertXML(xmlFile, 6);
-    assertJSON(jsonFile, 6);
-    assertHTML(htmlFile, 6);
+    assertXML(xmlFile, 10);
+    assertJSON(jsonFile, 10);
+    assertHTML(htmlFile, 10);
   }
 
   private String getPath() {
