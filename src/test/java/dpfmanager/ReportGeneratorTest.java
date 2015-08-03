@@ -121,6 +121,95 @@ public class ReportGeneratorTest extends TestCase {
     Platform.exit();
   }
 
+  public void testReportsFormat() throws Exception {
+
+    assertReportsFormat("html");
+    assertReportsFormat("xml");
+    assertReportsFormat("json");
+    assertReportsFormat("xml,html");
+    assertReportsFormat("xml,json");
+    assertReportsFormat("json,html");
+    assertReportsFormat("xml,json,html");
+  }
+
+  private void assertReportsFormat(String formats) throws Exception {
+    String[] args = new String[4];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-reportformat";
+    args[3] = formats;
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        listRaw.add(args[3]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        listRaw.add(args[3]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    String path = getPath();
+
+    File directori = new File(path);
+    if(formats.split(",").length==3){
+      assertEquals(directori.list().length,6);
+    }else if(formats.split(",").length==2){
+      assertEquals(directori.list().length,4);
+    } else {
+      assertEquals(directori.list().length,2);
+    }
+    String extension="";
+    boolean isXML=false;
+    boolean isHTML=false;
+    boolean isJSON=false;
+    for(File file:directori.listFiles()){
+      extension=file.getAbsolutePath();
+      if(!file.isDirectory()) {
+        if (formats.contains("xml")&&!isXML) {
+          isXML=extension.substring(extension.lastIndexOf(".")).equalsIgnoreCase(".xml");
+        }
+        if (formats.contains("json")&&!isJSON) {
+          isJSON=extension.substring(extension.lastIndexOf(".")).equalsIgnoreCase(".json");
+        }
+        if (formats.contains("html")&&!isHTML) {
+         isHTML=extension.substring(extension.lastIndexOf(".")).equalsIgnoreCase(".html");
+        }
+      }
+    }
+    if (formats.contains("xml")) {
+      assertEquals(true,isXML);
+    }
+    if (formats.contains("json")) {
+      assertEquals(true,isJSON);
+    }
+    if (formats.contains("html")) {
+      assertEquals(true,isHTML);
+    }
+    Platform.exit();
+  }
+
   private String getPath() {
     String path = "reports";
     File theDir = new File(path);
