@@ -173,13 +173,10 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    if(formats.split(",").length==3){
-      assertEquals(directori.list().length,6);
-    }else if(formats.split(",").length==2){
-      assertEquals(directori.list().length,4);
-    } else {
-      assertEquals(directori.list().length,2);
-    }
+    int filesExpect=(formats.split(",").length)*2;
+
+    assertEquals(directori.list().length,filesExpect);
+
     String extension="";
     boolean isXML=false;
     boolean isHTML=false;
