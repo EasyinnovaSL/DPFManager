@@ -118,7 +118,7 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(16, directori.list().length);
+    assertEquals(24, directori.list().length);
     Platform.exit();
   }
 
