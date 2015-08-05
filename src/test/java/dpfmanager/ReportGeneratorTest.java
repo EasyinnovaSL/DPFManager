@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.io.File;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,27 +45,24 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   public void testReports1() throws Exception {
-    String[] args = new String[3];
+    String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";
-    args[1] = "-reportformat";
-    args[2] = "xml";
+    args[1] = "-s";
 
-    Application.Parameters params = new Application.Parameters() {
+    Application.Parameters params=new Application.Parameters() {
       @Override
       public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
+        ArrayList<String> listRaw=new ArrayList<String>();
         listRaw.add(args[0]);
         listRaw.add(args[1]);
-        listRaw.add(args[2]);
         return listRaw;
       }
 
       @Override
       public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
+        ArrayList<String> listRaw=new ArrayList<String>();
         listRaw.add(args[0]);
         listRaw.add(args[1]);
-        listRaw.add(args[2]);
         return listRaw;
       }
 
@@ -81,7 +79,217 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(2, directori.list().length);
+    assertEquals(6, directori.list().length);
+    Platform.exit();
+  }
+
+  public void testReports2() throws Exception {
+    String[] args = new String[2];
+    args[0] = "src/test/resources/Small";
+    args[1] = "-s";
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(24, directori.list().length);
+    Platform.exit();
+  }
+
+  public void testReports3() throws Exception {
+    String[] args = new String[2];
+    args[0] = "src/test/resources/Small/Small.zip";
+    args[1] = "-s";
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(12, directori.list().length);
+    Platform.exit();
+  }
+
+  public void testReports4() throws Exception {
+    String dirWeb="http://dpfmanager.org/img/Bilevel.tif";
+    try{
+
+      Socket s = new Socket("www.google.com", 80);
+      String[] args = new String[2];
+      args[0] =dirWeb;
+      args[1] = "-s";
+
+      Application.Parameters params=new Application.Parameters() {
+        @Override
+        public List<String> getRaw() {
+          ArrayList<String> listRaw=new ArrayList<String>();
+          listRaw.add(args[0]);
+          listRaw.add(args[1]);
+          return listRaw;
+        }
+
+        @Override
+        public List<String> getUnnamed() {
+          ArrayList<String> listRaw=new ArrayList<String>();
+          listRaw.add(args[0]);
+          listRaw.add(args[1]);
+          return listRaw;
+        }
+
+        @Override
+        public Map<String, String> getNamed() {
+          return null;
+        }
+      };
+
+      CommandLine cl = new CommandLine(params);
+      cl.launch();
+      Platform.exit();
+
+      String path = getPath();
+
+      File directori = new File(path);
+      assertEquals(6, directori.list().length);
+      Platform.exit();
+    }catch (Exception ex){
+      ex.printStackTrace();
+    }
+  }
+
+  public void testReportsFormat() throws Exception {
+
+    assertReportsFormat("html");
+    assertReportsFormat("xml");
+    assertReportsFormat("json");
+    assertReportsFormat("xml,html");
+    assertReportsFormat("xml,json");
+    assertReportsFormat("json,html");
+    assertReportsFormat("xml,json,html");
+  }
+
+  private void assertReportsFormat(String formats) throws Exception {
+    String[] args = new String[4];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-reportformat";
+    args[3] = formats;
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        listRaw.add(args[3]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        listRaw.add(args[3]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    String path = getPath();
+
+    File directori = new File(path);
+    int filesExpect=(formats.split(",").length)*2;
+
+    assertEquals(directori.list().length,filesExpect);
+
+    String extension="";
+    boolean isXML=false;
+    boolean isHTML=false;
+    boolean isJSON=false;
+    for(File file:directori.listFiles()){
+      extension=file.getAbsolutePath();
+      if(!file.isDirectory()) {
+        if (formats.contains("xml")&&!isXML) {
+          isXML=extension.substring(extension.lastIndexOf(".")).equalsIgnoreCase(".xml");
+        }
+        if (formats.contains("json")&&!isJSON) {
+          isJSON=extension.substring(extension.lastIndexOf(".")).equalsIgnoreCase(".json");
+        }
+        if (formats.contains("html")&&!isHTML) {
+         isHTML=extension.substring(extension.lastIndexOf(".")).equalsIgnoreCase(".html");
+        }
+      }
+    }
+    if (formats.contains("xml")) {
+      assertEquals(true,isXML);
+    }
+    if (formats.contains("json")) {
+      assertEquals(true,isJSON);
+    }
+    if (formats.contains("html")) {
+      assertEquals(true,isHTML);
+    }
     Platform.exit();
   }
 
