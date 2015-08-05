@@ -33,6 +33,7 @@ package dpfmanager;
 
 import org.apache.commons.lang.time.FastDateFormat;
 
+import java.awt.Desktop;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -134,11 +136,10 @@ public class ReportGenerator {
   public static String getReportName(String internalReportFolder, String realFilename) {
     String reportName = internalReportFolder + new File(realFilename).getName();
     File file = new File(reportName);
-    String ext = getFileType(reportName);
     int index = 0;
     while (file.exists()) {
       index++;
-      ext = getFileType(reportName);
+      String ext = getFileType(reportName);
       reportName =
           internalReportFolder
               + new File(realFilename.substring(0, realFilename.lastIndexOf(".")) + index + "." + ext)
@@ -386,6 +387,26 @@ public class ReportGenerator {
   }
 
   /**
+   * Opens the default browser with the HTML file.
+   *
+   * @param htmlfile the file to show
+   */
+  private void showToUser(String htmlfile) {
+    if (Desktop.isDesktopSupported()) {
+      try {
+        String fullHtmlPath = new File(htmlfile).getAbsolutePath();
+        fullHtmlPath = fullHtmlPath.replaceAll("\\\\", "/");
+        Desktop.getDesktop().browse(new URI(fullHtmlPath));
+      } catch (Exception e) {
+        e.printStackTrace();
+        System.out.println("Error opening the bowser with the global report." + e.getMessage());
+      }
+    } else {
+      System.out.println("Desktop services not suported.");
+    }
+  }
+
+  /**
    * Make individual report.
    *
    * @param reportName the output file name
@@ -393,19 +414,19 @@ public class ReportGenerator {
    */
   public void generateIndividualReport(String reportName, IndividualReport ir) {
     String output = null;
-    String xmlfile = reportName + ".xml";
-    String jsonFile = reportName + ".json";
-    String htmlfile = reportName + ".html";
-    output = ReportXml.parseIndividual(xmlfile, ir);
+    String xmlFileStr = reportName + ".xml";
+    String jsonFileStr = reportName + ".json";
+    String htmlFileStr = reportName + ".html";
+    output = ReportXml.parseIndividual(xmlFileStr, ir);
     if (html) {
-      copyHtmlFolder(htmlfile);
-      ReportHtml.parseIndividual(htmlfile, ir);
+      copyHtmlFolder(htmlFileStr);
+      ReportHtml.parseIndividual(htmlFileStr, ir);
     }
     if (json) {
-      ReportJson.xmlToJson(output, jsonFile);
+      ReportJson.xmlToJson(output, jsonFileStr);
     }
     if (!xml) {
-      ReportGenerator.deleteFileOrFolder(new File(xmlfile));
+      ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
     }
   }
 
@@ -417,7 +438,7 @@ public class ReportGenerator {
    * @return the string
    */
   public String makeSummaryReport(String internalReportFolder,
-      ArrayList<IndividualReport> individuals) {
+      ArrayList<IndividualReport> individuals, String outputFolder, boolean silence) {
     GlobalReport gr = new GlobalReport();
     for (final IndividualReport individual : individuals) {
       gr.addIndividual(individual);
@@ -425,20 +446,40 @@ public class ReportGenerator {
     gr.generate();
 
     String output = null;
-    String xmlfile = internalReportFolder + "summary.xml";
-    String jsonFile = internalReportFolder + "summary.json";
-    String htmlfile = internalReportFolder + "report.html";
-    output = ReportXml.parseGlobal(xmlfile, gr);
+    String xmlFileStr = internalReportFolder + "summary.xml";
+    String jsonFileStr = internalReportFolder + "summary.json";
+    String htmlFileStr = internalReportFolder + "report.html";
+    output = ReportXml.parseGlobal(xmlFileStr, gr);
     if (html) {
-      copyHtmlFolder(htmlfile);
-      ReportHtml.parseGlobal(htmlfile, gr);
+      copyHtmlFolder(htmlFileStr);
+      ReportHtml.parseGlobal(htmlFileStr, gr);
+      if (!silence) {
+        showToUser(htmlFileStr);
+      }
     }
     if (json) {
-      ReportJson.xmlToJson(output, jsonFile);
+      ReportJson.xmlToJson(output, jsonFileStr);
     }
     if (!xml) {
-      ReportGenerator.deleteFileOrFolder(new File(xmlfile));
+      ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
     }
+
+    if (outputFolder != null) {
+      File htmlFile = new File(htmlFileStr);
+      File outFolder = new File(outputFolder);
+      String absolutePath = htmlFile.getAbsolutePath();
+      String targetPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+      try {
+        copy(new File(targetPath), outFolder);
+        if (!silence) {
+          Desktop desktop = Desktop.getDesktop();
+          desktop.open(outFolder);
+        }
+      } catch (IOException e) {
+        System.out.println("Cannot copy the report folder to the output path.");
+      }
+    }
+
     return output;
   }
 }

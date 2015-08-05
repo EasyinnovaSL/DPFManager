@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>CommandLine.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Easy Innova
  * @version 1.0
@@ -30,6 +18,11 @@
  */
 
 package dpfmanager.shell.modules.interfaces;
+
+import dpfmanager.IndividualReport;
+import dpfmanager.ReportGenerator;
+import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
+import javafx.application.Application.Parameters;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -40,10 +33,6 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.profiles.BaselineProfile;
 import com.easyinnova.tiff.profiles.TiffEPProfile;
 import com.easyinnova.tiff.reader.TiffReader;
-
-import dpfmanager.IndividualReport;
-import dpfmanager.ReportGenerator;
-import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -66,8 +55,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javafx.application.Application.Parameters;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -81,10 +68,14 @@ public class CommandLine implements UserInterface {
    */
   List<String> args;
 
-  /** The allowed extensions. */
+  /**
+   * The allowed extensions.
+   */
   List<String> allowedExtensions;
 
-  /** The Reports Generator. */
+  /**
+   * The Reports Generator.
+   */
   ReportGenerator reportGenerator;
 
   /**
@@ -313,7 +304,7 @@ public class CommandLine implements UserInterface {
       }
 
     } catch (Exception e) {
-      System.out.println("Failed communication with conformance checker: " + e.getMessage());
+      System.err.println("Failed communication with conformance checker: " + e.getMessage());
     }
   }
 
@@ -321,7 +312,6 @@ public class CommandLine implements UserInterface {
    * Process a Tiff file.
    *
    * @param filename the filename
-   * @param outputFile the output file
    * @param internalReportFolder the internal report folder
    * @return the list
    */
@@ -348,7 +338,7 @@ public class CommandLine implements UserInterface {
         }
         zipFile.close();
       } catch (Exception ex) {
-        System.out.println("Error reading zip file");
+        System.err.println("Error reading zip file");
       }
     } else if (isUrl(filename)) {
       // URL
@@ -373,11 +363,11 @@ public class CommandLine implements UserInterface {
           indReports.add(ir);
         }
       } catch (Exception ex) {
-        System.out.println("Error in File " + filename);
+        System.err.println("Error in File " + filename);
       }
     } else {
       // Anything else
-      System.out.println("File " + filename + " does not exist or is not a Tiff");
+      System.err.println("File " + filename + " does not exist or is not a Tiff");
     }
     return indReports;
   }
@@ -446,7 +436,6 @@ public class CommandLine implements UserInterface {
    *
    * @param filename the filename
    * @param realFilename the real filename
-   * @param outputFile the output file
    * @param internalReportFolder the internal report folder
    * @return the individual report
    * @throws ReadTagsIOException the read tags io exception
@@ -484,9 +473,9 @@ public class CommandLine implements UserInterface {
           break;
       }
     } catch (ReadTagsIOException e) {
-      System.out.println("Error loading Tiff library dependencies");
+      System.err.println("Error loading Tiff library dependencies");
     } catch (ReadIccConfigIOException e) {
-      System.out.println("Error loading Tiff library dependencies");
+      System.err.println("Error loading Tiff library dependencies");
     }
     return null;
   }
