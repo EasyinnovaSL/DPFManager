@@ -38,7 +38,6 @@ import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -182,18 +181,17 @@ public class ReportXml {
 
     // TiffEP
     results = doc.createElement("results_tiffep");
-    errors = ir.getEpErrors();
-    warnings = ir.getEpWarnings();
+    errors = ir.getEPErrors();
+    warnings = ir.getEPWarnings();
     addErrorsWarnings(doc, results, errors, warnings);
     implementationCheckerElement.appendChild(results);
 
     // Total
     results = doc.createElement("results_tiffep");
-    errors = new ArrayList<ValidationEvent>();
-    errors.addAll(ir.getBaselineErrors());
-    errors.addAll(ir.getEpErrors());
+    errors = ir.getBaselineErrors();
+    errors.addAll(ir.getEPErrors());
     warnings = ir.getBaselineWarnings();
-    warnings.addAll(ir.getEpWarnings());
+    warnings.addAll(ir.getEPWarnings());
     addErrorsWarnings(doc, results, errors, warnings);
     implementationCheckerElement.appendChild(results);
 

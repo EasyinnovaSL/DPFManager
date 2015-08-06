@@ -239,7 +239,7 @@ public class IndividualReport {
    *
    * @return the errors
    */
-  public List<ValidationEvent> getEpErrors() {
+  public List<ValidationEvent> getEPErrors() {
     return errorsEp;
   }
 
@@ -248,7 +248,7 @@ public class IndividualReport {
    *
    * @return the warnings
    */
-  public List<ValidationEvent> getEpWarnings() {
+  public List<ValidationEvent> getEPWarnings() {
     return warningsEp;
   }
 

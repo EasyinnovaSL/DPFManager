@@ -40,7 +40,7 @@ import com.easyinnova.tiff.model.types.IFD;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -58,35 +58,6 @@ public class ReportHtml {
   private static String insertHtmlFolder(String file) {
     String name = file.substring(file.lastIndexOf("/") + 1, file.length());
     return file.replace(name, "html/" + name);
-  }
-
-  /**
-   * Replace the strings for show the errors information.
-   * 
-   * @param htmlBody the HTML full body
-   * @param type the type (EP or BL)
-   * @param err the error numbers
-   * @param war the warning numbers
-   * @return htmlBody modified
-   */
-  public static String replaceErrorsCount(String htmlBody, String type, int err, int war) {
-    if (err > 0) {
-      htmlBody = htmlBody.replaceAll("##" + type + "_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##" + type + "_ERR##", "block");
-      htmlBody = htmlBody.replaceAll("##" + type + "_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##" + type + "_ERR-WAR##", "");
-    } else if (war > 0) {
-      htmlBody = htmlBody.replaceAll("##" + type + "_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##" + type + "_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##" + type + "_WAR##", "block");
-      htmlBody = htmlBody.replaceAll("##" + type + "_ERR-WAR##", "");
-    } else {
-      htmlBody = htmlBody.replaceAll("##" + type + "_OK##", "block");
-      htmlBody = htmlBody.replaceAll("##" + type + "_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##" + type + "_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##" + type + "_ERR-WAR##", "display: none;");
-    }
-    return htmlBody;
   }
 
   /**
@@ -112,38 +83,34 @@ public class ReportHtml {
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
-    int epErr = ir.getEpErrors().size();
-    int epWar = ir.getEpWarnings().size();
-    int blErr = ir.getBaselineErrors().size();
-    int blWar = ir.getBaselineWarnings().size();
-    htmlBody = replaceErrorsCount(htmlBody, "EP", epErr, epWar);
-    htmlBody = replaceErrorsCount(htmlBody, "BL", blErr, blWar);
+    int epErr = ir.getEPErrors().size();
+    int epWar = ir.getEPWarnings().size();
+    if (epErr > 0) {
+      htmlBody = htmlBody.replaceAll("##EP_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##EP_ERR##", "block");
+      htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "");
+    } else if (epWar > 0) {
+      htmlBody = htmlBody.replaceAll("##EP_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##EP_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##EP_WAR##", "block");
+      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##EP_OK##", "block");
+      htmlBody = htmlBody.replaceAll("##EP_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "display: none;");
+    }
 
-    // Errors Baseline
+    // Errors
     String clas = "success";
-    if (blErr > 0) {
-      clas = "error";
-    }
-    htmlBody = htmlBody.replaceAll("##U_BL_ERR_N##", "" + blErr);
-    htmlBody = htmlBody.replaceAll("##U_BL_ERR_CLASS##", clas);
-
-    // Warnings Baseline
-    clas = "success";
-    if (blWar > 0) {
-      clas = "warning";
-    }
-    htmlBody = htmlBody.replaceAll("##U_BL_WAR##", "" + blWar);
-    htmlBody = htmlBody.replaceAll("##U_BL_WAR_CLASS##", clas);
-
-    // Errors EP
-    clas = "success";
     if (epErr > 0) {
       clas = "error";
     }
     htmlBody = htmlBody.replaceAll("##U_EP_ERR_N##", "" + epErr);
     htmlBody = htmlBody.replaceAll("##U_EP_ERR_CLASS##", clas);
 
-    // Warnings EP
+    // Warnings
     clas = "success";
     if (epWar > 0) {
       clas = "warning";
@@ -151,30 +118,37 @@ public class ReportHtml {
     htmlBody = htmlBody.replaceAll("##U_EP_WAR##", "" + epWar);
     htmlBody = htmlBody.replaceAll("##U_EP_WAR_CLASS##", clas);
 
-    // TO-DO, actually never fix nothing
+    // TO-DO, actually never fix nothing || no policy checker
+    htmlBody = htmlBody.replaceAll("##U_PC_CLASS##", "success");
+    htmlBody = htmlBody.replaceAll("##U_PCR##", "" + 0);
+    htmlBody = htmlBody.replaceAll("##CP_OK##", "none");
+    htmlBody = htmlBody.replaceAll("##CP_ERR##", "none");
     htmlBody = htmlBody.replaceAll("##F_EP_ERR_CLASS##", "info");
     htmlBody = htmlBody.replaceAll("##F_EP_WAR_CLASS##", "info");
-    htmlBody = htmlBody.replaceAll("##F_BL_ERR_CLASS##", "info");
-    htmlBody = htmlBody.replaceAll("##F_BL_WAR_CLASS##", "info");
+    htmlBody = htmlBody.replaceAll("##F_PC_CLASS##", "info");
     htmlBody = htmlBody.replaceAll("##F_EP_ERR##", "0");
     htmlBody = htmlBody.replaceAll("##F_EP_WAR##", "0");
-    htmlBody = htmlBody.replaceAll("##F_BL_ERR##", "0");
-    htmlBody = htmlBody.replaceAll("##F_BL_WAR##", "0");
+    htmlBody = htmlBody.replaceAll("##F_PC##", "0");
     // End TO-DO
 
     // Full Description
-    // Errors and warnings Baseline
-    String rows = generateRows("Error", ir.getBaselineErrors());
-    rows += generateRows("Warning", ir.getBaselineWarnings());
-    htmlBody = htmlBody.replaceAll("##ROWS_BL##", rows);
+    // Errors and warnings
+    String row;
+    String rows = "";
+    for (ValidationEvent val : ir.getEPErrors()) {
+      row = "<tr><td class=\"bold error\">Error</td><td>##TEXT##</td></tr>";
+      row = row.replace("##TEXT##", val.getDescription());
+      rows += row;
+    }
 
-    // Errors and warnings EP
-    rows = generateRows("Error", ir.getEpErrors());
-    rows += generateRows("Warning", ir.getEpWarnings());
+    for (ValidationEvent val : ir.getEPWarnings()) {
+      row = "<tr><td class=\"bold warning\">Warning</td><td>##TEXT##</td></tr>";
+      row = row.replace("##TEXT##", val.getDescription());
+      rows += row;
+    }
     htmlBody = htmlBody.replaceAll("##ROWS_EP##", rows);
 
     // Taggs list
-    String row;
     rows = "";
     Metadata meta = ir.getTiffModel().getMetadata();
     for (String key : meta.keySet()) {
@@ -202,20 +176,6 @@ public class ReportHtml {
     // Finish, write to html file
     htmlBody = htmlBody.replaceAll("\\.\\./html/", "");
     ReportGenerator.writeToFile(outputfile, htmlBody);
-  }
-
-
-  private static String generateRows(String type, List<ValidationEvent> list) {
-    String row;
-    String rows = "";
-    for (ValidationEvent val : list) {
-      row =
-          "<tr><td class=\"bold " + type.toLowerCase() + "\">" + type
-              + "</td><td>##TEXT##</td></tr>";
-      row = row.replace("##TEXT##", val.getDescription());
-      rows += row;
-    }
-    return rows;
   }
 
   /**
@@ -249,7 +209,7 @@ public class ReportHtml {
       graphic.dispose();
 
       ImageIO.write(convertedImage, "jpg", new File(outputfile));
-    } catch (Exception e) {
+    } catch (IOException e) {
       return false;
     }
     return true;
@@ -262,7 +222,7 @@ public class ReportHtml {
    * @return the int
    */
   private static int calculatePercent(IndividualReport ir) {
-    Double rest = 100.0 - (ir.getEpErrors().size() + ir.getBaselineErrors().size()) * 7.5;
+    Double rest = 100.0 - ir.getEPErrors().size() * 12.5;
     if (rest < 0.0) {
       rest = 0.0;
     }
@@ -301,32 +261,18 @@ public class ReportHtml {
       imageBody = imageBody.replace("##PERCENT##", "" + percent);
       imageBody = imageBody.replace("##INDEX##", "" + index);
       imageBody = imageBody.replace("##IMG_NAME##", "" + ir.getFileName());
-      imageBody = imageBody.replace("##ERR_N##", "" + ir.getBaselineErrors().size());
-      imageBody = imageBody.replace("##WAR_N##", "" + ir.getBaselineWarnings().size());
+      imageBody = imageBody.replace("##ERR_N##", "" + ir.getEPErrors().size());
+      imageBody = imageBody.replace("##WAR_N##", "" + ir.getEPWarnings().size());
       imageBody = imageBody.replace("##HREF##", "html/" + ir.getFileName() + ".html");
-      // BaselineErrors
-      if (ir.getBaselineErrors().size() > 0) {
+      if (ir.getEPErrors().size() > 0) {
         imageBody = imageBody.replace("##ERR_C##", "error");
       } else {
         imageBody = imageBody.replace("##ERR_C##", "success");
       }
-      if (ir.getBaselineWarnings().size() > 0) {
+      if (ir.getEPWarnings().size() > 0) {
         imageBody = imageBody.replace("##WAR_C##", "warning");
       } else {
         imageBody = imageBody.replace("##WAR_C##", "success");
-      }
-      // Tiff/EP errors
-      imageBody = imageBody.replace("##ERR_EP_N##", "" + ir.getEpErrors().size());
-      imageBody = imageBody.replace("##WAR_EP_N##", "" + ir.getEpWarnings().size());
-      if (ir.getEpErrors().size() > 0) {
-        imageBody = imageBody.replace("##ERR_EP_C##", "error");
-      } else {
-        imageBody = imageBody.replace("##ERR_EP_C##", "success");
-      }
-      if (ir.getEpWarnings().size() > 0) {
-        imageBody = imageBody.replace("##WAR_EP_C##", "warning");
-      } else {
-        imageBody = imageBody.replace("##WAR_EP_C##", "success");
       }
 
       // Percent Info
@@ -337,7 +283,7 @@ public class ReportHtml {
         imageBody = imageBody.replace("##CLASS##", "error");
         imageBody = imageBody.replace("##RESULT##", "Failed");
       }
-      if (ir.getEpWarnings().size() + ir.getBaselineWarnings().size() > 0) {
+      if (ir.getEPWarnings().size() > 0) {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "inline-block");
       } else {
         imageBody = imageBody.replace("##DISPLAY_WAR##", "none");
@@ -347,7 +293,7 @@ public class ReportHtml {
       int angle = percent * 360 / 100;
       int reverseAngle = 360 - angle;
       String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
-      if ((ir.getEpErrors().size() + ir.getBaselineErrors().size()) > 0) {
+      if (ir.getEPErrors().size() > 0) {
         functionPie += ", '#CCCCCC', 'red'); ";
       } else {
         functionPie += ", '#66CC66', '#66CC66'); ";
@@ -373,8 +319,6 @@ public class ReportHtml {
     htmlBody = htmlBody.replace("##COUNT##", "" + gr.getReportsCount());
     htmlBody = htmlBody.replaceAll("##OK##", "" + gr.getReportsOk());
     htmlBody = htmlBody.replace("##KO##", "" + gr.getReportsKo());
-    htmlBody = htmlBody.replace("##OK_BL##", "" + gr.getReportsBl());
-    htmlBody = htmlBody.replace("##OK_EP##", "" + gr.getReportsEp());
     if (gr.getReportsOk() >= gr.getReportsKo()) {
       htmlBody = htmlBody.replace("##OK_C##", "success");
       htmlBody = htmlBody.replace("##KO_C##", "info-white");
@@ -396,6 +340,11 @@ public class ReportHtml {
 
     // All charts calls
     htmlBody = htmlBody.replaceAll("##PLOT##", pieFunctions);
+
+    // TO-DO
+    htmlBody = htmlBody.replace("##OK_PC##", "0");
+    htmlBody = htmlBody.replace("##OK_EP##", "0");
+    // END TO-DO
 
     htmlBody = htmlBody.replaceAll("\\.\\./", "");
     ReportGenerator.writeToFile(outputfile, htmlBody);

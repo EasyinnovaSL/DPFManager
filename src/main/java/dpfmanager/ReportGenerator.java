@@ -80,16 +80,12 @@ public class ReportGenerator {
   public static String createReportPath() {
     // reports folder
     String path = "reports";
-    File theDir = new File(path);
-    if (!theDir.exists()) {
-      theDir.mkdir();
-    }
+    validateDirectory(path);
+
     // date folder
     path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
-    theDir = new File(path);
-    if (!theDir.exists()) {
-      theDir.mkdir();
-    }
+    validateDirectory(path);
+
     // index folder
     int index = 1;
     File file = new File(path + "/" + index);
@@ -98,12 +94,24 @@ public class ReportGenerator {
       file = new File(path + "/" + index);
     }
     path += "/" + index;
-    theDir = new File(path);
+    validateDirectory(path);
+
+    path += "/";
+    return path;
+  }
+
+  /**
+   * Check if the path exists and if it's a directory, otherwise create the directory with this name.
+   * @param path the path
+   */
+  private static void validateDirectory(String path){
+    File theDir = new File(path);
+    if (theDir.exists() && !theDir.isDirectory()) {
+      theDir.delete();
+    }
     if (!theDir.exists()) {
       theDir.mkdir();
     }
-    path += "/";
-    return path;
   }
 
   /**
@@ -114,7 +122,7 @@ public class ReportGenerator {
    */
   static String getFileType(String path) {
     String fileType = null;
-    fileType = path.substring(path.indexOf('.', path.lastIndexOf('/')) + 1).toUpperCase();
+    fileType = path.substring(path.lastIndexOf('.') + 1).toUpperCase();
     return fileType;
   }
 
@@ -134,8 +142,8 @@ public class ReportGenerator {
       String ext = getFileType(reportName);
       reportName =
           internalReportFolder
-              + new File(realFilename.substring(0, realFilename.lastIndexOf(".")) + index + ext)
-                  .getName();
+              + new File(realFilename.substring(0, realFilename.lastIndexOf(".")) + index + "." + ext)
+              .getName();
       file = new File(reportName);
     }
     return reportName;
@@ -190,9 +198,9 @@ public class ReportGenerator {
         }
       }
     } catch (FileNotFoundException e) {
-      System.out.println("Template for html not found in dir.");
+      System.err.println("Template for html not found in dir.");
     } catch (IOException e) {
-      System.out.println("Error reading " + pathStr);
+      System.err.println("Error reading " + pathStr);
     }
 
     return text;
@@ -222,7 +230,7 @@ public class ReportGenerator {
 
   /**
    * Delete the file or folder and it subs folders / files.
-   * 
+   *
    * @param file the file/folder
    */
   public static void deleteFileOrFolder(File file) {
@@ -304,7 +312,7 @@ public class ReportGenerator {
 
   /**
    * Extracts a zip entry (file entry).
-   * 
+   *
    * @param zipIn the zip input stream
    * @param filePath the file path
    * @throws IOException exception
@@ -370,7 +378,7 @@ public class ReportGenerator {
               zip.closeEntry();
             }
           } catch (IOException e) {
-            System.out.println("Exception!");
+            System.err.println("Exception!");
             e.printStackTrace();
           }
         }
@@ -380,7 +388,7 @@ public class ReportGenerator {
 
   /**
    * Opens the default browser with the HTML file.
-   * 
+   *
    * @param htmlfile the file to show
    */
   private void showToUser(String htmlfile) {
