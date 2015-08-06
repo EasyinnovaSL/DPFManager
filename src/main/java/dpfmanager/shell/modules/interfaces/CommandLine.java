@@ -472,6 +472,7 @@ public class CommandLine implements UserInterface {
 
           ValidationResult baselineVal = tr.getBaselineValidation();
           ValidationResult epValidation = tr.getTiffEPValidation();
+          //ValidationResult itValidation = tr.getTiffITValidation();
 
           String pathNorm = realFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);

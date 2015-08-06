@@ -89,14 +89,22 @@ public class TiffConformanceChecker {
       conformenceCheckerElement.appendChild(implementationChecker);
       Element standards = doc.createElement("standards");
       implementationChecker.appendChild(standards);
+
+      // Baseline 6
       Element standard = doc.createElement("standard");
       standards.appendChild(standard);
       addElement(doc, standard, "name", "TIFF");
       addElement(doc, standard, "description", "TIFF Baseline 6.0");
+      // Tiff/EP
       standard = doc.createElement("standard");
       standards.appendChild(standard);
       addElement(doc, standard, "name", "TIFF/EP");
       addElement(doc, standard, "description", "TIFF extension for Electronic Photography");
+      // Tiff/IT
+      standard = doc.createElement("standard");
+      standards.appendChild(standard);
+      addElement(doc, standard, "name", "TIFF/IT");
+      addElement(doc, standard, "description", "TIFF extension for Image Technology");
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
