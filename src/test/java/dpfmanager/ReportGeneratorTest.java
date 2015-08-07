@@ -118,13 +118,13 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(24, directori.list().length);
+    assertEquals(16, directori.list().length);
     Platform.exit();
   }
 
   public void testReports3() throws Exception {
     String[] args = new String[2];
-    args[0] = "src/test/resources/Small/Small.zip";
+    args[0] = "src/test/resources/Small.zip";
     args[1] = "-s";
 
     Application.Parameters params=new Application.Parameters() {

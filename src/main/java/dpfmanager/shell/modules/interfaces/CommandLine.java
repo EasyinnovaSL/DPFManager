@@ -19,11 +19,6 @@
 
 package dpfmanager.shell.modules.interfaces;
 
-import dpfmanager.IndividualReport;
-import dpfmanager.ReportGenerator;
-import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
-import javafx.application.Application.Parameters;
-
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -33,6 +28,10 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.profiles.BaselineProfile;
 import com.easyinnova.tiff.profiles.TiffEPProfile;
 import com.easyinnova.tiff.reader.TiffReader;
+
+import dpfmanager.IndividualReport;
+import dpfmanager.ReportGenerator;
+import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -54,6 +53,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javafx.application.Application.Parameters;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
