@@ -158,7 +158,9 @@ public class CommandLine implements UserInterface {
         argsError = true;
       } else {
         // File or directory to process
-        File file = new File(arg);
+        String arg_mod = arg;
+        if (!new File(arg_mod).isAbsolute() && !new File(arg_mod).exists() && new File("../" + arg_mod).exists()) arg_mod = "../" + arg;
+        File file = new File(arg_mod);
         if (file.isDirectory()) {
           File[] listOfFiles = file.listFiles();
           for (int j = 0; j < listOfFiles.length; j++) {
@@ -167,7 +169,7 @@ public class CommandLine implements UserInterface {
             }
           }
         } else {
-          files.add(arg);
+          files.add(arg_mod);
         }
       }
       idx++;

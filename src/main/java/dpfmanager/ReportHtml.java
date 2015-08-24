@@ -148,7 +148,7 @@ public class ReportHtml {
     }
     htmlBody = htmlBody.replaceAll("##ROWS_EP##", rows);
 
-    // Taggs list
+    // Tags list
     rows = "";
     Metadata meta = ir.getTiffModel().getMetadata();
     for (String key : meta.keySet()) {
