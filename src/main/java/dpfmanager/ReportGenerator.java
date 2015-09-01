@@ -188,7 +188,7 @@ public class ReportGenerator {
               BufferedReader br = new BufferedReader(new InputStreamReader(zip));
               String line = br.readLine();
               while (line != null) {
-                text += line;
+                text += line + System.lineSeparator();
                 line = br.readLine();
               }
               found = true;

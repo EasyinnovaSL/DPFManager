@@ -31,7 +31,9 @@
 
 package dpfmanager;
 
+import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.Metadata;
+import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffObject;
 import com.easyinnova.tiff.model.ValidationEvent;
@@ -85,6 +87,26 @@ public class ReportHtml {
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
     int epErr = ir.getEPErrors().size();
     int epWar = ir.getEPWarnings().size();
+    int blErr = ir.getBaselineErrors().size();
+    int blWar = ir.getBaselineWarnings().size();
+    int itErr = ir.getITErrors().size();
+    int itWar = ir.getITWarnings().size();
+    if (blErr > 0) {
+      htmlBody = htmlBody.replaceAll("##BL_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##BL_ERR##", "block");
+      htmlBody = htmlBody.replaceAll("##BL_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##BL_ERR-WAR##", "");
+    } else if (blWar > 0) {
+      htmlBody = htmlBody.replaceAll("##BL_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##BL_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##BL_WAR##", "block");
+      htmlBody = htmlBody.replaceAll("##BL_ERR-WAR##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##BL_OK##", "block");
+      htmlBody = htmlBody.replaceAll("##BL_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##BL_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##BL_ERR-WAR##", "display: none;");
+    }
     if (epErr > 0) {
       htmlBody = htmlBody.replaceAll("##EP_OK##", "none");
       htmlBody = htmlBody.replaceAll("##EP_ERR##", "block");
@@ -100,6 +122,22 @@ public class ReportHtml {
       htmlBody = htmlBody.replaceAll("##EP_ERR##", "none");
       htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
       htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "display: none;");
+    }
+    if (itErr > 0) {
+      htmlBody = htmlBody.replaceAll("##IT_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##IT_ERR##", "block");
+      htmlBody = htmlBody.replaceAll("##IT_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "");
+    } else if (itWar > 0) {
+      htmlBody = htmlBody.replaceAll("##IT_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##IT_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT_WAR##", "block");
+      htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##IT_OK##", "block");
+      htmlBody = htmlBody.replaceAll("##IT_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "display: none;");
     }
 
     // Errors
@@ -133,42 +171,105 @@ public class ReportHtml {
 
     // Full Description
     // Errors and warnings
+
+    // EP
     String row;
     String rows = "";
     for (ValidationEvent val : ir.getEPErrors()) {
-      row = "<tr><td class=\"bold error\">Error</td><td>##TEXT##</td></tr>";
+      row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+      row = row.replace("##LOC##", val.getLocation());
       row = row.replace("##TEXT##", val.getDescription());
       rows += row;
     }
 
     for (ValidationEvent val : ir.getEPWarnings()) {
-      row = "<tr><td class=\"bold warning\">Warning</td><td>##TEXT##</td></tr>";
+      row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+      row = row.replace("##LOC##", val.getLocation());
       row = row.replace("##TEXT##", val.getDescription());
       rows += row;
     }
     htmlBody = htmlBody.replaceAll("##ROWS_EP##", rows);
 
+    // Baseline
+    rows = "";
+    for (ValidationEvent val : ir.getBaselineErrors()) {
+      row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+      row = row.replace("##LOC##", val.getLocation());
+      row = row.replace("##TEXT##", val.getDescription());
+      rows += row;
+    }
+
+    for (ValidationEvent val : ir.getBaselineWarnings()) {
+      row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+      row = row.replace("##LOC##", val.getLocation());
+      row = row.replace("##TEXT##", val.getDescription());
+      rows += row;
+    }
+    htmlBody = htmlBody.replaceAll("##ROWS_BL##", rows);
+
+    // IT
+    rows = "";
+    for (ValidationEvent val : ir.getITErrors()) {
+      row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+      row = row.replace("##LOC##", val.getLocation());
+      row = row.replace("##TEXT##", val.getDescription());
+      rows += row;
+    }
+
+    for (ValidationEvent val : ir.getITWarnings()) {
+      row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+      row = row.replace("##LOC##", val.getLocation());
+      row = row.replace("##TEXT##", val.getDescription());
+      rows += row;
+    }
+    htmlBody = htmlBody.replaceAll("##ROWS_IT##", rows);
+
     // Tags list
     rows = "";
-    Metadata meta = ir.getTiffModel().getMetadata();
-    for (String key : meta.keySet()) {
-      row = "<tr><td>##KEY##</td><td>##VALUE##</td></tr>";
-      row = row.replace("##KEY##", key);
-      row = row.replace("##VALUE##", meta.get(key).toString());
-      rows += row;
+    TiffDocument td = ir.getTiffModel();
+    IFD ifd = td.getFirstIFD();
+    int index = 0;
+    while (ifd != null) {
+      IfdTags meta = ifd.getMetadata();
+      for (TagValue tv : meta.getTags()) {
+        String seetr = "";
+        if (index > 0) seetr = " hide";
+        row = "<tr class='ifd ifd"+index+seetr+"'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+        row = row.replace("##ID##", tv.getId()+"");
+        row = row.replace("##KEY##", tv.getName());
+        row = row.replace("##VALUE##", tv.toString());
+        rows += row;
+      }
+      ifd = ifd.getNextIFD();
+      index++;
     }
     htmlBody = htmlBody.replaceAll("##ROWS_TAGS##", rows);
 
     // File Structure
     String ul = "<ul>";
-    TiffDocument td = ir.getTiffModel();
-    for (TiffObject object : td.getImageIfds()) {
-      IFD ifd = (IFD) object;
-      ul += "<li><i class=\"fa fa-file-o\"></i> " + ifd.toString();
+    index = 0;
+    ifd = td.getFirstIFD();
+    while (ifd != null) {
+      String typ = " - Main image";
+      if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Thumbnail";
+      ul += "<li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick='showIfd("+index+++")'>" + ifd.toString() + typ + "</a>";
       if (ifd.getsubIFD() != null) {
-        ul += "<ul><li><i class=\"fa fa-file-o\"></i> " + ifd.getsubIFD().toString() + "</li></ul>";
+        typ="";
+        if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Main image";
+        else typ = " - Thumbnail";
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> SubIFD"+typ+"</li></ul>";
+      }
+      if (ifd.containsTagId(34665)) {
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> EXIF</li></ul>";
+      }
+      if (ifd.containsTagId(700)) {
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> XMP</li></ul>";
+      }
+      if (ifd.containsTagId(33723)) {
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> IPTC</li></ul>";
       }
       ul += "</li>";
+      ifd = ifd.getNextIFD();
     }
     ul += "</ul>";
     htmlBody = htmlBody.replaceAll("##UL##", ul);

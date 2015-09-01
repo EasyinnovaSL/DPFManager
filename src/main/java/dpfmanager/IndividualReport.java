@@ -77,6 +77,12 @@ public class IndividualReport {
   /** The Tiff EP warning list. */
   private List<ValidationEvent> warningsEp;
 
+  /** The Tiff IT errors list. */
+  private List<ValidationEvent> errorsIt;
+
+  /** The Tiff IT warning list. */
+  private List<ValidationEvent> warningsIt;
+
   /** The Tiff Document object. */
   private TiffDocument tiffModel;
 
@@ -90,13 +96,13 @@ public class IndividualReport {
    * @param epValidation the validation
    */
   public IndividualReport(String name, String path, TiffDocument tiffModel,
-      ValidationResult baselineValidation, ValidationResult epValidation) {
+      ValidationResult baselineValidation, ValidationResult epValidation, ValidationResult itValidation) {
     filename = name;
     filepath = path;
     ifdCount = 0;
     listIsimg = new ArrayList<Boolean>();
     listHasSubIfd = new ArrayList<Boolean>();
-    generate(tiffModel, baselineValidation, epValidation);
+    generate(tiffModel, baselineValidation, epValidation, itValidation);
   }
 
   /**
@@ -145,7 +151,7 @@ public class IndividualReport {
    * @param epValidation the ep validation
    */
   public void generate(TiffDocument tiffModel, ValidationResult validation,
-      ValidationResult epValidation) {
+      ValidationResult epValidation, ValidationResult itValidation) {
     this.tiffModel = tiffModel;
     // tiff structure
     IFD ifd = tiffModel.getFirstIFD();
@@ -166,6 +172,8 @@ public class IndividualReport {
     warningsBl = validation.getWarnings();
     errorsEp = epValidation.getErrors();
     warningsEp = epValidation.getWarnings();
+    errorsIt = itValidation.getErrors();
+    warningsIt = itValidation.getWarnings();
 
   }
 
@@ -235,7 +243,7 @@ public class IndividualReport {
   }
 
   /**
-   * Get errors list.
+   * Get EP errors list.
    *
    * @return the errors
    */
@@ -244,12 +252,30 @@ public class IndividualReport {
   }
 
   /**
-   * Get warnings list.
+   * Get EP warnings list.
    *
    * @return the warnings
    */
   public List<ValidationEvent> getEPWarnings() {
     return warningsEp;
+  }
+
+  /**
+   * Get IT errors list.
+   *
+   * @return the errors
+   */
+  public List<ValidationEvent> getITErrors() {
+    return errorsIt;
+  }
+
+  /**
+   * Get IT warnings list.
+   *
+   * @return the warnings
+   */
+  public List<ValidationEvent> getITWarnings() {
+    return warningsIt;
   }
 
   /**

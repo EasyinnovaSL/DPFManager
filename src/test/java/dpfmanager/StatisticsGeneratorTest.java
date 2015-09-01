@@ -191,9 +191,9 @@ public class StatisticsGeneratorTest extends TestCase {
 
     if (nList != null && nList.getLength() > 0) {
       Element el = (Element) nList.item(0);
-      assertEquals(getIntValue(el, "reports_count"), files);
-      assertEquals(getIntValue(el, "valid_files"), 0);
-      assertEquals(getIntValue(el, "invalid_files"), files);
+      assertEquals(files, getIntValue(el, "reports_count"));
+      assertEquals(0, getIntValue(el, "valid_files"));
+      assertEquals(files, getIntValue(el, "invalid_files"));
     }
   }
 

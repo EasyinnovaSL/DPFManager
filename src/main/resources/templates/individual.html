@@ -32,9 +32,9 @@
 					<div class="row">
 						<div class="col-md-10 bot20 text-center-sm">
 							<h2>##IMG_NAME##</h2>
-							<div style="display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Baseline</div>
-							<div style="display: ##EP_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to Baseline, BUT it has some warnings</div>
-							<div style="display: ##EP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to Baseline</div>
+							<div style="display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Tiff/EP</div>
+							<div style="display: ##EP_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to Tiff/EP, BUT it has some warnings</div>
+							<div style="display: ##EP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to Tiff/EP</div>
 			<!-- 				<div style="display: ##CP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file passes the policy checker</div> -->
 			<!-- 				<div style="display: ##CP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT pass the policy checker</div> -->
 						</div>
@@ -42,7 +42,7 @@
 			                <table class="center-table CustomTable">
 			                    <tr>
 			                        <td></td>
-			                        <td >Baseline</td>
+			                        <td >Tiff/EP</td>
 			                        <td></td>
 			<!--                         <td>Policy checker</td> -->
 			                    </tr>
@@ -75,7 +75,8 @@
 					<h4><i class="fa fa-tags"></i>  Tags</h4>
 					<table class="CustomTable3">
 				        <tr>
-				            <th class="bold">Tag</th>
+				            <th class="bold">Tag Id</th>
+				            <th class="bold">Tag Name</th>
 				            <th class="bold">Value</th>
 				        </tr>
 				        ##ROWS_TAGS##
@@ -89,13 +90,42 @@
 			<div class="row top30 bot50">
 				<div class="col-md-6">
 					<h4><i class="fa fa-check-square-o"></i>  Baseline conformance</h4>
+					<span style="margin-left: 20px; display: ##BL_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Baseline</span>
+					<table style="##BL_ERR-WAR##" class="CustomTable3">
+				        <tr>
+				            <th class="bold">Type</th>
+				            <th class="bold">Location</th>
+				            <th class="bold">Description</th>
+				        </tr>
+				        ##ROWS_BL##
+					</table>
+				</div>
+			</div>
+			<div class="row top30 bot50">
+				<div class="col-md-6">
+					<h4><i class="fa fa-check-square-o"></i>  Tiff/EP conformance</h4>
 					<span style="margin-left: 20px; display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Baseline</span>
 					<table style="##EP_ERR-WAR##" class="CustomTable3">
 				        <tr>
 				            <th class="bold">Type</th>
+				            <th class="bold">Location</th>
 				            <th class="bold">Description</th>
 				        </tr>
 				        ##ROWS_EP##
+					</table>
+				</div>
+			</div>
+			<div class="row top30 bot50">
+				<div class="col-md-6">
+					<h4><i class="fa fa-check-square-o"></i>  Tiff/IT conformance</h4>
+					<span style="margin-left: 20px; display: ##IT_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Baseline</span>
+					<table style="##IT_ERR-WAR##" class="CustomTable3">
+				        <tr>
+				            <th class="bold">Type</th>
+				            <th class="bold">Location</th>
+				            <th class="bold">Description</th>
+				        </tr>
+				        ##ROWS_IT##
 					</table>
 				</div>
 			</div>
@@ -107,5 +137,15 @@
 			<a href="../report.html" class="button">Back</a>
 		</div>
 	</div>
+	
+	<!-- 	Java Script -->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript">
+	function showIfd(nameid){
+		$(".ifd").removeClass("hide");
+		$(".ifd").hide();
+		$(".ifd"+nameid).show();
+	}
+    </script>
 </body>
 </html>

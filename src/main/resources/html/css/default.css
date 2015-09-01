@@ -335,3 +335,6 @@ h4 i{
 	background-color: rgba(0, 106, 255, 0.08);;
 }
 
+.hide {
+	display:none;
+}

@@ -42,27 +42,23 @@ public class GlobalReport {
   /** The list of all individual reports. */
   private List<IndividualReport> reports;
 
-  /** Number of valid EP. */
-  private int nReportsOnlyBl;
+  /** Number of EP ok */
+  int nreportsEpOk;
 
-  /** Number of valid Baseline. */
-  private int nReportsOnlyEp;
+  /** Number of Baseline ok */
+  int nreportsBlOk;
 
-  /** Number of valid reports. */
-  private int nreportsok;
-
-  /** Number of failed reports. */
-  private int nreportsko;
+  /** Number of IT ok */
+  int nreportsItOk;
 
   /**
    * Instantiates a new global report.
    */
   public GlobalReport() {
     reports = new ArrayList<IndividualReport>();
-    nreportsok = 0;
-    nreportsko = 0;
-    nReportsOnlyBl = 0;
-    nReportsOnlyEp = 0;
+    nreportsEpOk = 0;
+    nreportsItOk = 0;
+    nreportsBlOk = 0;
   }
 
   /**
@@ -79,16 +75,10 @@ public class GlobalReport {
    *
    */
   public void generate() {
-    for (final IndividualReport ir : reports) {
-      if (ir.getBaselineErrors().size() == 0 && ir.getEPErrors().size() == 0) {
-        nreportsok++;
-      } else if (ir.getBaselineErrors().size() > 0 && ir.getEPErrors().size() > 0) {
-        nreportsko++;
-      } else if (ir.getEPErrors().size() > 0) {
-        nReportsOnlyEp++;
-      } else {
-        nReportsOnlyBl++;
-      }
+    for (IndividualReport ir : reports) {
+      if (ir.getEPErrors().size()==0) nreportsEpOk++;
+      if (ir.getITErrors().size()==0) nreportsItOk++;
+      if (ir.getBaselineErrors().size()==0) nreportsBlOk++;
     }
   }
 
@@ -98,7 +88,7 @@ public class GlobalReport {
    * @return nreportsok + nreportsko
    */
   public int getReportsCount() {
-    return nreportsok + nreportsko;
+    return reports.size();
   }
 
   /**
@@ -107,7 +97,7 @@ public class GlobalReport {
    * @return nreportsok
    */
   public int getReportsOk() {
-    return nreportsok;
+    return nreportsEpOk;
   }
 
   /**
@@ -116,7 +106,7 @@ public class GlobalReport {
    * @return nreportsko
    */
   public int getReportsKo() {
-    return nreportsko;
+    return getReportsCount() - nreportsEpOk;
   }
 
   /**
@@ -125,7 +115,7 @@ public class GlobalReport {
    * @return nReportsOnlyBl
    */
   public int getReportsBl() {
-    return nReportsOnlyBl;
+    return nreportsBlOk;
   }
 
   /**
@@ -134,7 +124,7 @@ public class GlobalReport {
    * @return nReportsOnlyEp
    */
   public int getReportsEp() {
-    return nReportsOnlyEp;
+    return nreportsEpOk;
   }
 
   /**

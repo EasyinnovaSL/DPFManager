@@ -31,13 +31,16 @@
 
 package dpfmanager;
 
+import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.ValidationEvent;
+import com.easyinnova.tiff.model.types.IFD;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -60,33 +63,93 @@ public class ReportXml {
    *
    * @param doc the doc
    * @param ir the ir
+   * @param ifd the ifd
    * @param index the index
    * @return the element
    */
-  private static Element createIfdNode(Document doc, IndividualReport ir, int index) {
+  private static Element createIfdNode(Document doc, IndividualReport ir, IFD ifd, int index) {
     Element ifdNode = doc.createElement("ifdNode");
-    Element el;
+    Element el, elchild, elchild2;
 
     // Number
     el = doc.createElement("number");
-    el.setTextContent("" + (index + 1));
+    el.setTextContent("" + index);
     ifdNode.appendChild(el);
 
     // Image
     el = doc.createElement("isimg");
-    if (ir.getIsimgAt(index)) {
+    if (ifd.isImage()) {
       el.setTextContent("yes");
     } else {
       el.setTextContent("no");
     }
     ifdNode.appendChild(el);
 
+    // Strips or Tiles
+    el = doc.createElement("image_representation");
+    if (ifd.hasStrips()) {
+      el.setTextContent("strips");
+    } else if (ifd.hasTiles()) {
+      el.setTextContent("tiles");
+    } else {
+      el.setTextContent("none");
+    }
+    ifdNode.appendChild(el);
+
     // SubImage
     el = doc.createElement("hasSubIfd");
-    if (ir.getHasSubIfdAt(index)) {
+    if (ifd.hasSubIFD()) {
       el.setTextContent("yes");
     } else {
       el.setTextContent("no");
+    }
+    ifdNode.appendChild(el);
+
+    // Exif
+    el = doc.createElement("hasExif");
+    if (ifd.containsTagId(34665)) {
+      el.setTextContent("yes");
+    } else {
+      el.setTextContent("no");
+    }
+    ifdNode.appendChild(el);
+
+    // XMP
+    el = doc.createElement("hasXMP");
+    if (ifd.containsTagId(700)) {
+      el.setTextContent("yes");
+    } else {
+      el.setTextContent("no");
+    }
+    ifdNode.appendChild(el);
+
+    // IPTC
+    el = doc.createElement("hasIPTC");
+    if (ifd.containsTagId(33723)) {
+      el.setTextContent("yes");
+    } else {
+      el.setTextContent("no");
+    }
+    ifdNode.appendChild(el);
+
+    // Tags
+    el = doc.createElement("tags");
+    for (TagValue t : ifd.getMetadata().getTags()) {
+      elchild = doc.createElement("tag");
+
+      elchild2 = doc.createElement("name");
+      elchild2.setTextContent(t.getName());
+      elchild.appendChild(elchild2);
+
+      elchild2 = doc.createElement("id");
+      elchild2.setTextContent(t.getId()+"");
+      elchild.appendChild(elchild2);
+
+      elchild2 = doc.createElement("value");
+      elchild2.setTextContent(t.toString());
+      elchild.appendChild(elchild2);
+
+      el.appendChild(elchild);
     }
     ifdNode.appendChild(el);
 
@@ -153,9 +216,12 @@ public class ReportXml {
     // tiff structure
     Element tiffStructureElement = doc.createElement("tiff_structure");
     Element ifdTree = doc.createElement("ifdTree");
-    for (int index = 0; index < ir.getIfdCount(); index++) {
-      Element ifdNode = createIfdNode(doc, ir, index);
+    IFD ifd = ir.getTiffModel().getFirstIFD();
+    int index = 1;
+    while (ifd != null) {
+      Element ifdNode = createIfdNode(doc, ir, ifd, index++);
       ifdTree.appendChild(ifdNode);
+      ifd = ifd.getNextIFD();
     }
     tiffStructureElement.appendChild(ifdTree);
     report.appendChild(tiffStructureElement);
@@ -186,13 +252,24 @@ public class ReportXml {
     addErrorsWarnings(doc, results, errors, warnings);
     implementationCheckerElement.appendChild(results);
 
-    // Total
-    results = doc.createElement("results_tiffep");
-    errors = ir.getBaselineErrors();
-    errors.addAll(ir.getEPErrors());
-    warnings = ir.getBaselineWarnings();
-    warnings.addAll(ir.getEPWarnings());
+    // TiffIT
+    results = doc.createElement("results_tiffit");
+    errors = ir.getITErrors();
+    warnings = ir.getITWarnings();
     addErrorsWarnings(doc, results, errors, warnings);
+    implementationCheckerElement.appendChild(results);
+
+    // Total
+    results = doc.createElement("results");
+    List<ValidationEvent> errorsTotal = new ArrayList<ValidationEvent>();
+    List<ValidationEvent> warningsTotal = new ArrayList<ValidationEvent>();
+    errorsTotal.addAll(ir.getBaselineErrors());
+    errorsTotal.addAll(ir.getEPErrors());
+    errorsTotal.addAll(ir.getITErrors());
+    warningsTotal.addAll(ir.getBaselineWarnings());
+    warningsTotal.addAll(ir.getEPWarnings());
+    warningsTotal.addAll(ir.getITWarnings());
+    addErrorsWarnings(doc, results, errorsTotal, warningsTotal);
     implementationCheckerElement.appendChild(results);
 
     return report;

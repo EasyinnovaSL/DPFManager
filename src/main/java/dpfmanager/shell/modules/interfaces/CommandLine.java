@@ -459,16 +459,13 @@ public class CommandLine implements UserInterface {
         case 0:
           TiffDocument to = tr.getModel();
 
-          TiffEPProfile bpep = new TiffEPProfile(to);
-          bpep.validate();
-
           ValidationResult baselineVal = tr.getBaselineValidation();
           ValidationResult epValidation = tr.getTiffEPValidation();
-          //ValidationResult itValidation = tr.getTiffITValidation();
+          ValidationResult itValidation = tr.getTiffITValidation(0);
 
           String pathNorm = realFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, filename, to, baselineVal, epValidation);
+          IndividualReport ir = new IndividualReport(name, filename, to, baselineVal, epValidation, itValidation);
           // reportResults(name, to, baselineVal);
           internalReport(ir, tr, realFilename, internalReportFolder);
           return ir;
