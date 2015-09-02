@@ -78,7 +78,7 @@ public class MainApp extends Application {
       // GUI
       LOG.info("Starting Hello JavaFX and Maven demonstration application");
 
-      String fxmlFile = "/fxml/hellov.fxml";
+      String fxmlFile = "/fxml/design.fxml";
       LOG.debug("Loading FXML for main view from: {}", fxmlFile);
       FXMLLoader loader = new FXMLLoader();
       Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
@@ -91,7 +91,7 @@ public class MainApp extends Application {
       final int height = gd.getDisplayMode().getHeight() - 75;
 
       Scene scene = new Scene(rootNode, width, height);
-      scene.getStylesheets().add("/styles/stylesv.css");
+      scene.getStylesheets().add("/styles/style.css");
 
       stage.setTitle("DPFManager");
       stage.setScene(scene);

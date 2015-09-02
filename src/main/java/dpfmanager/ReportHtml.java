@@ -43,6 +43,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
 import javax.imageio.ImageIO;
 
@@ -229,16 +230,19 @@ public class ReportHtml {
     TiffDocument td = ir.getTiffModel();
     IFD ifd = td.getFirstIFD();
     int index = 0;
+    boolean expertMode = true;
     while (ifd != null) {
       IfdTags meta = ifd.getMetadata();
       for (TagValue tv : meta.getTags()) {
-        String seetr = "";
-        if (index > 0) seetr = " hide";
-        row = "<tr class='ifd ifd"+index+seetr+"'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
-        row = row.replace("##ID##", tv.getId()+"");
-        row = row.replace("##KEY##", tv.getName());
-        row = row.replace("##VALUE##", tv.toString());
-        rows += row;
+        if (showTag(tv) || expertMode) {
+          String seetr = "";
+          if (index > 0) seetr = " hide";
+          row = "<tr class='ifd ifd" + index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+          row = row.replace("##ID##", tv.getId() + "");
+          row = row.replace("##KEY##", tv.getName());
+          row = row.replace("##VALUE##", tv.toString());
+          rows += row;
+        }
       }
       ifd = ifd.getNextIFD();
       index++;
@@ -277,6 +281,38 @@ public class ReportHtml {
     // Finish, write to html file
     htmlBody = htmlBody.replaceAll("\\.\\./html/", "");
     ReportGenerator.writeToFile(outputfile, htmlBody);
+  }
+
+  /**
+   * Show Tag.
+   *
+   * @return true, if successful
+   */
+  private static boolean showTag(TagValue tv) {
+    HashSet<String> showableTags = new HashSet<String>();
+    showableTags.add("ImageWidth");
+    showableTags.add("ImageLength");
+    showableTags.add("BitsPerSample");
+    showableTags.add("Compression");
+    showableTags.add("PhotometricInterpretation");
+    showableTags.add("ImageDescription");
+    showableTags.add("Make");
+    showableTags.add("Model");
+    showableTags.add("Orientation");
+    showableTags.add("SamplesPerPixel");
+    showableTags.add("XResolution");
+    showableTags.add("YResolution");
+    showableTags.add("ResolutionUnit");
+    showableTags.add("PlanarConfiguration");
+    showableTags.add("Software");
+    showableTags.add("DateTime");
+    showableTags.add("Artist");
+    showableTags.add("Copyright");
+    showableTags.add("DateTimeOriginal");
+    showableTags.add("Flash");
+    showableTags.add("TIFFEPStandardID");
+    //if (tv.getName().equals(""+tv.getId())) return false;
+    return showableTags.contains(tv.getName());
   }
 
   /**
