@@ -6,3 +6,48 @@
 .mainimage{
 	-fx-image: url("../images/main.png");
 }
+
+/* Radio button style */
+.radio-button .radio{
+	-fx-border-width     : 1px   ;
+	-fx-border-color     : #31C2F3  ;
+	-fx-background-color: white;
+	-fx-background-image: null;
+	-fx-border-radius: 15px;
+	-fx-padding: 4px;
+}
+
+.radio-button .dot {
+	-fx-mark-highlight-color: #31C2F3 ;
+	-fx-mark-color: #31C2F3 ;
+}
+
+.button{
+	-fx-background-color: #303030;
+	-fx-border-width     : 1px   ;
+	-fx-border-color     : white  ;
+	-fx-border-radius: 5 5 5 5;
+	-fx-background-radius: 5 5 5 5;
+}
+
+#myButton{
+	-fx-background-color: #31C2F3;
+	-fx-border-width     : 1px   ;
+	-fx-border-color     : #31C2F3  ;
+	-fx-border-radius: 5 5 5 5;
+	-fx-background-radius: 5 5 5 5;
+}
+.button:pressed{
+	-fx-background-color: #848282;
+}
+
+#myButton:pressed{
+	-fx-background-color: #19B2D8;
+}
+
+
+/*
+.button:hover{
+	-fx-background-color: rgba(235,235,235,0.7);
+}
+*/
