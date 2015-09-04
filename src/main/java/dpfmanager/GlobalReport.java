@@ -76,9 +76,9 @@ public class GlobalReport {
    */
   public void generate() {
     for (IndividualReport ir : reports) {
-      if (ir.getEPErrors().size()==0) nreportsEpOk++;
-      if (ir.getITErrors().size()==0) nreportsItOk++;
-      if (ir.getBaselineErrors().size()==0) nreportsBlOk++;
+      if (ir.getEPErrors() == null || ir.getEPErrors().size()==0) nreportsEpOk++;
+      if (ir.getITErrors() == null || ir.getITErrors().size()==0) nreportsItOk++;
+      if (ir.getBaselineErrors() == null || ir.getBaselineErrors().size()==0) nreportsBlOk++;
     }
   }
 

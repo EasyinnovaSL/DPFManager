@@ -41,9 +41,19 @@ import com.easyinnova.tiff.model.types.IFD;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.HashSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
@@ -86,12 +96,12 @@ public class ReportHtml {
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
-    int epErr = ir.getEPErrors().size();
-    int epWar = ir.getEPWarnings().size();
-    int blErr = ir.getBaselineErrors().size();
-    int blWar = ir.getBaselineWarnings().size();
-    int itErr = ir.getITErrors().size();
-    int itWar = ir.getITWarnings().size();
+    int epErr = ir.getEPErrors() == null ? 0 : ir.getEPErrors().size();
+    int epWar = ir.getEPWarnings() == null ? 0 : ir.getEPWarnings().size();
+    int blErr = ir.getBaselineErrors() == null ? 0 : ir.getBaselineErrors().size();
+    int blWar = ir.getBaselineWarnings() == null ? 0 : ir.getBaselineWarnings().size();
+    int itErr = ir.getITErrors() == null ? 0 : ir.getITErrors().size();
+    int itWar = ir.getITWarnings() == null ? 0 : ir.getITWarnings().size();
     if (blErr > 0) {
       htmlBody = htmlBody.replaceAll("##BL_OK##", "none");
       htmlBody = htmlBody.replaceAll("##BL_ERR##", "block");
@@ -176,52 +186,64 @@ public class ReportHtml {
     // EP
     String row;
     String rows = "";
-    for (ValidationEvent val : ir.getEPErrors()) {
-      row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-      row = row.replace("##LOC##", val.getLocation());
-      row = row.replace("##TEXT##", val.getDescription());
-      rows += row;
+    if (ir.getEPErrors() != null ) {
+      for (ValidationEvent val : ir.getEPErrors()) {
+        row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+        row = row.replace("##LOC##", val.getLocation());
+        row = row.replace("##TEXT##", val.getDescription());
+        rows += row;
+      }
     }
 
-    for (ValidationEvent val : ir.getEPWarnings()) {
-      row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-      row = row.replace("##LOC##", val.getLocation());
-      row = row.replace("##TEXT##", val.getDescription());
-      rows += row;
+    if (ir.getEPWarnings() != null ) {
+      for (ValidationEvent val : ir.getEPWarnings()) {
+        row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+        row = row.replace("##LOC##", val.getLocation());
+        row = row.replace("##TEXT##", val.getDescription());
+        rows += row;
+      }
     }
     htmlBody = htmlBody.replaceAll("##ROWS_EP##", rows);
 
     // Baseline
     rows = "";
-    for (ValidationEvent val : ir.getBaselineErrors()) {
-      row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-      row = row.replace("##LOC##", val.getLocation());
-      row = row.replace("##TEXT##", val.getDescription());
-      rows += row;
+    if (ir.getBaselineErrors() != null ) {
+      for (ValidationEvent val : ir.getBaselineErrors()) {
+        row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+        row = row.replace("##LOC##", val.getLocation());
+        row = row.replace("##TEXT##", val.getDescription());
+        rows += row;
+      }
     }
 
-    for (ValidationEvent val : ir.getBaselineWarnings()) {
-      row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-      row = row.replace("##LOC##", val.getLocation());
-      row = row.replace("##TEXT##", val.getDescription());
-      rows += row;
+    if (ir.getBaselineWarnings() != null ) {
+      for (ValidationEvent val : ir.getBaselineWarnings()) {
+        row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+        row = row.replace("##LOC##", val.getLocation());
+        row = row.replace("##TEXT##", val.getDescription());
+        rows += row;
+      }
     }
     htmlBody = htmlBody.replaceAll("##ROWS_BL##", rows);
 
     // IT
     rows = "";
-    for (ValidationEvent val : ir.getITErrors()) {
-      row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-      row = row.replace("##LOC##", val.getLocation());
-      row = row.replace("##TEXT##", val.getDescription());
-      rows += row;
+    if (ir.getITErrors() != null ) {
+      for (ValidationEvent val : ir.getITErrors()) {
+        row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+        row = row.replace("##LOC##", val.getLocation());
+        row = row.replace("##TEXT##", val.getDescription());
+        rows += row;
+      }
     }
 
-    for (ValidationEvent val : ir.getITWarnings()) {
-      row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-      row = row.replace("##LOC##", val.getLocation());
-      row = row.replace("##TEXT##", val.getDescription());
-      rows += row;
+    if (ir.getITWarnings() != null ) {
+      for (ValidationEvent val : ir.getITWarnings()) {
+        row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+        row = row.replace("##LOC##", val.getLocation());
+        row = row.replace("##TEXT##", val.getDescription());
+        rows += row;
+      }
     }
     htmlBody = htmlBody.replaceAll("##ROWS_IT##", rows);
 
@@ -230,7 +252,7 @@ public class ReportHtml {
     TiffDocument td = ir.getTiffModel();
     IFD ifd = td.getFirstIFD();
     int index = 0;
-    boolean expertMode = true;
+    boolean expertMode = false;
     while (ifd != null) {
       IfdTags meta = ifd.getMetadata();
       for (TagValue tv : meta.getTags()) {
@@ -284,13 +306,70 @@ public class ReportHtml {
   }
 
   /**
+   * Read showable tags file.
+   *
+   * @return hashset of tags
+   */
+  private static HashSet<String> readShowableTags() {
+    HashSet<String> hs = new HashSet<String>();
+    try {
+      Path path = Paths.get("./src/main/resources/");
+      if (Files.exists(path)) {
+        // Look in current dir
+        FileReader fr = new FileReader("./src/main/resources/htmltags.txt");
+        BufferedReader br = new BufferedReader(fr);
+        String line = br.readLine();
+        while (line != null) {
+          String[] fields = line.split("\t");
+          if (fields.length == 1) {
+            hs.add(fields[0]);
+          }
+          line = br.readLine();
+        }
+        br.close();
+        fr.close();
+      } else {
+        // Look in JAR
+        CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
+        if (src != null) {
+          URL jar = src.getLocation();
+          ZipInputStream zip = new ZipInputStream(jar.openStream());
+          ZipEntry zipFile;
+          while ((zipFile = zip.getNextEntry()) != null) {
+            String name = zipFile.getName();
+            if (name.equals("resources/htmltags.txt")) {
+              try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(zip));
+                String line = br.readLine();
+                while (line != null) {
+                  String[] fields = line.split("\t");
+                  if (fields.length == 1) {
+                    hs.add(fields[0]);
+                  }
+                  line = br.readLine();
+                }
+              } catch (Exception ex) {
+                throw new Exception("");
+              }
+            }
+          }
+        } else {
+          throw new Exception("");
+        }
+      }
+    } catch (Exception ex) {
+    }
+    return hs;
+  }
+
+  /**
    * Show Tag.
    *
    * @return true, if successful
    */
   private static boolean showTag(TagValue tv) {
-    HashSet<String> showableTags = new HashSet<String>();
-    showableTags.add("ImageWidth");
+    HashSet<String> showableTags = readShowableTags();
+    /*showableTags.add("ImageWidth");
     showableTags.add("ImageLength");
     showableTags.add("BitsPerSample");
     showableTags.add("Compression");
@@ -310,7 +389,7 @@ public class ReportHtml {
     showableTags.add("Copyright");
     showableTags.add("DateTimeOriginal");
     showableTags.add("Flash");
-    showableTags.add("TIFFEPStandardID");
+    showableTags.add("TIFFEPStandardID");*/
     //if (tv.getName().equals(""+tv.getId())) return false;
     return showableTags.contains(tv.getName());
   }
@@ -359,7 +438,8 @@ public class ReportHtml {
    * @return the int
    */
   private static int calculatePercent(IndividualReport ir) {
-    Double rest = 100.0 - ir.getEPErrors().size() * 12.5;
+    Double rest = 100.0;
+    if (ir.getEPErrors() != null) rest = 100.0 - ir.getEPErrors().size() * 12.5;
     if (rest < 0.0) {
       rest = 0.0;
     }

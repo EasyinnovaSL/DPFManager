@@ -31,6 +31,7 @@ import com.easyinnova.tiff.reader.TiffReader;
 
 import dpfmanager.IndividualReport;
 import dpfmanager.ReportGenerator;
+import dpfmanager.shell.modules.ProcessInput;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
 import org.apache.camel.CamelContext;
@@ -183,59 +184,8 @@ public class CommandLine implements UserInterface {
     } else {
       readConformanceChecker();
 
-      reportGenerator = new ReportGenerator();
-      reportGenerator.setReportsFormats(xml, json, html);
-      // Process files
-      ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
-      String internalReportFolder = ReportGenerator.createReportPath();
-      for (final String filename : files) {
-        System.out.println("");
-        System.out.println("Processing file " + filename);
-        List<IndividualReport> indReports = processFile(filename, internalReportFolder);
-        if (indReports.size() > 0) {
-          individuals.addAll(indReports);
-        }
-      }
-      // Global report
-      String summaryXml =
-          reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
-              silence);
-
-      // Send report over FTP (only for alpha testing)
-      try {
-        sendFtpCamel(reportGenerator, summaryXml);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  /**
-   * Send ftp.
-   *
-   * @param reportGenerator the report generator
-   * @param summaryXml the summary xml
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   */
-  private void sendFtpCamel(ReportGenerator reportGenerator, String summaryXml)
-      throws NoSuchAlgorithmException {
-    String ftp = "84.88.145.109";
-    String user = "preformaapp";
-    String password = "2.eX#lh>";
-
-    CamelContext context = new DefaultCamelContext();
-    try {
-      context.addRoutes(new RouteBuilder() {
-        public void configure() {
-          from("direct:sendFtp").to("sftp://" + user + "@" + ftp + "/?password=" + password);
-        }
-      });
-      ProducerTemplate template = context.createProducerTemplate();
-      context.start();
-      template.sendBody("direct:sendFtp", summaryXml);
-      context.stop();
-    } catch (Exception e) {
-      e.printStackTrace();
+      ProcessInput pi = new ProcessInput(allowedExtensions, true, true, true);
+      pi.ProcessFiles(files, xml, json, html, outputFolder, silence);
     }
   }
 
@@ -312,176 +262,6 @@ public class CommandLine implements UserInterface {
   }
 
   /**
-   * Process a Tiff file.
-   *
-   * @param filename the filename
-   * @param internalReportFolder the internal report folder
-   * @return the list
-   */
-  private List<IndividualReport> processFile(String filename, String internalReportFolder) {
-    List<IndividualReport> indReports = new ArrayList<IndividualReport>();
-    IndividualReport ir = null;
-    if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
-      // Zip File
-      try {
-        ZipFile zipFile = new ZipFile(filename);
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-          ZipEntry entry = entries.nextElement();
-          if (isTiff(entry.getName())) {
-            InputStream stream = zipFile.getInputStream(entry);
-            String filename2 = createTempFile(entry.getName(), stream);
-            ir = processTiffFile(filename2, filename2, internalReportFolder);
-            if (ir != null) {
-              indReports.add(ir);
-            }
-            File file = new File(filename2);
-            file.delete();
-          }
-        }
-        zipFile.close();
-      } catch (Exception ex) {
-        System.err.println("Error reading zip file");
-      }
-    } else if (isUrl(filename)) {
-      // URL
-      try {
-        InputStream input = new java.net.URL(filename).openStream();
-        String filename2 = createTempFile(filename, input);
-        filename = java.net.URLDecoder.decode(filename, "UTF-8");
-        ir = processTiffFile(filename2, filename, internalReportFolder);
-        if (ir != null) {
-          indReports.add(ir);
-        }
-        File file = new File(filename2);
-        file.delete();
-      } catch (Exception ex) {
-        System.out.println("Error in URL " + filename);
-      }
-    } else if (isTiff(filename)) {
-      // File
-      try {
-        ir = processTiffFile(filename, filename, internalReportFolder);
-        if (ir != null) {
-          indReports.add(ir);
-        }
-      } catch (Exception ex) {
-        System.err.println("Error in File " + filename);
-      }
-    } else {
-      // Anything else
-      System.err.println("File " + filename + " does not exist or is not a Tiff");
-    }
-    return indReports;
-  }
-
-  /**
-   * Creates the temp file.
-   *
-   * @param name the name
-   * @param stream the stream
-   * @return the string
-   * @throws IOException Signals that an I/O exception has occurred.
-   */
-  private String createTempFile(String name, InputStream stream) throws IOException {
-    String filename2 = name + "2";
-    if (filename2.contains("/")) {
-      filename2 = filename2.substring(filename2.lastIndexOf("/") + 1);
-    }
-    while (new File(filename2).isFile()) {
-      filename2 += "x";
-    }
-    File targetFile = new File(filename2);
-    OutputStream outStream = new FileOutputStream(targetFile);
-    byte[] buffer = new byte[8 * 1024];
-    int bytesRead;
-    while ((bytesRead = stream.read(buffer)) != -1) {
-      outStream.write(buffer, 0, bytesRead);
-    }
-    outStream.close();
-    return filename2;
-  }
-
-  /**
-   * Checks if is url.
-   *
-   * @param filename the filename
-   * @return true, if is url
-   */
-  private boolean isUrl(String filename) {
-    boolean ok = true;
-    try {
-      new java.net.URL(filename);
-    } catch (Exception ex) {
-      ok = false;
-    }
-    return ok;
-  }
-
-  /**
-   * Checks if is tiff.
-   *
-   * @param filename the filename
-   * @return true, if is tiff
-   */
-  private boolean isTiff(String filename) {
-    boolean isTiff = false;
-    for (String extension : allowedExtensions) {
-      if (filename.toLowerCase().endsWith(extension.toLowerCase())) {
-        isTiff = true;
-      }
-    }
-    return isTiff;
-  }
-
-  /**
-   * Process tiff file.
-   *
-   * @param filename the filename
-   * @param realFilename the real filename
-   * @param internalReportFolder the internal report folder
-   * @return the individual report
-   * @throws ReadTagsIOException the read tags io exception
-   * @throws ReadIccConfigIOException the read icc config io exception
-   */
-  private IndividualReport processTiffFile(String filename, String realFilename,
-      String internalReportFolder) throws ReadTagsIOException, ReadIccConfigIOException {
-    try {
-      TiffReader tr = new TiffReader();
-      int result = tr.readFile(filename);
-      switch (result) {
-        case -1:
-          System.out.println("File '" + filename + "' does not exist");
-          break;
-        case -2:
-          System.out.println("IO Exception in file '" + filename + "'");
-          break;
-        case 0:
-          TiffDocument to = tr.getModel();
-
-          ValidationResult baselineVal = tr.getBaselineValidation();
-          ValidationResult epValidation = tr.getTiffEPValidation();
-          ValidationResult itValidation = tr.getTiffITValidation(0);
-
-          String pathNorm = realFilename.replaceAll("\\\\", "/");
-          String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, filename, to, baselineVal, epValidation, itValidation);
-          // reportResults(name, to, baselineVal);
-          internalReport(ir, tr, realFilename, internalReportFolder);
-          return ir;
-        default:
-          System.out.println("Unknown result (" + result + ") in file '" + filename + "'");
-          break;
-      }
-    } catch (ReadTagsIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
-    } catch (ReadIccConfigIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
-    }
-    return null;
-  }
-
-  /**
    * Report the results of the reading process to the console.
    *
    * @param filename the filename
@@ -535,21 +315,6 @@ public class CommandLine implements UserInterface {
       val.printErrors();
     }
     val.printWarnings();
-  }
-
-  /**
-   * Report the results of the reading process to the console.
-   *
-   * @param ir the individual report
-   * @param tiffreader the tiff reader
-   * @param realFilename the real filename
-   * @param folder the internal report folder
-   */
-  private void internalReport(IndividualReport ir, TiffReader tiffreader, String realFilename,
-      String folder) {
-    String outputfile = ReportGenerator.getReportName(folder, realFilename);
-    reportGenerator.generateIndividualReport(outputfile, ir);
-    System.out.println("Internal report '" + outputfile + "' created");
   }
 
   /**

@@ -168,12 +168,18 @@ public class IndividualReport {
     height = tiffModel.getMetadataSingleString("ImageLength");
 
     // errors & warnings
-    errorsBl = validation.getErrors();
-    warningsBl = validation.getWarnings();
-    errorsEp = epValidation.getErrors();
-    warningsEp = epValidation.getWarnings();
-    errorsIt = itValidation.getErrors();
-    warningsIt = itValidation.getWarnings();
+    if (validation != null) {
+      errorsBl = validation.getErrors();
+      warningsBl = validation.getWarnings();
+    }
+    if (epValidation != null) {
+      errorsEp = epValidation.getErrors();
+      warningsEp = epValidation.getWarnings();
+    }
+    if (itValidation != null) {
+      errorsIt = itValidation.getErrors();
+      warningsIt = itValidation.getWarnings();
+    }
 
   }
 
@@ -230,6 +236,7 @@ public class IndividualReport {
    * @return the errors
    */
   public List<ValidationEvent> getBaselineErrors() {
+    if (errorsBl == null) return new ArrayList<ValidationEvent>();
     return errorsBl;
   }
 
@@ -239,6 +246,7 @@ public class IndividualReport {
    * @return the warnings
    */
   public List<ValidationEvent> getBaselineWarnings() {
+    if (warningsBl == null) return new ArrayList<ValidationEvent>();
     return warningsBl;
   }
 
@@ -248,6 +256,7 @@ public class IndividualReport {
    * @return the errors
    */
   public List<ValidationEvent> getEPErrors() {
+    if (errorsEp == null) return new ArrayList<ValidationEvent>();
     return errorsEp;
   }
 
@@ -257,6 +266,7 @@ public class IndividualReport {
    * @return the warnings
    */
   public List<ValidationEvent> getEPWarnings() {
+    if (warningsEp == null) return new ArrayList<ValidationEvent>();
     return warningsEp;
   }
 
@@ -266,6 +276,7 @@ public class IndividualReport {
    * @return the errors
    */
   public List<ValidationEvent> getITErrors() {
+    if (errorsIt == null) return new ArrayList<ValidationEvent>();
     return errorsIt;
   }
 
@@ -275,6 +286,7 @@ public class IndividualReport {
    * @return the warnings
    */
   public List<ValidationEvent> getITWarnings() {
+    if (warningsIt == null) return new ArrayList<ValidationEvent>();
     return warningsIt;
   }
 

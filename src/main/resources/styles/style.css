@@ -30,6 +30,13 @@
 	-fx-background-radius: 5 5 5 5;
 }
 
+.button-check{
+	-fx-background-color: transparent;
+	-fx-border-width     : 0px   ;
+	-fx-border-radius: 0 0 0 0;
+	-fx-background-radius: 0 0 0 0;
+}
+
 #myButton{
 	-fx-background-color: #31C2F3;
 	-fx-border-width     : 1px   ;
@@ -45,6 +52,9 @@
 	-fx-background-color: #19B2D8;
 }
 
+.button-check:pressed{
+	-fx-background-color: rgba(255, 255, 255, 0.2);
+}
 
 /*
 .button:hover{

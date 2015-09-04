@@ -37,3 +37,4 @@ package dpfmanager.shell.modules.interfaces;
 public class Gui implements UserInterface {
   public void launch() {}
 }
+

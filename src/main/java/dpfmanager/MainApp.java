@@ -31,6 +31,7 @@
 
 package dpfmanager;
 
+import dpfmanager.shell.modules.ProcessInput;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 
 import org.slf4j.Logger;
@@ -38,12 +39,20 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -55,6 +64,23 @@ public class MainApp extends Application {
    */
   private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
 
+  private static Stage _stage;
+
+  @FXML
+  private TextField txtFile;
+
+  @FXML
+  private RadioButton radBL;
+
+  @FXML
+  private RadioButton radEP;
+
+  @FXML
+  private RadioButton radIT;
+
+  @FXML
+  private RadioButton radAll;
+
   /**
    * The main method.
    *
@@ -63,6 +89,31 @@ public class MainApp extends Application {
    */
   public static void main(final String[] args) throws Exception {
     launch(args);
+  }
+
+  @FXML
+  protected void openFile(ActionEvent event) {
+    List<String> allowedExtensions = new ArrayList<String>();
+    ArrayList<String> files = new ArrayList<String>();
+
+    allowedExtensions.add(".tif");
+    files.add(txtFile.getText());
+
+    boolean bl = radBL.isSelected() || radAll.isSelected();
+    boolean ep = radEP.isSelected() || radAll.isSelected();
+    boolean it = radIT.isSelected() || radAll.isSelected();
+
+    ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
+    pi.ProcessFiles(files, false, false, true, "", false);
+  }
+
+  @FXML
+  protected void browseFile(ActionEvent event) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Open File");
+    File file = fileChooser.showOpenDialog(_stage);
+
+    txtFile.setText(file.getPath());
   }
 
   /**
@@ -95,6 +146,7 @@ public class MainApp extends Application {
 
       stage.setTitle("DPFManager");
       stage.setScene(scene);
+      _stage = stage;
       stage.show();
     } else {
       // Command Line
