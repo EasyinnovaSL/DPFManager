@@ -242,33 +242,39 @@ public class ReportXml {
     Element results = doc.createElement("results_baseline");
     List<ValidationEvent> errors = ir.getBaselineErrors();
     List<ValidationEvent> warnings = ir.getBaselineWarnings();
-    addErrorsWarnings(doc, results, errors, warnings);
-    implementationCheckerElement.appendChild(results);
+    if (errors != null && warnings != null) {
+      addErrorsWarnings(doc, results, errors, warnings);
+      implementationCheckerElement.appendChild(results);
+    }
 
     // TiffEP
     results = doc.createElement("results_tiffep");
     errors = ir.getEPErrors();
     warnings = ir.getEPWarnings();
-    addErrorsWarnings(doc, results, errors, warnings);
-    implementationCheckerElement.appendChild(results);
+    if (errors != null && warnings != null) {
+      addErrorsWarnings(doc, results, errors, warnings);
+      implementationCheckerElement.appendChild(results);
+    }
 
     // TiffIT
     results = doc.createElement("results_tiffit");
     errors = ir.getITErrors();
     warnings = ir.getITWarnings();
-    addErrorsWarnings(doc, results, errors, warnings);
-    implementationCheckerElement.appendChild(results);
+    if (errors != null && warnings != null) {
+      addErrorsWarnings(doc, results, errors, warnings);
+      implementationCheckerElement.appendChild(results);
+    }
 
     // Total
     results = doc.createElement("results");
     List<ValidationEvent> errorsTotal = new ArrayList<ValidationEvent>();
     List<ValidationEvent> warningsTotal = new ArrayList<ValidationEvent>();
-    errorsTotal.addAll(ir.getBaselineErrors());
-    errorsTotal.addAll(ir.getEPErrors());
-    errorsTotal.addAll(ir.getITErrors());
-    warningsTotal.addAll(ir.getBaselineWarnings());
-    warningsTotal.addAll(ir.getEPWarnings());
-    warningsTotal.addAll(ir.getITWarnings());
+    if (ir.getBaselineErrors() != null) errorsTotal.addAll(ir.getBaselineErrors());
+    if (ir.getEPErrors() != null) errorsTotal.addAll(ir.getEPErrors());
+    if (ir.getITErrors() != null) errorsTotal.addAll(ir.getITErrors());
+    if (ir.getBaselineWarnings() != null) warningsTotal.addAll(ir.getBaselineWarnings());
+    if (ir.getEPWarnings() != null) warningsTotal.addAll(ir.getEPWarnings());
+    if (ir.getITWarnings() != null) warningsTotal.addAll(ir.getITWarnings());
     addErrorsWarnings(doc, results, errorsTotal, warningsTotal);
     implementationCheckerElement.appendChild(results);
 
