@@ -38,6 +38,13 @@
 	-fx-background-radius: 5 5 5 5;
 }
 
+.button-check{
+	-fx-background-color: transparent;
+	-fx-border-width     : 0px   ;
+	-fx-border-radius: 0 0 0 0;
+	-fx-background-radius: 0 0 0 0;
+}
+
 #myButton{
 	-fx-background-color: #31C2F3;
 	-fx-border-width     : 1px   ;
@@ -45,20 +52,6 @@
 	-fx-border-radius: 5 5 5 5;
 	-fx-background-radius: 5 5 5 5;
 }
-
-#myButton1{
-	/*-fx-background-color: #31C2F3;*/
-	-fx-border-width     : 2   ;
-	-fx-border-color     : #31C2F3  ;
-    -fx-background-image: url("../images/button.png");
-    -fx-background-size: 214 60;
-    /*-fx-background-size: 200 50;*/
-    -fx-background-radius: 50;
-	-fx-border-radius: 5;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
-    -fx-padding: 10;
-}
-
 .button:pressed{
 	-fx-background-color: #848282;
 }
@@ -67,11 +60,8 @@
 	-fx-background-color: #19B2D8;
 }
 
-#myButton1:pressed{
-    -fx-background-color: #19B2D8;
-    -fx-border-color     : #19B2D8;
-    -fx-background-image: null;
-    -fx-background-radius: 5;
+.button-check:pressed{
+	-fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
 /*
