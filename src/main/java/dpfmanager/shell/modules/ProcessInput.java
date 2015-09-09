@@ -41,7 +41,7 @@ public class ProcessInput {
     this.checkIT = checkIT;
   }
 
-  public void ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, String outputFolder, boolean silence) {
+  public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, String outputFolder, boolean silence) {
     reportGenerator = new ReportGenerator();
     reportGenerator.setReportsFormats(xml, json, html);
     // Process files
@@ -66,6 +66,9 @@ public class ProcessInput {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    String htmlFileStr = internalReportFolder + "report.html";
+    return htmlFileStr;
   }
 
   /**

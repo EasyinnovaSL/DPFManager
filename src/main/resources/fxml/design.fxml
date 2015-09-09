@@ -12,7 +12,7 @@
 
 <VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
-    <MenuBar prefWidth="1215.0" VBox.vgrow="NEVER">
+    <MenuBar prefWidth="500.0" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
@@ -57,36 +57,42 @@
                <content>
                   <AnchorPane>
                       <children>
-                          <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-<!--                              <image>
-                                 <Image url="@../images/main.png" />
-                              </image>-->
+                          <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <!--                              <image>
+                                                               <Image url="@../images/back.png" />
+                                                            </image>-->
                           </ImageView>
-                          <Button fx:id="myButton" onAction="#browseFile" layoutX="619.0" layoutY="345.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="106.0" style="" stylesheets="@../styles/style.css" text="Select" textFill="WHITE">
-                              <font>
-                                  <Font name="System Bold" size="16.0" />
-                              </font></Button>
-                          <TextField fx:id="txtFile" layoutX="239.0" layoutY="344.0" prefHeight="41.0" prefWidth="371.0" text="localhost:8888/path/file.tif" />
-                          <Pane layoutX="246.0" layoutY="480.0" prefHeight="166.0" prefWidth="468.0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); -fx-border-radius: 5 5 5 5;-fx-background-radius: 5 5 5 5;">
-                              <children>
-                                  <RadioButton layoutX="23.0" layoutY="20.0" fx:id="radBL" mnemonicParsing="false" selected="true" style="-fx-padding: 0 10 0 0;" styleClass="radio-button" stylesheets="@../styles/style.css" text="Baseline">
-                                      <toggleGroup>
-                                          <ToggleGroup fx:id="conftoggleGroup" />
-                                      </toggleGroup></RadioButton>
-                                  <RadioButton layoutX="23.0" layoutY="37.0" fx:id="radEP" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@../styles/style.css" text="TIFF/EP" toggleGroup="$conftoggleGroup" />
-                                  <RadioButton layoutX="23.0" layoutY="54.0" fx:id="radIT" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@../styles/style.css" text="TIFF/IT" toggleGroup="$conftoggleGroup" />
-                                  <RadioButton layoutX="23.0" layoutY="75.0" fx:id="radAll" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@../styles/style.css" text="All" toggleGroup="$conftoggleGroup" />
-                              </children>
-                              <effect>
-                                  <ColorAdjust />
-                              </effect>
-                              <opaqueInsets>
-                                  <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                              </opaqueInsets>
-                          </Pane>
-                          <Button layoutX="246.0" layoutY="667.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="223.0" stylesheets="@../styles/style.css" text="IMPORT CONFIGURATION" textFill="#31C2F3" />
-                          <Button layoutX="491.0" layoutY="667.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="223.0" stylesheets="@../styles/style.css" text="NEW CONFIGURATION" textFill="#31C2F3" />
-                          <Button layoutX="369.0" layoutY="840.0" mnemonicParsing="false" onAction="#openFile" prefHeight="62.0" prefWidth="214.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT" />
+                              <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+<!--                                  <image>
+                                     <Image url="@../images/main.png" />
+                                  </image>-->
+                              </ImageView>
+                              <Button fx:id="myButton" layoutX="619.0" layoutY="345.0" mnemonicParsing="false" onAction="#browseFile" prefHeight="37.0" prefWidth="106.0" style="" stylesheets="@../styles/style.css" text="Select" textFill="WHITE">
+                                  <font>
+                                      <Font name="System Bold" size="16.0" />
+                                  </font></Button>
+                              <TextField fx:id="txtFile" layoutX="239.0" layoutY="344.0" prefHeight="41.0" prefWidth="371.0" text="localhost:8888/path/file.tif" />
+                              <Pane layoutX="246.0" layoutY="480.0" prefHeight="166.0" prefWidth="468.0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); -fx-border-radius: 5 5 5 5;-fx-background-radius: 5 5 5 5;">
+                                  <children>
+                                      <RadioButton fx:id="radBL" layoutX="23.0" layoutY="20.0" mnemonicParsing="false" selected="true" style="-fx-padding: 0 10 0 0;" styleClass="radio-button" stylesheets="@../styles/style.css" text="Baseline">
+                                          <toggleGroup>
+                                              <ToggleGroup fx:id="conftoggleGroup" />
+                                          </toggleGroup></RadioButton>
+                                      <RadioButton fx:id="radEP" layoutX="23.0" layoutY="37.0" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@../styles/style.css" text="TIFF/EP" toggleGroup="$conftoggleGroup" />
+                                      <RadioButton fx:id="radIT" layoutX="23.0" layoutY="54.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@../styles/style.css" text="TIFF/IT" toggleGroup="$conftoggleGroup" />
+                                      <RadioButton fx:id="radAll" layoutX="23.0" layoutY="75.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@../styles/style.css" text="All" toggleGroup="$conftoggleGroup" />
+                                  </children>
+                                  <effect>
+                                      <ColorAdjust />
+                                  </effect>
+                                  <opaqueInsets>
+                                      <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                  </opaqueInsets>
+                              </Pane>
+                              <Button layoutX="246.0" layoutY="667.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="223.0" stylesheets="@../styles/style.css" text="IMPORT CONFIGURATION" textFill="#31C2F3" />
+                              <Button layoutX="491.0" layoutY="667.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="223.0" stylesheets="@../styles/style.css" text="NEW CONFIGURATION" textFill="#31C2F3" />
+                              <Button layoutX="369.0" layoutY="840.0" mnemonicParsing="false" onAction="#openFile" prefHeight="62.0" prefWidth="214.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT" />
+                          <Button layoutX="471.0" layoutY="3.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="25.0" prefWidth="52.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT" />
                       </children>
                   </AnchorPane>
                </content>

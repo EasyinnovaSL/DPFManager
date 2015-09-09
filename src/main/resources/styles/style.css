@@ -7,6 +7,14 @@
 	-fx-image: url("../images/main.png");
 }
 
+.mainimagereport{
+	-fx-image: url("../images/report.png");
+}
+
+.backgr{
+	-fx-image: url("../images/back.png");
+}
+
 /* Radio button style */
 .radio-button .radio{
 	-fx-border-width     : 1px   ;
