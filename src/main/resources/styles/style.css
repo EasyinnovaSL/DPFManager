@@ -42,7 +42,7 @@
 	/*-fx-background-color: #31C2F3;*/
 	-fx-border-width     : 2   ;
 	-fx-border-color     : #31C2F3  ;
-    -fx-background-image: url("../images/button.jpg");
+    -fx-background-image: url("../images/button.png");
     -fx-background-size: 214 60;
     /*-fx-background-size: 200 50;*/
     -fx-background-radius: 50;
