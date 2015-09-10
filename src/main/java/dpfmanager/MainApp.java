@@ -42,19 +42,28 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Spliterator;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -124,8 +133,13 @@ public class MainApp extends Application {
     Scene scenemain = new Scene(rootNode1, width, height);
     scenemain.getStylesheets().add("/styles/style.css");
 
+
     thestage.setTitle("DPFManager");
     thestage.setScene(scenemain);
+    thestage.setMaxHeight(height);
+    thestage.setMinHeight(height);
+    thestage.setMaxWidth(width);
+    thestage.setMinWidth(width);
     thestage.show();
   }
 
@@ -133,6 +147,18 @@ public class MainApp extends Application {
   protected void openFile(ActionEvent event) throws Exception {
     List<String> allowedExtensions = new ArrayList<String>();
     ArrayList<String> files = new ArrayList<String>();
+
+    String image=this.getClass().getResource("../images/topMenu.png").toExternalForm();
+    String styleBackground="-fx-background-image: url('" + image + "'); " +
+        "-fx-background-position: center center; " +
+        "-fx-background-repeat: stretch;";
+    String styleButton="-fx-background-color: transparent;\n" +
+        "\t-fx-border-width     : 0px   ;\n" +
+        "\t-fx-border-radius: 0 0 0 0;\n" +
+        "\t-fx-background-radius: 0 0 0";
+    String styleButtonPressed="-fx-background-color: rgba(255, 255, 255, 0.2);";
+
+
     allowedExtensions.add(".tif");
     files.add(txtFile.getText());
     boolean bl = radBL.isSelected() || radAll.isSelected();
@@ -141,19 +167,93 @@ public class MainApp extends Application {
     ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
     String filename = pi.ProcessFiles(files, false, false, true, "", true);
 
-    Scene scenereport = new Scene(new Group(), 1000, 1000);
+    Scene sceneReport = new Scene(new Group(), 1000, 1000);
+
+
     VBox root = new VBox();
+    SplitPane splitPa=new SplitPane();
+    splitPa.setOrientation(Orientation.VERTICAL);
+
+    Pane topImg=new Pane();
+    topImg.setStyle(styleBackground);
+
+    Button checker = new Button();
+    checker.setMinWidth(170);
+    checker.setLayoutX(310.0);
+
+    checker.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        try {
+          gotoMain(event);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
+    checker.styleProperty().bind(
+        Bindings
+            .when(checker.pressedProperty())
+            .then(
+                new SimpleStringProperty(styleButtonPressed)
+            ).otherwise(
+            new SimpleStringProperty(styleButton)
+        )
+
+    );
+
+
+    Button report = new Button();
+    report.setMinWidth(90);
+    report.setLayoutX(480.0);
+
+    report.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        try {
+          gotoReport(event);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
+    report.styleProperty().bind(
+        Bindings
+            .when(report.pressedProperty())
+            .then(
+                new SimpleStringProperty(styleButtonPressed)
+            ).otherwise(
+            new SimpleStringProperty(styleButton)
+        )
+
+    );
+
+    topImg.getChildren().addAll(checker,report);
+
     final WebView browser = new WebView();
     browser.setPrefWidth(1000);
     browser.setPrefHeight(1000);
     final WebEngine webEngine = browser.getEngine();
-    ScrollPane scrollPane = new ScrollPane();
-    scrollPane.setContent(browser);
     webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
-    root.getChildren().addAll(scrollPane);
-    scenereport.setRoot(root);
 
-    thestage.setScene(scenereport);
+    splitPa.getItems().addAll(topImg);
+    splitPa.getItems().addAll(browser);
+    splitPa.setDividerPosition(0, 0.03f);
+    root.getChildren().addAll(splitPa);
+    sceneReport.setRoot(root);
+
+    thestage.setScene(sceneReport);
+
+    //Set invisible the divisor line
+    splitPa.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setStyle("-fx-padding: 0;\n" +
+                "    -fx-background-color: transparent;\n" +
+                "    -fx-background-insets: 0;\n" +
+                "    -fx-shape: \" \";"));
+    splitPa.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setMouseTransparent(true) );
     thestage.sizeToScene();
   }
 
@@ -169,6 +269,11 @@ public class MainApp extends Application {
     Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
     Scene scenereport = new Scene(rootNode2, width, height);
     scenereport.getStylesheets().add("/styles/style.css");
+
+    thestage.setMaxHeight(height);
+    thestage.setMinHeight(height);
+    thestage.setMaxWidth(width);
+    thestage.setMinWidth(width);
 
     thestage.setScene(scenereport);
     thestage.sizeToScene();
