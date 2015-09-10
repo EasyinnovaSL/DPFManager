@@ -69,3 +69,10 @@
 	-fx-background-color: rgba(235,235,235,0.7);
 }
 */
+
+.split-pane-divider {
+	-fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-shape: " ";
+}

@@ -21,12 +21,12 @@
  * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
  * </p>
  * <p>
- * © 2015 Easy Innova, SL
+ * © 2115 Easy Innova, SL
  * </p>
  *
  * @author Easy Innova
  * @version 1.0
- * @since 23/6/2015
+ * @since 23/6/2115
  */
 
 package dpfmanager;
@@ -37,6 +37,8 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -74,6 +76,7 @@ public class MainApp extends Application {
   @FXML private RadioButton radEP;
   @FXML private RadioButton radIT;
   @FXML private RadioButton radAll;
+  @FXML private SplitPane splitPa1;
 
   private static Stage thestage;
   final int width = 970;
@@ -124,13 +127,24 @@ public class MainApp extends Application {
     Scene scenemain = new Scene(rootNode1, width, height);
     scenemain.getStylesheets().add("/styles/style.css");
 
-
     thestage.setTitle("DPFManager");
     thestage.setScene(scenemain);
     thestage.setMaxHeight(height);
     thestage.setMinHeight(height);
     thestage.setMaxWidth(width);
     thestage.setMinWidth(width);
+
+    //Set invisible the divisor line
+/*    splitPa1.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setStyle("-fx-padding: 0;\n" +
+                "    -fx-background-color: transparent;\n" +
+                "    -fx-background-insets: 0;\n" +
+                "    -fx-shape: \" \";"));
+    splitPa1.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setMouseTransparent(true));*/
+
     thestage.show();
   }
 
@@ -142,7 +156,7 @@ public class MainApp extends Application {
     String image=this.getClass().getResource("../images/topMenu.png").toExternalForm();
     String styleBackground="-fx-background-image: url('" + image + "'); " +
         "-fx-background-position: center center; " +
-        "-fx-background-repeat: stretch;";
+        "-fx-background-repeat: repeat-x;";
     String styleButton="-fx-background-color: transparent;\n" +
         "\t-fx-border-width     : 0px   ;\n" +
         "\t-fx-border-radius: 0 0 0 0;\n" +
@@ -158,7 +172,7 @@ public class MainApp extends Application {
     ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
     String filename = pi.ProcessFiles(files, false, false, true, "", true);
 
-    Scene sceneReport = new Scene(new Group(), 1000, 1000);
+    Scene sceneReport = new Scene(new Group(), width, height);
 
 
     VBox root = new VBox();
@@ -167,15 +181,21 @@ public class MainApp extends Application {
 
     Pane topImg=new Pane();
     topImg.setStyle(styleBackground);
+    topImg.setMinWidth(width);
+    topImg.setMinHeight(50);
+    //topImg.setMaxWidth(width);
+    topImg.setMaxHeight(50);
 
     Button checker = new Button();
     checker.setMinWidth(170);
-    checker.setLayoutX(310.0);
+    checker.setMinHeight(30);
+    checker.setLayoutY(5.0);
 
     checker.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
         try {
+          gotoReport(event);
           gotoMain(event);
         } catch (Exception e) {
           e.printStackTrace();
@@ -190,13 +210,13 @@ public class MainApp extends Application {
             ).otherwise(
             new SimpleStringProperty(styleButton)
         )
-
     );
 
 
     Button report = new Button();
-    report.setMinWidth(90);
-    report.setLayoutX(480.0);
+    report.setMinWidth(80);
+    report.setMinHeight(30);
+    report.setLayoutY(5.0);
 
     report.setOnAction(new EventHandler<ActionEvent>() {
       @Override
@@ -222,14 +242,18 @@ public class MainApp extends Application {
     topImg.getChildren().addAll(checker, report);
 
     final WebView browser = new WebView();
-    browser.setPrefWidth(1000);
-    browser.setPrefHeight(1000);
+    //double w = width-topImg.getWidth();
+    double h = height-topImg.getHeight();
+    browser.setMinWidth(width);
+    browser.setMinHeight(h);
+    //browser.setMaxWidth(width);
+    browser.setMaxHeight(h);
     final WebEngine webEngine = browser.getEngine();
     webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
 
     splitPa.getItems().addAll(topImg);
     splitPa.getItems().addAll(browser);
-    splitPa.setDividerPosition(0, 0.03f);
+    splitPa.setDividerPosition(0, 0.5f);
     root.getChildren().addAll(splitPa);
     sceneReport.setRoot(root);
 
@@ -245,6 +269,26 @@ public class MainApp extends Application {
     splitPa.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setMouseTransparent(true));
+
+    thestage.setMaxHeight(Double.MAX_VALUE);
+    thestage.setMinHeight(height);
+    thestage.setMaxWidth(Double.MAX_VALUE);
+    thestage.setResizable(true);
+    thestage.setMinWidth(width);
+
+    thestage.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+        if (newSceneWidth.doubleValue() < 989) {
+          report.setLayoutX(470.0);
+          checker.setLayoutX(290.0);
+        } else {
+          double dif = (newSceneWidth.doubleValue() - width) / 2;
+          report.setLayoutX(463.0 + dif);
+          checker.setLayoutX(283.0 + dif);
+        }
+      }
+    });
+
     thestage.sizeToScene();
   }
 

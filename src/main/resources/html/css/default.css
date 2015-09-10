@@ -1,7 +1,7 @@
 body{
     font-family: 'Roboto', sans-serif;
 	font-weight: 400;
-	background-color: #303030;
+	background-color: #333333;
 }
 
 img {
@@ -119,7 +119,7 @@ img {
  */
 
 .header {
-	background-color: #303030;
+	background-color: #333333;
 }
 
 .main {
@@ -127,7 +127,7 @@ img {
 }
 
 .footer{
-	background-color: #303030;
+	background-color: #333333;
 }
 
 /* Button css */
