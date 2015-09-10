@@ -124,6 +124,10 @@ public class MainApp extends Application {
     Scene scenemain = new Scene(rootNode1, width, height);
     scenemain.getStylesheets().add("/styles/style.css");
 
+    thestage.setMaxHeight(height);
+    thestage.setMinHeight(height);
+    thestage.setMaxWidth(width);
+    thestage.setMinWidth(width);
     thestage.setTitle("DPFManager");
     thestage.setScene(scenemain);
     thestage.show();
