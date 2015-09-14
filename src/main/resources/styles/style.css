@@ -64,14 +64,26 @@
 	-fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
+#topMenuImage{
+    -fx-background-image: url("../images/topMenu1.png");
+    -fx-background-position: center center;
+    -fx-background-repeat: repeat-x;
+}
 /*
 .button:hover{
 	-fx-background-color: rgba(235,235,235,0.7);
 }
 */
 
-.split-pane-divider {
-	-fx-padding: 0;
+.split-pane:vertical > .split-pane-divider {
+    -fx-padding: 0;
+    -fx-border-color:  #333333;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.split-pane *.vertical-grabber {
+    -fx-padding: 0;
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-shape: " ";

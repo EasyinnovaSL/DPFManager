@@ -39,12 +39,14 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -76,7 +78,7 @@ public class MainApp extends Application {
   @FXML private RadioButton radEP;
   @FXML private RadioButton radIT;
   @FXML private RadioButton radAll;
-  @FXML private SplitPane splitPa1;
+  //@FXML private SplitPane splitPa1;
 
   private static Stage thestage;
   final int width = 970;
@@ -134,8 +136,10 @@ public class MainApp extends Application {
     thestage.setMaxWidth(width);
     thestage.setMinWidth(width);
 
+
+
     //Set invisible the divisor line
-/*    splitPa1.lookupAll(".split-pane-divider").stream()
+    /*splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setStyle("-fx-padding: 0;\n" +
                 "    -fx-background-color: transparent;\n" +
@@ -146,6 +150,11 @@ public class MainApp extends Application {
             div -> div.setMouseTransparent(true));*/
 
     thestage.show();
+    ObservableList<Node> nodes=scenemain.getRoot().getChildrenUnmodifiable();
+    SplitPane splitPa1=(SplitPane)nodes.get(0);
+    splitPa1.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setMouseTransparent(true));
   }
 
   @FXML
