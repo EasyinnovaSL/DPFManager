@@ -55,7 +55,7 @@
         <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
             <VBox>
                 <children>
-                    <Pane fx:id="topMenuImage" maxHeight="50" minHeight="50" stylesheets="@../styles/style.css">
+                    <Pane fx:id="topMenuImage1" maxHeight="50" minHeight="50" stylesheets="@../styles/style.css">
                         <Button layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="30.0" prefWidth="80.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT">
                      <cursor>
                         <Cursor fx:constant="HAND" />

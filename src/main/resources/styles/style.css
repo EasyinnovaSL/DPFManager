@@ -64,8 +64,14 @@
 	-fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
-#topMenuImage{
+#topMenuImage1{
     -fx-background-image: url("../images/topMenu1.png");
+    -fx-background-position: center center;
+    -fx-background-repeat: repeat-x;
+}
+
+#topMenuImage{
+    -fx-background-image: url("../images/topMenu.png");
     -fx-background-position: center center;
     -fx-background-repeat: repeat-x;
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
@@ -11,9 +12,9 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@../styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
-    <MenuBar prefWidth="500.0" VBox.vgrow="NEVER">
+    <!--<MenuBar prefWidth="500.0" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
@@ -51,30 +52,46 @@
           </items>
         </Menu>
       </menus>
-    </MenuBar>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-      <children>
-            <ScrollPane prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <content>
-                  <AnchorPane>
-                      <children>
-                          <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                         <!--   <image>
-                                                               <Image url="@../images/back.png" />
-                                                            </image>-->
-                          </ImageView>
-                              <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimagereport" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-<!--                                  <image>
-                                     <Image url="@../images/report.png" />
-                                  </image>-->
-                              </ImageView>
-                          <Button layoutX="346.0" layoutY="2.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="25.0" prefWidth="120.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT" />
-                          <Button layoutX="369.0" layoutY="610.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="29.0" prefWidth="195.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT" />
-                      </children>
-                  </AnchorPane>
-               </content>
-            </ScrollPane>
-      </children>
-    </AnchorPane>
+    </MenuBar>-->
+        <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
+            <VBox>
+                <children>
+                    <Pane fx:id="topMenuImage" maxHeight="50" minHeight="50" stylesheets="@../styles/style.css">
+                        <Button layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="30.0" prefWidth="170.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                    </Pane>
+                </children>
+            </VBox>
+            <VBox>
+                <children>
+                    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <ScrollPane prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <content>
+                                    <AnchorPane>
+                                        <children>
+                                            <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <!--   <image>
+                                                      <Image url="@../images/back.png" />
+                                                   </image>-->
+                                            </ImageView>
+                                            <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimagereport" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <!--<image>
+                                                   <Image url="@../images/report.png" />
+                                                </image>-->
+                                            </ImageView>
+                                            <Button layoutX="385.0" layoutY="592.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="29.0" prefWidth="200.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT" />
+                                        </children>
+                                    </AnchorPane>
+                                </content>
+                            </ScrollPane>
+                        </children>
+                    </AnchorPane>
+                </children>
+            </VBox>
+        </SplitPane>
+
   </children>
 </VBox>
