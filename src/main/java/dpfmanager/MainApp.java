@@ -121,11 +121,9 @@ public class MainApp extends Application {
   {
     String fxmlFile = "/fxml/design.fxml";
     LOG.debug("Loading FXML for main view from: {}", fxmlFile);
+
     FXMLLoader loader = new FXMLLoader();
     Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
-
-    LOG.debug("Showing JFX scene");
-
     Scene scenemain = new Scene(rootNode1, width, height);
     scenemain.getStylesheets().add("/styles/style.css");
 
@@ -135,26 +133,7 @@ public class MainApp extends Application {
     thestage.setMinHeight(height);
     thestage.setMaxWidth(width);
     thestage.setMinWidth(width);
-
-
-
-    //Set invisible the divisor line
-    /*splitPa1.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setStyle("-fx-padding: 0;\n" +
-                "    -fx-background-color: transparent;\n" +
-                "    -fx-background-insets: 0;\n" +
-                "    -fx-shape: \" \";"));
-    splitPa1.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setMouseTransparent(true));*/
-
     thestage.show();
-    ObservableList<Node> nodes=scenemain.getRoot().getChildrenUnmodifiable();
-    SplitPane splitPa1=(SplitPane)nodes.get(0);
-    splitPa1.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setMouseTransparent(true));
   }
 
   @FXML
@@ -172,7 +151,6 @@ public class MainApp extends Application {
         "\t-fx-background-radius: 0 0 0";
     String styleButtonPressed="-fx-background-color: rgba(255, 255, 255, 0.2);";
 
-
     allowedExtensions.add(".tif");
     files.add(txtFile.getText());
     boolean bl = radBL.isSelected() || radAll.isSelected();
@@ -182,7 +160,6 @@ public class MainApp extends Application {
     String filename = pi.ProcessFiles(files, false, false, true, "", true);
 
     Scene sceneReport = new Scene(new Group(), width, height);
-
 
     VBox root = new VBox();
     SplitPane splitPa=new SplitPane();
@@ -221,7 +198,6 @@ public class MainApp extends Application {
         )
     );
 
-
     Button report = new Button();
     report.setMinWidth(80);
     report.setMinHeight(30);
@@ -252,7 +228,7 @@ public class MainApp extends Application {
 
     final WebView browser = new WebView();
     //double w = width-topImg.getWidth();
-    double h = height-topImg.getHeight();
+    double h = height-topImg.getHeight()-50;
     browser.setMinWidth(width);
     browser.setMinHeight(h);
     //browser.setMaxWidth(width);

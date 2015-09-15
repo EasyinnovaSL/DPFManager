@@ -186,66 +186,82 @@ public class ReportHtml {
     // EP
     String row;
     String rows = "";
-    if (ir.getEPErrors() != null ) {
-      for (ValidationEvent val : ir.getEPErrors()) {
-        row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-        row = row.replace("##LOC##", val.getLocation());
-        row = row.replace("##TEXT##", val.getDescription());
-        rows += row;
-      }
-    }
 
-    if (ir.getEPWarnings() != null ) {
-      for (ValidationEvent val : ir.getEPWarnings()) {
-        row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-        row = row.replace("##LOC##", val.getLocation());
-        row = row.replace("##TEXT##", val.getDescription());
-        rows += row;
+    if (ir.checkEP) {
+      if (ir.getEPErrors() != null) {
+        for (ValidationEvent val : ir.getEPErrors()) {
+          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
       }
+
+      if (ir.getEPWarnings() != null) {
+        for (ValidationEvent val : ir.getEPWarnings()) {
+          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
+      }
+      htmlBody = htmlBody.replaceAll("##ROWS_EP##", rows);
+      htmlBody = htmlBody.replaceAll("##EP_VISIBLE##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##EP_VISIBLE##", "hidden");
     }
-    htmlBody = htmlBody.replaceAll("##ROWS_EP##", rows);
 
     // Baseline
     rows = "";
-    if (ir.getBaselineErrors() != null ) {
-      for (ValidationEvent val : ir.getBaselineErrors()) {
-        row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-        row = row.replace("##LOC##", val.getLocation());
-        row = row.replace("##TEXT##", val.getDescription());
-        rows += row;
+    if (ir.checkBL) {
+      if (ir.getBaselineErrors() != null) {
+        for (ValidationEvent val : ir.getBaselineErrors()) {
+          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
       }
-    }
 
-    if (ir.getBaselineWarnings() != null ) {
-      for (ValidationEvent val : ir.getBaselineWarnings()) {
-        row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-        row = row.replace("##LOC##", val.getLocation());
-        row = row.replace("##TEXT##", val.getDescription());
-        rows += row;
+      if (ir.getBaselineWarnings() != null) {
+        for (ValidationEvent val : ir.getBaselineWarnings()) {
+          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
       }
+      htmlBody = htmlBody.replaceAll("##ROWS_BL##", rows);
+      htmlBody = htmlBody.replaceAll("##BL_VISIBLE##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##BL_VISIBLE##", "hidden");
     }
-    htmlBody = htmlBody.replaceAll("##ROWS_BL##", rows);
 
     // IT
     rows = "";
-    if (ir.getITErrors() != null ) {
-      for (ValidationEvent val : ir.getITErrors()) {
-        row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-        row = row.replace("##LOC##", val.getLocation());
-        row = row.replace("##TEXT##", val.getDescription());
-        rows += row;
+    if (ir.checkIT) {
+      if (ir.getITErrors() != null) {
+        for (ValidationEvent val : ir.getITErrors()) {
+          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
       }
-    }
 
-    if (ir.getITWarnings() != null ) {
-      for (ValidationEvent val : ir.getITWarnings()) {
-        row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-        row = row.replace("##LOC##", val.getLocation());
-        row = row.replace("##TEXT##", val.getDescription());
-        rows += row;
+      if (ir.getITWarnings() != null) {
+        for (ValidationEvent val : ir.getITWarnings()) {
+          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
       }
+      htmlBody = htmlBody.replaceAll("##ROWS_IT##", rows);
+      htmlBody = htmlBody.replaceAll("##IT_VISIBLE##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##IT_VISIBLE##", "hidden");
     }
-    htmlBody = htmlBody.replaceAll("##ROWS_IT##", rows);
 
     // Tags list
     rows = "";

@@ -197,6 +197,9 @@ public class ProcessInput {
           String pathNorm = realFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, filename, to, baselineVal, epValidation, itValidation);
+          ir.checkBL = checkBL;
+          ir.checkEP = checkEP;
+          ir.checkIT = checkIT;
           // reportResults(name, to, baselineVal);
           internalReport(ir, tr, realFilename, internalReportFolder);
           return ir;

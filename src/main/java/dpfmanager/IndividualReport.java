@@ -86,6 +86,15 @@ public class IndividualReport {
   /** The Tiff Document object. */
   private TiffDocument tiffModel;
 
+  /** Check Tiff/IT conformance. */
+  public boolean checkIT;
+
+  /** Check Tiff/EP conformance. */
+  public boolean checkEP;
+
+  /** Check Baseline conformance. */
+  public boolean checkBL;
+
   /**
    * Constructor + generate.
    *

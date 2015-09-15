@@ -13,62 +13,23 @@
 
 <VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@../styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
-    <!--<MenuBar prefWidth="500.0" VBox.vgrow="NEVER">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>-->
         <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
             <VBox>
                 <children>
                     <Pane fx:id="topMenuImage" maxHeight="50" minHeight="50" stylesheets="@../styles/style.css">
                         <Button layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="30.0" prefWidth="80.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
                     </Pane>
-
                 </children>
             </VBox>
             <VBox>
                 <children>
-                    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0%; -fx-border-color: none;" VBox.vgrow="ALWAYS">
+                    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
                         <children>
-                            <ScrollPane prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <ScrollPane prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                                 <content>
                                     <AnchorPane>
                                         <children>
@@ -89,7 +50,7 @@
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
                                     </cursor></Button>
-                                            <TextField fx:id="txtFile" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="localhost:8888/path/file.tif">
+                                            <TextField fx:id="txtFile" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
                                     <cursor>
                                        <Cursor fx:constant="TEXT" />
                                     </cursor></TextField>

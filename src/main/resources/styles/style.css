@@ -88,3 +88,6 @@
     -fx-background-insets: 0;
     -fx-shape: " ";
 }
+.hidden {
+	display:none;
+}
