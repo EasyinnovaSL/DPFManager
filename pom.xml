@@ -10,8 +10,8 @@
 
 	<!-- More Project Information -->
 	<name>dpf_manager</name>
-	<description>Dpf manager is a ... </description>
-	<url>http://DPFmanager</url>
+	<description>Dpf manager</description>
+	<url>http://www.dpfmanager.org</url>
 	<inceptionYear>2015</inceptionYear>
 	<licenses>
 		<license>
@@ -36,10 +36,27 @@
 			<url>https://github.com/XaviTarres</url>
 			<id>XaviTarres</id>
 		</developer>
+		<developer>
+			<name>Víctor Muñoz Solà</name>
+			<email>victormunoz@easyinnova.com</email>
+			<organization>Easy Innova</organization>
+			<organizationUrl>http://www.easyinnova.com</organizationUrl>
+		</developer>
 	</developers>
 	<contributors>
 		
 	</contributors>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
 	<properties>
 		<slf4j.version>1.6.1</slf4j.version>
