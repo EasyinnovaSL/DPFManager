@@ -134,6 +134,12 @@ public class MainApp extends Application {
     thestage.setMaxWidth(width);
     thestage.setMinWidth(width);
     thestage.show();
+
+    ObservableList<Node> nodes=scenemain.getRoot().getChildrenUnmodifiable();
+    SplitPane splitPa1=(SplitPane)nodes.get(0);
+    splitPa1.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setMouseTransparent(true));
   }
 
   @FXML
@@ -297,6 +303,11 @@ public class MainApp extends Application {
 
     thestage.setScene(scenereport);
     thestage.sizeToScene();
+    ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
+    SplitPane splitPa1=(SplitPane)nodes.get(0);
+    splitPa1.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setMouseTransparent(true));
   }
 
   @FXML
