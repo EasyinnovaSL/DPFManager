@@ -32,6 +32,7 @@
 package dpfmanager;
 
 import dpfmanager.shell.modules.ProcessInput;
+import dpfmanager.shell.modules.ReportRow;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -39,6 +40,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -53,7 +55,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
@@ -81,8 +85,6 @@ public class MainApp extends Application {
   @FXML private RadioButton radEP;
   @FXML private RadioButton radIT;
   @FXML private RadioButton radAll;
-  //@FXML private javafx.scene.control.TableView tabReports;
-  //@FXML private SplitPane splitPa1;
 
   private static Stage thestage;
   final int width = 970;
@@ -291,7 +293,7 @@ public class MainApp extends Application {
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setTitle("Error");
       alert.setHeaderText("An error occured");
-      alert.setContentText(ex.getMessage());
+      alert.setContentText(ex.toString());
       alert.showAndWait();
     }
   }
@@ -303,6 +305,7 @@ public class MainApp extends Application {
 
   @FXML
   protected void gotoReport(ActionEvent event) throws Exception {
+    try {
     FXMLLoader loader2 = new FXMLLoader();
     String fxmlFile2 = "/fxml/design2.fxml";
     Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
@@ -318,9 +321,76 @@ public class MainApp extends Application {
     thestage.sizeToScene();
     ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
     SplitPane splitPa1=(SplitPane)nodes.get(0);
+    VBox tabPane = ((VBox) ((SplitPane) nodes.get(0)).getItems().get(1));
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setMouseTransparent(true));
+
+    ObservableList<ReportRow> data =
+        FXCollections.observableArrayList(
+            new ReportRow("14/01/2015", "5", "4 files passed all checks", "1 errors 5 warnings", "1 errors", "5 warnings", "20 passed", "95%"),
+            new ReportRow("12/01/2015", "5", "2 files passed all checks", "1 errors 5 warnings", "1 errors", "5 warnings", "20 passed", "95%")
+        );
+
+    javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
+
+    tabReports.setEditable(true);
+    TableColumn colDate = new TableColumn("Date");
+    colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
+
+    TableColumn colN = new TableColumn("Files Processed");
+    colN.setCellValueFactory(
+        new PropertyValueFactory<ReportRow, String>("nFiles")
+    );
+
+    TableColumn colResult = new TableColumn("Result");
+    colResult.setMinWidth(100);
+    colResult.setCellValueFactory(
+        new PropertyValueFactory<ReportRow, String>("result")
+    );
+
+    TableColumn colFixed= new TableColumn("Fixed");
+    colFixed.setCellValueFactory(
+        new PropertyValueFactory<ReportRow, String>("fixed")
+    );
+
+    TableColumn colErrors = new TableColumn("Errors");
+    colErrors.setCellValueFactory(
+        new PropertyValueFactory<ReportRow, String>("errors")
+    );
+
+    TableColumn colWarnings = new TableColumn("Warnings");
+    colWarnings.setCellValueFactory(
+        new PropertyValueFactory<ReportRow, String>("warnings")
+    );
+
+    TableColumn colPassed = new TableColumn("Passed");
+    colPassed.setCellValueFactory(
+        new PropertyValueFactory<ReportRow, String>("passed")
+    );
+
+    TableColumn colScore = new TableColumn("Score");
+    colScore.setCellValueFactory(
+        new PropertyValueFactory<ReportRow, String>("score")
+    );
+
+    tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore);
+    tabReports.setItems(data);
+
+      /*tabReports.setLayoutX(82.0);
+      tabReports.setLayoutY(333.0);
+      tabReports.setPrefHeight(213.0);
+      tabReports.setPrefWidth(835.0);*/
+
+      //tabPane.getChildren().add(tabReports);
+
+    } catch (Exception ex) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Error");
+      alert.setHeaderText("An error occured");
+      alert.setContentText(ex.toString());
+      alert.showAndWait();
+    }
   }
 
   @FXML

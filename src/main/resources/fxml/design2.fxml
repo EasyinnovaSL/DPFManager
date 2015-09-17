@@ -12,20 +12,20 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@../styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
             <VBox>
                 <children>
-                    <Pane fx:id="topMenuImage" maxHeight="50" minHeight="50" stylesheets="@../styles/style.css">
-                        <Button layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="30.0" prefWidth="170.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT">
+                    <Pane fx:id="topMenuImage" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
+                        <Button layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="30.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Button>
                     </Pane>
                 </children>
             </VBox>
-            <VBox>
+            <VBox fx:id="rootReports">
                 <children>
                     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
                         <children>
@@ -43,23 +43,23 @@
                                                    <Image url="@../images/report.png" />
                                                 </image>-->
                                             </ImageView>
-                                            <Button layoutX="385.0" layoutY="592.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="29.0" prefWidth="200.0" styleClass="button-check" stylesheets="@../styles/style.css" textFill="TRANSPARENT">
+                                            <Button layoutX="385.0" layoutY="592.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="29.0" prefWidth="200.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
                                     </cursor></Button>
-<!--                                 <TableView fx:id="tabReports" layoutX="82.0" layoutY="333.0" prefHeight="213.0" prefWidth="835.0" stylesheets="@../styles/style.css">
-                                   <columns>
-                                     <TableColumn styleClass="th" prefWidth="75.0" text="DATE" />
-                                     <TableColumn styleClass="th" prefWidth="75.0" text="FILES PROCESSED" />
-                                       <TableColumn styleClass="th" prefWidth="75.0" text="RESULT" />
-                                       <TableColumn styleClass="th" prefWidth="75.0" text="FIXED" />
-                                       <TableColumn styleClass="th" prefWidth="75.0" text="ERRORS" />
-                                       <TableColumn styleClass="th" prefWidth="75.0" text="WARNINGS" />
-                                       <TableColumn styleClass="th" prefWidth="75.0" text="PASSED" />
-                                       <TableColumn styleClass="th" prefWidth="75.0" text="SCORE" />
-                                       <TableColumn styleClass="th" prefWidth="75.0" text="" />
-                                   </columns>
-                                 </TableView>-->
+<!--                                            <TableView fx:id="tabReps" styleClass="tableReports" layoutX="82.0" layoutY="333.0" prefHeight="213.0" prefWidth="835.0" stylesheets="@/styles/style.css">
+                                                <columns>
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="DATE" />
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="FILES PROCESSED" />
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="RESULT" />
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="FIXED" />
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="ERRORS" />
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="WARNINGS" />
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="PASSED" />
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="SCORE" />
+                                                    <TableColumn styleClass="th" prefWidth="75.0" text="" />
+                                                </columns>
+                                            </TableView>-->
                                         </children>
                                     </AnchorPane>
                                 </content>

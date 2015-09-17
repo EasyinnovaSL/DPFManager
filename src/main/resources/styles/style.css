@@ -98,11 +98,15 @@
 	display:none;
 }
 
-#tabReports {
+.tableReports {
 	-fx-border-width: 0;
 }
 
 .th {
-	-fx-text-fill: red;
-	-fx-font-size: 13;
+	-fx-border-width: 0;
+	-fx-background-color: #333333;
+}
+
+.th .label {
+	-fx-text-fill: #1cc2ff;
 }
