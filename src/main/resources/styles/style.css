@@ -97,3 +97,12 @@
 .hidden {
 	display:none;
 }
+
+#tabReports {
+	-fx-border-width: 0;
+}
+
+.th {
+	-fx-text-fill: red;
+	-fx-font-size: 13;
+}

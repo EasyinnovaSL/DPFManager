@@ -49,6 +49,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
@@ -67,6 +68,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.TableView;
+
 /**
  * The Class MainApp.
  */
@@ -78,6 +81,7 @@ public class MainApp extends Application {
   @FXML private RadioButton radEP;
   @FXML private RadioButton radIT;
   @FXML private RadioButton radAll;
+  //@FXML private javafx.scene.control.TableView tabReports;
   //@FXML private SplitPane splitPa1;
 
   private static Stage thestage;
@@ -147,140 +151,149 @@ public class MainApp extends Application {
     List<String> allowedExtensions = new ArrayList<String>();
     ArrayList<String> files = new ArrayList<String>();
 
-    String image=this.getClass().getResource("../images/topMenu.png").toExternalForm();
-    String styleBackground="-fx-background-image: url('" + image + "'); " +
-        "-fx-background-position: center center; " +
-        "-fx-background-repeat: repeat-x;";
-    String styleButton="-fx-background-color: transparent;\n" +
-        "\t-fx-border-width     : 0px   ;\n" +
-        "\t-fx-border-radius: 0 0 0 0;\n" +
-        "\t-fx-background-radius: 0 0 0";
-    String styleButtonPressed="-fx-background-color: rgba(255, 255, 255, 0.2);";
+    try {
+      String styleBackground = "-fx-background-image: url('/images/topMenu.png'); " +
+          "-fx-background-position: center center; " +
+          "-fx-background-repeat: repeat-x;";
+      String styleButton = "-fx-background-color: transparent;\n" +
+          "\t-fx-border-width     : 0px   ;\n" +
+          "\t-fx-border-radius: 0 0 0 0;\n" +
+          "\t-fx-background-radius: 0 0 0";
+      String styleButtonPressed = "-fx-background-color: rgba(255, 255, 255, 0.2);";
 
-    allowedExtensions.add(".tif");
-    files.add(txtFile.getText());
-    boolean bl = radBL.isSelected() || radAll.isSelected();
-    boolean ep = radEP.isSelected() || radAll.isSelected();
-    boolean it = radIT.isSelected() || radAll.isSelected();
-    ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
-    String filename = pi.ProcessFiles(files, false, false, true, "", true);
+      allowedExtensions.add(".tif");
+      files.add(txtFile.getText());
+      boolean bl = radBL.isSelected() || radAll.isSelected();
+      boolean ep = radEP.isSelected() || radAll.isSelected();
+      boolean it = radIT.isSelected() || radAll.isSelected();
 
-    Scene sceneReport = new Scene(new Group(), width, height);
+      ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
+      String filename = pi.ProcessFiles(files, false, false, true, "", true);
 
-    VBox root = new VBox();
-    SplitPane splitPa=new SplitPane();
-    splitPa.setOrientation(Orientation.VERTICAL);
+      Scene sceneReport = new Scene(new Group(), width, height);
 
-    Pane topImg=new Pane();
-    topImg.setStyle(styleBackground);
-    topImg.setMinWidth(width);
-    topImg.setMinHeight(50);
-    //topImg.setMaxWidth(width);
-    topImg.setMaxHeight(50);
+      VBox root = new VBox();
+      SplitPane splitPa = new SplitPane();
+      splitPa.setOrientation(Orientation.VERTICAL);
 
-    Button checker = new Button();
-    checker.setMinWidth(170);
-    checker.setMinHeight(30);
-    checker.setLayoutY(5.0);
+      Pane topImg = new Pane();
+      topImg.setStyle(styleBackground);
+      topImg.setMinWidth(width);
+      topImg.setMinHeight(50);
+      //topImg.setMaxWidth(width);
+      topImg.setMaxHeight(50);
 
-    checker.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        try {
-          gotoReport(event);
-          gotoMain(event);
-        } catch (Exception e) {
-          e.printStackTrace();
+      Button checker = new Button();
+      checker.setMinWidth(170);
+      checker.setMinHeight(30);
+      checker.setLayoutY(5.0);
+
+      checker.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          try {
+            gotoReport(event);
+            gotoMain(event);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
-      }
-    });
-    checker.styleProperty().bind(
-        Bindings
-            .when(checker.pressedProperty())
-            .then(
-                new SimpleStringProperty(styleButtonPressed)
-            ).otherwise(
-            new SimpleStringProperty(styleButton)
-        )
-    );
+      });
+      checker.styleProperty().bind(
+          Bindings
+              .when(checker.pressedProperty())
+              .then(
+                  new SimpleStringProperty(styleButtonPressed)
+              ).otherwise(
+              new SimpleStringProperty(styleButton)
+          )
+      );
 
-    Button report = new Button();
-    report.setMinWidth(80);
-    report.setMinHeight(30);
-    report.setLayoutY(5.0);
+      Button report = new Button();
+      report.setMinWidth(80);
+      report.setMinHeight(30);
+      report.setLayoutY(5.0);
 
-    report.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        try {
-          gotoReport(event);
-        } catch (Exception e) {
-          e.printStackTrace();
+      report.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          try {
+            gotoReport(event);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
-      }
-    });
-    report.styleProperty().bind(
-        Bindings
-            .when(report.pressedProperty())
-            .then(
-                new SimpleStringProperty(styleButtonPressed)
-            ).otherwise(
-            new SimpleStringProperty(styleButton)
-        )
+      });
+      report.styleProperty().bind(
+          Bindings
+              .when(report.pressedProperty())
+              .then(
+                  new SimpleStringProperty(styleButtonPressed)
+              ).otherwise(
+              new SimpleStringProperty(styleButton)
+          )
 
-    );
+      );
 
-    topImg.getChildren().addAll(checker, report);
+      topImg.getChildren().addAll(checker, report);
 
-    final WebView browser = new WebView();
-    //double w = width-topImg.getWidth();
-    double h = height-topImg.getHeight()-50;
-    browser.setMinWidth(width);
-    browser.setMinHeight(h);
-    //browser.setMaxWidth(width);
-    browser.setMaxHeight(h);
-    final WebEngine webEngine = browser.getEngine();
-    webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
+      final WebView browser = new WebView();
+      //double w = width-topImg.getWidth();
+      double h = height - topImg.getHeight() - 50;
+      browser.setMinWidth(width);
+      browser.setMinHeight(h);
+      //browser.setMaxWidth(width);
+      browser.setMaxHeight(h);
+      final WebEngine webEngine = browser.getEngine();
+      webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
 
-    splitPa.getItems().addAll(topImg);
-    splitPa.getItems().addAll(browser);
-    splitPa.setDividerPosition(0, 0.5f);
-    root.getChildren().addAll(splitPa);
-    sceneReport.setRoot(root);
+      splitPa.getItems().addAll(topImg);
+      splitPa.getItems().addAll(browser);
+      splitPa.setDividerPosition(0, 0.5f);
+      root.getChildren().addAll(splitPa);
+      sceneReport.setRoot(root);
 
-    thestage.setScene(sceneReport);
+      thestage.setScene(sceneReport);
 
-    //Set invisible the divisor line
-    splitPa.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setStyle("-fx-padding: 0;\n" +
-                "    -fx-background-color: transparent;\n" +
-                "    -fx-background-insets: 0;\n" +
-                "    -fx-shape: \" \";"));
-    splitPa.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setMouseTransparent(true));
+      //Set invisible the divisor line
+      splitPa.lookupAll(".split-pane-divider").stream()
+          .forEach(
+              div -> div.setStyle("-fx-padding: 0;\n" +
+                  "    -fx-background-color: transparent;\n" +
+                  "    -fx-background-insets: 0;\n" +
+                  "    -fx-shape: \" \";"));
+      splitPa.lookupAll(".split-pane-divider").stream()
+          .forEach(
+              div -> div.setMouseTransparent(true));
 
-    thestage.setMaxHeight(Double.MAX_VALUE);
-    thestage.setMinHeight(height);
-    thestage.setMaxWidth(Double.MAX_VALUE);
-    thestage.setResizable(true);
-    thestage.setMinWidth(width);
+      thestage.setMaxHeight(Double.MAX_VALUE);
+      thestage.setMinHeight(height);
+      thestage.setMaxWidth(Double.MAX_VALUE);
+      thestage.setResizable(true);
+      thestage.setMinWidth(width);
 
-    thestage.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-        if (newSceneWidth.doubleValue() < 989) {
-          report.setLayoutX(470.0);
-          checker.setLayoutX(290.0);
-        } else {
-          double dif = (newSceneWidth.doubleValue() - width) / 2;
-          report.setLayoutX(463.0 + dif);
-          checker.setLayoutX(283.0 + dif);
+      thestage.widthProperty().addListener(new ChangeListener<Number>() {
+        @Override
+        public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+          if (newSceneWidth.doubleValue() < 989) {
+            report.setLayoutX(470.0);
+            checker.setLayoutX(290.0);
+          } else {
+            double dif = (newSceneWidth.doubleValue() - width) / 2;
+            report.setLayoutX(463.0 + dif);
+            checker.setLayoutX(283.0 + dif);
+          }
         }
-      }
-    });
+      });
 
-    thestage.sizeToScene();
+      thestage.sizeToScene();
+    } catch (Exception ex) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Error");
+      alert.setHeaderText("An error occured");
+      alert.setContentText(ex.getMessage());
+      alert.showAndWait();
+    }
   }
 
   @FXML

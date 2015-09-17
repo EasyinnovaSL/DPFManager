@@ -47,6 +47,19 @@
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
                                     </cursor></Button>
+<!--                                 <TableView fx:id="tabReports" layoutX="82.0" layoutY="333.0" prefHeight="213.0" prefWidth="835.0" stylesheets="@../styles/style.css">
+                                   <columns>
+                                     <TableColumn styleClass="th" prefWidth="75.0" text="DATE" />
+                                     <TableColumn styleClass="th" prefWidth="75.0" text="FILES PROCESSED" />
+                                       <TableColumn styleClass="th" prefWidth="75.0" text="RESULT" />
+                                       <TableColumn styleClass="th" prefWidth="75.0" text="FIXED" />
+                                       <TableColumn styleClass="th" prefWidth="75.0" text="ERRORS" />
+                                       <TableColumn styleClass="th" prefWidth="75.0" text="WARNINGS" />
+                                       <TableColumn styleClass="th" prefWidth="75.0" text="PASSED" />
+                                       <TableColumn styleClass="th" prefWidth="75.0" text="SCORE" />
+                                       <TableColumn styleClass="th" prefWidth="75.0" text="" />
+                                   </columns>
+                                 </TableView>-->
                                         </children>
                                     </AnchorPane>
                                 </content>
