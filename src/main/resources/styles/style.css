@@ -98,15 +98,35 @@
 	display:none;
 }
 
-.tableReports {
-	-fx-border-width: 0;
-}
-
-.th {
-	-fx-border-width: 0;
+.table-view {
 	-fx-background-color: #333333;
+	-fx-table-cell-border-color: transparent;
 }
 
-.th .label {
+.table-view .column-header-background .filler {
+	-fx-background-color: #333333;
+	-fx-border-color: transparent transparent gray transparent;
+}
+
+.table-view .table-row-cell {
+	-fx-background-color: #333333;
+	-fx-font-size: 11px;
+	-fx-border-color: transparent transparent gray transparent;
+}
+
+.table-view .column-header {
+	-fx-background-color: #333333;
+	-fx-border-color: transparent transparent gray transparent;
+}
+
+.table-view .column-header .label{
+	-fx-border-color: transparent transparent gray transparent;
+	-fx-background-color: #333333;
+	-fx-font-size: 12px;
 	-fx-text-fill: #1cc2ff;
+	-fx-alignment: left;
+}
+
+.table-view .arrow {
+	-fx-mark-color: cyan ;
 }

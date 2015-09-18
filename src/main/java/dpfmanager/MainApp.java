@@ -54,24 +54,35 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.spi.DirectoryManager;
 import javax.swing.text.TableView;
 
 /**
@@ -85,7 +96,6 @@ public class MainApp extends Application {
   @FXML private RadioButton radEP;
   @FXML private RadioButton radIT;
   @FXML private RadioButton radAll;
-
   private static Stage thestage;
   final int width = 970;
   final int height = 1000;
@@ -123,8 +133,32 @@ public class MainApp extends Application {
     }
   }
 
+  private boolean FirstTime() {
+    return false;
+  }
+
   private void LoadGui() throws Exception
   {
+    if (FirstTime()) {
+      String fxmlFile = "/fxml/design3.fxml";
+
+      FXMLLoader loader = new FXMLLoader();
+      Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+      Scene scenemain = new Scene(rootNode1, width, height);
+
+      thestage.setTitle("DPFManager");
+      thestage.setScene(scenemain);
+      thestage.setMaxHeight(height);
+      thestage.setMinHeight(height);
+      thestage.setMaxWidth(width);
+      thestage.setMinWidth(width);
+      thestage.show();
+    } else {
+      ShowMain();
+    }
+  }
+
+  private void ShowMain() throws Exception {
     String fxmlFile = "/fxml/design.fxml";
     LOG.debug("Loading FXML for main view from: {}", fxmlFile);
 
@@ -149,146 +183,9 @@ public class MainApp extends Application {
   }
 
   @FXML
-  protected void openFile(ActionEvent event) throws Exception {
-    List<String> allowedExtensions = new ArrayList<String>();
-    ArrayList<String> files = new ArrayList<String>();
-
+  protected void acceptConditions(ActionEvent event) throws Exception {
     try {
-      String styleBackground = "-fx-background-image: url('/images/topMenu.png'); " +
-          "-fx-background-position: center center; " +
-          "-fx-background-repeat: repeat-x;";
-      String styleButton = "-fx-background-color: transparent;\n" +
-          "\t-fx-border-width     : 0px   ;\n" +
-          "\t-fx-border-radius: 0 0 0 0;\n" +
-          "\t-fx-background-radius: 0 0 0";
-      String styleButtonPressed = "-fx-background-color: rgba(255, 255, 255, 0.2);";
-
-      allowedExtensions.add(".tif");
-      files.add(txtFile.getText());
-      boolean bl = radBL.isSelected() || radAll.isSelected();
-      boolean ep = radEP.isSelected() || radAll.isSelected();
-      boolean it = radIT.isSelected() || radAll.isSelected();
-
-      ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
-      String filename = pi.ProcessFiles(files, false, false, true, "", true);
-
-      Scene sceneReport = new Scene(new Group(), width, height);
-
-      VBox root = new VBox();
-      SplitPane splitPa = new SplitPane();
-      splitPa.setOrientation(Orientation.VERTICAL);
-
-      Pane topImg = new Pane();
-      topImg.setStyle(styleBackground);
-      topImg.setMinWidth(width);
-      topImg.setMinHeight(50);
-      //topImg.setMaxWidth(width);
-      topImg.setMaxHeight(50);
-
-      Button checker = new Button();
-      checker.setMinWidth(170);
-      checker.setMinHeight(30);
-      checker.setLayoutY(5.0);
-
-      checker.setOnAction(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-          try {
-            gotoReport(event);
-            gotoMain(event);
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      });
-      checker.styleProperty().bind(
-          Bindings
-              .when(checker.pressedProperty())
-              .then(
-                  new SimpleStringProperty(styleButtonPressed)
-              ).otherwise(
-              new SimpleStringProperty(styleButton)
-          )
-      );
-
-      Button report = new Button();
-      report.setMinWidth(80);
-      report.setMinHeight(30);
-      report.setLayoutY(5.0);
-
-      report.setOnAction(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-          try {
-            gotoReport(event);
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      });
-      report.styleProperty().bind(
-          Bindings
-              .when(report.pressedProperty())
-              .then(
-                  new SimpleStringProperty(styleButtonPressed)
-              ).otherwise(
-              new SimpleStringProperty(styleButton)
-          )
-
-      );
-
-      topImg.getChildren().addAll(checker, report);
-
-      final WebView browser = new WebView();
-      //double w = width-topImg.getWidth();
-      double h = height - topImg.getHeight() - 50;
-      browser.setMinWidth(width);
-      browser.setMinHeight(h);
-      //browser.setMaxWidth(width);
-      browser.setMaxHeight(h);
-      final WebEngine webEngine = browser.getEngine();
-      webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
-
-      splitPa.getItems().addAll(topImg);
-      splitPa.getItems().addAll(browser);
-      splitPa.setDividerPosition(0, 0.5f);
-      root.getChildren().addAll(splitPa);
-      sceneReport.setRoot(root);
-
-      thestage.setScene(sceneReport);
-
-      //Set invisible the divisor line
-      splitPa.lookupAll(".split-pane-divider").stream()
-          .forEach(
-              div -> div.setStyle("-fx-padding: 0;\n" +
-                  "    -fx-background-color: transparent;\n" +
-                  "    -fx-background-insets: 0;\n" +
-                  "    -fx-shape: \" \";"));
-      splitPa.lookupAll(".split-pane-divider").stream()
-          .forEach(
-              div -> div.setMouseTransparent(true));
-
-      thestage.setMaxHeight(Double.MAX_VALUE);
-      thestage.setMinHeight(height);
-      thestage.setMaxWidth(Double.MAX_VALUE);
-      thestage.setResizable(true);
-      thestage.setMinWidth(width);
-
-      thestage.widthProperty().addListener(new ChangeListener<Number>() {
-        @Override
-        public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-          if (newSceneWidth.doubleValue() < 989) {
-            report.setLayoutX(470.0);
-            checker.setLayoutX(290.0);
-          } else {
-            double dif = (newSceneWidth.doubleValue() - width) / 2;
-            report.setLayoutX(463.0 + dif);
-            checker.setLayoutX(283.0 + dif);
-          }
-        }
-      });
-
-      thestage.sizeToScene();
+      ShowMain();
     } catch (Exception ex) {
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setTitle("Error");
@@ -298,9 +195,164 @@ public class MainApp extends Application {
     }
   }
 
+
+  @FXML
+  protected void openFile(ActionEvent event) throws Exception {
+    List<String> allowedExtensions = new ArrayList<String>();
+    ArrayList<String> files = new ArrayList<String>();
+
+    try {
+      allowedExtensions.add(".tif");
+      files.add(txtFile.getText());
+      boolean bl = radBL.isSelected() || radAll.isSelected();
+      boolean ep = radEP.isSelected() || radAll.isSelected();
+      boolean it = radIT.isSelected() || radAll.isSelected();
+
+      ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
+      String filename = pi.ProcessFiles(files, false, false, true, "", true);
+
+      ShowReport(filename);
+    } catch (Exception ex) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Error");
+      alert.setHeaderText("An error occured");
+      alert.setContentText(ex.toString());
+      alert.showAndWait();
+    }
+  }
+
+  private void ShowReport(String filename) {
+    String styleBackground = "-fx-background-image: url('/images/topMenu.png'); " +
+        "-fx-background-position: center center; " +
+        "-fx-background-repeat: repeat-x;";
+    String styleButton = "-fx-background-color: transparent;\n" +
+        "\t-fx-border-width     : 0px   ;\n" +
+        "\t-fx-border-radius: 0 0 0 0;\n" +
+        "\t-fx-background-radius: 0 0 0";
+    String styleButtonPressed = "-fx-background-color: rgba(255, 255, 255, 0.2);";
+
+    Scene sceneReport = new Scene(new Group(), width, height);
+
+    VBox root = new VBox();
+    SplitPane splitPa = new SplitPane();
+    splitPa.setOrientation(Orientation.VERTICAL);
+
+    Pane topImg = new Pane();
+    topImg.setStyle(styleBackground);
+    topImg.setMinWidth(width);
+    topImg.setMinHeight(50);
+    //topImg.setMaxWidth(width);
+    topImg.setMaxHeight(50);
+
+    Button checker = new Button();
+    checker.setMinWidth(170);
+    checker.setMinHeight(30);
+    checker.setLayoutY(5.0);
+
+    checker.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        try {
+          gotoReport(event);
+          gotoMain(event);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
+    checker.styleProperty().bind(
+        Bindings
+            .when(checker.pressedProperty())
+            .then(
+                new SimpleStringProperty(styleButtonPressed)
+            ).otherwise(
+            new SimpleStringProperty(styleButton)
+        )
+    );
+
+    Button report = new Button();
+    report.setMinWidth(80);
+    report.setMinHeight(30);
+    report.setLayoutY(5.0);
+
+    report.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        try {
+          gotoReport(event);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
+    report.styleProperty().bind(
+        Bindings
+            .when(report.pressedProperty())
+            .then(
+                new SimpleStringProperty(styleButtonPressed)
+            ).otherwise(
+            new SimpleStringProperty(styleButton)
+        )
+
+    );
+
+    topImg.getChildren().addAll(checker, report);
+
+    final WebView browser = new WebView();
+    //double w = width-topImg.getWidth();
+    double h = height - topImg.getHeight() - 50;
+    browser.setMinWidth(width);
+    browser.setMinHeight(h);
+    //browser.setMaxWidth(width);
+    browser.setMaxHeight(h);
+    final WebEngine webEngine = browser.getEngine();
+    webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
+
+    splitPa.getItems().addAll(topImg);
+    splitPa.getItems().addAll(browser);
+    splitPa.setDividerPosition(0, 0.5f);
+    root.getChildren().addAll(splitPa);
+    sceneReport.setRoot(root);
+
+    thestage.setScene(sceneReport);
+
+    //Set invisible the divisor line
+    splitPa.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setStyle("-fx-padding: 0;\n" +
+                "    -fx-background-color: transparent;\n" +
+                "    -fx-background-insets: 0;\n" +
+                "    -fx-shape: \" \";"));
+    splitPa.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setMouseTransparent(true));
+
+    thestage.setMaxHeight(Double.MAX_VALUE);
+    thestage.setMinHeight(height);
+    thestage.setMaxWidth(Double.MAX_VALUE);
+    thestage.setResizable(true);
+    thestage.setMinWidth(width);
+
+    thestage.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+        if (newSceneWidth.doubleValue() < 989) {
+          report.setLayoutX(470.0);
+          checker.setLayoutX(290.0);
+        } else {
+          double dif = (newSceneWidth.doubleValue() - width) / 2;
+          report.setLayoutX(463.0 + dif);
+          checker.setLayoutX(283.0 + dif);
+        }
+      }
+    });
+
+    thestage.sizeToScene();
+  }
+
   @FXML
   protected void gotoMain(ActionEvent event) throws Exception {
-    LoadGui();
+    ShowMain();
   }
 
   @FXML
@@ -321,68 +373,93 @@ public class MainApp extends Application {
     thestage.sizeToScene();
     ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
     SplitPane splitPa1=(SplitPane)nodes.get(0);
-    VBox tabPane = ((VBox) ((SplitPane) nodes.get(0)).getItems().get(1));
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setMouseTransparent(true));
 
-    ObservableList<ReportRow> data =
-        FXCollections.observableArrayList(
-            new ReportRow("14/01/2015", "5", "4 files passed all checks", "1 errors 5 warnings", "1 errors", "5 warnings", "20 passed", "95%"),
-            new ReportRow("12/01/2015", "5", "2 files passed all checks", "1 errors 5 warnings", "1 errors", "5 warnings", "20 passed", "95%")
-        );
+      ObservableList<ReportRow> data = ReadReports();
 
     javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
 
     tabReports.setEditable(true);
     TableColumn colDate = new TableColumn("Date");
+    colDate.setMinWidth(90);
     colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
     TableColumn colN = new TableColumn("Files Processed");
+    colN.setMinWidth(100);
     colN.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("nFiles")
+        new PropertyValueFactory<ReportRow, String>("nfiles")
     );
 
     TableColumn colResult = new TableColumn("Result");
-    colResult.setMinWidth(100);
+    colResult.setMinWidth(165);
     colResult.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("result")
     );
 
     TableColumn colFixed= new TableColumn("Fixed");
+      colFixed.setMinWidth(120);
     colFixed.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("fixed")
     );
 
     TableColumn colErrors = new TableColumn("Errors");
+      colErrors.setMinWidth(75);
     colErrors.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("errors")
     );
 
     TableColumn colWarnings = new TableColumn("Warnings");
+      colWarnings.setMinWidth(85);
     colWarnings.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("warnings")
     );
 
     TableColumn colPassed = new TableColumn("Passed");
+      colPassed.setMinWidth(75);
     colPassed.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("passed")
     );
 
     TableColumn colScore = new TableColumn("Score");
-    colScore.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("score")
-    );
+      colScore.setMinWidth(100);
+      colScore.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("score")
+      );
 
-    tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore);
-    tabReports.setItems(data);
+      tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore);
+      tabReports.setItems(data);
 
-      /*tabReports.setLayoutX(82.0);
-      tabReports.setLayoutY(333.0);
-      tabReports.setPrefHeight(213.0);
-      tabReports.setPrefWidth(835.0);*/
+      tabReports.setLayoutX(82.0);
+      tabReports.setLayoutY(270.0);
+      tabReports.setPrefHeight(270.0);
+      tabReports.setPrefWidth(835.0);
 
-      //tabPane.getChildren().add(tabReports);
+      changeColumnTextColor(colDate, Color.LIGHTGRAY);
+      changeColumnTextColor(colN, Color.CYAN);
+      changeColumnTextColor(colResult, Color.LIGHTGRAY);
+      changeColumnTextColor(colFixed, Color.LIGHTGRAY);
+      changeColumnTextColor(colErrors, Color.RED);
+      changeColumnTextColor(colWarnings, Color.ORANGE);
+      changeColumnTextColor(colPassed, Color.GREENYELLOW);
+      changeColumnTextColor(colScore, Color.LIGHTGRAY);
+
+      tabReports.setOnMousePressed(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+          if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
+            ReportRow row = tabReports.getSelectionModel().getSelectedItem();
+            ShowReport(row.getFile());
+          }
+        }
+      });
+
+      VBox tabPane = ((VBox) ((SplitPane) nodes.get(0)).getItems().get(1));
+      AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
+      ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
+      AnchorPane ap2 = (AnchorPane)(sp.getContent());
+      ap2.getChildren().add(tabReports);
 
     } catch (Exception ex) {
       Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -393,11 +470,74 @@ public class MainApp extends Application {
     }
   }
 
+  private void changeColumnTextColor(TableColumn column, Color color) {
+    column.setCellFactory(new Callback<TableColumn, TableCell>() {
+      public TableCell call(TableColumn param) {
+        return new TableCell<ReportRow, String>() {
+          @Override
+          public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!isEmpty()) {
+              this.setTextFill(color);
+              setText(item);
+            }
+          }
+        };
+      }
+    });
+  }
+
   @FXML
   protected void browseFile(ActionEvent event) {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open File");
     File file = fileChooser.showOpenDialog(thestage);
     txtFile.setText(file.getPath());
+  }
+
+  private ObservableList<ReportRow> ReadReports() {
+    List<ReportRow> list = new ArrayList<ReportRow>();
+    ObservableList<ReportRow> data = FXCollections.observableArrayList(list);
+
+    String baseDir = "reports";
+    File reportsDir = new File(baseDir);
+    if (reportsDir.exists()) {
+      String[] directories = reportsDir.list(new FilenameFilter() {
+        @Override
+        public boolean accept(File current, String name) {
+          return new File(current, name).isDirectory();
+        }
+      });
+      for (String reportDay : directories) {
+        File reportsDay = new File(baseDir + "/" + reportDay);
+        String[] directories2 = reportsDay.list(new FilenameFilter() {
+          @Override
+          public boolean accept(File current, String name) {
+            return new File(current, name).isDirectory();
+          }
+        });
+        for (String reportDir : directories2) {
+          File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
+          if (report.exists()) {
+            ReportRow rr = ReportRow.createRowFromXml(reportDay, report);
+            data.add(rr);
+          } else {
+            File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
+            if (reportHtml.exists()) {
+              ReportRow rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
+              data.add(rr);
+            } else {
+              File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
+              if (reportJson.exists()) {
+                ReportRow rr = ReportRow.createRowFromJson(reportDay, reportJson);
+                data.add(rr);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return data;
   }
 }
