@@ -18,10 +18,15 @@
             <VBox>
                 <children>
                     <Pane fx:id="topMenuImage" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
-                        <Button layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="30.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                        <Button layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Button>
+                        <Button layoutX="560.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoAbout" prefHeight="20.0" prefWidth="55.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
                     </Pane>
                 </children>
             </VBox>
@@ -29,7 +34,7 @@
                 <children>
                     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
                         <children>
-                            <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                            <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER" prefHeight="944.0" prefWidth="74.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                                 <content>
                                     <AnchorPane>
                                         <children>
