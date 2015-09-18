@@ -58,7 +58,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -77,13 +76,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.naming.spi.DirectoryManager;
-import javax.swing.text.TableView;
+import java.util.prefs.Preferences;
 
 /**
  * The Class MainApp.
@@ -134,28 +129,36 @@ public class MainApp extends Application {
   }
 
   private boolean FirstTime() {
-    return false;
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "first_time";
+    String defaultValue = "1";
+    String propertyValue = prefs.get(PREF_NAME, defaultValue);
+    return propertyValue.equals("1");
   }
 
   private void LoadGui() throws Exception
   {
     if (FirstTime()) {
-      String fxmlFile = "/fxml/design3.fxml";
-
-      FXMLLoader loader = new FXMLLoader();
-      Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
-      Scene scenemain = new Scene(rootNode1, width, height);
-
-      thestage.setTitle("DPFManager");
-      thestage.setScene(scenemain);
-      thestage.setMaxHeight(height);
-      thestage.setMinHeight(height);
-      thestage.setMaxWidth(width);
-      thestage.setMinWidth(width);
-      thestage.show();
+      ShowDisclaimer();
     } else {
       ShowMain();
     }
+  }
+
+  private void ShowDisclaimer() throws Exception {
+    String fxmlFile = "/fxml/legal.fxml";
+
+    FXMLLoader loader = new FXMLLoader();
+    Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+    Scene scenemain = new Scene(rootNode1, width, height);
+
+    thestage.setTitle("DPFManager");
+    thestage.setScene(scenemain);
+    thestage.setMaxHeight(height);
+    thestage.setMinHeight(height);
+    thestage.setMaxWidth(width);
+    thestage.setMinWidth(width);
+    thestage.show();
   }
 
   private void ShowMain() throws Exception {
@@ -185,6 +188,11 @@ public class MainApp extends Application {
   @FXML
   protected void acceptConditions(ActionEvent event) throws Exception {
     try {
+      Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+      final String PREF_NAME = "first_time";
+      String newValue = "0";
+      prefs.put(PREF_NAME, newValue);
+
       ShowMain();
     } catch (Exception ex) {
       Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -194,7 +202,6 @@ public class MainApp extends Application {
       alert.showAndWait();
     }
   }
-
 
   @FXML
   protected void openFile(ActionEvent event) throws Exception {
@@ -450,7 +457,9 @@ public class MainApp extends Application {
         public void handle(MouseEvent event) {
           if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
             ReportRow row = tabReports.getSelectionModel().getSelectedItem();
-            ShowReport(row.getFile());
+            if (row.getFile().toLowerCase().endsWith(".html")) {
+              ShowReport(row.getFile());
+            }
           }
         }
       });

@@ -23,13 +23,7 @@
                                 <content>
                                     <AnchorPane>
                                         <children>
-                                 <Label layoutX="27.0" layoutY="89.0" prefHeight="49.0" prefWidth="814.0" text="The main objective of the dpf-manager.org community is to create and maintain community of experts with a common interest: FILE FORMAT VALIDATION for DIGITAL PRESERVATION." wrapText="true" />
-                                 <Label layoutX="27.0" layoutY="130.0" prefHeight="70.0" prefWidth="774.0" text="If you decide to register with the dpf-manager.org website you will be asked to provide certain information about yourself including your name and contact details. By submitting your personal information, you consent to the collection, use and transfer of your information in accordance with the terms of this Privacy Policy." wrapText="true" />
-                                 <Label layoutX="27.0" layoutY="193.0" prefHeight="56.0" prefWidth="787.0" text="By submitting your personal information you also consent to the publication of your name and the name of your company/institution in the dpf-manager.org website. If you would like this information to remain private please let us know by contacting us as specified in the privacy policy." wrapText="true" />
-                                 <Label layoutX="27.0" layoutY="249.0" text="We manually review all the applications, and we reserve the right to accept or reject any application we receive." />
-                                 <Label layoutX="27.0" layoutY="276.0" prefHeight="67.0" prefWidth="727.0" text="We reserve the right to terminate or suspend your access to and use of the dpf-manager.org website, without notice, if we believe, in our sole discretion, that it is in violation of any applicable law or it is harmful to our interests or the interests, including intellectual property or other rights, of another user or other third party partners." wrapText="true" />
-                                 <Button layoutX="291.0" layoutY="368.0" mnemonicParsing="false" onAction="#acceptConditions" prefHeight="40.0" prefWidth="212.0" text="I Accept" />
-                                 <Label layoutX="27.0" layoutY="43.0" text="Participant Terms and Conditions">
+                                 <Label layoutX="27.0" layoutY="43.0" text="DPF Manager">
                                     <font>
                                        <Font name="System Bold" size="18.0" />
                                     </font>
