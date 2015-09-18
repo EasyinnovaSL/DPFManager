@@ -99,7 +99,7 @@ public class MainApp extends Application {
   @FXML private RadioButton radAll;
   private static Stage thestage;
   final int width = 970;
-  final int height = 1000;
+  final int height = 960;
 
   /**
    * The main method.
@@ -153,6 +153,7 @@ public class MainApp extends Application {
       thestage.setMinHeight(height);
       thestage.setMaxWidth(width);
       thestage.setMinWidth(width);
+      thestage.sizeToScene();
       thestage.show();
     } else {
       ShowMain();
@@ -174,6 +175,7 @@ public class MainApp extends Application {
     thestage.setMinHeight(height);
     thestage.setMaxWidth(width);
     thestage.setMinWidth(width);
+    thestage.sizeToScene();
     thestage.show();
 
     ObservableList<Node> nodes=scenemain.getRoot().getChildrenUnmodifiable();
@@ -374,6 +376,7 @@ public class MainApp extends Application {
 
     thestage.setScene(scenereport);
     thestage.sizeToScene();
+      
     ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
     SplitPane splitPa1=(SplitPane)nodes.get(0);
     splitPa1.lookupAll(".split-pane-divider").stream()
