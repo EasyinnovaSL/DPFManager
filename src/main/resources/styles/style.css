@@ -135,3 +135,23 @@
 .table-view .arrow {
 	-fx-mark-color: cyan ;
 }
+
+.table-view .scroll-bar:vertical .track{
+    -fx-background-color:#333333;
+}
+
+.table-view .scroll-bar:vertical .thumb{
+    -fx-background-color:#1cc2ff;
+}
+
+.table-view .increment-button ,.table-view .decrement-button {
+    -fx-background-color:#333333;
+    -fx-background-radius: 2em;
+
+}
+.table-view .scroll-bar:vertical .increment-arrow,
+.table-view .scroll-bar:vertical .decrement-arrow,
+{
+    -fx-background-color:transparent;
+    -fx-color-label-visible: blue;
+}

@@ -94,7 +94,7 @@ public class MainApp extends Application {
   @FXML private RadioButton radAll;
   private static Stage thestage;
   final int width = 970;
-  final int height = 960;
+  final int height = 950;
 
   /**
    * The main method.
