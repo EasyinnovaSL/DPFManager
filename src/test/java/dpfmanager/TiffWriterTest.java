@@ -127,6 +127,7 @@ public class TiffWriterTest extends TestCase {
     Node node2 = doc2.getFirstChild().getFirstChild();
 
     while(node.getNextSibling()!=null && node2.getNextSibling()!=null){
+
       assertEquals(node.getNodeName(),node2.getNodeName());
       assertEquals(node.getNodeValue(),node2.getNodeValue());
       if(node.getFirstChild()!=null && node2.getFirstChild()!=null){

@@ -47,6 +47,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -249,6 +250,7 @@ public class MainApp extends Application {
     checker.setMinHeight(30);
     checker.setLayoutY(5.0);
 
+    checker.setCursor(Cursor.HAND);
     checker.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -275,6 +277,7 @@ public class MainApp extends Application {
     report.setMinHeight(30);
     report.setLayoutY(5.0);
 
+    report.setCursor(Cursor.HAND);
     report.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -517,16 +520,16 @@ public class MainApp extends Application {
           }
         });
         for (String reportDir : directories2) {
-          File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-          if (report.exists()) {
-            ReportRow rr = ReportRow.createRowFromXml(reportDay, report);
+          File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
+          if (reportHtml.exists()) {
+            ReportRow rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
             data.add(rr);
           } else {
-            File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-            if (reportHtml.exists()) {
-              ReportRow rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
+            File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
+            if (report.exists()) {
+              ReportRow rr = ReportRow.createRowFromXml(reportDay, report);
               data.add(rr);
-            } else {
+            }  else {
               File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
               if (reportJson.exists()) {
                 ReportRow rr = ReportRow.createRowFromJson(reportDay, reportJson);

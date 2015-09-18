@@ -150,7 +150,9 @@ public class ReportRow {
       }
     }
 
-    score = passed * 100 / n;
+    if(n>0){
+      score = passed * 100 / n;
+    }
 
     ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%", file.getPath());
     return row;
