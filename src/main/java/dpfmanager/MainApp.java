@@ -94,7 +94,7 @@ public class MainApp extends Application {
   @FXML private RadioButton radAll;
   private static Stage thestage;
   final int width = 970;
-  final int height = 960;
+  final int height = 950;
 
   /**
    * The main method.
@@ -253,6 +253,7 @@ public class MainApp extends Application {
     //topImg.setMaxWidth(width);
     topImg.setMaxHeight(50);
 
+    // Button go to main
     Button checker = new Button();
     checker.setMinWidth(170);
     checker.setMinHeight(30);
@@ -280,6 +281,7 @@ public class MainApp extends Application {
         )
     );
 
+    // Button go to reports
     Button report = new Button();
     report.setMinWidth(80);
     report.setMinHeight(30);
@@ -304,10 +306,36 @@ public class MainApp extends Application {
             ).otherwise(
             new SimpleStringProperty(styleButton)
         )
-
     );
 
-    topImg.getChildren().addAll(checker, report);
+    // Button go to about
+    Button about = new Button();
+    about.setMinWidth(55);
+    about.setMinHeight(30);
+    about.setLayoutY(5.0);
+
+    about.setCursor(Cursor.HAND);
+    about.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        try {
+          gotoAbout(event);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
+    about.styleProperty().bind(
+        Bindings
+            .when(about.pressedProperty())
+            .then(
+                new SimpleStringProperty(styleButtonPressed)
+            ).otherwise(
+            new SimpleStringProperty(styleButton)
+        )
+    );
+
+    topImg.getChildren().addAll(checker, report, about);
 
     final WebView browser = new WebView();
     //double w = width-topImg.getWidth();
@@ -350,10 +378,12 @@ public class MainApp extends Application {
         if (newSceneWidth.doubleValue() < 989) {
           report.setLayoutX(470.0);
           checker.setLayoutX(290.0);
+          about.setLayoutX(560.0);
         } else {
           double dif = (newSceneWidth.doubleValue() - width) / 2;
           report.setLayoutX(463.0 + dif);
           checker.setLayoutX(283.0 + dif);
+          about.setLayoutX(560.0 + dif);
         }
       }
     });
@@ -364,6 +394,32 @@ public class MainApp extends Application {
   @FXML
   protected void gotoMain(ActionEvent event) throws Exception {
     ShowMain();
+  }
+
+  @FXML
+  protected void gotoAbout(ActionEvent event) throws Exception {
+    String fxmlFile = "/fxml/about.fxml";
+    LOG.debug("Loading FXML for main view from: {}", fxmlFile);
+
+    FXMLLoader loader = new FXMLLoader();
+    Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+    Scene sceneabout = new Scene(rootNode1, width, height);
+    sceneabout.getStylesheets().add("/styles/style.css");
+
+    thestage.setTitle("DPFManager");
+    thestage.setScene(sceneabout);
+    thestage.setMaxHeight(height);
+    thestage.setMinHeight(height);
+    thestage.setMaxWidth(width);
+    thestage.setMinWidth(width);
+    thestage.sizeToScene();
+    thestage.show();
+
+    ObservableList<Node> nodes=sceneabout.getRoot().getChildrenUnmodifiable();
+    SplitPane splitPa1=(SplitPane)nodes.get(0);
+    splitPa1.lookupAll(".split-pane-divider").stream()
+        .forEach(
+            div -> div.setMouseTransparent(true));
   }
 
   @FXML

@@ -70,6 +70,12 @@
     -fx-background-repeat: repeat-x;
 }
 
+#topMenuImage2{
+	-fx-background-image: url("../images/topMenu2.png");
+	-fx-background-position: center center;
+	-fx-background-repeat: repeat-x;
+}
+
 #topMenuImage{
     -fx-background-image: url("../images/topMenu.png");
     -fx-background-position: center center;
@@ -134,4 +140,12 @@
 
 .table-view .arrow {
 	-fx-mark-color: cyan ;
+}
+
+.backabout {
+	-fx-background-color: #333333;
+}
+
+.clabel {
+	-fx-text-fill: #ffffff;
 }
