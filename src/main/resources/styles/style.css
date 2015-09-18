@@ -114,6 +114,11 @@
 	-fx-border-color: transparent transparent gray transparent;
 }
 
+.table-view:row-selection .table-row-cell:filled:hover {
+	-fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-cursor: hand;
+}
+
 .table-view .column-header {
 	-fx-background-color: #333333;
 	-fx-border-color: transparent transparent gray transparent;
@@ -124,7 +129,7 @@
 	-fx-background-color: #333333;
 	-fx-font-size: 12px;
 	-fx-text-fill: #1cc2ff;
-	-fx-alignment: left;
+	-fx-alignment: CENTER-LEFT;
 }
 
 .table-view .arrow {
