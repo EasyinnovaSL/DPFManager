@@ -186,6 +186,7 @@ public class CommandLine implements UserInterface {
 
       ProcessInput pi = new ProcessInput(allowedExtensions, true, true, true);
       pi.ProcessFiles(files, xml, json, html, outputFolder, silence);
+      System.out.println("Report generated successfully.");
     }
   }
 

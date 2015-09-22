@@ -85,6 +85,14 @@ public class ReportXml {
     }
     ifdNode.appendChild(el);
 
+    // Thumbnail or main
+    String typ = "Main image";
+    if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = "Thumbnail";
+    el = doc.createElement("imagetype");
+    el.setAttribute("check_ifd0", "typ");
+    el.setTextContent(typ);
+    ifdNode.appendChild(el);
+
     // Strips or Tiles
     el = doc.createElement("image_representation");
     if (ifd.hasStrips()) {
@@ -96,10 +104,17 @@ public class ReportXml {
     }
     ifdNode.appendChild(el);
 
+    // Photometric
+    el = doc.createElement("photometric");
+    el.setTextContent(ifd.getMetadata().get("PhotometricInterpretation").getFirstNumericValue()+"");
+    ifdNode.appendChild(el);
+
     // SubImage
     el = doc.createElement("hasSubIfd");
-    if (ifd.hasSubIFD()) {
-      el.setTextContent("yes");
+    if (ifd.getsubIFD() != null) {
+      typ="Thumbnail";
+      if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = "Main image";
+      el.setTextContent(typ);
     } else {
       el.setTextContent("no");
     }
@@ -216,22 +231,29 @@ public class ReportXml {
     // tiff structure
     Element tiffStructureElement = doc.createElement("tiff_structure");
     Element ifdTree = doc.createElement("ifdTree");
+    int index = 0;
     IFD ifd = ir.getTiffModel().getFirstIFD();
-    int index = 1;
     while (ifd != null) {
       Element ifdNode = createIfdNode(doc, ir, ifd, index++);
       ifdTree.appendChild(ifdNode);
       ifd = ifd.getNextIFD();
     }
+
     tiffStructureElement.appendChild(ifdTree);
     report.appendChild(tiffStructureElement);
 
     // basic info
     Element infoElement = doc.createElement("width");
+    infoElement.setAttribute("check_value", "width");
     infoElement.setTextContent(ir.getWidth());
     report.appendChild(infoElement);
     infoElement = doc.createElement("height");
+    infoElement.setAttribute("check_value", "height");
     infoElement.setTextContent(ir.getHeight());
+    report.appendChild(infoElement);
+    infoElement = doc.createElement("bitspersample");
+    infoElement.setAttribute("check_value", "bitspersample");
+    infoElement.setTextContent(ir.getBitsPerSample());
     report.appendChild(infoElement);
 
     // implementation checker

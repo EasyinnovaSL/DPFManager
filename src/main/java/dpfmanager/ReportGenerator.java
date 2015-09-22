@@ -454,7 +454,7 @@ public class ReportGenerator {
       copyHtmlFolder(htmlFileStr);
       ReportHtml.parseGlobal(htmlFileStr, gr);
       if (!silence) {
-        showToUser(htmlFileStr);
+        //showToUser(htmlFileStr);
       }
     }
     if (json) {

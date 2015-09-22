@@ -65,6 +65,12 @@ public class IndividualReport {
   /** The Tiff height. */
   private String height;
 
+  /** The Tiff bits per sample. */
+  private String bps;
+
+  /** The Tiff photometric. */
+  private String photo;
+
   /** The baseline errors list. */
   private List<ValidationEvent> errorsBl;
 
@@ -175,6 +181,8 @@ public class IndividualReport {
     // basic info
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
+    bps = tiffModel.getMetadataSingleString("BitsPerSample");
+    photo = tiffModel.getMetadataSingleString("PhotometricRepresentation");
 
     // errors & warnings
     if (validation != null) {
@@ -237,6 +245,24 @@ public class IndividualReport {
    */
   public String getHeight() {
     return height;
+  }
+
+  /**
+   * Get Photometric.
+   *
+   * @return the Photometric
+   */
+  public String getPhotometric() {
+    return photo;
+  }
+
+  /**
+   * Get bits per sample.
+   *
+   * @return the height
+   */
+  public String getBitsPerSample() {
+    return bps;
   }
 
   /**

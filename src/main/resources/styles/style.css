@@ -24,10 +24,12 @@
 	-fx-border-radius: 15px;
 	-fx-padding: 4px;
 }
-
 .radio-button .dot {
 	-fx-mark-highlight-color: #31C2F3 ;
 	-fx-mark-color: #31C2F3 ;
+}
+.radio-button:selected .dot {
+	-fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
 }
 
 .button{
