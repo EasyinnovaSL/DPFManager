@@ -34,40 +34,29 @@
                 <children>
                     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
                         <children>
-                            <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                            <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                                 <content>
                                     <AnchorPane>
                                         <children>
-                                            <ImageView fitWidth="2000.0" focusTraversable="true" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                 <!-- <image>
                                                     <Image url="@../images/back.png" />
                                                  </image>-->
                                             </ImageView>
-                                            <ImageView fitHeight="1000.0" focusTraversable="true" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                                              <!--<image>
                                                                                                 <Image url="@../images/main.png" />
                                                                                              </image>-->
                                             </ImageView>
-                                            <Button fx:id="myButton" layoutX="641.0" layoutY="315.0" mnemonicParsing="false" onAction="#browseFile" prefHeight="37.0" prefWidth="106.0" style="" stylesheets="@/styles/style.css" text="Select" textFill="WHITE">
-                                                <font>
-                                                    <Font name="System Bold" size="16.0" />
-                                                </font>
-                                    <cursor>
-                                       <Cursor fx:constant="HAND" />
-                                    </cursor></Button>
-                                            <TextField fx:id="txtFile" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
-                                    <cursor>
-                                       <Cursor fx:constant="TEXT" />
-                                    </cursor></TextField>
                                             <Pane layoutX="254.0" layoutY="455.0" prefHeight="172.0" prefWidth="486.0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); -fx-border-radius: 5 5 5 5;-fx-background-radius: 5 5 5 5;">
                                                 <children>
-                                                    <RadioButton fx:id="radBL" layoutX="23.0" layoutY="20.0" mnemonicParsing="false" selected="true" style="-fx-padding: 0 10 0 0;" styleClass="radio-button" stylesheets="@/styles/style.css" text="Baseline">
-                                                        <toggleGroup>
+                                                    <RadioButton fx:id="radEP" layoutX="23.0" layoutY="37.0" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/EP">
+                                          <toggleGroup>
                                                             <ToggleGroup fx:id="conftoggleGroup" />
-                                                        </toggleGroup></RadioButton>
-                                                    <RadioButton fx:id="radEP" layoutX="23.0" layoutY="37.0" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/EP" toggleGroup="$conftoggleGroup" />
-                                                    <RadioButton fx:id="radIT" layoutX="23.0" layoutY="54.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT" toggleGroup="$conftoggleGroup" />
+                                          </toggleGroup></RadioButton>
                                                     <RadioButton fx:id="radAll" layoutX="23.0" layoutY="75.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="All" toggleGroup="$conftoggleGroup" />
+                                                    <RadioButton fx:id="radIT" layoutX="23.0" layoutY="54.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT" toggleGroup="$conftoggleGroup" />
+                                                    <RadioButton fx:id="radBL" layoutX="23.0" layoutY="20.0" mnemonicParsing="false" selected="true" style="-fx-padding: 0 10 0 0;" styleClass="radio-button" stylesheets="@/styles/style.css" text="Baseline" toggleGroup="$conftoggleGroup" />
                                                 </children>
                                                 <effect>
                                                     <ColorAdjust />
@@ -79,6 +68,17 @@
                                        <Cursor fx:constant="HAND" />
                                     </cursor>
                                             </Pane>
+                                            <Button fx:id="myButton" layoutX="641.0" layoutY="315.0" mnemonicParsing="false" onAction="#browseFile" prefHeight="37.0" prefWidth="106.0" style="" stylesheets="@/styles/style.css" text="Select" textFill="WHITE">
+                                                <font>
+                                                    <Font name="System Bold" size="16.0" />
+                                                </font>
+                                    <cursor>
+                                       <Cursor fx:constant="HAND" />
+                                    </cursor></Button>
+                                            <TextField fx:id="txtFile" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
+                                    <cursor>
+                                       <Cursor fx:constant="TEXT" />
+                                    </cursor></TextField>
                                             <Button layoutX="258.0" layoutY="649.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="228.0" stylesheets="@/styles/style.css" text="IMPORT CONFIGURATION" textFill="#31C2F3">
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
