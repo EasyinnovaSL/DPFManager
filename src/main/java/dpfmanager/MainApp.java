@@ -158,7 +158,7 @@ public class MainApp extends Application {
 
   private void LoadGui() throws Exception
   {
-    if (FirstTime() || true) {
+    if (FirstTime()) {
       ShowDisclaimer();
     } else {
       ShowMain();
@@ -214,6 +214,10 @@ public class MainApp extends Application {
       if (chkFeedback.isSelected()){
         final String PREF_NAME = "feedback";
         String newValue = "1";
+        prefs.put(PREF_NAME, newValue);
+      } else {
+        final String PREF_NAME = "feedback";
+        String newValue = "0";
         prefs.put(PREF_NAME, newValue);
       }
       if (chkSubmit.isSelected()){
