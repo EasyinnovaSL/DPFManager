@@ -562,7 +562,7 @@ public class MainApp extends Application {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open File");
     File file = fileChooser.showOpenDialog(thestage);
-    txtFile.setText(file.getPath());
+    if(file!=null)txtFile.setText(file.getPath());
   }
 
   private ObservableList<ReportRow> ReadReports() {
