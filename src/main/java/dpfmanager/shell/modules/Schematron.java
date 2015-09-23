@@ -20,12 +20,12 @@ public class Schematron {
     try {
       context.addRoutes(new RouteBuilder() {
         public void configure() {
-          from("file:" + xmlFilename).to("schematron://sch/schematron.sch").to("mock:result");
+          from("file:xml").to("schematron://sch/schematron.sch").to("mock:result");
         }
       });
       ProducerTemplate template = context.createProducerTemplate();
       context.start();
-      template.sendBody("file:" + xmlFilename, xmlFilename);
+      template.sendBody("file:xml", xmlFilename);
       context.stop();
     } catch (Exception e) {
       e.printStackTrace();

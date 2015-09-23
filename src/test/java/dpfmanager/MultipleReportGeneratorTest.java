@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -28,6 +29,11 @@ public class MultipleReportGeneratorTest extends TestCase {
    */
   @Before
   public void PreTest() {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
     boolean ok = true;
     try {
       tr = new TiffReader();
@@ -38,6 +44,11 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   public void testReports2() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
     String[] args = new String[3];
     args[0] = "src/test/resources/Small/";
     args[1] = "-reportformat";

@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.prefs.Preferences;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -62,7 +63,13 @@ public class ProcessInput {
 
     // Send report over FTP (only for alpha testing)
     try {
-      sendFtpCamel(reportGenerator, summaryXml);
+      Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+      final String PREF_NAME = "feedback";
+      String defaultValue = "0";
+      String propertyValue = prefs.get(PREF_NAME, defaultValue);
+      if(propertyValue.equals("1")) {
+        sendFtpCamel(reportGenerator, summaryXml);
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }

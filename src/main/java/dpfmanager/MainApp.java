@@ -55,11 +55,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -75,12 +77,18 @@ import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
+import javax.net.ssl.HttpsURLConnection;
 /**
  * The Class MainApp.
  */
@@ -92,6 +100,17 @@ public class MainApp extends Application {
   @FXML private RadioButton radEP;
   @FXML private RadioButton radIT;
   @FXML private RadioButton radAll;
+
+  @FXML private CheckBox chkFeedback;
+  @FXML private CheckBox chkSubmit;
+  @FXML private TextField txtName;
+  @FXML private TextField txtSurname;
+  @FXML private TextField txtEmail;
+  @FXML private TextField txtJob;
+  @FXML private TextField txtOrganization;
+  @FXML private TextField txtCountry;
+  @FXML private TextArea txtWhy;
+
   private static Stage thestage;
   final int width = 970;
   final int height = 950;
@@ -188,12 +207,104 @@ public class MainApp extends Application {
   }
 
   @FXML
-  protected void acceptConditions(ActionEvent event) throws Exception {
+  protected void proceed(ActionEvent event) throws Exception {
     try {
       Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-      final String PREF_NAME = "first_time";
-      String newValue = "0";
-      prefs.put(PREF_NAME, newValue);
+
+      if (chkFeedback.isSelected()){
+        final String PREF_NAME = "feedback";
+        String newValue = "1";
+        prefs.put(PREF_NAME, newValue);
+      } else {
+        final String PREF_NAME = "feedback";
+        String newValue = "0";
+        prefs.put(PREF_NAME, newValue);
+      }
+      if (chkSubmit.isSelected()){
+        boolean ok = true;
+        if (txtName.getText().length() == 0) ok = false;
+        if (txtSurname.getText().length() == 0) ok = false;
+        if (txtEmail.getText().length() == 0) ok = false;
+        if (txtJob.getText().length() == 0) ok = false;
+        if (txtOrganization.getText().length() == 0) ok = false;
+        if (txtCountry.getText().length() == 0) ok = false;
+        if (txtWhy.getText().length() == 0) ok = false;
+        if (!ok) {
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Error");
+          alert.setHeaderText("Missing data");
+          alert.setContentText("Please fill in all the fields");
+          alert.showAndWait();
+          return;
+        }
+        if (txtEmail.getText().indexOf("@") < 0 || txtEmail.getText().indexOf("@") > txtEmail.getText().lastIndexOf(".")) {
+          ok = false;
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Error");
+          alert.setHeaderText("Incorrect email");
+          alert.setContentText("Please write your email correctly");
+          alert.showAndWait();
+        }
+        if (ok) {
+          String url = "http://dpfmanager.org/form.php";
+          URL obj = new URL(url);
+          java.net.HttpURLConnection con = (java.net.HttpURLConnection) obj.openConnection();
+
+          //add reuqest header
+          con.setRequestMethod("POST");
+          con.setRequestProperty("User-Agent", "Mozilla/5.0");
+          con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+          String urlParameters = "email=" + txtEmail.getText();
+          urlParameters += "&name=" + txtName.getText();
+          urlParameters += "&surname=" + txtSurname.getText();
+          urlParameters += "&jobrole=" + txtJob.getText();
+          urlParameters += "&organization=" + txtOrganization.getText();
+          urlParameters += "&country=" + txtCountry.getText();
+          urlParameters += "&comments=" + txtWhy.getText();
+          urlParameters += "&formtype=DPFManagerApp";
+
+          // Send post request
+          con.setDoOutput(true);
+          DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+          wr.writeBytes(urlParameters);
+          wr.flush();
+          wr.close();
+
+          boolean getok = false;
+          int responseCode = con.getResponseCode();
+          if (responseCode == 200) {
+            BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+              if (inputLine == "OK") getok = true;
+            }
+            in.close();
+          }
+          if (getok) {
+            final String PREF_NAME = "first_time";
+            String newValue = "0";
+            prefs.put(PREF_NAME, newValue);
+          } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error ocurred");
+            alert.setContentText("Sorry, we could not proceed your request. Try again the next time you run DPFmanager");
+            alert.showAndWait();
+
+            final String PREF_NAME = "first_time";
+            String newValue = "1";
+            prefs.put(PREF_NAME, newValue);
+          }
+        }
+      } else {
+        final String PREF_NAME = "first_time";
+        String newValue = "0";
+        prefs.put(PREF_NAME, newValue);
+      }
 
       ShowMain();
     } catch (Exception ex) {

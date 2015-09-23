@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,6 +48,11 @@ public class TiffWriterTest extends TestCase {
    */
   @Before
   public void PreTest() {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
     boolean ok = true;
     try {
       tr = new TiffReader();
@@ -57,6 +63,11 @@ public class TiffWriterTest extends TestCase {
   }
 
   public void testReports1() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
     String[] args = new String[2];
     args[0] = "src/test/resources/TestWriter";
     args[1] = "-s";
