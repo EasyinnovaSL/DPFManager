@@ -1,39 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <SplitPane fx:id="splitPa1" orientation="VERTICAL">
             <VBox fx:id="rootReports">
                 <children>
                     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
                         <children>
-                            <ScrollPane prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                            <ScrollPane prefHeight="944.0" prefWidth="974.0" style="-fx-background-color: #333333;" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                                 <content>
-                                    <AnchorPane>
+                                    <AnchorPane prefHeight="511.0" prefWidth="841.0">
                                         <children>
-                                 <Label layoutX="27.0" layoutY="89.0" prefHeight="49.0" prefWidth="814.0" text="The main objective of the dpf-manager.org community is to create and maintain community of experts with a common interest: FILE FORMAT VALIDATION for DIGITAL PRESERVATION." wrapText="true" />
-                                 <Label layoutX="27.0" layoutY="130.0" prefHeight="70.0" prefWidth="774.0" text="If you decide to register with the dpf-manager.org website you will be asked to provide certain information about yourself including your name and contact details. By submitting your personal information, you consent to the collection, use and transfer of your information in accordance with the terms of this Privacy Policy." wrapText="true" />
-                                 <Label layoutX="27.0" layoutY="193.0" prefHeight="56.0" prefWidth="787.0" text="By submitting your personal information you also consent to the publication of your name and the name of your company/institution in the dpf-manager.org website. If you would like this information to remain private please let us know by contacting us as specified in the privacy policy." wrapText="true" />
-                                 <Label layoutX="27.0" layoutY="249.0" text="We manually review all the applications, and we reserve the right to accept or reject any application we receive." />
-                                 <Label layoutX="27.0" layoutY="276.0" prefHeight="67.0" prefWidth="727.0" text="We reserve the right to terminate or suspend your access to and use of the dpf-manager.org website, without notice, if we believe, in our sole discretion, that it is in violation of any applicable law or it is harmful to our interests or the interests, including intellectual property or other rights, of another user or other third party partners." wrapText="true" />
-                                 <Button layoutX="291.0" layoutY="368.0" mnemonicParsing="false" onAction="#acceptConditions" prefHeight="40.0" prefWidth="212.0" text="I Accept" />
-                                 <Label layoutX="27.0" layoutY="43.0" text="Participant Terms and Conditions">
+                                            <ImageView fitWidth="1500.0" focusTraversable="true" layoutX="0" layoutY="0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="195.741943359375" AnchorPane.topAnchor="-195.0">
+<!--                                                 <image>
+                                                    <Image url="@../images/back.png" />
+                                                 </image>-->
+                                            </ImageView>
+                                 <Label layoutX="27.0" layoutY="89.0" prefHeight="49.0" prefWidth="814.0" text="DPF manager is currently under development but we are looking early adopters like you!" textFill="WHITE" wrapText="true" />
+                                 <Label layoutX="27.0" layoutY="130.0" prefHeight="42.0" prefWidth="774.0" text="Help us improve the DPFManager by submitting your contact information, and allowing us to collect the reports of the images that you test. Only the details of the execution and validation will be sent to us, not the image itself." textFill="WHITE" wrapText="true" />
+                                 <Button layoutX="305.0" layoutY="576.0" mnemonicParsing="false" onAction="#proceed" prefHeight="40.0" prefWidth="206.0" styleClass="buttonlegal" text="Proceed" />
+                                 <Label layoutX="27.0" layoutY="43.0" text="Welcome to DPF Manager!" textFill="WHITE">
                                     <font>
                                        <Font name="System Bold" size="18.0" />
                                     </font>
                                  </Label>
+                                 <CheckBox fx:id="chkFeedback" layoutX="27.0" layoutY="531.0" mnemonicParsing="false" selected="true" styleClass="checklegal" text="I authorize the DPF Manager to automatically send feedback" textFill="WHITE" />
+                                 <TextField fx:id="txtEmail" layoutX="27.0" layoutY="244.0" prefHeight="31.0" prefWidth="375.0" promptText="Your email" styleClass="inputlegal" stylesheets="@/styles/style.css" />
+                                 <TextField fx:id="txtName" layoutX="413.0" layoutY="244.0" prefHeight="31.0" prefWidth="375.0" promptText="Your name" styleClass="inputlegal" stylesheets="@/styles/style.css" />
+                                 <TextField fx:id="txtSurname" layoutX="27.0" layoutY="292.0" prefHeight="31.0" prefWidth="375.0" promptText="Your surname" styleClass="inputlegal" stylesheets="@/styles/style.css" />
+                                 <TextField fx:id="txtJob" layoutX="413.0" layoutY="292.0" prefHeight="31.0" prefWidth="375.0" promptText="Job role" styleClass="inputlegal" stylesheets="@/styles/style.css" />
+                                 <TextField fx:id="txtOrganization" layoutX="27.0" layoutY="339.0" prefHeight="31.0" prefWidth="375.0" promptText="Organization" styleClass="inputlegal" stylesheets="@/styles/style.css" />
+                                 <TextField fx:id="txtCountry" layoutX="413.0" layoutY="339.0" prefHeight="31.0" prefWidth="375.0" promptText="Country" styleClass="inputlegal" stylesheets="@/styles/style.css" />
+                                 <TextArea fx:id="txtWhy" layoutX="27.0" layoutY="389.0" prefHeight="113.0" prefWidth="761.0" promptText="Why do you want to use DPFManager?" styleClass="inputlegal" stylesheets="@/styles/style.css" />
+                                 <CheckBox fx:id="chkSubmit" layoutX="27.0" layoutY="208.0" mnemonicParsing="false" selected="true" text="I want to collaborate with the project" styleClass="checklegal" textFill="WHITE" />
                                         </children>
                                     </AnchorPane>
                                 </content>
@@ -43,6 +47,5 @@
                 </children>
             </VBox>
         </SplitPane>
-
   </children>
 </VBox>

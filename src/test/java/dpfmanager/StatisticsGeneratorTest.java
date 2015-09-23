@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,6 +40,11 @@ public class StatisticsGeneratorTest extends TestCase {
    */
   @Before
   public void PreTest() {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
     boolean ok = true;
     try {
       tr = new TiffReader();
@@ -49,6 +55,11 @@ public class StatisticsGeneratorTest extends TestCase {
   }
 
   public void testStatistics() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
@@ -91,6 +102,11 @@ public class StatisticsGeneratorTest extends TestCase {
   }
 
   public void testStatistics2() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/";
     args[1] = "-s";
