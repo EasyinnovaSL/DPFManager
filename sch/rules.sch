@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<schema  xmlns="http://www.ascc.net/xml/schematron" 
- schemaVersion="1.01">
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://purl.oclc.org/dsdl/schematron">
 <title>Check Report</title>
   <pattern name="structure-check">
    <rule context="globalreport">
@@ -26,6 +25,7 @@
    <rule context="report">
 	<assert test="width">Image width is mandatory</assert>
 	<assert test="height">Image height is mandatory</assert>
+	<assert test="pixeldensity">Pixel density is mandatory</assert>
    </rule>
   </pattern>
 </schema>

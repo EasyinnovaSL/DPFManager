@@ -45,6 +45,7 @@ public class ProcessInput {
   public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, String outputFolder, boolean silence) {
     reportGenerator = new ReportGenerator();
     reportGenerator.setReportsFormats(xml, json, html);
+
     // Process files
     ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
     String internalReportFolder = ReportGenerator.createReportPath();
@@ -70,6 +71,13 @@ public class ProcessInput {
       if(propertyValue.equals("1")) {
         sendFtpCamel(reportGenerator, summaryXml);
       }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    Schematron sch = new Schematron();
+    try {
+      sch.testXML(summaryXml);
     } catch (Exception e) {
       e.printStackTrace();
     }

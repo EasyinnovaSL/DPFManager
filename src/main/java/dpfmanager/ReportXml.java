@@ -244,16 +244,16 @@ public class ReportXml {
 
     // basic info
     Element infoElement = doc.createElement("width");
-    infoElement.setAttribute("check_value", "width");
     infoElement.setTextContent(ir.getWidth());
     report.appendChild(infoElement);
     infoElement = doc.createElement("height");
-    infoElement.setAttribute("check_value", "height");
     infoElement.setTextContent(ir.getHeight());
     report.appendChild(infoElement);
     infoElement = doc.createElement("bitspersample");
-    infoElement.setAttribute("check_value", "bitspersample");
     infoElement.setTextContent(ir.getBitsPerSample());
+    report.appendChild(infoElement);
+    infoElement = doc.createElement("pixeldensity");
+    infoElement.setTextContent(ir.getPixelsDensity());
     report.appendChild(infoElement);
 
     // implementation checker
@@ -326,7 +326,7 @@ public class ReportXml {
       DOMSource source = new DOMSource(doc);
 
       File file = new File(xmlfile);
-      StreamResult result = new StreamResult(file.getPath());
+      StreamResult result = new StreamResult(xmlfile);
       transformer.transform(source, result);
 
       // To String
@@ -388,7 +388,7 @@ public class ReportXml {
       DOMSource source = new DOMSource(doc);
 
       File file = new File(xmlfile);
-      StreamResult result = new StreamResult(file.getPath());
+      StreamResult result = new StreamResult(xmlfile);
       transformer.transform(source, result);
 
       // To String

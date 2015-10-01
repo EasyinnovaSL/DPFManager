@@ -11,7 +11,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox fx:id="rootMain" alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
             <VBox>
@@ -44,7 +44,7 @@
                                                  </image>-->
                                             </ImageView>
                                             <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                             <!--<image>
+<!--                                                                                             <image>
                                                                                                 <Image url="@../images/main.png" />
                                                                                              </image>-->
                                             </ImageView>
@@ -79,15 +79,15 @@
                                     <cursor>
                                        <Cursor fx:constant="TEXT" />
                                     </cursor></TextField>
-                                            <Button layoutX="258.0" layoutY="649.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="228.0" stylesheets="@/styles/style.css" text="IMPORT CONFIGURATION" textFill="#31C2F3">
+                                            <Button layoutX="258.0" layoutY="649.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="228.0" stylesheets="@/styles/style.css" text="IMPORT CONFIGURATION" textFill="#31C2F3" visible="false">
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
                                     </cursor></Button>
-                                            <Button layoutX="498.0" layoutY="649.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="247.0" stylesheets="@/styles/style.css" text="NEW CONFIGURATION" textFill="#31C2F3">
+                                            <Button layoutX="498.0" layoutY="649.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="247.0" stylesheets="@/styles/style.css" text="NEW CONFIGURATION" textFill="#31C2F3" visible="false">
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
                                     </cursor></Button>
-                                            <Button layoutX="385.0" layoutY="830.0" mnemonicParsing="false" onAction="#openFile" prefHeight="62.0" prefWidth="220.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                            <Button layoutX="385.0" layoutY="740.0" mnemonicParsing="false" onAction="#openFile" prefHeight="62.0" prefWidth="220.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
                                     </cursor></Button>

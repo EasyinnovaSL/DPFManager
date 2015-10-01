@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -21,8 +22,9 @@
                                                     <Image url="@../images/back.png" />
                                                  </image>-->
                                             </ImageView>
-                                 <Label layoutX="27.0" layoutY="89.0" prefHeight="49.0" prefWidth="814.0" text="DPF manager is currently under development but we are looking early adopters like you!" textFill="WHITE" wrapText="true" />
-                                 <Label layoutX="27.0" layoutY="130.0" prefHeight="42.0" prefWidth="774.0" text="Help us improve the DPFManager by submitting your contact information, and allowing us to collect the reports of the images that you test. Only the details of the execution and validation will be sent to us, not the image itself." textFill="WHITE" wrapText="true" />
+                                 <Label layoutX="27.0" layoutY="83.0" prefHeight="29.0" prefWidth="814.0" text="DPF manager is currently under development and early adopters like you are very welcome." textFill="WHITE" wrapText="true" />
+                                 <Label layoutX="27.0" layoutY="109.0" prefHeight="42.0" prefWidth="774.0" text="Help us improve DPFManager by allowing us to collect the reports of the images that you test. The reports do not include any images or thumbnails and are sent anonymously." textFill="WHITE" wrapText="true" />
+                                <Label layoutX="27.0" layoutY="149.0" prefHeight="42.0" prefWidth="774.0" text="In case we found an issue with any of the reports (a tag in a TIFF file we didn't expect, a bug in DPF Manager), we would like to be able to contact you to let you know so we can find a solution. If you would like to get this pro-active support from us, please enter your contact details below:" textFill="WHITE" wrapText="true" />
                                  <Button layoutX="305.0" layoutY="576.0" mnemonicParsing="false" onAction="#proceed" prefHeight="40.0" prefWidth="206.0" styleClass="buttonlegal" text="Proceed" />
                                  <Label layoutX="27.0" layoutY="43.0" text="Welcome to DPF Manager!" textFill="WHITE">
                                     <font>
@@ -37,7 +39,7 @@
                                  <TextField fx:id="txtOrganization" layoutX="27.0" layoutY="339.0" prefHeight="31.0" prefWidth="375.0" promptText="Organization" styleClass="inputlegal" stylesheets="@/styles/style.css" />
                                  <TextField fx:id="txtCountry" layoutX="413.0" layoutY="339.0" prefHeight="31.0" prefWidth="375.0" promptText="Country" styleClass="inputlegal" stylesheets="@/styles/style.css" />
                                  <TextArea fx:id="txtWhy" layoutX="27.0" layoutY="389.0" prefHeight="113.0" prefWidth="761.0" promptText="Why do you want to use DPFManager?" styleClass="inputlegal" stylesheets="@/styles/style.css" />
-                                 <CheckBox fx:id="chkSubmit" layoutX="27.0" layoutY="208.0" mnemonicParsing="false" selected="true" text="I want to collaborate with the project" styleClass="checklegal" textFill="WHITE" />
+                                 <CheckBox fx:id="chkSubmit" layoutX="27.0" layoutY="208.0" mnemonicParsing="false" selected="true" styleClass="checklegal" text="I want to collaborate with the project" textFill="WHITE" />
                                         </children>
                                     </AnchorPane>
                                 </content>

@@ -68,6 +68,9 @@ public class IndividualReport {
   /** The Tiff bits per sample. */
   private String bps;
 
+  /** The pixel density. */
+  private String pixeldensity;
+
   /** The Tiff photometric. */
   private String photo;
 
@@ -182,6 +185,7 @@ public class IndividualReport {
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
+    pixeldensity = tiffModel.getMetadataSingleString("ResolutionUnit");
     photo = tiffModel.getMetadataSingleString("PhotometricRepresentation");
 
     // errors & warnings
@@ -263,6 +267,26 @@ public class IndividualReport {
    */
   public String getBitsPerSample() {
     return bps;
+  }
+
+  public boolean hasBlValidation(){
+    return errorsBl != null;
+  }
+
+  public boolean hasEpValidation(){
+    return errorsEp != null;
+  }
+
+  public boolean hasItValidation(){
+    return errorsIt != null;
+  }
+
+  public boolean hasPcValidation(){
+    return true;
+  }
+
+  public String getPixelsDensity() {
+    return "" + pixeldensity;
   }
 
   /**

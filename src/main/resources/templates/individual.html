@@ -32,9 +32,9 @@
 					<div class="row">
 						<div class="col-md-10 bot20 text-center-sm">
 							<h2>##IMG_NAME##</h2>
-							<div style="display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Tiff/EP</div>
-							<div style="display: ##EP_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to Tiff/EP, BUT it has some warnings</div>
-							<div style="display: ##EP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to Tiff/EP</div>
+							<div style="display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to conformance checker</div>
+							<div style="display: ##EP_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to conformance checker, BUT it has some warnings</div>
+							<div style="display: ##EP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to conformance checker</div>
 			<!-- 				<div style="display: ##CP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file passes the policy checker</div> -->
 			<!-- 				<div style="display: ##CP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT pass the policy checker</div> -->
 						</div>
@@ -42,21 +42,28 @@
 			                <table class="center-table CustomTable">
 			                    <tr>
 			                        <td></td>
-			                        <td >Tiff/EP</td>
-			                        <td></td>
-			<!--                         <td>Policy checker</td> -->
+			                        <td>Errors</td>
+			                        <td>Warnings</td>
 			                    </tr>
-			                    <tr>
-			                        <td>Fixed</td>
-			                        <td class="##F_EP_ERR_CLASS##">##F_EP_ERR## errors</td>
-			                        <td class="##F_EP_WAR_CLASS##">##F_EP_WAR## warnings</td>
-			<!--                         <td class="##F_PC_CLASS##">##F_PC## errors</td> -->
+			                    <tr class="##ROW_BL##">
+			                        <td>Baseline</td>
+			                        <td class="##F_BL_ERR_CLASS##">##F_BL_ERR##</td>
+			                        <td class="##F_BL_WAR_CLASS##">##F_BL_WAR##</td>
 			                    </tr>
-			                    <tr>
-			                        <td>Unsolved</td>
-			                        <td class="##U_EP_ERR_CLASS##">##U_EP_ERR_N## errors</td>
-			                        <td class="##U_EP_WAR_CLASS##">##U_EP_WAR## warnings</td>
-			<!--                         <td class="##U_PC_CLASS##">##U_PCR## errors</td> -->
+			                    <tr class="##ROW_EP##">
+			                        <td>Tiff/EP</td>
+			                        <td class="##F_EP_ERR_CLASS##">##F_EP_ERR##</td>
+			                        <td class="##F_EP_WAR_CLASS##">##F_EP_WAR##</td>
+			                    </tr>
+			                    <tr class="##ROW_IT##">
+			                        <td>Tiff/IT</td>
+			                        <td class="##F_IT_ERR_CLASS##">##F_IT_ERR##</td>
+			                        <td class="##F_IT_WAR_CLASS##">##F_IT_WAR##</td>
+			                    </tr>
+			                    <tr class="##ROW_PC##">
+			                        <td>Policy Checker</td>
+			                        <td class="##F_PC_ERR_CLASS##">##F_PC_ERR##</td>
+			                        <td class="##F_PC_WAR_CLASS##">##F_PC_WAR##</td>
 			                    </tr>
 			                </table>
 		                </div>

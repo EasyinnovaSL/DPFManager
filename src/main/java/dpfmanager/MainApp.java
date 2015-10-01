@@ -36,6 +36,7 @@ import dpfmanager.shell.modules.ReportRow;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -74,6 +75,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import org.eclipse.fx.ui.controls.filesystem.DirectoryTreeView;
+import org.eclipse.fx.ui.controls.filesystem.DirectoryView;
+import org.eclipse.fx.ui.controls.filesystem.IconSize;
+import org.eclipse.fx.ui.controls.filesystem.ResourceItem;
+import org.eclipse.fx.ui.controls.filesystem.ResourcePreview;
+import org.eclipse.fx.ui.controls.filesystem.RootDirItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +91,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -100,6 +108,7 @@ public class MainApp extends Application {
   @FXML private RadioButton radEP;
   @FXML private RadioButton radIT;
   @FXML private RadioButton radAll;
+  @FXML private VBox rootMain;
 
   @FXML private CheckBox chkFeedback;
   @FXML private CheckBox chkSubmit;
@@ -189,6 +198,23 @@ public class MainApp extends Application {
     Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
     Scene scenemain = new Scene(rootNode1, width, height);
     scenemain.getStylesheets().add("/styles/style.css");
+
+    // Tree View
+    /*RootDirItem rootDirItem = ResourceItem.createObservedPath(Paths.get("/"));
+    DirectoryTreeView tv = new DirectoryTreeView();
+    tv.setIconSize(IconSize.MEDIUM);
+    tv.setRootDirectories(FXCollections.observableArrayList(rootDirItem));
+    DirectoryView v = new DirectoryView();
+    v.setIconSize(IconSize.MEDIUM);
+    tv.getSelectedItems().addListener( (Observable o) -> {
+      if( ! tv.getSelectedItems().isEmpty() ) {
+        v.setDir(tv.getSelectedItems().get(0));
+      } else {
+        v.setDir(null);
+      }
+    });
+    SplitPane p = new SplitPane(tv,v);
+    p.setDividerPositions(0.3);*/
 
     thestage.setTitle("DPFManager");
     thestage.setScene(scenemain);
@@ -323,13 +349,14 @@ public class MainApp extends Application {
 
     try {
       allowedExtensions.add(".tif");
+      allowedExtensions.add(".tiff");
       files.add(txtFile.getText());
       boolean bl = radBL.isSelected() || radAll.isSelected();
       boolean ep = radEP.isSelected() || radAll.isSelected();
       boolean it = radIT.isSelected() || radAll.isSelected();
 
       ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
-      String filename = pi.ProcessFiles(files, false, false, true, "", true);
+      String filename = pi.ProcessFiles(files, true, false, true, "", true);
 
       ShowReport(filename);
     } catch (Exception ex) {
@@ -673,7 +700,8 @@ public class MainApp extends Application {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open File");
     File file = fileChooser.showOpenDialog(thestage);
-    txtFile.setText(file.getPath());
+    if (file != null)
+      txtFile.setText(file.getPath());
   }
 
   private ObservableList<ReportRow> ReadReports() {

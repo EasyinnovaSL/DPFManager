@@ -51,6 +51,10 @@ public class GlobalReport {
   /** Number of IT ok */
   int nreportsItOk;
 
+  boolean hasEp;
+  boolean hasIt;
+  boolean hasBl;
+
   /**
    * Instantiates a new global report.
    */
@@ -59,6 +63,9 @@ public class GlobalReport {
     nreportsEpOk = 0;
     nreportsItOk = 0;
     nreportsBlOk = 0;
+    hasEp = false;
+    hasIt = false;
+    hasBl = false;
   }
 
   /**
@@ -76,9 +83,18 @@ public class GlobalReport {
    */
   public void generate() {
     for (IndividualReport ir : reports) {
-      if (ir.getEPErrors() == null || ir.getEPErrors().size()==0) nreportsEpOk++;
-      if (ir.getITErrors() == null || ir.getITErrors().size()==0) nreportsItOk++;
-      if (ir.getBaselineErrors() == null || ir.getBaselineErrors().size()==0) nreportsBlOk++;
+      if (ir.hasEpValidation()) {
+        if (ir.getEPErrors().size()==0) nreportsEpOk++;
+        hasEp = true;
+      }
+      if (ir.hasItValidation()) {
+        if (ir.getITErrors().size()==0) nreportsItOk++;
+        hasIt = true;
+      }
+      if (ir.hasBlValidation()) {
+        if (ir.getBaselineErrors().size()==0) nreportsBlOk++;
+        hasBl = true;
+      }
     }
   }
 
@@ -97,7 +113,21 @@ public class GlobalReport {
    * @return nreportsok
    */
   public int getReportsOk() {
-    return nreportsEpOk;
+    int n=0;
+    for (IndividualReport ir : reports) {
+      boolean ok = true;
+      if (ir.hasEpValidation()) {
+        if (ir.getEPErrors().size() > 0) ok = false;
+      }
+      if (ir.hasItValidation()) {
+        if (ir.getITErrors().size() > 0) ok = false;
+      }
+      if (ir.hasBlValidation()) {
+        if (ir.getBaselineErrors().size() > 0) ok = false;
+      }
+      if (ok) n++;
+    }
+    return n;
   }
 
   /**
@@ -106,7 +136,19 @@ public class GlobalReport {
    * @return nreportsko
    */
   public int getReportsKo() {
-    return getReportsCount() - nreportsEpOk;
+    return getReportsCount() - getReportsOk();
+  }
+
+  public boolean hasBl() {
+    return hasBl;
+  }
+
+  public boolean hasEp() {
+    return hasEp;
+  }
+
+  public boolean hasIt() {
+    return hasIt;
   }
 
   /**
@@ -125,6 +167,15 @@ public class GlobalReport {
    */
   public int getReportsEp() {
     return nreportsEpOk;
+  }
+
+  /**
+   * Get the count of reports with some error.
+   *
+   * @return nReportsOnlyIt
+   */
+  public int getReportsIt() {
+    return nreportsItOk;
   }
 
   /**
