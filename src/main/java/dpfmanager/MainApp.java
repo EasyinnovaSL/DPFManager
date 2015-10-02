@@ -47,6 +47,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -64,7 +65,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -94,6 +98,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -108,7 +113,6 @@ public class MainApp extends Application {
   @FXML private RadioButton radEP;
   @FXML private RadioButton radIT;
   @FXML private RadioButton radAll;
-  @FXML private VBox rootMain;
 
   @FXML private CheckBox chkFeedback;
   @FXML private CheckBox chkSubmit;
@@ -190,6 +194,7 @@ public class MainApp extends Application {
     thestage.show();
   }
 
+  @FXML
   private void ShowMain() throws Exception {
     String fxmlFile = "/fxml/design.fxml";
     LOG.debug("Loading FXML for main view from: {}", fxmlFile);
@@ -230,6 +235,38 @@ public class MainApp extends Application {
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setMouseTransparent(true));
+
+    scenemain.setOnDragOver(new EventHandler<DragEvent>() {
+      @Override
+      public void handle(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        if (db.hasFiles()) {
+          event.acceptTransferModes(TransferMode.MOVE);
+        } else {
+          event.consume();
+        }
+      }
+    });
+
+    // Dropping over surface
+    scenemain.setOnDragDropped(new EventHandler<DragEvent>() {
+      @Override
+      public void handle(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        boolean success = false;
+        if (db.hasFiles()) {
+          success = true;
+          String filePath = null;
+          for (File file:db.getFiles()) {
+            filePath = file.getAbsolutePath();
+            txtFile.setText(filePath);
+            break;
+          }
+        }
+        event.setDropCompleted(success);
+        event.consume();
+      }
+    });
   }
 
   @FXML

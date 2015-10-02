@@ -121,6 +121,70 @@ public class SchematronTest extends TestCase {
     Platform.exit();
   }
 
+  public void testSchematron2() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
+    String[] args = new String[3];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    String path = getPath();
+
+    File directori = new File(path);
+    boolean found = false;
+    String xml = null;
+    for (String file : directori.list()){
+      if (file.equals("summary.xml")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
+        xml = new String(encoded);
+      }
+    }
+    assertEquals(xml != null, true);
+    Schematron sch = new Schematron();
+    String result = sch.testXML(xml, "sch/rules2.sch");
+
+    assertEquals(true, result.indexOf("fired-rule context=\"globalreport\"") != -1);
+    assertEquals(true, result.indexOf("fired-rule context=\"individualreports\"") != -1);
+    assertEquals(true, result.indexOf("fired-rule context=\"report\"") != -1);
+    assertEquals(true, result.indexOf("fired-rule context=\"tiff_structure\"") != -1);
+    assertEquals(true, result.indexOf("fired-rule context=\"ifdTree\"") != -1);
+    assertEquals(true, result.indexOf("fired-rule context=\"tags\"") != -1);
+    assertEquals(true, result.indexOf("fired-rule context=\"report\"") != -1);
+    assertEquals(true, result.indexOf("failed") != -1);
+
+    Platform.exit();
+  }
+
   private String getPath() {
     String path = "reports";
     File theDir = new File(path);

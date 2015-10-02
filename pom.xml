@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.easyinnova</groupId>
 	<artifactId>dpf_manager</artifactId>
-	<version>1.1</version>
+	<version>1.1.1</version>
 	<packaging>jar</packaging>
 
 	<!-- More Project Information -->
@@ -178,7 +178,7 @@
 	<!-- Build Settings -->
 	<build>
 
-		<finalName>dpf_manager</finalName>
+		<finalName>DPF Manager</finalName>
 
 		<plugins>
 			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-compiler-plugin</artifactId> 
@@ -187,20 +187,44 @@
 			<plugin>
 			  <groupId>com.zenjava</groupId>
 			  <artifactId>javafx-maven-plugin</artifactId>
-			  <version>8.1.2</version>
-			  <configuration>
-					<!-- <nativeOutputDir>./bin/</nativeOutputDir> -->
-					<nativeReleaseVersion>1.1.0</nativeReleaseVersion>
-					<deployDir>./src/main/deploy</deployDir>
+			  <version>8.1.5</version>
+				<configuration>
 					<mainClass>dpfmanager.MainApp</mainClass>
-					<allPermissions>true</allPermissions>
-					<!-- only required if signing the jar file <keyStoreAlias>example-user</keyStoreAlias>
-						<keyStorePassword>example-password</keyStorePassword> -->
-			  </configuration>
-			  <executions>
+					<verbose>true</verbose>
+					<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
+					<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
+					<deployDir>${project.basedir}/src/main/deploy</deployDir>
+<!--
+					<vendor>${project.organization.name}</vendor>
+-->
+					<vendor>${project.build.finalName}</vendor>
+					<nativeOutputDir>${project.organization.name}</nativeOutputDir>
+					<bundleType>ALL</bundleType>
+					<bundler>ALL</bundler>
+					<nativeReleaseVersion>${project.version}</nativeReleaseVersion>
+					<needShortcut>true</needShortcut>
+					<needMenu>true</needMenu>
+					<appName>${project.build.finalName}</appName>
+					<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
+                     <!--<addPackagerJar>true</addPackagerJar>-->
+<!--
+					<jfxCallFromCLI>true</jfxCallFromCLI>
+-->
+				</configuration>
+				<executions>
 					<execution>
+						<!-- required before build-native -->
+						<id>create-jfxjar</id>
+						<phase>package</phase>
 						<goals>
-							<goal>native</goal>
+							<goal>build-jar</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>create-native</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build-native</goal>
 						</goals>
 					</execution>
 				</executions>

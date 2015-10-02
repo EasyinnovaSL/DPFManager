@@ -1,7 +1,5 @@
 package dpfmanager.shell.modules;
 
-import dpfmanager.ReportGenerator;
-
 import net.sf.saxon.TransformerFactoryImpl;
 
 import org.apache.camel.CamelContext;
@@ -14,15 +12,10 @@ import org.apache.camel.component.schematron.processor.SchematronProcessor;
 import org.apache.camel.component.schematron.processor.SchematronProcessorFactory;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -68,12 +61,16 @@ public class Schematron extends CamelTestSupport {
   }
 
   public String testXML(String xmlFile) throws Exception {
+    return testXML(xmlFile, "sch/rules.sch");
+  }
+
+  public String testXML(String xmlFile, String schema) throws Exception {
     String result;
     try {
       InputStream sc = null;
-      if (Files.exists(Paths.get("sch/rules.sch"))) {
+      if (Files.exists(Paths.get(schema))) {
         // Look in local dir
-        sc = new FileInputStream("sch/rules.sch");
+        sc = new FileInputStream(schema);
       } else {
         // Look in JAR
         CodeSource src = Schematron.class.getProtectionDomain().getCodeSource();
@@ -83,7 +80,7 @@ public class Schematron extends CamelTestSupport {
           ZipEntry zipFile;
           while ((zipFile = zip.getNextEntry()) != null) {
             String name = zipFile.getName();
-            if (name.equals("rules.sch")) {
+            if (name.equals(schema.substring(schema.indexOf("/")))) {
               try {
                 sc = zip;
               } catch (Exception ex) {
