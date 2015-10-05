@@ -31,6 +31,8 @@
 
 package dpfmanager;
 
+import dpfmanager.shell.modules.Schematron;
+
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.types.IFD;
@@ -39,6 +41,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -254,6 +259,7 @@ public class ReportXml {
     report.appendChild(infoElement);
     infoElement = doc.createElement("pixeldensity");
     infoElement.setTextContent(ir.getPixelsDensity());
+    infoElement.setAttribute("pd", "" + (int)Double.parseDouble(ir.getPixelsDensity()));
     report.appendChild(infoElement);
 
     // implementation checker
@@ -328,17 +334,40 @@ public class ReportXml {
       File file = new File(xmlfile);
       StreamResult result = new StreamResult(xmlfile);
       transformer.transform(source, result);
+      result.getOutputStream().close();
 
       // To String
       transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       StringWriter writer = new StringWriter();
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
-      String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
+      String output = writer.getBuffer().toString();
+
+      // Schematron
+      Schematron sch = new Schematron();
+      try {
+        String resultsch = sch.testXML(output);
+        String presch = output.substring(0, output.indexOf("</report>"));
+        String postsch = output.substring(output.indexOf("</report>"));
+        resultsch = resultsch.substring(resultsch.indexOf("<svrl:schematron-output"));
+        output = presch + resultsch + postsch;
+
+        // Rewrite
+        PrintWriter out = new PrintWriter(xmlfile);
+        out.print(output);
+        out.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
       return output;
 
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {
+      tfe.printStackTrace();
+    } catch (FileNotFoundException tfe) {
+      tfe.printStackTrace();
+    } catch (IOException tfe) {
       tfe.printStackTrace();
     }
     return "";
@@ -396,6 +425,7 @@ public class ReportXml {
       StringWriter writer = new StringWriter();
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
       String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
+
       return output;
 
     } catch (ParserConfigurationException pce) {

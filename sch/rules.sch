@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://purl.oclc.org/dsdl/schematron">
 <title>Check Report</title>
-  <pattern name="structure-check">
+  <pattern>
    <rule context="globalreport">
 	<assert test="individualreports">Individual reports is mandatory</assert>
    </rule>
@@ -21,11 +21,16 @@
     <assert test="count(tag)!= 0">IFDs must have at least one tag</assert>
    </rule>
   </pattern>
-  <pattern name="image-dimensions-check">
+  <pattern>
    <rule context="report">
 	<assert test="width">Image width is mandatory</assert>
 	<assert test="height">Image height is mandatory</assert>
 	<assert test="pixeldensity">Pixel density is mandatory</assert>
    </rule>
+   <rule context="pixeldensity">
+     <assert test="@pd > 50">
+      There pixel density is low.
+      </assert>
+  </rule>
   </pattern>
 </schema>

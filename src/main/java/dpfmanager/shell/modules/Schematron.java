@@ -98,6 +98,7 @@ public class Schematron extends CamelTestSupport {
       Templates rules = TemplatesFactory.newInstance().newTemplates(sc);
       SchematronProcessor proc = SchematronProcessorFactory.newScehamtronEngine(rules);
       result = proc.validate(payload);
+      result = result.substring(0, result.indexOf("<!--")) + result.substring(result.indexOf("-->")+3);
     } catch (Exception ex) {
       result = "";
     }
