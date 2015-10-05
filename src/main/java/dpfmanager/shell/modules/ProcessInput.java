@@ -75,13 +75,6 @@ public class ProcessInput {
       e.printStackTrace();
     }
 
-    Schematron sch = new Schematron();
-    try {
-      sch.testXML(summaryXml);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
     String htmlFileStr = internalReportFolder + "report.html";
     return htmlFileStr;
   }

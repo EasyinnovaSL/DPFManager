@@ -185,7 +185,27 @@ public class IndividualReport {
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
-    pixeldensity = tiffModel.getMetadataSingleString("ResolutionUnit");
+    pixeldensity = "0";
+    if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
+    {
+      double pd = 0;
+      try {
+        double ru = Double.parseDouble(tiffModel.getMetadata().get("ResolutionUnit").toString());
+        String xres = tiffModel.getMetadata().get("XResolution").toString();
+        double num = Double.parseDouble(xres.substring(0, xres.indexOf("/")));
+        double den = Double.parseDouble(xres.substring(xres.indexOf("/") + 1));
+        double xr = num / den;
+        double ppi;
+        if (ru == 2) {
+          ppi = xr;
+        } else {
+          ppi = xr / 0.3937;
+        }
+        pixeldensity = ppi+"";
+      } catch (Exception ex) {
+        pixeldensity = "";
+      }
+    }
     photo = tiffModel.getMetadataSingleString("PhotometricRepresentation");
 
     // errors & warnings
