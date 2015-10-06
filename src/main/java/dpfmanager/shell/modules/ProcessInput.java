@@ -33,9 +33,10 @@ import java.util.zip.ZipFile;
 public class ProcessInput {
   private ReportGenerator reportGenerator;
   List<String> allowedExtensions;
-  private boolean checkBL, checkEP, checkIT;
+  private boolean checkBL, checkEP;
+  private int checkIT;
 
-  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, boolean checkIT) {
+  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT) {
     this.allowedExtensions = allowedExtensions;
     this.checkBL = checkBL;
     this.checkEP = checkEP;
@@ -200,7 +201,7 @@ public class ProcessInput {
           ValidationResult epValidation = null;
           if (checkEP) epValidation = tr.getTiffEPValidation();
           ValidationResult itValidation = null;
-          if (checkIT) itValidation = tr.getTiffITValidation(0);
+          if (checkIT >= 0) itValidation = tr.getTiffITValidation(checkIT);
 
           String pathNorm = realFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);

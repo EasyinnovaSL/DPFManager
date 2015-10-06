@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="rootMain" alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+    <children>
+        <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
+            <VBox>
+                <children>
+                    <Pane fx:id="topMenuImage1" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
+                        <Button layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                        <Button layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                        <Button layoutX="560.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoAbout" prefHeight="20.0" prefWidth="55.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </Pane>
+                </children>
+            </VBox>
+            <VBox>
+                <children>
+                    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
+                        <children>
+                            <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                                <content>
+                                    <AnchorPane>
+                                        <children>
+                                            <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <!-- <image>
+                                                    <Image url="@../images/back.png" />
+                                                 </image>-->
+                                            </ImageView>
+                                            <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config6" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                                             <!--<image>
+                                                                                                <Image url="@../images/config6.png" />
+                                                                                             </image>-->
+                                            </ImageView>
+                                            <Button layoutX="387.0" layoutY="508.0" mnemonicParsing="false" onAction="#runConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                        </children>
+                                    </AnchorPane>
+                                </content>
+                            </ScrollPane>
+                        </children>
+                    </AnchorPane>
+                </children>
+            </VBox>
+        </SplitPane>
+  </children>
+</VBox>

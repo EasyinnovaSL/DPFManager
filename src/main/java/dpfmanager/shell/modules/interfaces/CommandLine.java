@@ -168,7 +168,7 @@ public class CommandLine implements UserInterface {
     } else {
       readConformanceChecker();
 
-      ProcessInput pi = new ProcessInput(allowedExtensions, true, true, true);
+      ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0);
       pi.ProcessFiles(files, xml, json, html, outputFolder, silence);
       System.out.println("Report generated successfully.");
     }

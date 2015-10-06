@@ -79,11 +79,11 @@
                                     <cursor>
                                        <Cursor fx:constant="TEXT" />
                                     </cursor></TextField>
-                                            <Button layoutX="258.0" layoutY="649.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="228.0" stylesheets="@/styles/style.css" text="IMPORT CONFIGURATION" textFill="#31C2F3" visible="false">
+                                            <Button layoutX="258.0" layoutY="649.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="228.0" stylesheets="@/styles/style.css" text="IMPORT CONFIGURATION" textFill="#31C2F3" visible="true">
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
                                     </cursor></Button>
-                                            <Button layoutX="498.0" layoutY="649.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="247.0" stylesheets="@/styles/style.css" text="NEW CONFIGURATION" textFill="#31C2F3" visible="false">
+                                            <Button layoutX="498.0" layoutY="649.0" onAction="#newConfig" mnemonicParsing="false" prefHeight="45.0" prefWidth="247.0" stylesheets="@/styles/style.css" text="NEW CONFIGURATION" textFill="#31C2F3" visible="true">
                                     <cursor>
                                        <Cursor fx:constant="HAND" />
                                     </cursor></Button>

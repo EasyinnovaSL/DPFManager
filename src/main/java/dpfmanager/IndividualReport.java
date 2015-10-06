@@ -96,7 +96,7 @@ public class IndividualReport {
   private TiffDocument tiffModel;
 
   /** Check Tiff/IT conformance. */
-  public boolean checkIT;
+  public int checkIT;
 
   /** Check Tiff/EP conformance. */
   public boolean checkEP;

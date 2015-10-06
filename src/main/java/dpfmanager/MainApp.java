@@ -33,10 +33,10 @@ package dpfmanager;
 
 import dpfmanager.shell.modules.ProcessInput;
 import dpfmanager.shell.modules.ReportRow;
+import dpfmanager.shell.modules.Rules;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -47,8 +47,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -56,6 +56,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
@@ -63,70 +64,58 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import org.eclipse.fx.ui.controls.filesystem.DirectoryTreeView;
-import org.eclipse.fx.ui.controls.filesystem.DirectoryView;
-import org.eclipse.fx.ui.controls.filesystem.IconSize;
-import org.eclipse.fx.ui.controls.filesystem.ResourceItem;
-import org.eclipse.fx.ui.controls.filesystem.ResourcePreview;
-import org.eclipse.fx.ui.controls.filesystem.RootDirItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
-import javax.net.ssl.HttpsURLConnection;
 /**
  * The Class MainApp.
  */
 public class MainApp extends Application {
   private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
+  public enum RuleFields { ImageWidth, ImageHeight, PixelDensity };
 
   @FXML private TextField txtFile;
-  @FXML private RadioButton radBL;
-  @FXML private RadioButton radEP;
-  @FXML private RadioButton radIT;
-  @FXML private RadioButton radAll;
-
-  @FXML private CheckBox chkFeedback;
-  @FXML private CheckBox chkSubmit;
-  @FXML private TextField txtName;
-  @FXML private TextField txtSurname;
-  @FXML private TextField txtEmail;
-  @FXML private TextField txtJob;
-  @FXML private TextField txtOrganization;
-  @FXML private TextField txtCountry;
-  @FXML private TextArea txtWhy;
+  @FXML private RadioButton radBL, radEP, radIT, radAll;
+  @FXML private RadioButton radProf1, radProf2, radProf3, radProf4, radProf5;
+  @FXML private Line line;
+  @FXML private CheckBox chkFeedback, chkSubmit;
+  @FXML private CheckBox chkHtml, chkXml, chkJson;
+  @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtWhy;
+  @FXML private Button addRule, continueButton;
 
   private static Stage thestage;
   final int width = 970;
   final int height = 950;
+  int chosenStandard = -1;
+  Rules rules = null;
 
   /**
    * The main method.
@@ -158,6 +147,13 @@ public class MainApp extends Application {
       CommandLine cl = new CommandLine(params);
       cl.launch();
       Platform.exit();
+    }
+  }
+
+  public static class AsNonApp extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+      // noop
     }
   }
 
@@ -390,7 +386,8 @@ public class MainApp extends Application {
       files.add(txtFile.getText());
       boolean bl = radBL.isSelected() || radAll.isSelected();
       boolean ep = radEP.isSelected() || radAll.isSelected();
-      boolean it = radIT.isSelected() || radAll.isSelected();
+      int it = -1;
+      if (radIT.isSelected() || radAll.isSelected()) it = 0;
 
       ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
       String filename = pi.ProcessFiles(files, true, false, true, "", true);
@@ -571,18 +568,16 @@ public class MainApp extends Application {
     ShowMain();
   }
 
-  @FXML
-  protected void gotoAbout(ActionEvent event) throws Exception {
-    String fxmlFile = "/fxml/about.fxml";
+  void LoadSceneXml(String fxmlFile) throws Exception {
     LOG.debug("Loading FXML for main view from: {}", fxmlFile);
 
     FXMLLoader loader = new FXMLLoader();
     Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
-    Scene sceneabout = new Scene(rootNode1, width, height);
-    sceneabout.getStylesheets().add("/styles/style.css");
+    Scene scene = new Scene(rootNode1, width, height);
+    scene.getStylesheets().add("/styles/style.css");
 
     thestage.setTitle("DPFManager");
-    thestage.setScene(sceneabout);
+    thestage.setScene(scene);
     thestage.setMaxHeight(height);
     thestage.setMinHeight(height);
     thestage.setMaxWidth(width);
@@ -590,7 +585,7 @@ public class MainApp extends Application {
     thestage.sizeToScene();
     thestage.show();
 
-    ObservableList<Node> nodes=sceneabout.getRoot().getChildrenUnmodifiable();
+    ObservableList<Node> nodes=scene.getRoot().getChildrenUnmodifiable();
     SplitPane splitPa1=(SplitPane)nodes.get(0);
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
@@ -598,10 +593,80 @@ public class MainApp extends Application {
   }
 
   @FXML
+  protected void newConfig(ActionEvent event) throws Exception {
+    LoadSceneXml("/fxml/config1.fxml");
+  }
+
+  @FXML
+  protected void gotoConfig2(ActionEvent event) throws Exception {
+    if (radProf1.isSelected()) chosenStandard = 1;
+    else if (radProf2.isSelected()) chosenStandard = 2;
+    else if (radProf3.isSelected()) chosenStandard = 3;
+    else if (radProf4.isSelected()) chosenStandard = 4;
+    else if (radProf5.isSelected()) chosenStandard = 5;
+    LoadSceneXml("/fxml/config2.fxml");
+  }
+
+  @FXML
+  protected void gotoConfig3(ActionEvent event) throws Exception {
+    rules = new Rules();
+    Scene scene = thestage.getScene();
+    rules.Read(scene);
+    LoadSceneXml("/fxml/config3.fxml");
+  }
+
+  @FXML
+  protected void gotoConfig4(ActionEvent event) throws Exception {
+    LoadSceneXml("/fxml/config4.fxml");
+  }
+
+  @FXML
+  protected void gotoConfig6(ActionEvent event) throws Exception {
+    LoadSceneXml("/fxml/config6.fxml");
+  }
+
+  @FXML
+  protected void runConfig(ActionEvent event) throws Exception {
+    List<String> allowedExtensions = new ArrayList<String>();
+    ArrayList<String> files = new ArrayList<String>();
+
+    try {
+      allowedExtensions.add(".tif");
+      allowedExtensions.add(".tiff");
+      files.add(txtFile.getText());
+      boolean bl = radProf1.isSelected();
+      boolean ep = radProf2.isSelected();
+      int it = -1;
+      if (radProf3.isSelected()) it = 0;
+      if (radProf4.isSelected()) it = 1;
+      if (radProf5.isSelected()) it = 2;
+
+      ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
+      boolean xml = chkXml.isSelected();
+      boolean html = chkHtml.isSelected();
+      boolean json = chkJson.isSelected();
+      String filename = pi.ProcessFiles(files, xml, json, html, "", true);
+
+      ShowReport(filename);
+    } catch (Exception ex) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Error");
+      alert.setHeaderText("An error occured");
+      alert.setContentText(ex.toString());
+      alert.showAndWait();
+    }
+  }
+
+  @FXML
+  protected void gotoAbout(ActionEvent event) throws Exception {
+    LoadSceneXml("/fxml/about.fxml");
+  }
+
+  @FXML
   protected void gotoReport(ActionEvent event) throws Exception {
     try {
     FXMLLoader loader2 = new FXMLLoader();
-    String fxmlFile2 = "/fxml/design2.fxml";
+    String fxmlFile2 = "/fxml/summary.fxml";
     Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
     Scene scenereport = new Scene(rootNode2, width, height);
     scenereport.getStylesheets().add("/styles/style.css");
@@ -620,7 +685,7 @@ public class MainApp extends Application {
         .forEach(
             div -> div.setMouseTransparent(true));
 
-      ObservableList<ReportRow> data = ReadReports();
+    ObservableList<ReportRow> data = ReadReports();
 
     javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
 
@@ -665,11 +730,41 @@ public class MainApp extends Application {
         new PropertyValueFactory<ReportRow, String>("passed")
     );
 
-    TableColumn colScore = new TableColumn("Score");
+    TableColumn<ReportRow, ReportRow> colScore = new TableColumn("Score");
       colScore.setMinWidth(100);
       colScore.setCellValueFactory(
-          new PropertyValueFactory<ReportRow, String>("score")
+          new PropertyValueFactory("score")
       );
+      colScore.setCellFactory((TableColumn<ReportRow, ReportRow> param) -> {
+        return new TableCell<ReportRow, ReportRow>(){
+
+          @Override
+          protected void updateItem(ReportRow item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) setGraphic (null);
+            else {
+              double tot = 50 + 100;
+              double ratio1 = 40 / tot;
+              double ratio2 = 60 / tot;
+
+              Rectangle r1 = new Rectangle();
+              //the param is the column, bind so rects resize with column
+              r1.widthProperty().bind(param.widthProperty().multiply(ratio1));
+              r1.heightProperty().bind(this.getTableRow().heightProperty().multiply(0.5));
+              r1.setStyle("-fx-fill:#f3622d;");
+              Rectangle r2 = new Rectangle(0, 20);
+              r2.widthProperty().bind(param.widthProperty().multiply(ratio2));
+              r2.setStyle("-fx-fill:#fba71b;");
+
+              HBox hbox = new HBox(r1,r2);
+              hbox.setAlignment(Pos.CENTER_LEFT);
+              setGraphic(hbox);
+              setText(null);
+            }
+          }
+
+        };
+      });
 
       tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore);
       tabReports.setItems(data);
@@ -730,6 +825,80 @@ public class MainApp extends Application {
         };
       }
     });
+  }
+
+  private void addNumericOperator(String item) {
+    Scene scene = thestage.getScene();
+    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
+    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
+    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
+    AnchorPane ap2 = (AnchorPane)(sp.getContent());
+    for (Node node : ap2.getChildren()){
+      if(node instanceof HBox) {
+        HBox hBox1 = (HBox)node;
+        for (Node nodeIn : hBox1.getChildren()){
+          if(nodeIn instanceof ComboBox) {
+            ComboBox comboBox = (ComboBox)nodeIn;
+            if (comboBox.getValue() != null && comboBox.getValue().equals(item)){
+              ObservableList<String> options =
+                  FXCollections.observableArrayList(
+                      ">",
+                      "<",
+                      "="
+                  );
+              ComboBox comboOp = new ComboBox(options);
+              while (hBox1.getChildren().size() > 1)
+                hBox1.getChildren().remove(1);
+              TextField value = new TextField();
+              value.getStyleClass().add("txtRule");
+              hBox1.getChildren().add(comboOp);
+              hBox1.getChildren().add(value);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
+  protected void addRule(ActionEvent event) {
+    int dif = 50;
+    double xRule = addRule.getLayoutX() - 100;
+    double yRule = addRule.getLayoutY();
+
+    // Add combobox
+    ObservableList<String> options =
+        FXCollections.observableArrayList(
+            RuleFields.ImageWidth.toString(),
+            RuleFields.ImageHeight.toString(),
+            RuleFields.PixelDensity.toString()
+        );
+    ComboBox comboBox = new ComboBox(options);
+    comboBox.valueProperty().addListener(new ChangeListener<String>() {
+      @Override public void changed(ObservableValue ov, String t, String item) {
+        if (item == RuleFields.ImageWidth.toString() || item == RuleFields.ImageHeight.toString()) addNumericOperator(item);
+      }
+    });
+    HBox hBox = new HBox (comboBox);
+    hBox.setSpacing(5);
+    hBox.setLayoutX(xRule);
+    hBox.setLayoutY(yRule);
+
+    Scene scene = thestage.getScene();
+    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
+    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
+    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
+    AnchorPane ap2 = (AnchorPane)(sp.getContent());
+    ap2.getChildren().add(hBox);
+
+    addRule.setLayoutY(addRule.getLayoutY() + dif);
+
+    // Move bottom elements if necessary
+    if (addRule.getLayoutY() + addRule.getHeight() > line.getLayoutY()) {
+      line.setLayoutY(line.getLayoutY() + dif);
+      continueButton.setLayoutY(continueButton.getLayoutY() + dif);
+    }
   }
 
   @FXML

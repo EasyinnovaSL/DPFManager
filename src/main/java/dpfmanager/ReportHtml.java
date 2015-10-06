@@ -272,7 +272,7 @@ public class ReportHtml {
 
     // IT
     rows = "";
-    if (ir.checkIT) {
+    if (ir.checkIT >= 0) {
       if (ir.getITErrors() != null) {
         for (ValidationEvent val : ir.getITErrors()) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
