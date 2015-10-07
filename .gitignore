@@ -6,3 +6,5 @@ reports/
 .classpath
 .settings/
 easyinnova/
+*.cfg
+!config.cfg

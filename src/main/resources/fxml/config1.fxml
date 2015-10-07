@@ -57,30 +57,27 @@
                                                     <Cursor fx:constant="HAND" />
                                                 </cursor>
                                             </Button>
-                                              <RadioButton fx:id="radProf1" layoutX="380.0" layoutY="375.0" mnemonicParsing="false" selected="true" style="-fx-padding: 0 10 0 0;" styleClass="radio-button" stylesheets="@/styles/style.css" text="TIFF Baseline" textFill="WHITE">
-                                                <toggleGroup>
-                                                                  <ToggleGroup fx:id="conftoggleGroup" />
-                                                </toggleGroup>
+                                              <CheckBox fx:id="radProf1" styleClass="checkreport" layoutX="380.0" layoutY="370.0" mnemonicParsing="false" selected="true" style="-fx-padding: 0 10 0 0;" stylesheets="@/styles/style.css" text="TIFF Baseline" textFill="WHITE">
                                     <font>
                                        <Font size="13.0" />
                                     </font>
-                                              </RadioButton>
-                                              <RadioButton fx:id="radProf2" layoutX="380.0" layoutY="393.0" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/EP" textFill="WHITE" toggleGroup="$conftoggleGroup">
+                                              </CheckBox>
+                                              <CheckBox fx:id="radProf2" styleClass="checkreport" layoutX="380.0" layoutY="395.0" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/EP" textFill="WHITE">
                                     <font>
                                        <Font size="13.0" />
-                                    </font></RadioButton>
-                                              <RadioButton fx:id="radProf3" layoutX="380.0" layoutY="411.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT" textFill="WHITE" toggleGroup="$conftoggleGroup">
+                                    </font></CheckBox>
+                                              <CheckBox fx:id="radProf3" styleClass="checkreport" layoutX="380.0" layoutY="420.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT" textFill="WHITE">
                                     <font>
                                        <Font size="13.0" />
-                                    </font></RadioButton>
-                                              <RadioButton fx:id="radProf4" layoutX="380.0" layoutY="434.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT-P1" textFill="WHITE" toggleGroup="$conftoggleGroup">
+                                    </font></CheckBox>
+                                              <CheckBox fx:id="radProf4" styleClass="checkreport" layoutX="380.0" layoutY="445.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT-P1" textFill="WHITE">
                                     <font>
                                        <Font size="13.0" />
-                                    </font></RadioButton>
-                                              <RadioButton fx:id="radProf5" layoutX="380.0" layoutY="456.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT-P2" textFill="WHITE" toggleGroup="$conftoggleGroup">
+                                    </font></CheckBox>
+                                              <CheckBox fx:id="radProf5" styleClass="checkreport" layoutX="380.0" layoutY="470.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT-P2" textFill="WHITE">
                                     <font>
                                        <Font size="13.0" />
-                                    </font></RadioButton>
+                                    </font></CheckBox>
                                         </children>
                                     </AnchorPane>
                                 </content>

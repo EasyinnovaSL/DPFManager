@@ -85,6 +85,7 @@ public class TiffConformanceChecker {
       addElement(doc, magicNumber, "offset", "0");
       addElement(doc, magicNumber, "signature", "\\x4D\\x4D\\x00\\x2A");
 
+      // ISOS
       Element implementationChecker = doc.createElement("implementationCheckerOptions");
       conformenceCheckerElement.appendChild(implementationChecker);
       Element standards = doc.createElement("standards");
@@ -105,6 +106,33 @@ public class TiffConformanceChecker {
       standards.appendChild(standard);
       addElement(doc, standard, "name", "TIFF/IT");
       addElement(doc, standard, "description", "TIFF extension for Image Technology");
+
+      // Policy checker
+      Element policyChecker = doc.createElement("policyCheckerOptions");
+      conformenceCheckerElement.appendChild(policyChecker);
+      Element fields = doc.createElement("fields");
+      policyChecker.appendChild(fields);
+      // Image Width
+      Element field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "ImageLength");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Image Width in pixels");
+      addElement(doc, field, "operators", ">,<,=");
+      // Image Height
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "ImageHeight");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Image Height in pixels");
+      addElement(doc, field, "operators", ">,<,=");
+      // Pixel Density
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "PixelDensity");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Pixel Density in pixels per centimeter");
+      addElement(doc, field, "operators", ">,<,=");
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();

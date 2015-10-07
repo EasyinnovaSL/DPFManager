@@ -68,6 +68,9 @@ public class IndividualReport {
   /** The Tiff bits per sample. */
   private String bps;
 
+  /** The Endianess. */
+  private String endianess;
+
   /** The pixel density. */
   private String pixeldensity;
 
@@ -185,6 +188,7 @@ public class IndividualReport {
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
+    endianess = tiffModel.getEndianess().toString();
     pixeldensity = "0";
     if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
     {
@@ -287,6 +291,10 @@ public class IndividualReport {
    */
   public String getBitsPerSample() {
     return bps;
+  }
+
+  public String getEndianess() {
+    return endianess;
   }
 
   public boolean hasBlValidation(){

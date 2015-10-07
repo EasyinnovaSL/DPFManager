@@ -58,9 +58,9 @@
                                                     <Cursor fx:constant="HAND" />
                                                 </cursor>
                                             </Button>
-                                             <CheckBox fx:id="chkHtml" layoutX="252.0" layoutY="520.0" mnemonicParsing="false" styleClass="checkreport" />
+                                             <CheckBox fx:id="chkJson" layoutX="252.0" layoutY="520.0" mnemonicParsing="false" styleClass="checkreport" />
                                              <CheckBox fx:id="chkXml" layoutX="252.0" layoutY="457.0" mnemonicParsing="false" styleClass="checkreport" />
-                                             <CheckBox fx:id="chkJson" layoutX="252.0" layoutY="398.0" mnemonicParsing="false" styleClass="checkreport" />
+                                             <CheckBox fx:id="chkHtml" layoutX="252.0" layoutY="398.0" mnemonicParsing="false" styleClass="checkreport" />
                                         </children>
                                     </AnchorPane>
                                 </content>

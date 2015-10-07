@@ -31,10 +31,81 @@
 
 package dpfmanager.shell.modules.interfaces;
 
+import dpfmanager.shell.modules.Field;
+import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 /**
  * The Class Gui.
  */
-public class Gui implements UserInterface {
-  public void launch() {}
+public class Gui {
+  private ArrayList<String> extensions;
+  private ArrayList<String> isos;
+  private ArrayList<Field> fields;
+
+  public ArrayList<String> getExtensions() {
+    return extensions;
+  }
+
+  public ArrayList<String> getIsos() {
+    return isos;
+  }
+
+  public ArrayList<Field> getFields() {
+    return fields;
+  }
+
+  public void LoadConformanceChecker() {
+    extensions = new ArrayList<String>();
+    isos = new ArrayList<String>();
+    fields = new ArrayList<Field>();
+
+    String xml = TiffConformanceChecker.getConformanceCheckerOptions();
+    Document doc = convertStringToDocument(xml);
+
+    NodeList nodelist = doc.getElementsByTagName("extension");
+    for (int i=0;i<nodelist.getLength();i++) {
+      Node node = nodelist.item(i);
+      extensions.add(node.getFirstChild().getNodeValue());
+    }
+
+    nodelist = doc.getElementsByTagName("standard");
+    for (int i=0;i<nodelist.getLength();i++) {
+      Node node = nodelist.item(i);
+      isos.add(node.getFirstChild().getNodeValue());
+    }
+
+    nodelist = doc.getElementsByTagName("field");
+    for (int i=0;i<nodelist.getLength();i++) {
+      Node node = nodelist.item(i);
+      NodeList childs = node.getChildNodes();
+      Field field = new Field(childs);
+      fields.add(field);
+    }
+  }
+
+  private Document convertStringToDocument(String xmlStr) {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder;
+    try
+    {
+      builder = factory.newDocumentBuilder();
+      Document doc = builder.parse( new InputSource( new StringReader( xmlStr ) ) );
+      return doc;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
 }
 

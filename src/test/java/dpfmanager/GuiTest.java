@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 
 import junit.framework.TestCase;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class GuiTest extends TestCase {
   @Test
   public void testGui() throws Exception {
     System.out.printf("About to launch FX App\n");
-    boolean robotize = false;
+    boolean robotize = true;
 
     if (robotize)
       StartRobot();

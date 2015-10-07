@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -49,5 +50,17 @@ public class Rules {
         rules.add(rule);
       }
     }
+  }
+
+  public void Write(PrintWriter pw) {
+    for (Rule rule : rules) {
+      pw.println("RULE\t" + rule.Txt());
+    }
+  }
+
+  public void addRuleFromTxt(String txt) {
+    Rule rule = new Rule();
+    rule.ReadTxt(txt);
+    rules.add(rule);
   }
 }

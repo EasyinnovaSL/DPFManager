@@ -34,7 +34,7 @@
                 <children>
                     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
                         <children>
-                            <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER" prefHeight="944.0" prefWidth="74.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                            <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="74.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                                 <content>
                                     <AnchorPane>
                                         <children>
@@ -44,11 +44,11 @@
                                                    </image>-->
                                             </ImageView>
                                             <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimagereport" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-<!--                                                <image>
+                                                <!--<image>
                                                    <Image url="@../images/report.png" />
                                                 </image>-->
                                             </ImageView>
-                                            <Button layoutX="385.0" layoutY="592.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="29.0" prefWidth="200.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                            <Button layoutX="458.0" layoutY="596.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="25.0" prefWidth="64.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                 <cursor>
                                                    <Cursor fx:constant="HAND" />
                                                 </cursor>

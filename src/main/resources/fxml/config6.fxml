@@ -53,7 +53,7 @@
                                                                                                 <Image url="@../images/config6.png" />
                                                                                              </image>-->
                                             </ImageView>
-                                            <Button layoutX="387.0" layoutY="508.0" mnemonicParsing="false" onAction="#runConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                            <Button layoutX="387.0" layoutY="508.0" mnemonicParsing="false" onAction="#saveConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                 <cursor>
                                                     <Cursor fx:constant="HAND" />
                                                 </cursor>

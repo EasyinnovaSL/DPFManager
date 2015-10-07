@@ -45,6 +45,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -261,6 +262,9 @@ public class ReportXml {
     infoElement.setTextContent(ir.getPixelsDensity());
     infoElement.setAttribute("pd", "" + (int)Double.parseDouble(ir.getPixelsDensity()));
     report.appendChild(infoElement);
+    infoElement = doc.createElement("endianess");
+    infoElement.setTextContent(ir.getEndianess());
+    report.appendChild(infoElement);
 
     // implementation checker
     Element implementationCheckerElement = doc.createElement("implementation_checker");
@@ -331,8 +335,8 @@ public class ReportXml {
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       DOMSource source = new DOMSource(doc);
 
-      File file = new File(xmlfile);
-      StreamResult result = new StreamResult(xmlfile);
+      //StreamResult result = new StreamResult(URLEncoder.encode(xmlfile, "UTF-8"));
+      StreamResult result = new StreamResult(new File(xmlfile));
       transformer.transform(source, result);
       result.getOutputStream().close();
 
