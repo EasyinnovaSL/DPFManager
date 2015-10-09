@@ -44,20 +44,42 @@
                                     <AnchorPane>
                                         <children>
                                             <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                <!-- <image>
-                                                    <Image url="@../images/back.png" />
-                                                 </image>-->
+                                                <!-- <image><Image url="@../images/back.png" /></image>-->
                                             </ImageView>
                                             <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config6" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                             <!--<image>
-                                                                                                <Image url="@../images/config6.png" />
-                                                                                             </image>-->
+                                                 <!--<image><Image url="@../images/config6.png" /></image>-->
                                             </ImageView>
-                                            <Button layoutX="387.0" layoutY="508.0" mnemonicParsing="false" onAction="#saveConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                            <Button layoutX="384.0" layoutY="694.0" mnemonicParsing="false" onAction="#saveConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                 <cursor>
                                                     <Cursor fx:constant="HAND" />
                                                 </cursor>
                                             </Button>
+                                            <Line fx:id="line" endX="710.0" layoutX="195.0" layoutY="652.0" startX="-100.0" stroke="WHITE" />
+                                             <Label fx:id="labIsos" layoutX="481.0" layoutY="341.0" text="TIFF/EP" textFill="WHITE">
+                                                <font>
+                                                   <Font size="14.0" />
+                                                </font>
+                                             </Label>
+                                             <Label fx:id="labRules" layoutX="481.0" layoutY="407.0" text="Width: &gt;1000" textFill="WHITE">
+                                                <font>
+                                                   <Font size="14.0" />
+                                                </font>
+                                             </Label>
+                                             <Label fx:id="labReports" layoutX="481.0" layoutY="478.0" text="Format HTML" textFill="WHITE">
+                                                <font>
+                                                   <Font size="14.0" />
+                                                </font>
+                                             </Label>
+                                             <Label fx:id="labFixes" layoutX="481.0" layoutY="542.0" text="Remove Tag: Copyright" textFill="WHITE">
+                                                <font>
+                                                   <Font size="14.0" />
+                                                </font>
+                                             </Label>
+                                             <Label layoutX="481.0" layoutY="609.0" text="None" textFill="WHITE">
+                                                <font>
+                                                   <Font size="14.0" />
+                                                </font>
+                                             </Label>
                                         </children>
                                     </AnchorPane>
                                 </content>

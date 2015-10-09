@@ -59,7 +59,7 @@
     <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.core:2.1.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:19.0-rc1" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.8.2" level="project" />
-    <orderEntry type="library" name="Maven: com.easyinnova:tifflibrary4java:1.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.easyinnova:tifflibrary4java:1.2.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit-dep:4.8.2" level="project" />
   </component>

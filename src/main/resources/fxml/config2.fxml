@@ -44,14 +44,10 @@
                                     <AnchorPane>
                                         <children>
                                             <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                <!-- <image>
-                                                    <Image url="@../images/back.png" />
-                                                 </image>-->
+                                                <!-- <image><Image url="@../images/back.png" /></image>-->
                                             </ImageView>
                                             <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config2" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-<!--                                                                                             <image>
-                                                                                                <Image url="@../images/config2.png" />
-                                                                                             </image>-->
+                                                <!-- <image><Image url="@../images/config2.png" /></image>-->
                                             </ImageView>
                                             <Button fx:id="continueButton" layoutX="384.0" layoutY="596.0" mnemonicParsing="false" onAction="#gotoConfig3" prefHeight="65.0" prefWidth="222.0" styleClass="button-continue" stylesheets="@/styles/style.css" text="Continue" textFill="WHITE">
                                                 <cursor>

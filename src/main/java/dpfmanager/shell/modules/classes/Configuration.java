@@ -1,6 +1,7 @@
-package dpfmanager;
+package dpfmanager.shell.modules.classes;
 
-import dpfmanager.shell.modules.Rules;
+import dpfmanager.shell.modules.classes.Fixes;
+import dpfmanager.shell.modules.classes.Rules;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,7 +15,7 @@ public class Configuration {
   private ArrayList<String> isos;
   private Rules rules;
   private ArrayList<String> formats;
-  private ArrayList<String> fixes;
+  private Fixes fixes;
 
   public ArrayList<String> getIsos() {
     return isos;
@@ -24,7 +25,7 @@ public class Configuration {
     return formats;
   }
 
-  public ArrayList<String> getFixes() {
+  public Fixes getFixes() {
     return fixes;
   }
 
@@ -36,7 +37,7 @@ public class Configuration {
     isos = new ArrayList<String>();
     rules = new Rules();
     formats = new ArrayList<String>();
-    fixes = new ArrayList<String>();
+    fixes = new Fixes();
   }
 
   public void SaveFile(String filename) throws Exception {
@@ -47,10 +48,8 @@ public class Configuration {
     for (String format : formats) {
       writer.println("FORMAT\t" + format);
     }
-    for (String fix : fixes) {
-      writer.println("FIX\t" + fix);
-    }
     rules.Write(writer);
+    fixes.Write(writer);
     writer.close();
   }
 
@@ -66,7 +65,7 @@ public class Configuration {
           switch (field1) {
             case "ISO": isos.add(field2); break;
             case "FORMAT": formats.add(field2); break;
-            case "FIX": fixes.add(field2); break;
+            case "FIX": fixes.addFixFromTxt(field2); break;
             case "RULE": rules.addRuleFromTxt(field2); break;
           }
         }
@@ -75,5 +74,47 @@ public class Configuration {
     } finally {
       br.close();
     }
+  }
+
+  public String getTxtRules() {
+    String txt = "";
+    for (int i=0;i<rules.getRules().size();i++) {
+      Rule rule = rules.getRules().get(i);
+      String val = "";
+      if (rule.getValue() != null) val = rule.getValue();
+      txt += (rule.getTag() + " " + rule.getOperator() + " " + val).trim();
+      if (i+1 < rules.getRules().size()) txt += ", ";
+    }
+    return txt;
+  }
+
+  public String getTxtFixes() {
+    String txt = "";
+    for (int i=0;i<fixes.getFixes().size();i++) {
+      Fix fix = fixes.getFixes().get(i);
+      String val = "";
+      if (fix.getValue() != null) val = "'" + fix.getValue() + "'";
+      txt += (fix.getOperator() + " " + fix.getTag() + " " + val).trim();
+      if (i+1 < fixes.getFixes().size()) txt += ", ";
+    }
+    return txt;
+  }
+
+  public String getTxtFormats() {
+    String txt = "";
+    for (int i=0;i<formats.size();i++) {
+      txt += formats.get(i);
+      if (i+1 < formats.size()) txt += ", ";
+    }
+    return txt;
+  }
+
+  public String getTxtIsos() {
+    String txt = "";
+    for (int i=0;i<isos.size();i++) {
+      txt += isos.get(i);
+      if (i+1 < isos.size()) txt += ", ";
+    }
+    return txt;
   }
 }

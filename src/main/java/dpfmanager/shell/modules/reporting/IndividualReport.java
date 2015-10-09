@@ -29,7 +29,7 @@
  * @since 23/6/2015
  */
 
-package dpfmanager;
+package dpfmanager.shell.modules.reporting;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
@@ -95,6 +95,12 @@ public class IndividualReport {
   /** The Tiff IT warning list. */
   private List<ValidationEvent> warningsIt;
 
+  /** The Tiff PC errors list. */
+  private List<ValidationEvent> errorsPc;
+
+  /** The Tiff PC warning list. */
+  private List<ValidationEvent> warningsPc;
+
   /** The Tiff Document object. */
   private TiffDocument tiffModel;
 
@@ -106,6 +112,9 @@ public class IndividualReport {
 
   /** Check Baseline conformance. */
   public boolean checkBL;
+
+  /** Check Policy. */
+  public boolean checkPC;
 
   /**
    * Constructor + generate.
@@ -225,7 +234,6 @@ public class IndividualReport {
       errorsIt = itValidation.getErrors();
       warningsIt = itValidation.getWarnings();
     }
-
   }
 
   /**
@@ -309,10 +317,6 @@ public class IndividualReport {
     return errorsIt != null;
   }
 
-  public boolean hasPcValidation(){
-    return true;
-  }
-
   public String getPixelsDensity() {
     return "" + pixeldensity;
   }
@@ -375,6 +379,34 @@ public class IndividualReport {
   public List<ValidationEvent> getITWarnings() {
     if (warningsIt == null) return new ArrayList<ValidationEvent>();
     return warningsIt;
+  }
+
+  /**
+   * Get PC errors list.
+   *
+   * @return the errors
+   */
+  public List<ValidationEvent> getPCErrors() {
+    if (errorsPc == null) return new ArrayList<ValidationEvent>();
+    return errorsPc;
+  }
+
+  /**
+   * Get PC warnings list.
+   *
+   * @return the warnings
+   */
+  public List<ValidationEvent> getPCWarnings() {
+    if (warningsPc == null) return new ArrayList<ValidationEvent>();
+    return warningsPc;
+  }
+
+  public void setPCErrors(List<ValidationEvent> errors) {
+    errorsPc = errors;
+  }
+
+  public void setPCWarnings(List<ValidationEvent> warnings) {
+    warningsPc = warnings;
   }
 
   /**

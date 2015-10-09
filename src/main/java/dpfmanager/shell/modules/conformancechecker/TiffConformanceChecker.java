@@ -115,7 +115,7 @@ public class TiffConformanceChecker {
       // Image Width
       Element field = doc.createElement("field");
       fields.appendChild(field);
-      addElement(doc, field, "name", "ImageLength");
+      addElement(doc, field, "name", "ImageWidth");
       addElement(doc, field, "type", "integer");
       addElement(doc, field, "description", "Image Width in pixels");
       addElement(doc, field, "operators", ">,<,=");

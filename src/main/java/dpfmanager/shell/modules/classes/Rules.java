@@ -1,4 +1,4 @@
-package dpfmanager.shell.modules;
+package dpfmanager.shell.modules.classes;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -21,6 +21,10 @@ public class Rules {
 
   public Rules() {
     rules = new ArrayList<Rule>();
+  }
+
+  public ArrayList<Rule> getRules() {
+    return rules;
   }
 
   public void Read(Scene scene) {

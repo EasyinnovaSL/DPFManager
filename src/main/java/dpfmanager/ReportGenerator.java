@@ -31,6 +31,18 @@
 
 package dpfmanager;
 
+import dpfmanager.shell.modules.classes.Fix;
+import dpfmanager.shell.modules.classes.Fixes;
+import dpfmanager.shell.modules.classes.Rules;
+import dpfmanager.shell.modules.reporting.GlobalReport;
+import dpfmanager.shell.modules.reporting.IndividualReport;
+import dpfmanager.shell.modules.reporting.ReportHtml;
+import dpfmanager.shell.modules.reporting.ReportJson;
+import dpfmanager.shell.modules.reporting.ReportXml;
+
+import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.ValidationResult;
+
 import org.apache.commons.lang.time.FastDateFormat;
 
 import java.awt.Desktop;
@@ -71,6 +83,12 @@ public class ReportGenerator {
 
   /** If generates the HTML report. */
   private boolean html;
+
+  /** Policy checker rules. */
+  private Rules rules;
+
+  /** Policy checker fixes. */
+  private Fixes fixes;
 
   /**
    * Creates the report path.
@@ -260,6 +278,14 @@ public class ReportGenerator {
     this.html = html;
   }
 
+  public void setRules(Rules rules) {
+    this.rules = rules;
+  }
+
+  public void setFixes(Fixes fixes) {
+    this.fixes = fixes;
+  }
+
   /**
    * Copy a file or directory from source to target.
    *
@@ -413,14 +439,17 @@ public class ReportGenerator {
    * @param ir the individual report
    */
   public void generateIndividualReport(String reportName, IndividualReport ir) {
-    String output = null;
+    String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
     String htmlFileStr = reportName + ".html";
-    output = ReportXml.parseIndividual(xmlFileStr, ir);
+    output = ReportXml.parseIndividual(xmlFileStr, ir, rules);
+    ValidationResult pcValidation = getPcValidation(output);
+    ir.setPCErrors(pcValidation.getErrors());
+    ir.setPCWarnings(pcValidation.getWarnings());
     if (html) {
       copyHtmlFolder(htmlFileStr);
-      ReportHtml.parseIndividual(htmlFileStr, ir);
+      ReportHtml.parseIndividual(htmlFileStr, ir, pcValidation);
     }
     if (json) {
       ReportJson.xmlToJson(output, jsonFileStr);
@@ -428,6 +457,47 @@ public class ReportGenerator {
     if (!xml) {
       ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
     }
+
+    // Fixes -> New report
+    if (fixes != null && fixes.getFixes().size() > 0) {
+      xmlFileStr = reportName + "_fixed" + ".xml";
+      jsonFileStr = reportName + "_fixed" + ".json";
+      htmlFileStr = reportName + "_fixed" + ".html";
+      TiffDocument td = ir.getTiffModel();
+      for (Fix fix : fixes.getFixes()) {
+        if (fix.getOperator().equals("Add Tag")) {
+          td.addTag(fix.getTag(), fix.getValue());
+        } else if (fix.getOperator().equals("Remove Tag")) {
+          td.removeTag(fix.getTag());
+        }
+      }
+      output = ReportXml.parseIndividual(xmlFileStr, ir, rules);
+      pcValidation = getPcValidation(output);
+      ir.setPCErrors(pcValidation.getErrors());
+      ir.setPCWarnings(pcValidation.getWarnings());
+      if (html) {
+        ReportHtml.parseIndividual(htmlFileStr, ir, pcValidation);
+      }
+      if (json) {
+        ReportJson.xmlToJson(output, jsonFileStr);
+      }
+      if (!xml) {
+        ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
+      }
+    }
+  }
+
+  ValidationResult getPcValidation(String output) {
+    ValidationResult valid = new ValidationResult();
+    int index = output.indexOf("<svrl:failed-assert");
+    while (index > -1) {
+      String text = output.substring(output.indexOf("text>", index));
+      text = text.substring(text.indexOf(">") + 1);
+      text = text.substring(0, text.indexOf("</"));
+      index = output.indexOf("<svrl:failed-assert", index + 1);
+      valid.addError(text);
+    }
+    return valid;
   }
 
   /**

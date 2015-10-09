@@ -27,7 +27,7 @@ public class GuiTest extends TestCase {
   @Test
   public void testGui() throws Exception {
     System.out.printf("About to launch FX App\n");
-    boolean robotize = true;
+    boolean robotize = false;
 
     if (robotize)
       StartRobot();

@@ -31,7 +31,7 @@
 
 package dpfmanager.shell.modules.interfaces;
 
-import dpfmanager.shell.modules.Field;
+import dpfmanager.shell.modules.classes.Field;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
 import org.w3c.dom.Document;
@@ -62,6 +62,21 @@ public class Gui {
   }
 
   public ArrayList<Field> getFields() {
+    return fields;
+  }
+
+  public ArrayList<String> getFixes() {
+    ArrayList<String> fixes = new ArrayList<String>();
+    fixes.add("Remove Tag");
+    fixes.add("Add Tag");
+    return fixes;
+  }
+
+  public ArrayList<String> getFixFields() {
+    ArrayList<String> fields = new ArrayList<String>();
+    fields.add("ImageDescription");
+    fields.add("Copyright");
+    fields.add("Artist");
     return fields;
   }
 

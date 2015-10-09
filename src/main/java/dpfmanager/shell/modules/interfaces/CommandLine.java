@@ -27,7 +27,7 @@ import com.easyinnova.tiff.profiles.BaselineProfile;
 import com.easyinnova.tiff.profiles.TiffEPProfile;
 
 import dpfmanager.ReportGenerator;
-import dpfmanager.shell.modules.ProcessInput;
+import dpfmanager.shell.modules.classes.ProcessInput;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
 import org.w3c.dom.Document;
@@ -168,8 +168,8 @@ public class CommandLine implements UserInterface {
     } else {
       readConformanceChecker();
 
-      ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0);
-      pi.ProcessFiles(files, xml, json, html, outputFolder, silence);
+      ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0, false);
+      pi.ProcessFiles(files, xml, json, html, outputFolder, silence, null, null);
       System.out.println("Report generated successfully.");
     }
   }

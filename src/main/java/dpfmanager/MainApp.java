@@ -31,10 +31,12 @@
 
 package dpfmanager;
 
-import dpfmanager.shell.modules.Field;
-import dpfmanager.shell.modules.ProcessInput;
-import dpfmanager.shell.modules.ReportRow;
-import dpfmanager.shell.modules.Rules;
+import dpfmanager.shell.modules.classes.Configuration;
+import dpfmanager.shell.modules.classes.Field;
+import dpfmanager.shell.modules.classes.Fixes;
+import dpfmanager.shell.modules.classes.ProcessInput;
+import dpfmanager.shell.modules.classes.ReportRow;
+import dpfmanager.shell.modules.classes.Rules;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.Gui;
 import javafx.application.Application;
@@ -119,7 +121,8 @@ public class MainApp extends Application {
   @FXML private CheckBox chkFeedback, chkSubmit;
   @FXML private CheckBox chkHtml, chkXml, chkJson;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtWhy;
-  @FXML private Button addRule, continueButton;
+  @FXML private Button addRule, continueButton, addFix;
+  @FXML private Label labIsos, labRules, labReports, labFixes;
 
   private static Gui gui;
 
@@ -301,12 +304,21 @@ public class MainApp extends Application {
     AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
     ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
     AnchorPane ap2 = (AnchorPane)(sp.getContent());
-    Pane pan = (Pane)ap2.getChildren().get(2);
+    ScrollPane sp2 = (ScrollPane)ap2.getChildren().get(2);
+    AnchorPane pan = (AnchorPane)(sp2.getContent());
     pan.getChildren().add(vBox);
   }
 
-  void SetFile() {
-    txtFile.setText(dropped);
+  protected void SetFile() {
+    //txtFile.setText(dropped);
+
+    Scene scene = thestage.getScene();
+    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
+    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
+    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
+    AnchorPane ap2 = (AnchorPane)(sp.getContent());
+    TextField txtField = (TextField)ap2.getChildren().get(4);
+    txtField.setText(dropped);
   }
 
   @FXML
@@ -437,9 +449,10 @@ public class MainApp extends Application {
     AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
     ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
     AnchorPane ap2 = (AnchorPane)(sp.getContent());
-    Pane pan = (Pane)ap2.getChildren().get(2);
+    ScrollPane pan = (ScrollPane)ap2.getChildren().get(2);
+    AnchorPane ap3 = (AnchorPane)(pan.getContent());
     boolean oneChecked = false;
-    for (Node node : pan.getChildren()){
+    for (Node node : ap3.getChildren()){
       if(node instanceof VBox) {
         VBox vBox1 = (VBox)node;
         for (Node nodeIn : vBox1.getChildren()){
@@ -479,9 +492,9 @@ public class MainApp extends Application {
           if (config.getIsos().contains("Tiff/IT-1")) it = 1;
           if (config.getIsos().contains("Tiff/IT-2")) it = 2;
 
-          ProcessInput pi = new ProcessInput(extensions, bl, ep, it);
+          ProcessInput pi = new ProcessInput(extensions, bl, ep, it, config.getRules().getRules().size() > 0);
           ArrayList<String> formats = config.getFormats();
-          String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), "", true);
+          String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), "", true, config.getRules(), config.getFixes());
 
           ShowReport(filename);
         } catch (Exception ex) {
@@ -732,7 +745,20 @@ public class MainApp extends Application {
 
   @FXML
   protected void gotoConfig6(ActionEvent event) throws Exception {
+    Fixes fixes = config.getFixes();
+    Scene scene = thestage.getScene();
+    fixes.Read(scene);
     LoadSceneXml("/fxml/config6.fxml");
+    setLabel("labIsos", config.getTxtIsos());
+    setLabel("labReports", config.getTxtFormats());
+    setLabel("labRules", config.getTxtRules());
+    setLabel("labFixes", config.getTxtFixes());
+  }
+
+  void setLabel(String labelName, String txt) {
+    Scene scene = thestage.getScene();
+    Label lab = (Label)scene.lookup("#" + labelName);
+    lab.setText(txt);
   }
 
   @FXML
@@ -965,6 +991,41 @@ public class MainApp extends Application {
     }
   }
 
+  private void addFixValue(String item) {
+    ArrayList<String> fields = null;
+    Scene scene = thestage.getScene();
+    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
+    AnchorPane ap = (AnchorPane) (tabPane.getChildren().get(0));
+    ScrollPane sp = (ScrollPane) (ap.getChildren().get(0));
+    AnchorPane ap2 = (AnchorPane) (sp.getContent());
+    for (Node node : ap2.getChildren()) {
+      if (node instanceof HBox) {
+        HBox hBox1 = (HBox) node;
+        for (Node nodeIn : hBox1.getChildren()) {
+          if (nodeIn instanceof ComboBox) {
+            ComboBox comboBox = (ComboBox) nodeIn;
+            if (comboBox.getValue() != null && comboBox.getValue().equals(item)) {
+              ComboBox comboOp = new ComboBox();
+              for (String field : gui.getFixFields()) {
+                comboOp.getItems().add(field);
+              }
+              while (hBox1.getChildren().size() > 1)
+                hBox1.getChildren().remove(1);
+              hBox1.getChildren().add(comboOp);
+
+              if (item.equals("Add Tag")) {
+                TextField value = new TextField();
+                value.getStyleClass().add("txtFix");
+                hBox1.getChildren().add(value);
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
   @FXML
   protected void addRule(ActionEvent event) {
     int dif = 50;
@@ -997,6 +1058,43 @@ public class MainApp extends Application {
 
     // Move bottom elements if necessary
     if (addRule.getLayoutY() + addRule.getHeight() > line.getLayoutY()) {
+      line.setLayoutY(line.getLayoutY() + dif);
+      continueButton.setLayoutY(continueButton.getLayoutY() + dif);
+    }
+  }
+
+  @FXML
+  protected void addFix(ActionEvent event) {
+    int dif = 50;
+    double xRule = addFix.getLayoutX() - 100;
+    double yRule = addFix.getLayoutY();
+
+    // Add combobox
+    ComboBox comboBox = new ComboBox();
+    for (String fix : gui.getFixes()) {
+      comboBox.getItems().add(fix);
+    }
+    comboBox.valueProperty().addListener(new ChangeListener<String>() {
+      @Override public void changed(ObservableValue ov, String t, String item) {
+        addFixValue(item);
+      }
+    });
+    HBox hBox = new HBox (comboBox);
+    hBox.setSpacing(5);
+    hBox.setLayoutX(xRule);
+    hBox.setLayoutY(yRule);
+
+    Scene scene = thestage.getScene();
+    VBox tabPane = (VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1);
+    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
+    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
+    AnchorPane ap2 = (AnchorPane)(sp.getContent());
+    ap2.getChildren().add(hBox);
+
+    addFix.setLayoutY(addFix.getLayoutY() + dif);
+
+    // Move bottom elements if necessary
+    if (addFix.getLayoutY() + addFix.getHeight() > line.getLayoutY()) {
       line.setLayoutY(line.getLayoutY() + dif);
       continueButton.setLayoutY(continueButton.getLayoutY() + dif);
     }

@@ -35,8 +35,6 @@
 							<div style="display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to conformance checker</div>
 							<div style="display: ##EP_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to conformance checker, BUT it has some warnings</div>
 							<div style="display: ##EP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to conformance checker</div>
-			<!-- 				<div style="display: ##CP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file passes the policy checker</div> -->
-			<!-- 				<div style="display: ##CP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT pass the policy checker</div> -->
 						</div>
 						<div class="col-md-12">
 			                <table class="center-table CustomTable">
@@ -133,6 +131,19 @@
 				            <th class="bold">Description</th>
 				        </tr>
 				        ##ROWS_IT##
+					</table>
+				</div>
+			</div>
+			<div class="row top30 bot50 ##PC_VISIBLE##">
+				<div class="col-md-6">
+					<h4><i class="fa fa-check-square-o"></i>  Policy checker</h4>
+					<span style="margin-left: 20px; display: ##PC_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Policy Checker</span>
+					<table style="##PC_ERR-WAR##" class="CustomTable3">
+				        <tr>
+				            <th class="bold">Type</th>
+				            <th class="bold">Description</th>
+				        </tr>
+				        ##ROWS_PC##
 					</table>
 				</div>
 			</div>

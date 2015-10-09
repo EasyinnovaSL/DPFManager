@@ -1,4 +1,4 @@
-package dpfmanager.shell.modules;
+package dpfmanager.shell.modules.classes;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

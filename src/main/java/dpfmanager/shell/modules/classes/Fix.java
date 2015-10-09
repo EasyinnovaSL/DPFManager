@@ -1,18 +1,30 @@
-package dpfmanager.shell.modules;
+package dpfmanager.shell.modules.classes;
 
 /**
- * Created by easy on 06/10/2015.
+ * Created by easy on 09/10/2015.
  */
-public class Rule {
+public class Fix {
   private String tag;
   private String operator;
   private String value;
 
-  public Rule() {
+  public Fix() {
 
   }
 
-  public Rule (String tag, String operator, String value) {
+  public String getTag() {
+    return tag;
+  }
+
+  public String getOperator() {
+    return operator;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public Fix (String tag, String operator, String value) {
     this.tag = tag;
     this.operator = operator;
     this.value = value;
@@ -25,7 +37,6 @@ public class Rule {
     if (operator != null) txt += operator;
     txt += ",";
     if (value != null) txt += value;
-    txt += ",";
     return txt;
   }
 

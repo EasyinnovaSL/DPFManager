@@ -1,6 +1,6 @@
-package dpfmanager.shell.modules;
+package dpfmanager.shell.modules.classes;
 
-import dpfmanager.IndividualReport;
+import dpfmanager.shell.modules.reporting.IndividualReport;
 import dpfmanager.ReportGenerator;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
@@ -33,19 +33,22 @@ import java.util.zip.ZipFile;
 public class ProcessInput {
   private ReportGenerator reportGenerator;
   List<String> allowedExtensions;
-  private boolean checkBL, checkEP;
+  private boolean checkBL, checkEP, checkPC;
   private int checkIT;
 
-  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT) {
+  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT, boolean checkPC) {
     this.allowedExtensions = allowedExtensions;
     this.checkBL = checkBL;
     this.checkEP = checkEP;
     this.checkIT = checkIT;
+    this.checkPC = checkPC;
   }
 
-  public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, String outputFolder, boolean silence) {
+  public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, String outputFolder, boolean silence, Rules rules, Fixes fixes) {
     reportGenerator = new ReportGenerator();
     reportGenerator.setReportsFormats(xml, json, html);
+    reportGenerator.setRules(rules);
+    reportGenerator.setFixes(fixes);
 
     // Process files
     ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
@@ -209,6 +212,7 @@ public class ProcessInput {
           ir.checkBL = checkBL;
           ir.checkEP = checkEP;
           ir.checkIT = checkIT;
+          ir.checkPC = checkPC;
           // reportResults(name, to, baselineVal);
           internalReport(ir, tr, realFilename, internalReportFolder);
           return ir;

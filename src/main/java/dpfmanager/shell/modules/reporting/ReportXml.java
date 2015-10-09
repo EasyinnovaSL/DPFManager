@@ -29,9 +29,10 @@
  * @since 23/6/2015
  */
 
-package dpfmanager;
+package dpfmanager.shell.modules.reporting;
 
-import dpfmanager.shell.modules.Schematron;
+import dpfmanager.shell.modules.classes.Rules;
+import dpfmanager.shell.modules.classes.Schematron;
 
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.ValidationEvent;
@@ -45,7 +46,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +63,6 @@ import javax.xml.transform.stream.StreamResult;
  * The Class ReportXml.
  */
 public class ReportXml {
-
   /**
    * Creates the ifd node.
    *
@@ -249,18 +248,20 @@ public class ReportXml {
     report.appendChild(tiffStructureElement);
 
     // basic info
-    Element infoElement = doc.createElement("width");
+    Element infoElement = doc.createElement("ImageWidth");
+    infoElement.setAttribute("ImageWidth", "" + ir.getWidth());
     infoElement.setTextContent(ir.getWidth());
     report.appendChild(infoElement);
-    infoElement = doc.createElement("height");
+    infoElement = doc.createElement("ImageHeight");
+    infoElement.setAttribute("ImageHeight", "" + ir.getHeight());
     infoElement.setTextContent(ir.getHeight());
     report.appendChild(infoElement);
     infoElement = doc.createElement("bitspersample");
     infoElement.setTextContent(ir.getBitsPerSample());
     report.appendChild(infoElement);
-    infoElement = doc.createElement("pixeldensity");
+    infoElement = doc.createElement("PixelDensity");
     infoElement.setTextContent(ir.getPixelsDensity());
-    infoElement.setAttribute("pd", "" + (int)Double.parseDouble(ir.getPixelsDensity()));
+    infoElement.setAttribute("PixelDensity", "" + (int)Double.parseDouble(ir.getPixelsDensity()));
     report.appendChild(infoElement);
     infoElement = doc.createElement("endianess");
     infoElement.setTextContent(ir.getEndianess());
@@ -320,7 +321,7 @@ public class ReportXml {
    * @param ir the individual report.
    * @return the XML string generated.
    */
-  public static String parseIndividual(String xmlfile, IndividualReport ir) {
+  public static String parseIndividual(String xmlfile, IndividualReport ir, Rules rules) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -349,7 +350,8 @@ public class ReportXml {
       // Schematron
       Schematron sch = new Schematron();
       try {
-        String resultsch = sch.testXML(output);
+        //String resultsch = sch.testXML(output);
+        String resultsch = sch.testXML(output, rules);
         String presch = output.substring(0, output.indexOf("</report>"));
         String postsch = output.substring(output.indexOf("</report>"));
         resultsch = resultsch.substring(resultsch.indexOf("<svrl:schematron-output"));

@@ -44,22 +44,25 @@
                                     <AnchorPane>
                                         <children>
                                             <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                <!-- <image>
-                                                    <Image url="@../images/back.png" />
-                                                 </image>-->
+                                                <!-- <image><Image url="@../images/back.png" /></image>-->
                                             </ImageView>
                                             <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config4" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-<!--                                                                                             <image>
-                                                                                                <Image url="@../images/config4.png" />
-                                                                                             </image>-->
+                                              <!--<image><Image url="@../images/config4.png" /></image>-->
                                             </ImageView>
-                                            <Button layoutX="387.0" layoutY="508.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                            <Button fx:id="continueButton" layoutX="384.0" layoutY="596.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="65.0" prefWidth="222.0" styleClass="button-continue" stylesheets="@/styles/style.css" text="Continue" textFill="WHITE">
                                                 <cursor>
                                                     <Cursor fx:constant="HAND" />
                                                 </cursor>
                                             </Button>
-                                            <CheckBox fx:id="chkFix" layoutX="403.0" layoutY="370.0" mnemonicParsing="false" styleClass="checkreport" />
-                                            <CheckBox fx:id="chkRemove" layoutX="403.0" layoutY="349.0" mnemonicParsing="false" styleClass="checkreport" />
+                                            <Button fx:id="addFix" layoutX="405.0" layoutY="339.0" mnemonicParsing="false" onAction="#addFix" prefHeight="37.0" prefWidth="187.0" style="" stylesheets="@/styles/style.css" text="Add Fix" textFill="WHITE">
+                                                <font>
+                                                    <Font name="System Bold" size="16.0" />
+                                                </font>
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Line fx:id="line" endX="710.0" layoutX="195.0" layoutY="564.0" startX="-100.0" stroke="WHITE" />
                                         </children>
                                     </AnchorPane>
                                 </content>
