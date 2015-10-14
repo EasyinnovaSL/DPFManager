@@ -66,17 +66,19 @@ public class Configuration {
     InputStream sc = null;
     if (Files.exists(Paths.get(filename))) {
       // Look in local dir
+      System.out.println("Found in local");
       sc = new FileInputStream(filename);
     } else {
       // Look in JAR
-      CodeSource src = Schematron.class.getProtectionDomain().getCodeSource();
+      CodeSource src = Configuration.class.getProtectionDomain().getCodeSource();
       if (src != null) {
         URL jar = src.getLocation();
         ZipInputStream zip = new ZipInputStream(jar.openStream());
         ZipEntry zipFile;
         while ((zipFile = zip.getNextEntry()) != null) {
           String name = zipFile.getName();
-          if (name.equals(filename)) {
+          if (name.contains(filename)) {
+            System.out.println("Found in JAR");
             try {
               sc = zip;
             } catch (Exception ex) {
@@ -92,7 +94,7 @@ public class Configuration {
   }
 
   public void ReadFile(String filename) throws Exception {
-    BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream(filename), "UTF-8"));
+    BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream(filename)));
     try {
       String line = br.readLine();
 
