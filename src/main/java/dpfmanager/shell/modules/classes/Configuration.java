@@ -4,9 +4,18 @@ import dpfmanager.shell.modules.classes.Fixes;
 import dpfmanager.shell.modules.classes.Rules;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Created by easy on 06/10/2015.
@@ -53,8 +62,37 @@ public class Configuration {
     writer.close();
   }
 
+  private InputStream getInputStream(String filename) throws Exception {
+    InputStream sc = null;
+    if (Files.exists(Paths.get(filename))) {
+      // Look in local dir
+      sc = new FileInputStream(filename);
+    } else {
+      // Look in JAR
+      CodeSource src = Schematron.class.getProtectionDomain().getCodeSource();
+      if (src != null) {
+        URL jar = src.getLocation();
+        ZipInputStream zip = new ZipInputStream(jar.openStream());
+        ZipEntry zipFile;
+        while ((zipFile = zip.getNextEntry()) != null) {
+          String name = zipFile.getName();
+          if (name.equals(filename)) {
+            try {
+              sc = zip;
+            } catch (Exception ex) {
+              throw new Exception("");
+            }
+          }
+        }
+      } else {
+        throw new Exception("");
+      }
+    }
+    return sc;
+  }
+
   public void ReadFile(String filename) throws Exception {
-    BufferedReader br = new BufferedReader(new FileReader(filename));
+    BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream(filename), "UTF-8"));
     try {
       String line = br.readLine();
 
