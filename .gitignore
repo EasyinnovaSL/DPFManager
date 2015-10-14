@@ -7,4 +7,5 @@ reports/
 .settings/
 easyinnova/
 *.cfg
+!src/main/resources/*.cfg
 !config.cfg

@@ -165,6 +165,18 @@
 		  <version>1.2.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.athaydes.automaton</groupId>
+			<artifactId>Automaton</artifactId>
+			<version>1.2.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.4.5</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	
 	<repositories>
@@ -225,6 +237,13 @@
 						<phase>package</phase>
 						<goals>
 							<goal>build-native</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>create-app</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build-app</goal>
 						</goals>
 					</execution>
 				</executions>
