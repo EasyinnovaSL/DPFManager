@@ -159,7 +159,6 @@ public class SchematronTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    boolean found = false;
     String xml = null;
     for (String file : directori.list()){
       if (file.equals("summary.xml")) {

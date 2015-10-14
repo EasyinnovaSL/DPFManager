@@ -122,7 +122,6 @@ public class MainApp extends Application {
   @FXML private CheckBox chkHtml, chkXml, chkJson;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtWhy;
   @FXML private Button addRule, continueButton, addFix;
-  @FXML private Label labIsos, labRules, labReports, labFixes;
 
   private static Gui gui;
 

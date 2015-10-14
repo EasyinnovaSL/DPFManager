@@ -114,6 +114,8 @@ public class Schematron extends CamelTestSupport {
       }
 
       String tempname = "sch/rules2.sch";
+      int idx=3;
+      while (new File(tempname).exists()) tempname = "sch/rules" + idx++ + ".sch";
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
