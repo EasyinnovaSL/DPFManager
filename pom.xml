@@ -240,10 +240,10 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>create-app</id>
+						<id>create-web</id>
 						<phase>package</phase>
 						<goals>
-							<goal>build-app</goal>
+							<goal>build-web</goal>
 						</goals>
 					</execution>
 				</executions>
