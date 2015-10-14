@@ -64,6 +64,7 @@ public class Configuration {
 
   private InputStream getInputStream(String filename) throws Exception {
     InputStream sc = null;
+    System.out.println("Searching file");
     if (Files.exists(Paths.get(filename))) {
       // Look in local dir
       System.out.println("Found in local");
