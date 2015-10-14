@@ -185,6 +185,11 @@
 			<name>GeoSolutions Repository</name>
 			<url>http://maven.geo-solutions.it</url>
 		</repository>
+		<repository>
+			<id>jcenter</id>
+			<name>JCenter</name>
+			<url>http://jcenter.bintray.com</url>
+		</repository>
 	</repositories>
   
 	<!-- Build Settings -->
