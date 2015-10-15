@@ -18,7 +18,9 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -62,6 +64,16 @@ public class FixerTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
+    PrintWriter bw = new PrintWriter("xx.cfg");
+    bw.write("ISO\tBaseline\n" +
+        "ISO\tTiff/EP\n" +
+        "FORMAT\tHTML\n" +
+        "FORMAT\tXML\n" +
+        "RULE\tImageWidth,>,1000\n" +
+        "FIX\tCopyright,Remove Tag,\n" +
+        "FIX\tImageDescription,Add Tag,description\n");
+    bw.close();
+
     String path = "output";
     int idx=1;
     while (new File(path).exists()) path = "output" + idx++;
@@ -72,7 +84,7 @@ public class FixerTest extends TestCase {
     args[2] = "-o";
     args[3] = path;
     args[4] = "-configuration";
-    args[5] = "configFix.cfg";
+    args[5] = "xx.cfg";
 
     Application.Parameters params=new Application.Parameters() {
       @Override
