@@ -299,24 +299,13 @@ public class MainApp extends Application {
     }
 
     Scene scene = thestage.getScene();
-    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
-    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-    AnchorPane ap2 = (AnchorPane)(sp.getContent());
-    ScrollPane sp2 = (ScrollPane)ap2.getChildren().get(2);
-    AnchorPane pan = (AnchorPane)(sp2.getContent());
+    AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
     pan.getChildren().add(vBox);
   }
 
   protected void SetFile() {
-    //txtFile.setText(dropped);
-
     Scene scene = thestage.getScene();
-    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
-    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-    AnchorPane ap2 = (AnchorPane)(sp.getContent());
-    TextField txtField = (TextField)ap2.getChildren().get(4);
+    TextField txtField = (TextField)scene.lookup("#txtBox1");
     txtField.setText(dropped);
   }
 
@@ -444,12 +433,7 @@ public class MainApp extends Application {
     }
 
     Scene scene = thestage.getScene();
-    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
-    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-    AnchorPane ap2 = (AnchorPane)(sp.getContent());
-    ScrollPane pan = (ScrollPane)ap2.getChildren().get(2);
-    AnchorPane ap3 = (AnchorPane)(pan.getContent());
+    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
     boolean oneChecked = false;
     for (Node node : ap3.getChildren()){
       if(node instanceof VBox) {
@@ -919,10 +903,7 @@ public class MainApp extends Application {
         }
       });
 
-      VBox tabPane = ((VBox) ((SplitPane) nodes.get(0)).getItems().get(1));
-      AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-      ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-      AnchorPane ap2 = (AnchorPane)(sp.getContent());
+      AnchorPane ap2 = (AnchorPane)scenereport.lookup("#pane1");
       ap2.getChildren().add(tabReports);
 
     } catch (Exception ex) {
@@ -960,10 +941,7 @@ public class MainApp extends Application {
     }
     if (operators != null) {
       Scene scene = thestage.getScene();
-      VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
-      AnchorPane ap = (AnchorPane) (tabPane.getChildren().get(0));
-      ScrollPane sp = (ScrollPane) (ap.getChildren().get(0));
-      AnchorPane ap2 = (AnchorPane) (sp.getContent());
+      AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
       for (Node node : ap2.getChildren()) {
         if (node instanceof HBox) {
           HBox hBox1 = (HBox) node;
@@ -993,10 +971,7 @@ public class MainApp extends Application {
   private void addFixValue(String item) {
     ArrayList<String> fields = null;
     Scene scene = thestage.getScene();
-    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
-    AnchorPane ap = (AnchorPane) (tabPane.getChildren().get(0));
-    ScrollPane sp = (ScrollPane) (ap.getChildren().get(0));
-    AnchorPane ap2 = (AnchorPane) (sp.getContent());
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     for (Node node : ap2.getChildren()) {
       if (node instanceof HBox) {
         HBox hBox1 = (HBox) node;
@@ -1047,10 +1022,7 @@ public class MainApp extends Application {
     hBox.setLayoutY(yRule);
 
     Scene scene = thestage.getScene();
-    VBox tabPane = (VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1);
-    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-    AnchorPane ap2 = (AnchorPane)(sp.getContent());
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ap2.getChildren().add(hBox);
 
     addRule.setLayoutY(addRule.getLayoutY() + dif);
@@ -1084,10 +1056,7 @@ public class MainApp extends Application {
     hBox.setLayoutY(yRule);
 
     Scene scene = thestage.getScene();
-    VBox tabPane = (VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1);
-    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-    AnchorPane ap2 = (AnchorPane)(sp.getContent());
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ap2.getChildren().add(hBox);
 
     addFix.setLayoutY(addFix.getLayoutY() + dif);
@@ -1143,10 +1112,7 @@ public class MainApp extends Application {
     bLoading.getChildren().add(loading);
 
     Scene scene = thestage.getScene();
-    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
-    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-    AnchorPane ap2 = (AnchorPane)(sp.getContent());
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane0");
     ap2.getChildren().add(bLoading);
   }
 

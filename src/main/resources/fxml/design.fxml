@@ -36,7 +36,7 @@
                         <children>
                             <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                                 <content>
-                                    <AnchorPane>
+                                    <AnchorPane id="pane0">
                                         <children>
                                             <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                 <!-- <image>
@@ -49,7 +49,7 @@
                                                                                              </image>-->
                                             </ImageView>
                                             <ScrollPane hbarPolicy="AS_NEEDED" layoutX="254.0" layoutY="455.0" prefHeight="172.0" prefWidth="486.0" styleClass="paneRadios">
-                                                <AnchorPane>
+                                                <AnchorPane id="pane1">
                                                     <children>
     <!--
                                                         <RadioButton fx:id="radEP" layoutX="23.0" layoutY="37.0" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/EP">
@@ -80,7 +80,7 @@
                                                    <Cursor fx:constant="HAND" />
                                                 </cursor>
                                             </Button>
-                                            <TextField fx:id="txtFile" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
+                                            <TextField fx:id="txtFile" id="txtBox1" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
                                                 <cursor>
                                                    <Cursor fx:constant="TEXT" />
                                                 </cursor>
