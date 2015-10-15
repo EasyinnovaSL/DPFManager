@@ -64,7 +64,11 @@ public class FixerTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    PrintWriter bw = new PrintWriter("xx.cfg");
+    String configfile = "xx.cfg";
+    int idx = 0;
+    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
         "ISO\tTiff/EP\n" +
         "FORMAT\tHTML\n" +
@@ -75,7 +79,7 @@ public class FixerTest extends TestCase {
     bw.close();
 
     String path = "output";
-    int idx=1;
+    idx=1;
     while (new File(path).exists()) path = "output" + idx++;
 
     String[] args = new String[6];
@@ -84,7 +88,7 @@ public class FixerTest extends TestCase {
     args[2] = "-o";
     args[3] = path;
     args[4] = "-configuration";
-    args[5] = "xx.cfg";
+    args[5] = configfile;
 
     Application.Parameters params=new Application.Parameters() {
       @Override
@@ -136,5 +140,7 @@ public class FixerTest extends TestCase {
     FileUtils.deleteDirectory(new File(path));
 
     Platform.exit();
+
+    new File(configfile).delete();
   }
 }

@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -60,13 +61,28 @@ public class PolicyTest extends TestCase {
     int idx=1;
     while (new File(path).exists()) path = "output" + idx++;
 
+    String configfile = "xx.cfg";
+    idx = 0;
+    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
+    bw.write("ISO\tBaseline\n" +
+        "ISO\tTiff/EP\n" +
+        "ISO\tTiff/IT\n" +
+        "FORMAT\tHTML\n" +
+        "FORMAT\tXML\n" +
+        "RULE\tImageWidth,>,1000\n" +
+        "RULE\tImageHeight,>,500\n" +
+        "RULE\tPixelDensity,>,10\n");
+    bw.close();
+
     String[] args = new String[6];
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
     args[4] = "-configuration";
-    args[5] = "2Rules.cfg";
+    args[5] = configfile;
 
     Application.Parameters params=new Application.Parameters() {
       @Override
@@ -110,5 +126,7 @@ public class PolicyTest extends TestCase {
     FileUtils.deleteDirectory(new File(path));
 
     Platform.exit();
+
+    new File(configfile).delete();
   }
 }
