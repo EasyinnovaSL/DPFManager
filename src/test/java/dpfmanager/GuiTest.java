@@ -6,6 +6,9 @@ import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
+import com.athaydes.automaton.FXApp;
+import com.athaydes.automaton.FXer;
+
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -25,6 +28,20 @@ import java.util.prefs.Preferences;
  * Created by easy on 05/10/2015.
  */
 public class GuiTest extends TestCase {
+
+  @Test
+  public void testAutomaton() throws Exception{
+    System.out.printf("About to launch FX App\n");
+    String[] params = new String[1];
+    params[0]="-gui";
+    //FXApp.initialize(params);
+    FXApp.startApp(new MainApp(),params);
+
+
+    FXer fxer = FXer.getUserWith(FXApp.getScene().getRoot());
+
+    fxer.clickOn( "#myButton" ).waitForFxEvents();
+  }
 
   @Test
   public void testGui() throws Exception {
