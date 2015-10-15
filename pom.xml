@@ -42,6 +42,13 @@
 			<organization>Easy Innova</organization>
 			<organizationUrl>http://www.easyinnova.com</organizationUrl>
 		</developer>
+		<developer>
+			<name>Carlos García Rubio</name>
+			<email>carlosgarcia@easyinnova.com</email>
+			<organization>Easy Innova</organization>
+			<url>https://github.com/SteinerX</url>
+			<organizationUrl>http://www.easyinnova.com</organizationUrl>
+		</developer>
 	</developers>
 	<contributors>
 		
