@@ -451,12 +451,13 @@ public class ReportGenerator {
     int htmlMode = 0;
     if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
     output = ReportXml.parseIndividual(xmlFileStr, ir, rules);
-    ValidationResult pcValidation = getPcValidation(output);
-    ir.setPCErrors(pcValidation.getErrors());
-    ir.setPCWarnings(pcValidation.getWarnings());
+    ValidationResult pcValidation1 = getPcValidation(output);
+    ir.setPCErrors(pcValidation1.getErrors());
+    ir.setPCWarnings(pcValidation1.getWarnings());
+    ir.setPcValidation(pcValidation1);
     if (html) {
       copyHtmlFolder(htmlFileStr);
-      ReportHtml.parseIndividual(htmlFileStr, ir, pcValidation, htmlMode);
+      ReportHtml.parseIndividual(htmlFileStr, ir, htmlMode);
     }
     if (json) {
       ReportJson.xmlToJson(output, jsonFileStr);
@@ -518,15 +519,13 @@ public class ReportGenerator {
         String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
         String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
         IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, itValidation);
+        output = ReportXml.parseIndividual(xmlFileStr, ir2, rules);
+        ValidationResult pcValidation2 = getPcValidation(output);
+        ir2.setPcValidation(pcValidation2);
         ir2.setCompareReport(ir);
         ir2.setFileName(ir.getFileName() + "_fixed");
-
-        output = ReportXml.parseIndividual(xmlFileStr, ir2, rules);
-        pcValidation = getPcValidation(output);
-        ir.setPCErrors(pcValidation.getErrors());
-        ir.setPCWarnings(pcValidation.getWarnings());
         if (html) {
-          ReportHtml.parseIndividual(htmlFileStr, ir2, pcValidation, 2);
+          ReportHtml.parseIndividual(htmlFileStr, ir2, 2);
         }
         if (json) {
           ReportJson.xmlToJson(output, jsonFileStr);
@@ -534,6 +533,8 @@ public class ReportGenerator {
         if (!xml) {
           ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
         }
+
+        new File(nameFixedTif).delete();
       } catch (Exception ex) {
 
       }

@@ -81,7 +81,7 @@ public class ReportHtml {
    * @param outputfile the outputfile
    * @param ir the individual report.
    */
-  public static void parseIndividual(String outputfile, IndividualReport ir, ValidationResult pcValidation, int mode) {
+  public static void parseIndividual(String outputfile, IndividualReport ir, int mode) {
     String templatePath = "./src/main/resources/templates/individual.html";
     outputfile = insertHtmlFolder(outputfile);
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
@@ -104,6 +104,7 @@ public class ReportHtml {
     int blWar = ir.getNBlWar();
     int itErr = ir.getNItErr();
     int itWar = ir.getNItWar();
+    ValidationResult pcValidation = ir.getPcValidation();
     int pcErr = pcValidation.getErrors().size();
     int pcWar = pcValidation.getWarnings().size();
     if (blErr > 0) {
@@ -193,8 +194,11 @@ public class ReportHtml {
     } else {
       htmlBody = htmlBody.replaceAll("##F_PC_WAR_CLASS##", "info");
     }
-    htmlBody = htmlBody.replaceAll("##F_PC_ERR##", "" + pcValidation.getErrors().size());
-    htmlBody = htmlBody.replaceAll("##F_PC_WAR##", "" + pcValidation.getWarnings().size());
+
+    dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getErrors().size(), pcValidation.getErrors().size()) : "";
+    htmlBody = htmlBody.replaceAll("##F_PC_ERR##", "" + pcValidation.getErrors().size() + dif);
+    dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getWarnings().size(), pcValidation.getWarnings().size()) : "";
+    htmlBody = htmlBody.replaceAll("##F_PC_WAR##", "" + pcValidation.getWarnings().size() + dif);
 
     if (ir.hasBlValidation()) {
       htmlBody = htmlBody.replaceAll("##F_BL_ERR_CLASS##", ir.getBaselineErrors().size() > 0 ? "error" : "info");
@@ -353,7 +357,7 @@ public class ReportHtml {
           dif = "";
           if (ifdcomp != null) {
             if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
-              dif += "+";
+              dif += "<i class=\"fa fa-plus\"></i>";
           }
           row = row.replace("##ID##", tv.getId() + dif);
           row = row.replace("##KEY##", tv.getName());
@@ -370,7 +374,7 @@ public class ReportHtml {
               String seetr = "";
               if (index > 0) seetr = " hide";
               row = "<tr class='ifd ifd" + index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
-              dif = "-";
+              dif = "<i class=\"fa fa-times\"></i>";
               row = row.replace("##ID##", tv.getId() + dif);
               row = row.replace("##KEY##", tv.getName());
               row = row.replace("##VALUE##", tv.toString());

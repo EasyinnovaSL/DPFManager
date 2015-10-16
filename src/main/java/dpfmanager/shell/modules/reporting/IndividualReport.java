@@ -113,6 +113,8 @@ public class IndividualReport {
   /** Check Baseline conformance. */
   public boolean checkBL;
 
+  private ValidationResult pcValidation;
+
   /** Check Policy. */
   public boolean checkPC;
 
@@ -135,6 +137,14 @@ public class IndividualReport {
     listIsimg = new ArrayList<Boolean>();
     listHasSubIfd = new ArrayList<Boolean>();
     generate(tiffModel, baselineValidation, epValidation, itValidation);
+  }
+
+  public void setPcValidation(ValidationResult pcValidation) {
+    this.pcValidation = pcValidation;
+  }
+
+  public ValidationResult getPcValidation() {
+    return pcValidation;
   }
 
   /**
