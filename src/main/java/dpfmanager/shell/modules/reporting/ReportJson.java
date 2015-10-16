@@ -29,7 +29,9 @@
  * @since 23/6/2015
  */
 
-package dpfmanager;
+package dpfmanager.shell.modules.reporting;
+
+import dpfmanager.ReportGenerator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;

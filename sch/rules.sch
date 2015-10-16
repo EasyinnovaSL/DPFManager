@@ -23,12 +23,12 @@
   </pattern>
   <pattern>
    <rule context="report">
-	<assert test="width">Image width is mandatory</assert>
-	<assert test="height">Image height is mandatory</assert>
-	<assert test="pixeldensity">Pixel density is mandatory</assert>
+	<assert test="ImageWidth">Image width is mandatory</assert>
+	<assert test="ImageHeight">Image height is mandatory</assert>
+	<assert test="PixelDensity">Pixel density is mandatory</assert>
    </rule>
    <rule context="pixeldensity">
-     <assert test="@pd > 50">
+     <assert test="@PixelDensity > 50">
       There pixel density is low.
       </assert>
   </rule>

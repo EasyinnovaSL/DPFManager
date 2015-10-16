@@ -31,10 +31,24 @@
 
 package dpfmanager.shell.modules.interfaces;
 
+import dpfmanager.shell.modules.classes.Field;
+import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 /**
  * The Class Gui.
  */
-public class Gui implements UserInterface {
-  public void launch() {}
+public class Gui extends UserInterface {
+
 }
 

@@ -27,7 +27,8 @@ import com.easyinnova.tiff.profiles.BaselineProfile;
 import com.easyinnova.tiff.profiles.TiffEPProfile;
 
 import dpfmanager.ReportGenerator;
-import dpfmanager.shell.modules.ProcessInput;
+import dpfmanager.shell.modules.classes.Configuration;
+import dpfmanager.shell.modules.classes.ProcessInput;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
 import org.w3c.dom.Document;
@@ -47,7 +48,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  * The Class CommandLine.
  */
-public class CommandLine implements UserInterface {
+public class CommandLine extends UserInterface {
 
   /**
    * The args.
@@ -85,6 +86,7 @@ public class CommandLine implements UserInterface {
     boolean json = true;
     boolean html = true;
     boolean silence = false;
+    Configuration config = null;
 
     List<String> params = new ArrayList<String>();
     for (String s : args) {
@@ -120,6 +122,19 @@ public class CommandLine implements UserInterface {
         }
       } else if (arg.equals("-s")) {
         silence = true;
+      } else if (arg.equals("-configuration")) {
+        if (idx + 1 < params.size()) {
+          String xmlConfig = params.get(++idx);
+          config = new Configuration();
+          try {
+            config.ReadFile(xmlConfig);
+          } catch (Exception ex) {
+            System.out.println("Incorrect configuration file '" + xmlConfig + "'");
+            argsError = true;
+          }
+        } else {
+          argsError = true;
+        }
       } else if (arg.equals("-help")) {
         argsError = true;
         break;
@@ -167,10 +182,15 @@ public class CommandLine implements UserInterface {
       System.out.println("No files specified.");
     } else {
       readConformanceChecker();
-
-      ProcessInput pi = new ProcessInput(allowedExtensions, true, true, true);
-      pi.ProcessFiles(files, xml, json, html, outputFolder, silence);
-      System.out.println("Report generated successfully.");
+      if (config != null) {
+        ProcessInput pi = new ProcessInput(allowedExtensions);
+        pi.ProcessFiles(files, config, outputFolder);
+        System.out.println("Report generated successfully.");
+      } else {
+        ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0, false);
+        pi.ProcessFiles(files, xml, json, html, outputFolder, silence, null, null);
+        System.out.println("Report generated successfully.");
+      }
     }
   }
 
@@ -309,7 +329,8 @@ public class CommandLine implements UserInterface {
     System.out.println("Usage: dpfmanager [options] <file1> <file2> ... <fileN>");
     System.out.println("Options: -help displays help");
     System.out.println("         -o path: Specifies the report output folder.");
-    // System.out.println("         -gui: Launches graphical interface");
+    System.out.println("         -gui: Launches graphical interface");
+    System.out.println("         -configuration (filename): Specify configuration file");
     System.out.println("         -reportformat (xml, json or html): "
         + "Specifies the report format. Default set to all reports.");
   }

@@ -1,7 +1,8 @@
-package dpfmanager.shell.modules;
+package dpfmanager.shell.modules.classes;
 
-import dpfmanager.IndividualReport;
+import dpfmanager.shell.modules.reporting.IndividualReport;
 import dpfmanager.ReportGenerator;
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -33,18 +34,76 @@ import java.util.zip.ZipFile;
 public class ProcessInput {
   private ReportGenerator reportGenerator;
   List<String> allowedExtensions;
-  private boolean checkBL, checkEP, checkIT;
+  private boolean checkBL, checkEP, checkPC;
+  private int checkIT;
 
-  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, boolean checkIT) {
+  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT, boolean checkPC) {
     this.allowedExtensions = allowedExtensions;
     this.checkBL = checkBL;
     this.checkEP = checkEP;
     this.checkIT = checkIT;
+    this.checkPC = checkPC;
   }
 
-  public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, String outputFolder, boolean silence) {
+  public ProcessInput(List<String> allowedExtensions) {
+    this.allowedExtensions = allowedExtensions;
+  }
+
+  public String ProcessFiles(ArrayList<String> files, Configuration config, String outputFolder) {
+    checkBL = config.getIsos().contains("Baseline");
+    checkEP = config.getIsos().contains("Tiff/EP");
+    checkIT = -1;
+    if (config.getIsos().contains("Tiff/IT")) checkIT = 0;
+    if (config.getIsos().contains("Tiff/IT-1")) checkIT = 1;
+    if (config.getIsos().contains("Tiff/IT-2")) checkIT = 2;
+    checkPC = config.getRules().getRules().size() > 0;
+    ArrayList<String> formats = config.getFormats();
+
+    boolean silence = true;
+
+    reportGenerator = new ReportGenerator();
+    reportGenerator.setReportsFormats(formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"));
+    reportGenerator.setRules(config.getRules());
+    reportGenerator.setFixes(config.getFixes());
+
+    // Process files
+    ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
+    String internalReportFolder = ReportGenerator.createReportPath();
+    for (final String filename : files) {
+      System.out.println("");
+      System.out.println("Processing file " + filename);
+      List<IndividualReport> indReports = processFile(filename, internalReportFolder);
+      if (indReports.size() > 0) {
+        individuals.addAll(indReports);
+      }
+    }
+    // Global report
+    String summaryXml =
+        reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
+            silence);
+
+    // Send report over FTP (only for alpha testing)
+    try {
+      Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+      final String PREF_NAME = "feedback";
+      String defaultValue = "0";
+      String propertyValue = prefs.get(PREF_NAME, defaultValue);
+      if(propertyValue.equals("1")) {
+        sendFtpCamel(reportGenerator, summaryXml);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    String htmlFileStr = internalReportFolder + "report.html";
+    return htmlFileStr;
+  }
+
+  public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, String outputFolder, boolean silence, Rules rules, Fixes fixes) {
     reportGenerator = new ReportGenerator();
     reportGenerator.setReportsFormats(xml, json, html);
+    reportGenerator.setRules(rules);
+    reportGenerator.setFixes(fixes);
 
     // Process files
     ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
@@ -200,7 +259,7 @@ public class ProcessInput {
           ValidationResult epValidation = null;
           if (checkEP) epValidation = tr.getTiffEPValidation();
           ValidationResult itValidation = null;
-          if (checkIT) itValidation = tr.getTiffITValidation(0);
+          if (checkIT >= 0) itValidation = tr.getTiffITValidation(checkIT);
 
           String pathNorm = realFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
@@ -208,6 +267,7 @@ public class ProcessInput {
           ir.checkBL = checkBL;
           ir.checkEP = checkEP;
           ir.checkIT = checkIT;
+          ir.checkPC = checkPC;
           // reportResults(name, to, baselineVal);
           internalReport(ir, tr, realFilename, internalReportFolder);
           return ir;

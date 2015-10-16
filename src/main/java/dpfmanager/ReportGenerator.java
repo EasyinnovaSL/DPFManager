@@ -31,6 +31,23 @@
 
 package dpfmanager;
 
+import static java.io.File.separator;
+
+import dpfmanager.shell.modules.classes.Fix;
+import dpfmanager.shell.modules.classes.Fixes;
+import dpfmanager.shell.modules.classes.Rules;
+import dpfmanager.shell.modules.reporting.GlobalReport;
+import dpfmanager.shell.modules.reporting.IndividualReport;
+import dpfmanager.shell.modules.reporting.ReportHtml;
+import dpfmanager.shell.modules.reporting.ReportJson;
+import dpfmanager.shell.modules.reporting.ReportXml;
+
+import com.easyinnova.tiff.io.TiffInputStream;
+import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.ValidationResult;
+import com.easyinnova.tiff.reader.TiffReader;
+import com.easyinnova.tiff.writer.TiffWriter;
+
 import org.apache.commons.lang.time.FastDateFormat;
 
 import java.awt.Desktop;
@@ -71,6 +88,12 @@ public class ReportGenerator {
 
   /** If generates the HTML report. */
   private boolean html;
+
+  /** Policy checker rules. */
+  private Rules rules;
+
+  /** Policy checker fixes. */
+  private Fixes fixes;
 
   /**
    * Creates the report path.
@@ -260,6 +283,14 @@ public class ReportGenerator {
     this.html = html;
   }
 
+  public void setRules(Rules rules) {
+    this.rules = rules;
+  }
+
+  public void setFixes(Fixes fixes) {
+    this.fixes = fixes;
+  }
+
   /**
    * Copy a file or directory from source to target.
    *
@@ -413,14 +444,20 @@ public class ReportGenerator {
    * @param ir the individual report
    */
   public void generateIndividualReport(String reportName, IndividualReport ir) {
-    String output = null;
+    String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
     String htmlFileStr = reportName + ".html";
-    output = ReportXml.parseIndividual(xmlFileStr, ir);
+    int htmlMode = 0;
+    if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
+    output = ReportXml.parseIndividual(xmlFileStr, ir, rules);
+    ValidationResult pcValidation1 = getPcValidation(output);
+    ir.setPCErrors(pcValidation1.getErrors());
+    ir.setPCWarnings(pcValidation1.getWarnings());
+    ir.setPcValidation(pcValidation1);
     if (html) {
       copyHtmlFolder(htmlFileStr);
-      ReportHtml.parseIndividual(htmlFileStr, ir);
+      ReportHtml.parseIndividual(htmlFileStr, ir, htmlMode);
     }
     if (json) {
       ReportJson.xmlToJson(output, jsonFileStr);
@@ -428,6 +465,93 @@ public class ReportGenerator {
     if (!xml) {
       ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
     }
+
+    // Fixes -> New report
+    if (fixes != null && fixes.getFixes().size() > 0) {
+      xmlFileStr = reportName + "_fixed" + ".xml";
+      jsonFileStr = reportName + "_fixed" + ".json";
+      htmlFileStr = reportName + "_fixed" + ".html";
+
+      TiffDocument td = ir.getTiffModel();
+      String nameOriginalTif = ir.getFilePath();
+
+      try {
+        TiffInputStream ti = new TiffInputStream(new File(nameOriginalTif));
+        TiffWriter tw = new TiffWriter(ti);
+        tw.SetModel(td);
+        int idx = 0;
+        while (new File("out" + idx + ".tif").exists()) idx++;
+        String nameFixedTif = "out" + idx + ".tif";
+        tw.write(nameFixedTif);
+
+        TiffReader tr = new TiffReader();
+        tr.readFile(nameFixedTif);
+        ir.setTiffModel(tr.getModel());
+        new File(nameFixedTif).delete();
+
+        for (Fix fix : fixes.getFixes()) {
+          if (fix.getOperator().equals("Add Tag")) {
+            td.addTag(fix.getTag(), fix.getValue());
+          } else if (fix.getOperator().equals("Remove Tag")) {
+            td.removeTag(fix.getTag());
+          }
+        }
+
+        ti = new TiffInputStream(new File(nameOriginalTif));
+        tw = new TiffWriter(ti);
+        tw.SetModel(td);
+        idx = 0;
+        while (new File("out" + idx + ".tif").exists()) idx++;
+        nameFixedTif = "out" + idx + ".tif";
+        tw.write(nameFixedTif);
+
+        tr = new TiffReader();
+        tr.readFile(nameFixedTif);
+        TiffDocument to = tr.getModel();
+
+        ValidationResult baselineVal = null;
+        if (ir.checkBL) baselineVal = tr.getBaselineValidation();
+        ValidationResult epValidation = null;
+        if (ir.checkEP) epValidation = tr.getTiffEPValidation();
+        ValidationResult itValidation = null;
+        if (ir.checkIT >= 0) itValidation = tr.getTiffITValidation(ir.checkIT);
+
+        String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
+        String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
+        IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, itValidation);
+        output = ReportXml.parseIndividual(xmlFileStr, ir2, rules);
+        ValidationResult pcValidation2 = getPcValidation(output);
+        ir2.setPcValidation(pcValidation2);
+        ir2.setCompareReport(ir);
+        ir2.setFileName(ir.getFileName() + "_fixed");
+        if (html) {
+          ReportHtml.parseIndividual(htmlFileStr, ir2, 2);
+        }
+        if (json) {
+          ReportJson.xmlToJson(output, jsonFileStr);
+        }
+        if (!xml) {
+          ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
+        }
+
+        new File(nameFixedTif).delete();
+      } catch (Exception ex) {
+
+      }
+    }
+  }
+
+  ValidationResult getPcValidation(String output) {
+    ValidationResult valid = new ValidationResult();
+    int index = output.indexOf("<svrl:failed-assert");
+    while (index > -1) {
+      String text = output.substring(output.indexOf("text>", index));
+      text = text.substring(text.indexOf(">") + 1);
+      text = text.substring(0, text.indexOf("</"));
+      index = output.indexOf("<svrl:failed-assert", index + 1);
+      valid.addError(text);
+    }
+    return valid;
   }
 
   /**

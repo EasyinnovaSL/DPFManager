@@ -29,7 +29,7 @@
  * @since 23/6/2015
  */
 
-package dpfmanager;
+package dpfmanager.shell.modules.reporting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +51,9 @@ public class GlobalReport {
   /** Number of IT ok */
   int nreportsItOk;
 
+  /** Number of PC ok */
+  int nreportsPcOk;
+
   boolean hasEp;
   boolean hasIt;
   boolean hasBl;
@@ -63,9 +66,22 @@ public class GlobalReport {
     nreportsEpOk = 0;
     nreportsItOk = 0;
     nreportsBlOk = 0;
+    nreportsPcOk = 0;
     hasEp = false;
     hasIt = false;
     hasBl = false;
+  }
+
+  public boolean getHasEp() {
+    return hasEp;
+  }
+
+  public boolean getHasIt() {
+    return hasIt;
+  }
+
+  public boolean getHasBl() {
+    return hasBl;
   }
 
   /**
@@ -95,6 +111,7 @@ public class GlobalReport {
         if (ir.getBaselineErrors().size()==0) nreportsBlOk++;
         hasBl = true;
       }
+      if (ir.getPCErrors().size() == 0) nreportsPcOk++;
     }
   }
 
@@ -176,6 +193,15 @@ public class GlobalReport {
    */
   public int getReportsIt() {
     return nreportsItOk;
+  }
+
+  /**
+   * Get the count of reports with some error.
+   *
+   * @return nReportsOnlyIt
+   */
+  public int getReportsPc() {
+    return nreportsPcOk;
   }
 
   /**

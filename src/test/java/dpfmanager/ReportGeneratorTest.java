@@ -8,12 +8,15 @@ import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.After;
 import org.junit.Before;
 
 import java.io.File;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +51,67 @@ public class ReportGeneratorTest extends TestCase {
       ok = false;
     }
     assertEquals(ok, true);
+  }
+
+  public void testHTMLTags() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
+    String path = "output";
+    int idx=1;
+    while (new File(path).exists()) path = "output" + idx++;
+
+    String[] args = new String[4];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    File directori = new File(path + "/html");
+    assertEquals(directori.exists(), true);
+
+    String html = null;
+    for (String file : directori.list()){
+      if (file.equals("Bilevel.tif.html")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
+        html = new String(encoded);
+      }
+    }
+    assertEquals(html != null, true);
+    assertEquals(html.contains("<td>256</td><td>ImageWidth</td><td>999</td>"), true);
+    assertEquals(html.contains("<td>257</td><td>ImageLength</td><td>662</td>"), true);
+    assertEquals(html.contains("<td>305</td><td>Software</td><td>Adobe Photoshop CS6 (Macintosh)</td>"), true);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    Platform.exit();
   }
 
   public void testReports1() throws Exception {
@@ -234,7 +298,6 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   public void testReportsFormat() throws Exception {
-
     assertReportsFormat("html");
     assertReportsFormat("xml");
     assertReportsFormat("json");

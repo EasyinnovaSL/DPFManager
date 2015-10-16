@@ -1,23 +1,17 @@
 package dpfmanager;
 
-import static java.io.File.separator;
-
-import dpfmanager.shell.modules.Schematron;
+import dpfmanager.shell.modules.classes.Schematron;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import javafx.application.Application;
 import javafx.application.Platform;
 
 import junit.framework.TestCase;
 
-import com.easyinnova.tiff.io.TiffInputStream;
-import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.reader.TiffReader;
-import com.easyinnova.tiff.writer.TiffWriter;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.After;
 import org.junit.Before;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -30,9 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by easy on 01/10/2015.
@@ -168,7 +159,6 @@ public class SchematronTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    boolean found = false;
     String xml = null;
     for (String file : directori.list()){
       if (file.equals("summary.xml")) {

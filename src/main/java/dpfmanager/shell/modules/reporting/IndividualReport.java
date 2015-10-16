@@ -29,7 +29,7 @@
  * @since 23/6/2015
  */
 
-package dpfmanager;
+package dpfmanager.shell.modules.reporting;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
@@ -68,6 +68,9 @@ public class IndividualReport {
   /** The Tiff bits per sample. */
   private String bps;
 
+  /** The Endianess. */
+  private String endianess;
+
   /** The pixel density. */
   private String pixeldensity;
 
@@ -92,17 +95,30 @@ public class IndividualReport {
   /** The Tiff IT warning list. */
   private List<ValidationEvent> warningsIt;
 
+  /** The Tiff PC errors list. */
+  private List<ValidationEvent> errorsPc;
+
+  /** The Tiff PC warning list. */
+  private List<ValidationEvent> warningsPc;
+
   /** The Tiff Document object. */
   private TiffDocument tiffModel;
 
   /** Check Tiff/IT conformance. */
-  public boolean checkIT;
+  public int checkIT;
 
   /** Check Tiff/EP conformance. */
   public boolean checkEP;
 
   /** Check Baseline conformance. */
   public boolean checkBL;
+
+  private ValidationResult pcValidation;
+
+  /** Check Policy. */
+  public boolean checkPC;
+
+  private IndividualReport compareIr;
 
   /**
    * Constructor + generate.
@@ -123,6 +139,14 @@ public class IndividualReport {
     generate(tiffModel, baselineValidation, epValidation, itValidation);
   }
 
+  public void setPcValidation(ValidationResult pcValidation) {
+    this.pcValidation = pcValidation;
+  }
+
+  public ValidationResult getPcValidation() {
+    return pcValidation;
+  }
+
   /**
    * Set file name.
    *
@@ -139,6 +163,14 @@ public class IndividualReport {
    */
   public String getFileName() {
     return filename;
+  }
+
+  public void setCompareReport(IndividualReport ir) {
+    compareIr = ir;
+  }
+
+  public IndividualReport getCompareReport() {
+    return compareIr;
   }
 
   /**
@@ -185,6 +217,7 @@ public class IndividualReport {
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
+    endianess = tiffModel.getEndianess().toString();
     pixeldensity = "0";
     if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
     {
@@ -221,7 +254,6 @@ public class IndividualReport {
       errorsIt = itValidation.getErrors();
       warningsIt = itValidation.getWarnings();
     }
-
   }
 
   /**
@@ -289,6 +321,10 @@ public class IndividualReport {
     return bps;
   }
 
+  public String getEndianess() {
+    return endianess;
+  }
+
   public boolean hasBlValidation(){
     return errorsBl != null;
   }
@@ -299,10 +335,6 @@ public class IndividualReport {
 
   public boolean hasItValidation(){
     return errorsIt != null;
-  }
-
-  public boolean hasPcValidation(){
-    return true;
   }
 
   public String getPixelsDensity() {
@@ -370,6 +402,34 @@ public class IndividualReport {
   }
 
   /**
+   * Get PC errors list.
+   *
+   * @return the errors
+   */
+  public List<ValidationEvent> getPCErrors() {
+    if (errorsPc == null) return new ArrayList<ValidationEvent>();
+    return errorsPc;
+  }
+
+  /**
+   * Get PC warnings list.
+   *
+   * @return the warnings
+   */
+  public List<ValidationEvent> getPCWarnings() {
+    if (warningsPc == null) return new ArrayList<ValidationEvent>();
+    return warningsPc;
+  }
+
+  public void setPCErrors(List<ValidationEvent> errors) {
+    errorsPc = errors;
+  }
+
+  public void setPCWarnings(List<ValidationEvent> warnings) {
+    warningsPc = warnings;
+  }
+
+  /**
    * Get Tiff Model.
    *
    * @return the tiffModel
@@ -378,4 +438,31 @@ public class IndividualReport {
     return tiffModel;
   }
 
+  public void setTiffModel(TiffDocument model) {
+    tiffModel = model;
+  }
+
+  public int getNEpErr() {
+    return getEPErrors() == null ? 0 : getEPErrors().size();
+  }
+
+  public int getNBlErr() {
+    return getBaselineErrors() == null ? 0 : getBaselineErrors().size();
+  }
+
+  public int getNItErr() {
+    return getITErrors() == null ? 0 : getITErrors().size();
+  }
+
+  public int getNEpWar() {
+    return getEPWarnings() == null ? 0 : getEPWarnings().size();
+  }
+
+  public int getNBlWar() {
+    return getBaselineWarnings() == null ? 0 : getBaselineWarnings().size();
+  }
+
+  public int getNItWar() {
+    return getITWarnings() == null ? 0 : getITWarnings().size();
+  }
 }

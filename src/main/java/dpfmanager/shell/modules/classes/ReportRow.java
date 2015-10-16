@@ -1,10 +1,9 @@
-package dpfmanager.shell.modules;
+package dpfmanager.shell.modules.classes;
 
 import javafx.beans.property.SimpleStringProperty;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;

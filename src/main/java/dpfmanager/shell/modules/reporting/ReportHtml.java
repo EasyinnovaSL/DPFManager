@@ -29,12 +29,16 @@
  * @since 23/6/2015
  */
 
-package dpfmanager;
+package dpfmanager.shell.modules.reporting;
+
+import dpfmanager.ReportGenerator;
+import dpfmanager.shell.modules.classes.Fixes;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
+import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 
 import java.awt.Graphics2D;
@@ -77,7 +81,7 @@ public class ReportHtml {
    * @param outputfile the outputfile
    * @param ir the individual report.
    */
-  public static void parseIndividual(String outputfile, IndividualReport ir) {
+  public static void parseIndividual(String outputfile, IndividualReport ir, int mode) {
     String templatePath = "./src/main/resources/templates/individual.html";
     outputfile = insertHtmlFolder(outputfile);
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
@@ -94,12 +98,15 @@ public class ReportHtml {
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
-    int epErr = ir.getEPErrors() == null ? 0 : ir.getEPErrors().size();
-    int epWar = ir.getEPWarnings() == null ? 0 : ir.getEPWarnings().size();
-    int blErr = ir.getBaselineErrors() == null ? 0 : ir.getBaselineErrors().size();
-    int blWar = ir.getBaselineWarnings() == null ? 0 : ir.getBaselineWarnings().size();
-    int itErr = ir.getITErrors() == null ? 0 : ir.getITErrors().size();
-    int itWar = ir.getITWarnings() == null ? 0 : ir.getITWarnings().size();
+    int epErr = ir.getNEpErr();
+    int epWar = ir.getNEpWar();
+    int blErr = ir.getNBlErr();
+    int blWar = ir.getNBlWar();
+    int itErr = ir.getNItErr();
+    int itWar = ir.getNItWar();
+    ValidationResult pcValidation = ir.getPcValidation();
+    int pcErr = pcValidation.getErrors().size();
+    int pcWar = pcValidation.getWarnings().size();
     if (blErr > 0) {
       htmlBody = htmlBody.replaceAll("##BL_OK##", "none");
       htmlBody = htmlBody.replaceAll("##BL_ERR##", "block");
@@ -148,43 +155,58 @@ public class ReportHtml {
       htmlBody = htmlBody.replaceAll("##IT_WAR##", "none");
       htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "display: none;");
     }
-
-    // Errors
-    String clas = "success";
-    if (epErr > 0) {
-      clas = "error";
-    }
-    htmlBody = htmlBody.replaceAll("##U_EP_ERR_N##", "" + epErr);
-    htmlBody = htmlBody.replaceAll("##U_EP_ERR_CLASS##", clas);
-
-    // Warnings
-    clas = "success";
-    if (epWar > 0) {
-      clas = "warning";
-    }
-    htmlBody = htmlBody.replaceAll("##U_EP_WAR##", "" + epWar);
-    htmlBody = htmlBody.replaceAll("##U_EP_WAR_CLASS##", clas);
-
-    // TO-DO, actually never fix nothing || no policy checker
-    htmlBody = htmlBody.replaceAll("##U_PC_CLASS##", "success");
-    htmlBody = htmlBody.replaceAll("##U_PCR##", "" + 0);
-    htmlBody = htmlBody.replaceAll("##CP_OK##", "none");
-    htmlBody = htmlBody.replaceAll("##CP_ERR##", "none");
-
-    if (ir.hasPcValidation()) {
-      htmlBody = htmlBody.replaceAll("##F_PC_ERR_CLASS##", "info");
-      htmlBody = htmlBody.replaceAll("##F_PC_WAR_CLASS##", "info");
-      htmlBody = htmlBody.replaceAll("##F_PC_ERR##", "" + 0);
-      htmlBody = htmlBody.replaceAll("##F_PC_WAR##", "" + 0);
+    if (pcErr > 0) {
+      htmlBody = htmlBody.replaceAll("##PC_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##PC_ERR##", "block");
+      htmlBody = htmlBody.replaceAll("##PC_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##PC_ERR-WAR##", "");
+    } else if (pcWar > 0) {
+      htmlBody = htmlBody.replaceAll("##PC_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##PC_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##PC_WAR##", "block");
+      htmlBody = htmlBody.replaceAll("##PC_ERR-WAR##", "");
     } else {
-      htmlBody = htmlBody.replaceAll("##ROW_PC##", "hide");
+      htmlBody = htmlBody.replaceAll("##PC_OK##", "block");
+      htmlBody = htmlBody.replaceAll("##PC_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##PC_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##PC_ERR-WAR##", "display: none;");
     }
+
+    if (mode == 1) {
+      htmlBody = htmlBody.replaceAll("##CL_LINKR2##", "show");
+      htmlBody = htmlBody.replaceAll("##LINK2##", ir.getFileName() + "_fixed.html");
+    }
+    if (mode == 2) {
+      htmlBody = htmlBody.replaceAll("##CL_LINKR1##", "show");
+      htmlBody = htmlBody.replaceAll("##LINK1##", ir.getCompareReport().getFileName() + ".html");
+    }
+
+    String dif;
+
+    // Policy checker
+    if (pcValidation.getErrors().size() > 0) {
+      htmlBody = htmlBody.replaceAll("##F_PC_ERR_CLASS##", "error");
+    } else {
+      htmlBody = htmlBody.replaceAll("##F_PC_ERR_CLASS##", "info");
+    }
+    if (pcValidation.getWarnings().size() > 0) {
+      htmlBody = htmlBody.replaceAll("##F_PC_WAR_CLASS##", "warning");
+    } else {
+      htmlBody = htmlBody.replaceAll("##F_PC_WAR_CLASS##", "info");
+    }
+
+    dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getErrors().size(), pcValidation.getErrors().size()) : "";
+    htmlBody = htmlBody.replaceAll("##F_PC_ERR##", "" + pcValidation.getErrors().size() + dif);
+    dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getWarnings().size(), pcValidation.getWarnings().size()) : "";
+    htmlBody = htmlBody.replaceAll("##F_PC_WAR##", "" + pcValidation.getWarnings().size() + dif);
 
     if (ir.hasBlValidation()) {
       htmlBody = htmlBody.replaceAll("##F_BL_ERR_CLASS##", ir.getBaselineErrors().size() > 0 ? "error" : "info");
       htmlBody = htmlBody.replaceAll("##F_BL_WAR_CLASS##", ir.getBaselineWarnings().size() > 0 ? "warning" : "info");
-      htmlBody = htmlBody.replaceAll("##F_BL_ERR##", "" + ir.getBaselineErrors().size());
-      htmlBody = htmlBody.replaceAll("##F_BL_WAR##", "" + ir.getBaselineWarnings().size());
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNBlErr(), blErr) : "";
+      htmlBody = htmlBody.replaceAll("##F_BL_ERR##", "" + ir.getBaselineErrors().size() + dif);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNBlWar(), blWar) : "";
+      htmlBody = htmlBody.replaceAll("##F_BL_WAR##", "" + ir.getBaselineWarnings().size() + dif);
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_BL##", "hide");
     }
@@ -192,8 +214,10 @@ public class ReportHtml {
     if (ir.hasEpValidation()) {
       htmlBody = htmlBody.replaceAll("##F_EP_ERR_CLASS##", ir.getEPErrors().size() > 0 ? "error" : "info");
       htmlBody = htmlBody.replaceAll("##F_EP_WAR_CLASS##", ir.getEPWarnings().size() > 0 ? "warning" : "info");
-      htmlBody = htmlBody.replaceAll("##F_EP_ERR##", "" + ir.getEPErrors().size());
-      htmlBody = htmlBody.replaceAll("##F_EP_WAR##", "" + ir.getEPWarnings().size());
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpErr(), epErr) : "";
+      htmlBody = htmlBody.replaceAll("##F_EP_ERR##", "" + ir.getEPErrors().size() + dif);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpWar(), epWar) : "";
+      htmlBody = htmlBody.replaceAll("##F_EP_WAR##", "" + ir.getEPWarnings().size() + dif);
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_EP##", "hide");
     }
@@ -201,17 +225,13 @@ public class ReportHtml {
     if (ir.hasItValidation()) {
       htmlBody = htmlBody.replaceAll("##F_IT_ERR_CLASS##", ir.getITErrors().size() > 0 ? "error" : "info");
       htmlBody = htmlBody.replaceAll("##F_IT_WAR_CLASS##", ir.getITWarnings().size() > 0 ? "warning" : "info");
-      htmlBody = htmlBody.replaceAll("##F_IT_ERR##", "" + ir.getITErrors().size());
-      htmlBody = htmlBody.replaceAll("##F_IT_WAR##", "" + ir.getITWarnings().size());
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(), itErr) : "";
+      htmlBody = htmlBody.replaceAll("##F_IT_ERR##", "" + ir.getITErrors().size() + dif);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(), itWar) : "";
+      htmlBody = htmlBody.replaceAll("##F_IT_WAR##", "" + ir.getITWarnings().size() + dif);
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_IT##", "hide");
     }
-
-    htmlBody = htmlBody.replaceAll("##F_PC_CLASS##", "info");
-    htmlBody = htmlBody.replaceAll("##F_EP_ERR##", "0");
-    htmlBody = htmlBody.replaceAll("##F_EP_WAR##", "0");
-    htmlBody = htmlBody.replaceAll("##F_PC##", "0");
-    // End TO-DO
 
     // Full Description
     // Errors and warnings
@@ -272,7 +292,7 @@ public class ReportHtml {
 
     // IT
     rows = "";
-    if (ir.checkIT) {
+    if (ir.checkIT >= 0) {
       if (ir.getITErrors() != null) {
         for (ValidationEvent val : ir.getITErrors()) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
@@ -296,10 +316,35 @@ public class ReportHtml {
       htmlBody = htmlBody.replaceAll("##IT_VISIBLE##", "hidden");
     }
 
+    // PC
+    rows = "";
+    if (ir.checkPC) {
+      for (ValidationEvent val : pcValidation.getErrors()) {
+        row = "<tr><td class=\"bold error\">Error</td><td>##TEXT##</td></tr>";
+        row = row.replace("##TEXT##", val.getDescription());
+        rows += row;
+      }
+
+      for (ValidationEvent val : pcValidation.getWarnings()) {
+        row = "<tr><td class=\"bold warning\">Warning</td><td>##TEXT##</td></tr>";
+        row = row.replace("##TEXT##", val.getDescription());
+        rows += row;
+      }
+      htmlBody = htmlBody.replaceAll("##ROWS_PC##", rows);
+      htmlBody = htmlBody.replaceAll("##PC_VISIBLE##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##PC_VISIBLE##", "hidden");
+    }
+
     // Tags list
     rows = "";
     TiffDocument td = ir.getTiffModel();
     IFD ifd = td.getFirstIFD();
+    IFD ifdcomp = null;
+    if (ir.getCompareReport() != null) {
+      ifdcomp = ir.getCompareReport().getTiffModel().getFirstIFD();
+    }
+    td.getFirstIFD();
     int index = 0;
     boolean expertMode = false;
     while (ifd != null) {
@@ -309,13 +354,37 @@ public class ReportHtml {
           String seetr = "";
           if (index > 0) seetr = " hide";
           row = "<tr class='ifd ifd" + index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
-          row = row.replace("##ID##", tv.getId() + "");
+          dif = "";
+          if (ifdcomp != null) {
+            if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
+              dif += "<i class=\"fa fa-plus\"></i>";
+          }
+          row = row.replace("##ID##", tv.getId() + dif);
           row = row.replace("##KEY##", tv.getName());
           row = row.replace("##VALUE##", tv.toString());
           rows += row;
         }
       }
+      if (ifdcomp != null) {
+        for (TagValue tv : ifdcomp.getMetadata().getTags()) {
+          if (showTag(tv) || expertMode) {
+            if (tv.getName().equals("Copyright"))
+              tv.toString();
+            if (!meta.containsTagId(tv.getId())) {
+              String seetr = "";
+              if (index > 0) seetr = " hide";
+              row = "<tr class='ifd ifd" + index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+              dif = "<i class=\"fa fa-times\"></i>";
+              row = row.replace("##ID##", tv.getId() + dif);
+              row = row.replace("##KEY##", tv.getName());
+              row = row.replace("##VALUE##", tv.toString());
+              rows += row;
+            }
+          }
+        }
+      }
       ifd = ifd.getNextIFD();
+      if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
       index++;
     }
     htmlBody = htmlBody.replaceAll("##ROWS_TAGS##", rows);
@@ -352,6 +421,16 @@ public class ReportHtml {
     // Finish, write to html file
     htmlBody = htmlBody.replaceAll("\\.\\./html/", "");
     ReportGenerator.writeToFile(outputfile, htmlBody);
+  }
+
+  private static String getDif(int n1, int n2) {
+    String dif = "";
+    if (n2 != n1) {
+      dif = " (" + (n2 > n1 ? "+" : "-") + Math.abs(n2-n1) + ")";
+    } else {
+      dif = " (=)";
+    }
+    return dif;
   }
 
   /**
@@ -551,9 +630,9 @@ public class ReportHtml {
         imageBody = imageBody.replace("##IT_CLASS##", "hide");
       }
 
-      if (ir.hasPcValidation()) {
-        imageBody = imageBody.replace("##PC_ERR_N##", "" + 0);
-        imageBody = imageBody.replace("##PC_WAR_N##", "" + 0);
+      if (ir.checkPC) {
+        imageBody = imageBody.replace("##PC_ERR_N##", "" + ir.getPCErrors().size());
+        imageBody = imageBody.replace("##PC_WAR_N##", "" + ir.getPCWarnings().size());
       } else {
         imageBody = imageBody.replace("##PC_CLASS##", "hide");
       }
@@ -590,13 +669,12 @@ public class ReportHtml {
         imageBody = imageBody.replace("##IT_WAR_C##", "");
       }
 
-      // ToDo
-      if (0 > 0) {
+      if (ir.getPCErrors().size() > 0) {
         imageBody = imageBody.replace("##PC_ERR_C##", "error");
       } else {
         imageBody = imageBody.replace("##PC_ERR_C##", "");
       }
-      if (0 > 0) {
+      if (ir.getPCWarnings().size() > 0) {
         imageBody = imageBody.replace("##PC_WAR_C##", "warning");
       } else {
         imageBody = imageBody.replace("##PC_WAR_C##", "");
@@ -627,11 +705,6 @@ public class ReportHtml {
       }
       pieFunctions += functionPie;
 
-      // TO-DO
-      imageBody = imageBody.replace("##CP_N##", "0");
-      imageBody = imageBody.replace("##CP_C##", "success");
-      // END TO-DO
-
       imagesBody += imageBody;
       index++;
     }
@@ -646,29 +719,29 @@ public class ReportHtml {
     htmlBody = htmlBody.replace("##COUNT##", "" + gr.getReportsCount());
     htmlBody = htmlBody.replaceAll("##OK##", "" + gr.getReportsOk());
 
-    if (gr.hasBl){
+    if (gr.getHasBl()){
       htmlBody = htmlBody.replaceAll("##BL_OK##", "" + gr.getReportsBl());
       htmlBody = htmlBody.replaceAll("##BL_TYP##", gr.getReportsBl() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_BL##", "hide");
     }
 
-    if (gr.hasEp){
+    if (gr.getHasEp()){
       htmlBody = htmlBody.replaceAll("##EP_OK##", "" + gr.getReportsEp());
       htmlBody = htmlBody.replaceAll("##EP_TYP##", gr.getReportsEp() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_EP##", "hide");
     }
 
-    if (gr.hasIt){
+    if (gr.getHasIt()){
       htmlBody = htmlBody.replaceAll("##IT_OK##", "" + gr.getReportsIt());
       htmlBody = htmlBody.replaceAll("##IT_TYP##", gr.getReportsIt() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_IT##", "hide");
     }
 
-    htmlBody = htmlBody.replaceAll("##PC_OK##", "" + gr.getReportsCount());
-    htmlBody = htmlBody.replaceAll("##PC_TYP##", gr.getReportsCount() == gr.getReportsCount() ? "success" : "error");
+    htmlBody = htmlBody.replaceAll("##PC_OK##", "" + gr.getReportsPc());
+    htmlBody = htmlBody.replaceAll("##PC_TYP##", gr.getReportsPc() == gr.getReportsCount() ? "success" : "error");
 
     htmlBody = htmlBody.replace("##KO##", "" + gr.getReportsKo());
     if (gr.getReportsOk() >= gr.getReportsKo()) {

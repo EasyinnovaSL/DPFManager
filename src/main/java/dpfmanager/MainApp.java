@@ -31,24 +31,30 @@
 
 package dpfmanager;
 
-import dpfmanager.shell.modules.ProcessInput;
-import dpfmanager.shell.modules.ReportRow;
+import dpfmanager.shell.modules.classes.Configuration;
+import dpfmanager.shell.modules.classes.Field;
+import dpfmanager.shell.modules.classes.Fixes;
+import dpfmanager.shell.modules.classes.ProcessInput;
+import dpfmanager.shell.modules.classes.ReportRow;
+import dpfmanager.shell.modules.classes.Rules;
 import dpfmanager.shell.modules.interfaces.CommandLine;
+import dpfmanager.shell.modules.interfaces.Gui;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -56,6 +62,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
@@ -63,70 +71,59 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import org.eclipse.fx.ui.controls.filesystem.DirectoryTreeView;
-import org.eclipse.fx.ui.controls.filesystem.DirectoryView;
-import org.eclipse.fx.ui.controls.filesystem.IconSize;
-import org.eclipse.fx.ui.controls.filesystem.ResourceItem;
-import org.eclipse.fx.ui.controls.filesystem.ResourcePreview;
-import org.eclipse.fx.ui.controls.filesystem.RootDirItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
-import javax.net.ssl.HttpsURLConnection;
 /**
  * The Class MainApp.
  */
 public class MainApp extends Application {
   private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
-
-  @FXML private TextField txtFile;
-  @FXML private RadioButton radBL;
-  @FXML private RadioButton radEP;
-  @FXML private RadioButton radIT;
-  @FXML private RadioButton radAll;
-
-  @FXML private CheckBox chkFeedback;
-  @FXML private CheckBox chkSubmit;
-  @FXML private TextField txtName;
-  @FXML private TextField txtSurname;
-  @FXML private TextField txtEmail;
-  @FXML private TextField txtJob;
-  @FXML private TextField txtOrganization;
-  @FXML private TextField txtCountry;
-  @FXML private TextArea txtWhy;
-
+  public enum RuleFields { ImageWidth, ImageHeight, PixelDensity };
   private static Stage thestage;
   final int width = 970;
   final int height = 950;
+  private static Configuration config;
+  private static String dropped;
+
+  @FXML private TextField txtFile;
+  @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
+  @FXML private Line line;
+  @FXML private CheckBox chkFeedback, chkSubmit;
+  @FXML private CheckBox chkHtml, chkXml, chkJson;
+  @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtWhy;
+  @FXML private Button addRule, continueButton, addFix;
+
+  private static Gui gui;
 
   /**
    * The main method.
@@ -147,7 +144,7 @@ public class MainApp extends Application {
   @Override
   public final void start(final Stage stage) throws Exception {
     Parameters params = getParameters();
-    if (params.getRaw().size() == 0 || (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui"))) {
+    if (params==null || params.getRaw().size() == 0 || (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui"))) {
       thestage = stage;
       LOG.info("Starting JavaFX application");
 
@@ -158,6 +155,13 @@ public class MainApp extends Application {
       CommandLine cl = new CommandLine(params);
       cl.launch();
       Platform.exit();
+    }
+  }
+
+  public static class AsNonApp extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+      // noop
     }
   }
 
@@ -174,6 +178,9 @@ public class MainApp extends Application {
     if (FirstTime()) {
       ShowDisclaimer();
     } else {
+      gui = new Gui();
+      gui.LoadConformanceChecker();
+
       ShowMain();
     }
   }
@@ -259,7 +266,13 @@ public class MainApp extends Application {
           String filePath = null;
           for (File file:db.getFiles()) {
             filePath = file.getAbsolutePath();
-            txtFile.setText(filePath);
+            dropped = filePath;
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                SetFile();
+              }
+            });
             break;
           }
         }
@@ -267,6 +280,33 @@ public class MainApp extends Application {
         event.consume();
       }
     });
+
+    // Read config files
+    VBox vBox = new VBox();
+    vBox.setSpacing(3);
+    vBox.setPadding(new Insets(5));
+    File folder = new File(".");
+    final ToggleGroup group = new ToggleGroup();
+    for (final File fileEntry : folder.listFiles()) {
+      if (fileEntry.isFile()) {
+        if (fileEntry.getName().toLowerCase().endsWith(".cfg")) {
+          RadioButton radio = new RadioButton();
+          radio.setText(fileEntry.getName());
+          radio.setToggleGroup(group);
+          vBox.getChildren().add(radio);
+        }
+      }
+    }
+
+    Scene scene = thestage.getScene();
+    AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
+    pan.getChildren().add(vBox);
+  }
+
+  protected void SetFile() {
+    Scene scene = thestage.getScene();
+    TextField txtField = (TextField)scene.lookup("#txtBox1");
+    txtField.setText(dropped);
   }
 
   @FXML
@@ -381,31 +421,84 @@ public class MainApp extends Application {
 
   @FXML
   protected void openFile(ActionEvent event) throws Exception {
-    List<String> allowedExtensions = new ArrayList<String>();
     ArrayList<String> files = new ArrayList<String>();
+    ArrayList<String> extensions = this.gui.getExtensions();
 
-    try {
-      allowedExtensions.add(".tif");
-      allowedExtensions.add(".tiff");
-      files.add(txtFile.getText());
-      boolean bl = radBL.isSelected() || radAll.isSelected();
-      boolean ep = radEP.isSelected() || radAll.isSelected();
-      boolean it = radIT.isSelected() || radAll.isSelected();
-
-      ProcessInput pi = new ProcessInput(allowedExtensions, bl, ep, it);
-      String filename = pi.ProcessFiles(files, true, false, true, "", true);
-
-      ShowReport(filename);
-    } catch (Exception ex) {
-      Alert alert = new Alert(Alert.AlertType.ERROR);
-      alert.setTitle("Error");
-      alert.setHeaderText("An error occured");
-      alert.setContentText(ex.toString());
+    if (txtFile.getText().equals("Select a file")) {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("Alert");
+      alert.setHeaderText("Please select a file");
       alert.showAndWait();
+      return;
     }
+
+    Scene scene = thestage.getScene();
+    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
+    boolean oneChecked = false;
+    for (Node node : ap3.getChildren()){
+      if(node instanceof VBox) {
+        VBox vBox1 = (VBox)node;
+        for (Node nodeIn : vBox1.getChildren()){
+          if(nodeIn instanceof RadioButton) {
+            RadioButton radio = (RadioButton)nodeIn;
+            if (radio.isSelected()) {
+              config = new Configuration();
+              config.ReadFile(radio.getText());
+              oneChecked = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (!oneChecked) {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("Alert");
+      alert.setHeaderText("Please select a configuration file");
+      alert.showAndWait();
+      return;
+    }
+
+    ShowLoading();
+
+    // Create a background task, because otherwise the loading message is not shown
+    Task<Integer> task = new Task<Integer>(){
+      @Override
+      protected Integer call() throws Exception{
+        try {
+          files.add(txtFile.getText());
+          boolean bl = config.getIsos().contains("Baseline");
+          boolean ep = config.getIsos().contains("Tiff/EP");
+          int it = -1;
+          if (config.getIsos().contains("Tiff/IT")) it = 0;
+          if (config.getIsos().contains("Tiff/IT-1")) it = 1;
+          if (config.getIsos().contains("Tiff/IT-2")) it = 2;
+
+          ProcessInput pi = new ProcessInput(extensions, bl, ep, it, config.getRules().getRules().size() > 0);
+          ArrayList<String> formats = config.getFormats();
+          String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), "", true, config.getRules(), config.getFixes());
+
+          ShowReport(filename);
+        } catch (Exception ex) {
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Error");
+          alert.setHeaderText("An error occured");
+          alert.setContentText(ex.toString());
+          alert.showAndWait();
+        }
+        return 0;
+      }
+    };
+
+    //start the background task
+    Thread th = new Thread(task);
+    th.setDaemon(true);
+    th.start();
   }
 
   private void ShowReport(String filename) {
+    System.out.println("Showing report...");
     String styleBackground = "-fx-background-image: url('/images/topMenu.png'); " +
         "-fx-background-position: center center; " +
         "-fx-background-repeat: repeat-x;";
@@ -512,58 +605,64 @@ public class MainApp extends Application {
 
     topImg.getChildren().addAll(checker, report, about);
 
-    final WebView browser = new WebView();
-    //double w = width-topImg.getWidth();
-    double h = height - topImg.getHeight() - 50;
-    browser.setMinWidth(width);
-    browser.setMinHeight(h);
-    //browser.setMaxWidth(width);
-    browser.setMaxHeight(h);
-    final WebEngine webEngine = browser.getEngine();
-    webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
-
-    splitPa.getItems().addAll(topImg);
-    splitPa.getItems().addAll(browser);
-    splitPa.setDividerPosition(0, 0.5f);
-    root.getChildren().addAll(splitPa);
-    sceneReport.setRoot(root);
-
-    thestage.setScene(sceneReport);
-
-    //Set invisible the divisor line
-    splitPa.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setStyle("-fx-padding: 0;\n" +
-                "    -fx-background-color: transparent;\n" +
-                "    -fx-background-insets: 0;\n" +
-                "    -fx-shape: \" \";"));
-    splitPa.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setMouseTransparent(true));
-
-    thestage.setMaxHeight(Double.MAX_VALUE);
-    thestage.setMinHeight(height);
-    thestage.setMaxWidth(Double.MAX_VALUE);
-    thestage.setResizable(true);
-    thestage.setMinWidth(width);
-
-    thestage.widthProperty().addListener(new ChangeListener<Number>() {
+    // Create a task to be run later, in order to avoid conflicts between threads
+    Platform.runLater(new Runnable() {
       @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-        if (newSceneWidth.doubleValue() < 989) {
-          report.setLayoutX(470.0);
-          checker.setLayoutX(290.0);
-          about.setLayoutX(560.0);
-        } else {
-          double dif = (newSceneWidth.doubleValue() - width) / 2;
-          report.setLayoutX(463.0 + dif);
-          checker.setLayoutX(283.0 + dif);
-          about.setLayoutX(560.0 + dif);
-        }
+      public void run() {
+        WebView browser = new WebView();
+        //double w = width-topImg.getWidth();
+        double h = height - topImg.getHeight() - 50;
+        browser.setMinWidth(width);
+        browser.setMinHeight(h);
+        //browser.setMaxWidth(width);
+        browser.setMaxHeight(h);
+        final WebEngine webEngine = browser.getEngine();
+        webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
+
+        splitPa.getItems().addAll(topImg);
+        splitPa.getItems().addAll(browser);
+        splitPa.setDividerPosition(0, 0.5f);
+        root.getChildren().addAll(splitPa);
+        sceneReport.setRoot(root);
+
+        thestage.setScene(sceneReport);
+
+        //Set invisible the divisor line
+        splitPa.lookupAll(".split-pane-divider").stream()
+            .forEach(
+                div -> div.setStyle("-fx-padding: 0;\n" +
+                    "    -fx-background-color: transparent;\n" +
+                    "    -fx-background-insets: 0;\n" +
+                    "    -fx-shape: \" \";"));
+        splitPa.lookupAll(".split-pane-divider").stream()
+            .forEach(
+                div -> div.setMouseTransparent(true));
+
+        thestage.setMaxHeight(Double.MAX_VALUE);
+        thestage.setMinHeight(height);
+        thestage.setMaxWidth(Double.MAX_VALUE);
+        thestage.setResizable(true);
+        thestage.setMinWidth(width);
+
+        thestage.widthProperty().addListener(new ChangeListener<Number>() {
+          @Override
+          public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+            if (newSceneWidth.doubleValue() < 989) {
+              report.setLayoutX(470.0);
+              checker.setLayoutX(290.0);
+              about.setLayoutX(560.0);
+            } else {
+              double dif = (newSceneWidth.doubleValue() - width) / 2;
+              report.setLayoutX(463.0 + dif);
+              checker.setLayoutX(283.0 + dif);
+              about.setLayoutX(560.0 + dif);
+            }
+          }
+        });
+
+        thestage.sizeToScene();
       }
     });
-
-    thestage.sizeToScene();
   }
 
   @FXML
@@ -571,18 +670,16 @@ public class MainApp extends Application {
     ShowMain();
   }
 
-  @FXML
-  protected void gotoAbout(ActionEvent event) throws Exception {
-    String fxmlFile = "/fxml/about.fxml";
+  void LoadSceneXml(String fxmlFile) throws Exception {
     LOG.debug("Loading FXML for main view from: {}", fxmlFile);
 
     FXMLLoader loader = new FXMLLoader();
     Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
-    Scene sceneabout = new Scene(rootNode1, width, height);
-    sceneabout.getStylesheets().add("/styles/style.css");
+    Scene scene = new Scene(rootNode1, width, height);
+    scene.getStylesheets().add("/styles/style.css");
 
     thestage.setTitle("DPFManager");
-    thestage.setScene(sceneabout);
+    thestage.setScene(scene);
     thestage.setMaxHeight(height);
     thestage.setMinHeight(height);
     thestage.setMaxWidth(width);
@@ -590,7 +687,7 @@ public class MainApp extends Application {
     thestage.sizeToScene();
     thestage.show();
 
-    ObservableList<Node> nodes=sceneabout.getRoot().getChildrenUnmodifiable();
+    ObservableList<Node> nodes=scene.getRoot().getChildrenUnmodifiable();
     SplitPane splitPa1=(SplitPane)nodes.get(0);
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
@@ -598,10 +695,86 @@ public class MainApp extends Application {
   }
 
   @FXML
+  protected void newConfig(ActionEvent event) throws Exception {
+    config = new Configuration();
+    LoadSceneXml("/fxml/config1.fxml");
+  }
+
+  @FXML
+  protected void gotoConfig2(ActionEvent event) throws Exception {
+    if (radProf1.isSelected()) config.getIsos().add("Baseline");
+    if (radProf2.isSelected()) config.getIsos().add("Tiff/EP");
+    if (radProf3.isSelected()) config.getIsos().add("Tiff/IT");
+    if (radProf4.isSelected()) config.getIsos().add("Tiff/IT-1");
+    if (radProf5.isSelected()) config.getIsos().add("Tiff/IT-2");
+    LoadSceneXml("/fxml/config2.fxml");
+  }
+
+  @FXML
+  protected void gotoConfig3(ActionEvent event) throws Exception {
+    Rules rules = config.getRules();
+    Scene scene = thestage.getScene();
+    rules.Read(scene);
+    LoadSceneXml("/fxml/config3.fxml");
+  }
+
+  @FXML
+  protected void gotoConfig4(ActionEvent event) throws Exception {
+    if (chkHtml.isSelected()) config.getFormats().add("HTML");
+    if (chkXml.isSelected()) config.getFormats().add("XML");
+    if (chkJson.isSelected()) config.getFormats().add("JSON");
+    LoadSceneXml("/fxml/config4.fxml");
+  }
+
+  @FXML
+  protected void gotoConfig6(ActionEvent event) throws Exception {
+    Fixes fixes = config.getFixes();
+    Scene scene = thestage.getScene();
+    fixes.Read(scene);
+    LoadSceneXml("/fxml/config6.fxml");
+    setLabel("labIsos", config.getTxtIsos());
+    setLabel("labReports", config.getTxtFormats());
+    setLabel("labRules", config.getTxtRules());
+    setLabel("labFixes", config.getTxtFixes());
+  }
+
+  void setLabel(String labelName, String txt) {
+    Scene scene = thestage.getScene();
+    Label lab = (Label)scene.lookup("#" + labelName);
+    lab.setText(txt);
+  }
+
+  @FXML
+  protected void saveConfig(ActionEvent event) throws Exception {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setInitialDirectory(new File("."));
+    fileChooser.setInitialFileName("config.cfg");
+    fileChooser.setTitle("Save Config");
+    File file = fileChooser.showSaveDialog(thestage);
+    if (file != null) {
+      try {
+        SaveConfig(file.getAbsolutePath());
+      } catch (Exception ex) {
+        System.out.println(ex.getMessage());
+      }
+    }
+    ShowMain();
+  }
+
+  void SaveConfig(String filename) throws Exception {
+    config.SaveFile(filename);
+  }
+
+  @FXML
+  protected void gotoAbout(ActionEvent event) throws Exception {
+    LoadSceneXml("/fxml/about.fxml");
+  }
+
+  @FXML
   protected void gotoReport(ActionEvent event) throws Exception {
     try {
     FXMLLoader loader2 = new FXMLLoader();
-    String fxmlFile2 = "/fxml/design2.fxml";
+    String fxmlFile2 = "/fxml/summary.fxml";
     Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
     Scene scenereport = new Scene(rootNode2, width, height);
     scenereport.getStylesheets().add("/styles/style.css");
@@ -620,7 +793,7 @@ public class MainApp extends Application {
         .forEach(
             div -> div.setMouseTransparent(true));
 
-      ObservableList<ReportRow> data = ReadReports();
+    ObservableList<ReportRow> data = ReadReports();
 
     javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
 
@@ -665,11 +838,41 @@ public class MainApp extends Application {
         new PropertyValueFactory<ReportRow, String>("passed")
     );
 
-    TableColumn colScore = new TableColumn("Score");
+    TableColumn<ReportRow, ReportRow> colScore = new TableColumn("Score");
       colScore.setMinWidth(100);
       colScore.setCellValueFactory(
-          new PropertyValueFactory<ReportRow, String>("score")
+          new PropertyValueFactory("score")
       );
+      colScore.setCellFactory((TableColumn<ReportRow, ReportRow> param) -> {
+        return new TableCell<ReportRow, ReportRow>(){
+
+          @Override
+          protected void updateItem(ReportRow item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) setGraphic (null);
+            else {
+              double tot = 50 + 100;
+              double ratio1 = 40 / tot;
+              double ratio2 = 60 / tot;
+
+              Rectangle r1 = new Rectangle();
+              //the param is the column, bind so rects resize with column
+              r1.widthProperty().bind(param.widthProperty().multiply(ratio1));
+              r1.heightProperty().bind(this.getTableRow().heightProperty().multiply(0.5));
+              r1.setStyle("-fx-fill:#f3622d;");
+              Rectangle r2 = new Rectangle(0, 20);
+              r2.widthProperty().bind(param.widthProperty().multiply(ratio2));
+              r2.setStyle("-fx-fill:#fba71b;");
+
+              HBox hbox = new HBox(r1,r2);
+              hbox.setAlignment(Pos.CENTER_LEFT);
+              setGraphic(hbox);
+              setText(null);
+            }
+          }
+
+        };
+      });
 
       tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore);
       tabReports.setItems(data);
@@ -700,10 +903,7 @@ public class MainApp extends Application {
         }
       });
 
-      VBox tabPane = ((VBox) ((SplitPane) nodes.get(0)).getItems().get(1));
-      AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-      ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-      AnchorPane ap2 = (AnchorPane)(sp.getContent());
+      AnchorPane ap2 = (AnchorPane)scenereport.lookup("#pane1");
       ap2.getChildren().add(tabReports);
 
     } catch (Exception ex) {
@@ -732,6 +932,163 @@ public class MainApp extends Application {
     });
   }
 
+  private void addNumericOperator(String item) {
+    ArrayList<String> operators = null;
+    for (Field field : gui.getFields()) {
+      if (field.getName().equals(item)) {
+        operators = field.getOperators();
+      }
+    }
+    if (operators != null) {
+      Scene scene = thestage.getScene();
+      AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+      for (Node node : ap2.getChildren()) {
+        if (node instanceof HBox) {
+          HBox hBox1 = (HBox) node;
+          for (Node nodeIn : hBox1.getChildren()) {
+            if (nodeIn instanceof ComboBox) {
+              ComboBox comboBox = (ComboBox) nodeIn;
+              if (comboBox.getValue() != null && comboBox.getValue().equals(item)) {
+                ComboBox comboOp = new ComboBox();
+                for (String operator : operators) {
+                  comboOp.getItems().add(operator);
+                }
+                while (hBox1.getChildren().size() > 1)
+                  hBox1.getChildren().remove(1);
+                TextField value = new TextField();
+                value.getStyleClass().add("txtRule");
+                hBox1.getChildren().add(comboOp);
+                hBox1.getChildren().add(value);
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private void addFixValue(String item) {
+    ArrayList<String> fields = null;
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    for (Node node : ap2.getChildren()) {
+      if (node instanceof HBox) {
+        HBox hBox1 = (HBox) node;
+        for (Node nodeIn : hBox1.getChildren()) {
+          if (nodeIn instanceof ComboBox) {
+            ComboBox comboBox = (ComboBox) nodeIn;
+            if (comboBox.getValue() != null && comboBox.getValue().equals(item)) {
+              ComboBox comboOp = new ComboBox();
+              for (String field : gui.getFixFields()) {
+                comboOp.getItems().add(field);
+              }
+              while (hBox1.getChildren().size() > 1)
+                hBox1.getChildren().remove(1);
+              hBox1.getChildren().add(comboOp);
+
+              if (item.equals("Add Tag")) {
+                TextField value = new TextField();
+                value.getStyleClass().add("txtFix");
+                hBox1.getChildren().add(value);
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
+  protected void addRule(ActionEvent event) {
+    int dif = 50;
+    double xRule = addRule.getLayoutX() - 100;
+    double yRule = addRule.getLayoutY();
+
+    // Add combobox
+    ComboBox comboBox = new ComboBox();
+    for (Field field : gui.getFields()) {
+      comboBox.getItems().add(field.getName());
+    }
+    comboBox.valueProperty().addListener(new ChangeListener<String>() {
+      @Override public void changed(ObservableValue ov, String t, String item) {
+        addNumericOperator(item);
+      }
+    });
+    HBox hBox = new HBox (comboBox);
+    hBox.setSpacing(5);
+    hBox.setLayoutX(xRule);
+    hBox.setLayoutY(yRule);
+
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    ap2.getChildren().add(hBox);
+
+    addRule.setLayoutY(addRule.getLayoutY() + dif);
+
+    // Move bottom elements if necessary
+    if (addRule.getLayoutY() + addRule.getHeight() > line.getLayoutY()) {
+      line.setLayoutY(line.getLayoutY() + dif);
+      continueButton.setLayoutY(continueButton.getLayoutY() + dif);
+    }
+  }
+
+  @FXML
+  protected void addFix(ActionEvent event) {
+    int dif = 50;
+    double xRule = addFix.getLayoutX() - 100;
+    double yRule = addFix.getLayoutY();
+
+    // Add combobox
+    ComboBox comboBox = new ComboBox();
+    for (String fix : gui.getFixes()) {
+      comboBox.getItems().add(fix);
+    }
+    comboBox.valueProperty().addListener(new ChangeListener<String>() {
+      @Override public void changed(ObservableValue ov, String t, String item) {
+        addFixValue(item);
+      }
+    });
+    HBox hBox = new HBox (comboBox);
+    hBox.setSpacing(5);
+    hBox.setLayoutX(xRule);
+    hBox.setLayoutY(yRule);
+
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    ap2.getChildren().add(hBox);
+
+    addFix.setLayoutY(addFix.getLayoutY() + dif);
+
+    // Move bottom elements if necessary
+    if (addFix.getLayoutY() + addFix.getHeight() > line.getLayoutY()) {
+      line.setLayoutY(line.getLayoutY() + dif);
+      continueButton.setLayoutY(continueButton.getLayoutY() + dif);
+    }
+  }
+
+  @FXML
+  protected void openConfig(ActionEvent event) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Open Config");
+    fileChooser.setInitialDirectory(new File("."));
+    fileChooser.setInitialFileName("config.cfg");
+    File file = fileChooser.showOpenDialog(thestage);
+    try {
+      if (file != null) {
+        config = new Configuration();
+        config.ReadFile(file.getAbsolutePath());
+      }
+    } catch (Exception ex) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Error");
+      alert.setHeaderText("An error ocurred");
+      alert.setContentText("There was an error while importing the configuration file");
+      alert.showAndWait();
+    }
+  }
+
   @FXML
   protected void browseFile(ActionEvent event) {
     FileChooser fileChooser = new FileChooser();
@@ -739,6 +1096,24 @@ public class MainApp extends Application {
     File file = fileChooser.showOpenDialog(thestage);
     if (file != null)
       txtFile.setText(file.getPath());
+  }
+
+  private void ShowLoading() {
+    HBox loading = new HBox();
+    Label msg = new Label("Processing...");
+    loading.setLayoutY(300);
+    loading.setLayoutX(240);
+    loading.getStyleClass().add("loading");
+    loading.getChildren().add(msg);
+    loading.setPadding(new Insets(50, 220, 50, 220));
+    HBox bLoading = new HBox();
+    bLoading.getStyleClass().add("loading2");
+    bLoading.setPadding(new Insets(350, 550, 550, 250));
+    bLoading.getChildren().add(loading);
+
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane0");
+    ap2.getChildren().add(bLoading);
   }
 
   private ObservableList<ReportRow> ReadReports() {
