@@ -338,3 +338,7 @@ h4 i{
 .hide {
 	display:none;
 }
+
+.show{
+	display:block;
+}

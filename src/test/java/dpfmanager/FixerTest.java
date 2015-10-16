@@ -132,8 +132,8 @@ public class FixerTest extends TestCase {
     }
     assertEquals(xml_orig != null, true);
     assertEquals(xml_modif != null, true);
-    assertEquals(xml_orig.contains("Copyright"), true);
-    assertEquals(xml_modif.contains("Copyright"), false);
+    assertEquals(xml_orig.contains("<name>Copyright</name>"), true);
+    assertEquals(xml_modif.contains("<name>Copyright</name>"), false);
     assertEquals(xml_orig.contains("<name>ImageDescription</name>"), false);
     assertEquals(xml_modif.contains("<name>ImageDescription</name>"), true);
 

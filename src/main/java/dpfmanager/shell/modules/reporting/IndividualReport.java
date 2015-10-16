@@ -116,6 +116,8 @@ public class IndividualReport {
   /** Check Policy. */
   public boolean checkPC;
 
+  private IndividualReport compareIr;
+
   /**
    * Constructor + generate.
    *
@@ -151,6 +153,14 @@ public class IndividualReport {
    */
   public String getFileName() {
     return filename;
+  }
+
+  public void setCompareReport(IndividualReport ir) {
+    compareIr = ir;
+  }
+
+  public IndividualReport getCompareReport() {
+    return compareIr;
   }
 
   /**
@@ -418,4 +428,31 @@ public class IndividualReport {
     return tiffModel;
   }
 
+  public void setTiffModel(TiffDocument model) {
+    tiffModel = model;
+  }
+
+  public int getNEpErr() {
+    return getEPErrors() == null ? 0 : getEPErrors().size();
+  }
+
+  public int getNBlErr() {
+    return getBaselineErrors() == null ? 0 : getBaselineErrors().size();
+  }
+
+  public int getNItErr() {
+    return getITErrors() == null ? 0 : getITErrors().size();
+  }
+
+  public int getNEpWar() {
+    return getEPWarnings() == null ? 0 : getEPWarnings().size();
+  }
+
+  public int getNBlWar() {
+    return getBaselineWarnings() == null ? 0 : getBaselineWarnings().size();
+  }
+
+  public int getNItWar() {
+    return getITWarnings() == null ? 0 : getITWarnings().size();
+  }
 }

@@ -32,6 +32,7 @@
 package dpfmanager.shell.modules.reporting;
 
 import dpfmanager.ReportGenerator;
+import dpfmanager.shell.modules.classes.Fixes;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
@@ -80,7 +81,7 @@ public class ReportHtml {
    * @param outputfile the outputfile
    * @param ir the individual report.
    */
-  public static void parseIndividual(String outputfile, IndividualReport ir, ValidationResult pcValidation) {
+  public static void parseIndividual(String outputfile, IndividualReport ir, ValidationResult pcValidation, int mode) {
     String templatePath = "./src/main/resources/templates/individual.html";
     outputfile = insertHtmlFolder(outputfile);
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
@@ -97,12 +98,12 @@ public class ReportHtml {
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
-    int epErr = ir.getEPErrors() == null ? 0 : ir.getEPErrors().size();
-    int epWar = ir.getEPWarnings() == null ? 0 : ir.getEPWarnings().size();
-    int blErr = ir.getBaselineErrors() == null ? 0 : ir.getBaselineErrors().size();
-    int blWar = ir.getBaselineWarnings() == null ? 0 : ir.getBaselineWarnings().size();
-    int itErr = ir.getITErrors() == null ? 0 : ir.getITErrors().size();
-    int itWar = ir.getITWarnings() == null ? 0 : ir.getITWarnings().size();
+    int epErr = ir.getNEpErr();
+    int epWar = ir.getNEpWar();
+    int blErr = ir.getNBlErr();
+    int blWar = ir.getNBlWar();
+    int itErr = ir.getNItErr();
+    int itWar = ir.getNItWar();
     int pcErr = pcValidation.getErrors().size();
     int pcWar = pcValidation.getWarnings().size();
     if (blErr > 0) {
@@ -170,21 +171,16 @@ public class ReportHtml {
       htmlBody = htmlBody.replaceAll("##PC_ERR-WAR##", "display: none;");
     }
 
-    // Errors
-    String clas = "success";
-    if (epErr > 0) {
-      clas = "error";
+    if (mode == 1) {
+      htmlBody = htmlBody.replaceAll("##CL_LINKR2##", "show");
+      htmlBody = htmlBody.replaceAll("##LINK2##", ir.getFileName() + "_fixed.html");
     }
-    htmlBody = htmlBody.replaceAll("##U_EP_ERR_N##", "" + epErr);
-    htmlBody = htmlBody.replaceAll("##U_EP_ERR_CLASS##", clas);
+    if (mode == 2) {
+      htmlBody = htmlBody.replaceAll("##CL_LINKR1##", "show");
+      htmlBody = htmlBody.replaceAll("##LINK1##", ir.getCompareReport().getFileName() + ".html");
+    }
 
-    // Warnings
-    clas = "success";
-    if (epWar > 0) {
-      clas = "warning";
-    }
-    htmlBody = htmlBody.replaceAll("##U_EP_WAR##", "" + epWar);
-    htmlBody = htmlBody.replaceAll("##U_EP_WAR_CLASS##", clas);
+    String dif;
 
     // Policy checker
     if (pcValidation.getErrors().size() > 0) {
@@ -203,8 +199,10 @@ public class ReportHtml {
     if (ir.hasBlValidation()) {
       htmlBody = htmlBody.replaceAll("##F_BL_ERR_CLASS##", ir.getBaselineErrors().size() > 0 ? "error" : "info");
       htmlBody = htmlBody.replaceAll("##F_BL_WAR_CLASS##", ir.getBaselineWarnings().size() > 0 ? "warning" : "info");
-      htmlBody = htmlBody.replaceAll("##F_BL_ERR##", "" + ir.getBaselineErrors().size());
-      htmlBody = htmlBody.replaceAll("##F_BL_WAR##", "" + ir.getBaselineWarnings().size());
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNBlErr(), blErr) : "";
+      htmlBody = htmlBody.replaceAll("##F_BL_ERR##", "" + ir.getBaselineErrors().size() + dif);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNBlWar(), blWar) : "";
+      htmlBody = htmlBody.replaceAll("##F_BL_WAR##", "" + ir.getBaselineWarnings().size() + dif);
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_BL##", "hide");
     }
@@ -212,8 +210,10 @@ public class ReportHtml {
     if (ir.hasEpValidation()) {
       htmlBody = htmlBody.replaceAll("##F_EP_ERR_CLASS##", ir.getEPErrors().size() > 0 ? "error" : "info");
       htmlBody = htmlBody.replaceAll("##F_EP_WAR_CLASS##", ir.getEPWarnings().size() > 0 ? "warning" : "info");
-      htmlBody = htmlBody.replaceAll("##F_EP_ERR##", "" + ir.getEPErrors().size());
-      htmlBody = htmlBody.replaceAll("##F_EP_WAR##", "" + ir.getEPWarnings().size());
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpErr(), epErr) : "";
+      htmlBody = htmlBody.replaceAll("##F_EP_ERR##", "" + ir.getEPErrors().size() + dif);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpWar(), epWar) : "";
+      htmlBody = htmlBody.replaceAll("##F_EP_WAR##", "" + ir.getEPWarnings().size() + dif);
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_EP##", "hide");
     }
@@ -221,8 +221,10 @@ public class ReportHtml {
     if (ir.hasItValidation()) {
       htmlBody = htmlBody.replaceAll("##F_IT_ERR_CLASS##", ir.getITErrors().size() > 0 ? "error" : "info");
       htmlBody = htmlBody.replaceAll("##F_IT_WAR_CLASS##", ir.getITWarnings().size() > 0 ? "warning" : "info");
-      htmlBody = htmlBody.replaceAll("##F_IT_ERR##", "" + ir.getITErrors().size());
-      htmlBody = htmlBody.replaceAll("##F_IT_WAR##", "" + ir.getITWarnings().size());
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(), itErr) : "";
+      htmlBody = htmlBody.replaceAll("##F_IT_ERR##", "" + ir.getITErrors().size() + dif);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(), itWar) : "";
+      htmlBody = htmlBody.replaceAll("##F_IT_WAR##", "" + ir.getITWarnings().size() + dif);
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_IT##", "hide");
     }
@@ -334,6 +336,11 @@ public class ReportHtml {
     rows = "";
     TiffDocument td = ir.getTiffModel();
     IFD ifd = td.getFirstIFD();
+    IFD ifdcomp = null;
+    if (ir.getCompareReport() != null) {
+      ifdcomp = ir.getCompareReport().getTiffModel().getFirstIFD();
+    }
+    td.getFirstIFD();
     int index = 0;
     boolean expertMode = false;
     while (ifd != null) {
@@ -343,13 +350,37 @@ public class ReportHtml {
           String seetr = "";
           if (index > 0) seetr = " hide";
           row = "<tr class='ifd ifd" + index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
-          row = row.replace("##ID##", tv.getId() + "");
+          dif = "";
+          if (ifdcomp != null) {
+            if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
+              dif += "+";
+          }
+          row = row.replace("##ID##", tv.getId() + dif);
           row = row.replace("##KEY##", tv.getName());
           row = row.replace("##VALUE##", tv.toString());
           rows += row;
         }
       }
+      if (ifdcomp != null) {
+        for (TagValue tv : ifdcomp.getMetadata().getTags()) {
+          if (showTag(tv) || expertMode) {
+            if (tv.getName().equals("Copyright"))
+              tv.toString();
+            if (!meta.containsTagId(tv.getId())) {
+              String seetr = "";
+              if (index > 0) seetr = " hide";
+              row = "<tr class='ifd ifd" + index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+              dif = "-";
+              row = row.replace("##ID##", tv.getId() + dif);
+              row = row.replace("##KEY##", tv.getName());
+              row = row.replace("##VALUE##", tv.toString());
+              rows += row;
+            }
+          }
+        }
+      }
       ifd = ifd.getNextIFD();
+      if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
       index++;
     }
     htmlBody = htmlBody.replaceAll("##ROWS_TAGS##", rows);
@@ -386,6 +417,16 @@ public class ReportHtml {
     // Finish, write to html file
     htmlBody = htmlBody.replaceAll("\\.\\./html/", "");
     ReportGenerator.writeToFile(outputfile, htmlBody);
+  }
+
+  private static String getDif(int n1, int n2) {
+    String dif = "";
+    if (n2 != n1) {
+      dif = " (" + (n2 > n1 ? "+" : "-") + Math.abs(n2-n1) + ")";
+    } else {
+      dif = " (=)";
+    }
+    return dif;
   }
 
   /**
