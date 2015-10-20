@@ -108,7 +108,6 @@ import java.util.prefs.Preferences;
  */
 public class MainApp extends Application {
   private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
-  public enum RuleFields { ImageWidth, ImageHeight, PixelDensity };
   private static Stage thestage;
   final int width = 970;
   final int height = 950;
@@ -119,7 +118,7 @@ public class MainApp extends Application {
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
   @FXML private Line line;
   @FXML private CheckBox chkFeedback, chkSubmit;
-  @FXML private CheckBox chkHtml, chkXml, chkJson;
+  @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtWhy;
   @FXML private Button addRule, continueButton, addFix;
 
@@ -173,8 +172,7 @@ public class MainApp extends Application {
     return propertyValue.equals("1");
   }
 
-  private void LoadGui() throws Exception
-  {
+  private void LoadGui() throws Exception {
     if (FirstTime()) {
       ShowDisclaimer();
     } else {
@@ -353,7 +351,7 @@ public class MainApp extends Application {
           URL obj = new URL(url);
           java.net.HttpURLConnection con = (java.net.HttpURLConnection) obj.openConnection();
 
-          //add reuqest header
+          //add request header
           con.setRequestMethod("POST");
           con.setRequestProperty("User-Agent", "Mozilla/5.0");
           con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
@@ -467,7 +465,16 @@ public class MainApp extends Application {
       @Override
       protected Integer call() throws Exception{
         try {
-          files.add(txtFile.getText());
+          if (new File(txtFile.getText()).isDirectory()) {
+            File[] listOfFiles = new File(txtFile.getText()).listFiles();
+            for (int j = 0; j < listOfFiles.length; j++) {
+              if (listOfFiles[j].isFile()) {
+                files.add(listOfFiles[j].getPath());
+              }
+            }
+          } else {
+            files.add(txtFile.getText());
+          }
           boolean bl = config.getIsos().contains("Baseline");
           boolean ep = config.getIsos().contains("Tiff/EP");
           int it = -1;
@@ -477,7 +484,8 @@ public class MainApp extends Application {
 
           ProcessInput pi = new ProcessInput(extensions, bl, ep, it, config.getRules().getRules().size() > 0);
           ArrayList<String> formats = config.getFormats();
-          String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), "", true, config.getRules(), config.getFixes());
+
+          String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), formats.contains("PDF"), null, true, config.getRules(), config.getFixes());
 
           ShowReport(filename);
         } catch (Exception ex) {
@@ -723,6 +731,7 @@ public class MainApp extends Application {
     if (chkHtml.isSelected()) config.getFormats().add("HTML");
     if (chkXml.isSelected()) config.getFormats().add("XML");
     if (chkJson.isSelected()) config.getFormats().add("JSON");
+    if (chkPdf.isSelected()) config.getFormats().add("PDF");
     LoadSceneXml("/fxml/config4.fxml");
   }
 
@@ -1152,6 +1161,12 @@ public class MainApp extends Application {
               if (reportJson.exists()) {
                 ReportRow rr = ReportRow.createRowFromJson(reportDay, reportJson);
                 data.add(rr);
+              }  else {
+                File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.pdf");
+                if (reportPdf.exists()) {
+                  ReportRow rr = ReportRow.createRowFromJson(reportDay, reportPdf);
+                  data.add(rr);
+                }
               }
             }
           }

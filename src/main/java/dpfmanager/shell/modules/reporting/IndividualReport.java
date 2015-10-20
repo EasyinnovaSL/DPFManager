@@ -36,6 +36,8 @@ import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,6 +122,8 @@ public class IndividualReport {
 
   private IndividualReport compareIr;
 
+  private String document;
+
   /**
    * Constructor + generate.
    *
@@ -173,6 +177,14 @@ public class IndividualReport {
     return compareIr;
   }
 
+  public void setPDFDocument(String document) {
+    this.document = document;
+  }
+
+  public String getPDFDocument() {
+    return document;
+  }
+
   /**
    * Get file path.
    *
@@ -191,6 +203,23 @@ public class IndividualReport {
     listIsimg.add(ifd.isImage());
     listHasSubIfd.add(ifd.getsubIFD() != null);
     ifdCount++;
+  }
+
+  /**
+   * Calculate percent.
+   *
+   * @return the int
+   */
+  public int calculatePercent() {
+    Double rest = 100.0;
+    IndividualReport ir = this;
+    if (ir.hasEpValidation()) rest -= ir.getEPErrors().size() * 12.5;
+    if (ir.hasItValidation()) rest -= ir.getITErrors().size() * 12.5;
+    if (ir.hasBlValidation()) rest -= ir.getBaselineErrors().size() * 12.5;
+    if (rest < 0.0) {
+      rest = 0.0;
+    }
+    return rest.intValue();
   }
 
   /**

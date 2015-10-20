@@ -85,6 +85,7 @@ public class CommandLine extends UserInterface {
     boolean xml = true;
     boolean json = true;
     boolean html = true;
+    boolean pdf = false;
     boolean silence = false;
     Configuration config = null;
 
@@ -188,7 +189,7 @@ public class CommandLine extends UserInterface {
         System.out.println("Report generated successfully.");
       } else {
         ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0, false);
-        pi.ProcessFiles(files, xml, json, html, outputFolder, silence, null, null);
+        pi.ProcessFiles(files, xml, json, html, pdf, outputFolder, silence, null, null);
         System.out.println("Report generated successfully.");
       }
     }
