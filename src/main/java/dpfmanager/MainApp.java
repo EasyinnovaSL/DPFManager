@@ -60,6 +60,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -70,6 +71,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -120,7 +122,8 @@ public class MainApp extends Application {
   @FXML private Line line;
   @FXML private CheckBox chkFeedback, chkSubmit;
   @FXML private CheckBox chkHtml, chkXml, chkJson;
-  @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtWhy;
+  @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
+  @FXML private TextArea txtWhy;
   @FXML private Button addRule, continueButton, addFix;
 
   private static Gui gui;
@@ -773,106 +776,76 @@ public class MainApp extends Application {
   @FXML
   protected void gotoReport(ActionEvent event) throws Exception {
     try {
-    FXMLLoader loader2 = new FXMLLoader();
-    String fxmlFile2 = "/fxml/summary.fxml";
-    Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
-    Scene scenereport = new Scene(rootNode2, width, height);
-    scenereport.getStylesheets().add("/styles/style.css");
+      FXMLLoader loader2 = new FXMLLoader();
+      String fxmlFile2 = "/fxml/summary.fxml";
+      Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
+      Scene scenereport = new Scene(rootNode2, width, height);
+      scenereport.getStylesheets().add("/styles/style.css");
 
-    thestage.setMaxHeight(height);
-    thestage.setMinHeight(height);
-    thestage.setMaxWidth(width);
-    thestage.setMinWidth(width);
+      thestage.setMaxHeight(height);
+      thestage.setMinHeight(height);
+      thestage.setMaxWidth(width);
+      thestage.setMinWidth(width);
 
-    thestage.setScene(scenereport);
-    thestage.sizeToScene();
-      
-    ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
-    SplitPane splitPa1=(SplitPane)nodes.get(0);
-    splitPa1.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setMouseTransparent(true));
+      thestage.setScene(scenereport);
+      thestage.sizeToScene();
 
-    ObservableList<ReportRow> data = ReadReports();
+      ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
+      SplitPane splitPa1=(SplitPane)nodes.get(0);
+      splitPa1.lookupAll(".split-pane-divider").stream()
+          .forEach(
+              div -> div.setMouseTransparent(true));
 
-    javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
+      ObservableList<ReportRow> data = ReadReports();
 
-    tabReports.setEditable(true);
-    TableColumn colDate = new TableColumn("Date");
-    colDate.setMinWidth(90);
-    colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
+      javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
 
-    TableColumn colN = new TableColumn("Files Processed");
-    colN.setMinWidth(100);
-    colN.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("nfiles")
-    );
+      tabReports.setEditable(true);
+      TableColumn colDate = new TableColumn("Date");
+      colDate.setMinWidth(90);
+      colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
-    TableColumn colResult = new TableColumn("Result");
-    colResult.setMinWidth(165);
-    colResult.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("result")
-    );
+      TableColumn colN = new TableColumn("Files Processed");
+      colN.setMinWidth(100);
+      colN.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("nfiles")
+      );
 
-    TableColumn colFixed= new TableColumn("Fixed");
-      colFixed.setMinWidth(120);
-    colFixed.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("fixed")
-    );
+      TableColumn colResult = new TableColumn("Result");
+      colResult.setMinWidth(165);
+      colResult.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("result")
+      );
 
-    TableColumn colErrors = new TableColumn("Errors");
-      colErrors.setMinWidth(75);
-    colErrors.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("errors")
-    );
+      TableColumn colFixed= new TableColumn("Fixed");
+        colFixed.setMinWidth(120);
+      colFixed.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("fixed")
+      );
 
-    TableColumn colWarnings = new TableColumn("Warnings");
-      colWarnings.setMinWidth(85);
-    colWarnings.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("warnings")
-    );
+      TableColumn colErrors = new TableColumn("Errors");
+        colErrors.setMinWidth(75);
+      colErrors.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("errors")
+      );
 
-    TableColumn colPassed = new TableColumn("Passed");
-      colPassed.setMinWidth(75);
-    colPassed.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("passed")
-    );
+      TableColumn colWarnings = new TableColumn("Warnings");
+        colWarnings.setMinWidth(85);
+      colWarnings.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("warnings")
+      );
 
-    TableColumn<ReportRow, ReportRow> colScore = new TableColumn("Score");
+      TableColumn colPassed = new TableColumn("Passed");
+        colPassed.setMinWidth(75);
+      colPassed.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("passed")
+      );
+
+      TableColumn<ReportRow, String> colScore = new TableColumn("Score");
       colScore.setMinWidth(100);
       colScore.setCellValueFactory(
           new PropertyValueFactory("score")
       );
-      colScore.setCellFactory((TableColumn<ReportRow, ReportRow> param) -> {
-        return new TableCell<ReportRow, ReportRow>(){
-
-          @Override
-          protected void updateItem(ReportRow item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty) setGraphic (null);
-            else {
-              double tot = 50 + 100;
-              double ratio1 = 40 / tot;
-              double ratio2 = 60 / tot;
-
-              Rectangle r1 = new Rectangle();
-              //the param is the column, bind so rects resize with column
-              r1.widthProperty().bind(param.widthProperty().multiply(ratio1));
-              r1.heightProperty().bind(this.getTableRow().heightProperty().multiply(0.5));
-              r1.setStyle("-fx-fill:#f3622d;");
-              Rectangle r2 = new Rectangle(0, 20);
-              r2.widthProperty().bind(param.widthProperty().multiply(ratio2));
-              r2.setStyle("-fx-fill:#fba71b;");
-
-              HBox hbox = new HBox(r1,r2);
-              hbox.setAlignment(Pos.CENTER_LEFT);
-              setGraphic(hbox);
-              setText(null);
-            }
-          }
-
-        };
-      });
 
       tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore);
       tabReports.setItems(data);
@@ -890,6 +863,8 @@ public class MainApp extends Application {
       changeColumnTextColor(colWarnings, Color.ORANGE);
       changeColumnTextColor(colPassed, Color.GREENYELLOW);
       changeColumnTextColor(colScore, Color.LIGHTGRAY);
+
+      addChartScore(colScore);
 
       tabReports.setOnMousePressed(new EventHandler<MouseEvent>() {
         @Override
@@ -928,6 +903,45 @@ public class MainApp extends Application {
             }
           }
         };
+      }
+    });
+  }
+
+  private void addChartScore(TableColumn colScore) {
+    colScore.setCellFactory(new Callback<TableColumn<ReportRow,String>,TableCell<ReportRow,String>>(){
+      @Override
+      public TableCell<ReportRow, String> call(TableColumn<ReportRow, String> param) {
+        TableCell<ReportRow, String> cell = new TableCell<ReportRow, String>(){
+          @Override
+          public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty && item != null) {
+
+              ObservableList<PieChart.Data> pieChartData =
+                  FXCollections.observableArrayList(
+                      new PieChart.Data("Si", 1),
+                      new PieChart.Data("No", 2));
+
+
+              double tot = 50 + 100;
+              double ratio1 = 40 / tot;
+
+              final PieChart chart = new PieChart(pieChartData);
+              chart.prefHeightProperty().bind(this.getTableRow().heightProperty().multiply(0.5));
+              chart.prefWidthProperty().bind(param.widthProperty().multiply(ratio1));
+              chart.setLegendVisible(false);
+              chart.setLabelsVisible(false);
+              chart.setClockwise(true);
+
+              getStylesheets().add("chart.css");
+              setGraphic(chart);
+              setText(null);
+            } else {
+              setGraphic(null);
+            }
+          }
+        };
+        return cell;
       }
     });
   }
