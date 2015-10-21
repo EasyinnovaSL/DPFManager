@@ -60,18 +60,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -119,7 +108,8 @@ public class MainApp extends Application {
   @FXML private Line line;
   @FXML private CheckBox chkFeedback, chkSubmit;
   @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
-  @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtWhy;
+  @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
+  @FXML private TextArea txtWhy;
   @FXML private Button addRule, continueButton, addFix;
 
   private static Gui gui;
@@ -433,12 +423,12 @@ public class MainApp extends Application {
     Scene scene = thestage.getScene();
     AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
     boolean oneChecked = false;
-    for (Node node : ap3.getChildren()){
-      if(node instanceof VBox) {
-        VBox vBox1 = (VBox)node;
-        for (Node nodeIn : vBox1.getChildren()){
-          if(nodeIn instanceof RadioButton) {
-            RadioButton radio = (RadioButton)nodeIn;
+    for (Node node : ap3.getChildren()) {
+      if (node instanceof VBox) {
+        VBox vBox1 = (VBox) node;
+        for (Node nodeIn : vBox1.getChildren()) {
+          if (nodeIn instanceof RadioButton) {
+            RadioButton radio = (RadioButton) nodeIn;
             if (radio.isSelected()) {
               config = new Configuration();
               config.ReadFile(radio.getText());
@@ -449,7 +439,6 @@ public class MainApp extends Application {
         }
       }
     }
-
     if (!oneChecked) {
       Alert alert = new Alert(Alert.AlertType.WARNING);
       alert.setTitle("Alert");
@@ -1086,8 +1075,14 @@ public class MainApp extends Application {
     File file = fileChooser.showOpenDialog(thestage);
     try {
       if (file != null) {
-        config = new Configuration();
-        config.ReadFile(file.getAbsolutePath());
+        Scene scene = thestage.getScene();
+        AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
+        VBox vbox = (VBox) pan.getChildren().get(0);
+        final ToggleGroup group = new ToggleGroup();
+        RadioButton radio = new RadioButton();
+        radio.setText(file.getAbsolutePath());
+        radio.setToggleGroup(group);
+        vbox.getChildren().add(radio);
       }
     } catch (Exception ex) {
       Alert alert = new Alert(Alert.AlertType.ERROR);
