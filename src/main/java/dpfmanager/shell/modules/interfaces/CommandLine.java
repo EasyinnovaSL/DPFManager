@@ -145,8 +145,9 @@ public class CommandLine extends UserInterface {
           xml = formats.contains("xml");
           json = formats.contains("json");
           html = formats.contains("html");
+          pdf = formats.contains("pdf");
           String result =
-              formats.replace("xml", "").replace("json", "").replace("html", "").replace(",", "");
+              formats.replace("xml", "").replace("json", "").replace("html", "").replace("pdf", "").replace(",", "");
           if (result.length() > 0) {
             System.out.println("Incorrect report formats");
             argsError = true;

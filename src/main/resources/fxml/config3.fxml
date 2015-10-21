@@ -47,7 +47,7 @@
                                                 <!-- <image> <Image url="@../images/back.png" /> </image>-->
                                             </ImageView>
                                             <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config3" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                <image> <Image url="@../images/config3.png" /> </image>
+                                                <!--<image> <Image url="@../images/config3.png" /> </image>-->
                                             </ImageView>
                                             <Button layoutX="385.0" layoutY="691.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="69.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                 <cursor>
