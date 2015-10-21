@@ -43,7 +43,7 @@ public class MultipleReportGeneratorTest extends TestCase {
     assertEquals(ok, true);
   }
 
-  public void testReports2() throws Exception {
+  public void testReportsXML() throws Exception {
     Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
     final String PREF_NAME = "feedback";
     String newValue = "0";
@@ -53,6 +53,51 @@ public class MultipleReportGeneratorTest extends TestCase {
     args[0] = "src/test/resources/Small/";
     args[1] = "-reportformat";
     args[2] = "xml";
+
+    Application.Parameters params = new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw = new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw = new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    String path = getPath();
+    File directori = new File(path);
+    assertEquals(7, directori.list().length);
+  }
+
+  public void testReportsPDF() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
+    String[] args = new String[3];
+    args[0] = "src/test/resources/Small/";
+    args[1] = "-reportformat";
+    args[2] = "pdf";
 
     Application.Parameters params = new Application.Parameters() {
       @Override

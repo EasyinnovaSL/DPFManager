@@ -62,7 +62,7 @@ public class ProcessInput {
     boolean silence = true;
 
     reportGenerator = new ReportGenerator();
-    reportGenerator.setReportsFormats(formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"));
+    reportGenerator.setReportsFormats(formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), formats.contains("PDF"));
     reportGenerator.setRules(config.getRules());
     reportGenerator.setFixes(config.getFixes());
 
@@ -99,9 +99,9 @@ public class ProcessInput {
     return htmlFileStr;
   }
 
-  public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, String outputFolder, boolean silence, Rules rules, Fixes fixes) {
+  public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, boolean pdf, String outputFolder, boolean silence, Rules rules, Fixes fixes) {
     reportGenerator = new ReportGenerator();
-    reportGenerator.setReportsFormats(xml, json, html);
+    reportGenerator.setReportsFormats(xml, json, html, pdf);
     reportGenerator.setRules(rules);
     reportGenerator.setFixes(fixes);
 

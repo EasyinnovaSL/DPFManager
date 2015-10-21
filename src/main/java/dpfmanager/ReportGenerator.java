@@ -40,6 +40,7 @@ import dpfmanager.shell.modules.reporting.GlobalReport;
 import dpfmanager.shell.modules.reporting.IndividualReport;
 import dpfmanager.shell.modules.reporting.ReportHtml;
 import dpfmanager.shell.modules.reporting.ReportJson;
+import dpfmanager.shell.modules.reporting.ReportPDF;
 import dpfmanager.shell.modules.reporting.ReportXml;
 
 import com.easyinnova.tiff.io.TiffInputStream;
@@ -88,6 +89,9 @@ public class ReportGenerator {
 
   /** If generates the HTML report. */
   private boolean html;
+
+  /** If generates the PDF report. */
+  private boolean pdf = true;
 
   /** Policy checker rules. */
   private Rules rules;
@@ -276,11 +280,13 @@ public class ReportGenerator {
    * @param xml the XML boolean.
    * @param json the JSON boolean.
    * @param html the HTML boolean.
+   * @param pdf the PDF boolean.
    */
-  public void setReportsFormats(boolean xml, boolean json, boolean html) {
+  public void setReportsFormats(boolean xml, boolean json, boolean html, boolean pdf) {
     this.xml = xml;
     this.json = json;
     this.html = html;
+    this.pdf = pdf;
   }
 
   public void setRules(Rules rules) {
@@ -448,6 +454,7 @@ public class ReportGenerator {
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
     String htmlFileStr = reportName + ".html";
+    String pdfFileStr = reportName + ".pdf";
     int htmlMode = 0;
     if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
     output = ReportXml.parseIndividual(xmlFileStr, ir, rules);
@@ -462,6 +469,9 @@ public class ReportGenerator {
     if (json) {
       ReportJson.xmlToJson(output, jsonFileStr);
     }
+    if (pdf) {
+      ReportPDF.parseIndividual(pdfFileStr, ir);
+    }
     if (!xml) {
       ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
     }
@@ -471,6 +481,7 @@ public class ReportGenerator {
       xmlFileStr = reportName + "_fixed" + ".xml";
       jsonFileStr = reportName + "_fixed" + ".json";
       htmlFileStr = reportName + "_fixed" + ".html";
+      pdfFileStr = reportName + "_fixed" + ".pdf";
 
       TiffDocument td = ir.getTiffModel();
       String nameOriginalTif = ir.getFilePath();
@@ -530,6 +541,9 @@ public class ReportGenerator {
         if (json) {
           ReportJson.xmlToJson(output, jsonFileStr);
         }
+        if (pdf) {
+          ReportPDF.parseIndividual(pdfFileStr, ir2);
+        }
         if (!xml) {
           ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
         }
@@ -573,6 +587,7 @@ public class ReportGenerator {
     String xmlFileStr = internalReportFolder + "summary.xml";
     String jsonFileStr = internalReportFolder + "summary.json";
     String htmlFileStr = internalReportFolder + "report.html";
+    String pdfFileStr = internalReportFolder + "report.pdf";
     output = ReportXml.parseGlobal(xmlFileStr, gr);
     if (html) {
       copyHtmlFolder(htmlFileStr);
@@ -583,6 +598,9 @@ public class ReportGenerator {
     }
     if (json) {
       ReportJson.xmlToJson(output, jsonFileStr);
+    }
+    if (pdf) {
+      ReportPDF.parseGlobal(pdfFileStr, gr);
     }
     if (!xml) {
       ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));

@@ -44,14 +44,10 @@
                                     <AnchorPane>
                                         <children>
                                             <ImageView fitWidth="2000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                <!-- <image>
-                                                    <Image url="@../images/back.png" />
-                                                 </image>-->
+                                                <!-- <image> <Image url="@../images/back.png" /> </image>-->
                                             </ImageView>
                                             <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config3" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-<!--                                                                                             <image>
-                                                                                                <Image url="@../images/config3.png" />
-                                                                                             </image>-->
+                                                <!--<image> <Image url="@../images/config3.png" /> </image>-->
                                             </ImageView>
                                             <Button layoutX="385.0" layoutY="691.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="69.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                 <cursor>
@@ -61,6 +57,7 @@
                                              <CheckBox fx:id="chkJson" layoutX="252.0" layoutY="520.0" mnemonicParsing="false" styleClass="checkreport" />
                                              <CheckBox fx:id="chkXml" layoutX="252.0" layoutY="457.0" mnemonicParsing="false" styleClass="checkreport" />
                                              <CheckBox fx:id="chkHtml" layoutX="252.0" layoutY="398.0" mnemonicParsing="false" styleClass="checkreport" />
+                                             <CheckBox fx:id="chkPdf" layoutX="252.0" layoutY="576.0" mnemonicParsing="false" styleClass="checkreport" />
                                         </children>
                                     </AnchorPane>
                                 </content>
