@@ -301,3 +301,22 @@
 	-fx-border-radius: 5 5 5 5;
 	-fx-background-radius: 5 5 5 5;
 }
+
+#tab_reports .table-column {
+	-fx-alignment: CENTER-LEFT;
+}
+
+#pie_chart {
+	-fx-padding: -8px;
+	-fx-pie-label-visible: false;
+	-fx-pie-legend-visible: false;
+	-fx-pie-title-visible: false;
+}
+
+.chart-pie {
+	-fx-border-width: 0px;
+	-fx-border-color:#31C2F3 ;
+}
+.data0.chart-pie { -fx-background-color: green; }
+.data1.chart-pie { -fx-background-color: red; }
+

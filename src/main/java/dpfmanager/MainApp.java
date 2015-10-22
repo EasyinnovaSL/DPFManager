@@ -80,6 +80,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -799,6 +801,7 @@ public class MainApp extends Application {
       ObservableList<ReportRow> data = ReadReports();
 
       javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
+      tabReports.setId("tab_reports");
 
       tabReports.setEditable(true);
       TableColumn colDate = new TableColumn("Date");
@@ -917,25 +920,32 @@ public class MainApp extends Application {
             super.updateItem(item, empty);
             if (!empty && item != null) {
 
+              Double score = Double.parseDouble(item.substring(0, item.indexOf('%')));
+
               ObservableList<PieChart.Data> pieChartData =
                   FXCollections.observableArrayList(
-                      new PieChart.Data("Si", 1),
-                      new PieChart.Data("No", 2));
+                      new PieChart.Data("Correct", score),
+                      new PieChart.Data("Error", 100-score));
 
+              PieChart chart = new PieChart(pieChartData);
+              chart.setId("pie_chart");
 
-              double tot = 50 + 100;
-              double ratio1 = 40 / tot;
+              chart.setMinSize(22, 22);
+              chart.setMaxSize(22, 22);
 
-              final PieChart chart = new PieChart(pieChartData);
-              chart.prefHeightProperty().bind(this.getTableRow().heightProperty().multiply(0.5));
-              chart.prefWidthProperty().bind(param.widthProperty().multiply(ratio1));
-              chart.setLegendVisible(false);
-              chart.setLabelsVisible(false);
-              chart.setClockwise(true);
+              HBox box= new HBox();
+              box.setSpacing(8);
+              box.setAlignment(Pos.CENTER_LEFT);
 
-              getStylesheets().add("chart.css");
-              setGraphic(chart);
+              Label score_label = new Label(item);
+              score_label.setTextFill(Color.LIGHTGRAY);
+
+              box.getChildren().add(chart);
+              box.getChildren().add(score_label);
+
+              setGraphic(box);
               setText(null);
+
             } else {
               setGraphic(null);
             }
