@@ -120,7 +120,7 @@ public class PolicyTest extends TestCase {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("Invalid ImageWidth: 999"), true);
+    assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
     assertEquals(xml_orig.contains("failed-assert"), true);
 
     FileUtils.deleteDirectory(new File(path));
