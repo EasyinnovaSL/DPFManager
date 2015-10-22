@@ -62,7 +62,7 @@ import javax.imageio.ImageIO;
 /**
  * The Class ReportHtml.
  */
-public class ReportHtml {
+public class ReportHtml extends ReportGeneric {
 
   /**
    * Insert html folder.
@@ -98,15 +98,27 @@ public class ReportHtml {
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
-    int epErr = ir.getNEpErr();
-    int epWar = ir.getNEpWar();
-    int blErr = ir.getNBlErr();
-    int blWar = ir.getNBlWar();
-    int itErr = ir.getNItErr();
-    int itWar = ir.getNItWar();
+    int epErr = ir.getNEpErr(), epWar = ir.getNEpWar();
+    int blErr = ir.getNBlErr(), blWar = ir.getNBlWar();
+    int itErr = ir.getNItErr(), itWar = ir.getNItWar();
     ValidationResult pcValidation = ir.getPcValidation();
-    int pcErr = pcValidation.getErrors().size();
-    int pcWar = pcValidation.getWarnings().size();
+    int pcErr = pcValidation.getErrors().size(), pcWar = pcValidation.getWarnings().size();
+
+    // Global result
+    if (blErr + epErr + itErr + pcErr > 0) {
+      htmlBody = htmlBody.replaceAll("##ALL_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##ALL_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##ALL_ERR##", "block");
+    } else if (blWar + epWar + itWar + pcWar > 0) {
+      htmlBody = htmlBody.replaceAll("##ALL_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##ALL_WAR##", "block");
+      htmlBody = htmlBody.replaceAll("##ALL_ERR##", "none");
+    } else {
+      htmlBody = htmlBody.replaceAll("##ALL_OK##", "block");
+      htmlBody = htmlBody.replaceAll("##ALL_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##ALL_ERR##", "none");
+    }
+
     if (blErr > 0) {
       htmlBody = htmlBody.replaceAll("##BL_OK##", "none");
       htmlBody = htmlBody.replaceAll("##BL_ERR##", "block");
@@ -184,12 +196,12 @@ public class ReportHtml {
     String dif;
 
     // Policy checker
-    if (pcValidation.getErrors().size() > 0) {
+    if (pcErr > 0) {
       htmlBody = htmlBody.replaceAll("##F_PC_ERR_CLASS##", "error");
     } else {
       htmlBody = htmlBody.replaceAll("##F_PC_ERR_CLASS##", "info");
     }
-    if (pcValidation.getWarnings().size() > 0) {
+    if (pcWar > 0) {
       htmlBody = htmlBody.replaceAll("##F_PC_WAR_CLASS##", "warning");
     } else {
       htmlBody = htmlBody.replaceAll("##F_PC_WAR_CLASS##", "info");
@@ -233,7 +245,6 @@ public class ReportHtml {
       htmlBody = htmlBody.replaceAll("##ROW_IT##", "hide");
     }
 
-    // Full Description
     // Errors and warnings
 
     // EP
@@ -338,61 +349,22 @@ public class ReportHtml {
 
     // Tags list
     rows = "";
-    TiffDocument td = ir.getTiffModel();
-    IFD ifd = td.getFirstIFD();
-    IFD ifdcomp = null;
-    if (ir.getCompareReport() != null) {
-      ifdcomp = ir.getCompareReport().getTiffModel().getFirstIFD();
-    }
-    td.getFirstIFD();
-    int index = 0;
-    boolean expertMode = false;
-    while (ifd != null) {
-      IfdTags meta = ifd.getMetadata();
-      for (TagValue tv : meta.getTags()) {
-        if (showTag(tv) || expertMode) {
-          String seetr = "";
-          if (index > 0) seetr = " hide";
-          row = "<tr class='ifd ifd" + index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
-          dif = "";
-          if (ifdcomp != null) {
-            if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
-              dif += "<i class=\"fa fa-plus\"></i>";
-          }
-          row = row.replace("##ID##", tv.getId() + dif);
-          row = row.replace("##KEY##", tv.getName());
-          row = row.replace("##VALUE##", tv.toString());
-          rows += row;
-        }
-      }
-      if (ifdcomp != null) {
-        for (TagValue tv : ifdcomp.getMetadata().getTags()) {
-          if (showTag(tv) || expertMode) {
-            if (tv.getName().equals("Copyright"))
-              tv.toString();
-            if (!meta.containsTagId(tv.getId())) {
-              String seetr = "";
-              if (index > 0) seetr = " hide";
-              row = "<tr class='ifd ifd" + index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
-              dif = "<i class=\"fa fa-times\"></i>";
-              row = row.replace("##ID##", tv.getId() + dif);
-              row = row.replace("##KEY##", tv.getName());
-              row = row.replace("##VALUE##", tv.toString());
-              rows += row;
-            }
-          }
-        }
-      }
-      ifd = ifd.getNextIFD();
-      if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
-      index++;
+    for (ReportTag tag : getTags(ir)) {
+      String seetr = "";
+      if (tag.index > 0) seetr = " hide";
+      row = "<tr class='ifd ifd" + tag.index + seetr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+      row = row.replace("##ID##", tag.tv.getId() + tag.dif + "");
+      row = row.replace("##KEY##", tag.tv.getName());
+      row = row.replace("##VALUE##", tag.tv.toString());
+      rows += row;
     }
     htmlBody = htmlBody.replaceAll("##ROWS_TAGS##", rows);
 
     // File Structure
     String ul = "<ul>";
-    index = 0;
-    ifd = td.getFirstIFD();
+    int index = 0;
+    TiffDocument td = ir.getTiffModel();
+    IFD ifd = td.getFirstIFD();
     while (ifd != null) {
       String typ = " - Main image";
       if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Thumbnail";
@@ -434,149 +406,6 @@ public class ReportHtml {
   }
 
   /**
-   * Read showable tags file.
-   *
-   * @return hashset of tags
-   */
-  private static HashSet<String> readShowableTags() {
-    HashSet<String> hs = new HashSet<String>();
-    try {
-      Path path = Paths.get("./src/main/resources/");
-      if (Files.exists(path)) {
-        // Look in current dir
-        FileReader fr = new FileReader("./src/main/resources/htmltags.txt");
-        BufferedReader br = new BufferedReader(fr);
-        String line = br.readLine();
-        while (line != null) {
-          String[] fields = line.split("\t");
-          if (fields.length == 1) {
-            hs.add(fields[0]);
-          }
-          line = br.readLine();
-        }
-        br.close();
-        fr.close();
-      } else {
-        // Look in JAR
-        CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
-        if (src != null) {
-          URL jar = src.getLocation();
-          ZipInputStream zip = new ZipInputStream(jar.openStream());
-          ZipEntry zipFile;
-          while ((zipFile = zip.getNextEntry()) != null) {
-            String name = zipFile.getName();
-            if (name.equals("htmltags.txt")) {
-              try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(zip));
-                String line = br.readLine();
-                while (line != null) {
-                  String[] fields = line.split("\t");
-                  if (fields.length == 1) {
-                    hs.add(fields[0]);
-                  }
-                  line = br.readLine();
-                }
-              } catch (Exception ex) {
-                throw new Exception("");
-              }
-            }
-          }
-        } else {
-          throw new Exception("");
-        }
-      }
-    } catch (Exception ex) {
-    }
-    return hs;
-  }
-
-  /**
-   * Show Tag.
-   *
-   * @return true, if successful
-   */
-  private static boolean showTag(TagValue tv) {
-    HashSet<String> showableTags = readShowableTags();
-    /*showableTags.add("ImageWidth");
-    showableTags.add("ImageLength");
-    showableTags.add("BitsPerSample");
-    showableTags.add("Compression");
-    showableTags.add("PhotometricInterpretation");
-    showableTags.add("ImageDescription");
-    showableTags.add("Make");
-    showableTags.add("Model");
-    showableTags.add("Orientation");
-    showableTags.add("SamplesPerPixel");
-    showableTags.add("XResolution");
-    showableTags.add("YResolution");
-    showableTags.add("ResolutionUnit");
-    showableTags.add("PlanarConfiguration");
-    showableTags.add("Software");
-    showableTags.add("DateTime");
-    showableTags.add("Artist");
-    showableTags.add("Copyright");
-    showableTags.add("DateTimeOriginal");
-    showableTags.add("Flash");
-    showableTags.add("TIFFEPStandardID");*/
-    //if (tv.getName().equals(""+tv.getId())) return false;
-    return showableTags.contains(tv.getName());
-  }
-
-  /**
-   * Tiff2 jpg.
-   *
-   * @param inputfile the inputfile
-   * @param outputfile the outputfile
-   * @return true, if successful
-   */
-  private static boolean tiff2Jpg(String inputfile, String outputfile) {
-    File outfile = new File(outputfile);
-    if (outfile.exists()) {
-      return true;
-    }
-    BufferedImage image = null;
-    try {
-      File input = new File(inputfile);
-      image = ImageIO.read(input);
-
-      double factor = 1.0;
-      int width = image.getWidth();
-      if (width > 500) {
-        factor = 500.0 / width;
-      }
-      int height = (int) (image.getHeight() * factor);
-      width = (int) (width * factor);
-
-      BufferedImage convertedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-      Graphics2D graphic = convertedImage.createGraphics();
-      graphic.drawImage(image, 0, 0, width, height, null);
-      graphic.dispose();
-
-      ImageIO.write(convertedImage, "jpg", new File(outputfile));
-    } catch (IOException e) {
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Calculate percent.
-   *
-   * @param ir the ir
-   * @return the int
-   */
-  private static int calculatePercent(IndividualReport ir) {
-    Double rest = 100.0;
-    if (ir.hasEpValidation()) rest -= ir.getEPErrors().size() * 12.5;
-    if (ir.hasItValidation()) rest -= ir.getITErrors().size() * 12.5;
-    if (ir.hasBlValidation()) rest -= ir.getBaselineErrors().size() * 12.5;
-    if (rest < 0.0) {
-      rest = 0.0;
-    }
-    return rest.intValue();
-  }
-
-  /**
    * Parse a global report to XML format.
    *
    * @param outputfile the output file.
@@ -586,10 +415,9 @@ public class ReportHtml {
     String templatePath = "./src/main/resources/templates/global.html";
     String imagePath = "./src/main/resources/templates/image.html";
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
-
-
     String imagesBody = "";
     String pieFunctions = "";
+
     // Parse individual Reports
     int index = 0;
     for (IndividualReport ir : gr.getIndividualReports()) {
@@ -604,7 +432,7 @@ public class ReportHtml {
       imageBody = imageBody.replace("##IMG_PATH##", imgPath);
 
       // Basic
-      int percent = calculatePercent(ir);
+      int percent = ir.calculatePercent();
       imageBody = imageBody.replace("##PERCENT##", "" + percent);
       imageBody = imageBody.replace("##INDEX##", "" + index);
       imageBody = imageBody.replace("##IMG_NAME##", "" + ir.getFileName());
@@ -709,8 +537,7 @@ public class ReportHtml {
       index++;
     }
 
-    // Parse the sumary report
-    // numbers
+    // Parse the sumary report numbers
     String htmlBody = ReportGenerator.readFile(templatePath);
     Double doub = 1.0 * gr.getReportsOk() / gr.getReportsCount() * 100.0;
     int globalPercent = doub.intValue();

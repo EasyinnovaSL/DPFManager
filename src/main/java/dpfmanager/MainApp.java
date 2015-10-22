@@ -112,7 +112,6 @@ import java.util.prefs.Preferences;
  */
 public class MainApp extends Application {
   private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
-  public enum RuleFields { ImageWidth, ImageHeight, PixelDensity };
   private static Stage thestage;
   final int width = 970;
   final int height = 950;
@@ -123,7 +122,7 @@ public class MainApp extends Application {
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
   @FXML private Line line;
   @FXML private CheckBox chkFeedback, chkSubmit;
-  @FXML private CheckBox chkHtml, chkXml, chkJson;
+  @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
   @FXML private TextArea txtWhy;
   @FXML private Button addRule, continueButton, addFix;
@@ -178,8 +177,7 @@ public class MainApp extends Application {
     return propertyValue.equals("1");
   }
 
-  private void LoadGui() throws Exception
-  {
+  private void LoadGui() throws Exception {
     if (FirstTime()) {
       ShowDisclaimer();
     } else {
@@ -358,7 +356,7 @@ public class MainApp extends Application {
           URL obj = new URL(url);
           java.net.HttpURLConnection con = (java.net.HttpURLConnection) obj.openConnection();
 
-          //add reuqest header
+          //add request header
           con.setRequestMethod("POST");
           con.setRequestProperty("User-Agent", "Mozilla/5.0");
           con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
@@ -440,12 +438,12 @@ public class MainApp extends Application {
     Scene scene = thestage.getScene();
     AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
     boolean oneChecked = false;
-    for (Node node : ap3.getChildren()){
-      if(node instanceof VBox) {
-        VBox vBox1 = (VBox)node;
-        for (Node nodeIn : vBox1.getChildren()){
-          if(nodeIn instanceof RadioButton) {
-            RadioButton radio = (RadioButton)nodeIn;
+    for (Node node : ap3.getChildren()) {
+      if (node instanceof VBox) {
+        VBox vBox1 = (VBox) node;
+        for (Node nodeIn : vBox1.getChildren()) {
+          if (nodeIn instanceof RadioButton) {
+            RadioButton radio = (RadioButton) nodeIn;
             if (radio.isSelected()) {
               config = new Configuration();
               config.ReadFile(radio.getText());
@@ -456,7 +454,6 @@ public class MainApp extends Application {
         }
       }
     }
-
     if (!oneChecked) {
       Alert alert = new Alert(Alert.AlertType.WARNING);
       alert.setTitle("Alert");
@@ -472,7 +469,16 @@ public class MainApp extends Application {
       @Override
       protected Integer call() throws Exception{
         try {
-          files.add(txtFile.getText());
+          if (new File(txtFile.getText()).isDirectory()) {
+            File[] listOfFiles = new File(txtFile.getText()).listFiles();
+            for (int j = 0; j < listOfFiles.length; j++) {
+              if (listOfFiles[j].isFile()) {
+                files.add(listOfFiles[j].getPath());
+              }
+            }
+          } else {
+            files.add(txtFile.getText());
+          }
           boolean bl = config.getIsos().contains("Baseline");
           boolean ep = config.getIsos().contains("Tiff/EP");
           int it = -1;
@@ -482,7 +488,8 @@ public class MainApp extends Application {
 
           ProcessInput pi = new ProcessInput(extensions, bl, ep, it, config.getRules().getRules().size() > 0);
           ArrayList<String> formats = config.getFormats();
-          String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), "", true, config.getRules(), config.getFixes());
+
+          String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), formats.contains("PDF"), null, true, config.getRules(), config.getFixes());
 
           ShowReport(filename);
         } catch (Exception ex) {
@@ -728,6 +735,7 @@ public class MainApp extends Application {
     if (chkHtml.isSelected()) config.getFormats().add("HTML");
     if (chkXml.isSelected()) config.getFormats().add("XML");
     if (chkJson.isSelected()) config.getFormats().add("JSON");
+    if (chkPdf.isSelected()) config.getFormats().add("PDF");
     LoadSceneXml("/fxml/config4.fxml");
   }
 
@@ -1101,8 +1109,21 @@ public class MainApp extends Application {
     File file = fileChooser.showOpenDialog(thestage);
     try {
       if (file != null) {
-        config = new Configuration();
-        config.ReadFile(file.getAbsolutePath());
+        Scene scene = thestage.getScene();
+        AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
+        VBox vbox = (VBox) pan.getChildren().get(0);
+        final ToggleGroup group;
+        if (!vbox.getChildren().isEmpty()) {
+          RadioButton radio_old = (RadioButton) vbox.getChildren().get(0);
+          group = radio_old.getToggleGroup();
+        }
+        else{
+          group = new ToggleGroup();
+        }
+        RadioButton radio = new RadioButton();
+        radio.setText(file.getAbsolutePath());
+        radio.setToggleGroup(group);
+        vbox.getChildren().add(radio);
       }
     } catch (Exception ex) {
       Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -1176,6 +1197,12 @@ public class MainApp extends Application {
               if (reportJson.exists()) {
                 ReportRow rr = ReportRow.createRowFromJson(reportDay, reportJson);
                 data.add(rr);
+              }  else {
+                File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.pdf");
+                if (reportPdf.exists()) {
+                  ReportRow rr = ReportRow.createRowFromJson(reportDay, reportPdf);
+                  data.add(rr);
+                }
               }
             }
           }

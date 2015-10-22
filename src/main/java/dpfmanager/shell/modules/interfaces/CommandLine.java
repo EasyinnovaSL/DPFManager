@@ -85,6 +85,7 @@ public class CommandLine extends UserInterface {
     boolean xml = true;
     boolean json = true;
     boolean html = true;
+    boolean pdf = false;
     boolean silence = false;
     Configuration config = null;
 
@@ -144,8 +145,9 @@ public class CommandLine extends UserInterface {
           xml = formats.contains("xml");
           json = formats.contains("json");
           html = formats.contains("html");
+          pdf = formats.contains("pdf");
           String result =
-              formats.replace("xml", "").replace("json", "").replace("html", "").replace(",", "");
+              formats.replace("xml", "").replace("json", "").replace("html", "").replace("pdf", "").replace(",", "");
           if (result.length() > 0) {
             System.out.println("Incorrect report formats");
             argsError = true;
@@ -188,7 +190,7 @@ public class CommandLine extends UserInterface {
         System.out.println("Report generated successfully.");
       } else {
         ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0, false);
-        pi.ProcessFiles(files, xml, json, html, outputFolder, silence, null, null);
+        pi.ProcessFiles(files, xml, json, html, pdf, outputFolder, silence, null, null);
         System.out.println("Report generated successfully.");
       }
     }

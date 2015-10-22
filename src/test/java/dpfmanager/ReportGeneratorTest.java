@@ -114,7 +114,7 @@ public class ReportGeneratorTest extends TestCase {
     Platform.exit();
   }
 
-  public void testReports1() throws Exception {
+  public void testReportsFile() throws Exception {
     Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
     final String PREF_NAME = "feedback";
     String newValue = "0";
@@ -158,7 +158,7 @@ public class ReportGeneratorTest extends TestCase {
     Platform.exit();
   }
 
-  public void testReports2() throws Exception {
+  public void testReportsFolder() throws Exception {
     Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
     final String PREF_NAME = "feedback";
     String newValue = "0";
@@ -202,7 +202,7 @@ public class ReportGeneratorTest extends TestCase {
     Platform.exit();
   }
 
-  public void testReports3() throws Exception {
+  public void testReportsZip() throws Exception {
     Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
     final String PREF_NAME = "feedback";
     String newValue = "0";
@@ -246,7 +246,7 @@ public class ReportGeneratorTest extends TestCase {
     Platform.exit();
   }
 
-  public void testReports4() throws Exception {
+  public void testReportsURL() throws Exception {
     Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
     final String PREF_NAME = "feedback";
     String newValue = "0";
