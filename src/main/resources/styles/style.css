@@ -317,6 +317,6 @@
 	-fx-border-width: 0px;
 	-fx-border-color:#31C2F3 ;
 }
-.data0.chart-pie { -fx-background-color: green; }
-.data1.chart-pie { -fx-background-color: red; }
+.data0.chart-pie { -fx-background-color: #33ccff; }
+.data1.chart-pie { -fx-background-color: #f2f2f2; }
 
