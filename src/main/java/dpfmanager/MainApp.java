@@ -121,7 +121,7 @@ public class MainApp extends Application {
   @FXML private TextField txtFile;
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
   @FXML private Line line;
-  @FXML private CheckBox chkFeedback, chkSubmit;
+  @FXML private CheckBox chkFeedback, chkSubmit, chkAutoFixLE, chkAutoFixBE;
   @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
   @FXML private TextArea txtWhy;
