@@ -1069,7 +1069,14 @@ public class MainApp extends Application {
         Scene scene = thestage.getScene();
         AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
         VBox vbox = (VBox) pan.getChildren().get(0);
-        final ToggleGroup group = new ToggleGroup();
+        final ToggleGroup group;
+        if (!vbox.getChildren().isEmpty()) {
+          RadioButton radio_old = (RadioButton) vbox.getChildren().get(0);
+          group = radio_old.getToggleGroup();
+        }
+        else{
+          group = new ToggleGroup();
+        }
         RadioButton radio = new RadioButton();
         radio.setText(file.getAbsolutePath());
         radio.setToggleGroup(group);
