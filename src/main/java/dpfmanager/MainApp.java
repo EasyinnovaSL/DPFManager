@@ -951,10 +951,18 @@ public class MainApp extends Application {
                 for (String operator : operators) {
                   comboOp.getItems().add(operator);
                 }
-                while (hBox1.getChildren().size() > 2)
-                  hBox1.getChildren().remove(2);
-                Button bRemove = (Button)hBox1.getChildren().get(1);
-                hBox1.getChildren().remove(1);
+                Button bRemove = null;
+                while (hBox1.getChildren().size() > 1) {
+                  for (int i=1;i<hBox1.getChildren().size();i++)
+                  {
+                    if (hBox1.getChildren().get(i) instanceof Button)
+                    {
+                      bRemove = (Button)hBox1.getChildren().get(i);
+                    }
+                    hBox1.getChildren().remove(i);
+                  }
+                }
+
                 TextField value = new TextField();
                 value.getStyleClass().add("txtRule");
                 hBox1.getChildren().add(comboOp);
@@ -983,10 +991,17 @@ public class MainApp extends Application {
               for (String field : gui.getFixFields()) {
                 comboOp.getItems().add(field);
               }
-              while (hBox1.getChildren().size() > 2)
-                hBox1.getChildren().remove(2);
-              Button bRemove = (Button)hBox1.getChildren().get(1);
-              hBox1.getChildren().remove(1);
+              Button bRemove = null;
+              while (hBox1.getChildren().size() > 1) {
+                for (int i=1;i<hBox1.getChildren().size();i++)
+                {
+                  if (hBox1.getChildren().get(i) instanceof Button)
+                  {
+                    bRemove = (Button)hBox1.getChildren().get(i);
+                  }
+                  hBox1.getChildren().remove(i);
+                }
+              }
 
               hBox1.getChildren().add(comboOp);
               hBox1.getChildren().add(bRemove);
@@ -1032,13 +1047,8 @@ public class MainApp extends Application {
         )
     );
     remove.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        try {
-          gotoAbout(event);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+      @Override public void handle(ActionEvent e) {
+        deleteRuleFix(yRule);
       }
     });
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -1064,6 +1074,23 @@ public class MainApp extends Application {
     }
   }
 
+  void deleteRuleFix(double yPos) {
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    ArrayList<Node> lRemove = new ArrayList<Node>();
+    for (Node node : ap2.getChildren()) {
+      if (node instanceof HBox) {
+        HBox hBox1 = (HBox) node;
+        if (hBox1.getLayoutY() == yPos) {
+          lRemove.add(node);
+        }
+      }
+    }
+    for (Node node : lRemove) {
+      ap2.getChildren().remove(node);
+    }
+  }
+
   @FXML
   protected void addFix(ActionEvent event) {
     int dif = 50;
@@ -1080,7 +1107,29 @@ public class MainApp extends Application {
         addFixValue(item);
       }
     });
-    HBox hBox = new HBox (comboBox);
+
+    // Remove button
+    String styleButton = "-fx-background-color: transparent;\n" +
+        "\t-fx-border-width     : 0px   ;\n" +
+        "\t-fx-border-radius: 0 0 0 0;\n" +
+        "\t-fx-background-radius: 0 0 0; -fx-text-fill: WHITE; -fx-font-weight:bold;";
+    String styleButtonPressed = "-fx-border-width: 0px; -fx-background-color: rgba(255, 255, 255, 0.2);";
+    Button remove = new Button();
+    remove.setText("X");
+    remove.styleProperty().bind(
+        Bindings
+            .when(remove.pressedProperty())
+            .then(new SimpleStringProperty(styleButtonPressed))
+            .otherwise(new SimpleStringProperty(styleButton)
+            )
+    );
+    remove.setOnAction(new EventHandler<ActionEvent>() {
+      @Override public void handle(ActionEvent e) {
+        deleteRuleFix(yRule);
+      }
+    });
+
+    HBox hBox = new HBox (comboBox, remove);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
