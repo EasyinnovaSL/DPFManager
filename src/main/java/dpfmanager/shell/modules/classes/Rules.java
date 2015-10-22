@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  * Created by easy on 06/10/2015.
@@ -28,6 +29,7 @@ public class Rules {
   }
 
   public void Read(Scene scene) {
+    Boolean wrong_format = false;
     VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
     AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
     ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
@@ -40,19 +42,34 @@ public class Rules {
           if(nodeIn instanceof ComboBox) {
             ComboBox comboBox = (ComboBox)nodeIn;
             if (comboBox.getValue() != null){
-              if (tag == null) tag = comboBox.getValue().toString();
-              else operator = comboBox.getValue().toString();
+              String comboBoxVal = comboBox.getValue().toString();
+              if (tag == null) tag = comboBoxVal;
+              else operator = comboBoxVal;
+            }
+            else{
+              wrong_format = true;
             }
           } else if(nodeIn instanceof TextField) {
             TextField textField = (TextField)nodeIn;
-            if (textField.getText() != null){
-              value = textField.getText();
+            String nodeInValue = textField.getText();
+            if (!nodeInValue.isEmpty()){
+              if (!Pattern.matches("[a-zA-Z ]+", nodeInValue)) {
+                value = nodeInValue;
+              }else{
+                wrong_format = true;
+              }
+            }
+            else{
+              wrong_format = true;
             }
           }
         }
-        Rule rule = new Rule(tag, operator, value);
-        rules.add(rule);
+        if (!wrong_format) {
+          Rule rule = new Rule(tag, operator, value);
+          rules.add(rule);
+        }
       }
+      wrong_format = false;
     }
   }
 

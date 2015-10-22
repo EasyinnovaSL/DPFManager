@@ -28,6 +28,7 @@ public class Fixes {
   }
 
   public void Read(Scene scene) {
+    Boolean wrong_format = false;
     VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
     AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
     ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
@@ -43,16 +44,26 @@ public class Fixes {
               if (operator == null) operator = comboBox.getValue().toString();
               else tag = comboBox.getValue().toString();
             }
+            else{
+              wrong_format = true;
+            }
           } else if(nodeIn instanceof TextField) {
             TextField textField = (TextField)nodeIn;
-            if (textField.getText() != null){
+            String nodeInValue = textField.getText();
+            if (!nodeInValue.isEmpty()){
               value = textField.getText();
+            }
+            else{
+              wrong_format = true;
             }
           }
         }
-        Fix fix = new Fix(tag, operator, value);
-        fixes.add(fix);
+        if (!wrong_format) {
+          Fix fix = new Fix(tag, operator, value);
+          fixes.add(fix);
+        }
       }
+      wrong_format=false;
     }
   }
 
