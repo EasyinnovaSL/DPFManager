@@ -231,5 +231,13 @@ public class ReportRow {
     ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%", file.getPath());
     return row;
   }
+
+  public static ReportRow createRowFromPdf(String reportDay, File file) {
+    String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
+    String n = "?";
+    String passed = "?", errors = "?", warnings = "?", score = "?";
+    ReportRow row = new ReportRow(sdate, n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%", file.getPath());
+    return row;
+  }
 }
 

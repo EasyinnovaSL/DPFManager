@@ -117,11 +117,14 @@ public class MainApp extends Application {
   final int height = 950;
   private static Configuration config;
   private static String dropped;
+  int uniqueId = 0;
 
   @FXML private TextField txtFile;
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
   @FXML private Line line;
   @FXML private CheckBox chkFeedback, chkSubmit;
+  @FXML private CheckBox chkAutoFixLE, chkAutoFixBE;
+  @FXML private CheckBox chkAutoFixPersonal;
   @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
   @FXML private TextArea txtWhy;
@@ -629,50 +632,65 @@ public class MainApp extends Application {
         //browser.setMaxWidth(width);
         browser.setMaxHeight(h);
         final WebEngine webEngine = browser.getEngine();
-        webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
+        if (!new File(System.getProperty("user.dir") + "/" + filename).exists()) {
+          String message = "Report file '" + System.getProperty("user.dir") + "/" + filename + "' does not exist";
+          System.out.println(message);
+          try {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error occured");
+            alert.setContentText(message);
+            alert.showAndWait();
+            ShowMain();
+          } catch (Exception ex) {
 
-        splitPa.getItems().addAll(topImg);
-        splitPa.getItems().addAll(browser);
-        splitPa.setDividerPosition(0, 0.5f);
-        root.getChildren().addAll(splitPa);
-        sceneReport.setRoot(root);
-
-        thestage.setScene(sceneReport);
-
-        //Set invisible the divisor line
-        splitPa.lookupAll(".split-pane-divider").stream()
-            .forEach(
-                div -> div.setStyle("-fx-padding: 0;\n" +
-                    "    -fx-background-color: transparent;\n" +
-                    "    -fx-background-insets: 0;\n" +
-                    "    -fx-shape: \" \";"));
-        splitPa.lookupAll(".split-pane-divider").stream()
-            .forEach(
-                div -> div.setMouseTransparent(true));
-
-        thestage.setMaxHeight(Double.MAX_VALUE);
-        thestage.setMinHeight(height);
-        thestage.setMaxWidth(Double.MAX_VALUE);
-        thestage.setResizable(true);
-        thestage.setMinWidth(width);
-
-        thestage.widthProperty().addListener(new ChangeListener<Number>() {
-          @Override
-          public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-            if (newSceneWidth.doubleValue() < 989) {
-              report.setLayoutX(470.0);
-              checker.setLayoutX(290.0);
-              about.setLayoutX(560.0);
-            } else {
-              double dif = (newSceneWidth.doubleValue() - width) / 2;
-              report.setLayoutX(463.0 + dif);
-              checker.setLayoutX(283.0 + dif);
-              about.setLayoutX(560.0 + dif);
-            }
           }
-        });
+        } else {
+          webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
 
-        thestage.sizeToScene();
+          splitPa.getItems().addAll(topImg);
+          splitPa.getItems().addAll(browser);
+          splitPa.setDividerPosition(0, 0.5f);
+          root.getChildren().addAll(splitPa);
+          sceneReport.setRoot(root);
+
+          thestage.setScene(sceneReport);
+
+          //Set invisible the divisor line
+          splitPa.lookupAll(".split-pane-divider").stream()
+              .forEach(
+                  div -> div.setStyle("-fx-padding: 0;\n" +
+                      "    -fx-background-color: transparent;\n" +
+                      "    -fx-background-insets: 0;\n" +
+                      "    -fx-shape: \" \";"));
+          splitPa.lookupAll(".split-pane-divider").stream()
+              .forEach(
+                  div -> div.setMouseTransparent(true));
+
+          thestage.setMaxHeight(Double.MAX_VALUE);
+          thestage.setMinHeight(height);
+          thestage.setMaxWidth(Double.MAX_VALUE);
+          thestage.setResizable(true);
+          thestage.setMinWidth(width);
+
+          thestage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+              if (newSceneWidth.doubleValue() < 989) {
+                report.setLayoutX(470.0);
+                checker.setLayoutX(290.0);
+                about.setLayoutX(560.0);
+              } else {
+                double dif = (newSceneWidth.doubleValue() - width) / 2;
+                report.setLayoutX(463.0 + dif);
+                checker.setLayoutX(283.0 + dif);
+                about.setLayoutX(560.0 + dif);
+              }
+            }
+          });
+
+          thestage.sizeToScene();
+        }
       }
     });
   }
@@ -742,6 +760,12 @@ public class MainApp extends Application {
   @FXML
   protected void gotoConfig6(ActionEvent event) throws Exception {
     Fixes fixes = config.getFixes();
+    if (chkAutoFixLE != null && chkAutoFixLE.isSelected())
+      fixes.addFixFromTxt("ByteOrder,LittleEndian");
+    if (chkAutoFixBE != null && chkAutoFixBE.isSelected())
+      fixes.addFixFromTxt("ByteOrder,BigEndian");
+    if (chkAutoFixPersonal != null && chkAutoFixPersonal.isSelected())
+      fixes.addFixFromTxt("PrivateData,Clear");
     Scene scene = thestage.getScene();
     fixes.Read(scene);
     LoadSceneXml("/fxml/config6.fxml");
@@ -1080,9 +1104,10 @@ public class MainApp extends Application {
             .otherwise(new SimpleStringProperty(styleButton)
         )
     );
+    remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent e) {
-        deleteRuleFix(yRule);
+        deleteRuleFix(remove.getId());
       }
     });
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -1091,6 +1116,7 @@ public class MainApp extends Application {
       }
     });
     HBox hBox = new HBox (comboBox, remove);
+    hBox.setId("ID" + uniqueId++);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
@@ -1108,16 +1134,22 @@ public class MainApp extends Application {
     }
   }
 
-  void deleteRuleFix(double yPos) {
+  void deleteRuleFix(String id) {
     Scene scene = thestage.getScene();
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ArrayList<Node> lRemove = new ArrayList<Node>();
     for (Node node : ap2.getChildren()) {
       if (node instanceof HBox) {
         HBox hBox1 = (HBox) node;
-        if (hBox1.getLayoutY() == yPos) {
+        if (hBox1.getId().equals(id)) {
           lRemove.add(node);
+        } else {
+          if (Integer.parseInt(hBox1.getId().substring(2)) > Integer.parseInt(id.substring(2))) {
+            hBox1.setLayoutY(hBox1.getLayoutY() - 50);
+          }
         }
+      } else if (node instanceof Button) {
+        node.setLayoutY(node.getLayoutY() - 50);
       }
     }
     for (Node node : lRemove) {
@@ -1157,13 +1189,15 @@ public class MainApp extends Application {
             .otherwise(new SimpleStringProperty(styleButton)
             )
     );
+    remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent e) {
-        deleteRuleFix(yRule);
+        deleteRuleFix(remove.getId());
       }
     });
 
     HBox hBox = new HBox (comboBox, remove);
+    hBox.setId("ID" + uniqueId++);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
@@ -1281,7 +1315,7 @@ public class MainApp extends Application {
               }  else {
                 File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.pdf");
                 if (reportPdf.exists()) {
-                  ReportRow rr = ReportRow.createRowFromJson(reportDay, reportPdf);
+                  ReportRow rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
                   data.add(rr);
                 }
               }
