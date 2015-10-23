@@ -60,13 +60,28 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.chart.PieChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -771,106 +786,77 @@ public class MainApp extends Application {
   @FXML
   protected void gotoReport(ActionEvent event) throws Exception {
     try {
-    FXMLLoader loader2 = new FXMLLoader();
-    String fxmlFile2 = "/fxml/summary.fxml";
-    Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
-    Scene scenereport = new Scene(rootNode2, width, height);
-    scenereport.getStylesheets().add("/styles/style.css");
+      FXMLLoader loader2 = new FXMLLoader();
+      String fxmlFile2 = "/fxml/summary.fxml";
+      Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
+      Scene scenereport = new Scene(rootNode2, width, height);
+      scenereport.getStylesheets().add("/styles/style.css");
 
-    thestage.setMaxHeight(height);
-    thestage.setMinHeight(height);
-    thestage.setMaxWidth(width);
-    thestage.setMinWidth(width);
+      thestage.setMaxHeight(height);
+      thestage.setMinHeight(height);
+      thestage.setMaxWidth(width);
+      thestage.setMinWidth(width);
 
-    thestage.setScene(scenereport);
-    thestage.sizeToScene();
-      
-    ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
-    SplitPane splitPa1=(SplitPane)nodes.get(0);
-    splitPa1.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setMouseTransparent(true));
+      thestage.setScene(scenereport);
+      thestage.sizeToScene();
 
-    ObservableList<ReportRow> data = ReadReports();
+      ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
+      SplitPane splitPa1=(SplitPane)nodes.get(0);
+      splitPa1.lookupAll(".split-pane-divider").stream()
+          .forEach(
+              div -> div.setMouseTransparent(true));
 
-    javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
+      ObservableList<ReportRow> data = ReadReports();
 
-    tabReports.setEditable(true);
-    TableColumn colDate = new TableColumn("Date");
-    colDate.setMinWidth(90);
-    colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
+      javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
+      tabReports.setId("tab_reports");
 
-    TableColumn colN = new TableColumn("Files Processed");
-    colN.setMinWidth(100);
-    colN.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("nfiles")
-    );
+      tabReports.setEditable(true);
+      TableColumn colDate = new TableColumn("Date");
+      colDate.setMinWidth(90);
+      colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
-    TableColumn colResult = new TableColumn("Result");
-    colResult.setMinWidth(165);
-    colResult.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("result")
-    );
+      TableColumn colN = new TableColumn("Files Processed");
+      colN.setMinWidth(100);
+      colN.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("nfiles")
+      );
 
-    TableColumn colFixed= new TableColumn("Fixed");
-      colFixed.setMinWidth(120);
-    colFixed.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("fixed")
-    );
+      TableColumn colResult = new TableColumn("Result");
+      colResult.setMinWidth(165);
+      colResult.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("result")
+      );
 
-    TableColumn colErrors = new TableColumn("Errors");
-      colErrors.setMinWidth(75);
-    colErrors.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("errors")
-    );
+      TableColumn colFixed= new TableColumn("Fixed");
+        colFixed.setMinWidth(120);
+      colFixed.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("fixed")
+      );
 
-    TableColumn colWarnings = new TableColumn("Warnings");
-      colWarnings.setMinWidth(85);
-    colWarnings.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("warnings")
-    );
+      TableColumn colErrors = new TableColumn("Errors");
+        colErrors.setMinWidth(75);
+      colErrors.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("errors")
+      );
 
-    TableColumn colPassed = new TableColumn("Passed");
-      colPassed.setMinWidth(75);
-    colPassed.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("passed")
-    );
+      TableColumn colWarnings = new TableColumn("Warnings");
+        colWarnings.setMinWidth(85);
+      colWarnings.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("warnings")
+      );
 
-    TableColumn<ReportRow, ReportRow> colScore = new TableColumn("Score");
+      TableColumn colPassed = new TableColumn("Passed");
+        colPassed.setMinWidth(75);
+      colPassed.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, String>("passed")
+      );
+
+      TableColumn<ReportRow, String> colScore = new TableColumn("Score");
       colScore.setMinWidth(100);
       colScore.setCellValueFactory(
           new PropertyValueFactory("score")
       );
-      colScore.setCellFactory((TableColumn<ReportRow, ReportRow> param) -> {
-        return new TableCell<ReportRow, ReportRow>(){
-
-          @Override
-          protected void updateItem(ReportRow item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty) setGraphic (null);
-            else {
-              double tot = 50 + 100;
-              double ratio1 = 40 / tot;
-              double ratio2 = 60 / tot;
-
-              Rectangle r1 = new Rectangle();
-              //the param is the column, bind so rects resize with column
-              r1.widthProperty().bind(param.widthProperty().multiply(ratio1));
-              r1.heightProperty().bind(this.getTableRow().heightProperty().multiply(0.5));
-              r1.setStyle("-fx-fill:#f3622d;");
-              Rectangle r2 = new Rectangle(0, 20);
-              r2.widthProperty().bind(param.widthProperty().multiply(ratio2));
-              r2.setStyle("-fx-fill:#fba71b;");
-
-              HBox hbox = new HBox(r1,r2);
-              hbox.setAlignment(Pos.CENTER_LEFT);
-              setGraphic(hbox);
-              setText(null);
-            }
-          }
-
-        };
-      });
 
       tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore);
       tabReports.setItems(data);
@@ -888,6 +874,8 @@ public class MainApp extends Application {
       changeColumnTextColor(colWarnings, Color.ORANGE);
       changeColumnTextColor(colPassed, Color.GREENYELLOW);
       changeColumnTextColor(colScore, Color.LIGHTGRAY);
+
+      addChartScore(colScore);
 
       tabReports.setOnMousePressed(new EventHandler<MouseEvent>() {
         @Override
@@ -930,6 +918,52 @@ public class MainApp extends Application {
     });
   }
 
+  private void addChartScore(TableColumn colScore) {
+    colScore.setCellFactory(new Callback<TableColumn<ReportRow,String>,TableCell<ReportRow,String>>(){
+      @Override
+      public TableCell<ReportRow, String> call(TableColumn<ReportRow, String> param) {
+        TableCell<ReportRow, String> cell = new TableCell<ReportRow, String>(){
+          @Override
+          public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty && item != null) {
+
+              Double score = Double.parseDouble(item.substring(0, item.indexOf('%')));
+
+              ObservableList<PieChart.Data> pieChartData =
+                  FXCollections.observableArrayList(
+                      new PieChart.Data("Correct", score),
+                      new PieChart.Data("Error", 100-score));
+
+              PieChart chart = new PieChart(pieChartData);
+              chart.setId("pie_chart");
+
+              chart.setMinSize(22, 22);
+              chart.setMaxSize(22, 22);
+
+              HBox box= new HBox();
+              box.setSpacing(8);
+              box.setAlignment(Pos.CENTER_LEFT);
+
+              Label score_label = new Label(item);
+              score_label.setTextFill(Color.LIGHTGRAY);
+
+              box.getChildren().add(chart);
+              box.getChildren().add(score_label);
+
+              setGraphic(box);
+              setText(null);
+
+            } else {
+              setGraphic(null);
+            }
+          }
+        };
+        return cell;
+      }
+    });
+  }
+
   private void addNumericOperator(String item) {
     ArrayList<String> operators = null;
     for (Field field : gui.getFields()) {
@@ -951,12 +985,23 @@ public class MainApp extends Application {
                 for (String operator : operators) {
                   comboOp.getItems().add(operator);
                 }
-                while (hBox1.getChildren().size() > 1)
-                  hBox1.getChildren().remove(1);
+                Button bRemove = null;
+                while (hBox1.getChildren().size() > 1) {
+                  for (int i=1;i<hBox1.getChildren().size();i++)
+                  {
+                    if (hBox1.getChildren().get(i) instanceof Button)
+                    {
+                      bRemove = (Button)hBox1.getChildren().get(i);
+                    }
+                    hBox1.getChildren().remove(i);
+                  }
+                }
+
                 TextField value = new TextField();
                 value.getStyleClass().add("txtRule");
                 hBox1.getChildren().add(comboOp);
                 hBox1.getChildren().add(value);
+                hBox1.getChildren().add(bRemove);
                 break;
               }
             }
@@ -967,7 +1012,6 @@ public class MainApp extends Application {
   }
 
   private void addFixValue(String item) {
-    ArrayList<String> fields = null;
     Scene scene = thestage.getScene();
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     for (Node node : ap2.getChildren()) {
@@ -981,9 +1025,20 @@ public class MainApp extends Application {
               for (String field : gui.getFixFields()) {
                 comboOp.getItems().add(field);
               }
-              while (hBox1.getChildren().size() > 1)
-                hBox1.getChildren().remove(1);
+              Button bRemove = null;
+              while (hBox1.getChildren().size() > 1) {
+                for (int i=1;i<hBox1.getChildren().size();i++)
+                {
+                  if (hBox1.getChildren().get(i) instanceof Button)
+                  {
+                    bRemove = (Button)hBox1.getChildren().get(i);
+                  }
+                  hBox1.getChildren().remove(i);
+                }
+              }
+
               hBox1.getChildren().add(comboOp);
+              hBox1.getChildren().add(bRemove);
 
               if (item.equals("Add Tag")) {
                 TextField value = new TextField();
@@ -1009,12 +1064,33 @@ public class MainApp extends Application {
     for (Field field : gui.getFields()) {
       comboBox.getItems().add(field.getName());
     }
+
+    // Remove button
+    String styleButton = "-fx-background-color: transparent;\n" +
+        "\t-fx-border-width     : 0px   ;\n" +
+        "\t-fx-border-radius: 0 0 0 0;\n" +
+        "\t-fx-background-radius: 0 0 0; -fx-text-fill: WHITE; -fx-font-weight:bold;";
+    String styleButtonPressed = "-fx-border-width: 0px; -fx-background-color: rgba(255, 255, 255, 0.2);";
+    Button remove = new Button();
+    remove.setText("X");
+    remove.styleProperty().bind(
+        Bindings
+            .when(remove.pressedProperty())
+            .then(new SimpleStringProperty(styleButtonPressed))
+            .otherwise(new SimpleStringProperty(styleButton)
+        )
+    );
+    remove.setOnAction(new EventHandler<ActionEvent>() {
+      @Override public void handle(ActionEvent e) {
+        deleteRuleFix(yRule);
+      }
+    });
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
       @Override public void changed(ObservableValue ov, String t, String item) {
         addNumericOperator(item);
       }
     });
-    HBox hBox = new HBox (comboBox);
+    HBox hBox = new HBox (comboBox, remove);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
@@ -1029,6 +1105,23 @@ public class MainApp extends Application {
     if (addRule.getLayoutY() + addRule.getHeight() > line.getLayoutY()) {
       line.setLayoutY(line.getLayoutY() + dif);
       continueButton.setLayoutY(continueButton.getLayoutY() + dif);
+    }
+  }
+
+  void deleteRuleFix(double yPos) {
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    ArrayList<Node> lRemove = new ArrayList<Node>();
+    for (Node node : ap2.getChildren()) {
+      if (node instanceof HBox) {
+        HBox hBox1 = (HBox) node;
+        if (hBox1.getLayoutY() == yPos) {
+          lRemove.add(node);
+        }
+      }
+    }
+    for (Node node : lRemove) {
+      ap2.getChildren().remove(node);
     }
   }
 
@@ -1048,7 +1141,29 @@ public class MainApp extends Application {
         addFixValue(item);
       }
     });
-    HBox hBox = new HBox (comboBox);
+
+    // Remove button
+    String styleButton = "-fx-background-color: transparent;\n" +
+        "\t-fx-border-width     : 0px   ;\n" +
+        "\t-fx-border-radius: 0 0 0 0;\n" +
+        "\t-fx-background-radius: 0 0 0; -fx-text-fill: WHITE; -fx-font-weight:bold;";
+    String styleButtonPressed = "-fx-border-width: 0px; -fx-background-color: rgba(255, 255, 255, 0.2);";
+    Button remove = new Button();
+    remove.setText("X");
+    remove.styleProperty().bind(
+        Bindings
+            .when(remove.pressedProperty())
+            .then(new SimpleStringProperty(styleButtonPressed))
+            .otherwise(new SimpleStringProperty(styleButton)
+            )
+    );
+    remove.setOnAction(new EventHandler<ActionEvent>() {
+      @Override public void handle(ActionEvent e) {
+        deleteRuleFix(yRule);
+      }
+    });
+
+    HBox hBox = new HBox (comboBox, remove);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);

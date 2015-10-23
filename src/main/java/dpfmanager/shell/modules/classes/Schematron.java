@@ -129,7 +129,7 @@ public class Schematron extends CamelTestSupport {
 
       byte[] encoded = Files.readAllBytes(Paths.get(tempname));
       String s = new String(encoded, Charset.defaultCharset());
-      s = s.replace("#PP#","<").replace("#GG#",">");
+      s = s.replace("#PP#","&lt;").replace("#GG#",">");
       PrintWriter out = new PrintWriter(tempname);
       out.print(s);
       out.close();

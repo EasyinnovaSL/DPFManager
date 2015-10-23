@@ -5,6 +5,8 @@ import com.easyinnova.tiff.reader.TiffReader;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 
 import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.Before;
 
 import java.io.File;
@@ -131,6 +133,11 @@ public class MultipleReportGeneratorTest extends TestCase {
     String path = getPath();
     File directori = new File(path);
     assertEquals(7, directori.list().length);
+
+    PDDocument doc = PDDocument.load(path + "/report.pdf");
+    List<PDPage> l = doc.getDocumentCatalog().getAllPages();
+    assertEquals(13, l.size());
+    doc.close();
   }
 
   private String getPath() {
