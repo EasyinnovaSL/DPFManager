@@ -85,12 +85,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 
-import net.sf.json.JSONObject;
-
-import org.eclipse.jface.text.TextViewer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -694,9 +691,8 @@ public class MainApp extends Application {
             ex.printStackTrace();
           }
 
-          if (format.equals("json")) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            content = (gson.toJson(content));
+          if(format.equals("json")) {
+            content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
           }
 
           ta.setText(content);
@@ -882,7 +878,7 @@ public class MainApp extends Application {
       javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
       tabReports.setId("tab_reports");
 
-      tabReports.setEditable(false);
+      tabReports.setEditable(true);
       TableColumn colDate = new TableColumn("Date");
       colDate.setMinWidth(90);
       colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
