@@ -354,8 +354,8 @@ public class ReportHtml extends ReportGeneric {
       if (tag.index > 0) seeTr = " hide";
       row = "<tr class='ifd ifd" + tag.index + seeTr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
       String sDif = "";
-      if (tag.dif < 0) sDif = "-";
-      else if (tag.dif > 0) sDif = "+";
+      if (tag.dif < 0) sDif = "<i class=\"fa fa-times\"></i>";
+      else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", tag.tv.getName());
       row = row.replace("##VALUE##", tag.tv.toString());

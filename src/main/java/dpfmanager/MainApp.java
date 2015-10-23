@@ -117,6 +117,7 @@ public class MainApp extends Application {
   final int height = 950;
   private static Configuration config;
   private static String dropped;
+  int uniqueId = 0;
 
   @FXML private TextField txtFile;
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
@@ -1103,9 +1104,10 @@ public class MainApp extends Application {
             .otherwise(new SimpleStringProperty(styleButton)
         )
     );
+    remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent e) {
-        deleteRuleFix(yRule);
+        deleteRuleFix(remove.getId());
       }
     });
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -1114,6 +1116,7 @@ public class MainApp extends Application {
       }
     });
     HBox hBox = new HBox (comboBox, remove);
+    hBox.setId("ID" + uniqueId++);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
@@ -1131,16 +1134,22 @@ public class MainApp extends Application {
     }
   }
 
-  void deleteRuleFix(double yPos) {
+  void deleteRuleFix(String id) {
     Scene scene = thestage.getScene();
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ArrayList<Node> lRemove = new ArrayList<Node>();
     for (Node node : ap2.getChildren()) {
       if (node instanceof HBox) {
         HBox hBox1 = (HBox) node;
-        if (hBox1.getLayoutY() == yPos) {
+        if (hBox1.getId().equals(id)) {
           lRemove.add(node);
+        } else {
+          if (Integer.parseInt(hBox1.getId().substring(2)) > Integer.parseInt(id.substring(2))) {
+            hBox1.setLayoutY(hBox1.getLayoutY() - 50);
+          }
         }
+      } else if (node instanceof Button) {
+        node.setLayoutY(node.getLayoutY() - 50);
       }
     }
     for (Node node : lRemove) {
@@ -1180,13 +1189,15 @@ public class MainApp extends Application {
             .otherwise(new SimpleStringProperty(styleButton)
             )
     );
+    remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
       @Override public void handle(ActionEvent e) {
-        deleteRuleFix(yRule);
+        deleteRuleFix(remove.getId());
       }
     });
 
     HBox hBox = new HBox (comboBox, remove);
+    hBox.setId("ID" + uniqueId++);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
@@ -1304,7 +1315,7 @@ public class MainApp extends Application {
               }  else {
                 File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.pdf");
                 if (reportPdf.exists()) {
-                  ReportRow rr = ReportRow.createRowFromJson(reportDay, reportPdf);
+                  ReportRow rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
                   data.add(rr);
                 }
               }

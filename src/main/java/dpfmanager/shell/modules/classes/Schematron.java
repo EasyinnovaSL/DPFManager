@@ -91,53 +91,56 @@ public class Schematron extends CamelTestSupport {
       return testXML(xmlFile, "sch/rules.sch");
     } else {
       InputStream sc = getInputStream("sch/rules.sch");
-      Document doc = readXml(sc);
+      if (sc != null) {
+        Document doc = readXml(sc);
 
-      NodeList nodes = doc.getElementsByTagName("rule");
-      while (nodes.getLength() > 0) {
-        Element el = (Element) nodes.item(0);
-        el.getParentNode().removeChild(el);
+        NodeList nodes = doc.getElementsByTagName("rule");
+        while (nodes.getLength() > 0) {
+          Element el = (Element) nodes.item(0);
+          el.getParentNode().removeChild(el);
+        }
+
+        Element pattern = (Element) doc.getElementsByTagName("pattern").item(0);
+        for (Rule r : rules.getRules()) {
+          Element newrule = doc.createElementNS(pattern.getNamespaceURI(), "rule");
+          newrule.setAttribute("context", r.getTag());
+
+          Element assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
+          assertion.setAttribute("test", "@" + r.getTag() + " " + convert(r.getOperator()) + " " + r.getValue());
+          assertion.setTextContent("Invalid " + r.getTag() + ": #PP2#value-of select=\"@" + r.getTag() + "\"/#GG#");
+
+          newrule.appendChild(assertion);
+
+          pattern.appendChild(newrule);
+        }
+
+        String tempname = "sch/rules2.sch";
+        int idx = 3;
+        while (new File(tempname).exists()) tempname = "sch/rules" + idx++ + ".sch";
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        DOMSource source = new DOMSource(doc);
+
+        File file = new File(tempname);
+        StreamResult result = new StreamResult(tempname);
+        transformer.transform(source, result);
+
+        byte[] encoded = Files.readAllBytes(Paths.get(tempname));
+        String s = new String(encoded, Charset.defaultCharset());
+        s = s.replace("#PP#", "&lt;").replace("#GG#", ">").replace("#PP2#", "<");
+        PrintWriter out = new PrintWriter(tempname);
+        out.print(s);
+        out.close();
+
+        String report = testXML(xmlFile, tempname);
+        file.delete();
+        return report;
+      } else {
+        return "";
       }
-
-      Element pattern = (Element)doc.getElementsByTagName("pattern").item(0);
-      for (Rule r : rules.getRules()) {
-        Element newrule = doc.createElementNS(pattern.getNamespaceURI(), "rule");
-        newrule.setAttribute("context", r.getTag());
-
-        Element assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
-        assertion.setAttribute("test", "@" + r.getTag() + " " + convert(r.getOperator()) + " " + r.getValue());
-        assertion.setTextContent("Invalid " + r.getTag() + ": #PP#value-of select=\"@" + r.getTag() + "\"/#GG#");
-
-        newrule.appendChild(assertion);
-
-        pattern.appendChild(newrule);
-      }
-
-      String tempname = "sch/rules2.sch";
-      int idx=3;
-      while (new File(tempname).exists()) tempname = "sch/rules" + idx++ + ".sch";
-
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
-      Transformer transformer = transformerFactory.newTransformer();
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-      DOMSource source = new DOMSource(doc);
-
-      File file = new File(tempname);
-      StreamResult result = new StreamResult(tempname);
-      transformer.transform(source, result);
-
-      byte[] encoded = Files.readAllBytes(Paths.get(tempname));
-      String s = new String(encoded, Charset.defaultCharset());
-      s = s.replace("#PP#","&lt;").replace("#GG#",">");
-      PrintWriter out = new PrintWriter(tempname);
-      out.print(s);
-      out.close();
-
-      String report = testXML(xmlFile, tempname);
-      file.delete();
-
-      return report;
     }
   }
 
@@ -161,12 +164,14 @@ public class Schematron extends CamelTestSupport {
     InputStream sc = null;
     if (Files.exists(Paths.get(schema))) {
       // Look in local dir
+      System.out.println("Schematron rules found in local dir");
       sc = new FileInputStream(schema);
     } else {
       // Look in JAR
       CodeSource src = Schematron.class.getProtectionDomain().getCodeSource();
       if (src != null) {
         URL jar = src.getLocation();
+        System.out.println("Reading JAR " + jar.toString());
         ZipInputStream zip = new ZipInputStream(jar.openStream());
         ZipEntry zipFile;
         while ((zipFile = zip.getNextEntry()) != null) {
