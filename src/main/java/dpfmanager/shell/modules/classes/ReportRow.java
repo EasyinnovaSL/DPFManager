@@ -2,9 +2,11 @@ package dpfmanager.shell.modules.classes;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -24,10 +26,9 @@ public class ReportRow {
   private final SimpleStringProperty warnings;
   private final SimpleStringProperty passed;
   private final SimpleStringProperty score;
-  private final SimpleListProperty<String> formats;
-  private String file;
+  private final SimpleMapProperty<String, String> formats;
 
-    public ReportRow(String date, String nFiles, String result, String fixed, String errors, String warnings, String passed, String score, String file, ObservableList<String> formats) {
+    public ReportRow(String date, String nFiles, String result, String fixed, String errors, String warnings, String passed, String score) {
       this.date = new SimpleStringProperty(date);
       this.nfiles = new SimpleStringProperty(nFiles);
       this.result = new SimpleStringProperty(result);
@@ -36,15 +37,14 @@ public class ReportRow {
       this.warnings = new SimpleStringProperty(warnings);
       this.passed = new SimpleStringProperty(passed);
       this.score = new SimpleStringProperty(score);
-      this.formats = new SimpleListProperty<>(formats);
-      this.file = file;
+      this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
     }
 
-  public String getFile() {
-    return file;
+  public String getNfiles() {
+    return nfiles.get();
   }
-  public void setFile(String fName) {
-    file = fName;
+  public void setNfiles(String fName) {
+    nfiles.set(fName);
   }
 
   public String getDate() {
@@ -54,17 +54,11 @@ public class ReportRow {
       date.set(fName);
     }
 
-    public String getNfiles() {
-      return nfiles.get();
-    }
-    public void setNfiles(String fName) {
-      nfiles.set(fName);
-    }
 
-    public String getResult() {
-      return result.get();
-    }
-    public void setResult(String fName) {
+  public String getResult() {
+    return result.get();
+  }
+  public void setResult(String fName) {
       result.set(fName);
     }
 
@@ -103,11 +97,14 @@ public class ReportRow {
     score.set(fName);
   }
 
-  public ObservableList<String> getFormats() {
+  public ObservableMap<String, String> getFormats() {
     return formats.get();
   }
-  public void setFormats(ObservableList<String> formats) {
-    this.formats.set(formats);
+  public void setFormats(ObservableMap<String, String> files) {
+    this.formats.set(files);
+  }
+  public void addFormat(String format, String filepath) {
+    this.formats.put(format, filepath);
   }
 
   private static int countFiles(File folder, String extension) {
@@ -131,7 +128,7 @@ public class ReportRow {
     }
   }
 
-  public static ReportRow createRowFromXml(String reportDay, File file, ObservableList<String> formats) {
+  public static ReportRow createRowFromXml(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     File parent = new File(file.getParent());
     int n = countFiles(parent, ".xml") - 1;
@@ -166,11 +163,11 @@ public class ReportRow {
       score = passed * 100 / n;
     }
 
-    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%", file.getPath(), formats);
+    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
   }
 
-  public static ReportRow createRowFromHtml(String reportDay, File file, ObservableList<String> formats) {
+  public static ReportRow createRowFromHtml(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     File parent = new File(file.getParent() + "/html");
     int n = countFiles(parent, ".html");
@@ -232,17 +229,17 @@ public class ReportRow {
       }
     }
 
-    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%", file.getPath(), formats);
+    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
   }
 
-  public static ReportRow createRowFromJson(String reportDay, File file, ObservableList<String> formats) {
+  public static ReportRow createRowFromJson(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     File parent = new File(file.getParent());
     int n = countFiles(parent, ".json") - 1;
     int passed = 0, errors = 0, warnings = 0, score = 0;
 
-    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%", file.getPath(), formats);
+    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
   }
 }

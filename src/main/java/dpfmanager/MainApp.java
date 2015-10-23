@@ -47,6 +47,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -820,7 +821,7 @@ public class MainApp extends Application {
       colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
       TableColumn colN = new TableColumn("Files Processed");
-      colN.setMinWidth(100);
+      colN.setMinWidth(80);
       colN.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("nfiles")
       );
@@ -838,33 +839,33 @@ public class MainApp extends Application {
       );
 
       TableColumn colErrors = new TableColumn("Errors");
-        colErrors.setMinWidth(75);
+        colErrors.setMinWidth(60);
       colErrors.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("errors")
       );
 
       TableColumn colWarnings = new TableColumn("Warnings");
-        colWarnings.setMinWidth(85);
+        colWarnings.setMinWidth(60);
       colWarnings.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("warnings")
       );
 
       TableColumn colPassed = new TableColumn("Passed");
-        colPassed.setMinWidth(75);
+        colPassed.setMinWidth(60);
       colPassed.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("passed")
       );
 
       TableColumn<ReportRow, String> colScore = new TableColumn("Score");
-      colScore.setMinWidth(30);
+      colScore.setMinWidth(80);
       colScore.setCellValueFactory(
           new PropertyValueFactory("score")
       );
 
       TableColumn colFormats = new TableColumn("Formats");
-      colFormats.setMinWidth(75);
+      colFormats.setMinWidth(95);
       colFormats.setCellValueFactory(
-          new PropertyValueFactory<ReportRow, ObservableList<String>>("formats")
+          new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
       );
 
       tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore, colFormats);
@@ -975,12 +976,12 @@ public class MainApp extends Application {
   }
 
   private void addFormatIcons(TableColumn colFormats) {
-    colFormats.setCellFactory(new Callback<TableColumn<ReportRow,ObservableList<String>>,TableCell<ReportRow,ObservableList<String>>>(){
+    colFormats.setCellFactory(new Callback<TableColumn<ReportRow,ObservableMap<String, String>>,TableCell<ReportRow,ObservableMap<String, String>>>(){
       @Override
-      public TableCell<ReportRow, ObservableList<String>> call(TableColumn<ReportRow, ObservableList<String>> param) {
-        TableCell<ReportRow, ObservableList<String>> cell = new TableCell<ReportRow, ObservableList<String>>(){
+      public TableCell<ReportRow, ObservableMap<String, String>> call(TableColumn<ReportRow, ObservableMap<String, String>> param) {
+        TableCell<ReportRow, ObservableMap<String, String>> cell = new TableCell<ReportRow, ObservableMap<String, String>>(){
           @Override
-          public void updateItem(ObservableList<String> item, boolean empty) {
+          public void updateItem(ObservableMap<String, String> item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty && item != null) {
 
@@ -988,23 +989,18 @@ public class MainApp extends Application {
               box.setSpacing(3);
               box.setAlignment(Pos.CENTER_LEFT);
 
-              for (String i: item) {
+              for (String i: item.keySet()) {
                 ImageView icon = new ImageView();
                 icon.setFitHeight(20);
                 icon.setFitWidth(20);
                 icon.setImage(new Image("images/format_" + i + ".png"));
-//                icon.setImage(new Image("images/format_json.png"));
 
                 icon.setOnMousePressed(new EventHandler<MouseEvent>() {
                   @Override
                   public void handle(MouseEvent event) {
                     if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
-//                      ReportRow row = tabReports.getSelectionModel().getSelectedItem();
-//                      if (row.getFile().toLowerCase().endsWith(".html")) {
-//                        ShowReport(row.getFile());
-//                      }
-
-                      System.out.println(i);
+                      System.out.println("Opening file " + item.get(i));
+                      ShowReport(item.get(i));
                     }
                   }
                 });
@@ -1242,40 +1238,44 @@ public class MainApp extends Application {
           }
         });
 
+        String[] available_formats = {"html", "xml", "json", "pdf"};
+
         for (String reportDir : directories2) {
-
-          String[] available_formats = {"html", "xml", "json", "pdf"};
-          ObservableList<String> format_list = FXCollections.observableArrayList();
-
-          for(String format: available_formats) {
-            File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
-            if(report.exists()) {
-              format_list.add(format);
-            }
-          }
-
+          ReportRow rr = null;
           File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
           if (reportHtml.exists()) {
-            ReportRow rr = ReportRow.createRowFromHtml(reportDay, reportHtml, format_list);
-            data.add(rr);
+            rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
           } else {
             File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
             if (report.exists()) {
-              ReportRow rr = ReportRow.createRowFromXml(reportDay, report, format_list);
-              data.add(rr);
+              rr = ReportRow.createRowFromXml(reportDay, report);
             }  else {
               File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
               if (reportJson.exists()) {
-                ReportRow rr = ReportRow.createRowFromJson(reportDay, reportJson, format_list);
-                data.add(rr);
+                rr = ReportRow.createRowFromJson(reportDay, reportJson);
               }  else {
                 File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.pdf");
                 if (reportPdf.exists()) {
-                  ReportRow rr = ReportRow.createRowFromJson(reportDay, reportPdf, format_list);
-                  data.add(rr);
+                  rr = ReportRow.createRowFromJson(reportDay, reportPdf);
                 }
               }
             }
+          }
+
+          for(String format: available_formats) {
+            File report;
+            if(format == "json" || format == "xml") {
+              report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
+            } else {
+              report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
+            }
+
+            if(report.exists()) {
+              rr.addFormat(format, report.getPath());
+            }
+          }
+          if(rr != null) {
+            data.add(rr);
           }
         }
       }
