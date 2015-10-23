@@ -6,6 +6,6 @@ reports/
 .classpath
 .settings/
 easyinnova/
-*.cfg
-!src/main/resources/*.cfg
-!config.cfg
+*.dpf
+!src/main/resources/*.dpf
+!config.dpf

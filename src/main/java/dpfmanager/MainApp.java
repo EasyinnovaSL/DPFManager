@@ -295,7 +295,7 @@ public class MainApp extends Application {
     File folder = new File(".");
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
-        if (fileEntry.getName().toLowerCase().endsWith(".cfg")) {
+        if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
           RadioButton radio = new RadioButton();
           radio.setText(fileEntry.getName());
           radio.setToggleGroup(group);
@@ -785,7 +785,7 @@ public class MainApp extends Application {
   protected void saveConfig(ActionEvent event) throws Exception {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setInitialDirectory(new File("."));
-    fileChooser.setInitialFileName("config.cfg");
+    fileChooser.setInitialFileName("config.dpf");
     fileChooser.setTitle("Save Config");
     File file = fileChooser.showSaveDialog(thestage);
     if (file != null) {
@@ -1220,7 +1220,7 @@ public class MainApp extends Application {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open Config");
     fileChooser.setInitialDirectory(new File("."));
-    fileChooser.setInitialFileName("config.cfg");
+    fileChooser.setInitialFileName("config.dpf");
     File file = fileChooser.showOpenDialog(thestage);
     try {
       if (file != null) {
