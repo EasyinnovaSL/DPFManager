@@ -742,6 +742,10 @@ public class MainApp extends Application {
   @FXML
   protected void gotoConfig6(ActionEvent event) throws Exception {
     Fixes fixes = config.getFixes();
+    if (chkAutoFixLE.isSelected())
+      fixes.addFixFromTxt("ByteOrder,LittleEndian");
+    if (chkAutoFixBE.isSelected())
+      fixes.addFixFromTxt("ByteOrder,BigEndian");
     Scene scene = thestage.getScene();
     fixes.Read(scene);
     LoadSceneXml("/fxml/config6.fxml");
