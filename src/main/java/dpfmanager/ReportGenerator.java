@@ -33,6 +33,7 @@ package dpfmanager;
 
 import static java.io.File.separator;
 
+import dpfmanager.shell.modules.autofixes.clearPrivateData;
 import dpfmanager.shell.modules.classes.Fix;
 import dpfmanager.shell.modules.classes.Fixes;
 import dpfmanager.shell.modules.classes.Rules;
@@ -509,6 +510,11 @@ public class ReportGenerator {
             } else if (fix.getValue().equals("BigEndian")) {
               byteOrder = ByteOrder.BIG_ENDIAN;
             }
+          } else if (fix.getTag().equals("PrivateData")) {
+            if (fix.getValue().equals("Clear")) {
+              clearPrivateData cpd = new clearPrivateData();
+              cpd.run(td);
+            }
           } else {
             if (fix.getOperator().equals("Add Tag")) {
               td.addTag(fix.getTag(), fix.getValue());
@@ -562,7 +568,7 @@ public class ReportGenerator {
 
         new File(nameFixedTif).delete();
       } catch (Exception ex) {
-
+        System.out.println("Error creating report of fixed image");
       }
     }
   }

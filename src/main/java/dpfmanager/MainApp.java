@@ -121,7 +121,9 @@ public class MainApp extends Application {
   @FXML private TextField txtFile;
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
   @FXML private Line line;
-  @FXML private CheckBox chkFeedback, chkSubmit, chkAutoFixLE, chkAutoFixBE;
+  @FXML private CheckBox chkFeedback, chkSubmit;
+  @FXML private CheckBox chkAutoFixLE, chkAutoFixBE;
+  @FXML private CheckBox chkAutoFixPersonal;
   @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
   @FXML private TextArea txtWhy;
@@ -629,50 +631,65 @@ public class MainApp extends Application {
         //browser.setMaxWidth(width);
         browser.setMaxHeight(h);
         final WebEngine webEngine = browser.getEngine();
-        webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
+        if (!new File(System.getProperty("user.dir") + "/" + filename).exists()) {
+          String message = "Report file '" + System.getProperty("user.dir") + "/" + filename + "' does not exist";
+          System.out.println(message);
+          try {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error occured");
+            alert.setContentText(message);
+            alert.showAndWait();
+            ShowMain();
+          } catch (Exception ex) {
 
-        splitPa.getItems().addAll(topImg);
-        splitPa.getItems().addAll(browser);
-        splitPa.setDividerPosition(0, 0.5f);
-        root.getChildren().addAll(splitPa);
-        sceneReport.setRoot(root);
-
-        thestage.setScene(sceneReport);
-
-        //Set invisible the divisor line
-        splitPa.lookupAll(".split-pane-divider").stream()
-            .forEach(
-                div -> div.setStyle("-fx-padding: 0;\n" +
-                    "    -fx-background-color: transparent;\n" +
-                    "    -fx-background-insets: 0;\n" +
-                    "    -fx-shape: \" \";"));
-        splitPa.lookupAll(".split-pane-divider").stream()
-            .forEach(
-                div -> div.setMouseTransparent(true));
-
-        thestage.setMaxHeight(Double.MAX_VALUE);
-        thestage.setMinHeight(height);
-        thestage.setMaxWidth(Double.MAX_VALUE);
-        thestage.setResizable(true);
-        thestage.setMinWidth(width);
-
-        thestage.widthProperty().addListener(new ChangeListener<Number>() {
-          @Override
-          public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-            if (newSceneWidth.doubleValue() < 989) {
-              report.setLayoutX(470.0);
-              checker.setLayoutX(290.0);
-              about.setLayoutX(560.0);
-            } else {
-              double dif = (newSceneWidth.doubleValue() - width) / 2;
-              report.setLayoutX(463.0 + dif);
-              checker.setLayoutX(283.0 + dif);
-              about.setLayoutX(560.0 + dif);
-            }
           }
-        });
+        } else {
+          webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
 
-        thestage.sizeToScene();
+          splitPa.getItems().addAll(topImg);
+          splitPa.getItems().addAll(browser);
+          splitPa.setDividerPosition(0, 0.5f);
+          root.getChildren().addAll(splitPa);
+          sceneReport.setRoot(root);
+
+          thestage.setScene(sceneReport);
+
+          //Set invisible the divisor line
+          splitPa.lookupAll(".split-pane-divider").stream()
+              .forEach(
+                  div -> div.setStyle("-fx-padding: 0;\n" +
+                      "    -fx-background-color: transparent;\n" +
+                      "    -fx-background-insets: 0;\n" +
+                      "    -fx-shape: \" \";"));
+          splitPa.lookupAll(".split-pane-divider").stream()
+              .forEach(
+                  div -> div.setMouseTransparent(true));
+
+          thestage.setMaxHeight(Double.MAX_VALUE);
+          thestage.setMinHeight(height);
+          thestage.setMaxWidth(Double.MAX_VALUE);
+          thestage.setResizable(true);
+          thestage.setMinWidth(width);
+
+          thestage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+              if (newSceneWidth.doubleValue() < 989) {
+                report.setLayoutX(470.0);
+                checker.setLayoutX(290.0);
+                about.setLayoutX(560.0);
+              } else {
+                double dif = (newSceneWidth.doubleValue() - width) / 2;
+                report.setLayoutX(463.0 + dif);
+                checker.setLayoutX(283.0 + dif);
+                about.setLayoutX(560.0 + dif);
+              }
+            }
+          });
+
+          thestage.sizeToScene();
+        }
       }
     });
   }
@@ -742,10 +759,12 @@ public class MainApp extends Application {
   @FXML
   protected void gotoConfig6(ActionEvent event) throws Exception {
     Fixes fixes = config.getFixes();
-    if (chkAutoFixLE.isSelected())
+    if (chkAutoFixLE != null && chkAutoFixLE.isSelected())
       fixes.addFixFromTxt("ByteOrder,LittleEndian");
-    if (chkAutoFixBE.isSelected())
+    if (chkAutoFixBE != null && chkAutoFixBE.isSelected())
       fixes.addFixFromTxt("ByteOrder,BigEndian");
+    if (chkAutoFixPersonal != null && chkAutoFixPersonal.isSelected())
+      fixes.addFixFromTxt("PrivateData,Clear");
     Scene scene = thestage.getScene();
     fixes.Read(scene);
     LoadSceneXml("/fxml/config6.fxml");
