@@ -133,9 +133,18 @@ public class ProcessInput {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-    String htmlFileStr = internalReportFolder + "report.html";
-    return htmlFileStr;
+    String format_type;
+    if (html){
+      format_type = ".html";
+    }else if (xml) {
+      format_type = ".xml";
+    }else if (json){
+      format_type = ".json";
+    }else{
+      format_type = ".pdf";
+    }
+    String FileStr = internalReportFolder + "report" + format_type;
+    return FileStr;
   }
 
   /**

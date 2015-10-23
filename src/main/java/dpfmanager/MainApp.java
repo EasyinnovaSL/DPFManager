@@ -118,6 +118,7 @@ public class MainApp extends Application {
   private static Configuration config;
   private static String dropped;
   int uniqueId = 0;
+  private final ToggleGroup group = new ToggleGroup();
 
   @FXML private TextField txtFile;
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
@@ -292,7 +293,6 @@ public class MainApp extends Application {
     vBox.setSpacing(3);
     vBox.setPadding(new Insets(5));
     File folder = new File(".");
-    final ToggleGroup group = new ToggleGroup();
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".cfg")) {
@@ -1227,14 +1227,6 @@ public class MainApp extends Application {
         Scene scene = thestage.getScene();
         AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
         VBox vbox = (VBox) pan.getChildren().get(0);
-        final ToggleGroup group;
-        if (!vbox.getChildren().isEmpty()) {
-          RadioButton radio_old = (RadioButton) vbox.getChildren().get(0);
-          group = radio_old.getToggleGroup();
-        }
-        else{
-          group = new ToggleGroup();
-        }
         RadioButton radio = new RadioButton();
         radio.setText(file.getAbsolutePath());
         radio.setToggleGroup(group);
