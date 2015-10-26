@@ -409,6 +409,7 @@ public class ReportPDF extends ReportGeneric {
 
       // Pie chart
       pos_y += 10;
+      if (pos_y > 565) pos_y = 565;
       pos_x += 200;
       int graph_size = 40;
       BufferedImage image = new BufferedImage(graph_size*10, graph_size*10, BufferedImage.TYPE_INT_ARGB);
@@ -427,7 +428,7 @@ public class ReportPDF extends ReportGeneric {
       pos_y -= 10;
       writeText(contentStream, gr.getReportsKo() + " failed", pos_x + 50, pos_y, font, font_size, Color.red);
       pos_y -= 10;
-      writeText(contentStream, "Global score " + doub + "%", pos_x + 50, pos_y, font, font_size, Color.black);
+      writeText(contentStream, "Global score " + (doub*100) + "%", pos_x + 50, pos_y, font, font_size, Color.black);
 
       // Individual Tiffs
       pos_x = 100;

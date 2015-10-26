@@ -598,7 +598,7 @@ public class MainApp extends Application {
       @Override
       public void handle(ActionEvent event) {
         try {
-          gotoReport(event);
+          //gotoReport(event);
           gotoMain(event);
         } catch (Exception e) {
           e.printStackTrace();
@@ -1575,29 +1575,45 @@ public class MainApp extends Application {
             return new File(current, name).isDirectory();
           }
         });
+
+        String[] available_formats = {"html", "xml", "json", "pdf"};
+
         for (String reportDir : directories2) {
+          ReportRow rr = null;
           File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
           if (reportHtml.exists()) {
-            ReportRow rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
-            data.add(rr);
+            rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
           } else {
             File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
             if (report.exists()) {
-              ReportRow rr = ReportRow.createRowFromXml(reportDay, report);
-              data.add(rr);
-            }  else {
+              rr = ReportRow.createRowFromXml(reportDay, report);
+            } else {
               File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
               if (reportJson.exists()) {
-                ReportRow rr = ReportRow.createRowFromJson(reportDay, reportJson);
-                data.add(rr);
-              }  else {
-                File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.pdf");
+                rr = ReportRow.createRowFromJson(reportDay, reportJson);
+              } else {
+                File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
                 if (reportPdf.exists()) {
-                  ReportRow rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
-                  data.add(rr);
+                  rr = ReportRow.createRowFromJson(reportDay, reportPdf);
                 }
               }
             }
+          }
+
+          for (String format : available_formats) {
+            File report;
+            if (format == "json" || format == "xml") {
+              report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
+            } else {
+              report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
+            }
+
+            if (report.exists()) {
+              rr.addFormat(format, report.getPath());
+            }
+          }
+          if (rr != null) {
+            data.add(rr);
           }
         }
       }
