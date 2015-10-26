@@ -56,19 +56,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -1259,9 +1247,11 @@ public class MainApp extends Application {
         Scene scene = thestage.getScene();
         AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
         VBox vbox = (VBox) pan.getChildren().get(0);
+        RadioButton radio_vbox = (RadioButton) vbox.getChildren().get(0);
+        ToggleGroup tg = radio_vbox.getToggleGroup();
         RadioButton radio = new RadioButton();
         radio.setText(file.getAbsolutePath());
-        radio.setToggleGroup(group);
+        radio.setToggleGroup(tg);
         vbox.getChildren().add(radio);
       }
     } catch (Exception ex) {
@@ -1269,6 +1259,41 @@ public class MainApp extends Application {
       alert.setTitle("Error");
       alert.setHeaderText("An error ocurred");
       alert.setContentText("There was an error while importing the configuration file");
+      alert.showAndWait();
+    }
+  }
+
+  @FXML
+  protected void deleteConfig(ActionEvent event) throws Exception{
+    Scene scene = thestage.getScene();
+    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
+    boolean oneChecked = false;
+    for (Node node : ap3.getChildren()) {
+      if (node instanceof VBox) {
+        VBox vBox1 = (VBox) node;
+        for (Node nodeIn : vBox1.getChildren()) {
+          if (nodeIn instanceof RadioButton) {
+            RadioButton radio = (RadioButton) nodeIn;
+            if (radio.isSelected()) {
+              File file = new File(radio.getText());
+              vBox1.getChildren().remove(nodeIn);
+              if (!file.delete()){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("There was an error deleting the configuration file");
+                alert.showAndWait();
+              }
+              oneChecked = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (!oneChecked) {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("Alert");
+      alert.setHeaderText("Please select a configuration file");
       alert.showAndWait();
     }
   }
