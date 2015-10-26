@@ -39,6 +39,7 @@ import dpfmanager.shell.modules.classes.NumberTextField;
 import dpfmanager.shell.modules.classes.ProcessInput;
 import dpfmanager.shell.modules.classes.ReportRow;
 import dpfmanager.shell.modules.classes.Rules;
+import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.Gui;
 import javafx.application.Application;
@@ -839,16 +840,8 @@ public class MainApp extends Application {
     if (chkPdf.isSelected()) config.getFormats().add("PDF");
     LoadSceneXml("/fxml/config4.fxml");
 
-    List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
-    classLoadersList.add(ClasspathHelper.contextClassLoader());
-    classLoadersList.add(ClasspathHelper.staticClassLoader());
+    Set<Class<?>> classes = TiffConformanceChecker.getAutofixes();
 
-    Reflections reflections = new Reflections(new ConfigurationBuilder()
-        .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
-        .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-        .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("dpfmanager.shell.modules.autofixes"))));
-
-    Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
     int ypos = 320;
     int xpos = 252;
     int dify = 50;
@@ -1088,7 +1081,7 @@ public class MainApp extends Application {
             super.updateItem(item, empty);
             if (!empty && item != null) {
 
-              Double score = Double.parseDouble(item.substring(0, item.indexOf('%')));
+              Double score = item.indexOf("&") < 0 ? 0 : Double.parseDouble(item.substring(0, item.indexOf('%')));
 
               ObservableList<PieChart.Data> pieChartData =
                   FXCollections.observableArrayList(
@@ -1594,7 +1587,7 @@ public class MainApp extends Application {
               } else {
                 File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
                 if (reportPdf.exists()) {
-                  rr = ReportRow.createRowFromJson(reportDay, reportPdf);
+                  rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
                 }
               }
             }

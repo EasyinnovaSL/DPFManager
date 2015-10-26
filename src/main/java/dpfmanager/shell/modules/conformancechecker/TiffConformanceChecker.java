@@ -31,10 +31,19 @@
 
 package dpfmanager.shell.modules.conformancechecker;
 
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -161,6 +170,24 @@ public class TiffConformanceChecker {
     Element element = doc.createElement(name);
     element.setTextContent(content);
     conformenceCheckerElement.appendChild(element);
+  }
+
+  public static Set<Class<?>> getAutofixes() {
+    // Get class loader
+    List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+    classLoadersList.add(ClasspathHelper.contextClassLoader());
+    classLoadersList.add(ClasspathHelper.staticClassLoader());
+
+    // Obtain all objects from the package autofixes
+    Reflections reflections = new Reflections(new ConfigurationBuilder()
+        .setScanners(new SubTypesScanner(false), new ResourcesScanner())
+        .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+        .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("dpfmanager.shell.modules.autofixes"))));
+
+    // Get classes
+    Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
+
+    return classes;
   }
 }
 
