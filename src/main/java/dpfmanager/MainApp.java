@@ -31,7 +31,13 @@
 
 package dpfmanager;
 
-import dpfmanager.shell.modules.classes.*;
+import dpfmanager.shell.modules.classes.Configuration;
+import dpfmanager.shell.modules.classes.Field;
+import dpfmanager.shell.modules.classes.Fixes;
+import dpfmanager.shell.modules.classes.NumberTextField;
+import dpfmanager.shell.modules.classes.ProcessInput;
+import dpfmanager.shell.modules.classes.ReportRow;
+import dpfmanager.shell.modules.classes.Rules;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.Gui;
 import javafx.application.Application;
@@ -56,7 +62,18 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
