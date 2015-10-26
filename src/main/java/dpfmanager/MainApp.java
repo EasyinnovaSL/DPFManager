@@ -31,12 +31,7 @@
 
 package dpfmanager;
 
-import dpfmanager.shell.modules.classes.Configuration;
-import dpfmanager.shell.modules.classes.Field;
-import dpfmanager.shell.modules.classes.Fixes;
-import dpfmanager.shell.modules.classes.ProcessInput;
-import dpfmanager.shell.modules.classes.ReportRow;
-import dpfmanager.shell.modules.classes.Rules;
+import dpfmanager.shell.modules.classes.*;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.Gui;
 import javafx.application.Application;
@@ -118,6 +113,7 @@ public class MainApp extends Application {
   private static Configuration config;
   private static String dropped;
   int uniqueId = 0;
+  private double defaultLineYlayout = 564.0;
   private final ToggleGroup group = new ToggleGroup();
 
   @FXML private TextField txtFile;
@@ -1021,7 +1017,7 @@ public class MainApp extends Application {
                   }
                 }
 
-                TextField value = new TextField();
+                TextField value = new NumberTextField();
                 value.getStyleClass().add("txtRule");
                 hBox1.getChildren().add(comboOp);
                 hBox1.getChildren().add(value);
@@ -1106,12 +1102,14 @@ public class MainApp extends Application {
     );
     remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent e) {
-        deleteRuleFix(remove.getId());
+      @Override
+      public void handle(ActionEvent e) {
+        deleteRule(remove.getId());
       }
     });
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
-      @Override public void changed(ObservableValue ov, String t, String item) {
+      @Override
+      public void changed(ObservableValue ov, String t, String item) {
         addNumericOperator(item);
       }
     });
@@ -1134,7 +1132,7 @@ public class MainApp extends Application {
     }
   }
 
-  void deleteRuleFix(String id) {
+  void deleteRule(String id) {
     Scene scene = thestage.getScene();
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ArrayList<Node> lRemove = new ArrayList<Node>();
@@ -1148,12 +1146,17 @@ public class MainApp extends Application {
             hBox1.setLayoutY(hBox1.getLayoutY() - 50);
           }
         }
-      } else if (node instanceof Button) {
-        node.setLayoutY(node.getLayoutY() - 50);
       }
     }
     for (Node node : lRemove) {
       ap2.getChildren().remove(node);
+    }
+    if (addRule.getLayoutY()>339) {
+      addRule.setLayoutY(addRule.getLayoutY() - 50);
+      if (line.getLayoutY()>defaultLineYlayout){
+        line.setLayoutY(line.getLayoutY() - 50);
+        continueButton.setLayoutY(continueButton.getLayoutY() - 50);
+      }
     }
   }
 
@@ -1191,8 +1194,9 @@ public class MainApp extends Application {
     );
     remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent e) {
-        deleteRuleFix(remove.getId());
+      @Override
+      public void handle(ActionEvent e) {
+        deleteFix(remove.getId());
       }
     });
 
@@ -1212,6 +1216,34 @@ public class MainApp extends Application {
     if (addFix.getLayoutY() + addFix.getHeight() > line.getLayoutY()) {
       line.setLayoutY(line.getLayoutY() + dif);
       continueButton.setLayoutY(continueButton.getLayoutY() + dif);
+    }
+  }
+
+  void deleteFix(String id) {
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    ArrayList<Node> lRemove = new ArrayList<Node>();
+    for (Node node : ap2.getChildren()) {
+      if (node instanceof HBox) {
+        HBox hBox1 = (HBox) node;
+        if (hBox1.getId().equals(id)) {
+          lRemove.add(node);
+        } else {
+          if (Integer.parseInt(hBox1.getId().substring(2)) > Integer.parseInt(id.substring(2))) {
+            hBox1.setLayoutY(hBox1.getLayoutY() - 50);
+          }
+        }
+      }
+    }
+    for (Node node : lRemove) {
+      ap2.getChildren().remove(node);
+    }
+    if (addFix.getLayoutY()>339) {
+      addFix.setLayoutY(addFix.getLayoutY() - 50);
+      if (line.getLayoutY()>defaultLineYlayout){
+        line.setLayoutY(line.getLayoutY() - 50);
+        continueButton.setLayoutY(continueButton.getLayoutY() - 50);
+      }
     }
   }
 

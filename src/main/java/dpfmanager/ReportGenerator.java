@@ -526,8 +526,8 @@ public class ReportGenerator {
 
         ti = new TiffInputStream(new File(nameOriginalTif));
         tw = new TiffWriter(ti);
-        if (byteOrder != null)
-          tw.setByteOrder(byteOrder);
+        //if (byteOrder != null)
+         // tw.setByteOrder(byteOrder);
         tw.SetModel(td);
         idx = 0;
         while (new File("out" + idx + ".tif").exists()) idx++;
