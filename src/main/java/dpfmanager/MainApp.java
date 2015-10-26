@@ -505,11 +505,27 @@ public class MainApp extends Application {
           } else if (formats.contains("JSON")) {
             ShowReport(filename, "json");
           } else if (formats.contains("PDF")) {
-            try {
-              Desktop.getDesktop().open(new File(filename));
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
+            new Thread(new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  Desktop.getDesktop().open(new File(filename));
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+              }
+            }).start();
+
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  gotoMain(event);
+                } catch (Exception e) {
+                  e.printStackTrace();
+                }
+              }
+            });
           }
 
         } catch (Exception ex) {
@@ -1326,7 +1342,7 @@ public class MainApp extends Application {
               if (reportJson.exists()) {
                 rr = ReportRow.createRowFromJson(reportDay, reportJson);
               } else {
-                File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.pdf");
+                File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
                 if (reportPdf.exists()) {
                   rr = ReportRow.createRowFromJson(reportDay, reportPdf);
                 }

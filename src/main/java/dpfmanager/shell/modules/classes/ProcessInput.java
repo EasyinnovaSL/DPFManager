@@ -15,6 +15,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -134,8 +135,15 @@ public class ProcessInput {
       e.printStackTrace();
     }
 
-    String htmlFileStr = internalReportFolder + "report.html";
-    return htmlFileStr;
+    if (html) {
+      return internalReportFolder + "report.html";
+    } else if (xml) {
+      return internalReportFolder + "summary.xml";
+    } else if (json) {
+      return internalReportFolder + "summary.json";
+    } else {
+      return internalReportFolder + "report.pdf";
+    }
   }
 
   /**
