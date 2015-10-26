@@ -31,6 +31,7 @@
 
 package dpfmanager;
 
+import dpfmanager.shell.modules.autofixes.autofix;
 import dpfmanager.shell.modules.classes.Configuration;
 import dpfmanager.shell.modules.classes.Field;
 import dpfmanager.shell.modules.classes.Fixes;
@@ -86,6 +87,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
@@ -94,6 +96,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +112,9 @@ import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.prefs.Preferences;
 
 /**
@@ -756,19 +766,65 @@ public class MainApp extends Application {
     if (chkJson.isSelected()) config.getFormats().add("JSON");
     if (chkPdf.isSelected()) config.getFormats().add("PDF");
     LoadSceneXml("/fxml/config4.fxml");
+
+    List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+    classLoadersList.add(ClasspathHelper.contextClassLoader());
+    classLoadersList.add(ClasspathHelper.staticClassLoader());
+
+    Reflections reflections = new Reflections(new ConfigurationBuilder()
+        .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
+        .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+        .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("dpfmanager.shell.modules.autofixes"))));
+
+    Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
+    int ypos = 320;
+    int xpos = 252;
+    int dify = 50;
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    boolean first = true;
+    for (Class<?> cl : classes) {
+      if (cl.toString().startsWith("class ")) {
+        String className = cl.toString().substring(cl.toString().lastIndexOf(".") + 1);
+        if (className.equals("changeEndianess")) continue;
+        autofix fix = (autofix)Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
+
+        CheckBox check = new CheckBox();
+        check.setText(fix.getDescription());
+        check.setId(className);
+        check.setLayoutY(ypos);
+        check.setLayoutX(xpos);
+        check.getStyleClass().add("checkreport");
+        check.setTextFill(Paint.valueOf("white"));
+        ap2.getChildren().add(check);
+
+        ypos += dify;
+        if (!first) {
+          Button but = (Button) scene.lookup("#addFix");
+          but.setLayoutY(but.getLayoutY() + dify);
+          Line lin = (Line) scene.lookup("#line");
+          lin.setLayoutY(lin.getLayoutY() + dify);
+        } else {
+          first = false;
+        }
+      }
+    }
   }
 
   @FXML
   protected void gotoConfig6(ActionEvent event) throws Exception {
     Fixes fixes = config.getFixes();
-    if (chkAutoFixLE != null && chkAutoFixLE.isSelected())
+    /*if (chkAutoFixLE != null && chkAutoFixLE.isSelected())
       fixes.addFixFromTxt("ByteOrder,LittleEndian");
     if (chkAutoFixBE != null && chkAutoFixBE.isSelected())
       fixes.addFixFromTxt("ByteOrder,BigEndian");
     if (chkAutoFixPersonal != null && chkAutoFixPersonal.isSelected())
-      fixes.addFixFromTxt("PrivateData,Clear");
+      fixes.addFixFromTxt("PrivateData,Clear");*/
+
     Scene scene = thestage.getScene();
-    fixes.Read(scene);
+    fixes.ReadFixes(scene);
+    fixes.ReadAutofixes(scene);
+
     LoadSceneXml("/fxml/config6.fxml");
     setLabel("labIsos", config.getTxtIsos());
     setLabel("labReports", config.getTxtFormats());

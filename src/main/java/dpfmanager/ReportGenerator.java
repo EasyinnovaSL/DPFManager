@@ -33,6 +33,7 @@ package dpfmanager;
 
 import static java.io.File.separator;
 
+import dpfmanager.shell.modules.autofixes.autofix;
 import dpfmanager.shell.modules.autofixes.clearPrivateData;
 import dpfmanager.shell.modules.classes.Fix;
 import dpfmanager.shell.modules.classes.Fixes;
@@ -504,23 +505,16 @@ public class ReportGenerator {
 
         ByteOrder byteOrder = null;
         for (Fix fix : fixes.getFixes()) {
-          if (fix.getTag().equals("ByteOrder")) {
-            if (fix.getValue().equals("LittleEndian")) {
-              byteOrder = ByteOrder.LITTLE_ENDIAN;
-            } else if (fix.getValue().equals("BigEndian")) {
-              byteOrder = ByteOrder.BIG_ENDIAN;
-            }
-          } else if (fix.getTag().equals("PrivateData")) {
-            if (fix.getValue().equals("Clear")) {
-              clearPrivateData cpd = new clearPrivateData();
-              cpd.run(td);
-            }
-          } else {
+          if (fix.getOperator() != null) {
             if (fix.getOperator().equals("Add Tag")) {
               td.addTag(fix.getTag(), fix.getValue());
             } else if (fix.getOperator().equals("Remove Tag")) {
               td.removeTag(fix.getTag());
             }
+          } else {
+            String className = fix.getTag();
+            autofix autofix = (autofix)Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
+            autofix.run(td);
           }
         }
 
