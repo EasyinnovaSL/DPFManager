@@ -18,13 +18,13 @@
  * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
  * </p>
  * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
+ * NB: for the (c) statement, include Easy Innova SL or other company/Person contributing the code.
  * </p>
  * <p>
- * © 2015 Easy Innova, SL
+ * (c) 2015 Easy Innova, SL
  * </p>
  *
- * @author Víctor Muñoz Solà
+ * @author Victor Munoz Sola
  * @version 1.0
  * @since 16/10/2015
  */
