@@ -1056,6 +1056,7 @@ public class MainApp extends Application {
       Scene scene = thestage.getScene();
       AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
       for (Node node : ap2.getChildren()) {
+        Boolean delete_combobox = true;
         if (node instanceof HBox) {
           HBox hBox1 = (HBox) node;
           for (Node nodeIn : hBox1.getChildren()) {
@@ -1067,23 +1068,29 @@ public class MainApp extends Application {
                   comboOp.getItems().add(operator);
                 }
                 Button bRemove = null;
-                while (hBox1.getChildren().size() > 1) {
-                  for (int i=1;i<hBox1.getChildren().size();i++)
-                  {
-                    if (hBox1.getChildren().get(i) instanceof Button)
-                    {
-                      bRemove = (Button)hBox1.getChildren().get(i);
-                    }
-                    hBox1.getChildren().remove(i);
+                if (hBox1.getChildren().get(1) instanceof ComboBox) {
+                  ComboBox bla = (ComboBox) hBox1.getChildren().get(1);
+                  String val = (String) bla.getValue();
+                  if (val!=null){
+                    delete_combobox = false;
                   }
                 }
-
-                TextField value = new NumberTextField();
-                value.getStyleClass().add("txtRule");
-                hBox1.getChildren().add(comboOp);
-                hBox1.getChildren().add(value);
-                hBox1.getChildren().add(bRemove);
-                break;
+                if (delete_combobox) {
+                  while (hBox1.getChildren().size() > 1) {
+                    for (int i = 1; i < hBox1.getChildren().size(); i++) {
+                      if (hBox1.getChildren().get(i) instanceof Button) {
+                        bRemove = (Button) hBox1.getChildren().get(i);
+                      }
+                      hBox1.getChildren().remove(i);
+                    }
+                  }
+                  TextField value = new NumberTextField();
+                  value.getStyleClass().add("txtRule");
+                  hBox1.getChildren().add(comboOp);
+                  hBox1.getChildren().add(value);
+                  hBox1.getChildren().add(bRemove);
+                  break;
+                }
               }
             }
           }
@@ -1094,8 +1101,10 @@ public class MainApp extends Application {
 
   private void addFixValue(String item) {
     Scene scene = thestage.getScene();
+    Boolean delete_combobox;
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     for (Node node : ap2.getChildren()) {
+      delete_combobox = true;
       if (node instanceof HBox) {
         HBox hBox1 = (HBox) node;
         for (Node nodeIn : hBox1.getChildren()) {
@@ -1107,26 +1116,35 @@ public class MainApp extends Application {
                 comboOp.getItems().add(field);
               }
               Button bRemove = null;
-              while (hBox1.getChildren().size() > 1) {
-                for (int i=1;i<hBox1.getChildren().size();i++)
-                {
-                  if (hBox1.getChildren().get(i) instanceof Button)
-                  {
-                    bRemove = (Button)hBox1.getChildren().get(i);
-                  }
-                  hBox1.getChildren().remove(i);
+              if (hBox1.getChildren().get(1) instanceof ComboBox) {
+                ComboBox bla = (ComboBox) hBox1.getChildren().get(1);
+                String val = (String) bla.getValue();
+                if (val!=null){
+                  delete_combobox = false;
                 }
               }
+              if (delete_combobox) {
+                while (hBox1.getChildren().size() > 1) {
+                  for (int i=1;i<hBox1.getChildren().size();i++)
+                  {
+                    if (hBox1.getChildren().get(i) instanceof Button)
+                    {
+                      bRemove = (Button)hBox1.getChildren().get(i);
+                    }
+                    hBox1.getChildren().remove(i);
+                  }
+                }
 
-              hBox1.getChildren().add(comboOp);
-              hBox1.getChildren().add(bRemove);
+                hBox1.getChildren().add(comboOp);
+                hBox1.getChildren().add(bRemove);
 
-              if (item.equals("Add Tag")) {
-                TextField value = new TextField();
-                value.getStyleClass().add("txtFix");
-                hBox1.getChildren().add(value);
+                if (item.equals("Add Tag")) {
+                  TextField value = new TextField();
+                  value.getStyleClass().add("txtFix");
+                  hBox1.getChildren().add(value);
+                }
+                break;
               }
-              break;
             }
           }
         }
@@ -1233,7 +1251,8 @@ public class MainApp extends Application {
       comboBox.getItems().add(fix);
     }
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
-      @Override public void changed(ObservableValue ov, String t, String item) {
+      @Override
+      public void changed(ObservableValue ov, String t, String item) {
         addFixValue(item);
       }
     });
