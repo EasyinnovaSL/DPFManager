@@ -12,6 +12,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.easyinnova:tifflibrary4java:1.2.3" level="project" />
     <orderEntry type="library" name="Maven: com.miglayout:miglayout-javafx:4.2" level="project" />
     <orderEntry type="library" name="Maven: com.miglayout:miglayout-core:4.2" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
