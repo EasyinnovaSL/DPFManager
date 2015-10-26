@@ -34,6 +34,7 @@ package dpfmanager;
 import dpfmanager.shell.modules.classes.Configuration;
 import dpfmanager.shell.modules.classes.Field;
 import dpfmanager.shell.modules.classes.Fixes;
+import dpfmanager.shell.modules.classes.NumberTextField;
 import dpfmanager.shell.modules.classes.ProcessInput;
 import dpfmanager.shell.modules.classes.ReportRow;
 import dpfmanager.shell.modules.classes.Rules;
@@ -63,11 +64,10 @@ import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -118,6 +118,7 @@ public class MainApp extends Application {
   private static Configuration config;
   private static String dropped;
   int uniqueId = 0;
+  private double defaultLineYlayout = 564.0;
   private final ToggleGroup group = new ToggleGroup();
 
   @FXML private TextField txtFile;
@@ -1021,7 +1022,7 @@ public class MainApp extends Application {
                   }
                 }
 
-                TextField value = new TextField();
+                TextField value = new NumberTextField();
                 value.getStyleClass().add("txtRule");
                 hBox1.getChildren().add(comboOp);
                 hBox1.getChildren().add(value);
@@ -1106,12 +1107,14 @@ public class MainApp extends Application {
     );
     remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent e) {
-        deleteRuleFix(remove.getId());
+      @Override
+      public void handle(ActionEvent e) {
+        deleteRule(remove.getId());
       }
     });
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
-      @Override public void changed(ObservableValue ov, String t, String item) {
+      @Override
+      public void changed(ObservableValue ov, String t, String item) {
         addNumericOperator(item);
       }
     });
@@ -1134,7 +1137,7 @@ public class MainApp extends Application {
     }
   }
 
-  void deleteRuleFix(String id) {
+  void deleteRule(String id) {
     Scene scene = thestage.getScene();
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ArrayList<Node> lRemove = new ArrayList<Node>();
@@ -1148,12 +1151,17 @@ public class MainApp extends Application {
             hBox1.setLayoutY(hBox1.getLayoutY() - 50);
           }
         }
-      } else if (node instanceof Button) {
-        node.setLayoutY(node.getLayoutY() - 50);
       }
     }
     for (Node node : lRemove) {
       ap2.getChildren().remove(node);
+    }
+    if (addRule.getLayoutY()>339) {
+      addRule.setLayoutY(addRule.getLayoutY() - 50);
+      if (line.getLayoutY()>defaultLineYlayout){
+        line.setLayoutY(line.getLayoutY() - 50);
+        continueButton.setLayoutY(continueButton.getLayoutY() - 50);
+      }
     }
   }
 
@@ -1191,8 +1199,9 @@ public class MainApp extends Application {
     );
     remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
-      @Override public void handle(ActionEvent e) {
-        deleteRuleFix(remove.getId());
+      @Override
+      public void handle(ActionEvent e) {
+        deleteFix(remove.getId());
       }
     });
 
@@ -1215,6 +1224,34 @@ public class MainApp extends Application {
     }
   }
 
+  void deleteFix(String id) {
+    Scene scene = thestage.getScene();
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    ArrayList<Node> lRemove = new ArrayList<Node>();
+    for (Node node : ap2.getChildren()) {
+      if (node instanceof HBox) {
+        HBox hBox1 = (HBox) node;
+        if (hBox1.getId().equals(id)) {
+          lRemove.add(node);
+        } else {
+          if (Integer.parseInt(hBox1.getId().substring(2)) > Integer.parseInt(id.substring(2))) {
+            hBox1.setLayoutY(hBox1.getLayoutY() - 50);
+          }
+        }
+      }
+    }
+    for (Node node : lRemove) {
+      ap2.getChildren().remove(node);
+    }
+    if (addFix.getLayoutY()>339) {
+      addFix.setLayoutY(addFix.getLayoutY() - 50);
+      if (line.getLayoutY()>defaultLineYlayout){
+        line.setLayoutY(line.getLayoutY() - 50);
+        continueButton.setLayoutY(continueButton.getLayoutY() - 50);
+      }
+    }
+  }
+
   @FXML
   protected void openConfig(ActionEvent event) {
     FileChooser fileChooser = new FileChooser();
@@ -1227,9 +1264,11 @@ public class MainApp extends Application {
         Scene scene = thestage.getScene();
         AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
         VBox vbox = (VBox) pan.getChildren().get(0);
+        RadioButton radio_vbox = (RadioButton) vbox.getChildren().get(0);
+        ToggleGroup tg = radio_vbox.getToggleGroup();
         RadioButton radio = new RadioButton();
         radio.setText(file.getAbsolutePath());
-        radio.setToggleGroup(group);
+        radio.setToggleGroup(tg);
         vbox.getChildren().add(radio);
       }
     } catch (Exception ex) {
@@ -1237,6 +1276,41 @@ public class MainApp extends Application {
       alert.setTitle("Error");
       alert.setHeaderText("An error ocurred");
       alert.setContentText("There was an error while importing the configuration file");
+      alert.showAndWait();
+    }
+  }
+
+  @FXML
+  protected void deleteConfig(ActionEvent event) throws Exception{
+    Scene scene = thestage.getScene();
+    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
+    boolean oneChecked = false;
+    for (Node node : ap3.getChildren()) {
+      if (node instanceof VBox) {
+        VBox vBox1 = (VBox) node;
+        for (Node nodeIn : vBox1.getChildren()) {
+          if (nodeIn instanceof RadioButton) {
+            RadioButton radio = (RadioButton) nodeIn;
+            if (radio.isSelected()) {
+              File file = new File(radio.getText());
+              vBox1.getChildren().remove(nodeIn);
+              if (!file.delete()){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("There was an error deleting the configuration file");
+                alert.showAndWait();
+              }
+              oneChecked = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (!oneChecked) {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("Alert");
+      alert.setHeaderText("Please select a configuration file");
       alert.showAndWait();
     }
   }
