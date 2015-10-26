@@ -49,6 +49,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -76,6 +77,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -102,19 +105,27 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 /**
@@ -163,7 +174,7 @@ public class MainApp extends Application {
   @Override
   public final void start(final Stage stage) throws Exception {
     Parameters params = getParameters();
-    if (params==null || params.getRaw().size() == 0 || (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui"))) {
+    if (params == null || params.getRaw().size() == 0 || (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui"))) {
       thestage = stage;
       LOG.info("Starting JavaFX application");
 
@@ -255,8 +266,8 @@ public class MainApp extends Application {
     thestage.sizeToScene();
     thestage.show();
 
-    ObservableList<Node> nodes=scenemain.getRoot().getChildrenUnmodifiable();
-    SplitPane splitPa1=(SplitPane)nodes.get(0);
+    ObservableList<Node> nodes = scenemain.getRoot().getChildrenUnmodifiable();
+    SplitPane splitPa1 = (SplitPane) nodes.get(0);
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setMouseTransparent(true));
@@ -282,7 +293,7 @@ public class MainApp extends Application {
         if (db.hasFiles()) {
           success = true;
           String filePath = null;
-          for (File file:db.getFiles()) {
+          for (File file : db.getFiles()) {
             filePath = file.getAbsolutePath();
             dropped = filePath;
             Platform.runLater(new Runnable() {
@@ -316,13 +327,13 @@ public class MainApp extends Application {
     }
 
     Scene scene = thestage.getScene();
-    AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
+    AnchorPane pan = (AnchorPane) scene.lookup("#pane1");
     pan.getChildren().add(vBox);
   }
 
   protected void SetFile() {
     Scene scene = thestage.getScene();
-    TextField txtField = (TextField)scene.lookup("#txtBox1");
+    TextField txtField = (TextField) scene.lookup("#txtBox1");
     txtField.setText(dropped);
   }
 
@@ -331,7 +342,7 @@ public class MainApp extends Application {
     try {
       Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
 
-      if (chkFeedback.isSelected()){
+      if (chkFeedback.isSelected()) {
         final String PREF_NAME = "feedback";
         String newValue = "1";
         prefs.put(PREF_NAME, newValue);
@@ -340,7 +351,7 @@ public class MainApp extends Application {
         String newValue = "0";
         prefs.put(PREF_NAME, newValue);
       }
-      if (chkSubmit.isSelected()){
+      if (chkSubmit.isSelected()) {
         boolean ok = true;
         if (txtName.getText().length() == 0) ok = false;
         if (txtSurname.getText().length() == 0) ok = false;
@@ -450,7 +461,7 @@ public class MainApp extends Application {
     }
 
     Scene scene = thestage.getScene();
-    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
+    AnchorPane ap3 = (AnchorPane) scene.lookup("#pane1");
     boolean oneChecked = false;
     for (Node node : ap3.getChildren()) {
       if (node instanceof VBox) {
@@ -505,7 +516,36 @@ public class MainApp extends Application {
 
           String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), formats.contains("PDF"), null, true, config.getRules(), config.getFixes());
 
-          ShowReport(filename);
+          if (formats.contains("HTML")) {
+            ShowReport(filename, "html");
+          } else if (formats.contains("XML")) {
+            ShowReport(filename, "xml");
+          } else if (formats.contains("JSON")) {
+            ShowReport(filename, "json");
+          } else if (formats.contains("PDF")) {
+            new Thread(new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  Desktop.getDesktop().open(new File(filename));
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+              }
+            }).start();
+
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  gotoMain(event);
+                } catch (Exception e) {
+                  e.printStackTrace();
+                }
+              }
+            });
+          }
+
         } catch (Exception ex) {
           Alert alert = new Alert(Alert.AlertType.ERROR);
           alert.setTitle("Error");
@@ -523,7 +563,7 @@ public class MainApp extends Application {
     th.start();
   }
 
-  private void ShowReport(String filename) {
+  private void ShowReport(String filename, String format) {
     System.out.println("Showing report...");
     String styleBackground = "-fx-background-image: url('/images/topMenu.png'); " +
         "-fx-background-position: center center; " +
@@ -635,35 +675,68 @@ public class MainApp extends Application {
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        WebView browser = new WebView();
-        //double w = width-topImg.getWidth();
         double h = height - topImg.getHeight() - 50;
-        browser.setMinWidth(width);
-        browser.setMinHeight(h);
-        //browser.setMaxWidth(width);
-        browser.setMaxHeight(h);
-        final WebEngine webEngine = browser.getEngine();
-        if (!new File(System.getProperty("user.dir") + "/" + filename).exists()) {
-          String message = "Report file '" + System.getProperty("user.dir") + "/" + filename + "' does not exist";
-          System.out.println(message);
-          try {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("An error occured");
-            alert.setContentText(message);
-            alert.showAndWait();
-            ShowMain();
-          } catch (Exception ex) {
+        splitPa.getItems().addAll(topImg);
+        String file = System.getProperty("user.dir") + "/" + filename;
 
-          }
-        } else {
-          webEngine.load("file:///" + System.getProperty("user.dir") + "/" + filename);
-
-          splitPa.getItems().addAll(topImg);
+        // If HTML show in webview
+        if (format.equals("html")) {
+          WebView browser = new WebView();
+          //double w = width-topImg.getWidth();
+          browser.setMinWidth(width);
+          browser.setMinHeight(h);
+          //browser.setMaxWidth(width);
+          browser.setMaxHeight(h);
+          final WebEngine webEngine = browser.getEngine();
+          webEngine.load("file:///" + file);
           splitPa.getItems().addAll(browser);
-          splitPa.setDividerPosition(0, 0.5f);
-          root.getChildren().addAll(splitPa);
-          sceneReport.setRoot(root);
+        }
+        // If PDF show in new window
+        else if (format.equals("pdf")) {
+          try {
+            Desktop.getDesktop().open(new File(file));
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+        // Else show in TextArea
+        else {
+          TextArea ta = new TextArea();
+          ta.setMinWidth(width);
+          ta.setMinHeight(h);
+          ta.setEditable(false);
+
+          String content = "";
+
+          try {
+            BufferedReader input = new BufferedReader(new FileReader(file));
+            try {
+              String line;
+              while ((line = input.readLine()) != null) {
+                if(!content.equals("")) {
+                  content += "\n";
+                }
+                content += line;
+              }
+            } finally {
+              input.close();
+            }
+          } catch (IOException ex) {
+            ex.printStackTrace();
+          }
+
+          if(format.equals("json")) {
+            content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
+          }
+
+          ta.setText(content);
+
+          splitPa.getItems().addAll(ta);
+        }
+
+        splitPa.setDividerPosition(0, 0.5f);
+        root.getChildren().addAll(splitPa);
+        sceneReport.setRoot(root);
 
           thestage.setScene(sceneReport);
 
@@ -702,7 +775,6 @@ public class MainApp extends Application {
 
           thestage.sizeToScene();
         }
-      }
     });
   }
 
@@ -881,8 +953,8 @@ public class MainApp extends Application {
       thestage.setScene(scenereport);
       thestage.sizeToScene();
 
-      ObservableList<Node> nodes=scenereport.getRoot().getChildrenUnmodifiable();
-      SplitPane splitPa1=(SplitPane)nodes.get(0);
+      ObservableList<Node> nodes = scenereport.getRoot().getChildrenUnmodifiable();
+      SplitPane splitPa1 = (SplitPane) nodes.get(0);
       splitPa1.lookupAll(".split-pane-divider").stream()
           .forEach(
               div -> div.setMouseTransparent(true));
@@ -898,48 +970,54 @@ public class MainApp extends Application {
       colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
       TableColumn colN = new TableColumn("Files Processed");
-      colN.setMinWidth(100);
+      colN.setMinWidth(80);
       colN.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("nfiles")
       );
 
       TableColumn colResult = new TableColumn("Result");
-      colResult.setMinWidth(165);
+      colResult.setMinWidth(150);
       colResult.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("result")
       );
 
-      TableColumn colFixed= new TableColumn("Fixed");
-        colFixed.setMinWidth(120);
+      TableColumn colFixed = new TableColumn("Fixed");
+      colFixed.setMinWidth(115);
       colFixed.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("fixed")
       );
 
       TableColumn colErrors = new TableColumn("Errors");
-        colErrors.setMinWidth(75);
+      colErrors.setMinWidth(60);
       colErrors.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("errors")
       );
 
       TableColumn colWarnings = new TableColumn("Warnings");
-        colWarnings.setMinWidth(85);
+      colWarnings.setMinWidth(60);
       colWarnings.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("warnings")
       );
 
       TableColumn colPassed = new TableColumn("Passed");
-        colPassed.setMinWidth(75);
+      colPassed.setMinWidth(60);
       colPassed.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("passed")
       );
 
       TableColumn<ReportRow, String> colScore = new TableColumn("Score");
-      colScore.setMinWidth(100);
+      colScore.setMinWidth(80);
       colScore.setCellValueFactory(
           new PropertyValueFactory("score")
       );
 
-      tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore);
+      TableColumn colFormats = new TableColumn("Formats");
+      colFormats.setMinWidth(95);
+      colFormats.setCellValueFactory(
+          new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
+      );
+
+      tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore, colFormats);
       tabReports.setItems(data);
 
       tabReports.setLayoutX(82.0);
@@ -957,20 +1035,21 @@ public class MainApp extends Application {
       changeColumnTextColor(colScore, Color.LIGHTGRAY);
 
       addChartScore(colScore);
+      addFormatIcons(colFormats);
 
-      tabReports.setOnMousePressed(new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-          if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
-            ReportRow row = tabReports.getSelectionModel().getSelectedItem();
-            if (row.getFile().toLowerCase().endsWith(".html")) {
-              ShowReport(row.getFile());
-            }
-          }
-        }
-      });
+//      tabReports.setOnMousePressed(new EventHandler<MouseEvent>() {
+//        @Override
+//        public void handle(MouseEvent event) {
+//          if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
+//            ReportRow row = tabReports.getSelectionModel().getSelectedItem();
+//            if (row.getFile().toLowerCase().endsWith(".html")) {
+//              ShowReport(row.getFile());
+//            }
+//          }
+//        }
+//      });
 
-      AnchorPane ap2 = (AnchorPane)scenereport.lookup("#pane1");
+      AnchorPane ap2 = (AnchorPane) scenereport.lookup("#pane1");
       ap2.getChildren().add(tabReports);
 
     } catch (Exception ex) {
@@ -1000,10 +1079,10 @@ public class MainApp extends Application {
   }
 
   private void addChartScore(TableColumn colScore) {
-    colScore.setCellFactory(new Callback<TableColumn<ReportRow,String>,TableCell<ReportRow,String>>(){
+    colScore.setCellFactory(new Callback<TableColumn<ReportRow, String>, TableCell<ReportRow, String>>() {
       @Override
       public TableCell<ReportRow, String> call(TableColumn<ReportRow, String> param) {
-        TableCell<ReportRow, String> cell = new TableCell<ReportRow, String>(){
+        TableCell<ReportRow, String> cell = new TableCell<ReportRow, String>() {
           @Override
           public void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
@@ -1014,7 +1093,7 @@ public class MainApp extends Application {
               ObservableList<PieChart.Data> pieChartData =
                   FXCollections.observableArrayList(
                       new PieChart.Data("Correct", score),
-                      new PieChart.Data("Error", 100-score));
+                      new PieChart.Data("Error", 100 - score));
 
               PieChart chart = new PieChart(pieChartData);
               chart.setId("pie_chart");
@@ -1022,7 +1101,7 @@ public class MainApp extends Application {
               chart.setMinSize(22, 22);
               chart.setMaxSize(22, 22);
 
-              HBox box= new HBox();
+              HBox box = new HBox();
               box.setSpacing(8);
               box.setAlignment(Pos.CENTER_LEFT);
 
@@ -1045,6 +1124,58 @@ public class MainApp extends Application {
     });
   }
 
+  private void addFormatIcons(TableColumn colFormats) {
+    colFormats.setCellFactory(new Callback<TableColumn<ReportRow, ObservableMap<String, String>>, TableCell<ReportRow, ObservableMap<String, String>>>() {
+      @Override
+      public TableCell<ReportRow, ObservableMap<String, String>> call(TableColumn<ReportRow, ObservableMap<String, String>> param) {
+        TableCell<ReportRow, ObservableMap<String, String>> cell = new TableCell<ReportRow, ObservableMap<String, String>>() {
+          @Override
+          public void updateItem(ObservableMap<String, String> item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty && item != null) {
+
+              HBox box = new HBox();
+              box.setSpacing(3);
+              box.setAlignment(Pos.CENTER_LEFT);
+
+              for (String i : item.keySet()) {
+                ImageView icon = new ImageView();
+                icon.setFitHeight(20);
+                icon.setFitWidth(20);
+                icon.setImage(new Image("images/format_" + i + ".png"));
+
+                icon.setOnMousePressed(new EventHandler<MouseEvent>() {
+                  @Override
+                  public void handle(MouseEvent event) {
+                    if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
+                      System.out.println("Opening file " + item.get(i));
+                      if (!i.equals("pdf")) {
+                        ShowReport(item.get(i), i);
+                      } else {
+                        try {
+                          Desktop.getDesktop().open(new File(item.get(i)));
+                        } catch (IOException e) {
+                          e.printStackTrace();
+                        }
+                      }
+                    }
+                  }
+                });
+
+                box.getChildren().add(icon);
+              }
+
+              setGraphic(box);
+            } else {
+              setGraphic(null);
+            }
+          }
+        };
+        return cell;
+      }
+    });
+  }
+
   private void addNumericOperator(String item) {
     ArrayList<String> operators = null;
     for (Field field : gui.getFields()) {
@@ -1054,7 +1185,7 @@ public class MainApp extends Application {
     }
     if (operators != null) {
       Scene scene = thestage.getScene();
-      AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+      AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
       for (Node node : ap2.getChildren()) {
         if (node instanceof HBox) {
           HBox hBox1 = (HBox) node;
@@ -1159,7 +1290,7 @@ public class MainApp extends Application {
             .when(remove.pressedProperty())
             .then(new SimpleStringProperty(styleButtonPressed))
             .otherwise(new SimpleStringProperty(styleButton)
-        )
+            )
     );
     remove.setId("ID" + uniqueId);
     remove.setOnAction(new EventHandler<ActionEvent>() {
@@ -1320,11 +1451,17 @@ public class MainApp extends Application {
         Scene scene = thestage.getScene();
         AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
         VBox vbox = (VBox) pan.getChildren().get(0);
-        RadioButton radio_vbox = (RadioButton) vbox.getChildren().get(0);
-        ToggleGroup tg = radio_vbox.getToggleGroup();
+        final ToggleGroup group;
+        if (!vbox.getChildren().isEmpty()) {
+          RadioButton radio_old = (RadioButton) vbox.getChildren().get(0);
+          group = radio_old.getToggleGroup();
+        }
+        else{
+          group = new ToggleGroup();
+        }
         RadioButton radio = new RadioButton();
         radio.setText(file.getAbsolutePath());
-        radio.setToggleGroup(tg);
+        radio.setToggleGroup(group);
         vbox.getChildren().add(radio);
       }
     } catch (Exception ex) {

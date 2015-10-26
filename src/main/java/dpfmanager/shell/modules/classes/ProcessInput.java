@@ -133,18 +133,16 @@ public class ProcessInput {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    String format_type;
-    if (html){
-      format_type = ".html";
-    }else if (xml) {
-      format_type = ".xml";
-    }else if (json){
-      format_type = ".json";
-    }else{
-      format_type = ".pdf";
+
+    if (html) {
+      return internalReportFolder + "report.html";
+    } else if (xml) {
+      return internalReportFolder + "summary.xml";
+    } else if (json) {
+      return internalReportFolder + "summary.json";
+    } else {
+      return internalReportFolder + "report.pdf";
     }
-    String FileStr = internalReportFolder + "report" + format_type;
-    return FileStr;
   }
 
   /**
