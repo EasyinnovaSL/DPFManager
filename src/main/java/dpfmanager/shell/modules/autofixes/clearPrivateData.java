@@ -5,8 +5,12 @@ import com.easyinnova.tiff.model.TiffDocument;
 /**
  * Created by easy on 23/10/2015.
  */
-public class clearPrivateData {
+public class clearPrivateData implements autofix {
   public String Definition = "Clear Private Data";
+
+  public String getDescription() {
+    return Definition;
+  }
 
   public void run(TiffDocument td) {
     td.removeTag("GPS IFD");

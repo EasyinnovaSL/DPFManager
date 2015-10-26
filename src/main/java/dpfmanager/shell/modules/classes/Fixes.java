@@ -2,6 +2,7 @@ package dpfmanager.shell.modules.classes;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -27,7 +28,7 @@ public class Fixes {
     return fixes;
   }
 
-  public void Read(Scene scene) {
+  public void ReadFixes(Scene scene) {
     Boolean wrong_format = false;
     VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
     AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
@@ -64,6 +65,18 @@ public class Fixes {
         }
       }
       wrong_format=false;
+    }
+  }
+
+  public void ReadAutofixes(Scene scene) {
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    for (Node node : ap2.getChildren()) {
+      if (node instanceof CheckBox) {
+        CheckBox check = (CheckBox)node;
+        if (check.isSelected()) {
+          addFixFromTxt(check.getId() + ",Yes");
+        }
+      }
     }
   }
 
