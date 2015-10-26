@@ -33,6 +33,8 @@ package dpfmanager;
 
 import static java.io.File.separator;
 
+import dpfmanager.shell.modules.autofixes.autofix;
+import dpfmanager.shell.modules.autofixes.clearPrivateData;
 import dpfmanager.shell.modules.classes.Fix;
 import dpfmanager.shell.modules.classes.Fixes;
 import dpfmanager.shell.modules.classes.Rules;
@@ -67,6 +69,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -500,16 +503,25 @@ public class ReportGenerator {
         ir.setTiffModel(tr.getModel());
         new File(nameFixedTif).delete();
 
+        ByteOrder byteOrder = null;
         for (Fix fix : fixes.getFixes()) {
-          if (fix.getOperator().equals("Add Tag")) {
-            td.addTag(fix.getTag(), fix.getValue());
-          } else if (fix.getOperator().equals("Remove Tag")) {
-            td.removeTag(fix.getTag());
+          if (fix.getOperator() != null) {
+            if (fix.getOperator().equals("Add Tag")) {
+              td.addTag(fix.getTag(), fix.getValue());
+            } else if (fix.getOperator().equals("Remove Tag")) {
+              td.removeTag(fix.getTag());
+            }
+          } else {
+            String className = fix.getTag();
+            autofix autofix = (autofix)Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
+            autofix.run(td);
           }
         }
 
         ti = new TiffInputStream(new File(nameOriginalTif));
         tw = new TiffWriter(ti);
+        //if (byteOrder != null)
+         // tw.setByteOrder(byteOrder);
         tw.SetModel(td);
         idx = 0;
         while (new File("out" + idx + ".tif").exists()) idx++;
@@ -550,7 +562,7 @@ public class ReportGenerator {
 
         new File(nameFixedTif).delete();
       } catch (Exception ex) {
-
+        System.out.println("Error creating report of fixed image");
       }
     }
   }

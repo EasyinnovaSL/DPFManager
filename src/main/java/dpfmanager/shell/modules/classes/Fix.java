@@ -34,8 +34,10 @@ public class Fix {
     String txt = "";
     if (tag != null) txt += tag;
     txt += ",";
-    if (operator != null) txt += operator;
-    txt += ",";
+    if (operator != null) {
+      txt += operator;
+      txt += ",";
+    }
     if (value != null) txt += value;
     return txt;
   }
@@ -47,6 +49,8 @@ public class Fix {
       if (v2.contains(",")) {
         operator = v2.substring(0, v2.indexOf(","));
         value = v2.substring(v2.indexOf(",") + 1);
+      } else {
+        value = v2;
       }
     }
   }

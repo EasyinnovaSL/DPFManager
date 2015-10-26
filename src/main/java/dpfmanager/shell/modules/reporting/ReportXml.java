@@ -354,7 +354,9 @@ public class ReportXml {
         String resultsch = sch.testXML(output, rules);
         String presch = output.substring(0, output.indexOf("</report>"));
         String postsch = output.substring(output.indexOf("</report>"));
-        resultsch = resultsch.substring(resultsch.indexOf("<svrl:schematron-output"));
+        if (resultsch.indexOf("<svrl:schematron-output") > -1) {
+          resultsch = resultsch.substring(resultsch.indexOf("<svrl:schematron-output"));
+        }
         output = presch + resultsch + postsch;
 
         // Rewrite

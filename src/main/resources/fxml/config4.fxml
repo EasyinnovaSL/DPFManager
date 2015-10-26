@@ -54,7 +54,10 @@
                                                     <Cursor fx:constant="HAND" />
                                                 </cursor>
                                             </Button>
-                                            <Button fx:id="addFix" layoutX="405.0" layoutY="339.0" mnemonicParsing="false" onAction="#addFix" prefHeight="37.0" prefWidth="187.0" style="" stylesheets="@/styles/style.css" text="Add Fix" textFill="WHITE">
+                                            <!--<CheckBox fx:id="chkAutoFixLE" layoutX="252.0" layoutY="310.0" mnemonicParsing="false" styleClass="checkreport" text="Autofix Byte Order Litte Endian" textFill="white" />
+                                            <CheckBox fx:id="chkAutoFixBE" layoutX="252.0" layoutY="340.0" mnemonicParsing="false" styleClass="checkreport" text="Autofix Byte Order Big Endian" textFill="white" />-->
+                                            <!--<CheckBox fx:id="chkAutoFixPersonal" layoutX="252.0" layoutY="320.0" mnemonicParsing="false" styleClass="checkreport" text="Clear Private Data" textFill="white" />-->
+                                            <Button fx:id="addFix" id="addFix" layoutX="405.0" layoutY="380.0" mnemonicParsing="false" onAction="#addFix" prefHeight="37.0" prefWidth="187.0" style="" stylesheets="@/styles/style.css" text="Add Fix" textFill="WHITE">
                                                 <font>
                                                     <Font name="System Bold" size="16.0" />
                                                 </font>
@@ -62,7 +65,7 @@
                                                     <Cursor fx:constant="HAND" />
                                                 </cursor>
                                             </Button>
-                                            <Line fx:id="line" endX="710.0" layoutX="195.0" layoutY="564.0" startX="-100.0" stroke="WHITE" />
+                                            <Line fx:id="line" id="line" endX="710.0" layoutX="195.0" layoutY="564.0" startX="-100.0" stroke="WHITE" />
                                         </children>
                                     </AnchorPane>
                                 </content>

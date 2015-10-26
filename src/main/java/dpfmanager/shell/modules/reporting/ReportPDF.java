@@ -29,7 +29,10 @@
  * @since 16/10/2015
  */
 
+
 package dpfmanager.shell.modules.reporting;
+
+import javafx.scene.control.Alert;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
@@ -47,10 +50,23 @@ import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
@@ -67,6 +83,44 @@ public class ReportPDF extends ReportGeneric {
 
   public PDPageContentStream getContentStream() {
     return contentStream;
+  }
+
+  static InputStream getResourceStream(String path) throws Exception {
+    InputStream fis = null;
+    if (new File(path).exists()) {
+      // Look in dir
+      fis = new FileInputStream(path);
+    } else {
+      // Look in JAR
+      String filename = path.substring(path.lastIndexOf("/") + 1);
+      CodeSource src = ReportPDF.class.getProtectionDomain().getCodeSource();
+      if (src != null) {
+        URL jar = src.getLocation();
+        ZipInputStream zip;
+
+        zip = new ZipInputStream(jar.openStream());
+        ZipEntry zipFile;
+        boolean found = false;
+        while ((zipFile = zip.getNextEntry()) != null && !found) {
+          if (zipFile.getName().endsWith(filename)) {
+            fis = zip;
+            return fis;
+          }
+          zip.closeEntry();
+        }
+      }
+    }
+    return fis;
+  }
+
+  static void showMessage(String message) {
+    try {
+      PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
+      out.println(message);
+      out.close();
+    } catch (Exception ex) {
+
+    }
   }
 
   /**
@@ -96,8 +150,9 @@ public class ReportPDF extends ReportGeneric {
       int font_size = 18;
 
       // Logo
-      PDXObjectImage ximage = new PDJpeg(document, new FileInputStream( "src/main/resources/images/logo.jpg" ) );
       float scale = 3;
+      InputStream inputStream = getResourceStream("src/main/resources/images/logo.jpg");
+      PDXObjectImage ximage = new PDJpeg(document, inputStream);
       contentStream.drawXObject( ximage, pos_x, pos_y, 645/scale, 300/scale );
 
       // Report Title
@@ -213,7 +268,7 @@ public class ReportPDF extends ReportGeneric {
         pos_y -= 20;
         String typ = " - Main image";
         if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Thumbnail";
-        ximage = new PDJpeg(document, new FileInputStream("src/main/resources/images/doc.jpg"));
+        ximage = new PDJpeg(document, getResourceStream("src/main/resources/images/doc.jpg"));
         contentStream.drawXObject( ximage, pos_x, pos_y, 5, 7 );
         writeText(contentStream, ifd.toString() + typ, pos_x + 7, pos_y, font, font_size);
         if (ifd.getsubIFD() != null) {
@@ -290,7 +345,7 @@ public class ReportPDF extends ReportGeneric {
 
       ir.setPDFDocument(outputfile);
     } catch (Exception tfe) {
-      tfe.printStackTrace();
+      showMessage("Error:" + tfe.toString());
     }
   }
 
@@ -303,7 +358,6 @@ public class ReportPDF extends ReportGeneric {
   public static void parseGlobal(String pdffile, GlobalReport gr) {
     try {
       PDDocument document = new PDDocument();
-      String newHtmlFolder = pdffile.substring(0, pdffile.lastIndexOf("/"));
 
       PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
       document.addPage( page );
@@ -316,7 +370,7 @@ public class ReportPDF extends ReportGeneric {
       int font_size = 18;
 
       // Logo
-      PDXObjectImage ximage = new PDJpeg(document, new FileInputStream( "src/main/resources/images/logo.jpg" ) );
+      PDXObjectImage ximage = new PDJpeg(document, getResourceStream("src/main/resources/images/logo.jpg"));
       float scale = 3;
       contentStream.drawXObject( ximage, pos_x, pos_y, 645/scale, 300/scale );
 
@@ -533,7 +587,7 @@ public class ReportPDF extends ReportGeneric {
     }
     if (total == 0) {
       pos_y -= 20;
-      PDXObjectImage ximage = new PDJpeg(document, new FileInputStream("src/main/resources/images/ok.jpg"));
+      PDXObjectImage ximage = new PDJpeg(document, getResourceStream("src/main/resources/images/ok.jpg"));
       contentStream.drawXObject( ximage, pos_x + 8, pos_y, 5, 5 );
       writeText(contentStream, "This file conforms to " + type, pos_x + 15, pos_y, font, font_size, Color.green);
     }
