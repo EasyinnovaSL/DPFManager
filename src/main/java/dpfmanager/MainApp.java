@@ -205,12 +205,12 @@ public class MainApp extends Application {
   }
 
   private void LoadGui() throws Exception {
+    gui = new Gui();
+    gui.LoadConformanceChecker();
+
     if (FirstTime()) {
       ShowDisclaimer();
     } else {
-      gui = new Gui();
-      gui.LoadConformanceChecker();
-
       ShowMain();
     }
   }
