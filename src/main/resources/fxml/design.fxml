@@ -79,6 +79,13 @@
                                                 <cursor>
                                                    <Cursor fx:constant="HAND" />
                                                 </cursor>
+                                                <graphic>
+                                                    <ImageView id="mybutton-image" fitHeight="10.0" fitWidth="10.0" pickOnBounds="true">
+                                                        <image>
+                                                            <Image url="@/images/arrow-down.png"/>
+                                                        </image>
+                                                    </ImageView>
+                                                </graphic>
                                             </Button>
                                             <TextField fx:id="txtFile" id="txtBox1" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
                                                 <cursor>
