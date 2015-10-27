@@ -207,7 +207,7 @@ public class TiffConformanceChecker {
 
     Set<Class<?>> ns = null;
     if (!ok) {
-      System.out.println("Could not load autofixes automatically");
+      System.out.println("Autofixes loaded manually");
       ns = new HashSet<Class<?>>();
       ns.add(clearPrivateData.class);
       ns.add(changeEndianess.class);

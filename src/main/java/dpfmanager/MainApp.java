@@ -1270,13 +1270,14 @@ public class MainApp extends Application {
                 }
 
                 hBox1.getChildren().add(comboOp);
-                hBox1.getChildren().add(bRemove);
 
                 if (item.equals("Add Tag")) {
                   TextField value = new TextField();
                   value.getStyleClass().add("txtFix");
                   hBox1.getChildren().add(value);
                 }
+
+                hBox1.getChildren().add(bRemove);
                 break;
               }
             }

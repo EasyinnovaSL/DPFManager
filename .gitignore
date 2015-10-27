@@ -10,3 +10,4 @@ easyinnova/
 !src/main/resources/*.dpf
 !config.dpf
 src/test/resources/TestWriter/Bilevel2.tif
+Output/

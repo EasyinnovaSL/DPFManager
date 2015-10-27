@@ -211,26 +211,25 @@
 			<url>http://jcenter.bintray.com</url>
 		</repository>
 	</repositories>
-  
-	<!-- Build Settings -->
+
 	<build>
 
 		<finalName>DPF Manager</finalName>
 
 		<plugins>
 			<plugin>
-			  <groupId>com.zenjava</groupId>
-			  <artifactId>javafx-maven-plugin</artifactId>
-			  <version>8.1.5</version>
+				<groupId>com.zenjava</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>8.1.5</version>
 				<configuration>
 					<mainClass>dpfmanager.MainApp</mainClass>
 					<verbose>true</verbose>
 					<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
 					<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
 					<deployDir>${project.basedir}/src/main/deploy</deployDir>
-<!--
-					<vendor>${project.organization.name}</vendor>
--->
+					<!--
+                                        <vendor>${project.organization.name}</vendor>
+                    -->
 					<vendor>${project.build.finalName}</vendor>
 					<nativeOutputDir>${project.organization.name}</nativeOutputDir>
 					<bundleType>ALL</bundleType>
@@ -240,10 +239,10 @@
 					<needMenu>true</needMenu>
 					<appName>${project.build.finalName}</appName>
 					<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
-                     <!--<addPackagerJar>true</addPackagerJar>-->
-<!--
-					<jfxCallFromCLI>true</jfxCallFromCLI>
--->
+					<!--<addPackagerJar>true</addPackagerJar>-->
+					<!--
+                                        <jfxCallFromCLI>true</jfxCallFromCLI>
+                    -->
 				</configuration>
 				<executions>
 					<execution>
@@ -254,7 +253,7 @@
 							<goal>build-jar</goal>
 						</goals>
 					</execution>
-<!--					<execution>
+					<execution>
 						<id>create-native</id>
 						<phase>package</phase>
 						<goals>
@@ -267,47 +266,7 @@
 						<goals>
 							<goal>build-web</goal>
 						</goals>
-					</execution>-->
-				</executions>
-			</plugin>
-
-
-			<plugin>
-				<groupId>com.akathist.maven.plugins.launch4j</groupId>
-				<artifactId>launch4j-maven-plugin</artifactId>
-				<version>1.7.7</version>
-				<executions>
-					<execution>
-						<id>l4j-cli</id>
-						<phase>package</phase>
-						<goals><goal>launch4j</goal></goals>
-						<configuration>
-							<headerType>console</headerType>
-							<outfile>${project.build.directory}/jfx/app/${project.build.finalName}.exe</outfile>
-							<jar>${project.build.directory}/jfx/app/${project.build.finalName}-jfx.jar</jar>
-							<errTitle>encc</errTitle>
-							<classPath>
-								<mainClass>dpfmanager.MainApp</mainClass>
-								<addDependencies>false</addDependencies>
-								<preCp>anything</preCp>
-							</classPath>
-							<jre>
-								<minVersion>1.8.0</minVersion>
-							</jre>
-							<versionInfo>
-								<fileVersion>1.2.3.4</fileVersion>
-								<txtFileVersion>txt file version?</txtFileVersion>
-								<fileDescription>a description</fileDescription>
-								<copyright>my copyright</copyright>
-								<productVersion>4.3.2.1</productVersion>
-								<txtProductVersion>txt product version</txtProductVersion>
-								<productName>E-N-C-C</productName>
-								<internalName>ccne</internalName>
-								<originalFilename>original.exe</originalFilename>
-							</versionInfo>
-						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
 
@@ -324,11 +283,11 @@
 				</dependencies>
 			</plugin>
 			<plugin>
-			  <groupId>org.apache.camel</groupId>
-			  <artifactId>camel-maven-plugin</artifactId>
-			  <configuration>
-			    <applicationContextUri>META-INF/spring/*.xml;YOUR_FILE_NAME_IN_THE_CLASS_PATH.xml</applicationContextUri>
-			  </configuration>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-maven-plugin</artifactId>
+				<configuration>
+					<applicationContextUri>META-INF/spring/*.xml;YOUR_FILE_NAME_IN_THE_CLASS_PATH.xml</applicationContextUri>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
