@@ -167,6 +167,18 @@ public class Schematron extends CamelTestSupport {
       System.out.println("Schematron rules found in local dir");
       sc = new FileInputStream(schema);
     } else {
+      Class cls = this.getClass();
+      ClassLoader cLoader = cls.getClassLoader();
+      sc = cLoader.getResourceAsStream(schema);
+    }
+    return sc;
+
+    /*InputStream sc = null;
+    if (Files.exists(Paths.get(schema))) {
+      // Look in local dir
+      System.out.println("Schematron rules found in local dir");
+      sc = new FileInputStream(schema);
+    } else {
       // Look in JAR
       CodeSource src = Schematron.class.getProtectionDomain().getCodeSource();
       if (src != null) {
@@ -188,7 +200,7 @@ public class Schematron extends CamelTestSupport {
         throw new Exception("");
       }
     }
-    return sc;
+    return sc;*/
   }
 
   public String testXML(String xmlFile, String schema) throws Exception {
