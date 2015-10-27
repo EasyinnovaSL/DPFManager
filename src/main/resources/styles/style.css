@@ -70,7 +70,7 @@
 #addRule,#addFix{
 	-fx-font: 12 "arial black";
 }
-#myButton,#addRule,#addFix{
+#myButton,#addRule,#addFix, #button_load{
 	-fx-background-color: #31C2F3;
 	-fx-border-width     : 1px   ;
 	-fx-border-color     : #31C2F3  ;
@@ -89,7 +89,7 @@
 	-fx-background-color: #848282;
 }
 
-#myButton:pressed,#addRule:pressed,#addFix:pressed,#choiceBtn:pressed{
+#myButton:pressed,#addRule:pressed,#addFix:pressed,#choiceBtn:pressed, #button_load:pressed{
 	-fx-background-color: #19B2D8;
 }
 
@@ -409,4 +409,15 @@
 	-fx-background-insets: 0 0 -1 0, 0, 1, 2;
 	-fx-padding: 0;
 	-fx-text-fill: white;
+}
+#tab_reports:row-selection .table-row-cell:filled:hover {
+	-fx-cursor: default;
+}
+
+#tab_reports:row-selection .table-row-cell:selected .table-cell{
+	-fx-border-color: transparent;
+}
+
+#format_icon {
+	-fx-cursor: hand;
 }

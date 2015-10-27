@@ -65,12 +65,18 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
@@ -118,6 +124,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -137,6 +145,8 @@ public class MainApp extends Application {
   int uniqueId = 0;
   private double defaultLineYlayout = 564.0;
   private final ToggleGroup group = new ToggleGroup();
+  private final int reports_loaded = 50;
+  private boolean all_reports_loaded;
 
   @FXML private TextField txtFile;
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
@@ -962,12 +972,13 @@ public class MainApp extends Application {
           .forEach(
               div -> div.setMouseTransparent(true));
 
-      ObservableList<ReportRow> data = ReadReports();
+      all_reports_loaded = false;
+      ObservableList<ReportRow> data = ReadReports(0, reports_loaded);
 
       javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
       tabReports.setId("tab_reports");
 
-      tabReports.setEditable(true);
+      tabReports.setEditable(false);
       TableColumn colDate = new TableColumn("Date");
       colDate.setMinWidth(90);
       colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
@@ -1027,6 +1038,7 @@ public class MainApp extends Application {
       tabReports.setLayoutY(270.0);
       tabReports.setPrefHeight(270.0);
       tabReports.setPrefWidth(835.0);
+      tabReports.setCursor(Cursor.DEFAULT);
 
       changeColumnTextColor(colDate, Color.LIGHTGRAY);
       changeColumnTextColor(colN, Color.CYAN);
@@ -1040,17 +1052,22 @@ public class MainApp extends Application {
       addChartScore(colScore);
       addFormatIcons(colFormats);
 
-//      tabReports.setOnMousePressed(new EventHandler<MouseEvent>() {
-//        @Override
-//        public void handle(MouseEvent event) {
-//          if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
-//            ReportRow row = tabReports.getSelectionModel().getSelectedItem();
-//            if (row.getFile().toLowerCase().endsWith(".html")) {
-//              ShowReport(row.getFile());
-//            }
-//          }
-//        }
-//      });
+      Button button_load = (Button) scenereport.lookup("#button_load");
+      button_load.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          data.addAll(ReadReports(data.size() - 1, reports_loaded));
+          if (all_reports_loaded) {
+            button_load.setVisible(false);
+          }
+          System.out.println(data.size());
+          addChartScore(colScore);
+        }
+      });
+
+      if(all_reports_loaded) {
+        button_load.setVisible(false);
+      }
 
       AnchorPane ap2 = (AnchorPane) scenereport.lookup("#pane1");
       ap2.getChildren().add(tabReports);
@@ -1147,9 +1164,12 @@ public class MainApp extends Application {
                 icon.setFitWidth(20);
                 icon.setImage(new Image("images/format_" + i + ".png"));
 
+                icon.setCursor(Cursor.HAND);
+
                 icon.setOnMousePressed(new EventHandler<MouseEvent>() {
                   @Override
                   public void handle(MouseEvent event) {
+                    getScene().setCursor(Cursor.HAND);
                     if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
                       System.out.println("Opening file " + item.get(i));
                       if (!i.equals("pdf")) {
@@ -1570,7 +1590,7 @@ public class MainApp extends Application {
     ap2.getChildren().add(bLoading);
   }
 
-  private ObservableList<ReportRow> ReadReports() {
+  private ObservableList<ReportRow> ReadReports(int start, int count) {
     List<ReportRow> list = new ArrayList<ReportRow>();
     ObservableList<ReportRow> data = FXCollections.observableArrayList(list);
 
@@ -1583,7 +1603,12 @@ public class MainApp extends Application {
           return new File(current, name).isDirectory();
         }
       });
-      for (String reportDay : directories) {
+
+      Arrays.sort(directories, Collections.reverseOrder());
+
+      int index = 0;
+      for (int i = 0; i < directories.length; i++) {
+        String reportDay = directories[i];
         File reportsDay = new File(baseDir + "/" + reportDay);
         String[] directories2 = reportsDay.list(new FilenameFilter() {
           @Override
@@ -1592,45 +1617,69 @@ public class MainApp extends Application {
           }
         });
 
-        String[] available_formats = {"html", "xml", "json", "pdf"};
+        // Convert to ints for ordering
+        Integer[] int_directories = new Integer[directories2.length];
+        for(int j = 0; j < directories2.length; j++) {
+          int_directories[j] = Integer.parseInt(directories2[j]);
+        }
 
-        for (String reportDir : directories2) {
-          ReportRow rr = null;
-          File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-          if (reportHtml.exists()) {
-            rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
-          } else {
-            File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-            if (report.exists()) {
-              rr = ReportRow.createRowFromXml(reportDay, report);
-            } else {
-              File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
-              if (reportJson.exists()) {
-                rr = ReportRow.createRowFromJson(reportDay, reportJson);
+        Arrays.sort(int_directories, Collections.reverseOrder());
+
+        if (index + directories2.length >= start) {
+
+          String[] available_formats = {"html", "xml", "json", "pdf"};
+
+          for (int j = 0; j < int_directories.length; j++) {
+            String reportDir = String.valueOf(int_directories[j]);
+
+            if (index >= start && index < start + count) {
+              ReportRow rr = null;
+              File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
+              if (reportHtml.exists()) {
+                rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
               } else {
-                File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
-                if (reportPdf.exists()) {
-                  rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
+                File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
+                if (report.exists()) {
+                  rr = ReportRow.createRowFromXml(reportDay, report);
+                } else {
+                  File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
+                  if (reportJson.exists()) {
+                    rr = ReportRow.createRowFromJson(reportDay, reportJson);
+                  } else {
+                    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
+                    if (reportPdf.exists()) {
+                      rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
+                    }
+                  }
                 }
               }
+
+              for (String format : available_formats) {
+                File report;
+                if (format == "json" || format == "xml") {
+                  report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
+                } else {
+                  report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
+                }
+
+                if (report.exists()) {
+                  rr.addFormat(format, report.getPath());
+                }
+              }
+              if (rr != null) {
+                data.add(rr);
+              }
+
+              // Check if all done
+              if(i == directories.length -1 && j == directories2.length -1) {
+                all_reports_loaded = true;
+              }
             }
+            index++;
           }
 
-          for (String format : available_formats) {
-            File report;
-            if (format == "json" || format == "xml") {
-              report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
-            } else {
-              report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
-            }
-
-            if (report.exists()) {
-              rr.addFormat(format, report.getPath());
-            }
-          }
-          if (rr != null) {
-            data.add(rr);
-          }
+        } else {
+          index += directories2.length;
         }
       }
     }
