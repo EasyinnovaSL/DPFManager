@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.easyinnova</groupId>
 	<artifactId>dpf_manager</artifactId>
-	<version>1.1.1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 	<!-- More Project Information -->
@@ -218,9 +218,6 @@
 		<finalName>DPF Manager</finalName>
 
 		<plugins>
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-compiler-plugin</artifactId> 
-				<version>3.3</version> <configuration> <source>1.7</source> <target>1.7</target> 
-				</configuration> </plugin> -->
 			<plugin>
 			  <groupId>com.zenjava</groupId>
 			  <artifactId>javafx-maven-plugin</artifactId>
@@ -257,7 +254,7 @@
 							<goal>build-jar</goal>
 						</goals>
 					</execution>
-					<execution>
+<!--					<execution>
 						<id>create-native</id>
 						<phase>package</phase>
 						<goals>
@@ -270,9 +267,50 @@
 						<goals>
 							<goal>build-web</goal>
 						</goals>
-					</execution>
+					</execution>-->
 				</executions>
 			</plugin>
+
+
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>1.7.7</version>
+				<executions>
+					<execution>
+						<id>l4j-cli</id>
+						<phase>package</phase>
+						<goals><goal>launch4j</goal></goals>
+						<configuration>
+							<headerType>console</headerType>
+							<outfile>${project.build.directory}/jfx/app/${project.build.finalName}.exe</outfile>
+							<jar>${project.build.directory}/jfx/app/${project.build.finalName}-jfx.jar</jar>
+							<errTitle>encc</errTitle>
+							<classPath>
+								<mainClass>dpfmanager.MainApp</mainClass>
+								<addDependencies>false</addDependencies>
+								<preCp>anything</preCp>
+							</classPath>
+							<jre>
+								<minVersion>1.8.0</minVersion>
+							</jre>
+							<versionInfo>
+								<fileVersion>1.2.3.4</fileVersion>
+								<txtFileVersion>txt file version?</txtFileVersion>
+								<fileDescription>a description</fileDescription>
+								<copyright>my copyright</copyright>
+								<productVersion>4.3.2.1</productVersion>
+								<txtProductVersion>txt product version</txtProductVersion>
+								<productName>E-N-C-C</productName>
+								<internalName>ccne</internalName>
+								<originalFilename>original.exe</originalFilename>
+							</versionInfo>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
