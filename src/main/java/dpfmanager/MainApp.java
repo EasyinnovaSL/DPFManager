@@ -65,18 +65,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.Menu;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
@@ -96,6 +90,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -330,6 +325,21 @@ public class MainApp extends Application {
     Scene scene = thestage.getScene();
     AnchorPane pan = (AnchorPane) scene.lookup("#pane1");
     pan.getChildren().add(vBox);
+    AnchorPane pan0 = (AnchorPane) scene.lookup("#pane0");
+
+    ComboBox comboBox = new ComboBox();
+    comboBox.getItems().add("File");
+    comboBox.getItems().add("Folder");
+    comboBox.setValue("File");
+    comboBox.setOpacity(0.0);
+    comboBox.setLayoutY(315.0);
+    comboBox.setLayoutX(720.0);
+    comboBox.setPrefWidth(10.0);
+    comboBox.setPrefHeight(39.0);
+    comboBox.setCursor(Cursor.HAND);
+    comboBox.setId("choiceType");
+    pan0.getChildren().add(comboBox);
+
   }
 
   protected void SetFile() {
@@ -1522,11 +1532,23 @@ public class MainApp extends Application {
 
   @FXML
   protected void browseFile(ActionEvent event) {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Open File");
-    File file = fileChooser.showOpenDialog(thestage);
-    if (file != null)
-      txtFile.setText(file.getPath());
+    Scene scene = thestage.getScene();
+    AnchorPane pan0 = (AnchorPane) scene.lookup("#pane0");
+    ComboBox c = (ComboBox) pan0.lookup("#choiceType");
+    if (c.getValue() == "File") {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Open File");
+      File file = fileChooser.showOpenDialog(thestage);
+      if (file != null)
+        txtFile.setText(file.getPath());
+    }
+    else{
+      DirectoryChooser folderChooser = new DirectoryChooser();
+      folderChooser.setTitle("Open Folder");
+      File directory = folderChooser.showDialog(thestage);
+      if (directory != null)
+        txtFile.setText(directory.getPath());
+    }
   }
 
   private void ShowLoading() {
