@@ -331,6 +331,53 @@ public class ReportGenerator {
     }
   }
 
+  public static String readFilefromResources(String pathStr) {
+    String text = "";
+    String name = pathStr.substring(pathStr.lastIndexOf("/") + 1, pathStr.length());
+    Path path = Paths.get(pathStr);
+    try {
+      if (Files.exists(path)) {
+        // Look in current dir
+        BufferedReader br = new BufferedReader(new FileReader(pathStr));
+        StringBuilder sb = new StringBuilder();
+        String line = br.readLine();
+
+        while (line != null) {
+          sb.append(line);
+          sb.append(System.lineSeparator());
+          line = br.readLine();
+        }
+        text = sb.toString();
+        br.close();
+      } else {
+        // Look in JAR
+
+        Class cls = ReportGenerator.class;
+        ClassLoader cLoader = cls.getClassLoader();
+        InputStream in = cLoader.getResourceAsStream(pathStr);
+        boolean found = false;
+        if (in != null) {
+
+          BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+          StringBuilder out = new StringBuilder();
+          String newLine = System.getProperty("line.separator");
+          String line;
+          while ((line = reader.readLine()) != null) {
+            out.append(line);
+            out.append(newLine);
+          }
+          text = out.toString();
+          found = true;
+        }
+      }
+    } catch (FileNotFoundException e) {
+      System.err.println("Template for html not found in dir.");
+    } catch (IOException e) {
+      System.err.println("Error reading " + pathStr);
+    }
+
+    return text;
+  }
 
   /**
    * Copy file.
@@ -400,8 +447,64 @@ public class ReportGenerator {
         if (src != null) {
           URL jar = src.getLocation();
           ZipInputStream zip;
+          String jarFolder;
           try {
-            zip = new ZipInputStream(jar.openStream());
+            Class cls = this.getClass();
+            ClassLoader cLoader = cls.getClassLoader();
+            String [] arrayFiles = new String[15];
+            File [] arrayFoulders = new File[4];
+            //files in js folder
+            arrayFiles[0] = "html/js/jquery-1.9.1.min.js";
+            arrayFiles[1] = "html/js/jquery.flot.pie.min.js";
+            arrayFiles[2] = "html/js/jquery.flot.min.js";
+
+            //files in img folder
+            arrayFiles[3] = "html/img/noise.jpg";
+            arrayFiles[4] = "html/img/logo.png";
+            arrayFiles[5] = "html/img/logo - copia.png";
+
+            //files in fonts folder
+            arrayFiles[6] = "html/fonts/fontawesome-webfont.woff2";
+            arrayFiles[7] = "html/fonts/fontawesome-webfont.woff";
+            arrayFiles[8] = "html/fonts/fontawesome-webfont.ttf";
+            arrayFiles[9] = "html/fonts/fontawesome-webfont.svg";
+            arrayFiles[10] = "html/fonts/fontawesome-webfont.eot";
+            arrayFiles[11] = "html/fonts/FontAwesome.otf";
+
+            //files in css folder
+            arrayFiles[12] = "html/css/font-awesome.css";
+            arrayFiles[13] = "html/css/default.css";
+            arrayFiles[14] = "html/css/bootstrap.css";
+
+            arrayFoulders[0] = new File(targetPath + File.separator + "html/js/");
+            arrayFoulders[1] = new File(targetPath + File.separator + "html/img/");
+            arrayFoulders[2]= new File(targetPath + File.separator + "html/fonts/");
+            arrayFoulders[3] = new File(targetPath + File.separator + "html/css/");
+
+            //if originals folders not exists
+            for (File item : arrayFoulders) {
+              if(!item.exists()) {
+                item.mkdirs();
+              }
+            }
+
+            //copy files
+            for(String filePath : arrayFiles){
+              InputStream in = cLoader.getResourceAsStream(filePath);
+              int readBytes;
+              byte[] buffer = new byte[4096];
+              jarFolder = targetPath + File.separator;
+              File prova = new File(jarFolder + filePath);
+              if(!prova.exists()) {
+                prova.createNewFile();
+              }
+              OutputStream resStreamOut = new FileOutputStream(prova, false);
+              while ((readBytes = in.read(buffer)) > 0) {
+                resStreamOut.write(buffer, 0, readBytes);
+              }
+            }
+
+           /* zip = new ZipInputStream(jar.openStream());
             ZipEntry zipFile;
             while ((zipFile = zip.getNextEntry()) != null) {
               if (zipFile.getName().startsWith("html/")) {
@@ -416,7 +519,7 @@ public class ReportGenerator {
                 }
               }
               zip.closeEntry();
-            }
+            }*/
           } catch (IOException e) {
             System.err.println("Exception!");
             e.printStackTrace();
@@ -560,7 +663,12 @@ public class ReportGenerator {
           ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
         }
 
-        new File(nameFixedTif).delete();
+        boolean outputFolderSet = false;
+        if (!outputFolderSet) {
+          new File(nameFixedTif).delete();
+        } else {
+
+        }
       } catch (Exception ex) {
         System.out.println("Error creating report of fixed image");
       }
