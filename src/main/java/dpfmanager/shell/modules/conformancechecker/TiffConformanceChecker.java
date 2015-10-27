@@ -31,10 +31,23 @@
 
 package dpfmanager.shell.modules.conformancechecker;
 
+import dpfmanager.shell.modules.autofixes.changeEndianess;
+import dpfmanager.shell.modules.autofixes.clearPrivateData;
+
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -161,6 +174,45 @@ public class TiffConformanceChecker {
     Element element = doc.createElement(name);
     element.setTextContent(content);
     conformenceCheckerElement.appendChild(element);
+  }
+
+  public static Set<Class<?>> getAutofixes() {
+    boolean ok = true;
+
+    // Get class loader
+    List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+    classLoadersList.add(ClasspathHelper.contextClassLoader());
+    classLoadersList.add(ClasspathHelper.staticClassLoader());
+
+    ConfigurationBuilder cb = new ConfigurationBuilder()
+        .setScanners(new SubTypesScanner(false), new ResourcesScanner())
+        .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+        .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("dpfmanager.shell.modules.autofixes")));
+
+    if (cb.getExecutorService() == null) {
+      ok = false;
+    } else {
+      try {
+        // Obtain all objects from the package autofixes
+        Reflections reflections = new Reflections(cb);
+
+        // Get classes
+        Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
+
+        return classes;
+      } catch (Exception ex) {
+        ok = false;
+      }
+    }
+
+    Set<Class<?>> ns = null;
+    if (!ok) {
+      System.out.println("Autofixes loaded manually");
+      ns = new HashSet<Class<?>>();
+      ns.add(clearPrivateData.class);
+      ns.add(changeEndianess.class);
+    }
+    return ns;
   }
 }
 

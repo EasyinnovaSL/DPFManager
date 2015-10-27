@@ -77,11 +77,19 @@
 	-fx-border-radius: 5 5 5 5;
 	-fx-background-radius: 5 5 5 5;
 }
+
+#myButton{
+	-fx-alignment: CENTER-LEFT;
+	-fx-background-image: url('../images/arrow-down.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: right;
+}
+
 .button:pressed{
 	-fx-background-color: #848282;
 }
 
-#myButton:pressed,#addRule:pressed,#addFix:pressed, #button_load:pressed{
+#myButton:pressed,#addRule:pressed,#addFix:pressed,#choiceBtn:pressed, #button_load:pressed{
 	-fx-background-color: #19B2D8;
 }
 
@@ -320,6 +328,88 @@
 .data0.chart-pie { -fx-background-color: #33ccff; }
 .data1.chart-pie { -fx-background-color: #f2f2f2; }
 
+
+
+.menu-item .label {
+	-fx-text-fill: white;
+}
+
+.menu-item:focused {
+	-fx-background-color: #33ccff;
+}
+
+.menu-item:selected .label {
+	-fx-text-fill: blue;
+}
+
+.context-menu {
+	-fx-skin: "com.sun.javafx.scene.control.skin.ContextMenuSkin";
+	-fx-background-color: 	#31C2F3;
+	-fx-background-insets: 0, 1, 2;
+	-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
+}
+
+
+#choiceType .combo-box .list-cell {
+	-fx-text-fill: white;
+}
+
+#choiceType .combo-box .list-cell
+{
+	-fx-background: #31C2F3;
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+	-fx-padding: 3 0 2 7;
+	-fx-cell-size: 1.66667em;
+}
+#choiceType .combo-box-popup{
+	-fx-border-radius: 5 5 5 5;
+	-fx-text-fill:white;
+}
+#choiceType .combo-box-popup .list-view
+{
+	-fx-background-color: #31C2F3, #31C2F3;
+	-fx-background-insets: 0, 1;
+	-fx-text-fill: white;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}    #choiceType .combo-box-popup .list-view .list-cell
+	 {
+		 -fx-padding: 4 0 4 5;
+		 -fx-background-color: #31C2F3;
+	 }
+
+#choiceType .combo-box-popup .list-view .list-cell{
+	-fx-background: white;
+	-fx-text-fill: white;
+}
+#choiceType .combo-box-popup .list-view .list-cell:filled:selected
+{
+	-fx-border-radius: 5 5 5 5;
+	-fx-background: white;
+	-fx-background-color: #2794bb;
+	-fx-text-fill: white;
+}
+
+#choiceType .combo-box-popup .list-view .list-cell:filled:selected:hover{
+	-fx-background: white;
+	-fx-background-color: #41dcff;
+	-fx-text-fill: white;
+}
+#choiceType .combo-box-popup .list-view .list-cell:filled:hover
+{
+	-fx-background-color: #41dcff;
+	-fx-text-fill: white;
+}
+
+#choiceType .combo-box-base
+{
+
+	-fx-background-color: #31C2F3, #31C2F3, #31C2F3, #31C2F3;
+	-fx-background-radius: 5, 5, 4, 3;
+	-fx-background-insets: 0 0 -1 0, 0, 1, 2;
+	-fx-padding: 0;
+	-fx-text-fill: white;
+}
 #tab_reports:row-selection .table-row-cell:filled:hover {
 	-fx-cursor: default;
 }

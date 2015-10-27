@@ -1,16 +1,28 @@
 /**
- * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
- * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
- * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
- * have received a copy of the GNU General Public License and the Mozilla Public License along with
- * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
- * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
- * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
- * 2115 Easy Innova, SL </p>
+ * <h1>ReportGenerator.java</h1>
+ * <p>
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version; or, at your choice, under the terms of the
+ * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p>
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License and the Mozilla Public License for more details.
+ * </p>
+ * <p>
+ * You should have received a copy of the GNU General Public License and the Mozilla Public License
+ * along with this program. If not, see <a
+ * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
+ * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
+ * </p>
+ * <p>
+ * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
+ * </p>
+ * <p>
+ * © 2115 Easy Innova, SL
+ * </p>
  *
  * @author Easy Innova
  * @version 1.0
@@ -27,6 +39,7 @@ import dpfmanager.shell.modules.classes.NumberTextField;
 import dpfmanager.shell.modules.classes.ProcessInput;
 import dpfmanager.shell.modules.classes.ReportRow;
 import dpfmanager.shell.modules.classes.Rules;
+import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.Gui;
 import javafx.application.Application;
@@ -65,27 +78,28 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -93,6 +107,9 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +117,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -110,7 +128,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set ;
+import java.util.Set;
+import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 /**
@@ -127,29 +146,18 @@ public class MainApp extends Application {
   private double defaultLineYlayout = 564.0;
   private final ToggleGroup group = new ToggleGroup();
   private final int reports_loaded = 50;
-
   private boolean all_reports_loaded;
 
-  @FXML
-  private TextField txtFile;
-  @FXML
-  private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
-  @FXML
-  private Line line;
-  @FXML
-  private CheckBox chkFeedback, chkSubmit;
-  @FXML
-  private CheckBox chkAutoFixLE, chkAutoFixBE;
-  @FXML
-  private CheckBox chkAutoFixPersonal;
-  @FXML
-  private CheckBox chkHtml, chkXml, chkJson, chkPdf;
-  @FXML
-  private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
-  @FXML
-  private TextArea txtWhy;
-  @FXML
-  private Button addRule, continueButton, addFix;
+  @FXML private TextField txtFile;
+  @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
+  @FXML private Line line;
+  @FXML private CheckBox chkFeedback, chkSubmit;
+  @FXML private CheckBox chkAutoFixLE, chkAutoFixBE;
+  @FXML private CheckBox chkAutoFixPersonal;
+  @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
+  @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
+  @FXML private TextArea txtWhy;
+  @FXML private Button addRule, continueButton, addFix;
 
   private static Gui gui;
 
@@ -202,12 +210,12 @@ public class MainApp extends Application {
   }
 
   private void LoadGui() throws Exception {
+    gui = new Gui();
+    gui.LoadConformanceChecker();
+
     if (FirstTime()) {
       ShowDisclaimer();
     } else {
-      gui = new Gui();
-      gui.LoadConformanceChecker();
-
       ShowMain();
     }
   }
@@ -327,6 +335,21 @@ public class MainApp extends Application {
     Scene scene = thestage.getScene();
     AnchorPane pan = (AnchorPane) scene.lookup("#pane1");
     pan.getChildren().add(vBox);
+    AnchorPane pan0 = (AnchorPane) scene.lookup("#pane0");
+
+    ComboBox comboBox = new ComboBox();
+    comboBox.getItems().add("File");
+    comboBox.getItems().add("Folder");
+    comboBox.setValue("File");
+    comboBox.setOpacity(0.0);
+    comboBox.setLayoutY(315.0);
+    comboBox.setLayoutX(720.0);
+    comboBox.setPrefWidth(10.0);
+    comboBox.setPrefHeight(39.0);
+    comboBox.setCursor(Cursor.HAND);
+    comboBox.setId("choiceType");
+    pan0.getChildren().add(comboBox);
+
   }
 
   protected void SetFile() {
@@ -488,9 +511,9 @@ public class MainApp extends Application {
     ShowLoading();
 
     // Create a background task, because otherwise the loading message is not shown
-    Task<Integer> task = new Task<Integer>() {
+    Task<Integer> task = new Task<Integer>(){
       @Override
-      protected Integer call() throws Exception {
+      protected Integer call() throws Exception{
         try {
           if (new File(txtFile.getText()).isDirectory()) {
             File[] listOfFiles = new File(txtFile.getText()).listFiles();
@@ -711,7 +734,7 @@ public class MainApp extends Application {
             try {
               String line;
               while ((line = input.readLine()) != null) {
-                if (!content.equals("")) {
+                if(!content.equals("")) {
                   content += "\n";
                 }
                 content += line;
@@ -723,7 +746,7 @@ public class MainApp extends Application {
             ex.printStackTrace();
           }
 
-          if (format.equals("json")) {
+          if(format.equals("json")) {
             content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
           }
 
@@ -736,43 +759,43 @@ public class MainApp extends Application {
         root.getChildren().addAll(splitPa);
         sceneReport.setRoot(root);
 
-        thestage.setScene(sceneReport);
+          thestage.setScene(sceneReport);
 
-        //Set invisible the divisor line
-        splitPa.lookupAll(".split-pane-divider").stream()
-            .forEach(
-                div -> div.setStyle("-fx-padding: 0;\n" +
-                    "    -fx-background-color: transparent;\n" +
-                    "    -fx-background-insets: 0;\n" +
-                    "    -fx-shape: \" \";"));
-        splitPa.lookupAll(".split-pane-divider").stream()
-            .forEach(
-                div -> div.setMouseTransparent(true));
+          //Set invisible the divisor line
+          splitPa.lookupAll(".split-pane-divider").stream()
+              .forEach(
+                  div -> div.setStyle("-fx-padding: 0;\n" +
+                      "    -fx-background-color: transparent;\n" +
+                      "    -fx-background-insets: 0;\n" +
+                      "    -fx-shape: \" \";"));
+          splitPa.lookupAll(".split-pane-divider").stream()
+              .forEach(
+                  div -> div.setMouseTransparent(true));
 
-        thestage.setMaxHeight(Double.MAX_VALUE);
-        thestage.setMinHeight(height);
-        thestage.setMaxWidth(Double.MAX_VALUE);
-        thestage.setResizable(true);
-        thestage.setMinWidth(width);
+          thestage.setMaxHeight(Double.MAX_VALUE);
+          thestage.setMinHeight(height);
+          thestage.setMaxWidth(Double.MAX_VALUE);
+          thestage.setResizable(true);
+          thestage.setMinWidth(width);
 
-        thestage.widthProperty().addListener(new ChangeListener<Number>() {
-          @Override
-          public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-            if (newSceneWidth.doubleValue() < 989) {
-              report.setLayoutX(470.0);
-              checker.setLayoutX(290.0);
-              about.setLayoutX(560.0);
-            } else {
-              double dif = (newSceneWidth.doubleValue() - width) / 2;
-              report.setLayoutX(463.0 + dif);
-              checker.setLayoutX(283.0 + dif);
-              about.setLayoutX(560.0 + dif);
+          thestage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+              if (newSceneWidth.doubleValue() < 989) {
+                report.setLayoutX(470.0);
+                checker.setLayoutX(290.0);
+                about.setLayoutX(560.0);
+              } else {
+                double dif = (newSceneWidth.doubleValue() - width) / 2;
+                report.setLayoutX(463.0 + dif);
+                checker.setLayoutX(283.0 + dif);
+                about.setLayoutX(560.0 + dif);
+              }
             }
-          }
-        });
+          });
 
-        thestage.sizeToScene();
-      }
+          thestage.sizeToScene();
+        }
     });
   }
 
@@ -798,8 +821,8 @@ public class MainApp extends Application {
     thestage.sizeToScene();
     thestage.show();
 
-    ObservableList<Node> nodes = scene.getRoot().getChildrenUnmodifiable();
-    SplitPane splitPa1 = (SplitPane) nodes.get(0);
+    ObservableList<Node> nodes=scene.getRoot().getChildrenUnmodifiable();
+    SplitPane splitPa1=(SplitPane)nodes.get(0);
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setMouseTransparent(true));
@@ -837,27 +860,19 @@ public class MainApp extends Application {
     if (chkPdf.isSelected()) config.getFormats().add("PDF");
     LoadSceneXml("/fxml/config4.fxml");
 
-    List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
-    classLoadersList.add(ClasspathHelper.contextClassLoader());
-    classLoadersList.add(ClasspathHelper.staticClassLoader());
+    Set<Class<?>> classes = TiffConformanceChecker.getAutofixes();
 
-    Reflections reflections = new Reflections(new ConfigurationBuilder()
-        .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
-        .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-        .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("dpfmanager.shell.modules.autofixes"))));
-
-    Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
     int ypos = 320;
     int xpos = 252;
     int dify = 50;
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     boolean first = true;
     for (Class<?> cl : classes) {
       if (cl.toString().startsWith("class ")) {
         String className = cl.toString().substring(cl.toString().lastIndexOf(".") + 1);
         if (className.equals("changeEndianess")) continue;
-        autofix fix = (autofix) Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
+        autofix fix = (autofix)Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
 
         CheckBox check = new CheckBox();
         check.setText(fix.getDescription());
@@ -904,7 +919,7 @@ public class MainApp extends Application {
 
   void setLabel(String labelName, String txt) {
     Scene scene = thestage.getScene();
-    Label lab = (Label) scene.lookup("#" + labelName);
+    Label lab = (Label)scene.lookup("#" + labelName);
     lab.setText(txt);
   }
 
@@ -1093,7 +1108,7 @@ public class MainApp extends Application {
             super.updateItem(item, empty);
             if (!empty && item != null) {
 
-              Double score = Double.parseDouble(item.substring(0, item.indexOf('%')));
+              Double score = item.indexOf("&") < 0 ? 0 : Double.parseDouble(item.substring(0, item.indexOf('%')));
 
               ObservableList<PieChart.Data> pieChartData =
                   FXCollections.observableArrayList(
@@ -1210,7 +1225,7 @@ public class MainApp extends Application {
                 if (hBox1.getChildren().get(1) instanceof ComboBox) {
                   ComboBox bla = (ComboBox) hBox1.getChildren().get(1);
                   String val = (String) bla.getValue();
-                  if (val != null) {
+                  if (val!=null){
                     delete_combobox = false;
                   }
                 }
@@ -1241,7 +1256,7 @@ public class MainApp extends Application {
   private void addFixValue(String item) {
     Scene scene = thestage.getScene();
     Boolean delete_combobox;
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     for (Node node : ap2.getChildren()) {
       delete_combobox = true;
       if (node instanceof HBox) {
@@ -1258,28 +1273,31 @@ public class MainApp extends Application {
               if (hBox1.getChildren().get(1) instanceof ComboBox) {
                 ComboBox bla = (ComboBox) hBox1.getChildren().get(1);
                 String val = (String) bla.getValue();
-                if (val != null) {
+                if (val!=null){
                   delete_combobox = false;
                 }
               }
               if (delete_combobox) {
                 while (hBox1.getChildren().size() > 1) {
-                  for (int i = 1; i < hBox1.getChildren().size(); i++) {
-                    if (hBox1.getChildren().get(i) instanceof Button) {
-                      bRemove = (Button) hBox1.getChildren().get(i);
+                  for (int i=1;i<hBox1.getChildren().size();i++)
+                  {
+                    if (hBox1.getChildren().get(i) instanceof Button)
+                    {
+                      bRemove = (Button)hBox1.getChildren().get(i);
                     }
                     hBox1.getChildren().remove(i);
                   }
                 }
 
                 hBox1.getChildren().add(comboOp);
-                hBox1.getChildren().add(bRemove);
 
                 if (item.equals("Add Tag")) {
                   TextField value = new TextField();
                   value.getStyleClass().add("txtFix");
                   hBox1.getChildren().add(value);
                 }
+
+                hBox1.getChildren().add(bRemove);
                 break;
               }
             }
@@ -1329,14 +1347,14 @@ public class MainApp extends Application {
         addNumericOperator(item);
       }
     });
-    HBox hBox = new HBox(comboBox, remove);
+    HBox hBox = new HBox (comboBox, remove);
     hBox.setId("ID" + uniqueId++);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
 
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ap2.getChildren().add(hBox);
 
     addRule.setLayoutY(addRule.getLayoutY() + dif);
@@ -1350,7 +1368,7 @@ public class MainApp extends Application {
 
   void deleteRule(String id) {
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ArrayList<Node> lRemove = new ArrayList<Node>();
     for (Node node : ap2.getChildren()) {
       if (node instanceof HBox) {
@@ -1367,9 +1385,9 @@ public class MainApp extends Application {
     for (Node node : lRemove) {
       ap2.getChildren().remove(node);
     }
-    if (addRule.getLayoutY() > 339) {
+    if (addRule.getLayoutY()>339) {
       addRule.setLayoutY(addRule.getLayoutY() - 50);
-      if (line.getLayoutY() > defaultLineYlayout) {
+      if (line.getLayoutY()>defaultLineYlayout){
         line.setLayoutY(line.getLayoutY() - 50);
         continueButton.setLayoutY(continueButton.getLayoutY() - 50);
       }
@@ -1417,14 +1435,14 @@ public class MainApp extends Application {
       }
     });
 
-    HBox hBox = new HBox(comboBox, remove);
+    HBox hBox = new HBox (comboBox, remove);
     hBox.setId("ID" + uniqueId++);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
 
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ap2.getChildren().add(hBox);
 
     addFix.setLayoutY(addFix.getLayoutY() + dif);
@@ -1438,7 +1456,7 @@ public class MainApp extends Application {
 
   void deleteFix(String id) {
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     ArrayList<Node> lRemove = new ArrayList<Node>();
     for (Node node : ap2.getChildren()) {
       if (node instanceof HBox) {
@@ -1455,9 +1473,9 @@ public class MainApp extends Application {
     for (Node node : lRemove) {
       ap2.getChildren().remove(node);
     }
-    if (addFix.getLayoutY() > 339) {
+    if (addFix.getLayoutY()>339) {
       addFix.setLayoutY(addFix.getLayoutY() - 50);
-      if (line.getLayoutY() > defaultLineYlayout) {
+      if (line.getLayoutY()>defaultLineYlayout){
         line.setLayoutY(line.getLayoutY() - 50);
         continueButton.setLayoutY(continueButton.getLayoutY() - 50);
       }
@@ -1474,13 +1492,14 @@ public class MainApp extends Application {
     try {
       if (file != null) {
         Scene scene = thestage.getScene();
-        AnchorPane pan = (AnchorPane) scene.lookup("#pane1");
+        AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
         VBox vbox = (VBox) pan.getChildren().get(0);
         final ToggleGroup group;
         if (!vbox.getChildren().isEmpty()) {
           RadioButton radio_old = (RadioButton) vbox.getChildren().get(0);
           group = radio_old.getToggleGroup();
-        } else {
+        }
+        else{
           group = new ToggleGroup();
         }
         RadioButton radio = new RadioButton();
@@ -1498,9 +1517,9 @@ public class MainApp extends Application {
   }
 
   @FXML
-  protected void deleteConfig(ActionEvent event) throws Exception {
+  protected void deleteConfig(ActionEvent event) throws Exception{
     Scene scene = thestage.getScene();
-    AnchorPane ap3 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
     boolean oneChecked = false;
     for (Node node : ap3.getChildren()) {
       if (node instanceof VBox) {
@@ -1511,7 +1530,7 @@ public class MainApp extends Application {
             if (radio.isSelected()) {
               File file = new File(radio.getText());
               vBox1.getChildren().remove(nodeIn);
-              if (!file.delete()) {
+              if (!file.delete()){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("There was an error deleting the configuration file");
@@ -1534,11 +1553,23 @@ public class MainApp extends Application {
 
   @FXML
   protected void browseFile(ActionEvent event) {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Open File");
-    File file = fileChooser.showOpenDialog(thestage);
-    if (file != null)
-      txtFile.setText(file.getPath());
+    Scene scene = thestage.getScene();
+    AnchorPane pan0 = (AnchorPane) scene.lookup("#pane0");
+    ComboBox c = (ComboBox) pan0.lookup("#choiceType");
+    if (c.getValue() == "File") {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Open File");
+      File file = fileChooser.showOpenDialog(thestage);
+      if (file != null)
+        txtFile.setText(file.getPath());
+    }
+    else{
+      DirectoryChooser folderChooser = new DirectoryChooser();
+      folderChooser.setTitle("Open Folder");
+      File directory = folderChooser.showDialog(thestage);
+      if (directory != null)
+        txtFile.setText(directory.getPath());
+    }
   }
 
   private void ShowLoading() {
@@ -1555,7 +1586,7 @@ public class MainApp extends Application {
     bLoading.getChildren().add(loading);
 
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane0");
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane0");
     ap2.getChildren().add(bLoading);
   }
 
@@ -1617,7 +1648,7 @@ public class MainApp extends Application {
                   } else {
                     File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
                     if (reportPdf.exists()) {
-                      rr = ReportRow.createRowFromJson(reportDay, reportPdf);
+                      rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
                     }
                   }
                 }

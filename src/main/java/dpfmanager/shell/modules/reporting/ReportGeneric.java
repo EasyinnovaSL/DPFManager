@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
@@ -60,7 +61,7 @@ public class ReportGeneric {
       graphic.dispose();
 
       ImageIO.write(convertedImage, "jpg", new File(outputfile));
-    } catch (IOException e) {
+    } catch (Exception e) {
       return false;
     }
     return true;
@@ -91,7 +92,7 @@ public class ReportGeneric {
         fr.close();
       } else {
         // Look in JAR
-        CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
+        /*CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
         if (src != null) {
           URL jar = src.getLocation();
           ZipInputStream zip = new ZipInputStream(jar.openStream());
@@ -116,6 +117,29 @@ public class ReportGeneric {
           }
         } else {
           throw new Exception("");
+        }*/
+        String resource = "htmltags.txt";
+        Class cls = ReportHtml.class;
+        ClassLoader cLoader = cls.getClassLoader();
+        InputStream in = cLoader.getResourceAsStream(resource);
+        //CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
+        if (in != null) {
+          try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String line = br.readLine();
+            while (line != null) {
+              String[] fields = line.split("\t");
+              if (fields.length == 1) {
+                hs.add(fields[0]);
+              }
+              line = br.readLine();
+            }
+          } catch (Exception ex) {
+            System.err.println("Exception!");
+            ex.printStackTrace();
+          }
+        } else {
+          throw new Exception("InputStream is null");
         }
       }
     } catch (Exception ex) {
@@ -153,6 +177,16 @@ public class ReportGeneric {
     showableTags.add("TIFFEPStandardID");*/
     //if (tv.getName().equals(""+tv.getId())) return false;
     return showableTags.contains(tv.getName());
+  }
+
+  protected static String getDif(int n1, int n2) {
+    String dif = "";
+    if (n2 != n1) {
+      dif = " (" + (n2 > n1 ? "+" : "-") + Math.abs(n2-n1) + ")";
+    } else {
+      dif = " (=)";
+    }
+    return dif;
   }
 
   protected static ArrayList<ReportTag> getTags(IndividualReport ir) {
