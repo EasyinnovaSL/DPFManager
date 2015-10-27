@@ -70,6 +70,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -82,6 +83,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
@@ -141,6 +143,7 @@ public class MainApp extends Application {
   int uniqueId = 0;
   private double defaultLineYlayout = 564.0;
   private final ToggleGroup group = new ToggleGroup();
+  private final int reports_loaded = 50;
 
   @FXML private TextField txtFile;
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
@@ -959,12 +962,12 @@ public class MainApp extends Application {
           .forEach(
               div -> div.setMouseTransparent(true));
 
-      ObservableList<ReportRow> data = ReadReports();
+      ObservableList<ReportRow> data = ReadReports(0, reports_loaded);
 
       javafx.scene.control.TableView<ReportRow> tabReports = new javafx.scene.control.TableView<ReportRow>();
       tabReports.setId("tab_reports");
 
-      tabReports.setEditable(true);
+      tabReports.setEditable(false);
       TableColumn colDate = new TableColumn("Date");
       colDate.setMinWidth(90);
       colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
@@ -1024,6 +1027,7 @@ public class MainApp extends Application {
       tabReports.setLayoutY(270.0);
       tabReports.setPrefHeight(270.0);
       tabReports.setPrefWidth(835.0);
+      tabReports.setCursor(Cursor.DEFAULT);
 
       changeColumnTextColor(colDate, Color.LIGHTGRAY);
       changeColumnTextColor(colN, Color.CYAN);
@@ -1037,17 +1041,18 @@ public class MainApp extends Application {
       addChartScore(colScore);
       addFormatIcons(colFormats);
 
-//      tabReports.setOnMousePressed(new EventHandler<MouseEvent>() {
-//        @Override
-//        public void handle(MouseEvent event) {
-//          if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
-//            ReportRow row = tabReports.getSelectionModel().getSelectedItem();
-//            if (row.getFile().toLowerCase().endsWith(".html")) {
-//              ShowReport(row.getFile());
-//            }
-//          }
-//        }
-//      });
+      Button b = (Button) scenereport.lookup("#button_load");
+      b.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          int size = data.size();
+          data.addAll(ReadReports(data.size() - 1, reports_loaded));
+          if(size == data.size()) {
+            b.setVisible(false);
+          }
+          addChartScore(colScore);
+        }
+      });
 
       AnchorPane ap2 = (AnchorPane) scenereport.lookup("#pane1");
       ap2.getChildren().add(tabReports);
@@ -1144,9 +1149,12 @@ public class MainApp extends Application {
                 icon.setFitWidth(20);
                 icon.setImage(new Image("images/format_" + i + ".png"));
 
+                icon.setCursor(Cursor.HAND);
+
                 icon.setOnMousePressed(new EventHandler<MouseEvent>() {
                   @Override
                   public void handle(MouseEvent event) {
+                    getScene().setCursor(Cursor.HAND);
                     if (event.isPrimaryButtonDown() && event.getClickCount() == 1) {
                       System.out.println("Opening file " + item.get(i));
                       if (!i.equals("pdf")) {
@@ -1554,7 +1562,7 @@ public class MainApp extends Application {
     ap2.getChildren().add(bLoading);
   }
 
-  private ObservableList<ReportRow> ReadReports() {
+  private ObservableList<ReportRow> ReadReports(int start, int count) {
     List<ReportRow> list = new ArrayList<ReportRow>();
     ObservableList<ReportRow> data = FXCollections.observableArrayList(list);
 
@@ -1567,6 +1575,8 @@ public class MainApp extends Application {
           return new File(current, name).isDirectory();
         }
       });
+
+      int index = 0;
       for (String reportDay : directories) {
         File reportsDay = new File(baseDir + "/" + reportDay);
         String[] directories2 = reportsDay.list(new FilenameFilter() {
@@ -1576,45 +1586,55 @@ public class MainApp extends Application {
           }
         });
 
-        String[] available_formats = {"html", "xml", "json", "pdf"};
+        if(index + directories2.length >= start) {
 
-        for (String reportDir : directories2) {
-          ReportRow rr = null;
-          File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-          if (reportHtml.exists()) {
-            rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
-          } else {
-            File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-            if (report.exists()) {
-              rr = ReportRow.createRowFromXml(reportDay, report);
-            } else {
-              File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
-              if (reportJson.exists()) {
-                rr = ReportRow.createRowFromJson(reportDay, reportJson);
+          String[] available_formats = {"html", "xml", "json", "pdf"};
+
+          for (String reportDir : directories2) {
+
+            if(index >= start && index < start + count) {
+              ReportRow rr = null;
+              File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
+              if (reportHtml.exists()) {
+                rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
               } else {
-                File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
-                if (reportPdf.exists()) {
-                  rr = ReportRow.createRowFromJson(reportDay, reportPdf);
+                File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
+                if (report.exists()) {
+                  rr = ReportRow.createRowFromXml(reportDay, report);
+                } else {
+                  File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
+                  if (reportJson.exists()) {
+                    rr = ReportRow.createRowFromJson(reportDay, reportJson);
+                  } else {
+                    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
+                    if (reportPdf.exists()) {
+                      rr = ReportRow.createRowFromJson(reportDay, reportPdf);
+                    }
+                  }
                 }
               }
+
+              for (String format : available_formats) {
+                File report;
+                if (format == "json" || format == "xml") {
+                  report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
+                } else {
+                  report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
+                }
+
+                if (report.exists()) {
+                  rr.addFormat(format, report.getPath());
+                }
+              }
+              if (rr != null) {
+                data.add(rr);
+              }
             }
+            index ++;
           }
 
-          for (String format : available_formats) {
-            File report;
-            if (format == "json" || format == "xml") {
-              report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
-            } else {
-              report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
-            }
-
-            if (report.exists()) {
-              rr.addFormat(format, report.getPath());
-            }
-          }
-          if (rr != null) {
-            data.add(rr);
-          }
+        } else {
+          index += directories2.length;
         }
       }
     }

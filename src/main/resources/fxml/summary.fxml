@@ -12,7 +12,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
             <VBox>
@@ -48,6 +48,14 @@
                                                    <Image url="@../images/report.png" />
                                                 </image>-->
                                             </ImageView>
+                                            <Button id="button_load" layoutX="430.0" layoutY="545.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" styleClass="button-check" stylesheets="@/styles/style.css" text="Load more..." textFill="WHITE">
+                                                <font>
+                                                    <Font name="System Bold" size="11.0" />
+                                                </font>
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
                                             <Button layoutX="458.0" layoutY="596.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="25.0" prefWidth="64.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                 <cursor>
                                                    <Cursor fx:constant="HAND" />
