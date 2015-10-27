@@ -400,16 +400,6 @@ public class ReportHtml extends ReportGeneric {
     ReportGenerator.writeToFile(outputfile, htmlBody);
   }
 
-  private static String getDif(int n1, int n2) {
-    String dif = "";
-    if (n2 != n1) {
-      dif = " (" + (n2 > n1 ? "+" : "-") + Math.abs(n2-n1) + ")";
-    } else {
-      dif = " (=)";
-    }
-    return dif;
-  }
-
   /**
    * Parse a global report to XML format.
    *

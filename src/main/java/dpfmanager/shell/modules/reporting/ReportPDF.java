@@ -199,30 +199,39 @@ public class ReportPDF extends ReportGeneric {
       font_size = 8;
       writeText(contentStream, "Errors", pos_x + image_width + 140, pos_y, font, font_size);
       writeText(contentStream, "Warnings", pos_x + image_width + 180, pos_y, font, font_size);
+      String dif = "";
 
       if (ir.hasBlValidation()) {
         pos_y -= 20;
         contentStream.drawLine(pos_x + image_width + 10,pos_y+15,pos_x + image_width + 230,pos_y+15);
         writeText(contentStream, "Baseline", pos_x + image_width + 10, pos_y, font, font_size);
-        writeText(contentStream, blErr + "", pos_x + image_width + 150, pos_y, font, font_size, blErr > 0 ? Color.red : Color.black);
-        writeText(contentStream, blWar + "", pos_x + image_width + 200, pos_y, font, font_size, blWar > 0 ? Color.orange : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNBlErr(), blErr) : "";
+        writeText(contentStream, blErr + dif, pos_x + image_width + 150, pos_y, font, font_size, blErr > 0 ? Color.red : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNBlWar(), blWar) : "";
+        writeText(contentStream, blWar + dif, pos_x + image_width + 200, pos_y, font, font_size, blWar > 0 ? Color.orange : Color.black);
       }
       if (ir.hasEpValidation()) {
         pos_y -= 20;
         writeText(contentStream, "Tiff/Ep", pos_x + image_width + 10, pos_y, font, font_size);
-        writeText(contentStream, epErr + "", pos_x + image_width + 150, pos_y, font, font_size, epErr > 0 ? Color.red : Color.black);
-        writeText(contentStream, epWar + "", pos_x + image_width + 200, pos_y, font, font_size, epWar > 0 ? Color.orange : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpErr(), epErr) : "";
+        writeText(contentStream, epErr + dif, pos_x + image_width + 150, pos_y, font, font_size, epErr > 0 ? Color.red : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpWar(), epWar) : "";
+        writeText(contentStream, epWar + dif, pos_x + image_width + 200, pos_y, font, font_size, epWar > 0 ? Color.orange : Color.black);
       }
       if (ir.hasItValidation()) {
         pos_y -= 20;
         writeText(contentStream, "Tiff/It", pos_x + image_width + 10, pos_y, font, font_size);
-        writeText(contentStream, itErr + "", pos_x + image_width + 150, pos_y, font, font_size, itErr > 0 ? Color.red : Color.black);
-        writeText(contentStream, itWar + "", pos_x + image_width + 200, pos_y, font, font_size, itWar > 0 ? Color.orange : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(), itErr) : "";
+        writeText(contentStream, itErr + dif, pos_x + image_width + 150, pos_y, font, font_size, itErr > 0 ? Color.red : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(), itWar) : "";
+        writeText(contentStream, itWar + dif, pos_x + image_width + 200, pos_y, font, font_size, itWar > 0 ? Color.orange : Color.black);
       }
       pos_y -= 20;
       writeText(contentStream, "Policy checker", pos_x + image_width + 10, pos_y, font, font_size);
-      writeText(contentStream, pcErr + "", pos_x + image_width + 150, pos_y, font, font_size, pcErr > 0 ? Color.red : Color.black);
-      writeText(contentStream, pcWar + "", pos_x + image_width + 200, pos_y, font, font_size, pcWar > 0 ? Color.orange : Color.black);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getErrors().size(), pcErr) : "";
+      writeText(contentStream, pcErr + dif, pos_x + image_width + 150, pos_y, font, font_size, pcErr > 0 ? Color.red : Color.black);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getWarnings().size(), pcWar) : "";
+      writeText(contentStream, pcWar + dif, pos_x + image_width + 200, pos_y, font, font_size, pcWar > 0 ? Color.orange : Color.black);
 
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -241,13 +250,16 @@ public class ReportPDF extends ReportGeneric {
       writeText(contentStream, "Tag Name", pos_x + 80, pos_y, font, font_size);
       writeText(contentStream, "Value", pos_x + 200, pos_y, font, font_size);
       for (ReportTag tag : getTags(ir)) {
+        String sDif = "";
+        if (tag.dif < 0) sDif = "(-)";
+        else if (tag.dif > 0) sDif = "(+)";
         pos_y -= 18;
         if (newPageNeeded(pos_y)) {
           contentStream = newPage(contentStream, document);
           pos_y = init_posy;
         }
         writeText(contentStream, tag.index + "", pos_x, pos_y, font, font_size);
-        writeText(contentStream, tag.tv.getId() + "", pos_x + 40, pos_y, font, font_size);
+        writeText(contentStream, tag.tv.getId() + sDif, pos_x + 40, pos_y, font, font_size);
         writeText(contentStream, tag.tv.getName(), pos_x + 80, pos_y, font, font_size);
         writeText(contentStream, tag.tv.toString(), pos_x + 200, pos_y, font, font_size);
       }

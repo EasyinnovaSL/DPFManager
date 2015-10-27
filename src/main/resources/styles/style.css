@@ -79,7 +79,10 @@
 }
 
 #myButton{
-	-fx-alignment: LEFT;
+	-fx-alignment: CENTER-LEFT;
+	-fx-background-image: url('../images/arrow-down.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: right;
 }
 
 .button:pressed{

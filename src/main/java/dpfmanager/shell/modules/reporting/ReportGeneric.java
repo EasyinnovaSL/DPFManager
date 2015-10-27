@@ -179,6 +179,16 @@ public class ReportGeneric {
     return showableTags.contains(tv.getName());
   }
 
+  protected static String getDif(int n1, int n2) {
+    String dif = "";
+    if (n2 != n1) {
+      dif = " (" + (n2 > n1 ? "+" : "-") + Math.abs(n2-n1) + ")";
+    } else {
+      dif = " (=)";
+    }
+    return dif;
+  }
+
   protected static ArrayList<ReportTag> getTags(IndividualReport ir) {
     ArrayList<ReportTag> list = new ArrayList<ReportTag>();
     TiffDocument td = ir.getTiffModel();

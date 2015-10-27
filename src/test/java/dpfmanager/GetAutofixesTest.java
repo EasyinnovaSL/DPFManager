@@ -19,7 +19,7 @@ public class GetAutofixesTest extends TestCase {
         }
       }
 
-      //assertEquals(2, nAutofixes);
+      assertEquals(2, nAutofixes);
     } catch (Exception ex) {
       assertEquals(1, 0);
     }

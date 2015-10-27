@@ -164,7 +164,7 @@ public class Schematron extends CamelTestSupport {
     InputStream sc = null;
     if (Files.exists(Paths.get(schema))) {
       // Look in local dir
-      System.out.println("Schematron rules found in local dir");
+      //System.out.println("Schematron rules found in local dir");
       sc = new FileInputStream(schema);
     } else {
       Class cls = this.getClass();

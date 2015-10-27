@@ -316,8 +316,8 @@ public class CommandLine extends UserInterface {
         // to.printMetadata();
         BaselineProfile bp = new BaselineProfile(to);
         bp.validate();
-        TiffEPProfile bpep = new TiffEPProfile(to);
-        bpep.validate();
+        TiffEPProfile bpEp = new TiffEPProfile(to);
+        bpEp.validate();
       }
       val.printErrors();
     }
@@ -333,7 +333,7 @@ public class CommandLine extends UserInterface {
     System.out.println("         -o path: Specifies the report output folder.");
     System.out.println("         -gui: Launches graphical interface");
     System.out.println("         -configuration (filename): Specify configuration file");
-    System.out.println("         -reportformat (xml, json or html): "
-        + "Specifies the report format. Default set to all reports.");
+    System.out.println("         -reportformat (xml, json, pdf or html): "
+        + "Specifies the report format. Default is 'xml,json,html'.");
   }
 }
