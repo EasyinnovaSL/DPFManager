@@ -1060,7 +1060,7 @@ public class MainApp extends Application {
           if (all_reports_loaded) {
             button_load.setVisible(false);
           }
-          System.out.println(data.size());
+          //System.out.println(data.size());
           addChartScore(colScore);
         }
       });

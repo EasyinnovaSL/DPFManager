@@ -48,9 +48,9 @@
                                                    <Image url="@../images/report.png" />
                                                 </image>-->
                                             </ImageView>
-                                            <Button id="button_load" layoutX="430.0" layoutY="545.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" styleClass="button-check" stylesheets="@/styles/style.css" text="Load more..." textFill="WHITE">
+                                            <Button id="button_load" layoutX="430.0" layoutY="555.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" styleClass="button-check" stylesheets="@/styles/style.css" text="Load more..." textFill="WHITE">
                                                 <font>
-                                                    <Font name="System Bold" size="11.0" />
+                                                    <Font name="System Bold" size="10.5" />
                                                 </font>
                                                 <cursor>
                                                     <Cursor fx:constant="HAND" />
