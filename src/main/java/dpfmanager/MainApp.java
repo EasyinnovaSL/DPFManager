@@ -348,6 +348,17 @@ public class MainApp extends Application {
     comboBox.setPrefHeight(39.0);
     comboBox.setCursor(Cursor.HAND);
     comboBox.setId("choiceType");
+
+
+    comboBox.valueProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue ov, String oldValue, String newValue) {
+        Scene scene = thestage.getScene();
+        AnchorPane pan0 = (AnchorPane) scene.lookup("#pane0");
+        Button Select = (Button) pan0.lookup("#myButton");
+        Select.fire();
+      }
+    });
     pan0.getChildren().add(comboBox);
 
   }
@@ -1016,19 +1027,19 @@ public class MainApp extends Application {
       TableColumn colPassed = new TableColumn("Passed");
       colPassed.setMinWidth(60);
       colPassed.setCellValueFactory(
-          new PropertyValueFactory<ReportRow, String>("passed")
+              new PropertyValueFactory<ReportRow, String>("passed")
       );
 
       TableColumn<ReportRow, String> colScore = new TableColumn("Score");
       colScore.setMinWidth(80);
       colScore.setCellValueFactory(
-          new PropertyValueFactory("score")
+              new PropertyValueFactory("score")
       );
 
       TableColumn colFormats = new TableColumn("Formats");
       colFormats.setMinWidth(95);
       colFormats.setCellValueFactory(
-          new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
+              new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
       );
 
       tabReports.getColumns().addAll(colDate, colN, colResult, colFixed, colErrors, colWarnings, colPassed, colScore, colFormats);
