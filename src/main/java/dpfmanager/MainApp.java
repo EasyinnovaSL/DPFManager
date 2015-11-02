@@ -443,7 +443,7 @@ public class MainApp extends Application {
             StringBuffer response = new StringBuffer();
 
             while ((inputLine = in.readLine()) != null) {
-              if (inputLine == "OK") getok = true;
+              if (inputLine.equals("OK")) getok = true;
             }
             in.close();
           }
