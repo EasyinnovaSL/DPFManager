@@ -106,7 +106,9 @@ public class Schematron extends CamelTestSupport {
           newrule.setAttribute("context", r.getTag());
 
           Element assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
-          assertion.setAttribute("test", "@" + r.getTag() + " " + convert(r.getOperator()) + " " + r.getValue());
+          String sval = r.getValue();
+          if (r.getType().equals("string")) sval = "'" + sval  + "'";
+          assertion.setAttribute("test", "@" + r.getTag() + " " + convert(r.getOperator()) + " " + sval);
           assertion.setTextContent("Invalid " + r.getTag() + ": #PP2#value-of select=\"@" + r.getTag() + "\"/#GG#");
 
           newrule.appendChild(assertion);

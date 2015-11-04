@@ -1210,11 +1210,13 @@ public class MainApp extends Application {
     });
   }
 
-  private void addNumericOperator(String item) {
+  private void addOperator(String item) {
     ArrayList<String> operators = null;
+    ArrayList<String> values = null;
     for (Field field : gui.getFields()) {
       if (field.getName().equals(item)) {
         operators = field.getOperators();
+        values = field.getValues();
       }
     }
     if (operators != null) {
@@ -1249,10 +1251,19 @@ public class MainApp extends Application {
                       hBox1.getChildren().remove(i);
                     }
                   }
-                  TextField value = new NumberTextField();
-                  value.getStyleClass().add("txtRule");
+
                   hBox1.getChildren().add(comboOp);
-                  hBox1.getChildren().add(value);
+                  if (values == null) {
+                    TextField value = new NumberTextField();
+                    value.getStyleClass().add("txtRule");
+                    hBox1.getChildren().add(value);
+                  } else {
+                    ComboBox comboVal = new ComboBox();
+                    for (String value : values) {
+                      comboVal.getItems().add(value);
+                    }
+                    hBox1.getChildren().add(comboVal);
+                  }
                   hBox1.getChildren().add(bRemove);
                   break;
                 }
@@ -1355,7 +1366,7 @@ public class MainApp extends Application {
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue ov, String t, String item) {
-        addNumericOperator(item);
+        addOperator(item);
       }
     });
     HBox hBox = new HBox (comboBox, remove);

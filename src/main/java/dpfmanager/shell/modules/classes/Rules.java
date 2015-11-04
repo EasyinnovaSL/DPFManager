@@ -30,10 +30,7 @@ public class Rules {
 
   public void Read(Scene scene) {
     Boolean wrong_format = false;
-    VBox tabPane = ((VBox) ((SplitPane) scene.getRoot().getChildrenUnmodifiable().get(0)).getItems().get(1));
-    AnchorPane ap = (AnchorPane)(tabPane.getChildren().get(0));
-    ScrollPane sp = (ScrollPane)(ap.getChildren().get(0));
-    AnchorPane ap2 = (AnchorPane)(sp.getContent());
+    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     for (Node node : ap2.getChildren()){
       if(node instanceof HBox) {
         HBox hBox1 = (HBox)node;
@@ -44,9 +41,9 @@ public class Rules {
             if (comboBox.getValue() != null){
               String comboBoxVal = comboBox.getValue().toString();
               if (tag == null) tag = comboBoxVal;
-              else operator = comboBoxVal;
-            }
-            else{
+              else if (operator == null) operator = comboBoxVal;
+              else value = comboBoxVal;
+            } else{
               wrong_format = true;
             }
           } else if(nodeIn instanceof TextField) {
@@ -58,8 +55,7 @@ public class Rules {
               }else{
                 wrong_format = true;
               }
-            }
-            else{
+            } else{
               wrong_format = true;
             }
           }

@@ -43,6 +43,8 @@ import org.reflections.util.FilterBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.nio.ByteOrder;
+
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -146,6 +148,14 @@ public class TiffConformanceChecker {
       addElement(doc, field, "type", "integer");
       addElement(doc, field, "description", "Pixel Density in pixels per centimeter");
       addElement(doc, field, "operators", ">,<,=");
+      // Byteorder
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "ByteOrder");
+      addElement(doc, field, "type", "string");
+      addElement(doc, field, "description", "Byte Order (BigEndian, LittleEndian)");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", ByteOrder.BIG_ENDIAN.toString() + "," + ByteOrder.LITTLE_ENDIAN.toString());
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();

@@ -29,11 +29,6 @@ import java.util.prefs.Preferences;
 public class ReportGeneratorTest extends TestCase {
   TiffReader tr;
 
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
-
   /**
    * Pre test.
    */
@@ -92,7 +87,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path + "/html");
     assertEquals(directori.exists(), true);
@@ -149,7 +143,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -193,7 +186,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -237,7 +229,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -285,7 +276,6 @@ public class ReportGeneratorTest extends TestCase {
 
       CommandLine cl = new CommandLine(params);
       cl.launch();
-      Platform.exit();
 
       String path = getPath();
 
@@ -343,7 +333,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 

@@ -13,6 +13,7 @@ public class Field {
   private String type;
   private String description;
   private ArrayList<String> operators;
+  private ArrayList<String> values;
 
   public String getName() {
     return name;
@@ -24,6 +25,10 @@ public class Field {
 
   public ArrayList<String> getOperators() {
     return operators;
+  }
+
+  public ArrayList<String> getValues() {
+    return values;
   }
 
   public Field() {
@@ -44,6 +49,12 @@ public class Field {
         this.operators = new ArrayList();
         for (String op : operators.split(",")) {
           this.operators.add(op);
+        }
+      } else if (child.getNodeName().equals("values")) {
+        String operators = nodelist.item(j).getTextContent();
+        this.values = new ArrayList();
+        for (String val : operators.split(",")) {
+          this.values.add(val);
         }
       }
     }

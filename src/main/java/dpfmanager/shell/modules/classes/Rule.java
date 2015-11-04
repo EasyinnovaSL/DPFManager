@@ -16,6 +16,20 @@ public class Rule {
     return tag;
   }
 
+  public String getType() {
+    try {
+      Integer.parseInt(value);
+      return "int";
+    } catch (Exception e2) {
+      try {
+        Double.parseDouble(value);
+        return "double";
+      } catch (Exception e3) {
+        return "string";
+      }
+    }
+  }
+
   public String getOperator() {
     return operator;
   }

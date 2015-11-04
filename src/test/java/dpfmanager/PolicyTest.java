@@ -9,8 +9,11 @@ import com.easyinnova.tiff.reader.TiffReader;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -26,11 +29,6 @@ import java.util.prefs.Preferences;
  */
 public class PolicyTest extends TestCase {
   TiffReader tr;
-
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
 
   /**
    * Pre test.
@@ -121,6 +119,154 @@ public class PolicyTest extends TestCase {
     }
     assertEquals(xml_orig != null, true);
     assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
+    assertEquals(xml_orig.contains("failed-assert"), true);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    Platform.exit();
+
+    new File(configfile).delete();
+  }
+
+  public void testEndianessOk() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
+    String path = "output";
+    int idx=1;
+    while (new File(path).exists()) path = "output" + idx++;
+
+    String configfile = "xx.cfg";
+    idx = 0;
+    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
+    bw.write("ISO\tBaseline\n" +
+        "FORMAT\tXML\n" +
+        "RULE\tByteOrder,=,BIG_ENDIAN\n");
+    bw.close();
+
+    String[] args = new String[6];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+    args[4] = "-configuration";
+    args[5] = configfile;
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    File directori = new File(path);
+    assertEquals(directori.exists(), true);
+
+    String xml_orig = null;
+    for (String file : directori.list()){
+      if (file.equals("Bilevel.tif.xml")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
+        xml_orig = new String(encoded);
+      }
+    }
+    assertEquals(xml_orig != null, true);
+    assertEquals(xml_orig.contains("Invalid ByteOrder"), false);
+    assertEquals(xml_orig.contains("failed-assert"), false);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    Platform.exit();
+
+    new File(configfile).delete();
+  }
+
+  public void testEndianessKo() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
+    String path = "output";
+    int idx=1;
+    while (new File(path).exists()) path = "output" + idx++;
+
+    String configfile = "xx.cfg";
+    idx = 0;
+    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
+    bw.write("ISO\tBaseline\n" +
+        "FORMAT\tXML\n" +
+        "RULE\tByteOrder,=,LITTLE_ENDIAN\n");
+    bw.close();
+
+    String[] args = new String[6];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+    args[4] = "-configuration";
+    args[5] = configfile;
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+    Platform.exit();
+
+    File directori = new File(path);
+    assertEquals(directori.exists(), true);
+
+    String xml_orig = null;
+    for (String file : directori.list()){
+      if (file.equals("Bilevel.tif.xml")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
+        xml_orig = new String(encoded);
+      }
+    }
+    assertEquals(xml_orig != null, true);
+    assertEquals(xml_orig.contains("Invalid ByteOrder"), true);
     assertEquals(xml_orig.contains("failed-assert"), true);
 
     FileUtils.deleteDirectory(new File(path));

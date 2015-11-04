@@ -83,11 +83,12 @@ public class MultipleReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
     File directori = new File(path);
     assertEquals(7, directori.list().length);
+
+    Platform.exit();
   }
 
   public void testReportsPDF() throws Exception {
@@ -128,7 +129,6 @@ public class MultipleReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
     File directori = new File(path);
@@ -138,6 +138,8 @@ public class MultipleReportGeneratorTest extends TestCase {
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
     assertEquals(13, l.size());
     doc.close();
+
+    Platform.exit();
   }
 
   private String getPath() {

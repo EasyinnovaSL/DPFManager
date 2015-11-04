@@ -31,11 +31,6 @@ import java.util.prefs.Preferences;
 public class SchematronTest extends TestCase {
   TiffReader tr;
 
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
-
   /**
    * Pre test.
    */
@@ -90,7 +85,6 @@ public class SchematronTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -154,7 +148,6 @@ public class SchematronTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -216,7 +209,6 @@ public class SchematronTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
     String xmlFile = path + "/Bilevel.tif.xml";
@@ -227,6 +219,8 @@ public class SchematronTest extends TestCase {
     String res = new String(encoded, Charset.defaultCharset());
 
     assertEquals(true, res.indexOf("fired-rule") > -1);
+
+    Platform.exit();
   }
 
   /**

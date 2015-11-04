@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.easyinnova</groupId>
 	<artifactId>dpf_manager</artifactId>
-	<version>1.2</version>
+	<version>1.2.1</version>
 	<packaging>jar</packaging>
 
 	<!-- More Project Information -->

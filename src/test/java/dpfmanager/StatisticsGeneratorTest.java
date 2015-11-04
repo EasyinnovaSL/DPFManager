@@ -88,7 +88,6 @@ public class StatisticsGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
     String xmlFile = path + "/summary.xml";
@@ -99,6 +98,7 @@ public class StatisticsGeneratorTest extends TestCase {
     assertJSON(jsonFile, 1);
     assertHTML(htmlFile, 1);
 
+    Platform.exit();
   }
 
   public void testStatistics2() throws Exception {
@@ -136,7 +136,6 @@ public class StatisticsGeneratorTest extends TestCase {
     //MainApp.main(args);
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
     String xmlFile = path + "/summary.xml";
@@ -146,6 +145,8 @@ public class StatisticsGeneratorTest extends TestCase {
     assertXML(xmlFile, 6);
     assertJSON(jsonFile, 6);
     assertHTML(htmlFile, 6);
+
+    Platform.exit();
   }
 
   private String getPath() {

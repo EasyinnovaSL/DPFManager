@@ -113,7 +113,6 @@ public class FixerTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -196,7 +195,6 @@ public class FixerTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -277,7 +275,6 @@ public class FixerTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -360,7 +357,6 @@ public class FixerTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);

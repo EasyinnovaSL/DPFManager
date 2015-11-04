@@ -107,13 +107,10 @@ public class TiffWriterTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
-
     String xmlFile = path + "/Bilevel.tif.xml";
     String xmlFile2 = path + "/Bilevel2.tif.xml";
-
 
     assertXML(xmlFile, xmlFile2);
 
