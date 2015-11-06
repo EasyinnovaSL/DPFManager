@@ -593,11 +593,11 @@ public class ReportHtml extends ReportGeneric {
     // Chart
     int angleG = globalPercent * 360 / 100;
     int reverseAngleG = 360 - angleG;
-    String functionPie = "plotPie('pie-global', " + reverseAngleG + ", " + angleG;
+    String functionPie = "plotPie('pie-global', " + angleG + ", " + reverseAngleG;
     if (gr.getReportsOk() >= gr.getReportsKo()) {
-      functionPie += ", '#F2F2F2', '#66CC66'); ";
+      functionPie += ", '#66CC66', '#F2F2F2'); ";
     } else {
-      functionPie += ", 'red', '#F2F2F2'); ";
+      functionPie += ", '#F2F2F2', 'red'); ";
     }
     pieFunctions += functionPie;
 

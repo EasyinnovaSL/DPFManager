@@ -361,6 +361,11 @@ public class MainApp extends Application {
     });
     pan0.getChildren().add(comboBox);
 
+    if (gui.getSelectedFile() != null) {
+      TextField txtField = (TextField) scene.lookup("#txtBox1");
+      txtField.setText(gui.getSelectedFile());
+    }
+
   }
 
   protected void SetFile() {
@@ -1119,7 +1124,7 @@ public class MainApp extends Application {
             super.updateItem(item, empty);
             if (!empty && item != null) {
 
-              Double score = item.indexOf("&") < 0 ? 0 : Double.parseDouble(item.substring(0, item.indexOf('%')));
+              Double score = item.indexOf("%") < 0 || item.indexOf("?") >= 0 ? 0 : Double.parseDouble(item.substring(0, item.indexOf('%')));
 
               ObservableList<PieChart.Data> pieChartData =
                   FXCollections.observableArrayList(
@@ -1592,6 +1597,7 @@ public class MainApp extends Application {
       if (directory != null)
         txtFile.setText(directory.getPath());
     }
+    gui.setSelectedFile(txtFile.getText());
   }
 
   private void ShowLoading() {

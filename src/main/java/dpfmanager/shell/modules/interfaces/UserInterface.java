@@ -40,6 +40,15 @@ public class UserInterface {
   private ArrayList<String> extensions;
   private ArrayList<String> isos;
   private ArrayList<Field> fields;
+  private String selectedFile;
+
+  public String getSelectedFile() {
+    return selectedFile;
+  }
+
+  public void setSelectedFile(String filename){
+    selectedFile = filename;
+  }
 
   public ArrayList<String> getExtensions() {
     return extensions;
