@@ -64,9 +64,13 @@ public class FixerTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String configfile = "xx.cfg";
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String configfile = "temp/xx.cfg";
     int idx = 0;
-    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
 
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
@@ -78,9 +82,9 @@ public class FixerTest extends TestCase {
         "FIX\tImageDescription,Add Tag,description\n");
     bw.close();
 
-    String path = "output";
+    String path = "temp/output";
     idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    while (new File(path).exists()) path = "temp/output" + idx++;
 
     String[] args = new String[6];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -141,6 +145,7 @@ public class FixerTest extends TestCase {
     Platform.exit();
 
     new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   public void testAddExistingTag() throws Exception {
@@ -149,9 +154,13 @@ public class FixerTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String configfile = "xx.cfg";
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String configfile = "temp/xx.cfg";
     int idx = 0;
-    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
 
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
@@ -160,9 +169,9 @@ public class FixerTest extends TestCase {
         "FIX\tArtist,Add Tag,NewArtist\n");
     bw.close();
 
-    String path = "output";
+    String path = "temp/output";
     idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    while (new File(path).exists()) path = "temp/output" + idx++;
 
     String[] args = new String[6];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -221,6 +230,7 @@ public class FixerTest extends TestCase {
     Platform.exit();
 
     new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   public void testAutofixPrivateData() throws Exception {
@@ -229,9 +239,13 @@ public class FixerTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String configfile = "xx.cfg";
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String configfile = "temp/xx.cfg";
     int idx = 0;
-    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
 
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
@@ -240,9 +254,9 @@ public class FixerTest extends TestCase {
         "FIX\tclearPrivateData,Yes\n");
     bw.close();
 
-    String path = "output";
+    String path = "temp/output";
     idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    while (new File(path).exists()) path = "temp/output" + idx++;
 
     String[] args = new String[6];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -300,6 +314,7 @@ public class FixerTest extends TestCase {
     Platform.exit();
 
     new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   public void testReports() throws Exception {
@@ -308,9 +323,13 @@ public class FixerTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String configfile = "xx.cfg";
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String configfile = "temp/xx.cfg";
     int idx = 0;
-    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
 
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
@@ -322,9 +341,9 @@ public class FixerTest extends TestCase {
         "FIX\tImageDescription,Add Tag,description\n");
     bw.close();
 
-    String path = "output";
+    String path = "temp/output";
     idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    while (new File(path).exists()) path = "temp/output" + idx++;
 
     String[] args = new String[6];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -401,5 +420,6 @@ public class FixerTest extends TestCase {
     Platform.exit();
 
     new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 }

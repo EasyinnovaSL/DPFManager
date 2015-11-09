@@ -876,38 +876,34 @@ public class MainApp extends Application {
     if (chkPdf.isSelected()) config.getFormats().add("PDF");
     LoadSceneXml("/fxml/config4.fxml");
 
-    Set<Class<?>> classes = TiffConformanceChecker.getAutofixes();
+    ArrayList<String> classes = TiffConformanceChecker.getAutofixes();
 
     int ypos = 320;
     int xpos = 252;
     int dify = 50;
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
     boolean first = true;
-    for (Class<?> cl : classes) {
-      if (cl.toString().startsWith("class ")) {
-        String className = cl.toString().substring(cl.toString().lastIndexOf(".") + 1);
-        if (className.equals("changeEndianess")) continue;
-        autofix fix = (autofix)Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
+    for (String className : classes) {
+      autofix fix = (autofix) Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
 
-        CheckBox check = new CheckBox();
-        check.setText(fix.getDescription());
-        check.setId(className);
-        check.setLayoutY(ypos);
-        check.setLayoutX(xpos);
-        check.getStyleClass().add("checkreport");
-        check.setTextFill(Paint.valueOf("white"));
-        ap2.getChildren().add(check);
+      CheckBox check = new CheckBox();
+      check.setText(fix.getDescription());
+      check.setId(className);
+      check.setLayoutY(ypos);
+      check.setLayoutX(xpos);
+      check.getStyleClass().add("checkreport");
+      check.setTextFill(Paint.valueOf("white"));
+      ap2.getChildren().add(check);
 
-        ypos += dify;
-        if (!first) {
-          Button but = (Button) scene.lookup("#addFix");
-          but.setLayoutY(but.getLayoutY() + dify);
-          Line lin = (Line) scene.lookup("#line");
-          lin.setLayoutY(lin.getLayoutY() + dify);
-        } else {
-          first = false;
-        }
+      ypos += dify;
+      if (!first) {
+        Button but = (Button) scene.lookup("#addFix");
+        but.setLayoutY(but.getLayoutY() + dify);
+        Line lin = (Line) scene.lookup("#line");
+        lin.setLayoutY(lin.getLayoutY() + dify);
+      } else {
+        first = false;
       }
     }
   }

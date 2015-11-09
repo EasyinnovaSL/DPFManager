@@ -55,13 +55,17 @@ public class PolicyTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String path = "output";
-    int idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
 
-    String configfile = "xx.cfg";
+    String path = "temp/output";
+    int idx=1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String configfile = "temp/xx.cfg";
     idx = 0;
-    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
 
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
@@ -126,6 +130,7 @@ public class PolicyTest extends TestCase {
     Platform.exit();
 
     new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   public void testEndianessOk() throws Exception {
@@ -134,13 +139,17 @@ public class PolicyTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String path = "output";
-    int idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
 
-    String configfile = "xx.cfg";
+    String path = "temp/output";
+    int idx=1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String configfile = "temp/xx.cfg";
     idx = 0;
-    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
 
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
@@ -200,6 +209,7 @@ public class PolicyTest extends TestCase {
     Platform.exit();
 
     new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   public void testEndianessKo() throws Exception {
@@ -208,13 +218,17 @@ public class PolicyTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String path = "output";
-    int idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
 
-    String configfile = "xx.cfg";
+    String path = "temp/output";
+    int idx=1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String configfile = "temp/xx.cfg";
     idx = 0;
-    while (new File(configfile).exists()) configfile = "xx" + idx++ + ".cfg";
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
 
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
@@ -274,5 +288,6 @@ public class PolicyTest extends TestCase {
     Platform.exit();
 
     new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 }

@@ -2,6 +2,8 @@ package dpfmanager;
 
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 import junit.framework.TestCase;
+
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -10,16 +12,11 @@ import java.util.Set;
 public class GetAutofixesTest extends TestCase {
   public void testAutofixes() throws Exception {
     try {
-      Set<Class<?>> classes = TiffConformanceChecker.getAutofixes();
+      ArrayList<String> classes = TiffConformanceChecker.getAutofixes();
 
-      int nAutofixes = 0;
-      for (Class<?> cl : classes) {
-        if (cl.toString().startsWith("class ")) {
-          nAutofixes++;
-        }
-      }
+      int nAutofixes = classes.size();
 
-      assertEquals(2, nAutofixes);
+      assertEquals(1, nAutofixes);
     } catch (Exception ex) {
       assertEquals(1, 0);
     }

@@ -54,9 +54,13 @@ public class ReportGeneratorTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String path = "output";
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String path = "temp/output";
     int idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    while (new File(path).exists()) path = "temp/output" + idx++;
 
     String[] args = new String[4];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -106,6 +110,7 @@ public class ReportGeneratorTest extends TestCase {
     FileUtils.deleteDirectory(new File(path));
 
     Platform.exit();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   public void testReportsFile() throws Exception {
