@@ -6,10 +6,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox alignment="TOP_CENTER" id="rootMain" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <SplitPane fx:id="splitPa1" orientation="VERTICAL">
-            <VBox fx:id="rootReports">
+            <VBox>
                 <children>
                     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
                         <children>

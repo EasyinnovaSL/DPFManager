@@ -6,9 +6,6 @@ import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
-import com.athaydes.automaton.FXApp;
-import com.athaydes.automaton.FXer;
-
 import junit.framework.TestCase;
 
 import org.junit.After;
