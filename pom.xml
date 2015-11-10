@@ -69,6 +69,7 @@
 		<slf4j.version>1.6.1</slf4j.version>
 	    <maven.compiler.source>1.8</maven.compiler.source>
 	    <maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -329,6 +330,7 @@
 					<plugin>
 						<groupId>org.apache.camel</groupId>
 						<artifactId>camel-maven-plugin</artifactId>
+						<version>2.15.2</version>
 						<configuration>
 							<applicationContextUri>META-INF/spring/*.xml;YOUR_FILE_NAME_IN_THE_CLASS_PATH.xml</applicationContextUri>
 						</configuration>

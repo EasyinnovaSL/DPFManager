@@ -320,6 +320,7 @@ public class ReportXml {
    *
    * @param xmlfile the file name.
    * @param ir the individual report.
+   * @param rules the policy checker.
    * @return the XML string generated.
    */
   public static String parseIndividual(String xmlfile, IndividualReport ir, Rules rules) {

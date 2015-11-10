@@ -130,8 +130,9 @@ public class IndividualReport {
    * @param name the name
    * @param path the path
    * @param tiffModel the TIFF model
-   * @param baselineValidation the validation
-   * @param epValidation the validation
+   * @param baselineValidation the baseline validation
+   * @param epValidation the EP validation
+   * @param itValidation the IT validation
    */
   public IndividualReport(String name, String path, TiffDocument tiffModel,
       ValidationResult baselineValidation, ValidationResult epValidation, ValidationResult itValidation) {
@@ -226,8 +227,9 @@ public class IndividualReport {
    * Generate the report information.
    *
    * @param tiffModel the tiff model
-   * @param validation the validation
-   * @param epValidation the ep validation
+   * @param validation the baseline validation
+   * @param epValidation the EP validation
+   * @param itValidation the IT validation
    */
   public void generate(TiffDocument tiffModel, ValidationResult validation,
       ValidationResult epValidation, ValidationResult itValidation) {

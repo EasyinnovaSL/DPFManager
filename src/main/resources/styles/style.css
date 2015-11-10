@@ -2,17 +2,18 @@
 
 
 /* Component specific styles */
+#rootMain {
+	-fx-background-color: rgb(51, 51, 51);
+}
 
 .mainimage{
 	-fx-image: url("../images/main.png");
+	-fx-background-position: center center;
+	-fx-background-repeat: repeat-x;
 }
 
 .mainimagereport{
 	-fx-image: url("../images/report.png");
-}
-
-.backgr{
-	-fx-image: url("../images/back.png");
 }
 
 .config1{
@@ -70,7 +71,7 @@
 #addRule,#addFix{
 	-fx-font: 12 "arial black";
 }
-#myButton,#addRule,#addFix, #button_load{
+#myButton,#addRule,#addFix, #button_load,#button_more{
 	-fx-background-color: #31C2F3;
 	-fx-border-width     : 1px   ;
 	-fx-border-color     : #31C2F3  ;
@@ -89,7 +90,7 @@
 	-fx-background-color: #848282;
 }
 
-#myButton:pressed,#addRule:pressed,#addFix:pressed,#choiceBtn:pressed, #button_load:pressed{
+#myButton:pressed,#addRule:pressed,#addFix:pressed,#choiceBtn:pressed, #button_load:pressed, #button_more:pressed{
 	-fx-background-color: #19B2D8;
 }
 

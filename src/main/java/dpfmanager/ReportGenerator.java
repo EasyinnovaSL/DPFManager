@@ -693,6 +693,8 @@ public class ReportGenerator {
    *
    * @param internalReportFolder the internal report folder
    * @param individuals the individual reports list
+   * @param outputFolder the output folder
+   * @param silence the silence
    * @return the string
    */
   public String makeSummaryReport(String internalReportFolder,

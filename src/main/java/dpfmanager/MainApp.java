@@ -24,7 +24,7 @@
  * © 2115 Easy Innova, SL
  * </p>
  *
- * @author Easy Innova
+ * @author Victor Muñoz
  * @version 1.0
  * @since 23/6/2115
  */
@@ -147,13 +147,12 @@ public class MainApp extends Application {
   private final ToggleGroup group = new ToggleGroup();
   private final int reports_loaded = 50;
   private boolean all_reports_loaded;
+  private static boolean firstRun = true;
 
   @FXML private TextField txtFile;
   @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
   @FXML private Line line;
   @FXML private CheckBox chkFeedback, chkSubmit;
-  @FXML private CheckBox chkAutoFixLE, chkAutoFixBE;
-  @FXML private CheckBox chkAutoFixPersonal;
   @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
   @FXML private TextArea txtWhy;
@@ -229,10 +228,6 @@ public class MainApp extends Application {
 
     thestage.setTitle("DPFManager");
     thestage.setScene(scenemain);
-    thestage.setMaxHeight(height);
-    thestage.setMinHeight(height);
-    thestage.setMaxWidth(width);
-    thestage.setMinWidth(width);
     thestage.show();
   }
 
@@ -243,7 +238,14 @@ public class MainApp extends Application {
 
     FXMLLoader loader = new FXMLLoader();
     Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
-    Scene scenemain = new Scene(rootNode1, width, height);
+    double w = width;
+    double h = height;
+    if (firstRun) firstRun = false;
+    else {
+      w = thestage.getScene().getWidth();
+      h = thestage.getScene().getHeight();
+    }
+    Scene scenemain = new Scene(rootNode1, w, h);
     scenemain.getStylesheets().add("/styles/style.css");
 
     // Tree View
@@ -265,15 +267,10 @@ public class MainApp extends Application {
 
     thestage.setTitle("DPFManager");
     thestage.setScene(scenemain);
-    thestage.setMaxHeight(height);
-    thestage.setMinHeight(height);
-    thestage.setMaxWidth(width);
-    thestage.setMinWidth(width);
     thestage.sizeToScene();
     thestage.show();
 
-    ObservableList<Node> nodes = scenemain.getRoot().getChildrenUnmodifiable();
-    SplitPane splitPa1 = (SplitPane) nodes.get(0);
+    SplitPane splitPa1 = (SplitPane) scenemain.lookup("#splitPa1");
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setMouseTransparent(true));
@@ -349,7 +346,6 @@ public class MainApp extends Application {
     comboBox.setCursor(Cursor.HAND);
     comboBox.setId("choiceType");
 
-
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -366,6 +362,7 @@ public class MainApp extends Application {
       txtField.setText(gui.getSelectedFile());
     }
 
+    topMenuPositioning(scene);
   }
 
   protected void SetFile() {
@@ -611,7 +608,7 @@ public class MainApp extends Application {
         "\t-fx-background-radius: 0 0 0";
     String styleButtonPressed = "-fx-background-color: rgba(255, 255, 255, 0.2);";
 
-    Scene sceneReport = new Scene(new Group(), width, height);
+    Scene sceneReport = new Scene(new Group(), thestage.getScene().getWidth(), thestage.getScene().getHeight());
 
     VBox root = new VBox();
     SplitPane splitPa = new SplitPane();
@@ -619,9 +616,8 @@ public class MainApp extends Application {
 
     Pane topImg = new Pane();
     topImg.setStyle(styleBackground);
-    topImg.setMinWidth(width);
+    topImg.setMinWidth(thestage.getScene().getWidth());
     topImg.setMinHeight(50);
-    //topImg.setMaxWidth(width);
     topImg.setMaxHeight(50);
 
     // Button go to main
@@ -629,6 +625,7 @@ public class MainApp extends Application {
     checker.setMinWidth(170);
     checker.setMinHeight(30);
     checker.setLayoutY(5.0);
+    checker.setId("butChecker");
 
     checker.setCursor(Cursor.HAND);
     checker.setOnAction(new EventHandler<ActionEvent>() {
@@ -657,6 +654,7 @@ public class MainApp extends Application {
     report.setMinWidth(80);
     report.setMinHeight(30);
     report.setLayoutY(5.0);
+    report.setId("butReport");
 
     report.setCursor(Cursor.HAND);
     report.setOnAction(new EventHandler<ActionEvent>() {
@@ -684,6 +682,7 @@ public class MainApp extends Application {
     about.setMinWidth(55);
     about.setMinHeight(30);
     about.setLayoutY(5.0);
+    about.setId("butAbout");
 
     about.setCursor(Cursor.HAND);
     about.setOnAction(new EventHandler<ActionEvent>() {
@@ -712,7 +711,7 @@ public class MainApp extends Application {
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        double h = height - topImg.getHeight() - 50;
+        double h = thestage.getScene().getHeight() - topImg.getHeight() - 50;
         splitPa.getItems().addAll(topImg);
         String file = System.getProperty("user.dir") + "/" + filename;
 
@@ -720,7 +719,7 @@ public class MainApp extends Application {
         if (format.equals("html")) {
           WebView browser = new WebView();
           //double w = width-topImg.getWidth();
-          browser.setMinWidth(width);
+          browser.setMinWidth(thestage.getScene().getWidth());
           browser.setMinHeight(h);
           //browser.setMaxWidth(width);
           browser.setMaxHeight(h);
@@ -739,7 +738,7 @@ public class MainApp extends Application {
         // Else show in TextArea
         else {
           TextArea ta = new TextArea();
-          ta.setMinWidth(width);
+          ta.setMinWidth(thestage.getScene().getWidth());
           ta.setMinHeight(h);
           ta.setEditable(false);
 
@@ -750,7 +749,7 @@ public class MainApp extends Application {
             try {
               String line;
               while ((line = input.readLine()) != null) {
-                if(!content.equals("")) {
+                if (!content.equals("")) {
                   content += "\n";
                 }
                 content += line;
@@ -762,7 +761,7 @@ public class MainApp extends Application {
             ex.printStackTrace();
           }
 
-          if(format.equals("json")) {
+          if (format.equals("json")) {
             content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
           }
 
@@ -775,43 +774,22 @@ public class MainApp extends Application {
         root.getChildren().addAll(splitPa);
         sceneReport.setRoot(root);
 
-          thestage.setScene(sceneReport);
+        thestage.setScene(sceneReport);
 
-          //Set invisible the divisor line
-          splitPa.lookupAll(".split-pane-divider").stream()
-              .forEach(
-                  div -> div.setStyle("-fx-padding: 0;\n" +
-                      "    -fx-background-color: transparent;\n" +
-                      "    -fx-background-insets: 0;\n" +
-                      "    -fx-shape: \" \";"));
-          splitPa.lookupAll(".split-pane-divider").stream()
-              .forEach(
-                  div -> div.setMouseTransparent(true));
+        //Set invisible the divisor line
+        splitPa.lookupAll(".split-pane-divider").stream()
+            .forEach(
+                div -> div.setStyle("-fx-padding: 0;\n" +
+                    "    -fx-background-color: transparent;\n" +
+                    "    -fx-background-insets: 0;\n" +
+                    "    -fx-shape: \" \";"));
+        splitPa.lookupAll(".split-pane-divider").stream()
+            .forEach(
+                div -> div.setMouseTransparent(true));
 
-          thestage.setMaxHeight(Double.MAX_VALUE);
-          thestage.setMinHeight(height);
-          thestage.setMaxWidth(Double.MAX_VALUE);
-          thestage.setResizable(true);
-          thestage.setMinWidth(width);
-
-          thestage.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-              if (newSceneWidth.doubleValue() < 989) {
-                report.setLayoutX(470.0);
-                checker.setLayoutX(290.0);
-                about.setLayoutX(560.0);
-              } else {
-                double dif = (newSceneWidth.doubleValue() - width) / 2;
-                report.setLayoutX(463.0 + dif);
-                checker.setLayoutX(283.0 + dif);
-                about.setLayoutX(560.0 + dif);
-              }
-            }
-          });
-
-          thestage.sizeToScene();
-        }
+        thestage.sizeToScene();
+        topMenuPositioning(sceneReport);
+      }
     });
   }
 
@@ -825,23 +803,52 @@ public class MainApp extends Application {
 
     FXMLLoader loader = new FXMLLoader();
     Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
-    Scene scene = new Scene(rootNode1, width, height);
+    Scene scene = new Scene(rootNode1, thestage.getScene().getWidth(), thestage.getScene().getHeight());
     scene.getStylesheets().add("/styles/style.css");
 
     thestage.setTitle("DPFManager");
     thestage.setScene(scene);
-    thestage.setMaxHeight(height);
-    thestage.setMinHeight(height);
-    thestage.setMaxWidth(width);
-    thestage.setMinWidth(width);
     thestage.sizeToScene();
     thestage.show();
 
-    ObservableList<Node> nodes=scene.getRoot().getChildrenUnmodifiable();
-    SplitPane splitPa1=(SplitPane)nodes.get(0);
+    SplitPane splitPa1 = (SplitPane) scene.lookup("#splitPa1");
     splitPa1.lookupAll(".split-pane-divider").stream()
         .forEach(
             div -> div.setMouseTransparent(true));
+
+    topMenuPositioning(scene);
+  }
+
+  void topMenuPositioning(Scene scene) {
+    thestage.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+        Button report = (Button) scene.lookup("#butReport");
+        Button checker = (Button) scene.lookup("#butChecker");
+        Button about = (Button) scene.lookup("#butAbout");
+        if (newSceneWidth.doubleValue() < 989) {
+          if (report != null) report.setLayoutX(470.0);
+          if (checker != null) checker.setLayoutX(290.0);
+          if (about != null) about.setLayoutX(560.0);
+        } else {
+          double dif = (newSceneWidth.doubleValue() - width) / 2;
+          if (report != null) report.setLayoutX(463.0 + dif);
+          if (checker != null) checker.setLayoutX(283.0 + dif);
+          if (about != null) about.setLayoutX(560.0 + dif);
+        }
+        VBox pan0 = (VBox) scene.lookup("#box0");
+        if (pan0 != null) {
+          if (newSceneWidth.doubleValue() < 989) {
+            pan0.setPadding(new Insets(0, 0, 0, 0));
+          } else {
+            double dif = (newSceneWidth.doubleValue() - width) / 2;
+            pan0.setPadding(new Insets(0, 0, 0, dif));
+          }
+        }
+      }
+    });
+    thestage.setWidth(thestage.getWidth() - 1);
+    thestage.setWidth(thestage.getWidth() + 1);
   }
 
   @FXML
@@ -967,19 +974,18 @@ public class MainApp extends Application {
       FXMLLoader loader2 = new FXMLLoader();
       String fxmlFile2 = "/fxml/summary.fxml";
       Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
-      Scene scenereport = new Scene(rootNode2, width, height);
+      Scene scenereport = new Scene(rootNode2, thestage.getScene().getWidth(), thestage.getScene().getHeight());
       scenereport.getStylesheets().add("/styles/style.css");
 
-      thestage.setMaxHeight(height);
+      /*thestage.setMaxHeight(height);
       thestage.setMinHeight(height);
       thestage.setMaxWidth(width);
-      thestage.setMinWidth(width);
+      thestage.setMinWidth(width);*/
 
       thestage.setScene(scenereport);
       thestage.sizeToScene();
 
-      ObservableList<Node> nodes = scenereport.getRoot().getChildrenUnmodifiable();
-      SplitPane splitPa1 = (SplitPane) nodes.get(0);
+      SplitPane splitPa1 = (SplitPane) scenereport.lookup("#splitPa1");
       splitPa1.lookupAll(".split-pane-divider").stream()
           .forEach(
               div -> div.setMouseTransparent(true));
@@ -1084,6 +1090,7 @@ public class MainApp extends Application {
       AnchorPane ap2 = (AnchorPane) scenereport.lookup("#pane1");
       ap2.getChildren().add(tabReports);
 
+      topMenuPositioning(scenereport);
     } catch (Exception ex) {
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setTitle("Error");

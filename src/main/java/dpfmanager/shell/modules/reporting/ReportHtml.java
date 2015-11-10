@@ -80,6 +80,7 @@ public class ReportHtml extends ReportGeneric {
    *
    * @param outputfile the outputfile
    * @param ir the individual report.
+   * @param mode the mode (1, 2).
    */
   public static void parseIndividual(String outputfile, IndividualReport ir, int mode) {
     //String templatePath = "./src/main/resources/templates/individual.html";
