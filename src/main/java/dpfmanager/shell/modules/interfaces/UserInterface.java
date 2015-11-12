@@ -42,26 +42,56 @@ public class UserInterface {
   private ArrayList<Field> fields;
   private String selectedFile;
 
+  /**
+   * Gets selected file.
+   *
+   * @return the selected file
+   */
   public String getSelectedFile() {
     return selectedFile;
   }
 
+  /**
+   * Set selected file.
+   *
+   * @param filename the filename
+   */
   public void setSelectedFile(String filename){
     selectedFile = filename;
   }
 
+  /**
+   * Gets extensions.
+   *
+   * @return the extensions
+   */
   public ArrayList<String> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Gets isos.
+   *
+   * @return the isos
+   */
   public ArrayList<String> getIsos() {
     return isos;
   }
 
+  /**
+   * Gets fields.
+   *
+   * @return the fields
+   */
   public ArrayList<Field> getFields() {
     return fields;
   }
 
+  /**
+   * Gets fixes.
+   *
+   * @return the fixes
+   */
   public ArrayList<String> getFixes() {
     ArrayList<String> fixes = new ArrayList<String>();
     fixes.add("Remove Tag");
@@ -69,6 +99,11 @@ public class UserInterface {
     return fixes;
   }
 
+  /**
+   * Gets fix fields.
+   *
+   * @return the fix fields
+   */
   public ArrayList<String> getFixFields() {
     ArrayList<String> fields = new ArrayList<String>();
     fields.add("ImageDescription");
@@ -77,6 +112,9 @@ public class UserInterface {
     return fields;
   }
 
+  /**
+   * Load conformance checker.
+   */
   public void LoadConformanceChecker() {
     extensions = new ArrayList<String>();
     isos = new ArrayList<String>();

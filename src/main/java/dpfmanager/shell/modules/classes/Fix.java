@@ -8,28 +8,58 @@ public class Fix {
   private String operator;
   private String value;
 
+  /**
+   * Instantiates a new Fix.
+   */
   public Fix() {
 
   }
 
+  /**
+   * Gets tag.
+   *
+   * @return the tag
+   */
   public String getTag() {
     return tag;
   }
 
+  /**
+   * Gets operator.
+   *
+   * @return the operator
+   */
   public String getOperator() {
     return operator;
   }
 
+  /**
+   * Gets value.
+   *
+   * @return the value
+   */
   public String getValue() {
     return value;
   }
 
+  /**
+   * Instantiates a new Fix.
+   *
+   * @param tag      the tag
+   * @param operator the operator
+   * @param value    the value
+   */
   public Fix (String tag, String operator, String value) {
     this.tag = tag;
     this.operator = operator;
     this.value = value;
   }
 
+  /**
+   * Txt string.
+   *
+   * @return the string
+   */
   public String Txt() {
     String txt = "";
     if (tag != null) txt += tag;
@@ -42,6 +72,11 @@ public class Fix {
     return txt;
   }
 
+  /**
+   * Read txt.
+   *
+   * @param txt the txt
+   */
   public void ReadTxt(String txt) {
     if (txt.contains(",")) {
       tag = txt.substring(0, txt.indexOf(","));

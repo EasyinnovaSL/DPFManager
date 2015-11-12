@@ -171,10 +171,10 @@ public class TiffConformanceChecker {
   /**
    * Adds a element to the XML object.
    *
-   * @param doc the Document (XML object)
+   * @param doc                       the Document (XML object)
    * @param conformenceCheckerElement the Main element in the XML object
-   * @param name the element name
-   * @param content the content of the element
+   * @param name                      the element name
+   * @param content                   the content of the element
    */
   static void addElement(Document doc, Element conformenceCheckerElement, String name,
       String content) {
@@ -183,6 +183,11 @@ public class TiffConformanceChecker {
     conformenceCheckerElement.appendChild(element);
   }
 
+  /**
+   * Gets autofixes.
+   *
+   * @return the autofixes
+   */
   public static ArrayList<String> getAutofixes() {
     ArrayList<String> classes = null;
 

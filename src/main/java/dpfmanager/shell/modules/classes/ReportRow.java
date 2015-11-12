@@ -1,11 +1,8 @@
 package dpfmanager.shell.modules.classes;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
 import java.io.File;
@@ -28,7 +25,19 @@ public class ReportRow {
   private final SimpleStringProperty score;
   private final SimpleMapProperty<String, String> formats;
 
-    public ReportRow(String date, String nFiles, String result, String fixed, String errors, String warnings, String passed, String score) {
+  /**
+   * Instantiates a new Report row.
+   *
+   * @param date     the date
+   * @param nFiles   the n files
+   * @param result   the result
+   * @param fixed    the fixed
+   * @param errors   the errors
+   * @param warnings the warnings
+   * @param passed   the passed
+   * @param score    the score
+   */
+  public ReportRow(String date, String nFiles, String result, String fixed, String errors, String warnings, String passed, String score) {
       this.date = new SimpleStringProperty(date);
       this.nfiles = new SimpleStringProperty(nFiles);
       this.result = new SimpleStringProperty(result);
@@ -40,69 +49,175 @@ public class ReportRow {
       this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
     }
 
+  /**
+   * Gets nfiles.
+   *
+   * @return the nfiles
+   */
   public String getNfiles() {
     return nfiles.get();
   }
+
+  /**
+   * Sets nfiles.
+   *
+   * @param fName the f name
+   */
   public void setNfiles(String fName) {
     nfiles.set(fName);
   }
 
+  /**
+   * Gets date.
+   *
+   * @return the date
+   */
   public String getDate() {
       return date.get();
     }
-    public void setDate(String fName) {
+
+  /**
+   * Sets date.
+   *
+   * @param fName the f name
+   */
+  public void setDate(String fName) {
       date.set(fName);
     }
 
 
+  /**
+   * Gets result.
+   *
+   * @return the result
+   */
   public String getResult() {
     return result.get();
   }
+
+  /**
+   * Sets result.
+   *
+   * @param fName the f name
+   */
   public void setResult(String fName) {
       result.set(fName);
     }
 
+  /**
+   * Gets fixed.
+   *
+   * @return the fixed
+   */
   public String getFixed() {
     return fixed.get();
   }
+
+  /**
+   * Sets fixed.
+   *
+   * @param fName the f name
+   */
   public void setFixed(String fName) {
     fixed.set(fName);
   }
 
+  /**
+   * Gets errors.
+   *
+   * @return the errors
+   */
   public String getErrors() {
     return errors.get();
   }
+
+  /**
+   * Sets errors.
+   *
+   * @param fName the f name
+   */
   public void setErrors(String fName) {
     errors.set(fName);
   }
 
+  /**
+   * Gets warnings.
+   *
+   * @return the warnings
+   */
   public String getWarnings() {
     return warnings.get();
   }
+
+  /**
+   * Sets warnings.
+   *
+   * @param fName the f name
+   */
   public void setWarnings(String fName) {
     warnings.set(fName);
   }
 
+  /**
+   * Gets passed.
+   *
+   * @return the passed
+   */
   public String getPassed() {
     return passed.get();
   }
+
+  /**
+   * Sets passed.
+   *
+   * @param fName the f name
+   */
   public void setPassed(String fName) {
     passed.set(fName);
   }
 
+  /**
+   * Gets score.
+   *
+   * @return the score
+   */
   public String getScore() {
     return score.get();
   }
+
+  /**
+   * Sets score.
+   *
+   * @param fName the f name
+   */
   public void setScore(String fName) {
     score.set(fName);
   }
 
+  /**
+   * Gets formats.
+   *
+   * @return the formats
+   */
   public ObservableMap<String, String> getFormats() {
     return formats.get();
   }
+
+  /**
+   * Sets formats.
+   *
+   * @param files the files
+   */
   public void setFormats(ObservableMap<String, String> files) {
     this.formats.set(files);
   }
+
+  /**
+   * Add format.
+   *
+   * @param format   the format
+   * @param filepath the filepath
+   */
   public void addFormat(String format, String filepath) {
     this.formats.put(format, filepath);
   }
@@ -118,6 +233,13 @@ public class ReportRow {
     return files.length;
   }
 
+  /**
+   * Read full file string.
+   *
+   * @param path     the path
+   * @param encoding the encoding
+   * @return the string
+   */
   static String readFullFile(String path, Charset encoding)
   {
     try {
@@ -128,6 +250,13 @@ public class ReportRow {
     }
   }
 
+  /**
+   * Create row from xml report row.
+   *
+   * @param reportDay the report day
+   * @param file      the file
+   * @return the report row
+   */
   public static ReportRow createRowFromXml(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     File parent = new File(file.getParent());
@@ -167,6 +296,13 @@ public class ReportRow {
     return row;
   }
 
+  /**
+   * Create row from html report row.
+   *
+   * @param reportDay the report day
+   * @param file      the file
+   * @return the report row
+   */
   public static ReportRow createRowFromHtml(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     File parent = new File(file.getParent() + "/html");
@@ -233,6 +369,13 @@ public class ReportRow {
     return row;
   }
 
+  /**
+   * Create row from json report row.
+   *
+   * @param reportDay the report day
+   * @param file      the file
+   * @return the report row
+   */
   public static ReportRow createRowFromJson(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     File parent = new File(file.getParent());
@@ -243,6 +386,13 @@ public class ReportRow {
     return row;
   }
 
+  /**
+   * Create row from pdf report row.
+   *
+   * @param reportDay the report day
+   * @param file      the file
+   * @return the report row
+   */
   public static ReportRow createRowFromPdf(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     String n = "?";

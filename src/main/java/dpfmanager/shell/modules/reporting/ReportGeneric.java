@@ -33,7 +33,7 @@ public class ReportGeneric {
   /**
    * Tiff 2 jpg.
    *
-   * @param inputfile the inputfile
+   * @param inputfile  the inputfile
    * @param outputfile the outputfile
    * @return true, if successful
    */
@@ -149,8 +149,8 @@ public class ReportGeneric {
 
   /**
    * Show Tag.
-   * @param tv The tag value
    *
+   * @param tv The tag value
    * @return true, if successful
    */
   protected static boolean showTag(TagValue tv) {
@@ -180,6 +180,13 @@ public class ReportGeneric {
     return showableTags.contains(tv.getName());
   }
 
+  /**
+   * Gets dif.
+   *
+   * @param n1 the n 1
+   * @param n2 the n 2
+   * @return the dif
+   */
   protected static String getDif(int n1, int n2) {
     String dif = "";
     if (n2 != n1) {
@@ -190,6 +197,12 @@ public class ReportGeneric {
     return dif;
   }
 
+  /**
+   * Gets tags.
+   *
+   * @param ir the ir
+   * @return the tags
+   */
   protected static ArrayList<ReportTag> getTags(IndividualReport ir) {
     ArrayList<ReportTag> list = new ArrayList<ReportTag>();
     TiffDocument td = ir.getTiffModel();

@@ -4,12 +4,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -20,14 +17,27 @@ import java.util.ArrayList;
 public class Fixes {
   private ArrayList<Fix> fixes;
 
+  /**
+   * Instantiates a new Fixes.
+   */
   public Fixes() {
     fixes = new ArrayList<Fix>();
   }
 
+  /**
+   * Gets fixes.
+   *
+   * @return the fixes
+   */
   public ArrayList<Fix> getFixes() {
     return fixes;
   }
 
+  /**
+   * Read fixes.
+   *
+   * @param scene the scene
+   */
   public void ReadFixes(Scene scene) {
     Boolean wrong_format = false;
     AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
@@ -65,6 +75,11 @@ public class Fixes {
     }
   }
 
+  /**
+   * Read autofixes.
+   *
+   * @param scene the scene
+   */
   public void ReadAutofixes(Scene scene) {
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
     for (Node node : ap2.getChildren()) {
@@ -77,12 +92,22 @@ public class Fixes {
     }
   }
 
+  /**
+   * Write.
+   *
+   * @param pw the pw
+   */
   public void Write(PrintWriter pw) {
     for (Fix fix : fixes) {
       pw.println("FIX\t" + fix.Txt());
     }
   }
 
+  /**
+   * Add fix from txt.
+   *
+   * @param txt the txt
+   */
   public void addFixFromTxt(String txt) {
     Fix fix = new Fix();
     fix.ReadTxt(txt);

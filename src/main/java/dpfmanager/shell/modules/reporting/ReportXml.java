@@ -46,6 +46,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,9 +102,9 @@ public class ReportXml {
     // Strips or Tiles
     el = doc.createElement("image_representation");
     if (ifd.hasStrips()) {
-      el.setTextContent("strips");
+      el.setTextContent("strips[" + ifd.getImageStrips().getStrips().size() + "]");
     } else if (ifd.hasTiles()) {
-      el.setTextContent("tiles");
+      el.setTextContent("tiles[" + ifd.getImageTiles().getTiles().size() + "]");
     } else {
       el.setTextContent("none");
     }
@@ -166,7 +167,10 @@ public class ReportXml {
       elchild.appendChild(elchild2);
 
       elchild2 = doc.createElement("value");
-      elchild2.setTextContent(t.toString());
+      if (t.getCardinality() == 1 || t.toString().length() < 100)
+        elchild2.setTextContent(t.toString());
+      else
+        elchild2.setTextContent("Array[" + t.getCardinality() + "]");
       elchild.appendChild(elchild2);
 
       el.appendChild(elchild);
@@ -319,8 +323,8 @@ public class ReportXml {
    * Parse an individual report to XML format.
    *
    * @param xmlfile the file name.
-   * @param ir the individual report.
-   * @param rules the policy checker.
+   * @param ir      the individual report.
+   * @param rules   the policy checker.
    * @return the XML string generated.
    */
   public static String parseIndividual(String xmlfile, IndividualReport ir, Rules rules) {
@@ -387,7 +391,7 @@ public class ReportXml {
    * Parse a global report to XML format.
    *
    * @param xmlfile the file name.
-   * @param gr the global report.
+   * @param gr      the global report.
    * @return the XML string generated
    */
   public static String parseGlobal(String xmlfile, GlobalReport gr) {
@@ -426,8 +430,8 @@ public class ReportXml {
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       DOMSource source = new DOMSource(doc);
 
-      File file = new File(xmlfile);
-      StreamResult result = new StreamResult(xmlfile);
+      File f = new File(xmlfile);
+      StreamResult result = new StreamResult(f.toURI().toString());
       transformer.transform(source, result);
 
       // To String

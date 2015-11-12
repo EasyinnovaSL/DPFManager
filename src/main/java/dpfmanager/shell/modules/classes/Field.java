@@ -15,26 +15,54 @@ public class Field {
   private ArrayList<String> operators;
   private ArrayList<String> values;
 
+  /**
+   * Gets name.
+   *
+   * @return the name
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Gets description.
+   *
+   * @return the description
+   */
   public String getDescription() {
     return description;
   }
 
+  /**
+   * Gets operators.
+   *
+   * @return the operators
+   */
   public ArrayList<String> getOperators() {
     return operators;
   }
 
+  /**
+   * Gets values.
+   *
+   * @return the values
+   */
   public ArrayList<String> getValues() {
     return values;
   }
 
+  /**
+   * Instantiates a new Field.
+   */
   public Field() {
     operators = new ArrayList<String>();
   }
 
+  /**
+   * Instantiates a new Field.
+   *
+   * @param nodelist the nodelist
+   */
   public Field(NodeList nodelist) {
     for (int j=0;j<nodelist.getLength();j++) {
       Node child = nodelist.item(j);

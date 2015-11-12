@@ -143,24 +143,7 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   private String getPath() {
-    String path = "reports";
-    File theDir = new File(path);
-    // date folder
-    path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
-    theDir = new File(path);
-
-    // index folder
-    int index = 1;
-    File file = new File(path + "/" + index);
-    while (file.exists()) {
-      index++;
-      file = new File(path + "/" + index);
-      if (!file.exists()) {
-        file = new File(path + "/" + (index - 1));
-        break;
-      }
-    }
-    path += "/" + (index - 1);
+    String path = ReportGenerator.createReportPath(true);
     return path;
   }
 }

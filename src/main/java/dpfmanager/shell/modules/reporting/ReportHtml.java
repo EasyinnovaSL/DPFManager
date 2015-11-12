@@ -79,8 +79,8 @@ public class ReportHtml extends ReportGeneric {
    * Parse an individual report to HTML.
    *
    * @param outputfile the outputfile
-   * @param ir the individual report.
-   * @param mode the mode (1, 2).
+   * @param ir         the individual report.
+   * @param mode       the mode (1, 2).
    */
   public static void parseIndividual(String outputfile, IndividualReport ir, int mode) {
     //String templatePath = "./src/main/resources/templates/individual.html";
@@ -405,7 +405,7 @@ public class ReportHtml extends ReportGeneric {
    * Parse a global report to XML format.
    *
    * @param outputfile the output file.
-   * @param gr the global report.
+   * @param gr         the global report.
    */
   public static void parseGlobal(String outputfile, GlobalReport gr) {
     String templatePath = "./src/main/resources/templates/global.html";

@@ -21,7 +21,7 @@
  * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
  * </p>
  * <p>
- * © 2115 Easy Innova, SL
+ * © 2015 Easy Innova, SL
  * </p>
  *
  * @author Victor Muñoz
@@ -142,6 +142,7 @@ public class MainApp extends Application {
   final int height = 950;
   private static Configuration config;
   private static String dropped;
+  private static Gui gui;
   int uniqueId = 0;
   private double defaultLineYlayout = 564.0;
   private final ToggleGroup group = new ToggleGroup();
@@ -157,8 +158,6 @@ public class MainApp extends Application {
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
   @FXML private TextArea txtWhy;
   @FXML private Button addRule, continueButton, addFix;
-
-  private static Gui gui;
 
   /**
    * The main method.
@@ -179,6 +178,7 @@ public class MainApp extends Application {
   @Override
   public final void start(final Stage stage) throws Exception {
     Parameters params = getParameters();
+    System.out.println("Default user folder: " + System.getProperty("user.home"));
     if (params == null || params.getRaw().size() == 0 || (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui"))) {
       thestage = stage;
       LOG.info("Starting JavaFX application");
@@ -1625,7 +1625,7 @@ public class MainApp extends Application {
     List<ReportRow> list = new ArrayList<ReportRow>();
     ObservableList<ReportRow> data = FXCollections.observableArrayList(list);
 
-    String baseDir = "reports";
+    String baseDir = ReportGenerator.getReportsFolder();
     File reportsDir = new File(baseDir);
     if (reportsDir.exists()) {
       String[] directories = reportsDir.list(new FilenameFilter() {

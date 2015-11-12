@@ -23,13 +23,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.CodeSource;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,15 +41,31 @@ import javax.xml.transform.stream.StreamResult;
  * Created by easy on 21/09/2015.
  */
 public class Schematron extends CamelTestSupport {
+  /**
+   * The Context.
+   */
   CamelContext context;
+  /**
+   * The Template.
+   */
   ProducerTemplate template;
 
+  /**
+   * Instantiates a new Schematron.
+   */
   public Schematron()
   {
     context = new DefaultCamelContext();
     template = context.createProducerTemplate();
   }
 
+  /**
+   * Run schematron string.
+   *
+   * @param xmlFilename the xml filename
+   * @param folder      the folder
+   * @return the string
+   */
   public String RunSchematron(String xmlFilename, String folder) {
     try {
       context.addRoutes(new RouteBuilder() {
@@ -75,10 +87,23 @@ public class Schematron extends CamelTestSupport {
     return null;
   }
 
+  /**
+   * Test xml string.
+   *
+   * @param xmlFile the xml file
+   * @return the string
+   * @throws Exception the exception
+   */
   public String testXML(String xmlFile) throws Exception {
     return testXML(xmlFile, "sch/rules.sch");
   }
 
+  /**
+   * Convert string.
+   *
+   * @param txt the txt
+   * @return the string
+   */
   String convert(String txt) {
     String converted = txt;
     converted = converted.replace("<","#PP#");
@@ -86,6 +111,14 @@ public class Schematron extends CamelTestSupport {
     return converted;
   }
 
+  /**
+   * Test xml string.
+   *
+   * @param xmlFile the xml file
+   * @param rules   the rules
+   * @return the string
+   * @throws Exception the exception
+   */
   public String testXML(String xmlFile, Rules rules) throws Exception {
     if (rules == null) {
       return testXML(xmlFile, "sch/rules.sch");
@@ -146,6 +179,15 @@ public class Schematron extends CamelTestSupport {
     }
   }
 
+  /**
+   * Read xml document.
+   *
+   * @param is the is
+   * @return the document
+   * @throws SAXException                 the sax exception
+   * @throws IOException                  the io exception
+   * @throws ParserConfigurationException the parser configuration exception
+   */
   public static Document readXml(InputStream is) throws SAXException, IOException,
       ParserConfigurationException {
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -205,6 +247,14 @@ public class Schematron extends CamelTestSupport {
     return sc;*/
   }
 
+  /**
+   * Test xml string.
+   *
+   * @param xmlFile the xml file
+   * @param schema  the schema
+   * @return the string
+   * @throws Exception the exception
+   */
   public String testXML(String xmlFile, String schema) throws Exception {
     String result;
     try {

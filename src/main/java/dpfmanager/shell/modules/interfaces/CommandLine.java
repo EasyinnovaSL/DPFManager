@@ -312,8 +312,6 @@ public class CommandLine extends UserInterface {
         System.out.println("IFDs: " + to.getIfdCount());
         System.out.println("SubIFDs: " + to.getSubIfdCount());
 
-        // int index = 0;
-        // to.printMetadata();
         BaselineProfile bp = new BaselineProfile(to);
         bp.validate();
         TiffEPProfile bpEp = new TiffEPProfile(to);

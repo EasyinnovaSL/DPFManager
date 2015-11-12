@@ -3,12 +3,9 @@ package dpfmanager.shell.modules.classes;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -20,14 +17,27 @@ import java.util.regex.Pattern;
 public class Rules {
   private ArrayList<Rule> rules;
 
+  /**
+   * Instantiates a new Rules.
+   */
   public Rules() {
     rules = new ArrayList<Rule>();
   }
 
+  /**
+   * Gets rules.
+   *
+   * @return the rules
+   */
   public ArrayList<Rule> getRules() {
     return rules;
   }
 
+  /**
+   * Read.
+   *
+   * @param scene the scene
+   */
   public void Read(Scene scene) {
     Boolean wrong_format = false;
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
@@ -69,12 +79,22 @@ public class Rules {
     }
   }
 
+  /**
+   * Write.
+   *
+   * @param pw the pw
+   */
   public void Write(PrintWriter pw) {
     for (Rule rule : rules) {
       pw.println("RULE\t" + rule.Txt());
     }
   }
 
+  /**
+   * Add rule from txt.
+   *
+   * @param txt the txt
+   */
   public void addRuleFromTxt(String txt) {
     Rule rule = new Rule();
     rule.ReadTxt(txt);
