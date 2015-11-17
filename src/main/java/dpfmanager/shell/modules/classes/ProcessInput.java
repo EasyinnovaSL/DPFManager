@@ -218,15 +218,19 @@ public class ProcessInput {
     } else if (isUrl(filename)) {
       // URL
       try {
-        InputStream input = new java.net.URL(filename).openStream();
-        String filename2 = createTempFile(filename, input);
-        filename = java.net.URLDecoder.decode(filename, "UTF-8");
-        ir = processTiffFile(filename2, filename, internalReportFolder);
-        if (ir != null) {
-          indReports.add(ir);
+        if (isTiff(filename)) {
+          InputStream input = new java.net.URL(filename).openStream();
+          String filename2 = createTempFile(filename, input);
+          filename = java.net.URLDecoder.decode(filename, "UTF-8");
+          ir = processTiffFile(filename2, filename, internalReportFolder);
+          if (ir != null) {
+            indReports.add(ir);
+          }
+          File file = new File(filename2);
+          file.delete();
+        } else {
+          System.err.println("The file in the URL " + filename + " is not a Tiff");
         }
-        File file = new File(filename2);
-        file.delete();
       } catch (Exception ex) {
         System.out.println("Error in URL " + filename);
       }

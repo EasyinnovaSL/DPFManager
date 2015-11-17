@@ -143,9 +143,9 @@ public class ReportPDF extends ReportGeneric {
    */
   static void showMessage(String message) {
     try {
-      PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
-      out.println(message);
-      out.close();
+      //PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
+      //out.println(message);
+      //out.close();
     } catch (Exception ex) {
 
     }
@@ -197,12 +197,14 @@ public class ReportPDF extends ReportGeneric {
       int ids = 0;
       while (new File(imgPath).exists()) imgPath = "img" + ids++ +".jpg";
       boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
+      BufferedImage bimg;
       if (!check) {
-        imgPath = "html/img/noise.jpg";
+        bimg = ImageIO.read(getResourceStream("src/main/resources/html/img/noise.jpg"));
+      } else {
+        bimg = ImageIO.read(new File(imgPath));
       }
-      BufferedImage bimg = ImageIO.read(new File(imgPath));
       image_width = image_height * bimg.getWidth() / bimg.getHeight();
-      ximage = new PDJpeg(document, new FileInputStream(imgPath));
+      ximage = new PDJpeg(document, bimg);
       contentStream.drawXObject( ximage, pos_x, pos_y, image_width, image_height );
       if (check) new File(imgPath).delete();
 
@@ -493,12 +495,14 @@ public class ReportPDF extends ReportGeneric {
         int ids = 0;
         while (new File(imgPath).exists()) imgPath = "img" + ids++ +".jpg";
         boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
+        BufferedImage bimg;
         if (!check) {
-          imgPath = "html/img/noise.jpg";
+          bimg = ImageIO.read(getResourceStream("src/main/resources/html/img/noise.jpg"));
+        } else {
+          bimg = ImageIO.read(new File(imgPath));
         }
-        BufferedImage bimg = ImageIO.read(new File(imgPath));
         image_width = image_height * bimg.getWidth() / bimg.getHeight();
-        ximage = new PDJpeg(document, new FileInputStream(imgPath) );
+        ximage = new PDJpeg(document, bimg );
         contentStream.drawXObject( ximage, pos_x, pos_y, image_width, image_height );
         if (check) new File(imgPath).delete();
 

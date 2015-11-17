@@ -67,6 +67,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -85,15 +86,12 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
@@ -101,12 +99,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
@@ -117,7 +109,6 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -126,10 +117,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.Scanner;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 
 /**
@@ -198,6 +187,23 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws Exception {
       // noop
     }
+  }
+
+  private void setDefaultBrowseDirectory(String path) {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "browse_dir";
+    prefs.put(PREF_NAME, path);
+  }
+
+  private String getDefaultBrowseDirectory() {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "browse_dir";
+    String defaultValue = ".";
+    String propertyValue = prefs.get(PREF_NAME, defaultValue);
+    if (new File(propertyValue).exists() && new File(propertyValue).isDirectory())
+      return propertyValue;
+    else
+      return ".";
   }
 
   private boolean FirstTime() {
@@ -713,7 +719,7 @@ public class MainApp extends Application {
       public void run() {
         double h = thestage.getScene().getHeight() - topImg.getHeight() - 50;
         splitPa.getItems().addAll(topImg);
-        String file = System.getProperty("user.dir") + "/" + filename;
+        String file = filename;
 
         // If HTML show in webview
         if (format.equals("html")) {
@@ -724,7 +730,7 @@ public class MainApp extends Application {
           //browser.setMaxWidth(width);
           browser.setMaxHeight(h);
           final WebEngine webEngine = browser.getEngine();
-          webEngine.load("file:///" + file);
+          webEngine.load("file:///" + file.replace("\\","/"));
           splitPa.getItems().addAll(browser);
         }
         // If PDF show in new window
@@ -1558,13 +1564,23 @@ public class MainApp extends Application {
           if (nodeIn instanceof RadioButton) {
             RadioButton radio = (RadioButton) nodeIn;
             if (radio.isSelected()) {
-              File file = new File(radio.getText());
-              vBox1.getChildren().remove(nodeIn);
-              if (!file.delete()){
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("There was an error deleting the configuration file");
-                alert.showAndWait();
+              Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+              alert.setTitle("Delete configuration file");
+              alert.setHeaderText("Are you sure to delete the configuration file '" + radio.getText() + "'?");
+              alert.setContentText("The physical file in disk will be also removed");
+              ButtonType buttonNo = new ButtonType("No");
+              ButtonType buttonYes = new ButtonType("Yes");
+              alert.getButtonTypes().setAll(buttonNo, buttonYes);
+              Optional<ButtonType> result = alert.showAndWait();
+              if (result.get() == buttonYes){
+                File file = new File(radio.getText());
+                vBox1.getChildren().remove(nodeIn);
+                if (!file.delete()){
+                  Alert alert2 = new Alert(Alert.AlertType.ERROR);
+                  alert2.setTitle("Error");
+                  alert2.setHeaderText("There was an error deleting the configuration file");
+                  alert2.showAndWait();
+                }
               }
               oneChecked = true;
               break;
@@ -1589,16 +1605,24 @@ public class MainApp extends Application {
     if (c.getValue() == "File") {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open File");
+      fileChooser.setInitialDirectory(new File(getDefaultBrowseDirectory()));
       File file = fileChooser.showOpenDialog(thestage);
-      if (file != null)
+      if (file != null) {
         txtFile.setText(file.getPath());
+        if (file.exists() && file.getParent() != null && new File(file.getParent()).exists() && new File(file.getParent()).isDirectory()) {
+          setDefaultBrowseDirectory(file.getParent());
+        }
+      }
     }
     else{
       DirectoryChooser folderChooser = new DirectoryChooser();
       folderChooser.setTitle("Open Folder");
+      folderChooser.setInitialDirectory(new File(getDefaultBrowseDirectory()));
       File directory = folderChooser.showDialog(thestage);
-      if (directory != null)
+      if (directory != null) {
         txtFile.setText(directory.getPath());
+        setDefaultBrowseDirectory(directory.getPath());
+      }
     }
     gui.setSelectedFile(txtFile.getText());
   }
