@@ -106,18 +106,26 @@ public class IndividualReport {
   /** The Tiff Document object. */
   private TiffDocument tiffModel;
 
-  /** Check Tiff/IT conformance. */
+  /**
+   * Check Tiff/IT conformance.
+   */
   public int checkIT;
 
-  /** Check Tiff/EP conformance. */
+  /**
+   * Check Tiff/EP conformance.
+   */
   public boolean checkEP;
 
-  /** Check Baseline conformance. */
+  /**
+   * Check Baseline conformance.
+   */
   public boolean checkBL;
 
   private ValidationResult pcValidation;
 
-  /** Check Policy. */
+  /**
+   * Check Policy.
+   */
   public boolean checkPC;
 
   private IndividualReport compareIr;
@@ -127,12 +135,12 @@ public class IndividualReport {
   /**
    * Constructor + generate.
    *
-   * @param name the name
-   * @param path the path
-   * @param tiffModel the TIFF model
+   * @param name               the name
+   * @param path               the path
+   * @param tiffModel          the TIFF model
    * @param baselineValidation the baseline validation
-   * @param epValidation the EP validation
-   * @param itValidation the IT validation
+   * @param epValidation       the EP validation
+   * @param itValidation       the IT validation
    */
   public IndividualReport(String name, String path, TiffDocument tiffModel,
       ValidationResult baselineValidation, ValidationResult epValidation, ValidationResult itValidation) {
@@ -144,10 +152,20 @@ public class IndividualReport {
     generate(tiffModel, baselineValidation, epValidation, itValidation);
   }
 
+  /**
+   * Sets pc validation.
+   *
+   * @param pcValidation the pc validation
+   */
   public void setPcValidation(ValidationResult pcValidation) {
     this.pcValidation = pcValidation;
   }
 
+  /**
+   * Gets pc validation.
+   *
+   * @return the pc validation
+   */
   public ValidationResult getPcValidation() {
     return pcValidation;
   }
@@ -164,24 +182,44 @@ public class IndividualReport {
   /**
    * Get file name.
    *
-   * @return filename
+   * @return filename file name
    */
   public String getFileName() {
     return filename;
   }
 
+  /**
+   * Sets compare report.
+   *
+   * @param ir the ir
+   */
   public void setCompareReport(IndividualReport ir) {
     compareIr = ir;
   }
 
+  /**
+   * Gets compare report.
+   *
+   * @return the compare report
+   */
   public IndividualReport getCompareReport() {
     return compareIr;
   }
 
+  /**
+   * Sets pdf document.
+   *
+   * @param document the document
+   */
   public void setPDFDocument(String document) {
     this.document = document;
   }
 
+  /**
+   * Gets pdf document.
+   *
+   * @return the pdf document
+   */
   public String getPDFDocument() {
     return document;
   }
@@ -189,7 +227,7 @@ public class IndividualReport {
   /**
    * Get file path.
    *
-   * @return filepath
+   * @return filepath file path
    */
   public String getFilePath() {
     return filepath;
@@ -226,8 +264,8 @@ public class IndividualReport {
   /**
    * Generate the report information.
    *
-   * @param tiffModel the tiff model
-   * @param validation the baseline validation
+   * @param tiffModel    the tiff model
+   * @param validation   the baseline validation
    * @param epValidation the EP validation
    * @param itValidation the IT validation
    */
@@ -352,22 +390,47 @@ public class IndividualReport {
     return bps;
   }
 
+  /**
+   * Gets endianess.
+   *
+   * @return the endianess
+   */
   public String getEndianess() {
     return endianess;
   }
 
+  /**
+   * Has bl validation boolean.
+   *
+   * @return the boolean
+   */
   public boolean hasBlValidation(){
     return errorsBl != null;
   }
 
+  /**
+   * Has ep validation boolean.
+   *
+   * @return the boolean
+   */
   public boolean hasEpValidation(){
     return errorsEp != null;
   }
 
+  /**
+   * Has it validation boolean.
+   *
+   * @return the boolean
+   */
   public boolean hasItValidation(){
     return errorsIt != null;
   }
 
+  /**
+   * Gets pixels density.
+   *
+   * @return the pixels density
+   */
   public String getPixelsDensity() {
     return "" + pixeldensity;
   }
@@ -452,10 +515,20 @@ public class IndividualReport {
     return warningsPc;
   }
 
+  /**
+   * Sets pc errors.
+   *
+   * @param errors the errors
+   */
   public void setPCErrors(List<ValidationEvent> errors) {
     errorsPc = errors;
   }
 
+  /**
+   * Sets pc warnings.
+   *
+   * @param warnings the warnings
+   */
   public void setPCWarnings(List<ValidationEvent> warnings) {
     warningsPc = warnings;
   }
@@ -469,30 +542,65 @@ public class IndividualReport {
     return tiffModel;
   }
 
+  /**
+   * Sets tiff model.
+   *
+   * @param model the model
+   */
   public void setTiffModel(TiffDocument model) {
     tiffModel = model;
   }
 
+  /**
+   * Gets n ep err.
+   *
+   * @return the n ep err
+   */
   public int getNEpErr() {
     return getEPErrors() == null ? 0 : getEPErrors().size();
   }
 
+  /**
+   * Gets n bl err.
+   *
+   * @return the n bl err
+   */
   public int getNBlErr() {
     return getBaselineErrors() == null ? 0 : getBaselineErrors().size();
   }
 
+  /**
+   * Gets n it err.
+   *
+   * @return the n it err
+   */
   public int getNItErr() {
     return getITErrors() == null ? 0 : getITErrors().size();
   }
 
+  /**
+   * Gets n ep war.
+   *
+   * @return the n ep war
+   */
   public int getNEpWar() {
     return getEPWarnings() == null ? 0 : getEPWarnings().size();
   }
 
+  /**
+   * Gets n bl war.
+   *
+   * @return the n bl war
+   */
   public int getNBlWar() {
     return getBaselineWarnings() == null ? 0 : getBaselineWarnings().size();
   }
 
+  /**
+   * Gets n it war.
+   *
+   * @return the n it war
+   */
   public int getNItWar() {
     return getITWarnings() == null ? 0 : getITWarnings().size();
   }

@@ -31,10 +31,7 @@
 
 package dpfmanager;
 
-import static java.io.File.separator;
-
 import dpfmanager.shell.modules.autofixes.autofix;
-import dpfmanager.shell.modules.autofixes.clearPrivateData;
 import dpfmanager.shell.modules.classes.Fix;
 import dpfmanager.shell.modules.classes.Fixes;
 import dpfmanager.shell.modules.classes.Rules;
@@ -103,13 +100,23 @@ public class ReportGenerator {
   private Fixes fixes;
 
   /**
-   * Creates the report path.
+   * Create report path string.
    *
    * @return the string
    */
   public static String createReportPath() {
+    return createReportPath(false);
+  }
+
+  /**
+   * Creates the report path.
+   *
+   * @param subtract1 the subtract 1
+   * @return the string
+   */
+  public static String createReportPath(boolean subtract1) {
     // reports folder
-    String path = "reports";
+    String path = getReportsFolder();
     validateDirectory(path);
 
     // date folder
@@ -123,10 +130,24 @@ public class ReportGenerator {
       index++;
       file = new File(path + "/" + index);
     }
+    if (subtract1) index--;
     path += "/" + index;
     validateDirectory(path);
 
     path += "/";
+    return path;
+  }
+
+  /**
+   * Gets reports folder.
+   *
+   * @return the reports folder
+   */
+  public static String getReportsFolder() {
+    String path = "reports";
+    if (new File(System.getProperty("user.home")).exists()){
+      path =  System.getProperty("user.home") + "/DPF Manager/reports";
+    }
     return path;
   }
 
@@ -160,7 +181,7 @@ public class ReportGenerator {
    * Gets the report name of a given tiff file.
    *
    * @param internalReportFolder the internal report folder
-   * @param realFilename the real file name
+   * @param realFilename         the real file name
    * @return the report name
    */
   public static String getReportName(String internalReportFolder, String realFilename) {
@@ -240,7 +261,7 @@ public class ReportGenerator {
    * Write the string into the file.
    *
    * @param outputfile the outPutFile
-   * @param body the body
+   * @param body       the body
    */
   public static void writeToFile(String outputfile, String body) {
     PrintWriter writer = null;
@@ -280,10 +301,10 @@ public class ReportGenerator {
   /**
    * Set the output formats.
    *
-   * @param xml the XML boolean.
+   * @param xml  the XML boolean.
    * @param json the JSON boolean.
    * @param html the HTML boolean.
-   * @param pdf the PDF boolean.
+   * @param pdf  the PDF boolean.
    */
   public void setReportsFormats(boolean xml, boolean json, boolean html, boolean pdf) {
     this.xml = xml;
@@ -292,10 +313,20 @@ public class ReportGenerator {
     this.pdf = pdf;
   }
 
+  /**
+   * Sets rules.
+   *
+   * @param rules the rules
+   */
   public void setRules(Rules rules) {
     this.rules = rules;
   }
 
+  /**
+   * Sets fixes.
+   *
+   * @param fixes the fixes
+   */
   public void setFixes(Fixes fixes) {
     this.fixes = fixes;
   }
@@ -331,6 +362,12 @@ public class ReportGenerator {
     }
   }
 
+  /**
+   * Read filefrom resources string.
+   *
+   * @param pathStr the path str
+   * @return the string
+   */
   public static String readFilefromResources(String pathStr) {
     String text = "";
     String name = pathStr.substring(pathStr.lastIndexOf("/") + 1, pathStr.length());
@@ -553,7 +590,7 @@ public class ReportGenerator {
    * Make individual report.
    *
    * @param reportName the output file name
-   * @param ir the individual report
+   * @param ir         the individual report
    */
   public void generateIndividualReport(String reportName, IndividualReport ir) {
     String output;
@@ -675,6 +712,12 @@ public class ReportGenerator {
     }
   }
 
+  /**
+   * Gets pc validation.
+   *
+   * @param output the output
+   * @return the pc validation
+   */
   ValidationResult getPcValidation(String output) {
     ValidationResult valid = new ValidationResult();
     int index = output.indexOf("<svrl:failed-assert");
@@ -683,7 +726,7 @@ public class ReportGenerator {
       text = text.substring(text.indexOf(">") + 1);
       text = text.substring(0, text.indexOf("</"));
       index = output.indexOf("<svrl:failed-assert", index + 1);
-      valid.addError(text);
+      valid.addErrorLoc(text, "Policy checker");
     }
     return valid;
   }
@@ -692,9 +735,9 @@ public class ReportGenerator {
    * Make full report.
    *
    * @param internalReportFolder the internal report folder
-   * @param individuals the individual reports list
-   * @param outputFolder the output folder
-   * @param silence the silence
+   * @param individuals          the individual reports list
+   * @param outputFolder         the output folder
+   * @param silence              the silence
    * @return the string
    */
   public String makeSummaryReport(String internalReportFolder,

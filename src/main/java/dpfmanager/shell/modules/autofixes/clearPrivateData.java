@@ -6,6 +6,9 @@ import com.easyinnova.tiff.model.TiffDocument;
  * Created by easy on 23/10/2015.
  */
 public class clearPrivateData implements autofix {
+  /**
+   * The Definition.
+   */
   public String Definition = "Clear Private Data";
 
   public String getDescription() {

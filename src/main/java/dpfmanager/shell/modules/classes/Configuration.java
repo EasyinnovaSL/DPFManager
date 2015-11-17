@@ -1,11 +1,7 @@
 package dpfmanager.shell.modules.classes;
 
-import dpfmanager.shell.modules.classes.Fixes;
-import dpfmanager.shell.modules.classes.Rules;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -26,22 +22,45 @@ public class Configuration {
   private ArrayList<String> formats;
   private Fixes fixes;
 
+  /**
+   * Gets isos.
+   *
+   * @return the isos
+   */
   public ArrayList<String> getIsos() {
     return isos;
   }
 
+  /**
+   * Gets formats.
+   *
+   * @return the formats
+   */
   public ArrayList<String> getFormats() {
     return formats;
   }
 
+  /**
+   * Gets fixes.
+   *
+   * @return the fixes
+   */
   public Fixes getFixes() {
     return fixes;
   }
 
+  /**
+   * Gets rules.
+   *
+   * @return the rules
+   */
   public Rules getRules() {
     return rules;
   }
 
+  /**
+   * Instantiates a new Configuration.
+   */
   public Configuration() {
     isos = new ArrayList<String>();
     rules = new Rules();
@@ -49,6 +68,12 @@ public class Configuration {
     fixes = new Fixes();
   }
 
+  /**
+   * Save file.
+   *
+   * @param filename the filename
+   * @throws Exception the exception
+   */
   public void SaveFile(String filename) throws Exception {
     PrintWriter writer = new PrintWriter(filename, "UTF-8");
     for (String iso : isos) {
@@ -92,6 +117,12 @@ public class Configuration {
     return sc;
   }
 
+  /**
+   * Read file.
+   *
+   * @param filename the filename
+   * @throws Exception the exception
+   */
   public void ReadFile(String filename) throws Exception {
     BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream(filename)));
     try {
@@ -115,6 +146,11 @@ public class Configuration {
     }
   }
 
+  /**
+   * Gets txt rules.
+   *
+   * @return the txt rules
+   */
   public String getTxtRules() {
     String txt = "";
     for (int i=0;i<rules.getRules().size();i++) {
@@ -127,6 +163,11 @@ public class Configuration {
     return txt;
   }
 
+  /**
+   * Gets txt fixes.
+   *
+   * @return the txt fixes
+   */
   public String getTxtFixes() {
     String txt = "";
     for (int i=0;i<fixes.getFixes().size();i++) {
@@ -139,6 +180,11 @@ public class Configuration {
     return txt;
   }
 
+  /**
+   * Gets txt formats.
+   *
+   * @return the txt formats
+   */
   public String getTxtFormats() {
     String txt = "";
     for (int i=0;i<formats.size();i++) {
@@ -148,6 +194,11 @@ public class Configuration {
     return txt;
   }
 
+  /**
+   * Gets txt isos.
+   *
+   * @return the txt isos
+   */
   public String getTxtIsos() {
     String txt = "";
     for (int i=0;i<isos.size();i++) {

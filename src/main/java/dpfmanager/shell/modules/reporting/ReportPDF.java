@@ -74,17 +74,40 @@ import javax.imageio.ImageIO;
  * The class Report PDF
  */
 public class ReportPDF extends ReportGeneric {
+  /**
+   * The Init posy.
+   */
   static int init_posy = 800;
+  /**
+   * The Content stream.
+   */
   PDPageContentStream contentStream;
 
+  /**
+   * Instantiates a new Report pdf.
+   *
+   * @param contentStream the content stream
+   */
   public ReportPDF(PDPageContentStream contentStream) {
     this.contentStream = contentStream;
   }
 
+  /**
+   * Gets content stream.
+   *
+   * @return the content stream
+   */
   public PDPageContentStream getContentStream() {
     return contentStream;
   }
 
+  /**
+   * Gets resource stream.
+   *
+   * @param path the path
+   * @return the resource stream
+   * @throws Exception the exception
+   */
   static InputStream getResourceStream(String path) throws Exception {
     InputStream fis = null;
     if (new File(path).exists()) {
@@ -113,11 +136,16 @@ public class ReportPDF extends ReportGeneric {
     return fis;
   }
 
+  /**
+   * Show message.
+   *
+   * @param message the message
+   */
   static void showMessage(String message) {
     try {
-      PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
-      out.println(message);
-      out.close();
+      //PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
+      //out.println(message);
+      //out.close();
     } catch (Exception ex) {
 
     }
@@ -127,7 +155,7 @@ public class ReportPDF extends ReportGeneric {
    * Parse an individual report to PDF.
    *
    * @param outputfile the outputfile
-   * @param ir the individual report.
+   * @param ir         the individual report.
    */
   public static void parseIndividual(String outputfile, IndividualReport ir) {
     try {
@@ -169,12 +197,14 @@ public class ReportPDF extends ReportGeneric {
       int ids = 0;
       while (new File(imgPath).exists()) imgPath = "img" + ids++ +".jpg";
       boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
+      BufferedImage bimg;
       if (!check) {
-        imgPath = "html/img/noise.jpg";
+        bimg = ImageIO.read(getResourceStream("src/main/resources/html/img/noise.jpg"));
+      } else {
+        bimg = ImageIO.read(new File(imgPath));
       }
-      BufferedImage bimg = ImageIO.read(new File(imgPath));
       image_width = image_height * bimg.getWidth() / bimg.getHeight();
-      ximage = new PDJpeg(document, new FileInputStream(imgPath));
+      ximage = new PDJpeg(document, bimg);
       contentStream.drawXObject( ximage, pos_x, pos_y, image_width, image_height );
       if (check) new File(imgPath).delete();
 
@@ -365,7 +395,7 @@ public class ReportPDF extends ReportGeneric {
    * Parse a global report to PDF format.
    *
    * @param pdffile the file name.
-   * @param gr the global report.
+   * @param gr      the global report.
    */
   public static void parseGlobal(String pdffile, GlobalReport gr) {
     try {
@@ -465,12 +495,14 @@ public class ReportPDF extends ReportGeneric {
         int ids = 0;
         while (new File(imgPath).exists()) imgPath = "img" + ids++ +".jpg";
         boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
+        BufferedImage bimg;
         if (!check) {
-          imgPath = "html/img/noise.jpg";
+          bimg = ImageIO.read(getResourceStream("src/main/resources/html/img/noise.jpg"));
+        } else {
+          bimg = ImageIO.read(new File(imgPath));
         }
-        BufferedImage bimg = ImageIO.read(new File(imgPath));
         image_width = image_height * bimg.getWidth() / bimg.getHeight();
-        ximage = new PDJpeg(document, new FileInputStream(imgPath) );
+        ximage = new PDJpeg(document, bimg );
         contentStream.drawXObject( ximage, pos_x, pos_y, image_width, image_height );
         if (check) new File(imgPath).delete();
 
@@ -554,10 +586,29 @@ public class ReportPDF extends ReportGeneric {
     }
   }
 
+  /**
+   * New page needed boolean.
+   *
+   * @param pos_y the pos y
+   * @return the boolean
+   */
   static boolean newPageNeeded(int pos_y) {
     return pos_y < 100;
   }
 
+  /**
+   * Write errors warnings int.
+   *
+   * @param document the document
+   * @param font     the font
+   * @param errors   the errors
+   * @param warnings the warnings
+   * @param pos_x    the pos x
+   * @param posy     the posy
+   * @param type     the type
+   * @return the int
+   * @throws Exception the exception
+   */
   int writeErrorsWarnings(PDDocument document, PDFont font, java.util.List<ValidationEvent> errors, List<ValidationEvent> warnings, int pos_x, int posy, String type) throws Exception{
     int total = 0;
     int font_size = 10;
@@ -607,6 +658,14 @@ public class ReportPDF extends ReportGeneric {
     return pos_y;
   }
 
+  /**
+   * New page pd page content stream.
+   *
+   * @param contentStream the content stream
+   * @param document      the document
+   * @return the pd page content stream
+   * @throws Exception the exception
+   */
   static PDPageContentStream newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
     contentStream.close();
     PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
@@ -614,10 +673,33 @@ public class ReportPDF extends ReportGeneric {
     return new PDPageContentStream(document, page);
   }
 
+  /**
+   * Write text.
+   *
+   * @param contentStream the content stream
+   * @param text          the text
+   * @param x             the x
+   * @param y             the y
+   * @param font          the font
+   * @param font_size     the font size
+   * @throws Exception the exception
+   */
   static void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size) throws Exception {
     writeText(contentStream, text, x, y, font, font_size, Color.black);
   }
 
+  /**
+   * Write text.
+   *
+   * @param contentStream the content stream
+   * @param text          the text
+   * @param x             the x
+   * @param y             the y
+   * @param font          the font
+   * @param font_size     the font size
+   * @param color         the color
+   * @throws Exception the exception
+   */
   static void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size, Color color) throws Exception {
     contentStream.beginText();
     contentStream.setFont( font, font_size );

@@ -2,7 +2,6 @@ package dpfmanager.shell.modules.classes;
 
 import dpfmanager.shell.modules.reporting.IndividualReport;
 import dpfmanager.ReportGenerator;
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -33,10 +32,22 @@ import java.util.zip.ZipFile;
  */
 public class ProcessInput {
   private ReportGenerator reportGenerator;
+  /**
+   * The Allowed extensions.
+   */
   List<String> allowedExtensions;
   private boolean checkBL, checkEP, checkPC;
   private int checkIT;
 
+  /**
+   * Instantiates a new Process input.
+   *
+   * @param allowedExtensions the allowed extensions
+   * @param checkBL           the check bl
+   * @param checkEP           the check ep
+   * @param checkIT           the check it
+   * @param checkPC           the check pc
+   */
   public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT, boolean checkPC) {
     this.allowedExtensions = allowedExtensions;
     this.checkBL = checkBL;
@@ -45,10 +56,23 @@ public class ProcessInput {
     this.checkPC = checkPC;
   }
 
+  /**
+   * Instantiates a new Process input.
+   *
+   * @param allowedExtensions the allowed extensions
+   */
   public ProcessInput(List<String> allowedExtensions) {
     this.allowedExtensions = allowedExtensions;
   }
 
+  /**
+   * Process files string.
+   *
+   * @param files        the files
+   * @param config       the config
+   * @param outputFolder the output folder
+   * @return the string
+   */
   public String ProcessFiles(ArrayList<String> files, Configuration config, String outputFolder) {
     checkBL = config.getIsos().contains("Baseline");
     checkEP = config.getIsos().contains("Tiff/EP");
@@ -99,6 +123,20 @@ public class ProcessInput {
     return htmlFileStr;
   }
 
+  /**
+   * Process files string.
+   *
+   * @param files        the files
+   * @param xml          the xml
+   * @param json         the json
+   * @param html         the html
+   * @param pdf          the pdf
+   * @param outputFolder the output folder
+   * @param silence      the silence
+   * @param rules        the rules
+   * @param fixes        the fixes
+   * @return the string
+   */
   public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, boolean pdf, String outputFolder, boolean silence, Rules rules, Fixes fixes) {
     reportGenerator = new ReportGenerator();
     reportGenerator.setReportsFormats(xml, json, html, pdf);
@@ -180,15 +218,19 @@ public class ProcessInput {
     } else if (isUrl(filename)) {
       // URL
       try {
-        InputStream input = new java.net.URL(filename).openStream();
-        String filename2 = createTempFile(filename, input);
-        filename = java.net.URLDecoder.decode(filename, "UTF-8");
-        ir = processTiffFile(filename2, filename, internalReportFolder);
-        if (ir != null) {
-          indReports.add(ir);
+        if (isTiff(filename)) {
+          InputStream input = new java.net.URL(filename).openStream();
+          String filename2 = createTempFile(filename, input);
+          filename = java.net.URLDecoder.decode(filename, "UTF-8");
+          ir = processTiffFile(filename2, filename, internalReportFolder);
+          if (ir != null) {
+            indReports.add(ir);
+          }
+          File file = new File(filename2);
+          file.delete();
+        } else {
+          System.err.println("The file in the URL " + filename + " is not a Tiff");
         }
-        File file = new File(filename2);
-        file.delete();
       } catch (Exception ex) {
         System.out.println("Error in URL " + filename);
       }

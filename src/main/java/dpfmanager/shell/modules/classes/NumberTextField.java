@@ -2,6 +2,9 @@ package dpfmanager.shell.modules.classes;
 
 import javafx.scene.control.TextField;
 
+/**
+ * The type Number text field.
+ */
 public class NumberTextField extends TextField
 {
 
