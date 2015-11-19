@@ -146,6 +146,7 @@ public class ReportPDF extends ReportGeneric {
       //PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
       //out.println(message);
       //out.close();
+      System.out.println(message);
     } catch (Exception ex) {
 
     }
@@ -472,7 +473,7 @@ public class ReportPDF extends ReportGeneric {
       pos_y -= 10;
       writeText(contentStream, "Global score " + (doub*100) + "%", pos_x + 50, pos_y, font, font_size, Color.black);
 
-      // Individual Tiffs
+      // Individual Tiff images list
       pos_x = 100;
       pos_y -= 50;
       for (IndividualReport ir : gr.getIndividualReports()) {
@@ -569,19 +570,27 @@ public class ReportPDF extends ReportGeneric {
         pos_y = maxy;
       }
 
+      // Full individual reports
+      ArrayList<PDDocument> toClose = new ArrayList<PDDocument>();
       for (IndividualReport ir : gr.getIndividualReports()) {
         PDDocument doc = PDDocument.load(ir.getPDFDocument());
         List<PDPage> l = doc.getDocumentCatalog().getAllPages();
         for (PDPage pag : l) {
           document.addPage(pag);
         }
+        toClose.add(doc);
       }
 
       contentStream.close();
 
       document.save(pdffile);
       document.close();
+
+      for (PDDocument doc : toClose) {
+        doc.close();
+      }
     } catch (Exception tfe) {
+      showMessage("ERROR:" + tfe.toString());
       tfe.printStackTrace();
     }
   }

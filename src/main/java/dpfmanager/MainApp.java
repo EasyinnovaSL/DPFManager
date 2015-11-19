@@ -237,6 +237,11 @@ public class MainApp extends Application {
     thestage.show();
   }
 
+  private String getConfigDir() {
+    //return ".";
+    return System.getProperty("user.home") + "/DPF Manager";
+  }
+
   @FXML
   private void ShowMain() throws Exception {
     String fxmlFile = "/fxml/design.fxml";
@@ -323,7 +328,7 @@ public class MainApp extends Application {
     VBox vBox = new VBox();
     vBox.setSpacing(3);
     vBox.setPadding(new Insets(5));
-    File folder = new File(".");
+    File folder = new File(getConfigDir());
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
@@ -951,7 +956,7 @@ public class MainApp extends Application {
   @FXML
   protected void saveConfig(ActionEvent event) throws Exception {
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setInitialDirectory(new File("."));
+    fileChooser.setInitialDirectory(new File(getConfigDir()));
     fileChooser.setInitialFileName("config.dpf");
     fileChooser.setTitle("Save Config");
     File file = fileChooser.showSaveDialog(thestage);
@@ -1522,7 +1527,7 @@ public class MainApp extends Application {
   protected void openConfig(ActionEvent event) {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open Config");
-    fileChooser.setInitialDirectory(new File("."));
+    fileChooser.setInitialDirectory(new File(getConfigDir()));
     fileChooser.setInitialFileName("config.dpf");
     File file = fileChooser.showOpenDialog(thestage);
     try {

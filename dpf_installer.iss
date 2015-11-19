@@ -15,7 +15,7 @@ AppCopyright=Copyright (C) 2015
 AppPublisherURL=http://dpfmanager.org/
 AppSupportURL=http://dpfmanager.org/
 AppUpdatesURL=http://dpfmanager.org/
-;DefaultDirName={localappdata}\DPFManager
+;DefaultDirName={localappdata}\DPF Manager
 UsePreviousAppDir=no
 DefaultDirName={pf}\DPF Manager
 DefaultGroupName=DPF Manager
@@ -40,6 +40,7 @@ Source: "target\jfx\app\DPF Manager.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "target\jfx\app\DPF Manager-jfx.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "target\jfx\app\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "additionalResources\*"; DestDir: "{app}"; Flags: ignoreversion
+; Source: "additionalResources\*.dpf"; DestDir: "{localappdata}\DPF Manager"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
