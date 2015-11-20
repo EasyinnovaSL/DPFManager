@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,16 +56,28 @@ public class ReportGeneric {
       int height = (int) (image.getHeight() * factor);
       width = (int) (width * factor);
 
-      BufferedImage convertedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-      Graphics2D graphic = convertedImage.createGraphics();
-      graphic.drawImage(image, 0, 0, width, height, null);
-      graphic.dispose();
+      BufferedImage img = scale(image, width, height);
 
-      ImageIO.write(convertedImage, "jpg", new File(outputfile));
+      ImageIO.write(img, "jpg", new File(outputfile));
     } catch (Exception e) {
       return false;
     }
     return true;
+  }
+
+  static BufferedImage scale(BufferedImage src, int w, int h)
+  {
+    BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+    int x, y;
+    int ww = src.getWidth();
+    int hh = src.getHeight();
+    for (x = 0; x < w; x++) {
+      for (y = 0; y < h; y++) {
+        int col = src.getRGB(x * ww / w, y * hh / h);
+        img.setRGB(x, y, col);
+      }
+    }
+    return img;
   }
 
   /**

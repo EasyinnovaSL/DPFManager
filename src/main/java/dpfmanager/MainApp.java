@@ -171,7 +171,6 @@ public class MainApp extends Application {
     if (params == null || params.getRaw().size() == 0 || (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui"))) {
       thestage = stage;
       LOG.info("Starting JavaFX application");
-
       // GUI
       LoadGui();
     } else {
@@ -516,7 +515,10 @@ public class MainApp extends Application {
             RadioButton radio = (RadioButton) nodeIn;
             if (radio.isSelected()) {
               config = new Configuration();
-              config.ReadFile(radio.getText());
+              String path = radio.getText();
+              if (!new File(path).exists())
+                path = getConfigDir() + "/" + radio.getText();
+              config.ReadFile(path);
               oneChecked = true;
               break;
             }
@@ -1600,6 +1602,24 @@ public class MainApp extends Application {
       alert.setHeaderText("Please select a configuration file");
       alert.showAndWait();
     }
+  }
+
+  @FXML
+  protected void infoFiles(ActionEvent event) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Help");
+    alert.setHeaderText("The path to the files to check");
+    alert.setContentText("This can be either a single file or a folder. Only the files with a valid TIF file extension will be processed.");
+    alert.showAndWait();
+  }
+
+  @FXML
+  protected void infoConfig(ActionEvent event) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Help");
+    alert.setHeaderText("Configuration files define the options to check the files (ISO, report format and policy rules)");
+    alert.setContentText("You can either create a new configuration file, import a new one from disk, or delete");
+    alert.showAndWait();
   }
 
   @FXML

@@ -33,14 +33,14 @@
                 </VBox>
                 <VBox id="box0">
                     <children>
-                        <AnchorPane style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS" id="paneMain">
+                        <AnchorPane id="paneMain" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
                             <children>
                                 <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER">
                                     <content>
                                         <AnchorPane id="pane0">
                                             <children>
                                                 <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                    <!-- <image><Image url="@../images/main.png" /></image>-->
+                                                    <!--<image><Image url="@../images/main.png" /></image>-->
                                                 </ImageView>
                                                 <ScrollPane hbarPolicy="AS_NEEDED" layoutX="254.0" layoutY="455.0" prefHeight="172.0" prefWidth="486.0" styleClass="paneRadios">
                                                     <AnchorPane id="pane1">
@@ -74,22 +74,32 @@
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <TextField fx:id="txtFile" id="txtBox1" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
+                                                <Button layoutX="536.0" layoutY="423.0" mnemonicParsing="false" onAction="#infoConfig" prefHeight="21.0" prefWidth="12.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </Button>
+                                                <Button layoutX="502.0" layoutY="277.0" mnemonicParsing="false" onAction="#infoFiles" prefHeight="20.0" prefWidth="22.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </Button>
+                                                <TextField id="txtBox1" fx:id="txtFile" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
                                                     <cursor>
                                                         <Cursor fx:constant="TEXT" />
                                                     </cursor>
                                                 </TextField>
-                                                <Button layoutX="255.0" layoutY="649.0" onAction="#openConfig" mnemonicParsing="false" prefHeight="44.0" prefWidth="160.0" stylesheets="@/styles/style.css" text="IMPORT" textFill="#31C2F3" visible="true">
+                                                <Button layoutX="255.0" layoutY="649.0" mnemonicParsing="false" onAction="#openConfig" prefHeight="44.0" prefWidth="160.0" stylesheets="@/styles/style.css" text="IMPORT" textFill="#31C2F3" visible="true">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="421.0" layoutY="649.0" onAction="#newConfig" mnemonicParsing="false" prefHeight="45.0" prefWidth="155.0" stylesheets="@/styles/style.css" text="NEW" textFill="#31C2F3" visible="true">
+                                                <Button layoutX="421.0" layoutY="649.0" mnemonicParsing="false" onAction="#newConfig" prefHeight="45.0" prefWidth="155.0" stylesheets="@/styles/style.css" text="NEW" textFill="#31C2F3" visible="true">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="582.0" layoutY="649.0" onAction="#deleteConfig" mnemonicParsing="false" prefHeight="45.0" prefWidth="155.0" stylesheets="@/styles/style.css" text="DELETE" textFill="#31C2F3" visible="true">
+                                                <Button layoutX="582.0" layoutY="649.0" mnemonicParsing="false" onAction="#deleteConfig" prefHeight="45.0" prefWidth="155.0" stylesheets="@/styles/style.css" text="DELETE" textFill="#31C2F3" visible="true">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>

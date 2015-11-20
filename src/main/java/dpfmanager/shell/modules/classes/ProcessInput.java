@@ -246,7 +246,7 @@ public class ProcessInput {
       }
     } else {
       // Anything else
-      System.err.println("File " + filename + " does not exist or is not a Tiff");
+      System.err.println("File " + filename + " is not a Tiff");
     }
     return indReports;
   }

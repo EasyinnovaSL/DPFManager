@@ -555,7 +555,10 @@ public class ReportHtml extends ReportGeneric {
     int globalPercent = doub.intValue();
     htmlBody = htmlBody.replace("##IMAGES_LIST##", imagesBody);
     htmlBody = htmlBody.replace("##PERCENT##", "" + globalPercent);
-    htmlBody = htmlBody.replace("##COUNT##", "" + gr.getReportsCount());
+    String scount = gr.getReportsCount() + " ";
+    if (gr.getReportsCount() == 1) scount += "file";
+    else scount += "files";
+    htmlBody = htmlBody.replace("##COUNT##", "" + scount);
     htmlBody = htmlBody.replaceAll("##OK##", "" + gr.getReportsOk());
 
     if (gr.getHasBl()){

@@ -240,7 +240,11 @@ public class StatisticsGeneratorTest extends TestCase {
     Elements fileNum = doc.getElementsByAttributeValue("id", info);
     Elements fileTotal = doc.getElementsByTag(filesTotal);
 
-    assertEquals(fileTotal.text(), files + " files processed");
+    if (files == 1) {
+      assertEquals(fileTotal.text(), files + " file processed");
+    } else {
+      assertEquals(fileTotal.text(), files + " files processed");
+    }
     assertEquals(fileNum.get(0).parent().text(), "0 passed " + files + " failed Global score 0%");
   }
 }
