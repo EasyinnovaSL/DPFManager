@@ -149,9 +149,9 @@ public class Schematron extends CamelTestSupport {
           pattern.appendChild(newrule);
         }
 
-        String tempname = "sch/rules2.sch";
+        String tempname = System.getProperty("user.home") + "/DPF Manager/rules2.sch";
         int idx = 3;
-        while (new File(tempname).exists()) tempname = "sch/rules" + idx++ + ".sch";
+        while (new File(tempname).exists()) tempname = System.getProperty("user.home") + "/DPF Manager/rules" + idx++ + ".sch";
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
@@ -160,7 +160,7 @@ public class Schematron extends CamelTestSupport {
         DOMSource source = new DOMSource(doc);
 
         File file = new File(tempname);
-        StreamResult result = new StreamResult(tempname);
+        StreamResult result = new StreamResult(file);
         transformer.transform(source, result);
 
         byte[] encoded = Files.readAllBytes(Paths.get(tempname));

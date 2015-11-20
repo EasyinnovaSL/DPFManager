@@ -167,7 +167,7 @@ public class MainApp extends Application {
   @Override
   public final void start(final Stage stage) throws Exception {
     Parameters params = getParameters();
-    System.out.println("Default user folder: " + System.getProperty("user.home"));
+    //System.out.println("Default user folder: " + System.getProperty("user.home"));
     if (params == null || params.getRaw().size() == 0 || (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui"))) {
       thestage = stage;
       LOG.info("Starting JavaFX application");
@@ -238,6 +238,13 @@ public class MainApp extends Application {
 
   private String getConfigDir() {
     //return ".";
+    if (!new File(System.getProperty("user.home") + "/DPF Manager").exists()) {
+      new File(System.getProperty("user.home") + "/DPF Manager").mkdir();
+    }
+    if (!new File(System.getProperty("user.home") + "/DPF Manager").exists()) {
+      System.out.println("Could not create user dir. Switching to app dir");
+      return ".";
+    }
     return System.getProperty("user.home") + "/DPF Manager";
   }
 

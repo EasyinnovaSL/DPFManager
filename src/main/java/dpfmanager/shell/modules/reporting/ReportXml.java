@@ -431,7 +431,7 @@ public class ReportXml {
       DOMSource source = new DOMSource(doc);
 
       File f = new File(xmlfile);
-      StreamResult result = new StreamResult(f.toURI().toString());
+      StreamResult result = new StreamResult(f);
       transformer.transform(source, result);
 
       // To String
