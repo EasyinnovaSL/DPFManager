@@ -79,7 +79,8 @@ public class ReportHtml extends ReportGeneric {
    * Parse an individual report to HTML.
    *
    * @param outputfile the outputfile
-   * @param ir the individual report.
+   * @param ir         the individual report.
+   * @param mode       the mode (1, 2).
    */
   public static void parseIndividual(String outputfile, IndividualReport ir, int mode) {
     //String templatePath = "./src/main/resources/templates/individual.html";
@@ -404,7 +405,7 @@ public class ReportHtml extends ReportGeneric {
    * Parse a global report to XML format.
    *
    * @param outputfile the output file.
-   * @param gr the global report.
+   * @param gr         the global report.
    */
   public static void parseGlobal(String outputfile, GlobalReport gr) {
     String templatePath = "./src/main/resources/templates/global.html";
@@ -554,7 +555,10 @@ public class ReportHtml extends ReportGeneric {
     int globalPercent = doub.intValue();
     htmlBody = htmlBody.replace("##IMAGES_LIST##", imagesBody);
     htmlBody = htmlBody.replace("##PERCENT##", "" + globalPercent);
-    htmlBody = htmlBody.replace("##COUNT##", "" + gr.getReportsCount());
+    String scount = gr.getReportsCount() + " ";
+    if (gr.getReportsCount() == 1) scount += "file";
+    else scount += "files";
+    htmlBody = htmlBody.replace("##COUNT##", "" + scount);
     htmlBody = htmlBody.replaceAll("##OK##", "" + gr.getReportsOk());
 
     if (gr.getHasBl()){
@@ -593,11 +597,11 @@ public class ReportHtml extends ReportGeneric {
     // Chart
     int angleG = globalPercent * 360 / 100;
     int reverseAngleG = 360 - angleG;
-    String functionPie = "plotPie('pie-global', " + reverseAngleG + ", " + angleG;
+    String functionPie = "plotPie('pie-global', " + angleG + ", " + reverseAngleG;
     if (gr.getReportsOk() >= gr.getReportsKo()) {
-      functionPie += ", '#F2F2F2', '#66CC66'); ";
+      functionPie += ", '#66CC66', '#F2F2F2'); ";
     } else {
-      functionPie += ", 'red', '#F2F2F2'); ";
+      functionPie += ", '#F2F2F2', 'red'); ";
     }
     pieFunctions += functionPie;
 

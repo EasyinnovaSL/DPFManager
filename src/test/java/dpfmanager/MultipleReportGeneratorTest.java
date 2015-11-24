@@ -83,11 +83,63 @@ public class MultipleReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
     File directori = new File(path);
     assertEquals(7, directori.list().length);
+
+    Platform.exit();
+  }
+
+  public void testReportsKoPdf() throws Exception {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = "0";
+    prefs.put(PREF_NAME, newValue);
+
+    String[] args = new String[3];
+    args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
+    args[1] = "-reportformat";
+    args[2] = "pdf";
+
+    Application.Parameters params = new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw = new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw = new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+
+    String path = getPath();
+    File directori = new File(path);
+    assertEquals(2, directori.list().length);
+
+    PDDocument doc = PDDocument.load(path + "/report.pdf");
+    List<PDPage> l = doc.getDocumentCatalog().getAllPages();
+    assertEquals(2, l.size());
+    doc.close();
+
+    Platform.exit();
   }
 
   public void testReportsPDF() throws Exception {
@@ -128,7 +180,6 @@ public class MultipleReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
     File directori = new File(path);
@@ -138,27 +189,12 @@ public class MultipleReportGeneratorTest extends TestCase {
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
     assertEquals(13, l.size());
     doc.close();
+
+    Platform.exit();
   }
 
   private String getPath() {
-    String path = "reports";
-    File theDir = new File(path);
-    // date folder
-    path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
-    theDir = new File(path);
-
-    // index folder
-    int index = 1;
-    File file = new File(path + "/" + index);
-    while (file.exists()) {
-      index++;
-      file = new File(path + "/" + index);
-      if (!file.exists()) {
-        file = new File(path + "/" + (index - 1));
-        break;
-      }
-    }
-    path += "/" + (index - 1);
+    String path = ReportGenerator.createReportPath(true);
     return path;
   }
 }

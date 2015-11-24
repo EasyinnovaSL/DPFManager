@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,7 +34,7 @@ public class ReportGeneric {
   /**
    * Tiff 2 jpg.
    *
-   * @param inputfile the inputfile
+   * @param inputfile  the inputfile
    * @param outputfile the outputfile
    * @return true, if successful
    */
@@ -55,16 +56,28 @@ public class ReportGeneric {
       int height = (int) (image.getHeight() * factor);
       width = (int) (width * factor);
 
-      BufferedImage convertedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-      Graphics2D graphic = convertedImage.createGraphics();
-      graphic.drawImage(image, 0, 0, width, height, null);
-      graphic.dispose();
+      BufferedImage img = scale(image, width, height);
 
-      ImageIO.write(convertedImage, "jpg", new File(outputfile));
+      ImageIO.write(img, "jpg", new File(outputfile));
     } catch (Exception e) {
       return false;
     }
     return true;
+  }
+
+  static BufferedImage scale(BufferedImage src, int w, int h)
+  {
+    BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+    int x, y;
+    int ww = src.getWidth();
+    int hh = src.getHeight();
+    for (x = 0; x < w; x++) {
+      for (y = 0; y < h; y++) {
+        int col = src.getRGB(x * ww / w, y * hh / h);
+        img.setRGB(x, y, col);
+      }
+    }
+    return img;
   }
 
   /**
@@ -150,6 +163,7 @@ public class ReportGeneric {
   /**
    * Show Tag.
    *
+   * @param tv The tag value
    * @return true, if successful
    */
   protected static boolean showTag(TagValue tv) {
@@ -179,6 +193,13 @@ public class ReportGeneric {
     return showableTags.contains(tv.getName());
   }
 
+  /**
+   * Gets dif.
+   *
+   * @param n1 the n 1
+   * @param n2 the n 2
+   * @return the dif
+   */
   protected static String getDif(int n1, int n2) {
     String dif = "";
     if (n2 != n1) {
@@ -189,6 +210,12 @@ public class ReportGeneric {
     return dif;
   }
 
+  /**
+   * Gets tags.
+   *
+   * @param ir the ir
+   * @return the tags
+   */
   protected static ArrayList<ReportTag> getTags(IndividualReport ir) {
     ArrayList<ReportTag> list = new ArrayList<ReportTag>();
     TiffDocument td = ir.getTiffModel();

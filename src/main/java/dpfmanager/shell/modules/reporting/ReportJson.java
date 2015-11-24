@@ -43,7 +43,7 @@ import java.io.File;
 
 /**
  * The Class ReportJson.
- * 
+ *
  * @author Adrià Llorens
  */
 public class ReportJson {
@@ -51,7 +51,7 @@ public class ReportJson {
   /**
    * XML to JSON.
    *
-   * @param xml the XML
+   * @param xml          the XML
    * @param jsonFilename the json filename
    */
   public static void xmlToJson(String xml, String jsonFilename) {

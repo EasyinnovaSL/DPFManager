@@ -31,11 +31,6 @@ import java.util.prefs.Preferences;
 public class SchematronTest extends TestCase {
   TiffReader tr;
 
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
-
   /**
    * Pre test.
    */
@@ -90,7 +85,6 @@ public class SchematronTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -154,7 +148,6 @@ public class SchematronTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -216,7 +209,6 @@ public class SchematronTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
     String xmlFile = path + "/Bilevel.tif.xml";
@@ -227,6 +219,8 @@ public class SchematronTest extends TestCase {
     String res = new String(encoded, Charset.defaultCharset());
 
     assertEquals(true, res.indexOf("fired-rule") > -1);
+
+    Platform.exit();
   }
 
   /**
@@ -254,24 +248,7 @@ public class SchematronTest extends TestCase {
   }
 
   private String getPath() {
-    String path = "reports";
-    File theDir = new File(path);
-    // date folder
-    path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
-    theDir = new File(path);
-
-    // index folder
-    int index = 1;
-    File file = new File(path + "/" + index);
-    while (file.exists()) {
-      index++;
-      file = new File(path + "/" + index);
-      if (!file.exists()) {
-        file = new File(path + "/" + (index - 1));
-        break;
-      }
-    }
-    path += "/" + (index - 1);
+    String path = ReportGenerator.createReportPath(true);
     return path;
   }
 }

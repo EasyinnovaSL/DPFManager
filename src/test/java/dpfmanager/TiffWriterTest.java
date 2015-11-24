@@ -107,13 +107,10 @@ public class TiffWriterTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
-
     String xmlFile = path + "/Bilevel.tif.xml";
     String xmlFile2 = path + "/Bilevel2.tif.xml";
-
 
     assertXML(xmlFile, xmlFile2);
 
@@ -163,24 +160,7 @@ public class TiffWriterTest extends TestCase {
   }
 
   private String getPath() {
-    String path = "reports";
-    File theDir = new File(path);
-    // date folder
-    path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
-    theDir = new File(path);
-
-    // index folder
-    int index = 1;
-    File file = new File(path + "/" + index);
-    while (file.exists()) {
-      index++;
-      file = new File(path + "/" + index);
-      if (!file.exists()) {
-        file = new File(path + "/" + (index - 1));
-        break;
-      }
-    }
-    path += "/" + (index - 1);
+    String path = ReportGenerator.createReportPath(true);
     return path;
   }
 }

@@ -42,20 +42,37 @@ public class GlobalReport {
   /** The list of all individual reports. */
   private List<IndividualReport> reports;
 
-  /** Number of EP ok */
+  /**
+   * Number of EP ok
+   */
   int nreportsEpOk;
 
-  /** Number of Baseline ok */
+  /**
+   * Number of Baseline ok
+   */
   int nreportsBlOk;
 
-  /** Number of IT ok */
+  /**
+   * Number of IT ok
+   */
   int nreportsItOk;
 
-  /** Number of PC ok */
+  /**
+   * Number of PC ok
+   */
   int nreportsPcOk;
 
+  /**
+   * The Has ep.
+   */
   boolean hasEp;
+  /**
+   * The Has it.
+   */
   boolean hasIt;
+  /**
+   * The Has bl.
+   */
   boolean hasBl;
 
   /**
@@ -72,14 +89,29 @@ public class GlobalReport {
     hasBl = false;
   }
 
+  /**
+   * Gets has ep.
+   *
+   * @return the has ep
+   */
   public boolean getHasEp() {
     return hasEp;
   }
 
+  /**
+   * Gets has it.
+   *
+   * @return the has it
+   */
   public boolean getHasIt() {
     return hasIt;
   }
 
+  /**
+   * Gets has bl.
+   *
+   * @return the has bl
+   */
   public boolean getHasBl() {
     return hasBl;
   }
@@ -95,7 +127,6 @@ public class GlobalReport {
 
   /**
    * Generate the full report information.
-   *
    */
   public void generate() {
     for (IndividualReport ir : reports) {
@@ -127,7 +158,7 @@ public class GlobalReport {
   /**
    * Get the count of correct reports.
    *
-   * @return nreportsok
+   * @return nreportsok reports ok
    */
   public int getReportsOk() {
     int n=0;
@@ -150,20 +181,35 @@ public class GlobalReport {
   /**
    * Get the count of reports with some error.
    *
-   * @return nreportsko
+   * @return nreportsko reports ko
    */
   public int getReportsKo() {
     return getReportsCount() - getReportsOk();
   }
 
+  /**
+   * Has bl boolean.
+   *
+   * @return the boolean
+   */
   public boolean hasBl() {
     return hasBl;
   }
 
+  /**
+   * Has ep boolean.
+   *
+   * @return the boolean
+   */
   public boolean hasEp() {
     return hasEp;
   }
 
+  /**
+   * Has it boolean.
+   *
+   * @return the boolean
+   */
   public boolean hasIt() {
     return hasIt;
   }
@@ -171,7 +217,7 @@ public class GlobalReport {
   /**
    * Get the count of correct reports.
    *
-   * @return nReportsOnlyBl
+   * @return nReportsOnlyBl reports bl
    */
   public int getReportsBl() {
     return nreportsBlOk;
@@ -180,7 +226,7 @@ public class GlobalReport {
   /**
    * Get the count of reports with some error.
    *
-   * @return nReportsOnlyEp
+   * @return nReportsOnlyEp reports ep
    */
   public int getReportsEp() {
     return nreportsEpOk;
@@ -189,7 +235,7 @@ public class GlobalReport {
   /**
    * Get the count of reports with some error.
    *
-   * @return nReportsOnlyIt
+   * @return nReportsOnlyIt reports it
    */
   public int getReportsIt() {
     return nreportsItOk;
@@ -198,7 +244,7 @@ public class GlobalReport {
   /**
    * Get the count of reports with some error.
    *
-   * @return nReportsOnlyIt
+   * @return nReportsOnlyIt reports pc
    */
   public int getReportsPc() {
     return nreportsPcOk;

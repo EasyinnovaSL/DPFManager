@@ -29,11 +29,6 @@ import java.util.prefs.Preferences;
 public class ReportGeneratorTest extends TestCase {
   TiffReader tr;
 
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
-
   /**
    * Pre test.
    */
@@ -59,9 +54,13 @@ public class ReportGeneratorTest extends TestCase {
     String newValue = "0";
     prefs.put(PREF_NAME, newValue);
 
-    String path = "output";
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String path = "temp/output";
     int idx=1;
-    while (new File(path).exists()) path = "output" + idx++;
+    while (new File(path).exists()) path = "temp/output" + idx++;
 
     String[] args = new String[4];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -92,7 +91,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path + "/html");
     assertEquals(directori.exists(), true);
@@ -112,6 +110,7 @@ public class ReportGeneratorTest extends TestCase {
     FileUtils.deleteDirectory(new File(path));
 
     Platform.exit();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   public void testReportsFile() throws Exception {
@@ -149,7 +148,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -193,7 +191,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -237,7 +234,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -285,7 +281,6 @@ public class ReportGeneratorTest extends TestCase {
 
       CommandLine cl = new CommandLine(params);
       cl.launch();
-      Platform.exit();
 
       String path = getPath();
 
@@ -343,7 +338,6 @@ public class ReportGeneratorTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     String path = getPath();
 
@@ -383,24 +377,7 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   private String getPath() {
-    String path = "reports";
-    File theDir = new File(path);
-    // date folder
-    path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
-    theDir = new File(path);
-
-    // index folder
-    int index = 1;
-    File file = new File(path + "/" + index);
-    while (file.exists()) {
-      index++;
-      file = new File(path + "/" + index);
-      if (!file.exists()) {
-        file = new File(path + "/" + (index - 1));
-        break;
-      }
-    }
-    path += "/" + (index - 1);
+    String path = ReportGenerator.createReportPath(true);
     return path;
   }
 }
