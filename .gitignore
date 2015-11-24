@@ -11,3 +11,4 @@ easyinnova/
 !config.dpf
 src/test/resources/TestWriter/Bilevel2.tif
 Output/
+src/test/resources/private/
