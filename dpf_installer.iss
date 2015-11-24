@@ -15,8 +15,8 @@ AppCopyright=Copyright (C) 2015
 AppPublisherURL=http://dpfmanager.org/
 AppSupportURL=http://dpfmanager.org/
 AppUpdatesURL=http://dpfmanager.org/
-;DefaultDirName={localappdata}\DPF Manager
 UsePreviousAppDir=no
+;DefaultDirName={localappdata}\DPF Manager
 DefaultDirName={pf}\DPF Manager
 DefaultGroupName=DPF Manager
 OutputBaseFilename=DPF Manager-1.2.2
@@ -40,7 +40,7 @@ Source: "target\jfx\app\DPF Manager.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "target\jfx\app\DPF Manager-jfx.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "target\jfx\app\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "additionalResources\*"; DestDir: "{app}"; Flags: ignoreversion
-; Source: "additionalResources\*.dpf"; DestDir: "{localappdata}\DPF Manager"; Flags: ignoreversion
+Source: "additionalResources\*.dpf"; DestDir: "{%HOMEPATH}\DPF Manager"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -50,3 +50,28 @@ Name: "{commondesktop}\DPFManager"; Filename: "{app}\DPF Manager.exe"; Tasks: de
 [Run]
 Filename: "{app}\DPF Manager.exe"; Description: "{cm:LaunchProgram,DPFManager}"; Flags: nowait postinstall skipifsilent
 
+[UninstallDelete]
+Type: dirifempty; Name: "{pf}\DPF Manager"
+
+[Code]
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+mRes : integer;
+begin
+  case CurUninstallStep of
+    usUninstall:
+      begin
+        mRes := MsgBox('Do you want to remove also the reports and configuration files?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2)
+        // Line breaks with with ' #13#13 '
+        if mRes = IDYES then
+          begin
+             // Delete config files
+             DeleteFile('{%HOMEPATH}\DPF Manager\*.dpf');
+             // Delete reports directory recursively
+             DelTree('{%HOMEPATH}\DPF Manager\reports', True, True, True);
+             // Delete DPF Manager user folder only if empty
+             RemoveDir('{%HOMEPATH}\DPF Manager');
+          End
+      end;
+  end;
+end;
