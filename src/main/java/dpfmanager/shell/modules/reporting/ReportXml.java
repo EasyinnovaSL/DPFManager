@@ -34,6 +34,7 @@ package dpfmanager.shell.modules.reporting;
 import dpfmanager.shell.modules.classes.Rules;
 import dpfmanager.shell.modules.classes.Schematron;
 
+import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.types.IFD;
@@ -63,7 +64,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * The Class ReportXml.
  */
-public class ReportXml {
+public class ReportXml extends ReportGeneric {
   /**
    * Creates the ifd node.
    *
@@ -155,7 +156,8 @@ public class ReportXml {
 
     // Tags
     el = doc.createElement("tags");
-    for (TagValue t : ifd.getMetadata().getTags()) {
+    IfdTags ifdTags = ifd.getMetadata();
+    for (TagValue t : ifdTags.getTags()) {
       elchild = doc.createElement("tag");
 
       elchild2 = doc.createElement("name");
@@ -271,6 +273,16 @@ public class ReportXml {
     infoElement.setTextContent(ir.getEndianess());
     infoElement.setAttribute("ByteOrder", ir.getEndianess());
     report.appendChild(infoElement);
+
+    // tags
+    for (ReportTag tag : getTags(ir)) {
+      infoElement = doc.createElement(tag.tv.getName());
+      infoElement.setTextContent(tag.tv.toString());
+      infoElement.setAttribute(tag.tv.getName(), tag.tv.toString());
+      infoElement.setAttribute("id", tag.tv.getId() + "");
+      infoElement.setAttribute("type", tag.dif + "");
+      report.appendChild(infoElement);
+    }
 
     // implementation checker
     Element implementationCheckerElement = doc.createElement("implementation_checker");

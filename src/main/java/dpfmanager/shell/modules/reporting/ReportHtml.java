@@ -361,7 +361,7 @@ public class ReportHtml extends ReportGeneric {
       else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", tag.tv.getName());
-      row = row.replace("##VALUE##", tag.tv.toString());
+      row = row.replace("##VALUE##", tag.tv.getDescriptiveValue());
       rows += row;
     }
     htmlBody = htmlBody.replaceAll("##ROWS_TAGS##", rows);

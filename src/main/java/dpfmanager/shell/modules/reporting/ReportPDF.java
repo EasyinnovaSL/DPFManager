@@ -292,7 +292,7 @@ public class ReportPDF extends ReportGeneric {
         writeText(contentStream, tag.index + "", pos_x, pos_y, font, font_size);
         writeText(contentStream, tag.tv.getId() + sDif, pos_x + 40, pos_y, font, font_size);
         writeText(contentStream, tag.tv.getName(), pos_x + 80, pos_y, font, font_size);
-        writeText(contentStream, tag.tv.toString(), pos_x + 200, pos_y, font, font_size);
+        writeText(contentStream, tag.tv.getDescriptiveValue(), pos_x + 200, pos_y, font, font_size);
       }
 
       if (newPageNeeded(pos_y)) {
