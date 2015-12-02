@@ -87,6 +87,7 @@ public class CommandLine extends UserInterface {
     boolean html = true;
     boolean pdf = false;
     boolean silence = false;
+    int recursive = 1;
     Configuration config = null;
 
     List<String> params = new ArrayList<String>();
@@ -123,6 +124,8 @@ public class CommandLine extends UserInterface {
         }
       } else if (arg.equals("-s")) {
         silence = true;
+      } else if (arg.startsWith("-r") && isNumeric(arg.substring(2))) {
+        recursive = Integer.parseInt(arg.substring(2));
       } else if (arg.equals("-configuration")) {
         if (idx + 1 < params.size()) {
           String xmlConfig = params.get(++idx);
@@ -164,12 +167,7 @@ public class CommandLine extends UserInterface {
         if (!new File(arg_mod).isAbsolute() && !new File(arg_mod).exists() && new File("../" + arg_mod).exists()) arg_mod = "../" + arg;
         File file = new File(arg_mod);
         if (file.isDirectory()) {
-          File[] listOfFiles = file.listFiles();
-          for (int j = 0; j < listOfFiles.length; j++) {
-            if (listOfFiles[j].isFile()) {
-              files.add(listOfFiles[j].getPath());
-            }
-          }
+          addDirectoryToFiles(files, file, recursive, 1);
         } else {
           files.add(arg_mod);
         }
@@ -192,6 +190,30 @@ public class CommandLine extends UserInterface {
         ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0, false);
         pi.ProcessFiles(files, xml, json, html, pdf, outputFolder, silence, null, null);
         System.out.println("Report generated successfully.");
+      }
+    }
+  }
+
+  public static boolean isNumeric(String str)
+  {
+    try
+    {
+      int d = Integer.parseInt(str);
+    }
+    catch(NumberFormatException nfe)
+    {
+      return false;
+    }
+    return true;
+  }
+
+  private void addDirectoryToFiles(ArrayList<String> files, File directory, int recursive, int currentlevel) {
+    File[] listOfFiles = directory.listFiles();
+    for (int j = 0; j < listOfFiles.length; j++) {
+      if (listOfFiles[j].isFile()) {
+        files.add(listOfFiles[j].getPath());
+      } else if (listOfFiles[j].isDirectory() && currentlevel < recursive) {
+        addDirectoryToFiles(files, listOfFiles[j], recursive, currentlevel + 1);
       }
     }
   }
@@ -329,6 +351,7 @@ public class CommandLine extends UserInterface {
     System.out.println("Usage: dpfmanager [options] <file1> <file2> ... <fileN>");
     System.out.println("Options: -help displays help");
     System.out.println("         -o path: Specifies the report output folder.");
+    System.out.println("         -r[deepness]: Check directories recursively. Default is '-r1'");
     System.out.println("         -gui: Launches graphical interface");
     System.out.println("         -configuration (filename): Specify configuration file");
     System.out.println("         -reportformat (xml, json, pdf or html): "

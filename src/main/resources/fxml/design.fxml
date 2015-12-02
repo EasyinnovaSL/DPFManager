@@ -89,27 +89,27 @@
                                                         <Cursor fx:constant="TEXT" />
                                                     </cursor>
                                                 </TextField>
-                                                <Button layoutX="255.0" layoutY="634.0" mnemonicParsing="false" onAction="#openConfig" prefHeight="30.0" prefWidth="243.0" stylesheets="@/styles/style.css" text="IMPORT" textFill="#31C2F3" visible="true">
+                                                <Button layoutX="382.0" layoutY="642.0" mnemonicParsing="false" onAction="#openConfig" prefHeight="45.0" prefWidth="117.0" stylesheets="@/styles/style.css" text="IMPORT" textFill="#31C2F3" visible="true">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="505.0" layoutY="634.0" mnemonicParsing="false" onAction="#newConfig" prefHeight="30.0" prefWidth="235.0" stylesheets="@/styles/style.css" text="NEW" textFill="#31C2F3" visible="true">
+                                                <Button layoutX="254.0" layoutY="642.0" mnemonicParsing="false" onAction="#newConfig" prefHeight="45.0" prefWidth="120.0" stylesheets="@/styles/style.css" text="NEW" textFill="#31C2F3" visible="true">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="255.0" layoutY="671.0" mnemonicParsing="false" onAction="#editConfig" prefHeight="30.0" prefWidth="243.0" stylesheets="@/styles/style.css" text="EDIT" textFill="#31C2F3" visible="true">
+                                                <Button layoutX="507.0" layoutY="642.0" mnemonicParsing="false" onAction="#editConfig" prefHeight="45.0" prefWidth="108.0" stylesheets="@/styles/style.css" text="EDIT" textFill="#31C2F3" visible="true">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="505.0" layoutY="671.0" mnemonicParsing="false" onAction="#deleteConfig" prefHeight="30.0" prefWidth="235.0" stylesheets="@/styles/style.css" text="DELETE" textFill="#31C2F3" visible="true">
+                                                <Button layoutX="623.0" layoutY="642.0" mnemonicParsing="false" onAction="#deleteConfig" prefHeight="45.0" prefWidth="118.0" stylesheets="@/styles/style.css" text="DELETE" textFill="#31C2F3" visible="true">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button fx:id="buttonRun" layoutX="385.0" layoutY="740.0" mnemonicParsing="false" onAction="#openFile" prefHeight="62.0" prefWidth="220.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button fx:id="buttonRun" layoutX="383.0" layoutY="740.0" mnemonicParsing="false" onAction="#openFile" prefHeight="62.0" prefWidth="220.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>

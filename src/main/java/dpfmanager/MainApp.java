@@ -54,6 +54,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -65,6 +66,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
@@ -76,6 +78,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -91,6 +94,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.scene.control.MenuItem;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -107,6 +111,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -932,14 +938,9 @@ public class MainApp extends Application {
     try {
       FXMLLoader loader2 = new FXMLLoader();
       String fxmlFile2 = "/fxml/summary.fxml";
-      Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
+      Parent rootNode2 = loader2.load(getClass().getResourceAsStream(fxmlFile2));
       Scene scenereport = new Scene(rootNode2, thestage.getScene().getWidth(), thestage.getScene().getHeight());
       scenereport.getStylesheets().add("/styles/style.css");
-
-      /*thestage.setMaxHeight(height);
-      thestage.setMinHeight(height);
-      thestage.setMaxWidth(width);
-      thestage.setMinWidth(width);*/
 
       thestage.setScene(scenereport);
       thestage.sizeToScene();
@@ -1163,6 +1164,34 @@ public class MainApp extends Application {
                   }
                 });
 
+                ContextMenu contextMenu = new ContextMenu();
+                MenuItem download = new MenuItem("Download report");
+                download.setOnAction(new EventHandler<ActionEvent>() {
+                  @Override
+                  public void handle(ActionEvent event) {
+                    FileChooser fileChooser = new FileChooser();
+                    fileChooser.setTitle("Save Report");
+                    fileChooser.setInitialFileName(new File(item.get(i)).getName());
+                    File file = fileChooser.showSaveDialog(thestage);
+                    if (file != null) {
+                      try {
+                        Files.copy(Paths.get(new File(item.get(i)).getAbsolutePath()), Paths.get(file.getAbsolutePath()));
+                      } catch (Exception ex) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("An error ocurred");
+                        alert.setContentText("There was an error while saving the report file");
+                        alert.showAndWait();
+                      }
+                    }
+                  }
+                });
+                contextMenu.getItems().add(download);
+                icon.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                  public void handle(ContextMenuEvent e) {
+                    contextMenu.show(icon, e.getScreenX(), e.getScreenY());
+                  }
+                });
                 box.getChildren().add(icon);
               }
 
