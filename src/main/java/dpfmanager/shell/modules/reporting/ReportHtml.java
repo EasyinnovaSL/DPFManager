@@ -355,7 +355,9 @@ public class ReportHtml extends ReportGeneric {
     for (ReportTag tag : getTags(ir)) {
       String seeTr = "";
       if (tag.index > 0) seeTr = " hide";
-      row = "<tr class='ifd ifd" + tag.index + seeTr + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+      String expert = "";
+      if (tag.expert) expert = " expert";
+      row = "<tr class='ifd ifd" + tag.index + seeTr + expert + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
       String sDif = "";
       if (tag.dif < 0) sDif = "<i class=\"fa fa-times\"></i>";
       else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";

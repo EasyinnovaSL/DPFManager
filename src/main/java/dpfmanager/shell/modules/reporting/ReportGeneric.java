@@ -226,31 +226,28 @@ public class ReportGeneric {
     }
     td.getFirstIFD();
     int index = 0;
-    boolean expertMode = false;
     while (ifd != null) {
       IfdTags meta = ifd.getMetadata();
       for (TagValue tv : meta.getTags()) {
-        if (showTag(tv) || expertMode) {
-          ReportTag tag = new ReportTag();
-          tag.index = index;
-          tag.tv = tv;
-          if (ifdcomp != null) {
-            if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
-              tag.dif = 1;
-          }
-          list.add(tag);
+        ReportTag tag = new ReportTag();
+        tag.index = index;
+        tag.tv = tv;
+        if (ifdcomp != null) {
+          if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
+            tag.dif = 1;
         }
+        if (!showTag(tv)) tag.expert = true;
+        list.add(tag);
       }
       if (ifdcomp != null) {
         for (TagValue tv : ifdcomp.getMetadata().getTags()) {
-          if (showTag(tv) || expertMode) {
-            if (!meta.containsTagId(tv.getId())) {
-              ReportTag tag = new ReportTag();
-              tag.index = index;
-              tag.tv = tv;
-              tag.dif = -1;
-              list.add(tag);
-            }
+          if (!meta.containsTagId(tv.getId())) {
+            ReportTag tag = new ReportTag();
+            tag.index = index;
+            tag.tv = tv;
+            tag.dif = -1;
+            if (!showTag(tv)) tag.expert = true;
+            list.add(tag);
           }
         }
       }
