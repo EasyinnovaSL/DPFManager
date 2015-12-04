@@ -18,4 +18,6 @@ public class ReportTag {
    * The Dif.
    */
   public int dif = 0;
+
+  public boolean expert = false;
 }
