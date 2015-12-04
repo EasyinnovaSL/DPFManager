@@ -79,6 +79,7 @@
 		<div class="container">
 			<div class="row top30-sm top50">
 				<div class="col-md-6">
+					<div class="clexpert"><input type="checkbox" name="expert" id="checkSelected" onchange="expertChanged()"> Expert mode</div>
 					<h4><i class="fa fa-tags"></i>  Tags</h4>
 					<table class="CustomTable3">
 				        <tr>
@@ -165,6 +166,10 @@
 		$(".ifd").removeClass("hide");
 		$(".ifd").hide();
 		$(".ifd"+nameid).show();
+	}
+	function expertChanged(){
+		if ($('#checkSelected').is(":checked")) $(".expert").show();
+		else $(".expert").hide();
 	}
     </script>
 </body>

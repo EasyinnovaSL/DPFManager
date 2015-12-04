@@ -31,15 +31,10 @@
 
 package dpfmanager;
 
-import dpfmanager.shell.modules.autofixes.autofix;
 import dpfmanager.shell.modules.classes.Configuration;
-import dpfmanager.shell.modules.classes.Field;
 import dpfmanager.shell.modules.classes.Fixes;
-import dpfmanager.shell.modules.classes.NumberTextField;
 import dpfmanager.shell.modules.classes.ProcessInput;
 import dpfmanager.shell.modules.classes.ReportRow;
-import dpfmanager.shell.modules.classes.Rules;
-import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.Gui;
 import javafx.application.Application;
@@ -59,6 +54,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -70,6 +66,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
@@ -81,6 +78,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -90,14 +88,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Line;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.scene.control.MenuItem;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -114,6 +111,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -132,21 +131,16 @@ public class MainApp extends Application {
   private static Configuration config;
   private static String dropped;
   private static Gui gui;
-  int uniqueId = 0;
-  private double defaultLineYlayout = 564.0;
   private final ToggleGroup group = new ToggleGroup();
   private final int reports_loaded = 50;
   private boolean all_reports_loaded;
   private static boolean firstRun = true;
+  static boolean editingConfig = false;
 
   @FXML private TextField txtFile;
-  @FXML private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
-  @FXML private Line line;
   @FXML private CheckBox chkFeedback, chkSubmit;
-  @FXML private CheckBox chkHtml, chkXml, chkJson, chkPdf;
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry;
   @FXML private TextArea txtWhy;
-  @FXML private Button addRule, continueButton, addFix;
 
   /**
    * The main method.
@@ -822,7 +816,7 @@ public class MainApp extends Application {
     LOG.debug("Loading FXML for main view from: {}", fxmlFile);
 
     FXMLLoader loader = new FXMLLoader();
-    Parent rootNode1 = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+    Parent rootNode1 = loader.load(getClass().getResourceAsStream(fxmlFile));
     Scene scene = new Scene(rootNode1, thestage.getScene().getWidth(), thestage.getScene().getHeight());
     scene.getStylesheets().add("/styles/style.css");
 
@@ -874,92 +868,43 @@ public class MainApp extends Application {
   @FXML
   protected void newConfig(ActionEvent event) throws Exception {
     config = new Configuration();
+    editingConfig = false;
     LoadSceneXml("/fxml/config1.fxml");
   }
 
   @FXML
   protected void gotoConfig2(ActionEvent event) throws Exception {
-    if (radProf1.isSelected()) config.getIsos().add("Baseline");
-    if (radProf2.isSelected()) config.getIsos().add("Tiff/EP");
-    if (radProf3.isSelected()) config.getIsos().add("Tiff/IT");
-    if (radProf4.isSelected()) config.getIsos().add("Tiff/IT-1");
-    if (radProf5.isSelected()) config.getIsos().add("Tiff/IT-2");
+    gui.saveIsos(thestage.getScene(), config);
     LoadSceneXml("/fxml/config2.fxml");
+    if (editingConfig) {
+      gui.loadRules(thestage.getScene(), config);
+    }
   }
 
   @FXML
   protected void gotoConfig3(ActionEvent event) throws Exception {
-    Rules rules = config.getRules();
-    Scene scene = thestage.getScene();
-    rules.Read(scene);
+    gui.saveRules(thestage.getScene(), config);
     LoadSceneXml("/fxml/config3.fxml");
+    if (editingConfig) {
+      gui.loadFormats(thestage.getScene(), config);
+    }
   }
 
   @FXML
   protected void gotoConfig4(ActionEvent event) throws Exception {
-    if (chkHtml.isSelected()) config.getFormats().add("HTML");
-    if (chkXml.isSelected()) config.getFormats().add("XML");
-    if (chkJson.isSelected()) config.getFormats().add("JSON");
-    if (chkPdf.isSelected()) config.getFormats().add("PDF");
+    gui.saveFormats(thestage.getScene(), config);
     LoadSceneXml("/fxml/config4.fxml");
-
-    ArrayList<String> classes = TiffConformanceChecker.getAutofixes();
-
-    int ypos = 320;
-    int xpos = 252;
-    int dify = 50;
-    Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
-    boolean first = true;
-    for (String className : classes) {
-      autofix fix = (autofix) Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
-
-      CheckBox check = new CheckBox();
-      check.setText(fix.getDescription());
-      check.setId(className);
-      check.setLayoutY(ypos);
-      check.setLayoutX(xpos);
-      check.getStyleClass().add("checkreport");
-      check.setTextFill(Paint.valueOf("white"));
-      ap2.getChildren().add(check);
-
-      ypos += dify;
-      if (!first) {
-        Button but = (Button) scene.lookup("#addFix");
-        but.setLayoutY(but.getLayoutY() + dify);
-        Line lin = (Line) scene.lookup("#line");
-        lin.setLayoutY(lin.getLayoutY() + dify);
-      } else {
-        first = false;
-      }
+    gui.getAutofixes(thestage.getScene());
+    if (editingConfig) {
+      gui.loadFixes(thestage.getScene(), config);
     }
   }
 
   @FXML
   protected void gotoConfig6(ActionEvent event) throws Exception {
-    Fixes fixes = config.getFixes();
-    /*if (chkAutoFixLE != null && chkAutoFixLE.isSelected())
-      fixes.addFixFromTxt("ByteOrder,LittleEndian");
-    if (chkAutoFixBE != null && chkAutoFixBE.isSelected())
-      fixes.addFixFromTxt("ByteOrder,BigEndian");
-    if (chkAutoFixPersonal != null && chkAutoFixPersonal.isSelected())
-      fixes.addFixFromTxt("PrivateData,Clear");*/
-
-    Scene scene = thestage.getScene();
-    fixes.ReadFixes(scene);
-    fixes.ReadAutofixes(scene);
-
+    gui.saveFixes(thestage.getScene(), config);
     LoadSceneXml("/fxml/config6.fxml");
-    setLabel("labIsos", config.getTxtIsos());
-    setLabel("labReports", config.getTxtFormats());
-    setLabel("labRules", config.getTxtRules());
-    setLabel("labFixes", config.getTxtFixes());
-  }
-
-  void setLabel(String labelName, String txt) {
-    Scene scene = thestage.getScene();
-    Label lab = (Label)scene.lookup("#" + labelName);
-    lab.setText(txt);
+    gui.setReport(thestage.getScene(), config);
   }
 
   @FXML
@@ -993,14 +938,9 @@ public class MainApp extends Application {
     try {
       FXMLLoader loader2 = new FXMLLoader();
       String fxmlFile2 = "/fxml/summary.fxml";
-      Parent rootNode2 = (Parent) loader2.load(getClass().getResourceAsStream(fxmlFile2));
+      Parent rootNode2 = loader2.load(getClass().getResourceAsStream(fxmlFile2));
       Scene scenereport = new Scene(rootNode2, thestage.getScene().getWidth(), thestage.getScene().getHeight());
       scenereport.getStylesheets().add("/styles/style.css");
-
-      /*thestage.setMaxHeight(height);
-      thestage.setMinHeight(height);
-      thestage.setMaxWidth(width);
-      thestage.setMinWidth(width);*/
 
       thestage.setScene(scenereport);
       thestage.sizeToScene();
@@ -1224,6 +1164,34 @@ public class MainApp extends Application {
                   }
                 });
 
+                ContextMenu contextMenu = new ContextMenu();
+                MenuItem download = new MenuItem("Download report");
+                download.setOnAction(new EventHandler<ActionEvent>() {
+                  @Override
+                  public void handle(ActionEvent event) {
+                    FileChooser fileChooser = new FileChooser();
+                    fileChooser.setTitle("Save Report");
+                    fileChooser.setInitialFileName(new File(item.get(i)).getName());
+                    File file = fileChooser.showSaveDialog(thestage);
+                    if (file != null) {
+                      try {
+                        Files.copy(Paths.get(new File(item.get(i)).getAbsolutePath()), Paths.get(file.getAbsolutePath()));
+                      } catch (Exception ex) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("An error ocurred");
+                        alert.setContentText("There was an error while saving the report file");
+                        alert.showAndWait();
+                      }
+                    }
+                  }
+                });
+                contextMenu.getItems().add(download);
+                icon.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                  public void handle(ContextMenuEvent e) {
+                    contextMenu.show(icon, e.getScreenX(), e.getScreenY());
+                  }
+                });
                 box.getChildren().add(icon);
               }
 
@@ -1238,298 +1206,16 @@ public class MainApp extends Application {
     });
   }
 
-  private void addOperator(String item) {
-    ArrayList<String> operators = null;
-    ArrayList<String> values = null;
-    for (Field field : gui.getFields()) {
-      if (field.getName().equals(item)) {
-        operators = field.getOperators();
-        values = field.getValues();
-      }
-    }
-    if (operators != null) {
-      Scene scene = thestage.getScene();
-      AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
-      for (Node node : ap2.getChildren()) {
-        Boolean delete_combobox = true;
-        if (node instanceof HBox) {
-          HBox hBox1 = (HBox) node;
-          for (Node nodeIn : hBox1.getChildren()) {
-            if (nodeIn instanceof ComboBox) {
-              ComboBox comboBox = (ComboBox) nodeIn;
-              if (comboBox.getValue() != null && comboBox.getValue().equals(item)) {
-                ComboBox comboOp = new ComboBox();
-                for (String operator : operators) {
-                  comboOp.getItems().add(operator);
-                }
-                Button bRemove = null;
-                if (hBox1.getChildren().get(1) instanceof ComboBox) {
-                  ComboBox bla = (ComboBox) hBox1.getChildren().get(1);
-                  String val = (String) bla.getValue();
-                  if (val!=null){
-                    delete_combobox = false;
-                  }
-                }
-                if (delete_combobox) {
-                  while (hBox1.getChildren().size() > 1) {
-                    for (int i = 1; i < hBox1.getChildren().size(); i++) {
-                      if (hBox1.getChildren().get(i) instanceof Button) {
-                        bRemove = (Button) hBox1.getChildren().get(i);
-                      }
-                      hBox1.getChildren().remove(i);
-                    }
-                  }
-
-                  hBox1.getChildren().add(comboOp);
-                  if (values == null) {
-                    TextField value = new NumberTextField();
-                    value.getStyleClass().add("txtRule");
-                    hBox1.getChildren().add(value);
-                  } else {
-                    ComboBox comboVal = new ComboBox();
-                    for (String value : values) {
-                      comboVal.getItems().add(value);
-                    }
-                    hBox1.getChildren().add(comboVal);
-                  }
-                  hBox1.getChildren().add(bRemove);
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  private void addFixValue(String item) {
-    Scene scene = thestage.getScene();
-    Boolean delete_combobox;
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
-    for (Node node : ap2.getChildren()) {
-      delete_combobox = true;
-      if (node instanceof HBox) {
-        HBox hBox1 = (HBox) node;
-        for (Node nodeIn : hBox1.getChildren()) {
-          if (nodeIn instanceof ComboBox) {
-            ComboBox comboBox = (ComboBox) nodeIn;
-            if (comboBox.getValue() != null && comboBox.getValue().equals(item)) {
-              ComboBox comboOp = new ComboBox();
-              for (String field : gui.getFixFields()) {
-                comboOp.getItems().add(field);
-              }
-              Button bRemove = null;
-              if (hBox1.getChildren().get(1) instanceof ComboBox) {
-                ComboBox bla = (ComboBox) hBox1.getChildren().get(1);
-                String val = (String) bla.getValue();
-                if (val!=null){
-                  delete_combobox = false;
-                }
-              }
-              if (delete_combobox) {
-                while (hBox1.getChildren().size() > 1) {
-                  for (int i=1;i<hBox1.getChildren().size();i++)
-                  {
-                    if (hBox1.getChildren().get(i) instanceof Button)
-                    {
-                      bRemove = (Button)hBox1.getChildren().get(i);
-                    }
-                    hBox1.getChildren().remove(i);
-                  }
-                }
-
-                hBox1.getChildren().add(comboOp);
-
-                if (item.equals("Add Tag")) {
-                  TextField value = new TextField();
-                  value.getStyleClass().add("txtFix");
-                  hBox1.getChildren().add(value);
-                }
-
-                hBox1.getChildren().add(bRemove);
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
   @FXML
   protected void addRule(ActionEvent event) {
-    int dif = 50;
-    double xRule = addRule.getLayoutX() - 100;
-    double yRule = addRule.getLayoutY();
-
-    // Add combobox
-    ComboBox comboBox = new ComboBox();
-    for (Field field : gui.getFields()) {
-      comboBox.getItems().add(field.getName());
-    }
-
-    // Remove button
-    String styleButton = "-fx-background-color: transparent;\n" +
-        "\t-fx-border-width     : 0px   ;\n" +
-        "\t-fx-border-radius: 0 0 0 0;\n" +
-        "\t-fx-background-radius: 0 0 0; -fx-text-fill: WHITE; -fx-font-weight:bold;";
-    String styleButtonPressed = "-fx-border-width: 0px; -fx-background-color: rgba(255, 255, 255, 0.2);";
-    Button remove = new Button();
-    remove.setText("X");
-    remove.styleProperty().bind(
-        Bindings
-            .when(remove.pressedProperty())
-            .then(new SimpleStringProperty(styleButtonPressed))
-            .otherwise(new SimpleStringProperty(styleButton)
-            )
-    );
-    remove.setId("ID" + uniqueId);
-    remove.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent e) {
-        deleteRule(remove.getId());
-      }
-    });
-    comboBox.valueProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue ov, String t, String item) {
-        addOperator(item);
-      }
-    });
-    HBox hBox = new HBox (comboBox, remove);
-    hBox.setId("ID" + uniqueId++);
-    hBox.setSpacing(5);
-    hBox.setLayoutX(xRule);
-    hBox.setLayoutY(yRule);
-
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
-    ap2.getChildren().add(hBox);
-
-    addRule.setLayoutY(addRule.getLayoutY() + dif);
-
-    // Move bottom elements if necessary
-    if (addRule.getLayoutY() + addRule.getHeight() > line.getLayoutY()) {
-      line.setLayoutY(line.getLayoutY() + dif);
-      continueButton.setLayoutY(continueButton.getLayoutY() + dif);
-    }
-  }
-
-  void deleteRule(String id) {
-    Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
-    ArrayList<Node> lRemove = new ArrayList<Node>();
-    for (Node node : ap2.getChildren()) {
-      if (node instanceof HBox) {
-        HBox hBox1 = (HBox) node;
-        if (hBox1.getId().equals(id)) {
-          lRemove.add(node);
-        } else {
-          if (Integer.parseInt(hBox1.getId().substring(2)) > Integer.parseInt(id.substring(2))) {
-            hBox1.setLayoutY(hBox1.getLayoutY() - 50);
-          }
-        }
-      }
-    }
-    for (Node node : lRemove) {
-      ap2.getChildren().remove(node);
-    }
-    if (addRule.getLayoutY()>339) {
-      addRule.setLayoutY(addRule.getLayoutY() - 50);
-      if (line.getLayoutY()>defaultLineYlayout){
-        line.setLayoutY(line.getLayoutY() - 50);
-        continueButton.setLayoutY(continueButton.getLayoutY() - 50);
-      }
-    }
+    gui.addRule(scene);
   }
 
   @FXML
   protected void addFix(ActionEvent event) {
-    int dif = 50;
-    double xRule = addFix.getLayoutX() - 100;
-    double yRule = addFix.getLayoutY();
-
-    // Add combobox
-    ComboBox comboBox = new ComboBox();
-    for (String fix : gui.getFixes()) {
-      comboBox.getItems().add(fix);
-    }
-    comboBox.valueProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue ov, String t, String item) {
-        addFixValue(item);
-      }
-    });
-
-    // Remove button
-    String styleButton = "-fx-background-color: transparent;\n" +
-        "\t-fx-border-width     : 0px   ;\n" +
-        "\t-fx-border-radius: 0 0 0 0;\n" +
-        "\t-fx-background-radius: 0 0 0; -fx-text-fill: WHITE; -fx-font-weight:bold;";
-    String styleButtonPressed = "-fx-border-width: 0px; -fx-background-color: rgba(255, 255, 255, 0.2);";
-    Button remove = new Button();
-    remove.setText("X");
-    remove.styleProperty().bind(
-        Bindings
-            .when(remove.pressedProperty())
-            .then(new SimpleStringProperty(styleButtonPressed))
-            .otherwise(new SimpleStringProperty(styleButton)
-            )
-    );
-    remove.setId("ID" + uniqueId);
-    remove.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent e) {
-        deleteFix(remove.getId());
-      }
-    });
-
-    HBox hBox = new HBox (comboBox, remove);
-    hBox.setId("ID" + uniqueId++);
-    hBox.setSpacing(5);
-    hBox.setLayoutX(xRule);
-    hBox.setLayoutY(yRule);
-
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
-    ap2.getChildren().add(hBox);
-
-    addFix.setLayoutY(addFix.getLayoutY() + dif);
-
-    // Move bottom elements if necessary
-    if (addFix.getLayoutY() + addFix.getHeight() > line.getLayoutY()) {
-      line.setLayoutY(line.getLayoutY() + dif);
-      continueButton.setLayoutY(continueButton.getLayoutY() + dif);
-    }
-  }
-
-  void deleteFix(String id) {
-    Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
-    ArrayList<Node> lRemove = new ArrayList<Node>();
-    for (Node node : ap2.getChildren()) {
-      if (node instanceof HBox) {
-        HBox hBox1 = (HBox) node;
-        if (hBox1.getId().equals(id)) {
-          lRemove.add(node);
-        } else {
-          if (Integer.parseInt(hBox1.getId().substring(2)) > Integer.parseInt(id.substring(2))) {
-            hBox1.setLayoutY(hBox1.getLayoutY() - 50);
-          }
-        }
-      }
-    }
-    for (Node node : lRemove) {
-      ap2.getChildren().remove(node);
-    }
-    if (addFix.getLayoutY()>339) {
-      addFix.setLayoutY(addFix.getLayoutY() - 50);
-      if (line.getLayoutY()>defaultLineYlayout){
-        line.setLayoutY(line.getLayoutY() - 50);
-        continueButton.setLayoutY(continueButton.getLayoutY() - 50);
-      }
-    }
+    gui.addFix(scene);
   }
 
   @FXML
@@ -1587,7 +1273,7 @@ public class MainApp extends Application {
               alert.getButtonTypes().setAll(buttonNo, buttonYes);
               Optional<ButtonType> result = alert.showAndWait();
               if (result.get() == buttonYes){
-                File file = new File(radio.getText());
+                File file = new File(getConfigDir() + "/" + radio.getText());
                 vBox1.getChildren().remove(nodeIn);
                 if (!file.delete()){
                   Alert alert2 = new Alert(Alert.AlertType.ERROR);
@@ -1597,6 +1283,43 @@ public class MainApp extends Application {
                 }
               }
               oneChecked = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (!oneChecked) {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("Alert");
+      alert.setHeaderText("Please select a configuration file");
+      alert.showAndWait();
+    }
+  }
+
+  @FXML
+  protected void editConfig(ActionEvent event) throws Exception{
+    Scene scene = thestage.getScene();
+    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
+    boolean oneChecked = false;
+    for (Node node : ap3.getChildren()) {
+      if (node instanceof VBox) {
+        VBox vBox1 = (VBox) node;
+        for (Node nodeIn : vBox1.getChildren()) {
+          if (nodeIn instanceof RadioButton) {
+            RadioButton radio = (RadioButton) nodeIn;
+            if (radio.isSelected()) {
+              oneChecked = true;
+              config = new Configuration();
+              String path = radio.getText();
+              if (!new File(path).exists())
+                path = getConfigDir() + "/" + radio.getText();
+              config.ReadFile(path);
+              editingConfig = true;
+              LoadSceneXml("/fxml/config1.fxml");
+              if (editingConfig) {
+                gui.loadIsos(thestage.getScene(), config);
+              }
               break;
             }
           }
