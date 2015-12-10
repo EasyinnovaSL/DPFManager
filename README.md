@@ -27,11 +27,12 @@ You can download an installer for the latest DPF Manager GUI release [from our d
 If you want to try the latest development version you can obtain it from our [development download site](http://dpfmanager.org/community.html).
 
 ####Run DPF Manager
-You can run the DPF Manager in two modes, GUI and CLI. To start the software in GUI mode just double-click the executable. For using the CLI use the terminal, the following command explains the available parameters.
+You can run the DPF Manager in two modes, GUI and CLI. To start the software in GUI mode just double-click the executable. A manual for the GUI can be found in [our download site](http://dpfmanager.org/Downloads/User%20Manual.pdf).
+
+For using the CLI, use the terminal and enter the following command which will explain the available parameters.
 
     dpfmanager -help
 
-A manual for the GUI can be found in [our download site](http://dpfmanager.org/Downloads/User%20Manual.pdf).
 
 Building the DPF Manager from Source
 ----------------------------------------
@@ -53,3 +54,5 @@ Move to the downloaded project directory and call Maven install:
 
     cd DPFManager
     mvn clean install
+
+The executable and the installer will be generated under the directory easyinnova.
