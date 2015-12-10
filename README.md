@@ -20,19 +20,17 @@ CI Status
 
 Getting DPF Manager software
 ------------------------
-###Pre-requisites
-In order to use the GUI you'll need:
-
- * Java 8, which can be downloaded [from Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
-
-###DPF Manager GUI
 ####Download release version
-You can download an installer for the latest DPF Manager GUI release [from our download site](http://dpfmanager.org/#download). The current installation process requires Java 1.8 to be pre-installed.
+You can download an installer for the latest DPF Manager GUI release [from our download site](http://dpfmanager.org/#download).
 
 ####Download latest development version
 If you want to try the latest development version you can obtain it from our [development download site](http://dpfmanager.org/community.html).
 
-####DPF Manager GUI manual
+####Run DPF Manager
+You can run the DPF Manager in two modes, GUI and CLI. To start the software in GUI mode just double-click the executable. For using the CLI use the terminal, the following command explains the available parameters.
+
+    dpfmanager -help
+
 A manual for the GUI can be found in [our download site](http://dpfmanager.org/Downloads/User%20Manual.pdf).
 
 Building the DPF Manager from Source
@@ -55,9 +53,3 @@ Move to the downloaded project directory and call Maven install:
 
     cd DPFManager
     mvn clean install
-
-####Run DPF Manager
-You can run the DPF Manager in two modes, GUI and CLI. To start the software in GUI mode just double-click the executable. For using the CLI use the terminal, the following command explains the available parameters.
-
-    dpfmanager -help
-
