@@ -39,7 +39,7 @@
                                     <content>
                                         <AnchorPane id="pane0">
                                             <children>
-                                                <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage">
                                                     <!--<image><Image url="@../images/main.png" /></image>-->
                                                 </ImageView>
                                                 <ScrollPane hbarPolicy="AS_NEEDED" layoutX="254.0" layoutY="455.0" prefHeight="172.0" prefWidth="486.0" styleClass="paneRadios">

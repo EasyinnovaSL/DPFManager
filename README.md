@@ -47,7 +47,7 @@ You can use [Git](https://git-scm.com/) to download the source code.
 ```
 git clone https://github.com/EasyinnovaSL/DPFManager.git
 ```
-or download the latest release from [GitHub] (https://github.com/EasyinnovaSL/Tiff-Library-4J/releases).
+or download the latest release from [GitHub] (https://github.com/EasyinnovaSL/DPFManager/releases).
 
 ####Use Maven to compile the source
 Move to the downloaded project directory and call Maven install:
