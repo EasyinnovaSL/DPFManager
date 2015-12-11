@@ -215,6 +215,7 @@ public class MainApp extends Application {
       ShowDisclaimer();
     } else {
       ShowMain();
+      resize(thestage.getScene(), thestage.getWidth()-1);
     }
   }
 
@@ -833,36 +834,47 @@ public class MainApp extends Application {
     topMenuPositioning(scene);
   }
 
+  void resize(Scene scene, Number newSceneWidth) {
+    Button report = (Button) scene.lookup("#butReport");
+    Button checker = (Button) scene.lookup("#butChecker");
+    Button about = (Button) scene.lookup("#butAbout");
+    if (newSceneWidth.doubleValue() < 989) {
+      if (report != null) report.setLayoutX(470.0);
+      if (checker != null) checker.setLayoutX(290.0);
+      if (about != null) about.setLayoutX(560.0);
+    } else {
+      double dif = (newSceneWidth.doubleValue() - width) / 2;
+      if (report != null) report.setLayoutX(463.0 + dif);
+      if (checker != null) checker.setLayoutX(283.0 + dif);
+      if (about != null) about.setLayoutX(560.0 + dif);
+    }
+    VBox pan0 = (VBox) scene.lookup("#box0");
+    if (pan0 != null) {
+      if (newSceneWidth.doubleValue() < 989) {
+        pan0.setPadding(new Insets(0, 0, 0, 0));
+      } else {
+        double dif = (newSceneWidth.doubleValue() - width) / 2;
+        pan0.setPadding(new Insets(0, 0, 0, dif));
+      }
+    }
+  }
+
   void topMenuPositioning(Scene scene) {
     thestage.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-        Button report = (Button) scene.lookup("#butReport");
-        Button checker = (Button) scene.lookup("#butChecker");
-        Button about = (Button) scene.lookup("#butAbout");
-        if (newSceneWidth.doubleValue() < 989) {
-          if (report != null) report.setLayoutX(470.0);
-          if (checker != null) checker.setLayoutX(290.0);
-          if (about != null) about.setLayoutX(560.0);
-        } else {
-          double dif = (newSceneWidth.doubleValue() - width) / 2;
-          if (report != null) report.setLayoutX(463.0 + dif);
-          if (checker != null) checker.setLayoutX(283.0 + dif);
-          if (about != null) about.setLayoutX(560.0 + dif);
-        }
-        VBox pan0 = (VBox) scene.lookup("#box0");
-        if (pan0 != null) {
-          if (newSceneWidth.doubleValue() < 989) {
-            pan0.setPadding(new Insets(0, 0, 0, 0));
-          } else {
-            double dif = (newSceneWidth.doubleValue() - width) / 2;
-            pan0.setPadding(new Insets(0, 0, 0, dif));
-          }
+        resize(scene, newSceneWidth);
+      }
+    });
+    thestage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (!observable.getValue()){
+          thestage.setWidth(width);
         }
       }
     });
-    thestage.setWidth(thestage.getWidth() - 1);
-    thestage.setWidth(thestage.getWidth() + 1);
+    resize(scene, thestage.getWidth());
   }
 
   @FXML

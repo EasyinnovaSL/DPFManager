@@ -8,8 +8,6 @@
 
 .mainimage{
 	-fx-image: url("../images/main.png");
-	-fx-background-position: center center;
-	-fx-background-repeat: repeat-x;
 }
 
 .mainimagereport{
