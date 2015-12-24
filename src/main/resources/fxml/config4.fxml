@@ -2,19 +2,14 @@
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
-<?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
 <VBox fx:id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
-        <BorderPane><top>
+        <BorderPane id="wizStep4"><top>
             <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
                 <VBox>
                     <children>
@@ -64,6 +59,36 @@
                                                     </cursor>
                                                 </Button>
                                                 <Line fx:id="line" id="line" endX="710.0" layoutX="195.0" layoutY="564.0" startX="-100.0" stroke="WHITE" />
+                                                <Button layoutX="377.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig1" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </Button>
+                                                <Button layoutX="424.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig2" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </Button>
+                                                <Button layoutX="468.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig3" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </Button>
+                                                <Button visible="false" layoutX="510.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </Button>
+                                                <Button layoutX="554.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig5" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </Button>
+                                                <Button layoutX="598.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </Button>
                                             </children>
                                         </AnchorPane>
                                     </content>

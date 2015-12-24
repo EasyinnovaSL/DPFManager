@@ -35,6 +35,7 @@ import dpfmanager.shell.modules.autofixes.autofix;
 import dpfmanager.shell.modules.classes.Fix;
 import dpfmanager.shell.modules.classes.Fixes;
 import dpfmanager.shell.modules.classes.Rules;
+import dpfmanager.shell.modules.interfaces.UserInterface;
 import dpfmanager.shell.modules.reporting.GlobalReport;
 import dpfmanager.shell.modules.reporting.IndividualReport;
 import dpfmanager.shell.modules.reporting.ReportHtml;
@@ -48,25 +49,31 @@ import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 
 import java.awt.Desktop;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -144,10 +151,7 @@ public class ReportGenerator {
    * @return the reports folder
    */
   public static String getReportsFolder() {
-    String path = "reports";
-    if (new File(System.getProperty("user.home")).exists()){
-      path =  System.getProperty("user.home") + "/DPF Manager/reports";
-    }
+    String path = UserInterface.getConfigDir() + "/reports";
     return path;
   }
 
@@ -264,18 +268,12 @@ public class ReportGenerator {
    * @param body       the body
    */
   public static void writeToFile(String outputfile, String body) {
-    PrintWriter writer = null;
     try {
-      writer = new PrintWriter(outputfile, "UTF-8");
-      writer.println(body);
-    } catch (FileNotFoundException e) {
-      System.out.println("File not found exception");
-    } catch (UnsupportedEncodingException e) {
-      System.out.println("UnsupportedEncodingException exception");
-    } finally {
-      if (writer != null) {
-        writer.close();
-      }
+      BufferedWriter writer = new BufferedWriter(new FileWriter(outputfile));
+      writer.write(body);
+      writer.close();
+    } catch (IOException e) {
+      System.out.println("IOException");
     }
   }
 
@@ -370,7 +368,6 @@ public class ReportGenerator {
    */
   public static String readFilefromResources(String pathStr) {
     String text = "";
-    String name = pathStr.substring(pathStr.lastIndexOf("/") + 1, pathStr.length());
     Path path = Paths.get(pathStr);
     try {
       if (Files.exists(path)) {
@@ -378,7 +375,6 @@ public class ReportGenerator {
         BufferedReader br = new BufferedReader(new FileReader(pathStr));
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
-
         while (line != null) {
           sb.append(line);
           sb.append(System.lineSeparator());
@@ -388,13 +384,10 @@ public class ReportGenerator {
         br.close();
       } else {
         // Look in JAR
-
         Class cls = ReportGenerator.class;
         ClassLoader cLoader = cls.getClassLoader();
         InputStream in = cLoader.getResourceAsStream(pathStr);
-        boolean found = false;
         if (in != null) {
-
           BufferedReader reader = new BufferedReader(new InputStreamReader(in));
           StringBuilder out = new StringBuilder();
           String newLine = System.getProperty("line.separator");
@@ -404,7 +397,6 @@ public class ReportGenerator {
             out.append(newLine);
           }
           text = out.toString();
-          found = true;
         }
       }
     } catch (FileNotFoundException e) {
@@ -592,7 +584,7 @@ public class ReportGenerator {
    * @param reportName the output file name
    * @param ir         the individual report
    */
-  public void generateIndividualReport(String reportName, IndividualReport ir) {
+  public void generateIndividualReport(String reportName, IndividualReport ir, String outputFolder) {
     String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
@@ -643,7 +635,6 @@ public class ReportGenerator {
         ir.setTiffModel(tr.getModel());
         new File(nameFixedTif).delete();
 
-        ByteOrder byteOrder = null;
         for (Fix fix : fixes.getFixes()) {
           if (fix.getOperator() != null) {
             if (fix.getOperator().equals("Add Tag")) {
@@ -660,8 +651,6 @@ public class ReportGenerator {
 
         ti = new TiffInputStream(new File(nameOriginalTif));
         tw = new TiffWriter(ti);
-        //if (byteOrder != null)
-         // tw.setByteOrder(byteOrder);
         tw.SetModel(td);
         idx = 0;
         while (new File("out" + idx + ".tif").exists()) idx++;
@@ -700,11 +689,14 @@ public class ReportGenerator {
           ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
         }
 
-        boolean outputFolderSet = false;
-        if (!outputFolderSet) {
+        if (outputFolder == null) {
           new File(nameFixedTif).delete();
         } else {
-
+          File dir = new File(outputFolder + "/fixed/");
+          if (!dir.exists()) dir.mkdir();
+          String pathFixed = outputFolder + "/fixed/" + new File(nameOriginalTif).getName();
+          Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
+          System.out.println("Fixed file " + pathFixed + " created");
         }
       } catch (Exception ex) {
         System.out.println("Error creating report of fixed image");

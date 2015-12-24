@@ -7,8 +7,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{0D5B5F16-9992-49DC-AD65-D66FE249CE67}
 AppName=DPF Manager
-AppVersion=1.2.3
-AppVerName=DPF Manager 1.2.3
+AppVersion=1.3
+AppVerName=DPF Manager 1.3
 AppPublisher=DPF Manager
 AppComments=DPF Manager
 AppCopyright=Copyright (C) 2015
@@ -19,7 +19,7 @@ UsePreviousAppDir=no
 ;DefaultDirName={localappdata}\DPF Manager
 DefaultDirName={pf}\DPF Manager
 DefaultGroupName=DPF Manager
-OutputBaseFilename=DPF Manager-1.2.3
+OutputBaseFilename=DPF Manager-1.3
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
@@ -41,6 +41,7 @@ Source: "target\jfx\app\DPF Manager-jfx.jar"; DestDir: "{app}"; Flags: ignorever
 Source: "target\jfx\app\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "additionalResources\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "additionalResources\*.dpf"; DestDir: "{%HOMEPATH}\DPF Manager"; Flags: ignoreversion
+Source: "additionalResources\*.txt"; DestDir: "{%HOMEPATH}\DPF Manager"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -67,6 +68,7 @@ begin
           begin
              // Delete config files
              DeleteFile('{%HOMEPATH}\DPF Manager\*.dpf');
+             DeleteFile('{%HOMEPATH}\DPF Manager\setts.txt');
              // Delete reports directory recursively
              DelTree('{%HOMEPATH}\DPF Manager\reports', True, True, True);
              // Delete DPF Manager user folder only if empty

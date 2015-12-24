@@ -21,6 +21,7 @@ public class Configuration {
   private Rules rules;
   private ArrayList<String> formats;
   private Fixes fixes;
+  private String output = null;
 
   /**
    * Gets isos.
@@ -69,6 +70,25 @@ public class Configuration {
   }
 
   /**
+   * Sets output.
+   *
+   * @param path the path
+   */
+  public void setOutput(String path) {
+    output = path;
+  }
+
+  /**
+   * Gets output.
+   * Null means default.
+   *
+   * @return the output
+   */
+  public String getOutput() {
+    return output;
+  }
+
+  /**
    * Save file.
    *
    * @param filename the filename
@@ -84,6 +104,9 @@ public class Configuration {
     }
     rules.Write(writer);
     fixes.Write(writer);
+    if (output != null) {
+      writer.println("OUTPUT\t" + output);
+    }
     writer.close();
   }
 
@@ -124,6 +147,7 @@ public class Configuration {
    * @throws Exception the exception
    */
   public void ReadFile(String filename) throws Exception {
+    output = null;
     BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream(filename)));
     try {
       String line = br.readLine();
@@ -137,6 +161,7 @@ public class Configuration {
             case "FORMAT": formats.add(field2); break;
             case "FIX": fixes.addFixFromTxt(field2); break;
             case "RULE": rules.addRuleFromTxt(field2); break;
+            case "OUTPUT": output = field2; break;
           }
         }
         line = br.readLine();

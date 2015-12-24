@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
+import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
 import javafx.application.Platform;
 import junit.framework.TestCase;
@@ -31,10 +32,7 @@ public class MultipleReportGeneratorTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -46,10 +44,7 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   public void testReportsXML() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "src/test/resources/Small/";
@@ -92,10 +87,7 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   public void testReportsKoPdf() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
@@ -143,10 +135,7 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   public void testReportsPDF() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "src/test/resources/Small/";

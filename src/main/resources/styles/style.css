@@ -1,7 +1,4 @@
-/* Application wide styles */
-
-
-/* Component specific styles */
+/* Backgrounds */
 #rootMain {
 	-fx-background-color: rgb(51, 51, 51);
 }
@@ -51,6 +48,7 @@
 	-fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
 }
 
+/* Buttons */
 .button{
 	-fx-background-color: #303030;
 	-fx-border-width     : 1px   ;
@@ -69,7 +67,7 @@
 #addRule,#addFix{
 	-fx-font: 12 "arial black";
 }
-#myButton,#addRule,#addFix, #button_load,#button_more{
+#myButton,#addRule,#addFix, #button_load,#button_more,#butOutput{
 	-fx-background-color: #31C2F3;
 	-fx-border-width     : 1px   ;
 	-fx-border-color     : #31C2F3  ;
@@ -96,6 +94,7 @@
 	-fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Top menu */
 #topMenuImage1{
     -fx-background-image: url("../images/topMenu1.png");
     -fx-background-position: center center;
@@ -113,11 +112,6 @@
     -fx-background-position: center center;
     -fx-background-repeat: repeat-x;
 }
-/*
-.button:hover{
-	-fx-background-color: rgba(235,235,235,0.7);
-}
-*/
 
 .split-pane:vertical > .split-pane-divider {
     -fx-padding: 0;
@@ -136,6 +130,7 @@
 	display:none;
 }
 
+/* Reports table */
 .table-view {
 	-fx-background-color: #333333;
 	-fx-table-cell-border-color: transparent;
@@ -201,6 +196,11 @@
     -fx-color-label-visible: blue;
 }
 
+#txtOutput {
+	-fx-background-color: white;
+}
+
+/* Legal Form */
 .inputlegal {
 	-fx-background-color: white;
 }
@@ -256,7 +256,6 @@
 	-fx-background-radius: 3;
 }
 
-
 /* Combos rules */
 .combo-box .list-cell
 {
@@ -294,6 +293,7 @@
 	-fx-padding:7px;
 }
 
+/* Loading */
 .loading {
 	-fx-background-color: white, white , white;
 	-fx-border-width     : 1px   ;
@@ -302,6 +302,7 @@
 .loading2 {
 	-fx-background-color: rgba(255,255,255,0.4);
 }
+
 .paneRadios {
 	-fx-background-color: white;
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
@@ -313,6 +314,7 @@
 	-fx-alignment: CENTER-LEFT;
 }
 
+/* Chart */
 #pie_chart {
 	-fx-padding: -8px;
 	-fx-pie-label-visible: false;
@@ -326,8 +328,6 @@
 }
 .data0.chart-pie { -fx-background-color: #33ccff; }
 .data1.chart-pie { -fx-background-color: #f2f2f2; }
-
-
 
 .menu-item .label {
 	-fx-text-fill: white;

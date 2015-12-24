@@ -36,9 +36,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javafx.application.Application.Parameters;
 
@@ -82,11 +86,14 @@ public class CommandLine extends UserInterface {
     ArrayList<String> files = new ArrayList<String>();
     String outputFolder = null;
 
+    boolean explicitformats = false;
+    boolean explicitoutput = false;
     boolean xml = true;
-    boolean json = true;
+    boolean json = false;
     boolean html = true;
     boolean pdf = false;
     boolean silence = false;
+    boolean version = false;
     int recursive = 1;
     Configuration config = null;
 
@@ -119,6 +126,9 @@ public class CommandLine extends UserInterface {
             System.out.println("The output folder must be empty. Ignoring ouput folder.");
             outputFolder = null;
           }
+          if (outputFolder != null) {
+            explicitoutput = true;
+          }
         } else {
           argsError = true;
         }
@@ -142,6 +152,9 @@ public class CommandLine extends UserInterface {
       } else if (arg.equals("-help")) {
         argsError = true;
         break;
+      } else if (arg.equals("-v")) {
+        version = true;
+        break;
       } else if (arg.equals("-reportformat")) {
         if (idx + 1 < params.size()) {
           String formats = params.get(++idx);
@@ -154,6 +167,8 @@ public class CommandLine extends UserInterface {
           if (result.length() > 0) {
             System.out.println("Incorrect report formats");
             argsError = true;
+          } else {
+            explicitformats = true;
           }
         } else {
           argsError = true;
@@ -175,19 +190,33 @@ public class CommandLine extends UserInterface {
       idx++;
     }
 
+    if (version) {
+      String sversion = getVersion();
+      System.out.println("DPF Manager version " + sversion);
+    }
     if (argsError) {
       // Shows the program usage
       displayHelp();
-    } else if (files.size() == 0) {
+    } else if (files.size() == 0 && !version) {
       System.out.println("No files specified.");
     } else {
       readConformanceChecker();
       if (config != null) {
+        if (explicitformats) {
+          config.getFormats().clear();
+          if (xml) config.getFormats().add("XML");
+          if (pdf) config.getFormats().add("PDF");
+          if (html) config.getFormats().add("HTML");
+          if (json) config.getFormats().add("JSON");
+        }
+        if (explicitoutput) {
+          config.setOutput(outputFolder);
+        }
         ProcessInput pi = new ProcessInput(allowedExtensions);
         pi.ProcessFiles(files, config, outputFolder);
         System.out.println("Report generated successfully.");
       } else {
-        ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0, false);
+        ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0, false, null);
         pi.ProcessFiles(files, xml, json, html, pdf, outputFolder, silence, null, null);
         System.out.println("Report generated successfully.");
       }
@@ -348,13 +377,15 @@ public class CommandLine extends UserInterface {
    * Shows program usage.
    */
   static void displayHelp() {
-    System.out.println("Usage: dpfmanager [options] <file1> <file2> ... <fileN>");
-    System.out.println("Options: -help displays help");
-    System.out.println("         -o path: Specifies the report output folder.");
-    System.out.println("         -r[deepness]: Check directories recursively. Default is '-r1'");
-    System.out.println("         -gui: Launches graphical interface");
-    System.out.println("         -configuration (filename): Specify configuration file");
-    System.out.println("         -reportformat (xml, json, pdf or html): "
-        + "Specifies the report format. Default is 'xml,json,html'.");
+    System.out.println("Usage: dpfmanager [options] input1 [input2 ... inputN]");
+    System.out.println("(the inputs can be single TIF files, directories, zip files or URLs)");
+    System.out.println("Options:");
+    System.out.println("    -help: Displays this help message");
+    System.out.println("    -v: Shows application version number");
+    System.out.println("    -gui: Launches graphical user interface");
+    System.out.println("    -configuration <filename>: Selects a configuration file");
+    System.out.println("    -o <path>: Specifies the output folder (overriding the one specified in the configuration file, if selected).");
+    System.out.println("    -r[deepness]: Check directories recursively, with the specified depth. Default is '-r1'");
+    System.out.println("    -reportformat '[xml, json, pdf, html]': Specifies the report format. Default is 'xml,html'.");
   }
 }

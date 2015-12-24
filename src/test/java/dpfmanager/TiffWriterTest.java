@@ -3,6 +3,7 @@ package dpfmanager;
 import static java.io.File.separator;
 
 import dpfmanager.shell.modules.interfaces.CommandLine;
+import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -48,10 +49,7 @@ public class TiffWriterTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -63,10 +61,7 @@ public class TiffWriterTest extends TestCase {
   }
 
   public void testReports1() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/TestWriter";

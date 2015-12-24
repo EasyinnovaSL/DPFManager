@@ -4,11 +4,8 @@
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
 <VBox fx:id="rootMain" alignment="TOP_CENTER" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">

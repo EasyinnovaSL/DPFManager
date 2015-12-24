@@ -1,6 +1,7 @@
 package dpfmanager;
 
 import dpfmanager.shell.modules.interfaces.CommandLine;
+import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -40,10 +41,7 @@ public class StatisticsGeneratorTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -55,10 +53,7 @@ public class StatisticsGeneratorTest extends TestCase {
   }
 
   public void testStatistics() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -102,10 +97,7 @@ public class StatisticsGeneratorTest extends TestCase {
   }
 
   public void testStatistics2() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/";

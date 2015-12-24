@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.interfaces;
 
+import dpfmanager.MainApp;
 import dpfmanager.shell.modules.classes.Field;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
 
@@ -27,8 +28,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.prefs.Preferences;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -156,6 +165,135 @@ public class UserInterface {
       e.printStackTrace();
     }
     return null;
+  }
+
+  public static String getVersion() {
+    Properties prop = new Properties();
+    InputStream input = null;
+
+    try {
+
+      String filename = ".properties";
+      input = MainApp.class.getClassLoader().getResourceAsStream(filename);
+      if(input==null){
+        return "";
+      }
+
+      // load a properties file
+      prop.load(input);
+
+      // get the property value and print it out
+      return prop.getProperty("version");
+
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    } finally {
+      if (input != null) {
+        try {
+          input.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return "";
+  }
+
+  public static boolean getFeedback() {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String defaultValue = "0";
+    String propertyValue = prefs.get(PREF_NAME, defaultValue);
+    return propertyValue.equals("1");
+  }
+
+  public static void setFeedback(boolean value) {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "feedback";
+    String newValue = value ? "1" : "0";
+    prefs.put(PREF_NAME, newValue);
+  }
+
+  public static boolean getFirstTime() {
+    String sfile = UserInterface.getConfigDir() + "/setts.txt";
+    File file = new File(sfile);
+    try {
+      if (file.exists()) {
+        FileInputStream fis = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fis.read(data);
+        fis.close();
+        String str = new String(data, "UTF-8");
+        if (str.contains("first_time=0"))
+          return false;
+      }
+    } catch (Exception ex) {
+
+    }
+    return true;
+    //Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    //final String PREF_NAME = "first_time";
+    //String defaultValue = "1";
+    //String propertyValue = prefs.get(PREF_NAME, defaultValue);
+    //return propertyValue.equals("1");
+  }
+
+  public static void setFirstTime(boolean value) {
+    String sfile = UserInterface.getConfigDir() + "/setts.txt";
+    File file = new File(sfile);
+    String txt = "first_time=" + (value ? "1" : "0");
+    try {
+      if (file.exists()) {
+        FileInputStream fis = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fis.read(data);
+        fis.close();
+        String str = new String(data, "UTF-8");
+        if (str.contains("first_time=1")) str.replace("first_time=1", txt);
+        else if (str.contains("first_time=0")) str.replace("first_time=0", txt);
+        else txt = str + txt;
+        file.delete();
+      }
+      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+      writer.write(txt);
+      writer.close();
+    } catch (Exception ex) {
+
+    }
+
+    //Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    //final String PREF_NAME = "first_time";
+    //String newValue = value ? "1" : "0";
+    //prefs.put(PREF_NAME, newValue);
+  }
+
+  public static String getDefaultDir() {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "browse_dir";
+    String defaultValue = ".";
+    String propertyValue = prefs.get(PREF_NAME, defaultValue);
+    if (new File(propertyValue).exists() && new File(propertyValue).isDirectory())
+      return propertyValue;
+    else
+      return ".";
+  }
+
+  public static void setDefaultDir(String path) {
+    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
+    final String PREF_NAME = "browse_dir";
+    prefs.put(PREF_NAME, path);
+  }
+
+  public static String getConfigDir() {
+    //return ".";
+    if (!new File(System.getProperty("user.home") + "/DPF Manager").exists()) {
+      new File(System.getProperty("user.home") + "/DPF Manager").mkdir();
+    }
+    if (!new File(System.getProperty("user.home") + "/DPF Manager").exists()) {
+      System.out.println("Could not create user dir. Switching to app dir");
+      return ".";
+    }
+    return System.getProperty("user.home") + "/DPF Manager";
   }
 }
 

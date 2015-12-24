@@ -1,7 +1,11 @@
 package dpfmanager.shell.modules.classes;
 
+import dpfmanager.shell.modules.interfaces.UserInterface;
 import dpfmanager.shell.modules.reporting.IndividualReport;
 import dpfmanager.ReportGenerator;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -38,6 +42,7 @@ public class ProcessInput {
   List<String> allowedExtensions;
   private boolean checkBL, checkEP, checkPC;
   private int checkIT;
+  private Scene scene;
 
   /**
    * Instantiates a new Process input.
@@ -48,12 +53,13 @@ public class ProcessInput {
    * @param checkIT           the check it
    * @param checkPC           the check pc
    */
-  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT, boolean checkPC) {
+  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT, boolean checkPC, Scene scene) {
     this.allowedExtensions = allowedExtensions;
     this.checkBL = checkBL;
     this.checkEP = checkEP;
     this.checkIT = checkIT;
     this.checkPC = checkPC;
+    this.scene = scene;
   }
 
   /**
@@ -93,10 +99,19 @@ public class ProcessInput {
     // Process files
     ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
     String internalReportFolder = ReportGenerator.createReportPath();
+    int n=files.size();
     for (final String filename : files) {
       System.out.println("");
       System.out.println("Processing file " + filename);
-      List<IndividualReport> indReports = processFile(filename, internalReportFolder);
+      List<IndividualReport> indReports = processFile(filename, internalReportFolder, outputFolder);
+      if (scene != null) {
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n);
+          }
+        });
+      }
       if (indReports.size() > 0) {
         individuals.addAll(indReports);
       }
@@ -108,11 +123,7 @@ public class ProcessInput {
 
     // Send report over FTP (only for alpha testing)
     try {
-      Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-      final String PREF_NAME = "feedback";
-      String defaultValue = "0";
-      String propertyValue = prefs.get(PREF_NAME, defaultValue);
-      if(propertyValue.equals("1")) {
+      if(UserInterface.getFeedback()) {
         sendFtpCamel(reportGenerator, summaryXml);
       }
     } catch (Exception e) {
@@ -146,10 +157,19 @@ public class ProcessInput {
     // Process files
     ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
     String internalReportFolder = ReportGenerator.createReportPath();
+    int n=files.size();
     for (final String filename : files) {
       System.out.println("");
       System.out.println("Processing file " + filename);
-      List<IndividualReport> indReports = processFile(filename, internalReportFolder);
+      if (scene != null) {
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n);
+          }
+        });
+      }
+      List<IndividualReport> indReports = processFile(filename, internalReportFolder, outputFolder);
       if (indReports.size() > 0) {
         individuals.addAll(indReports);
       }
@@ -161,11 +181,7 @@ public class ProcessInput {
 
     // Send report over FTP (only for alpha testing)
     try {
-      Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-      final String PREF_NAME = "feedback";
-      String defaultValue = "0";
-      String propertyValue = prefs.get(PREF_NAME, defaultValue);
-      if(propertyValue.equals("1")) {
+      if(UserInterface.getFeedback()) {
         sendFtpCamel(reportGenerator, summaryXml);
       }
     } catch (Exception e) {
@@ -190,20 +206,21 @@ public class ProcessInput {
    * @param internalReportFolder the internal report folder
    * @return the list
    */
-  private List<IndividualReport> processFile(String filename, String internalReportFolder) {
+  private List<IndividualReport> processFile(String filename, String internalReportFolder, String outputFolder) {
     List<IndividualReport> indReports = new ArrayList<IndividualReport>();
     IndividualReport ir = null;
     if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
       // Zip File
       try {
+        System.err.println(filename);
         ZipFile zipFile = new ZipFile(filename);
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
           ZipEntry entry = entries.nextElement();
           if (isTiff(entry.getName())) {
             InputStream stream = zipFile.getInputStream(entry);
-            String filename2 = createTempFile(entry.getName(), stream);
-            ir = processTiffFile(filename2, filename2, internalReportFolder);
+            String filename2 = createTempFile(internalReportFolder, entry.getName(), stream);
+            ir = processTiffFile(filename2, entry.getName(), internalReportFolder, outputFolder);
             if (ir != null) {
               indReports.add(ir);
             }
@@ -213,16 +230,16 @@ public class ProcessInput {
         }
         zipFile.close();
       } catch (Exception ex) {
-        System.err.println("Error reading zip file");
+        System.err.println("Error reading zip file [" + ex.toString() + "]");
       }
     } else if (isUrl(filename)) {
       // URL
       try {
         if (isTiff(filename)) {
           InputStream input = new java.net.URL(filename).openStream();
-          String filename2 = createTempFile(filename, input);
+          String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
           filename = java.net.URLDecoder.decode(filename, "UTF-8");
-          ir = processTiffFile(filename2, filename, internalReportFolder);
+          ir = processTiffFile(filename2, filename, internalReportFolder, outputFolder);
           if (ir != null) {
             indReports.add(ir);
           }
@@ -237,7 +254,7 @@ public class ProcessInput {
     } else if (isTiff(filename)) {
       // File
       try {
-        ir = processTiffFile(filename, filename, internalReportFolder);
+        ir = processTiffFile(filename, filename, internalReportFolder, outputFolder);
         if (ir != null) {
           indReports.add(ir);
         }
@@ -259,14 +276,15 @@ public class ProcessInput {
    * @return the string
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  private String createTempFile(String name, InputStream stream) throws IOException {
-    String filename2 = name + "2";
+  private String createTempFile(String folder, String name, InputStream stream) throws IOException {
+    String filename2 = "x" + name;
     if (filename2.contains("/")) {
       filename2 = filename2.substring(filename2.lastIndexOf("/") + 1);
     }
     while (new File(filename2).isFile()) {
-      filename2 += "x";
+      filename2 = "x" + filename2;
     }
+    filename2 = folder + "/" + filename2;
     File targetFile = new File(filename2);
     OutputStream outStream = new FileOutputStream(targetFile);
     byte[] buffer = new byte[8 * 1024];
@@ -281,24 +299,25 @@ public class ProcessInput {
   /**
    * Process tiff file.
    *
-   * @param filename the filename
-   * @param realFilename the real filename
+   * @param pathToFile the path in local disk to the file
+   * @param reportFilename the file name that will be displayed in the report
    * @param internalReportFolder the internal report folder
+   * @param outputFolder the output report folder (optional)
    * @return the individual report
    * @throws ReadTagsIOException the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  private IndividualReport processTiffFile(String filename, String realFilename,
-                                           String internalReportFolder) throws ReadTagsIOException, ReadIccConfigIOException {
+  private IndividualReport processTiffFile(String pathToFile, String reportFilename,
+                                           String internalReportFolder, String outputFolder) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
       TiffReader tr = new TiffReader();
-      int result = tr.readFile(filename);
+      int result = tr.readFile(pathToFile);
       switch (result) {
         case -1:
-          System.out.println("File '" + filename + "' does not exist");
+          System.out.println("File '" + pathToFile + "' does not exist");
           break;
         case -2:
-          System.out.println("IO Exception in file '" + filename + "'");
+          System.out.println("IO Exception in file '" + pathToFile + "'");
           break;
         case 0:
           TiffDocument to = tr.getModel();
@@ -310,18 +329,21 @@ public class ProcessInput {
           ValidationResult itValidation = null;
           if (checkIT >= 0) itValidation = tr.getTiffITValidation(checkIT);
 
-          String pathNorm = realFilename.replaceAll("\\\\", "/");
+          String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, filename, to, baselineVal, epValidation, itValidation);
+          IndividualReport ir = new IndividualReport(name, pathToFile, to, baselineVal, epValidation, itValidation);
           ir.checkBL = checkBL;
           ir.checkEP = checkEP;
           ir.checkIT = checkIT;
           ir.checkPC = checkPC;
-          // reportResults(name, to, baselineVal);
-          internalReport(ir, tr, realFilename, internalReportFolder);
+
+          internalReport(ir, tr, reportFilename, internalReportFolder, outputFolder);
+          to=null;
+          tr=null;
+          System.gc();
           return ir;
         default:
-          System.out.println("Unknown result (" + result + ") in file '" + filename + "'");
+          System.out.println("Unknown result (" + result + ") in file '" + pathToFile + "'");
           break;
       }
     } catch (ReadTagsIOException e) {
@@ -373,9 +395,9 @@ public class ProcessInput {
    * @param folder the internal report folder
    */
   private void internalReport(IndividualReport ir, TiffReader tiffreader, String realFilename,
-                              String folder) {
+                              String folder, String outputFolder) {
     String outputfile = ReportGenerator.getReportName(folder, realFilename);
-    reportGenerator.generateIndividualReport(outputfile, ir);
+    reportGenerator.generateIndividualReport(outputfile, ir, outputFolder);
     System.out.println("Internal report '" + outputfile + "' created");
   }
 

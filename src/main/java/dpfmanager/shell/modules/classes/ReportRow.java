@@ -7,9 +7,12 @@ import javafx.collections.ObservableMap;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * Created by easy on 17/09/2015.
@@ -17,8 +20,8 @@ import java.nio.file.Paths;
 public class ReportRow {
     private final SimpleStringProperty date;
     private final SimpleStringProperty nfiles;
-    private final SimpleStringProperty result;
-  private final SimpleStringProperty fixed;
+    private final SimpleStringProperty time;
+  private final SimpleStringProperty input;
   private final SimpleStringProperty errors;
   private final SimpleStringProperty warnings;
   private final SimpleStringProperty passed;
@@ -30,18 +33,18 @@ public class ReportRow {
    *
    * @param date     the date
    * @param nFiles   the n files
-   * @param result   the result
-   * @param fixed    the fixed
+   * @param time   the time
+   * @param input    the input
    * @param errors   the errors
    * @param warnings the warnings
    * @param passed   the passed
    * @param score    the score
    */
-  public ReportRow(String date, String nFiles, String result, String fixed, String errors, String warnings, String passed, String score) {
+  public ReportRow(String date, String time, String input, String nFiles, String errors, String warnings, String passed, String score) {
       this.date = new SimpleStringProperty(date);
+      this.time = new SimpleStringProperty(time);
+      this.input = new SimpleStringProperty(input);
       this.nfiles = new SimpleStringProperty(nFiles);
-      this.result = new SimpleStringProperty(result);
-      this.fixed = new SimpleStringProperty(fixed);
       this.errors = new SimpleStringProperty(errors);
       this.warnings = new SimpleStringProperty(warnings);
       this.passed = new SimpleStringProperty(passed);
@@ -91,8 +94,8 @@ public class ReportRow {
    *
    * @return the result
    */
-  public String getResult() {
-    return result.get();
+  public String getTime() {
+    return time.get();
   }
 
   /**
@@ -100,8 +103,8 @@ public class ReportRow {
    *
    * @param fName the f name
    */
-  public void setResult(String fName) {
-      result.set(fName);
+  public void setTime(String fName) {
+      time.set(fName);
     }
 
   /**
@@ -109,8 +112,8 @@ public class ReportRow {
    *
    * @return the fixed
    */
-  public String getFixed() {
-    return fixed.get();
+  public String getInput() {
+    return input.get();
   }
 
   /**
@@ -118,8 +121,8 @@ public class ReportRow {
    *
    * @param fName the f name
    */
-  public void setFixed(String fName) {
-    fixed.set(fName);
+  public void setInput(String fName) {
+    input.set(fName);
   }
 
   /**
@@ -259,10 +262,36 @@ public class ReportRow {
    */
   public static ReportRow createRowFromXml(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
+    String stime = "";
+    String input = "";
     File parent = new File(file.getParent());
     int n = countFiles(parent, ".xml") - 1;
     String xml = readFullFile(file.getPath(), Charset.defaultCharset());
+    try {
+      Path pfile = Paths.get(file.getPath());
+      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
+      stime = attr.creationTime().toString();
+      stime = stime.substring(stime.indexOf("T")+1);
+      stime = stime.substring(0, stime.indexOf("."));
+    } catch (IOException e) {
+
+    }
     int passed = 0, errors = 0, warnings = 0, score = 0;
+    File folder = new File(file.getParentFile().getAbsolutePath());
+    for (final File fileEntry : folder.listFiles()) {
+      if (!fileEntry.isDirectory()) {
+        if (fileEntry.getPath().toLowerCase().endsWith(".xml")) {
+          if (!fileEntry.getAbsolutePath().equals(file.getAbsolutePath())) {
+            if (input.length() > 0) input += ", ";
+            String fname = fileEntry.getName();
+            if (fname.toLowerCase().endsWith(".xml")) fname = fname.substring(0, fname.length()-4);
+            if (fname.toLowerCase().endsWith(".tif")) fname = fname.substring(0, fname.length()-4);
+            if (fname.toLowerCase().endsWith(".tiff")) fname = fname.substring(0, fname.length()-5);
+            input += fname;
+          }
+        }
+      }
+    }
 
     // Passed
     if (xml.indexOf("<valid_files>") >= 0) {
@@ -292,7 +321,7 @@ public class ReportRow {
       score = passed * 100 / n;
     }
 
-    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+    ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
   }
 
@@ -305,10 +334,41 @@ public class ReportRow {
    */
   public static ReportRow createRowFromHtml(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
+    String stime = "";
     File parent = new File(file.getParent() + "/html");
     int n = countFiles(parent, ".html");
     String html = readFullFile(file.getPath(), Charset.defaultCharset());
     int passed = 0, errors = 0, warnings = 0, score = 0;
+    try {
+      Path pfile = Paths.get(file.getPath());
+      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
+      stime = attr.creationTime().toString();
+      stime = stime.substring(stime.indexOf("T")+1);
+      stime = stime.substring(0, stime.indexOf("."));
+    } catch (IOException e) {
+
+    }
+    String input = "";
+    File folder = new File(file.getParentFile().getAbsolutePath() + "/html");
+    if (folder.exists()) {
+      for (final File fileEntry : folder.listFiles()) {
+        if (!fileEntry.isDirectory()) {
+          if (fileEntry.getPath().toLowerCase().endsWith(".html")) {
+            if (!fileEntry.getAbsolutePath().equals(file.getAbsolutePath())) {
+              if (input.length() > 0) input += ", ";
+              String fname = fileEntry.getName();
+              if (fname.toLowerCase().endsWith(".html"))
+                fname = fname.substring(0, fname.length() - 5);
+              if (fname.toLowerCase().endsWith(".tif"))
+                fname = fname.substring(0, fname.length() - 4);
+              if (fname.toLowerCase().endsWith(".tiff"))
+                fname = fname.substring(0, fname.length() - 5);
+              input += fname;
+            }
+          }
+        }
+      }
+    }
 
     // Passed
     if (html.indexOf("id=\"pie-global\"") >= 0) {
@@ -365,7 +425,7 @@ public class ReportRow {
       }
     }
 
-    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+    ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
   }
 
@@ -381,8 +441,34 @@ public class ReportRow {
     File parent = new File(file.getParent());
     int n = countFiles(parent, ".json") - 1;
     int passed = 0, errors = 0, warnings = 0, score = 0;
+    String stime = "";
+    try {
+      Path pfile = Paths.get(file.getPath());
+      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
+      stime = attr.creationTime().toString();
+      stime = stime.substring(stime.indexOf("T")+1);
+      stime = stime.substring(0, stime.indexOf("."));
+    } catch (IOException e) {
 
-    ReportRow row = new ReportRow(sdate, "" + n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+    }
+    String input = "";
+    File folder = new File(file.getParentFile().getAbsolutePath());
+    for (final File fileEntry : folder.listFiles()) {
+      if (!fileEntry.isDirectory()) {
+        if (fileEntry.getPath().toLowerCase().endsWith(".json")) {
+          if (!fileEntry.getAbsolutePath().equals(file.getAbsolutePath())) {
+            if (input.length() > 0) input += ", ";
+            String fname = fileEntry.getName();
+            if (fname.toLowerCase().endsWith(".json")) fname = fname.substring(0, fname.length()-5);
+            if (fname.toLowerCase().endsWith(".tif")) fname = fname.substring(0, fname.length()-4);
+            if (fname.toLowerCase().endsWith(".tiff")) fname = fname.substring(0, fname.length()-5);
+            input += fname;
+          }
+        }
+      }
+    }
+
+    ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
   }
 
@@ -397,7 +483,34 @@ public class ReportRow {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     String n = "?";
     String passed = "?", errors = "?", warnings = "?", score = "?";
-    ReportRow row = new ReportRow(sdate, n, passed + " files passed all checks", errors + " errors " + warnings + " warnings", errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+    String stime = "";
+    try {
+      Path pfile = Paths.get(file.getPath());
+      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
+      stime = attr.creationTime().toString();
+      stime = stime.substring(stime.indexOf("T")+1);
+      stime = stime.substring(0, stime.indexOf("."));
+    } catch (IOException e) {
+
+    }
+    String input = "";
+    File folder = new File(file.getParentFile().getAbsolutePath());
+    for (final File fileEntry : folder.listFiles()) {
+      if (!fileEntry.isDirectory()) {
+        if (fileEntry.getPath().toLowerCase().endsWith(".pdf")) {
+          if (!fileEntry.getAbsolutePath().equals(file.getAbsolutePath())) {
+            if (input.length() > 0) input += ", ";
+            String fname = fileEntry.getName();
+            if (fname.toLowerCase().endsWith(".pdf")) fname = fname.substring(0, fname.length()-4);
+            if (fname.toLowerCase().endsWith(".tif")) fname = fname.substring(0, fname.length()-4);
+            if (fname.toLowerCase().endsWith(".tiff")) fname = fname.substring(0, fname.length()-5);
+            input += fname;
+          }
+        }
+      }
+    }
+
+    ReportRow row = new ReportRow(sdate, stime, input, n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
   }
 }

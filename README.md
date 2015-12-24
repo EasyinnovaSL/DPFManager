@@ -56,3 +56,8 @@ Move to the downloaded project directory and call Maven install:
     mvn clean install
 
 The executable and the installer will be generated under the directory easyinnova.
+
+###Compiling with OpenJDK instead of OracleJDK
+We recommend to compile the DPF Manager using the OracleJDK, since compiling the project with it, is straightforward.
+
+However, if you want to use OpenJDK instead of OracleJDK, you will need to build with the [open version of OpenJDK that includes JavaFX](https://wiki.openjdk.java.net/display/OpenJFX/Building+OpenJFX) completely from source.

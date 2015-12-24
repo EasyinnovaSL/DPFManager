@@ -2,6 +2,7 @@ package dpfmanager;
 
 import dpfmanager.shell.modules.classes.Schematron;
 import dpfmanager.shell.modules.interfaces.CommandLine;
+import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -36,10 +37,7 @@ public class SchematronTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -51,10 +49,7 @@ public class SchematronTest extends TestCase {
   }
 
   public void testSchematron1() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -114,10 +109,7 @@ public class SchematronTest extends TestCase {
   }
 
   public void testSchematron2() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -176,10 +168,7 @@ public class SchematronTest extends TestCase {
   }
 
   public void testReport() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";

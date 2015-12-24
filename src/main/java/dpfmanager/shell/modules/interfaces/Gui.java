@@ -297,6 +297,17 @@ public class Gui extends UserInterface {
     chkPdf.setSelected(config.getFormats().contains("PDF"));
   }
 
+  public void loadOutput(Scene scene, Configuration config) {
+    CheckBox chkOutput = (CheckBox)scene.lookup("#chkDefaultOutput");
+    TextField txtOutput = (TextField)scene.lookup("#txtOutput");
+    if (config.getOutput() != null) {
+      chkOutput.setSelected(false);
+      txtOutput.setText(config.getOutput());
+    } else {
+      chkOutput.setSelected(true);
+    }
+  }
+
   public void saveFormats(Scene scene, Configuration config) {
     CheckBox chkHtml = (CheckBox)scene.lookup("#chkHtml");
     CheckBox chkXml = (CheckBox)scene.lookup("#chkXml");
@@ -306,6 +317,14 @@ public class Gui extends UserInterface {
     if (chkXml.isSelected()) config.getFormats().add("XML");
     if (chkJson.isSelected()) config.getFormats().add("JSON");
     if (chkPdf.isSelected()) config.getFormats().add("PDF");
+  }
+
+  public void saveOutput(Scene scene, Configuration config) {
+    CheckBox chkDefaultOutput = (CheckBox)scene.lookup("#chkDefaultOutput");
+    TextField txtOutput = (TextField)scene.lookup("#txtOutput");
+    if (!chkDefaultOutput.isSelected()) {
+      config.setOutput(txtOutput.getText());
+    }
   }
 
   public void getAutofixes(Scene scene) throws Exception {

@@ -1,6 +1,7 @@
 package dpfmanager;
 
 import dpfmanager.shell.modules.interfaces.CommandLine;
+import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -35,10 +36,7 @@ public class PolicyTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -50,10 +48,7 @@ public class PolicyTest extends TestCase {
   }
 
   public void testAddRemoveTag() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -134,10 +129,7 @@ public class PolicyTest extends TestCase {
   }
 
   public void testEndianessOk() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -213,10 +205,7 @@ public class PolicyTest extends TestCase {
   }
 
   public void testEndianessKo() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();

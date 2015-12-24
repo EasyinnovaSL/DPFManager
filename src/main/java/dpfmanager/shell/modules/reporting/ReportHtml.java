@@ -410,14 +410,8 @@ public class ReportHtml extends ReportGeneric {
    * @param gr         the global report.
    */
   public static void parseGlobal(String outputfile, GlobalReport gr) {
-    String templatePath = "./src/main/resources/templates/global.html";
-    String imagePath = "./src/main/resources/templates/image.html";
-    Path pathTemplate = Paths.get(templatePath);
-    Path pathImage = Paths.get(imagePath);
-    if (!Files.exists(pathTemplate) || !Files.exists(pathImage) ) {
-      templatePath = "templates/global.html";
-      imagePath = "templates/image.html";
-    }
+    String templatePath = "templates/global.html";
+    String imagePath = "templates/image.html";
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
     String imagesBody = "";
@@ -427,11 +421,7 @@ public class ReportHtml extends ReportGeneric {
     int index = 0;
     for (IndividualReport ir : gr.getIndividualReports()) {
       String imageBody;
-      if(Files.exists(pathImage)){
-        imageBody = ReportGenerator.readFile(imagePath);
-      }else{
-        imageBody = ReportGenerator.readFilefromResources(imagePath);
-      }
+      imageBody = ReportGenerator.readFilefromResources(imagePath);
       // Image
       String imgPath = "html/img/" + ir.getFileName() + ".jpg";
       boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
@@ -548,11 +538,7 @@ public class ReportHtml extends ReportGeneric {
 
     // Parse the sumary report numbers
     String htmlBody;
-    if(Files.exists(pathTemplate)){
-      htmlBody = ReportGenerator.readFile(templatePath);
-    }else{
-      htmlBody = ReportGenerator.readFilefromResources(templatePath);
-    }
+    htmlBody = ReportGenerator.readFilefromResources(templatePath);
     Double doub = 1.0 * gr.getReportsOk() / gr.getReportsCount() * 100.0;
     int globalPercent = doub.intValue();
     htmlBody = htmlBody.replace("##IMAGES_LIST##", imagesBody);

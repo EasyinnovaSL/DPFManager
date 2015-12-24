@@ -1,5 +1,7 @@
 package dpfmanager.shell.modules.reporting;
 
+import dpfmanager.ReportGenerator;
+
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -9,6 +11,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -256,5 +260,33 @@ public class ReportGeneric {
       index++;
     }
     return list;
+  }
+
+  /**
+   * Read filefrom resources string.
+   *
+   * @param pathStr the path str
+   * @return the string
+   */
+  public static InputStream getFileStreamFromResources(String pathStr) {
+    InputStream fis = null;
+    Path path = Paths.get(pathStr);
+    try {
+      if (Files.exists(path)) {
+        // Look in current dir
+        fis = new FileInputStream(pathStr);
+      } else {
+        // Look in JAR
+        Class cls = ReportGenerator.class;
+        ClassLoader cLoader = cls.getClassLoader();
+        fis = cLoader.getResourceAsStream(pathStr);
+      }
+    } catch (FileNotFoundException e) {
+      System.err.println("File " + pathStr + " not found in dir.");
+    } catch (IOException e) {
+      System.err.println("Error reading " + pathStr);
+    }
+
+    return fis;
   }
 }

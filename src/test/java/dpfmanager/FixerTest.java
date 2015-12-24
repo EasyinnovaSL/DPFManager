@@ -4,6 +4,7 @@ import static java.io.File.separator;
 
 import dpfmanager.shell.modules.classes.Schematron;
 import dpfmanager.shell.modules.interfaces.CommandLine;
+import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -44,10 +45,7 @@ public class FixerTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -59,10 +57,7 @@ public class FixerTest extends TestCase {
   }
 
   public void testAddRemoveTag() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -149,10 +144,7 @@ public class FixerTest extends TestCase {
   }
 
   public void testAddExistingTag() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -234,10 +226,7 @@ public class FixerTest extends TestCase {
   }
 
   public void testAutofixPrivateData() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -318,10 +307,7 @@ public class FixerTest extends TestCase {
   }
 
   public void testReports() throws Exception {
-    Preferences prefs = Preferences.userNodeForPackage(dpfmanager.MainApp.class);
-    final String PREF_NAME = "feedback";
-    String newValue = "0";
-    prefs.put(PREF_NAME, newValue);
+    UserInterface.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();

@@ -1,5 +1,7 @@
 package dpfmanager.shell.modules.classes;
 
+import dpfmanager.shell.modules.interfaces.UserInterface;
+
 import net.sf.saxon.TransformerFactoryImpl;
 
 import org.apache.camel.CamelContext;
@@ -149,9 +151,9 @@ public class Schematron extends CamelTestSupport {
           pattern.appendChild(newrule);
         }
 
-        String tempname = System.getProperty("user.home") + "/DPF Manager/rules2.sch";
+        String tempname = UserInterface.getConfigDir() + "/rules2.sch";
         int idx = 3;
-        while (new File(tempname).exists()) tempname = System.getProperty("user.home") + "/DPF Manager/rules" + idx++ + ".sch";
+        while (new File(tempname).exists()) tempname = UserInterface.getConfigDir() + "/rules" + idx++ + ".sch";
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();

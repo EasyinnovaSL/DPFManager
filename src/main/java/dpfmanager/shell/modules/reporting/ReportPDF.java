@@ -102,41 +102,6 @@ public class ReportPDF extends ReportGeneric {
   }
 
   /**
-   * Gets resource stream.
-   *
-   * @param path the path
-   * @return the resource stream
-   * @throws Exception the exception
-   */
-  static InputStream getResourceStream(String path) throws Exception {
-    InputStream fis = null;
-    if (new File(path).exists()) {
-      // Look in dir
-      fis = new FileInputStream(path);
-    } else {
-      // Look in JAR
-      String filename = path.substring(path.lastIndexOf("/") + 1);
-      CodeSource src = ReportPDF.class.getProtectionDomain().getCodeSource();
-      if (src != null) {
-        URL jar = src.getLocation();
-        ZipInputStream zip;
-
-        zip = new ZipInputStream(jar.openStream());
-        ZipEntry zipFile;
-        boolean found = false;
-        while ((zipFile = zip.getNextEntry()) != null && !found) {
-          if (zipFile.getName().endsWith(filename)) {
-            fis = zip;
-            return fis;
-          }
-          zip.closeEntry();
-        }
-      }
-    }
-    return fis;
-  }
-
-  /**
    * Show message.
    *
    * @param message the message
@@ -180,7 +145,7 @@ public class ReportPDF extends ReportGeneric {
 
       // Logo
       float scale = 3;
-      InputStream inputStream = getResourceStream("src/main/resources/images/logo.jpg");
+      InputStream inputStream = getFileStreamFromResources("images/logo.jpg");
       PDXObjectImage ximage = new PDJpeg(document, inputStream);
       contentStream.drawXObject( ximage, pos_x, pos_y, 645/scale, 300/scale );
 
@@ -194,13 +159,13 @@ public class ReportPDF extends ReportGeneric {
       int image_width = 200;
       pos_y -= (image_height + 30);
       int image_pos_y = pos_y;
-      String imgPath = "img.jpg";
+      String imgPath = outputfile + "img.jpg";
       int ids = 0;
-      while (new File(imgPath).exists()) imgPath = "img" + ids++ +".jpg";
+      while (new File(imgPath).exists()) imgPath = outputfile + "img" + ids++ +".jpg";
       boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
       BufferedImage bimg;
       if (!check) {
-        bimg = ImageIO.read(getResourceStream("src/main/resources/html/img/noise.jpg"));
+        bimg = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
       } else {
         bimg = ImageIO.read(new File(imgPath));
       }
@@ -281,6 +246,7 @@ public class ReportPDF extends ReportGeneric {
       writeText(contentStream, "Tag Name", pos_x + 80, pos_y, font, font_size);
       writeText(contentStream, "Value", pos_x + 200, pos_y, font, font_size);
       for (ReportTag tag : getTags(ir)) {
+        if (tag.expert) continue;
         String sDif = "";
         if (tag.dif < 0) sDif = "(-)";
         else if (tag.dif > 0) sDif = "(+)";
@@ -311,7 +277,7 @@ public class ReportPDF extends ReportGeneric {
         pos_y -= 20;
         String typ = " - Main image";
         if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Thumbnail";
-        ximage = new PDJpeg(document, getResourceStream("src/main/resources/images/doc.jpg"));
+        ximage = new PDJpeg(document, getFileStreamFromResources("images/doc.jpg"));
         contentStream.drawXObject( ximage, pos_x, pos_y, 5, 7 );
         writeText(contentStream, ifd.toString() + typ, pos_x + 7, pos_y, font, font_size);
         if (ifd.getsubIFD() != null) {
@@ -411,9 +377,8 @@ public class ReportPDF extends ReportGeneric {
       int pos_x = 200;
       int pos_y = 700;
       int font_size = 18;
-
       // Logo
-      PDXObjectImage ximage = new PDJpeg(document, getResourceStream("src/main/resources/images/logo.jpg"));
+      PDXObjectImage ximage = new PDJpeg(document, getFileStreamFromResources("images/logo.jpg"));
       float scale = 3;
       contentStream.drawXObject( ximage, pos_x, pos_y, 645/scale, 300/scale );
 
@@ -492,13 +457,13 @@ public class ReportPDF extends ReportGeneric {
         int maxy = pos_y;
 
         // Draw image
-        String imgPath = "img.jpg";
+        String imgPath = pdffile + "img.jpg";
         int ids = 0;
-        while (new File(imgPath).exists()) imgPath = "img" + ids++ +".jpg";
+        while (new File(imgPath).exists()) imgPath = pdffile + "img" + ids++ +".jpg";
         boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
         BufferedImage bimg;
         if (!check) {
-          bimg = ImageIO.read(getResourceStream("src/main/resources/html/img/noise.jpg"));
+          bimg = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
         } else {
           bimg = ImageIO.read(new File(imgPath));
         }
@@ -660,7 +625,7 @@ public class ReportPDF extends ReportGeneric {
     }
     if (total == 0) {
       pos_y -= 20;
-      PDXObjectImage ximage = new PDJpeg(document, getResourceStream("src/main/resources/images/ok.jpg"));
+      PDXObjectImage ximage = new PDJpeg(document, getFileStreamFromResources("images/ok.jpg"));
       contentStream.drawXObject( ximage, pos_x + 8, pos_y, 5, 5 );
       writeText(contentStream, "This file conforms to " + type, pos_x + 15, pos_y, font, font_size, Color.green);
     }
