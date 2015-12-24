@@ -144,7 +144,7 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(6, directori.list().length);
+    assertEquals(4, directori.list().length);
     Platform.exit();
   }
 
@@ -184,7 +184,7 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(16, directori.list().length);
+    assertEquals(9, directori.list().length);
     Platform.exit();
   }
 
@@ -224,7 +224,7 @@ public class ReportGeneratorTest extends TestCase {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(12, directori.list().length);
+    assertEquals(7, directori.list().length);
     Platform.exit();
   }
 
@@ -266,7 +266,7 @@ public class ReportGeneratorTest extends TestCase {
       String path = getPath();
 
       File directori = new File(path);
-      assertEquals(6, directori.list().length);
+      assertEquals(4, directori.list().length);
       Platform.exit();
     }catch (Exception ex){
       ex.printStackTrace();

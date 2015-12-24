@@ -55,15 +55,19 @@ public class StatisticsGeneratorTest extends TestCase {
   public void testStatistics() throws Exception {
     UserInterface.setFeedback(false);
 
-    String[] args = new String[2];
+    String[] args = new String[4];
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
+    args[2] = "-reportformat";
+    args[3] = "'html,json,xml'";
     Application.Parameters params = new Application.Parameters() {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
         listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        listRaw.add(args[3]);
         return listRaw;
       }
 
@@ -72,6 +76,8 @@ public class StatisticsGeneratorTest extends TestCase {
         ArrayList<String> listRaw = new ArrayList<String>();
         listRaw.add(args[0]);
         listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        listRaw.add(args[3]);
         return listRaw;
       }
 
@@ -131,11 +137,9 @@ public class StatisticsGeneratorTest extends TestCase {
 
     String path = getPath();
     String xmlFile = path + "/summary.xml";
-    String jsonFile = path + "/summary.json";
     String htmlFile = path + "/report.html";
 
     assertXML(xmlFile, 6);
-    assertJSON(jsonFile, 6);
     assertHTML(htmlFile, 6);
 
     Platform.exit();
