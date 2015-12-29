@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
@@ -35,9 +36,13 @@ public class GuiFXTest extends ApplicationTest {
 //    System.setProperty("prism.text", "t2k");
   }
 
+  @BeforeClass
+  public static void setupSpec() throws Exception {
+    FxToolkit.registerPrimaryStage();
+  }
+
   @Before
   public void before() throws Exception {
-    FxToolkit.registerPrimaryStage();
     FxToolkit.setupStage(stage -> {
       view = new SpreadsheetView();
       StackPane sceneRoot = new StackPane(view);
