@@ -1,6 +1,7 @@
 package dpfmanager;
 
 import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 
@@ -32,6 +33,8 @@ public class GuiFXTest extends FxRobot {
 //    System.setProperty("prism.text", "t2k");
   }
 
+  private static GuiTest controller;
+
   @Before
   public void before() throws Exception {
     FxToolkit.registerPrimaryStage();
@@ -46,6 +49,7 @@ public class GuiFXTest extends FxRobot {
     });
     FxToolkit.setupApplication(MainApp.class);
     FxToolkit.showStage();
+    Thread.sleep(5000);
   }
 
   @Test
