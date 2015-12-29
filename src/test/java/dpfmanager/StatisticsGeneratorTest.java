@@ -3,7 +3,6 @@ package dpfmanager;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
-import javafx.application.Platform;
 
 import com.google.gson.stream.JsonReader;
 
@@ -11,7 +10,6 @@ import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.time.FastDateFormat;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.junit.Before;
@@ -22,10 +20,8 @@ import org.w3c.dom.NodeList;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -98,8 +94,6 @@ public class StatisticsGeneratorTest extends TestCase {
     assertXML(xmlFile, 1);
     assertJSON(jsonFile, 1);
     assertHTML(htmlFile, 1);
-
-    Platform.exit();
   }
 
   public void testStatistics2() throws Exception {
@@ -141,8 +135,6 @@ public class StatisticsGeneratorTest extends TestCase {
 
     assertXML(xmlFile, 6);
     assertHTML(htmlFile, 6);
-
-    Platform.exit();
   }
 
   private String getPath() {

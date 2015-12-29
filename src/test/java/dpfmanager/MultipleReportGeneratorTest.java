@@ -1,25 +1,21 @@
 package dpfmanager;
 
+import dpfmanager.shell.modules.interfaces.CommandLine;
+import dpfmanager.shell.modules.interfaces.UserInterface;
+import javafx.application.Application;
+
 import com.easyinnova.tiff.reader.TiffReader;
 
-import dpfmanager.shell.modules.interfaces.CommandLine;
+import junit.framework.TestCase;
 
-import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.Before;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
-
-import dpfmanager.shell.modules.interfaces.UserInterface;
-import javafx.application.Application;
-import javafx.application.Platform;
-import junit.framework.TestCase;
 
 /**
  * Created by Easy on 20/07/2015.
@@ -82,8 +78,6 @@ public class MultipleReportGeneratorTest extends TestCase {
     String path = getPath();
     File directori = new File(path);
     assertEquals(7, directori.list().length);
-
-    Platform.exit();
   }
 
   public void testReportsKoPdf() throws Exception {
@@ -130,8 +124,6 @@ public class MultipleReportGeneratorTest extends TestCase {
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
     assertEquals(2, l.size());
     doc.close();
-
-    Platform.exit();
   }
 
   public void testReportsPDF() throws Exception {
@@ -178,8 +170,6 @@ public class MultipleReportGeneratorTest extends TestCase {
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
     assertEquals(13, l.size());
     doc.close();
-
-    Platform.exit();
   }
 
   private String getPath() {

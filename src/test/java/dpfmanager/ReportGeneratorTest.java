@@ -3,26 +3,20 @@ package dpfmanager;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
-import javafx.application.Platform;
 
 import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.junit.After;
 import org.junit.Before;
 
 import java.io.File;
-import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 /**
  * Created by Easy on 20/07/2015.
@@ -104,7 +98,6 @@ public class ReportGeneratorTest extends TestCase {
 
     FileUtils.deleteDirectory(new File(path));
 
-    Platform.exit();
     FileUtils.deleteDirectory(new File("temp"));
   }
 
@@ -145,7 +138,6 @@ public class ReportGeneratorTest extends TestCase {
 
     File directori = new File(path);
     assertEquals(4, directori.list().length);
-    Platform.exit();
   }
 
   public void testReportsFolder() throws Exception {
@@ -185,7 +177,6 @@ public class ReportGeneratorTest extends TestCase {
 
     File directori = new File(path);
     assertEquals(9, directori.list().length);
-    Platform.exit();
   }
 
   public void testReportsZip() throws Exception {
@@ -225,7 +216,6 @@ public class ReportGeneratorTest extends TestCase {
 
     File directori = new File(path);
     assertEquals(7, directori.list().length);
-    Platform.exit();
   }
 
   public void testReportsURL() throws Exception {
@@ -267,7 +257,6 @@ public class ReportGeneratorTest extends TestCase {
 
       File directori = new File(path);
       assertEquals(4, directori.list().length);
-      Platform.exit();
     }catch (Exception ex){
       ex.printStackTrace();
       assertEquals(1, 0);
@@ -355,7 +344,6 @@ public class ReportGeneratorTest extends TestCase {
     if (formats.contains("html")) {
       assertEquals(true,isHTML);
     }
-    Platform.exit();
   }
 
   private String getPath() {

@@ -118,7 +118,7 @@ public class GuiTest extends TestCase {
   }
 
   void Write(Robot robot) throws Exception {
-    for (int i=0;i<15;i++) {
+    /*for (int i=0;i<15;i++) {
       robot.keyPress(KeyCode.DELETE.impl_getCode());
       robot.delay(100);
     }
@@ -174,6 +174,6 @@ public class GuiTest extends TestCase {
     robot.keyPress(KeyCode.I.impl_getCode());
     robot.delay(100);
     robot.keyPress(KeyCode.F.impl_getCode());
-    robot.delay(100);
+    robot.delay(100);*/
   }
 }

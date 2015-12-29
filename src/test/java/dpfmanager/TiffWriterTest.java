@@ -5,7 +5,6 @@ import static java.io.File.separator;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
-import javafx.application.Platform;
 
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -14,21 +13,14 @@ import com.easyinnova.tiff.writer.TiffWriter;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.time.FastDateFormat;
-import org.junit.After;
 import org.junit.Before;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.File;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,11 +30,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class TiffWriterTest extends TestCase {
   TiffReader tr;
-
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
 
   /**
    * Pre test.
@@ -108,8 +95,6 @@ public class TiffWriterTest extends TestCase {
     String xmlFile2 = path + "/Bilevel2.tif.xml";
 
     assertXML(xmlFile, xmlFile2);
-
-    Platform.exit();
   }
 
   private void assertXML(String xmlFile, String xmlFile2) throws Exception {

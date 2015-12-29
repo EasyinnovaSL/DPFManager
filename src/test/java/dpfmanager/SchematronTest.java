@@ -4,14 +4,11 @@ import dpfmanager.shell.modules.classes.Schematron;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
-import javafx.application.Platform;
-
-import junit.framework.TestCase;
 
 import com.easyinnova.tiff.reader.TiffReader;
 
-import org.apache.commons.lang.time.FastDateFormat;
-import org.junit.After;
+import junit.framework.TestCase;
+
 import org.junit.Before;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -21,10 +18,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 /**
  * Created by easy on 01/10/2015.
@@ -104,8 +99,6 @@ public class SchematronTest extends TestCase {
     assertEquals(true, result.indexOf("fired-rule context=\"tags\"") != -1);
     assertEquals(true, result.indexOf("fired-rule context=\"report\"") != -1);
     assertEquals(true, result.indexOf("failed") == -1);
-
-    Platform.exit();
   }
 
   public void testSchematron2() throws Exception {
@@ -163,8 +156,6 @@ public class SchematronTest extends TestCase {
     assertEquals(true, result.indexOf("fired-rule context=\"tags\"") != -1);
     assertEquals(true, result.indexOf("fired-rule context=\"report\"") != -1);
     assertEquals(true, result.indexOf("failed") != -1);
-
-    Platform.exit();
   }
 
   public void testReport() throws Exception {
@@ -208,8 +199,6 @@ public class SchematronTest extends TestCase {
     String res = new String(encoded, Charset.defaultCharset());
 
     assertEquals(true, res.indexOf("fired-rule") > -1);
-
-    Platform.exit();
   }
 
   /**
