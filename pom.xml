@@ -223,7 +223,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jfxtras</groupId>
+			<groupId>org.testfx</groupId>
 			<artifactId>openjfx-monocle</artifactId>
 			<version>1.8.0_20</version>
 		</dependency>

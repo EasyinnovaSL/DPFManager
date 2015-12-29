@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
@@ -12,13 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
+import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.api.FxToolkit;
 
 /**
  * Created by Adria Llorens on 05/10/2015.
  */
-public class GuiFXTest extends FxRobot {
+public class GuiFXTest extends ApplicationTest {
 
   final static int width = 970;
   final static int height = 950;
@@ -47,7 +49,7 @@ public class GuiFXTest extends FxRobot {
     });
     FxToolkit.setupApplication(MainApp.class);
     FxToolkit.showStage();
-    Thread.sleep(5000);
+    Thread.sleep(2000);
   }
 
   @Test
@@ -93,4 +95,8 @@ public class GuiFXTest extends FxRobot {
     FxToolkit.hideStage();
   }
 
+  @Override
+  public void start(Stage stage) throws Exception {
+
+  }
 }
