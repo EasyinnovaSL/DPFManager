@@ -3,6 +3,7 @@ package dpfmanager;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -29,9 +30,9 @@ public class GuiFXTest extends ApplicationTest {
 
   //Set properties for headless mode
   static {
-    System.setProperty("testfx.robot", "glass");
-    System.setProperty("glass.platform", "Monocle");
-    System.setProperty("monocle.platform", "Headless");
+//    System.setProperty("testfx.robot", "glass");
+//    System.setProperty("glass.platform", "Monocle");
+//    System.setProperty("monocle.platform", "Headless");
 
 //    System.setProperty("java.awt.headless", "true");
 //    System.setProperty("testfx.robot", "glass");
@@ -48,13 +49,18 @@ public class GuiFXTest extends ApplicationTest {
   @Before
   public void before() throws Exception {
     FxToolkit.setupStage(stage -> {
-      view = new SpreadsheetView();
-      StackPane sceneRoot = new StackPane(view);
-
-      stage.setScene(new Scene(sceneRoot, width, height));
-      stage.setX(0);
-      stage.setY(0);
+//      view = new SpreadsheetView();
+//      StackPane sceneRoot = new StackPane(view);
+//
+//      stage.setScene(new Scene(sceneRoot, width, height));
+//      stage.setX(0);
+//      stage.setY(0);
+//      stage.show();
+      Parent rootNode = new Region();
+      stage.setScene(new Scene(rootNode, width, height));
       stage.show();
+      stage.toBack();
+      stage.toFront();
     });
     FxToolkit.setupApplication(MainApp.class);
     FxToolkit.showStage();
@@ -71,33 +77,33 @@ public class GuiFXTest extends ApplicationTest {
     FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
   }
 
-//  @Test
-//  public void testFX() throws Exception {
-//    // given:
-//    clickOn("#butAbout");//.moveTo("New").clickOn("Text Document");
-////    write("myTextfile.txt").push(ENTER);
-//
-//    // when:
-////    drag(".file").dropTo("#trash-can");
-//
-//    // then:
-////    verifyThat("#aboutTitle", containsText("About DPF Manager"));
-////    Thread.sleep(2000);
-//
-////    FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
-//    FxAssert.verifyThat("#aboutTitle", NodeMatchers.hasText("About DPF Manager"));
-//  }
-//
-//  @Test
-//  public void testFail() throws Exception {
-//    // given:
-//
-//    // when:
-//    clickOn("#butReport");//.moveTo("New").clickOn("Text Document");
-//
-//    // then:
+  @Test
+  public void testFX() throws Exception {
+    // given:
+    clickOn("#butAbout");//.moveTo("New").clickOn("Text Document");
+//    write("myTextfile.txt").push(ENTER);
+
+    // when:
+//    drag(".file").dropTo("#trash-can");
+
+    // then:
+//    verifyThat("#aboutTitle", containsText("About DPF Manager"));
+//    Thread.sleep(2000);
+
 //    FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
-//  }
+    FxAssert.verifyThat("#aboutTitle", NodeMatchers.hasText("About DPF Manager"));
+  }
+
+  @Test
+  public void testFail() throws Exception {
+    // given:
+
+    // when:
+    clickOn("#butReport");//.moveTo("New").clickOn("Text Document");
+
+    // then:
+    FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
+  }
 
   @After
   public void after() throws Exception {
