@@ -1,23 +1,22 @@
 package dpfmanager;
 
-import javafx.application.Platform;
-import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToolBar;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-
-
-import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
+import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
-import org.testfx.api.FxToolkit;
+import org.testfx.util.WaitForAsyncUtils;
 
 /**
  * Created by Adria Llorens on 05/10/2015.
@@ -26,7 +25,6 @@ public class GuiFXTest extends ApplicationTest {
 
   final static int width = 970;
   final static int height = 950;
-  static SpreadsheetView view;
 
   //Set properties for headless mode
   static {
@@ -41,31 +39,63 @@ public class GuiFXTest extends ApplicationTest {
 //    System.setProperty("prism.text", "t2k");
   }
 
-  @BeforeClass
-  public static void setupSpec() throws Exception {
-    FxToolkit.registerPrimaryStage();
+  Stage stage;
+  Scene scene;
+
+  @Override
+  public void init() throws Exception{
+    launch(MainApp.class,null);
+  }
+  @Override
+  public void start(Stage stage) throws Exception {
+    this.stage = stage;
+    scene = stage.getScene();
+  }
+  @Override
+  public void stop() throws Exception{
+    FxToolkit.hideStage();
   }
 
-  @Before
-  public void before() throws Exception {
-    FxToolkit.setupStage(stage -> {
-//      view = new SpreadsheetView();
-//      StackPane sceneRoot = new StackPane(view);
-//
-//      stage.setScene(new Scene(sceneRoot, width, height));
-//      stage.setX(0);
-//      stage.setY(0);
+//  @BeforeClass
+//  public static void setupSpec() throws Exception {
+//    FxToolkit.registerPrimaryStage();
+//  }
+
+//  @Before
+//  public void before() throws Exception {
+//    FxToolkit.setupStage(stage -> {
+////      view = new SpreadsheetView();
+////      StackPane sceneRoot = new StackPane(view);
+////
+////      stage.setScene(new Scene(sceneRoot, width, height));
+////      stage.setX(0);
+////      stage.setY(0);
+////      stage.show();
+//      Parent rootNode = new Region();
+//      stage.setScene(new Scene(rootNode, width, height));
 //      stage.show();
-      Parent rootNode = new Region();
-      stage.setScene(new Scene(rootNode, width, height));
-      stage.show();
-      stage.toBack();
-      stage.toFront();
-    });
-    FxToolkit.setupApplication(MainApp.class);
-    FxToolkit.showStage();
-    Thread.sleep(2000);
-  }
+//      stage.toBack();
+//      stage.toFront();
+//    });
+//    FxToolkit.setupApplication(MainApp.class);
+//    FxToolkit.showStage();
+//    Thread.sleep(2000);
+//  }
+
+//  @Test
+//  public void  launchApplication() throws Exception {
+//    WaitForAsyncUtils.waitForFxEvents();
+//    Button gitinit = (Button)scene.lookup("#gitinit");
+//    Assert.assertEquals("\uf04b",gitinit.getText());
+//    Button gitclone = (Button)scene.lookup("#gitclone");
+//    Assert.assertEquals("\uF0C5", gitclone.getText());
+//    ToolBar toolbar = (ToolBar)scene.lookup("#gitToolBar");
+//    AnchorPane anchor = (AnchorPane)toolbar.getParent();
+//    Double anchorPaneConstraint = new Double(0.0);
+//    Assert.assertEquals("Left Anchor Test",anchorPaneConstraint, anchor.getLeftAnchor(toolbar));
+//    Assert.assertEquals("Right Anchor Test",anchorPaneConstraint,anchor.getRightAnchor(toolbar));
+//    Assert.assertEquals("Top Anchor Test", anchorPaneConstraint, anchor.getTopAnchor(toolbar));
+//  }
 
   @Test
   public void testFirstScreen() throws Exception {
@@ -81,6 +111,7 @@ public class GuiFXTest extends ApplicationTest {
   public void testFX() throws Exception {
     // given:
     clickOn("#butAbout");//.moveTo("New").clickOn("Text Document");
+    Thread.sleep(500);
 //    write("myTextfile.txt").push(ENTER);
 
     // when:
@@ -100,6 +131,7 @@ public class GuiFXTest extends ApplicationTest {
 
     // when:
     clickOn("#butReport");//.moveTo("New").clickOn("Text Document");
+    Thread.sleep(500);
 
     // then:
     FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
@@ -108,10 +140,5 @@ public class GuiFXTest extends ApplicationTest {
   @After
   public void after() throws Exception {
     FxToolkit.hideStage();
-  }
-
-  @Override
-  public void start(Stage stage) throws Exception {
-
   }
 }
