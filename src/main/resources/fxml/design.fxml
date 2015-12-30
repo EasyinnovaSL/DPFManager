@@ -15,12 +15,12 @@
                 <VBox>
                     <children>
                         <Pane fx:id="topMenuImage1" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
-                            <Button id="butReport" layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <Button fx:id="butReport" id="butReport" layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                 <cursor>
                                     <Cursor fx:constant="HAND" />
                                 </cursor>
                             </Button>
-                            <Button id="butAbout" layoutX="560.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoAbout" prefHeight="20.0" prefWidth="55.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <Button fx:id="butAbout" id="butAbout" layoutX="560.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoAbout" prefHeight="20.0" prefWidth="55.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                 <cursor>
                                     <Cursor fx:constant="HAND" />
                                 </cursor>
