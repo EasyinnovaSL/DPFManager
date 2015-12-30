@@ -29,7 +29,6 @@ public class ApplicationLaunchTest extends ApplicationTest {
   @Override
   public void start(Stage stage) throws Exception {
     scene=stage.getScene();
-    FxToolkit.showStage();
   }
 
   @Override
