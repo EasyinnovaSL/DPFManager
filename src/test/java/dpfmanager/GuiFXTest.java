@@ -1,11 +1,15 @@
 package dpfmanager;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,6 +29,7 @@ public class GuiFXTest extends ApplicationTest {
 
   final static int width = 970;
   final static int height = 950;
+  SpreadsheetView view;
 
   //Set properties for headless mode
   static {
@@ -44,12 +49,27 @@ public class GuiFXTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception{
-    launch(MainApp.class,null);
+    launch(MainApp.class, null);
+    Thread.sleep(1000);
   }
   @Override
-  public void start(Stage stage) throws Exception {
-    this.stage = stage;
+  public void start(Stage stage2) throws Exception {
+    stage = stage2;
+    stage.setWidth(width);
+    stage.setHeight(height);
+    stage.setX(0);
+    stage.setY(0);
     scene = stage.getScene();
+    FxToolkit.showStage();
+//    FxToolkit.setupStage(stage -> {
+//      view = new SpreadsheetView();
+//      StackPane sceneRoot = new StackPane(view);
+//
+//      stage.setScene(new Scene(sceneRoot, width, height));
+//      stage.setX(0);
+//      stage.setY(0);
+//      stage.show();
+//    });
   }
   @Override
   public void stop() throws Exception{
@@ -99,41 +119,27 @@ public class GuiFXTest extends ApplicationTest {
 
   @Test
   public void testFirstScreen() throws Exception {
-    // given:
+    //Wait for buttons clicks
+    WaitForAsyncUtils.waitForFxEvents();
 
-    // when:
-
-    // then:
     FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
   }
 
   @Test
   public void testFX() throws Exception {
-    // given:
+    //Wait for buttons clicks
+    WaitForAsyncUtils.waitForFxEvents();
+
     clickOn("#butAbout");//.moveTo("New").clickOn("Text Document");
-    Thread.sleep(500);
-//    write("myTextfile.txt").push(ENTER);
-
-    // when:
-//    drag(".file").dropTo("#trash-can");
-
-    // then:
-//    verifyThat("#aboutTitle", containsText("About DPF Manager"));
-//    Thread.sleep(2000);
-
-//    FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
     FxAssert.verifyThat("#aboutTitle", NodeMatchers.hasText("About DPF Manager"));
   }
 
   @Test
   public void testFail() throws Exception {
-    // given:
+    //Wait for buttons clicks
+    WaitForAsyncUtils.waitForFxEvents();
 
-    // when:
     clickOn("#butReport");//.moveTo("New").clickOn("Text Document");
-    Thread.sleep(500);
-
-    // then:
     FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
   }
 
