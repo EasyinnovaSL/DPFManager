@@ -37,15 +37,21 @@ public class ApplicationLaunchTest extends ApplicationTest {
   }
 
   @Test
-  public void  launchApplicationTest() throws Exception {
+  public void testFirstScreen() throws Exception {
     WaitForAsyncUtils.waitForFxEvents();
-
-    //Check for buttons
-    Button butAbout = (Button)scene.lookup("#butAbout");
-    Assert.assertEquals("butAbout", butAbout.getId());
-    Button butReport = (Button)scene.lookup("#butReport");
-    Assert.assertEquals("butReport", butReport.getId());
+    FxAssert.verifyThat("#welcomeText", NodeMatchers.hasText("Welcome to DPF Manager!"));
   }
+
+//  @Test
+//  public void  launchApplicationTest() throws Exception {
+//    WaitForAsyncUtils.waitForFxEvents();
+//
+//    //Check for buttons
+//    Button butAbout = (Button)scene.lookup("#butAbout");
+//    Assert.assertEquals("butAbout", butAbout.getId());
+//    Button butReport = (Button)scene.lookup("#butReport");
+//    Assert.assertEquals("butReport", butReport.getId());
+//  }
 
 //  @Test
 //  public void launchApplicationTest2() throws Exception {
