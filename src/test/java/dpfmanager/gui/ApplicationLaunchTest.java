@@ -49,7 +49,7 @@ public class ApplicationLaunchTest extends ApplicationTest {
   }
 
 //  @Test
-//  public void  launchApplicationTest2() throws Exception {
+//  public void launchApplicationTest2() throws Exception {
 //    WaitForAsyncUtils.waitForFxEvents();
 //    FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
 //  }

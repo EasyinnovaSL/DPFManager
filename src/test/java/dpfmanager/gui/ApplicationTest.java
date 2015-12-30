@@ -14,28 +14,40 @@ import org.testfx.toolkit.ApplicationFixture;
  */
 public abstract class ApplicationTest extends FxRobot implements ApplicationFixture {
 
+  //Set properties for headless mode
+  static {
+//    System.setProperty("testfx.robot", "glass");
+//    System.setProperty("testfx.headless", "true");
+  }
+
   static Stage stage;
+
   public static Stage launch(Class<? extends Application> appClass,
                              String... appArgs) throws Exception {
-    if(stage==null)
-    {stage = FxToolkit.registerPrimaryStage();
-      FxToolkit.setupApplication(appClass, appArgs);}
+    if (stage == null) {
+      stage = FxToolkit.registerPrimaryStage();
+      FxToolkit.setupApplication(appClass, appArgs);
+    }
     return stage;
   }
+
   @Before
   public final void internalBefore()
       throws Exception {
     FxToolkit.registerPrimaryStage();
     FxToolkit.setupApplication(this);
   }
+
   @After
   public final void internalAfter()
       throws Exception {
     FxToolkit.cleanupApplication(this);
   }
+
   @Override
   public void init()
-      throws Exception {}
+      throws Exception {
+  }
 
   @Override
   public abstract void start(Stage stage)
@@ -43,6 +55,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   @Override
   public void stop()
-      throws Exception {}
+      throws Exception {
+  }
 
 }
