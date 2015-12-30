@@ -48,10 +48,10 @@ public class ApplicationLaunchTest extends ApplicationTest {
     Assert.assertEquals("butReport", butReport.getId());
   }
 
-  @Test
-  public void  launchApplicationTest2() throws Exception {
-    WaitForAsyncUtils.waitForFxEvents();
-    FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
-  }
+//  @Test
+//  public void  launchApplicationTest2() throws Exception {
+//    WaitForAsyncUtils.waitForFxEvents();
+//    FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
+//  }
 
 }
