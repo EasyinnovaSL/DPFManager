@@ -145,6 +145,10 @@ public class MainApp extends Application {
   @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtOutput;
   @FXML private TextArea txtWhy;
 
+  public static Stage getStage(){
+    return thestage;
+  }
+
   /**
    * The main method.
    *
