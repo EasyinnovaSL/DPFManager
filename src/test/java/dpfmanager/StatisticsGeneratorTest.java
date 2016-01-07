@@ -2,6 +2,7 @@ package dpfmanager;
 
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.UserInterface;
+import dpfmanager.shell.modules.reporting.ReportGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -11,7 +12,6 @@ import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.time.FastDateFormat;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.junit.Before;
@@ -22,10 +22,8 @@ import org.w3c.dom.NodeList;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

@@ -4,19 +4,17 @@ import com.easyinnova.tiff.reader.TiffReader;
 
 import dpfmanager.shell.modules.interfaces.CommandLine;
 
-import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.Before;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 import dpfmanager.shell.modules.interfaces.UserInterface;
+import dpfmanager.shell.modules.reporting.ReportGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import junit.framework.TestCase;

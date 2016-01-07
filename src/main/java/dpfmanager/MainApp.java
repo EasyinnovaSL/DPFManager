@@ -32,12 +32,12 @@
 package dpfmanager;
 
 import dpfmanager.shell.modules.classes.Configuration;
-import dpfmanager.shell.modules.classes.Fixes;
 import dpfmanager.shell.modules.classes.ProcessInput;
-import dpfmanager.shell.modules.classes.ReportRow;
+import dpfmanager.shell.modules.reporting.ReportRow;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.Gui;
 import dpfmanager.shell.modules.interfaces.UserInterface;
+import dpfmanager.shell.modules.reporting.ReportGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -55,7 +55,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -121,7 +120,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.prefs.Preferences;
 
 /**
  * The Class MainApp.
@@ -164,11 +162,11 @@ public class MainApp extends Application {
   @Override
   public final void start(final Stage stage) throws Exception {
     Parameters params = getParameters();
-    if (params == null || params.getRaw().size() == 0 || (params.getRaw().size() == 1 && params.getRaw().get(0).equals("-gui"))) {
+    if (params == null || params.getRaw().size() == 0 || (params.getRaw().size() > 0 && params.getRaw().contains("-gui"))) {
       thestage = stage;
       LOG.info("Starting JavaFX application");
       // GUI
-      LoadGui();
+      LoadGui(params.getRaw().contains("-noDisc"));
     } else {
       // Command Line
       CommandLine cl = new CommandLine(params);
@@ -206,11 +204,11 @@ public class MainApp extends Application {
     }
   }
 
-  private void LoadGui() throws Exception {
+  private void LoadGui(boolean noDisc) throws Exception {
     gui = new Gui();
     gui.LoadConformanceChecker();
 
-    if (UserInterface.getFirstTime()) {
+    if (!noDisc && UserInterface.getFirstTime()) {
       ShowDisclaimer();
       CreateDefaultConfigurationFiles();
     } else {

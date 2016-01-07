@@ -26,7 +26,7 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.profiles.BaselineProfile;
 import com.easyinnova.tiff.profiles.TiffEPProfile;
 
-import dpfmanager.ReportGenerator;
+import dpfmanager.shell.modules.reporting.ReportGenerator;
 import dpfmanager.shell.modules.classes.Configuration;
 import dpfmanager.shell.modules.classes.ProcessInput;
 import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
@@ -36,13 +36,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javafx.application.Application.Parameters;
 

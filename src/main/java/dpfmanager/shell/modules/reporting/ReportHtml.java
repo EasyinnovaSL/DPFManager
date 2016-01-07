@@ -31,33 +31,10 @@
 
 package dpfmanager.shell.modules.reporting;
 
-import dpfmanager.ReportGenerator;
-import dpfmanager.shell.modules.classes.Fixes;
-
-import com.easyinnova.tiff.model.IfdTags;
-import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
-
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.CodeSource;
-import java.util.HashSet;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.imageio.ImageIO;
 
 /**
  * The Class ReportHtml.

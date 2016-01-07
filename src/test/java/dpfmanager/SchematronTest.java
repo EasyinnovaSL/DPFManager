@@ -3,6 +3,7 @@ package dpfmanager;
 import dpfmanager.shell.modules.classes.Schematron;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.UserInterface;
+import dpfmanager.shell.modules.reporting.ReportGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -10,8 +11,6 @@ import junit.framework.TestCase;
 
 import com.easyinnova.tiff.reader.TiffReader;
 
-import org.apache.commons.lang.time.FastDateFormat;
-import org.junit.After;
 import org.junit.Before;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -21,10 +20,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 /**
  * Created by easy on 01/10/2015.

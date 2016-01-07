@@ -31,8 +31,6 @@
 
 package dpfmanager.shell.modules.reporting;
 
-import dpfmanager.ReportGenerator;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
