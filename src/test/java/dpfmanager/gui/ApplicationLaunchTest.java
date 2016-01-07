@@ -22,22 +22,9 @@ public class ApplicationLaunchTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception{
+    System.out.println("Init");
     stage = launch(MainApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
-    System.out.println("Init");
-  }
-
-//  @Override
-//  public void start(Stage stage) throws Exception {
-//    scene=stage.getScene();
-//    System.out.println("Start");
-//    FxToolkit.showStage();
-//  }
-
-  @Override
-  public void stop() throws Exception{
-    System.out.println("Stop");
-    FxToolkit.hideStage();
   }
 
 //  @Test
@@ -57,16 +44,6 @@ public class ApplicationLaunchTest extends ApplicationTest {
     Button butReport = (Button)scene.lookup("#butReport");
     Assert.assertEquals("butReport", butReport.getId());
   }
-
-//  @Test
-//  public void testButAbout() throws Exception {
-//    //Wait for async events
-//    WaitForAsyncUtils.waitForFxEvents();
-//
-//    //Check buton about
-//    clickOn("#butAbout");
-//    FxAssert.verifyThat("#aboutTitle", NodeMatchers.hasText("About DPF Manager"));
-//  }
 
 //  @Test
 //  public void testFail() throws Exception {

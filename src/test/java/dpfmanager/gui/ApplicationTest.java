@@ -3,8 +3,13 @@ package dpfmanager.gui;
 import dpfmanager.MainApp;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -20,12 +25,34 @@ import java.util.List;
  */
 public abstract class ApplicationTest extends FxRobot implements ApplicationFixture {
 
+  //Set properties for headless mode (Windows only)
+  static {
+//    System.setProperty("testfx.robot", "glass");
+//    System.setProperty("testfx.headless", "true");
+  }
+
+  final static int width = 970;
+  final static int height = 950;
+
   static Stage stage;
+  static SpreadsheetView view;
 
   public static Stage launch(Class<? extends Application> appClass, String... appArgs) throws Exception {
     if (stage == null) {
       System.out.println("Launch");
       stage = FxToolkit.registerPrimaryStage();
+      FxToolkit.setupStage(stage -> {
+        view = new SpreadsheetView();
+        StackPane sceneRoot = new StackPane(view);
+
+        stage.setScene(new Scene(sceneRoot, width, height));
+        stage.setX(0);
+        stage.setY(0);
+
+        stage.show();
+        stage.toBack();
+        stage.toFront();
+      });
       FxToolkit.setupApplication(appClass, appArgs);
     }
     return stage;
