@@ -21,14 +21,14 @@ public class ApplicationLaunchTest extends ApplicationTest {
   Scene scene;
 
   @Override
-  public void init()
-      throws Exception{
-    stage=launch(MainApp.class,null);
+  public void init() throws Exception{
+    stage=launch(MainApp.class, "-gui", "-noDisc");
   }
 
   @Override
   public void start(Stage stage) throws Exception {
     scene=stage.getScene();
+    FxToolkit.showStage();
   }
 
   @Override
@@ -36,26 +36,39 @@ public class ApplicationLaunchTest extends ApplicationTest {
     FxToolkit.hideStage();
   }
 
+//  @Test
+//  public void testFirstScreen() throws Exception {
+//    WaitForAsyncUtils.waitForFxEvents();
+//    FxAssert.verifyThat("#welcomeText", NodeMatchers.hasText("Welcome to DPF Manager!"));
+//  }
+
   @Test
-  public void testFirstScreen() throws Exception {
+  public void  testDesignScreen() throws Exception {
+    //Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
-    FxAssert.verifyThat("#welcomeText", NodeMatchers.hasText("Welcome to DPF Manager!"));
+
+    //Check for buttons
+    Button butAbout = (Button)scene.lookup("#butAbout");
+    Assert.assertEquals("butAbout", butAbout.getId());
+    Button butReport = (Button)scene.lookup("#butReport");
+    Assert.assertEquals("butReport", butReport.getId());
+  }
+
+  @Test
+  public void testButAbout() throws Exception {
+    //Wait for async events
+    WaitForAsyncUtils.waitForFxEvents();
+
+    clickOn("#butAbout");
+    FxAssert.verifyThat("#aboutTitle", NodeMatchers.hasText("About DPF Manager"));
   }
 
 //  @Test
-//  public void  launchApplicationTest() throws Exception {
+//  public void testFail() throws Exception {
+//    //Wait for buttons clicks
 //    WaitForAsyncUtils.waitForFxEvents();
 //
-//    //Check for buttons
-//    Button butAbout = (Button)scene.lookup("#butAbout");
-//    Assert.assertEquals("butAbout", butAbout.getId());
-//    Button butReport = (Button)scene.lookup("#butReport");
-//    Assert.assertEquals("butReport", butReport.getId());
-//  }
-
-//  @Test
-//  public void launchApplicationTest2() throws Exception {
-//    WaitForAsyncUtils.waitForFxEvents();
+//    clickOn("#butReport");//.moveTo("New").clickOn("Text Document");
 //    FxAssert.verifyThat("#txtBox1", NodeMatchers.hasText("Select a file"));
 //  }
 
