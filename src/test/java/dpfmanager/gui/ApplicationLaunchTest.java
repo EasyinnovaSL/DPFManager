@@ -17,22 +17,26 @@ import org.testfx.util.WaitForAsyncUtils;
  */
 public class ApplicationLaunchTest extends ApplicationTest {
 
-  Stage stage;
+  Stage stage = null;
   Scene scene;
 
   @Override
   public void init() throws Exception{
-    stage=launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(MainApp.class, "-gui", "-noDisc");
+    scene = stage.getScene();
+    System.out.println("Init");
   }
 
-  @Override
-  public void start(Stage stage) throws Exception {
-    scene=stage.getScene();
-    FxToolkit.showStage();
-  }
+//  @Override
+//  public void start(Stage stage) throws Exception {
+//    scene=stage.getScene();
+//    System.out.println("Start");
+//    FxToolkit.showStage();
+//  }
 
   @Override
   public void stop() throws Exception{
+    System.out.println("Stop");
     FxToolkit.hideStage();
   }
 
@@ -54,14 +58,15 @@ public class ApplicationLaunchTest extends ApplicationTest {
     Assert.assertEquals("butReport", butReport.getId());
   }
 
-  @Test
-  public void testButAbout() throws Exception {
-    //Wait for async events
-    WaitForAsyncUtils.waitForFxEvents();
-
-    clickOn("#butAbout");
-    FxAssert.verifyThat("#aboutTitle", NodeMatchers.hasText("About DPF Manager"));
-  }
+//  @Test
+//  public void testButAbout() throws Exception {
+//    //Wait for async events
+//    WaitForAsyncUtils.waitForFxEvents();
+//
+//    //Check buton about
+//    clickOn("#butAbout");
+//    FxAssert.verifyThat("#aboutTitle", NodeMatchers.hasText("About DPF Manager"));
+//  }
 
 //  @Test
 //  public void testFail() throws Exception {
