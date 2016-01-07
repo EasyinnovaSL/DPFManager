@@ -2,7 +2,7 @@ package dpfmanager.shell.modules.classes;
 
 import dpfmanager.shell.modules.interfaces.UserInterface;
 import dpfmanager.shell.modules.reporting.IndividualReport;
-import dpfmanager.ReportGenerator;
+import dpfmanager.shell.modules.reporting.ReportGenerator;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -27,7 +27,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.prefs.Preferences;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 

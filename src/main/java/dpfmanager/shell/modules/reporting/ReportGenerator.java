@@ -29,19 +29,13 @@
  * @since 23/6/2015
  */
 
-package dpfmanager;
+package dpfmanager.shell.modules.reporting;
 
 import dpfmanager.shell.modules.autofixes.autofix;
 import dpfmanager.shell.modules.classes.Fix;
 import dpfmanager.shell.modules.classes.Fixes;
 import dpfmanager.shell.modules.classes.Rules;
 import dpfmanager.shell.modules.interfaces.UserInterface;
-import dpfmanager.shell.modules.reporting.GlobalReport;
-import dpfmanager.shell.modules.reporting.IndividualReport;
-import dpfmanager.shell.modules.reporting.ReportHtml;
-import dpfmanager.shell.modules.reporting.ReportJson;
-import dpfmanager.shell.modules.reporting.ReportPDF;
-import dpfmanager.shell.modules.reporting.ReportXml;
 
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -49,7 +43,6 @@ import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 
 import java.awt.Desktop;
@@ -66,14 +59,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
-import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
