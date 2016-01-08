@@ -21,13 +21,13 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   //Set properties for headless mode (Windows only)
   static {
     if (SystemUtils.IS_OS_WINDOWS) {
-//      System.setProperty("testfx.robot", "glass");
-//      System.setProperty("testfx.headless", "true");
+      System.setProperty("testfx.robot", "glass");
+      System.setProperty("testfx.headless", "true");
     }
   }
 
   final static int width = 970;
-  final static int height = 950;
+  final static int height = 1200;
 
   static Stage stage;
   protected Scene scene;
