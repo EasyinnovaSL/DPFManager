@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.image.*?>
@@ -7,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox fx:id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <BorderPane id="wizStep6"><top>
             <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
@@ -37,16 +38,17 @@
                             <children>
                                 <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                                     <content>
-                                        <AnchorPane>
+                                        <AnchorPane id="anchorPane">
                                             <children>
                                                 <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config6" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                     <!--<image><Image url="@../images/config6.png" /></image>-->
                                                 </ImageView>
-                                                <Button layoutX="384.0" layoutY="694.0" mnemonicParsing="false" onAction="#saveConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button id="saveReportButton" layoutX="384.0" layoutY="694.0" mnemonicParsing="false" onAction="#saveConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
+                                       <TextField id="outputTextField" layoutX="419.0" layoutY="659.0" styleClass="txtFix" stylesheets="@/styles/style.css" />
                                                 <Line fx:id="line" endX="710.0" layoutX="195.0" layoutY="652.0" startX="-100.0" stroke="WHITE" />
                                                 <Label fx:id="labIsos" layoutX="481.0" layoutY="341.0" text="TIFF/EP" textFill="WHITE">
                                                     <font>
@@ -98,7 +100,7 @@
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button visible="false" layoutX="598.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button layoutX="598.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT" visible="false">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>

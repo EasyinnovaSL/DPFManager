@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox fx:id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <BorderPane id="wizStep3"><top>
             <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
@@ -43,7 +43,7 @@
                                                 <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config3" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                     <!--<image> <Image url="@../images/config3.png" /> </image>-->
                                                 </ImageView>
-                                                <Button layoutX="385.0" layoutY="844.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="69.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button id="continue3" layoutX="385.0" layoutY="844.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="69.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
@@ -52,7 +52,7 @@
                                                 <CheckBox fx:id="chkXml" layoutX="252.0" layoutY="457.0" mnemonicParsing="false" styleClass="checkreport" />
                                                 <CheckBox fx:id="chkHtml" layoutX="252.0" layoutY="398.0" mnemonicParsing="false" selected="true" styleClass="checkreport" />
                                                 <CheckBox fx:id="chkPdf" layoutX="252.0" layoutY="576.0" mnemonicParsing="false" styleClass="checkreport" />
-                                                <CheckBox fx:id="chkDefaultOutput" layoutX="252.0" layoutY="679.0" mnemonicParsing="false" selected="true" styleClass="checkreport" text="Default" textFill="white" onAction="#checkChanged" />
+                                                <CheckBox fx:id="chkDefaultOutput" layoutX="252.0" layoutY="679.0" mnemonicParsing="false" onAction="#checkChanged" selected="true" styleClass="checkreport" text="Default" textFill="white" />
                                                 <TextField fx:id="txtOutput" layoutX="250.0" layoutY="713.0" prefHeight="41.0" prefWidth="382.0" text="" visible="false">
                                                     <cursor>
                                                         <Cursor fx:constant="TEXT" />
@@ -76,7 +76,7 @@
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button visible="false" layoutX="468.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig3" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button layoutX="468.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig3" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT" visible="false">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>

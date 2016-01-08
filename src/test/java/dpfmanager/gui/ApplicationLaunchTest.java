@@ -5,7 +5,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.api.FxToolkit;
@@ -18,7 +20,6 @@ import org.testfx.util.WaitForAsyncUtils;
 public class ApplicationLaunchTest extends ApplicationTest {
 
   Stage stage = null;
-  Scene scene;
 
   @Override
   public void init() throws Exception{

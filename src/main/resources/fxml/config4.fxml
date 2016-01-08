@@ -42,7 +42,7 @@
                                                 <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config4" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                     <!--<image><Image url="@../images/config4.png" /></image>-->
                                                 </ImageView>
-                                                <Button fx:id="continueButton" layoutX="384.0" layoutY="596.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="65.0" prefWidth="222.0" styleClass="button-continue" stylesheets="@/styles/style.css" text="Continue" textFill="WHITE">
+                                                <Button id="continue4" layoutX="384.0" layoutY="596.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="65.0" prefWidth="222.0" styleClass="button-continue" stylesheets="@/styles/style.css" text="Continue" textFill="WHITE">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
@@ -50,7 +50,7 @@
                                                 <!--<CheckBox fx:id="chkAutoFixLE" layoutX="252.0" layoutY="310.0" mnemonicParsing="false" styleClass="checkreport" text="Autofix Byte Order Litte Endian" textFill="white" />
                                                 <CheckBox fx:id="chkAutoFixBE" layoutX="252.0" layoutY="340.0" mnemonicParsing="false" styleClass="checkreport" text="Autofix Byte Order Big Endian" textFill="white" />-->
                                                 <!--<CheckBox fx:id="chkAutoFixPersonal" layoutX="252.0" layoutY="320.0" mnemonicParsing="false" styleClass="checkreport" text="Clear Private Data" textFill="white" />-->
-                                                <Button fx:id="addFix" id="addFix" layoutX="405.0" layoutY="380.0" mnemonicParsing="false" onAction="#addFix" prefHeight="37.0" prefWidth="187.0" style="" stylesheets="@/styles/style.css" text="Add Fix" textFill="WHITE">
+                                                <Button id="addFix" layoutX="405.0" layoutY="380.0" mnemonicParsing="false" onAction="#addFix" prefHeight="37.0" prefWidth="187.0" style="" stylesheets="@/styles/style.css" text="Add Fix" textFill="WHITE">
                                                     <font>
                                                         <Font name="System Bold" size="16.0" />
                                                     </font>

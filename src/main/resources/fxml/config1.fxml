@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="rootMain" alignment="TOP_CENTER" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox fx:id="rootMain" alignment="TOP_CENTER" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <BorderPane id="wizStep1"><top>
             <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
@@ -42,7 +42,7 @@
                                                 <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config1" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                      <!--<image><Image url="@../images/config1.png" /></image>-->
                                                 </ImageView>
-                                                <Button layoutX="386.0" layoutY="590.0" mnemonicParsing="false" onAction="#gotoConfig2" prefHeight="69.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button id="continue1" layoutX="386.0" layoutY="590.0" mnemonicParsing="false" onAction="#gotoConfig2" prefHeight="69.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
@@ -68,7 +68,7 @@
                                                     <font>
                                                         <Font size="13.0" />
                                                     </font></CheckBox>
-                                        <Button visible="false" layoutX="377.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig1" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                        <Button layoutX="377.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig1" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT" visible="false">
                                             <cursor>
                                                 <Cursor fx:constant="HAND" />
                                             </cursor>

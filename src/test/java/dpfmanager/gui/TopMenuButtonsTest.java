@@ -24,13 +24,24 @@ public class TopMenuButtonsTest extends ApplicationTest {
   }
 
   @Test
-  public void testButAbout() throws Exception {
+  public void testTopMenuButtons() throws Exception {
     //Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
 
-    //Check buton about
-    clickOn("#butAbout");
-    FxAssert.verifyThat("#aboutTitle", NodeMatchers.hasText("About DPF Manager"));
+    // checker -- about
+    clickOnAndReload("#butAbout");
+    // about -- reports
+    clickOnAndReload("#butReport");
+    // reports -- checker
+    clickOnAndReload("#butChecker");
+    // checker -- reports
+    clickOnAndReload("#butReport");
+    // reports -- about
+    clickOnAndReload("#butAbout");
+    // about -- checker
+    clickOnAndReload("#butChecker");
+    // test we are back to conformance checker
+    FxAssert.verifyThat("#checkFilesButton", NodeMatchers.isNotNull());
   }
 
 }
