@@ -264,11 +264,12 @@ public class Gui extends UserInterface {
     CheckBox radProf3 = (CheckBox)scene.lookup("#radProf3");
     CheckBox radProf4 = (CheckBox)scene.lookup("#radProf4");
     CheckBox radProf5 = (CheckBox)scene.lookup("#radProf5");
-    if (radProf1.isSelected()) config.getIsos().add("Baseline");
-    if (radProf2.isSelected()) config.getIsos().add("Tiff/EP");
-    if (radProf3.isSelected()) config.getIsos().add("Tiff/IT");
-    if (radProf4.isSelected()) config.getIsos().add("Tiff/IT-1");
-    if (radProf5.isSelected()) config.getIsos().add("Tiff/IT-2");
+    config.getIsos().clear();
+    if (radProf1.isSelected()) config.addISO("Baseline");
+    if (radProf2.isSelected()) config.addISO("Tiff/EP");
+    if (radProf3.isSelected()) config.addISO("Tiff/IT");
+    if (radProf4.isSelected()) config.addISO("Tiff/IT-1");
+    if (radProf5.isSelected()) config.addISO("Tiff/IT-2");
   }
 
   public void saveRules(Scene scene, Configuration config) {
@@ -313,10 +314,11 @@ public class Gui extends UserInterface {
     CheckBox chkXml = (CheckBox)scene.lookup("#chkXml");
     CheckBox chkJson = (CheckBox)scene.lookup("#chkJson");
     CheckBox chkPdf = (CheckBox)scene.lookup("#chkPdf");
-    if (chkHtml.isSelected()) config.getFormats().add("HTML");
-    if (chkXml.isSelected()) config.getFormats().add("XML");
-    if (chkJson.isSelected()) config.getFormats().add("JSON");
-    if (chkPdf.isSelected()) config.getFormats().add("PDF");
+    config.getFormats().clear();
+    if (chkHtml.isSelected()) config.addFormat("HTML");
+    if (chkXml.isSelected()) config.addFormat("XML");
+    if (chkJson.isSelected()) config.addFormat("JSON");
+    if (chkPdf.isSelected()) config.addFormat("PDF");
   }
 
   public void saveOutput(Scene scene, Configuration config) {

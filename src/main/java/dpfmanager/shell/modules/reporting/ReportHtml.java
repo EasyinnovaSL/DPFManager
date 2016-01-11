@@ -42,17 +42,6 @@ import com.easyinnova.tiff.model.types.IFD;
 public class ReportHtml extends ReportGeneric {
 
   /**
-   * Insert html folder.
-   *
-   * @param file the file
-   * @return the string
-   */
-  private static String insertHtmlFolder(String file) {
-    String name = file.substring(file.lastIndexOf("/") + 1, file.length());
-    return file.replace(name, "html/" + name);
-  }
-
-  /**
    * Parse an individual report to HTML.
    *
    * @param outputfile the outputfile
@@ -62,7 +51,8 @@ public class ReportHtml extends ReportGeneric {
   public static void parseIndividual(String outputfile, IndividualReport ir, int mode) {
     //String templatePath = "./src/main/resources/templates/individual.html";
     String templatePath = "templates/individual.html";
-    outputfile = insertHtmlFolder(outputfile);
+    String name = outputfile.substring(outputfile.lastIndexOf("/") + 1, outputfile.length());
+    outputfile = outputfile.replace(name, "html/" + name);
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
     //String htmlBody = ReportGenerator.readFile(templatePath);

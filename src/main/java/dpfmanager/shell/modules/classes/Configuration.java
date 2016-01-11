@@ -32,6 +32,18 @@ public class Configuration {
     return isos;
   }
 
+  public void addISO(String iso) {
+    if (!isos.contains(iso)) {
+      isos.add(iso);
+    }
+  }
+
+  public void addFormat(String format) {
+    if (!formats.contains(format)) {
+      formats.add(format);
+    }
+  }
+
   /**
    * Gets formats.
    *
