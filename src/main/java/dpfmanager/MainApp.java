@@ -879,26 +879,23 @@ public class MainApp extends Application {
   protected void gotoConfig1(ActionEvent event) throws Exception {
     saveSettings(thestage.getScene(), config);
     LoadSceneXml("/fxml/config1.fxml");
+    gui.loadIsos(thestage.getScene(), config);
   }
 
   @FXML
   protected void gotoConfig2(ActionEvent event) throws Exception {
     saveSettings(thestage.getScene(), config);
     LoadSceneXml("/fxml/config2.fxml");
-    if (editingConfig) {
-      gui.loadRules(thestage.getScene(), config);
-    }
+    gui.loadRules(thestage.getScene(), config);
   }
 
   @FXML
   protected void gotoConfig3(ActionEvent event) throws Exception {
     saveSettings(thestage.getScene(), config);
     LoadSceneXml("/fxml/config3.fxml");
-    if (editingConfig) {
-      gui.loadFormats(thestage.getScene(), config);
-      gui.loadOutput(thestage.getScene(), config);
-      checkChanged(null);
-    }
+    gui.loadFormats(thestage.getScene(), config);
+    gui.loadOutput(thestage.getScene(), config);
+    checkChanged(null);
   }
 
   @FXML
@@ -906,9 +903,7 @@ public class MainApp extends Application {
     saveSettings(thestage.getScene(), config);
     LoadSceneXml("/fxml/config4.fxml");
     gui.getAutofixes(thestage.getScene());
-    if (editingConfig) {
-      gui.loadFixes(thestage.getScene(), config);
-    }
+    gui.loadFixes(thestage.getScene(), config);
   }
 
   @FXML
