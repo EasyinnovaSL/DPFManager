@@ -1,16 +1,28 @@
 /**
- * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
- * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
- * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
- * have received a copy of the GNU General Public License and the Mozilla Public License along with
- * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
- * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
- * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
- * 2015 Easy Innova, SL </p>
+ * <h1>ReportGenerator.java</h1>
+ * <p>
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version; or, at your choice, under the terms of the
+ * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p>
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License and the Mozilla Public License for more details.
+ * </p>
+ * <p>
+ * You should have received a copy of the GNU General Public License and the Mozilla Public License
+ * along with this program. If not, see <a
+ * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
+ * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
+ * </p>
+ * <p>
+ * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
+ * </p>
+ * <p>
+ * © 2015 Easy Innova, SL
+ * </p>
  *
  * @author Easy Innova
  * @version 1.0
@@ -250,16 +262,17 @@ public class Gui extends UserInterface {
   }
 
   public void saveIsos(Scene scene, Configuration config) {
-    CheckBox radProf1 = (CheckBox) scene.lookup("#radProf1");
-    CheckBox radProf2 = (CheckBox) scene.lookup("#radProf2");
-    CheckBox radProf3 = (CheckBox) scene.lookup("#radProf3");
-    CheckBox radProf4 = (CheckBox) scene.lookup("#radProf4");
-    CheckBox radProf5 = (CheckBox) scene.lookup("#radProf5");
-    if (radProf1.isSelected()) config.getIsos().add("Baseline");
-    if (radProf2.isSelected()) config.getIsos().add("Tiff/EP");
-    if (radProf3.isSelected()) config.getIsos().add("Tiff/IT");
-    if (radProf4.isSelected()) config.getIsos().add("Tiff/IT-1");
-    if (radProf5.isSelected()) config.getIsos().add("Tiff/IT-2");
+    CheckBox radProf1 = (CheckBox)scene.lookup("#radProf1");
+    CheckBox radProf2 = (CheckBox)scene.lookup("#radProf2");
+    CheckBox radProf3 = (CheckBox)scene.lookup("#radProf3");
+    CheckBox radProf4 = (CheckBox)scene.lookup("#radProf4");
+    CheckBox radProf5 = (CheckBox)scene.lookup("#radProf5");
+    config.getIsos().clear();
+    if (radProf1.isSelected()) config.addISO("Baseline");
+    if (radProf2.isSelected()) config.addISO("Tiff/EP");
+    if (radProf3.isSelected()) config.addISO("Tiff/IT");
+    if (radProf4.isSelected()) config.addISO("Tiff/IT-1");
+    if (radProf5.isSelected()) config.addISO("Tiff/IT-2");
   }
 
   public void saveRules(Scene scene, Configuration config) {
@@ -300,14 +313,15 @@ public class Gui extends UserInterface {
   }
 
   public void saveFormats(Scene scene, Configuration config) {
-    CheckBox chkHtml = (CheckBox) scene.lookup("#chkHtml");
-    CheckBox chkXml = (CheckBox) scene.lookup("#chkXml");
-    CheckBox chkJson = (CheckBox) scene.lookup("#chkJson");
-    CheckBox chkPdf = (CheckBox) scene.lookup("#chkPdf");
-    if (chkHtml.isSelected()) config.getFormats().add("HTML");
-    if (chkXml.isSelected()) config.getFormats().add("XML");
-    if (chkJson.isSelected()) config.getFormats().add("JSON");
-    if (chkPdf.isSelected()) config.getFormats().add("PDF");
+    CheckBox chkHtml = (CheckBox)scene.lookup("#chkHtml");
+    CheckBox chkXml = (CheckBox)scene.lookup("#chkXml");
+    CheckBox chkJson = (CheckBox)scene.lookup("#chkJson");
+    CheckBox chkPdf = (CheckBox)scene.lookup("#chkPdf");
+    config.getFormats().clear();
+    if (chkHtml.isSelected()) config.addFormat("HTML");
+    if (chkXml.isSelected()) config.addFormat("XML");
+    if (chkJson.isSelected()) config.addFormat("JSON");
+    if (chkPdf.isSelected()) config.addFormat("PDF");
   }
 
   public void saveOutput(Scene scene, Configuration config) {

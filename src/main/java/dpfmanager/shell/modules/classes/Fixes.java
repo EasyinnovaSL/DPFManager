@@ -39,6 +39,7 @@ public class Fixes {
    * @param scene the scene
    */
   public void ReadFixes(Scene scene) {
+    fixes.clear();
     Boolean wrong_format = false;
     AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
     for (Node node : ap2.getChildren()){
