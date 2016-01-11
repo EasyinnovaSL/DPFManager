@@ -106,7 +106,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -125,7 +127,7 @@ public class MainApp extends Application {
   private boolean all_reports_loaded;
   private static boolean firstRun = true;
   static boolean editingConfig = false;
-  static boolean testMode = false;
+  static Map<String, String> testValues;
 
   @FXML
   private TextField txtFile;
@@ -138,6 +140,14 @@ public class MainApp extends Application {
 
   public static Stage getStage() {
     return thestage;
+  }
+
+  public static void setTestParam(String key, String value) {
+    testValues.put(key,value);
+  }
+
+  public static String getTestParams(String key) {
+    return testValues.get(key);
   }
 
   /**
@@ -163,7 +173,7 @@ public class MainApp extends Application {
       thestage = stage;
       LOG.info("Starting JavaFX application");
       // GUI
-      testMode = params.getRaw().contains("-test");
+      testValues = new HashMap<>();
       LoadGui(params.getRaw().contains("-noDisc"));
     } else {
       // Command Line
@@ -322,6 +332,7 @@ public class MainApp extends Application {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
           RadioButton radio = new RadioButton();
+          radio.setId("radioConfig" + vBox.getChildren().size());
           radio.setText(fileEntry.getName());
           radio.setToggleGroup(group);
           vBox.getChildren().add(radio);
@@ -707,6 +718,7 @@ public class MainApp extends Application {
         // If HTML show in webview
         if (format.equals("html")) {
           WebView browser = new WebView();
+          browser.setId("webViewReport");
           //double w = width-topImg.getWidth();
           browser.setMinWidth(thestage.getScene().getWidth());
           browser.setMinHeight(h);
@@ -727,6 +739,7 @@ public class MainApp extends Application {
         // Else show in TextArea
         else {
           TextArea ta = new TextArea();
+          ta.setId("textAreaReport");
           ta.setMinWidth(thestage.getScene().getWidth());
           ta.setMinHeight(h);
           ta.setEditable(false);
@@ -926,32 +939,25 @@ public class MainApp extends Application {
   protected void gotoConfig6(ActionEvent event) throws Exception {
     saveSettings(thestage.getScene(), config);
     LoadSceneXml("/fxml/config6.fxml");
-    if (!testMode){
-      TextField tf = (TextField) thestage.getScene().lookup("#outputTextField");
-      tf.setEditable(false);
-      tf.setVisible(false);
-      AnchorPane anchorPane = (AnchorPane) thestage.getScene().lookup("#anchorPane");
-      anchorPane.getChildren().remove(tf);
-    }
     gui.setReport(thestage.getScene(), config);
   }
 
   @FXML
   protected void saveConfig(ActionEvent event) throws Exception {
-    File file = null;
-    if (!testMode) {
+    File file;
+    String value = testValues.get("saveConfig");
+    if (value != null) {
+      //Save in specified output
+      file = new File(value);
+    } else {
       //Open save dialog
       FileChooser fileChooser = new FileChooser();
       fileChooser.setInitialDirectory(new File(getConfigDir()));
       fileChooser.setInitialFileName("config.dpf");
       fileChooser.setTitle("Save Config");
       file = fileChooser.showSaveDialog(thestage);
-    } else {
-      //Save in specified output
-      TextField textField = (TextField) thestage.getScene().lookup("#outputTextField");
-      String path = textField.getText();
-      file = new File(path);
     }
+
     if (file != null) {
       try {
         SaveConfig(file.getAbsolutePath());
@@ -1260,11 +1266,21 @@ public class MainApp extends Application {
 
   @FXML
   protected void openConfig(ActionEvent event) {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Open Config");
-    fileChooser.setInitialDirectory(new File(getConfigDir()));
-    fileChooser.setInitialFileName("config.dpf");
-    File file = fileChooser.showOpenDialog(thestage);
+    File file;
+    String value = testValues.get("import");
+    if(value != null){
+      //test mode
+      file = new File(value);
+    }
+    else{
+      //Ask for file
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Open Config");
+      fileChooser.setInitialDirectory(new File(getConfigDir()));
+      fileChooser.setInitialFileName("config.dpf");
+      file = fileChooser.showOpenDialog(thestage);
+    }
+
     try {
       if (file != null) {
         Scene scene = thestage.getScene();
@@ -1278,6 +1294,7 @@ public class MainApp extends Application {
           group = new ToggleGroup();
         }
         RadioButton radio = new RadioButton();
+        radio.setId("radioConfig" + vbox.getChildren().size());
         radio.setText(file.getAbsolutePath());
         radio.setToggleGroup(group);
         vbox.getChildren().add(radio);
@@ -1441,6 +1458,7 @@ public class MainApp extends Application {
 
   private void ShowLoading() {
     HBox loading = new HBox();
+    loading.setId("loadingPane");
     Label msg = new Label("Processing...");
     msg.setId("lblLoading");
     loading.setLayoutY(300);

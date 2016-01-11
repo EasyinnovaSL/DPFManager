@@ -97,7 +97,7 @@
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="507.0" layoutY="642.0" mnemonicParsing="false" onAction="#editConfig" prefHeight="45.0" prefWidth="108.0" stylesheets="@/styles/style.css" text="EDIT" textFill="#31C2F3" visible="true">
+                                                <Button id="editButton" layoutX="507.0" layoutY="642.0" mnemonicParsing="false" onAction="#editConfig" prefHeight="45.0" prefWidth="108.0" stylesheets="@/styles/style.css" text="EDIT" textFill="#31C2F3" visible="true">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>

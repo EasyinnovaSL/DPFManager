@@ -1,24 +1,14 @@
 package dpfmanager.gui;
 
 import dpfmanager.MainApp;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
-
-import com.sun.javafx.robot.FXRobot;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.testfx.api.FxAssert;
-import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
-import org.testfx.matcher.base.GeneralMatchers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,35 +20,23 @@ import java.util.function.Predicate;
  */
 public class CreateConfigFileTest extends ApplicationTest {
 
+  private String outputPath = "/tmp/config.dpf";
+  private String expectedPath = "src/test/resources/TestFiles/config.dpf";
+
   Stage stage = null;
   private int uniqueId = 0;
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc", "-test");
+    stage = launch(MainApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
-  }
-
-  private class isChecked implements Predicate {
-    @Override
-    public boolean test(Object o) {
-      CheckBox checkbox = (CheckBox) o;
-      return checkbox.isSelected();
-    }
-  }
-
-  private class isNotChecked implements Predicate {
-    @Override
-    public boolean test(Object o) {
-      CheckBox checkbox = (CheckBox) o;
-      return !checkbox.isSelected();
-    }
   }
 
   @Test
   public void testCreateConfigFile() throws Exception {
     //Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
+    System.out.println("Running create config file test...");
 
     // 1 - Click New Button
     clickOnAndReload("#newButton");
@@ -89,22 +67,13 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnAndReload("#continue4");
 
     // 6 - Save the report
-    String outputPath = "/tmp/config.dpf";
-    clickOn("#outputTextField").write(outputPath);
+    MainApp.setTestParam("saveConfig",outputPath);
     clickOn("#saveReportButton");
 
     // Print generated file
-    System.out.println("\n\n\nConfig File:\n");
-    FileReader fr = new FileReader(outputPath);
-    BufferedReader br = new BufferedReader(fr);
-    String s;
-    while ((s = br.readLine()) != null) {
-      System.out.println(s);
-    }
-    fr.close();
+//    printFile(outputPath);
 
     // Compare Result
-    String expectedPath = "src/test/resources/TestFiles/config.dpf";
     File expected = new File(expectedPath);
     File output = new File(outputPath);
     Assert.assertEquals("Config files differ!", FileUtils.readFileToString(expected, "utf-8"), FileUtils.readFileToString(output, "utf-8"));
@@ -146,5 +115,33 @@ public class CreateConfigFileTest extends ApplicationTest {
     Assert.assertEquals("ComboBox Field inside 'Add Fix' failed", 3, comboBoxFix.getItems().size());
 
     uniqueId++;
+  }
+
+  private void printFile(String outputPath) throws Exception {
+    System.out.println("\n\n\nConfig File:\n");
+    FileReader fr = new FileReader(outputPath);
+    BufferedReader br = new BufferedReader(fr);
+    String s;
+    while ((s = br.readLine()) != null) {
+      System.out.println(s);
+    }
+    fr.close();
+  }
+
+  //Unused
+  private class isChecked implements Predicate {
+    @Override
+    public boolean test(Object o) {
+      CheckBox checkbox = (CheckBox) o;
+      return checkbox.isSelected();
+    }
+  }
+
+  private class isNotChecked implements Predicate {
+    @Override
+    public boolean test(Object o) {
+      CheckBox checkbox = (CheckBox) o;
+      return !checkbox.isSelected();
+    }
   }
 }

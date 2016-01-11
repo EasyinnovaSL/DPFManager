@@ -66,7 +66,7 @@
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="377.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig1" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button id="step1" layoutX="377.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig1" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
@@ -86,12 +86,12 @@
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="554.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig5" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button id="step5" layoutX="554.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig5" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
                                                 </Button>
-                                                <Button layoutX="598.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <Button id="step6" layoutX="598.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>

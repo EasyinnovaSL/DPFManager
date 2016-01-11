@@ -21,8 +21,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   //Set properties for headless mode (Windows only)
   static {
     if (SystemUtils.IS_OS_WINDOWS) {
-      System.setProperty("testfx.robot", "glass");
-      System.setProperty("testfx.headless", "true");
+//      System.setProperty("testfx.robot", "glass");
+//      System.setProperty("testfx.headless", "true");
     }
   }
 
@@ -82,6 +82,10 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   public void clickOnAndReload(String id){
     clickOn(id);
+    scene = stage.getScene();
+  }
+
+  public void reloadScene(){
     scene = stage.getScene();
   }
 
