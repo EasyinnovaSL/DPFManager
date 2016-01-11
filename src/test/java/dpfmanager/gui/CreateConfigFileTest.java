@@ -78,7 +78,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
     // 4 - Repot format
     clickOn("#chkPdf");
-    // BUG FIX TO-DO
+    // BUG FIX TO-DO: Click button continue, not step4
 //    clickOnAndReload("#continue3");
     clickOnAndReload("#step4");
 
@@ -89,7 +89,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnAndReload("#continue4");
 
     // 6 - Save the report
-    String outputPath = "D:/tmp/config.dpf";
+    String outputPath = "/tmp/config.dpf";
     clickOn("#outputTextField").write(outputPath);
     clickOn("#saveReportButton");
 

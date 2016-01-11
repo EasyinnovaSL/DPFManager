@@ -34,7 +34,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   static SpreadsheetView view;
 
   public static Stage launch(Class<? extends Application> appClass, String... appArgs) throws Exception {
-    System.out.println("Launch");
+//    System.out.println("Launch");
     stage = FxToolkit.registerPrimaryStage();
     FxToolkit.setupStage(stage -> {
       view = new SpreadsheetView();
@@ -55,13 +55,13 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   @Before
   public final void internalBefore() throws Exception {
     FxToolkit.setupApplication(this);
-    System.out.println("Before");
+//    System.out.println("Before");
   }
 
   @After
   public final void internalAfter() throws Exception {
     FxToolkit.cleanupApplication(this);
-    System.out.println("Afeter");
+//    System.out.println("Afeter");
   }
 
   @Override
@@ -71,13 +71,13 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   @Override
   public void start(Stage stage) throws Exception {
     FxToolkit.showStage();
-    System.out.println("Start");
+//    System.out.println("Start");
   }
 
   @Override
   public void stop() throws Exception {
     FxToolkit.hideStage();
-    System.out.println("Stop");
+//    System.out.println("Stop");
   }
 
   public void clickOnAndReload(String id){

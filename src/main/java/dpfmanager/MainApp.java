@@ -902,7 +902,6 @@ public class MainApp extends Application {
 
   @FXML
   protected void gotoConfig4(ActionEvent event) throws Exception {
-    System.out.println("Go To Config 4!");
     saveSettings(thestage.getScene(), config);
     LoadSceneXml("/fxml/config4.fxml");
     gui.getAutofixes(thestage.getScene());
