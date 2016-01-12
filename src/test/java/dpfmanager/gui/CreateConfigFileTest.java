@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  */
 public class CreateConfigFileTest extends ApplicationTest {
 
-  private String outputPath = "/tmp/config.dpf";
+  private String outputPath = "D:/tmp/config.dpf";
   private String expectedPath = "src/test/resources/ConfigFiles/config.dpf";
 
   Stage stage = null;
@@ -55,6 +55,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnAndReload("#continue2");
 
     // 4 - Repot format
+    clickOn("#chkHtml");
     clickOn("#chkPdf");
     // BUG FIX TO-DO: Click button continue, not step4
 //    clickOnAndReload("#continue3");
@@ -71,7 +72,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOn("#saveReportButton");
 
     // Print generated file
-//    printFile(outputPath);
+    printFile(outputPath);
 
     // Compare Result
     File expected = new File(expectedPath);

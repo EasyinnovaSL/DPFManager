@@ -1,6 +1,10 @@
 package dpfmanager.gui;
 
 import dpfmanager.MainApp;
+import javafx.scene.Node;
+import javafx.scene.control.RadioButton;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.junit.Test;
@@ -34,7 +38,7 @@ public class ImportConfigFileTest extends ApplicationTest {
 
     //Import it
     clickOn("#importButton");
-    clickOn("#radioConfig1");
+    clickOnImportedConfig();
 
     //Edit
     clickOnAndReload("#editButton");
@@ -55,5 +59,19 @@ public class ImportConfigFileTest extends ApplicationTest {
     FxAssert.verifyThat("#labFixes", NodeMatchers.hasText("Add Tag Artist 'EasyTest'"));
   }
 
+  private void clickOnImportedConfig(){
+    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
+    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
+    String idToClick = "#";
+    String search = inputPath.replaceAll("/","_").replaceAll("\\\\","_");
+    for (Node node : vbox.getChildren()){
+      RadioButton rb = (RadioButton) node;
+      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\","_");
+      if (text.endsWith(search)){
+        idToClick += rb.getId();
+      }
+    }
+    clickOn(idToClick);
+  }
 }
 
