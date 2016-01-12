@@ -658,6 +658,10 @@ public class ReportGenerator {
         String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
         String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
         IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, itValidation);
+        ir2.checkPC = ir.checkPC;
+        ir2.checkBL = ir.checkBL;
+        ir2.checkEP = ir.checkEP;
+        ir2.checkIT = ir.checkIT;
         output = ReportXml.parseIndividual(xmlFileStr, ir2, rules);
         ValidationResult pcValidation2 = getPcValidation(output);
         ir2.setPcValidation(pcValidation2);
