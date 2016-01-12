@@ -6,7 +6,13 @@ import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import net.sf.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Site;
@@ -23,8 +29,8 @@ import org.testfx.util.WaitForAsyncUtils;
  */
 public class FileCheckTest extends ApplicationTest {
 
-  private String inputConfigPath = "src/test/resources/TestFiles/configAll.dpf";
-  private String inputFilePath = "src/test/resources/Small.zip";
+  private String inputConfigPath = "src/test/resources/ConfigFiles/configAll.dpf";
+  private String inputFilePath = "src/test/resources/SmallGui.zip";
 //  private String inputFilePath = "src/test/resources/Small/Bilevel.tif";
 
   Stage stage = null;
@@ -42,32 +48,52 @@ public class FileCheckTest extends ApplicationTest {
     System.out.println("Running check file test...");
 
     //import config file
-//    MainApp.setTestParam("import", inputConfigPath);
-//    clickOn("#importButton");
-//    clickOn("#radioConfig1");
+    MainApp.setTestParam("import", inputConfigPath);
+    clickOn("#importButton");
+    clickOn("#radioConfig1");
 
     //Check files
-//    clickOn("#txtBox1").eraseText(13).write(inputFilePath);
-//    clickOnAndReload("#checkFilesButton");
+    clickOn("#txtBox1").eraseText(13).write(inputFilePath);
+    clickOnAndReload("#checkFilesButton");
 
     //Wait for check files
-//    int timeout = waitForCheckFiles();
+    int timeout = waitForCheckFiles();
 
-    //Check timeout && HTML report
-//    Assert.assertNotEquals("Check files reached timeout! (60s)", 60, timeout);
-//    FxAssert.verifyThat("#webViewReport", NodeMatchers.isNotNull());
+    //Check timeout
+    Assert.assertNotEquals("Check files reached timeout! (60s)", 60, timeout);
 
     //Check table view
     clickOnAndReload("#butReport");
     TableView<ReportRow> table = (TableView) scene.lookup("#tab_reports");
-//    Assert.assertEquals("Reports table rows", 1, table.getItems().size());
     ReportRow row = table.getItems().get(0);
-    Assert.assertEquals("Number of reports", "8", row.getNfiles());
-    clickOnAndReload("#tab_reports #butxml");
-    sleep(5000);
-//    row.get
-//    row.getNfiles()
+    Assert.assertEquals("Reports table rows", 1, table.getItems().size());
+    Assert.assertEquals("Report row N files", "3", row.getNfiles());
+    Assert.assertEquals("Report row N passed", "1 passed", row.getPassed());
+    Assert.assertEquals("Report row N errors", "2 errors", row.getErrors());
 
+    //Check html && pdf exists
+    FxAssert.verifyThat("#tab_reports #buthtml", NodeMatchers.isNotNull());
+    clickOnAndReload("#tab_reports #buthtml");
+    FxAssert.verifyThat("#webViewReport", NodeMatchers.isNotNull());
+
+    //Check xml
+    clickOnAndReload("#butReport");
+    clickOnAndReload("#tab_reports #butxml");
+    FxAssert.verifyThat("#textAreaReport", NodeMatchers.isNotNull());
+    TextArea textArea = (TextArea) scene.lookup("#textAreaReport");
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+    String initial = textArea.getText().substring(0,expected.length());
+    Assert.assertEquals("Report xml", expected, initial);
+
+    //Check json
+    clickOnAndReload("#butReport");
+    clickOnAndReload("#tab_reports #butjson");
+    FxAssert.verifyThat("#textAreaReport", NodeMatchers.isNotNull());
+    textArea = (TextArea) scene.lookup("#textAreaReport");
+    JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
+    Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
+
+    sleep(1000);
   }
 
   private int waitForCheckFiles(){

@@ -366,7 +366,6 @@ public class Gui extends UserInterface {
 
   public void loadFixes(Scene scene, Configuration config) {
     Fixes fixes = config.getFixes();
-    fixes.getFixes().clear();
     for (Fix fix : fixes.getFixes()) {
       String value = fix.getValue();
       String tag = fix.getTag();
