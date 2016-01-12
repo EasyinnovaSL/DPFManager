@@ -52,6 +52,7 @@ public class ImportConfigFileTest extends ApplicationTest {
     FxAssert.verifyThat("#labIsos", NodeMatchers.hasText("Tiff/EP, Tiff/IT-1"));
     FxAssert.verifyThat("#labRules", NodeMatchers.hasText("ImageHeight < 1000"));
     FxAssert.verifyThat("#labReports", NodeMatchers.hasText("HTML, PDF"));
+    sleep(5000);
     FxAssert.verifyThat("#labFixes", NodeMatchers.hasText("Add Tag Artist 'EasyTest'"));
   }
 

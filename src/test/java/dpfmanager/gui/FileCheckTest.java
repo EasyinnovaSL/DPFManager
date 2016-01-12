@@ -42,15 +42,35 @@ public class FileCheckTest extends ApplicationTest {
     System.out.println("Running check file test...");
 
     //import config file
-    MainApp.setTestParam("import", inputConfigPath);
-    clickOn("#importButton");
-    clickOn("#radioConfig1");
+//    MainApp.setTestParam("import", inputConfigPath);
+//    clickOn("#importButton");
+//    clickOn("#radioConfig1");
 
     //Check files
-    clickOn("#txtBox1").eraseText(13).write(inputFilePath);
-    clickOnAndReload("#checkFilesButton");
+//    clickOn("#txtBox1").eraseText(13).write(inputFilePath);
+//    clickOnAndReload("#checkFilesButton");
 
     //Wait for check files
+//    int timeout = waitForCheckFiles();
+
+    //Check timeout && HTML report
+//    Assert.assertNotEquals("Check files reached timeout! (60s)", 60, timeout);
+//    FxAssert.verifyThat("#webViewReport", NodeMatchers.isNotNull());
+
+    //Check table view
+    clickOnAndReload("#butReport");
+    TableView<ReportRow> table = (TableView) scene.lookup("#tab_reports");
+//    Assert.assertEquals("Reports table rows", 1, table.getItems().size());
+    ReportRow row = table.getItems().get(0);
+    Assert.assertEquals("Number of reports", "8", row.getNfiles());
+    clickOnAndReload("#tab_reports #butxml");
+    sleep(5000);
+//    row.get
+//    row.getNfiles()
+
+  }
+
+  private int waitForCheckFiles(){
     sleep(1000);
     int timeout = 0;
     boolean finish = false;
@@ -65,22 +85,7 @@ public class FileCheckTest extends ApplicationTest {
       }
     }
     sleep(1000);
-
-    //Check timeout
-    Assert.assertNotEquals("Check files reached timeout! (60s)", 60, timeout);
-
-    //Check HTML report
-    FxAssert.verifyThat("#webViewReport", NodeMatchers.isNotNull());
-
-    //Check table view
-    clickOnAndReload("#butReport");
-    TableView<ReportRow> table = (TableView) scene.lookup("#tab_reports");
-//    Assert.assertEquals("Reports table rows doesn't match", 1, table.getItems().size());
-    ReportRow row = table.getItems().get(0);
-    Assert.assertEquals("Number of reports", "8", row.getNfiles());
-//    row.get
-//    row.getNfiles()
-
+    return timeout;
   }
 
 }

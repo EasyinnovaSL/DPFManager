@@ -1180,6 +1180,7 @@ public class MainApp extends Application {
 
               for (String i : item.keySet()) {
                 ImageView icon = new ImageView();
+                icon.setId("but"+i);
                 icon.setFitHeight(20);
                 icon.setFitWidth(20);
                 icon.setImage(new Image("images/format_" + i + ".png"));
