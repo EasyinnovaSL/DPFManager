@@ -57,7 +57,7 @@ public class ReportParserTest extends ApplicationTest {
       clickOnImportedConfig(configFile);
       writeText("#txtBox1", inputFiles);
       clickOnAndReload("#checkFilesButton");
-      waitForCheckFiles();
+      waitForCheckFiles(60);
       clickOnAndReload("#butChecker");
     }
 
@@ -68,30 +68,6 @@ public class ReportParserTest extends ApplicationTest {
     checkValidRow(table.getItems().get(0), "XML"); //Xml
     checkValidRow(table.getItems().get(1), "JSON"); //Json
     checkValidRow(table.getItems().get(2), "HTML"); //Html
-  }
-
-  private void waitForCheckFiles(){
-    sleep(1000);
-    int timeout = 0;
-    boolean finish = false;
-    while (!finish && timeout < 60) {
-      reloadScene();
-      Node node = scene.lookup("#loadingPane");
-      if (node != null) {
-        timeout++;
-        sleep(1000);
-      } else {
-        finish = true;
-      }
-    }
-    sleep(1000);
-    Assert.assertNotEquals("Check files reached timeout! (60s)", 60, timeout);
-  }
-
-  private void writeText(String id, String text){
-    TextField txtField = (TextField) scene.lookup(id);
-    int length = txtField.getText().length();
-    clickOn(id).eraseText(length).write(text);
   }
 
   private void checkValidRow(ReportRow row, String type){

@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -12,6 +13,7 @@ import javafx.stage.Stage;
 import org.apache.commons.lang.SystemUtils;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
@@ -25,8 +27,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   //Set properties for headless mode (Windows only)
   static {
     if (SystemUtils.IS_OS_WINDOWS) {
-//      System.setProperty("testfx.robot", "glass");
-//      System.setProperty("testfx.headless", "true");
+      System.setProperty("testfx.robot", "glass");
+      System.setProperty("testfx.headless", "true");
     }
   }
 
@@ -101,6 +103,29 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       }
     }
     clickOn(idToClick);
+  }
+  protected void writeText(String id, String text){
+    TextField txtField = (TextField) scene.lookup(id);
+    int length = txtField.getText().length();
+    clickOn(id).eraseText(length).write(text);
+  }
+
+  protected void waitForCheckFiles(int maxTimeout){
+    sleep(1000);
+    int timeout = 0;
+    boolean finish = false;
+    while (!finish && timeout < maxTimeout) {
+      reloadScene();
+      Node node = scene.lookup("#loadingPane");
+      if (node != null) {
+        timeout++;
+        sleep(1000);
+      } else {
+        finish = true;
+      }
+    }
+    sleep(1000);
+    Assert.assertNotEquals("Check files reached timeout! ("+maxTimeout+"s)", maxTimeout, timeout);
   }
 
 }

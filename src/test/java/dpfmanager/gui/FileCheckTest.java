@@ -53,14 +53,11 @@ public class FileCheckTest extends ApplicationTest {
     clickOnImportedConfig(inputConfigPath);
 
     //Check files
-    clickOn("#txtBox1").eraseText(13).write(inputFilePath);
+    writeText("#txtBox1", inputFilePath);
     clickOnAndReload("#checkFilesButton");
 
     //Wait for check files
-    int timeout = waitForCheckFiles();
-
-    //Check timeout
-    Assert.assertNotEquals("Check files reached timeout! (60s)", 60, timeout);
+    waitForCheckFiles(60);
 
     //Check table view
     clickOnAndReload("#butReport");
@@ -96,24 +93,5 @@ public class FileCheckTest extends ApplicationTest {
 
     sleep(1000);
   }
-
-  private int waitForCheckFiles(){
-    sleep(1000);
-    int timeout = 0;
-    boolean finish = false;
-    while (!finish && timeout < 60) {
-      reloadScene();
-      Node node = scene.lookup("#loadingPane");
-      if (node != null) {
-        timeout++;
-        sleep(1000);
-      } else {
-        finish = true;
-      }
-    }
-    sleep(1000);
-    return timeout;
-  }
-
 }
 
