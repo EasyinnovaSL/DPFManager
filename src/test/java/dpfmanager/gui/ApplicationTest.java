@@ -1,6 +1,7 @@
 package dpfmanager.gui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
@@ -65,6 +66,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   @After
   public final void internalAfter() throws Exception {
     FxToolkit.cleanupApplication(this);
+    Platform.exit();
   }
 
   @Override
@@ -124,7 +126,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
         finish = true;
       }
     }
-    sleep(1000);
+    sleep(2000);
+    reloadScene();
     Assert.assertNotEquals("Check files reached timeout! ("+maxTimeout+"s)", maxTimeout, timeout);
   }
 

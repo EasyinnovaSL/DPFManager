@@ -42,7 +42,7 @@ public class ReportParserTest extends ApplicationTest {
   }
 
   @Test
-  public void testImportConfigFile() throws Exception {
+  public void testReportParser() throws Exception {
     //Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
     System.out.println("Running report parser test...");
@@ -58,6 +58,7 @@ public class ReportParserTest extends ApplicationTest {
       writeText("#txtBox1", inputFiles);
       clickOnAndReload("#checkFilesButton");
       waitForCheckFiles(60);
+      System.out.println("Current config: "+configFile);
       clickOnAndReload("#butChecker");
     }
 
@@ -75,7 +76,7 @@ public class ReportParserTest extends ApplicationTest {
     Assert.assertEquals("Report row N passed ("+type+")", "1 passed", row.getPassed());
     Assert.assertEquals("Report row N errors ("+type+")", "1 errors", row.getErrors());
     Assert.assertEquals("Report row N warnings ("+type+")", "1 warnings", row.getWarnings());
-    Assert.assertEquals("Report row score ("+type+")", "50%", row.getScore());
+    Assert.assertEquals("Report row score (" + type + ")", "50%", row.getScore());
   }
 }
 
