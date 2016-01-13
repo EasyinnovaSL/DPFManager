@@ -394,11 +394,10 @@
 								<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
 							</additionalClasspathElements>
 							<excludes>
-								<exclude>dpfmanager.gui.*</exclude>
-								<exclude>dpfmanager.commandline.*</exclude>
+								<exclude>**/**Test.java</exclude>
 							</excludes>
 							<includes>
-								<include>dpfmanager.RunTestOnly</include>
+								<include>RunTestOnly.java</include>
 							</includes>
 						</configuration>
 					</plugin>

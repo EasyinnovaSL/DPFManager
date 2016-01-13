@@ -87,8 +87,6 @@ public class FileCheckTest extends ApplicationTest {
     textArea = (TextArea) scene.lookup("#textAreaReport");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
     Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
-
-    sleep(1000);
   }
 }
 

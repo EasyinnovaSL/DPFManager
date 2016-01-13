@@ -28,13 +28,13 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   //Set properties for headless mode (Windows only)
   static {
     if (SystemUtils.IS_OS_WINDOWS) {
-      System.setProperty("testfx.robot", "glass");
-      System.setProperty("testfx.headless", "true");
+//      System.setProperty("testfx.robot", "glass");
+//      System.setProperty("testfx.headless", "true");
     }
   }
 
-  final static int width = 970;
-  final static int height = 1200;
+  final static int width = 1280;
+  final static int height = 1024;
 
   static Stage stage;
   protected Scene scene;
@@ -46,15 +46,18 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       view = new SpreadsheetView();
       StackPane sceneRoot = new StackPane(view);
 
-      stage.setScene(new Scene(sceneRoot, width, height));
+      stage.setScene(new Scene(sceneRoot, 1280, 1024));
       stage.setX(0);
       stage.setY(0);
+      stage.setMinHeight(1024);
 
       stage.show();
       stage.toBack();
       stage.toFront();
     });
     FxToolkit.setupApplication(appClass, appArgs);
+    FxToolkit.toolkitContext().getRegisteredStage().setWidth(1280);
+    FxToolkit.toolkitContext().getRegisteredStage().setHeight(1024);
     return stage;
   }
 
@@ -65,6 +68,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   @After
   public final void internalAfter() throws Exception {
+    FxToolkit.cleanupStages();
     FxToolkit.cleanupApplication(this);
   }
 

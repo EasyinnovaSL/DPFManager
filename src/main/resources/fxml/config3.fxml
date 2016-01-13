@@ -43,7 +43,7 @@
                                                 <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config3" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                     <!--<image><Image url="@../images/config3.png" /></image>-->
                                                 </ImageView>
-                                                <Button id="continue3" layoutX="384.0" layoutY="844.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="65.0" prefWidth="222.0" styleClass="button-continue" stylesheets="@/styles/style.css" text="Continue" textFill="WHITE">
+                                                <Button id="continue3" layoutX="384.0" layoutY="844.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="65.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" text="Continue" textFill="WHITE">
                                                     <cursor>
                                                         <Cursor fx:constant="HAND" />
                                                     </cursor>
