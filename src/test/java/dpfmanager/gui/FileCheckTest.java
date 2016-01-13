@@ -70,6 +70,7 @@ public class FileCheckTest extends ApplicationTest {
     Assert.assertEquals("Report row N files", "3", row.getNfiles());
     Assert.assertEquals("Report row N passed", "1 passed", row.getPassed());
     Assert.assertEquals("Report row N errors", "2 errors", row.getErrors());
+    Assert.assertEquals("Report row N warnings", "0 warnings", row.getWarnings());
 
     //Check html && pdf exists
     FxAssert.verifyThat("#tab_reports #buthtml", NodeMatchers.isNotNull());

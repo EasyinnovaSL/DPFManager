@@ -38,7 +38,7 @@ public class ImportConfigFileTest extends ApplicationTest {
 
     //Import it
     clickOn("#importButton");
-    clickOnImportedConfig();
+    clickOnImportedConfig(inputPath);
 
     //Edit
     clickOnAndReload("#editButton");
@@ -59,11 +59,11 @@ public class ImportConfigFileTest extends ApplicationTest {
     FxAssert.verifyThat("#labFixes", NodeMatchers.hasText("Add Tag Artist 'EasyTest'"));
   }
 
-  private void clickOnImportedConfig(){
+  private void clickOnImportedConfig(String path){
     AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
     VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
     String idToClick = "#";
-    String search = inputPath.replaceAll("/","_").replaceAll("\\\\","_");
+    String search = path.replaceAll("/","_").replaceAll("\\\\","_");
     for (Node node : vbox.getChildren()){
       RadioButton rb = (RadioButton) node;
       String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\","_");
