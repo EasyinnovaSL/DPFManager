@@ -166,6 +166,11 @@
 			<artifactId>xom</artifactId>
 			<version>1.2.5</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.5</version>
+		</dependency>
 
 		<dependency>
 			<!-- jsoup HTML parser library @ http://jsoup.org/ -->
@@ -184,7 +189,7 @@
 		<dependency>
 		  <groupId>com.easyinnova</groupId>
 		  <artifactId>tifflibrary4java</artifactId>
-		  <version>1.2.8</version>
+		  <version>1.2.9</version>
 		</dependency>
 
 		<dependency>
