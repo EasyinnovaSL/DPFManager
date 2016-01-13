@@ -1,8 +1,12 @@
 package dpfmanager.gui;
 
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.RadioButton;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.apache.commons.lang.SystemUtils;
@@ -82,6 +86,21 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   public void reloadScene(){
     scene = stage.getScene();
+  }
+
+  protected void clickOnImportedConfig(String path){
+    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
+    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
+    String idToClick = "#";
+    String search = path.replaceAll("/","_").replaceAll("\\\\","_");
+    for (Node node : vbox.getChildren()){
+      RadioButton rb = (RadioButton) node;
+      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\","_");
+      if (text.endsWith(search)){
+        idToClick += rb.getId();
+      }
+    }
+    clickOn(idToClick);
   }
 
 }

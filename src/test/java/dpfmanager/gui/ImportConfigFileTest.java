@@ -58,20 +58,5 @@ public class ImportConfigFileTest extends ApplicationTest {
     FxAssert.verifyThat("#labReports", NodeMatchers.hasText("HTML, PDF"));
     FxAssert.verifyThat("#labFixes", NodeMatchers.hasText("Add Tag Artist 'EasyTest'"));
   }
-
-  private void clickOnImportedConfig(String path){
-    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
-    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
-    String idToClick = "#";
-    String search = path.replaceAll("/","_").replaceAll("\\\\","_");
-    for (Node node : vbox.getChildren()){
-      RadioButton rb = (RadioButton) node;
-      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\","_");
-      if (text.endsWith(search)){
-        idToClick += rb.getId();
-      }
-    }
-    clickOn(idToClick);
-  }
 }
 

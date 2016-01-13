@@ -50,21 +50,21 @@ public class ReportParserTest extends ApplicationTest {
     // --
     // First Run the 3 check
     // --
-//    List<String> list = Arrays.asList(configHtml, configJson, configXml);
-//    for (String configFile : list){
-//      MainApp.setTestParam("import", configFile);
-//      clickOn("#importButton");
-//      clickOnImportedConfig(configFile);
-//      writeText("#txtBox1", inputFiles);
-//      clickOnAndReload("#checkFilesButton");
-//      waitForCheckFiles();
-//      clickOnAndReload("#butChecker");
-//    }
+    List<String> list = Arrays.asList(configHtml, configJson, configXml);
+    for (String configFile : list){
+      MainApp.setTestParam("import", configFile);
+      clickOn("#importButton");
+      clickOnImportedConfig(configFile);
+      writeText("#txtBox1", inputFiles);
+      clickOnAndReload("#checkFilesButton");
+      waitForCheckFiles();
+      clickOnAndReload("#butChecker");
+    }
 
     // Go to reports and check them
     clickOnAndReload("#butReport");
     TableView<ReportRow> table = (TableView) scene.lookup("#tab_reports");
-    Assert.assertEquals("Reports table rows", 10, table.getItems().size());
+    Assert.assertEquals("Reports table rows", 3, table.getItems().size());
     checkValidRow(table.getItems().get(0), "XML"); //Xml
     checkValidRow(table.getItems().get(1), "JSON"); //Json
     checkValidRow(table.getItems().get(2), "HTML"); //Html
@@ -101,21 +101,5 @@ public class ReportParserTest extends ApplicationTest {
     Assert.assertEquals("Report row N warnings ("+type+")", "1 warnings", row.getWarnings());
     Assert.assertEquals("Report row score ("+type+")", "50%", row.getScore());
   }
-
-  private void clickOnImportedConfig(String path){
-    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
-    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
-    String idToClick = "#";
-    String search = path.replaceAll("/","_").replaceAll("\\\\","_");
-    for (Node node : vbox.getChildren()){
-      RadioButton rb = (RadioButton) node;
-      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\","_");
-      if (text.endsWith(search)){
-        idToClick += rb.getId();
-      }
-    }
-    clickOn(idToClick);
-  }
-
 }
 

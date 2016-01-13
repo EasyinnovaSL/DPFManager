@@ -50,7 +50,7 @@ public class FileCheckTest extends ApplicationTest {
     //import config file
     MainApp.setTestParam("import", inputConfigPath);
     clickOn("#importButton");
-    clickOn("#radioConfig1");
+    clickOnImportedConfig(inputConfigPath);
 
     //Check files
     clickOn("#txtBox1").eraseText(13).write(inputFilePath);

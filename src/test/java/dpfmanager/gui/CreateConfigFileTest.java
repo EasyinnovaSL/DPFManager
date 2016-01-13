@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  */
 public class CreateConfigFileTest extends ApplicationTest {
 
-  private String outputPath = "D:/tmp/config.dpf";
+  private String outputPath = "/tmp/config.dpf";
   private String expectedPath = "src/test/resources/ConfigFiles/config.dpf";
 
   Stage stage = null;
@@ -72,7 +72,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOn("#saveReportButton");
 
     // Print generated file
-    printFile(outputPath);
+//    printFile(outputPath);
 
     // Compare Result
     File expected = new File(expectedPath);
