@@ -536,11 +536,8 @@ public class ReportRow {
     }
 
     // Score
-    if (passed > -1) {
-      score = passed / n;
-    }
-    else{
-      score = -1;
+    if(n>0){
+      score = passed * 100 / n;
     }
 
 
