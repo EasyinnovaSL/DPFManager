@@ -143,7 +143,7 @@ public class MainApp extends Application {
   }
 
   public static void setTestParam(String key, String value) {
-    testValues.put(key,value);
+    testValues.put(key, value);
   }
 
   public static String getTestParams(String key) {
@@ -1180,7 +1180,7 @@ public class MainApp extends Application {
 
               for (String i : item.keySet()) {
                 ImageView icon = new ImageView();
-                icon.setId("but"+i);
+                icon.setId("but" + i);
                 icon.setFitHeight(20);
                 icon.setFitWidth(20);
                 icon.setImage(new Image("images/format_" + i + ".png"));
@@ -1264,11 +1264,10 @@ public class MainApp extends Application {
   protected void openConfig(ActionEvent event) {
     File file;
     String value = testValues.get("import");
-    if(value != null){
+    if (value != null) {
       //test mode
       file = new File(value);
-    }
-    else{
+    } else {
       //Ask for file
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open Config");
@@ -1516,25 +1515,20 @@ public class MainApp extends Application {
 
             if (index >= start && index < start + count) {
               ReportRow rr = null;
+              File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
+              File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
               File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-              if (reportHtml.exists()) {
+              File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
+              if (reportXml.exists()) {
+                rr = ReportRow.createRowFromXml(reportDay, reportXml);
+              } else if (reportJson.exists()) {
+                rr = ReportRow.createRowFromJson(reportDay, reportJson);
+              } else if (reportHtml.exists()) {
                 rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
-              } else {
-                File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-                if (report.exists()) {
-                  rr = ReportRow.createRowFromXml(reportDay, report);
-                } else {
-                  File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
-                  if (reportJson.exists()) {
-                    rr = ReportRow.createRowFromJson(reportDay, reportJson);
-                  } else {
-                    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
-                    if (reportPdf.exists()) {
-                      rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
-                    }
-                  }
-                }
+              } else if (reportPdf.exists()) {
+                rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
               }
+
 
               for (String format : available_formats) {
                 File report;

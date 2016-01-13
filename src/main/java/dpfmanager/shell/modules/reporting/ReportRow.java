@@ -5,6 +5,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -13,6 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by easy on 17/09/2015.
@@ -265,7 +272,7 @@ public class ReportRow {
     String stime = "";
     String input = "";
     File parent = new File(file.getParent());
-    int n = countFiles(parent, ".xml") - 1;
+    int n = countFiles(parent, ".xml") - 1 - countFiles(parent, "_fixed.xml");
     String xml = readFullFile(file.getPath(), Charset.defaultCharset());
     try {
       Path pfile = Paths.get(file.getPath());
@@ -317,6 +324,21 @@ public class ReportRow {
       }
     }
 
+    // Warnings
+    if (xml.indexOf("<report>") > 0) {
+      try {
+        String[] list = xml.split("<report>");
+        for (int i=1; i<list.length; i++){
+          String sub = list[i];
+          if (sub.contains("warning")){
+            warnings++;
+          }
+        }
+      } catch (Exception e) {
+        warnings = -1;
+      }
+    }
+
     if(n>0){
       score = passed * 100 / n;
     }
@@ -336,7 +358,7 @@ public class ReportRow {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     String stime = "";
     File parent = new File(file.getParent() + "/html");
-    int n = countFiles(parent, ".html");
+    int n = countFiles(parent, ".html") - countFiles(parent, "_fixed.html");
     String html = readFullFile(file.getPath(), Charset.defaultCharset());
     int passed = 0, errors = 0, warnings = 0, score = 0;
     try {
@@ -403,22 +425,31 @@ public class ReportRow {
       }
     }
 
-    // Errors & warnings
-    if (html.indexOf("<td class=\"success\">") >= 0) {
+    // Errors
+    if (html.indexOf("id=\"pie-global\"") >= 0) {
       try {
-        String sub = html.substring(html.indexOf("<td class=\"success\">"));
+        String sub = html.substring(html.indexOf("id=\"pie-global\""));
+        sub = sub.substring(sub.indexOf("pie-info"));
+        sub = sub.substring(sub.indexOf("error"));
         sub = sub.substring(sub.indexOf(">") + 1);
         sub = sub.substring(0, sub.indexOf("<"));
-        if (sub.endsWith(" errors")) {
+        if (sub.endsWith(" failed")) {
           errors = Integer.parseInt(sub.substring(0, sub.indexOf(" ")));
         }
+      } catch (Exception e) {
+        errors = -1;
+      }
+    }
 
-        sub = html.substring(html.indexOf("<td class=\"success\">"));
-        sub = sub.substring(sub.indexOf("<td class=\"success\">"), 1);
-        sub = sub.substring(sub.indexOf(">") + 1);
-        sub = sub.substring(0, sub.indexOf("<"));
-        if (sub.endsWith(" warnings")) {
-          warnings = Integer.parseInt(sub.substring(0, sub.indexOf(" ")));
+    // Warnings
+    if (html.indexOf("row hover-row") > 0) {
+      try {
+        String[] list = html.split("row hover-row");
+        for (int i=1; i<list.length; i++){
+          String sub = list[i];
+          if (sub.contains("class=\"warning\"")){
+            warnings++;
+          }
         }
       } catch (Exception e) {
         warnings = -1;
@@ -439,8 +470,10 @@ public class ReportRow {
   public static ReportRow createRowFromJson(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     File parent = new File(file.getParent());
-    int n = countFiles(parent, ".json") - 1;
+    int n = countFiles(parent, ".json") - 1 - countFiles(parent, "_fixed.json");
     int passed = 0, errors = 0, warnings = 0, score = 0;
+    String json = readFullFile(file.getPath(), Charset.defaultCharset());
+    JsonObject jObj = new JsonParser().parse(json).getAsJsonObject();
     String stime = "";
     try {
       Path pfile = Paths.get(file.getPath());
@@ -467,6 +500,49 @@ public class ReportRow {
         }
       }
     }
+
+    // Passed
+    if (jObj.has("stats")) {
+      try {
+        JsonObject jStats = jObj.get("stats").getAsJsonObject();
+        passed = Integer.parseInt(jStats.get("valid_files").getAsString());
+      } catch (Exception e) {
+        passed = -1;
+      }
+    }
+
+    // Errors
+    if (jObj.has("stats")) {
+      try {
+        JsonObject jStats = jObj.get("stats").getAsJsonObject();
+        errors = Integer.parseInt(jStats.get("invalid_files").getAsString());
+      } catch (Exception e) {
+        errors = -1;
+      }
+    }
+
+    // Warnings
+    if (jObj.has("individualreports")) {
+      try {
+        JsonArray jArray = jObj.get("individualreports").getAsJsonArray();
+        for (JsonElement element : jArray){
+          if (element.toString().contains("warning")){
+            warnings++;
+          }
+        }
+      } catch (Exception e) {
+        warnings = -1;
+      }
+    }
+
+    // Score
+    if (passed > -1) {
+      score = passed / n;
+    }
+    else{
+      score = -1;
+    }
+
 
     ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
