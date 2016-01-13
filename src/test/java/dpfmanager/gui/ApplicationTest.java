@@ -126,8 +126,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
         finish = true;
       }
     }
-    sleep(2000);
-    reloadScene();
+    sleep(1000);
     Assert.assertNotEquals("Check files reached timeout! ("+maxTimeout+"s)", maxTimeout, timeout);
   }
 

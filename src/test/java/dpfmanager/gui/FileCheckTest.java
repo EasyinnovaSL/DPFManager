@@ -51,12 +51,9 @@ public class FileCheckTest extends ApplicationTest {
     MainApp.setTestParam("import", inputConfigPath);
     clickOn("#importButton");
     clickOnImportedConfig(inputConfigPath);
-
-    //Check files
     writeText("#txtBox1", inputFilePath);
     clickOnAndReload("#checkFilesButton");
-
-    //Wait for check files
+    FxAssert.verifyThat("#loadingPane", NodeMatchers.isNotNull()); //Check loading screen
     waitForCheckFiles(60);
 
     //Check table view
