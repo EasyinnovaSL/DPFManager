@@ -66,7 +66,6 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   @After
   public final void internalAfter() throws Exception {
     FxToolkit.cleanupApplication(this);
-    Platform.exit();
   }
 
   @Override
@@ -117,6 +116,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     int timeout = 0;
     boolean finish = false;
     while (!finish && timeout < maxTimeout) {
+      System.out.println("Inside timeout "+timeout);
       reloadScene();
       Node node = scene.lookup("#loadingPane");
       if (node != null) {

@@ -478,6 +478,7 @@ public class MainApp extends Application {
 
   @FXML
   protected void openFile(ActionEvent event) throws Exception {
+    System.out.println("Into open file");
     ArrayList<String> files = new ArrayList<String>();
     ArrayList<String> extensions = this.gui.getExtensions();
 
