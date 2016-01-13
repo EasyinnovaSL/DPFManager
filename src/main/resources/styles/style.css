@@ -58,10 +58,15 @@
 }
 
 .button-check{
-	-fx-background-color: transparent;
-	-fx-border-width     : 0px   ;
-	-fx-border-radius: 0 0 0 0;
-	-fx-background-radius: 0 0 0 0;
+	-fx-background-color: #303030;
+	-fx-border-width     : 1px   ;
+	-fx-border-color     : white  ;
+	-fx-border-radius: 5 5 5 5;
+	-fx-background-radius: 5 5 5 5;
+	/*-fx-background-color: transparent;*/
+	/*-fx-border-width     : 0px   ;*/
+	/*-fx-border-radius: 0 0 0 0;*/
+	/*-fx-background-radius: 0 0 0 0;*/
 }
 
 #addRule,#addFix{

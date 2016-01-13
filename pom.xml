@@ -394,7 +394,7 @@
 								<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
 							</additionalClasspathElements>
 							<excludes>
-								<exclude>**/**Test.java</exclude>
+								<exclude>**/*Test.java</exclude>
 							</excludes>
 							<includes>
 								<include>RunTestOnly.java</include>
