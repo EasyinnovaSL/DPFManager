@@ -88,9 +88,10 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     FxToolkit.hideStage();
   }
 
-  public void clickOnAndReloadOld(String id){
-    clickOn(id);
-    scene = stage.getScene();
+  //Main click function + reload
+  public void clickOnAndReload(String id){
+    clickOnScroll(id);
+    reloadScene();
   }
 
   public void clickOnAndReloadScroll(String id) throws FxRobotException {
@@ -113,29 +114,28 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
   }
 
-  public void clickOnAndReload(String id) throws FxRobotException {
+  public ApplicationTest clickOnScroll(String id) throws FxRobotException {
     //Click and scroll
     boolean ret = clickOnCustom(id);
     if (ret){
       scene = stage.getScene();
-      return;
+      return this;
     }
 
     // Else Scroll
+    int maxScroll = 200;
     moveTo(100, 100);
     restartScroll();
-    while (!ret && scroll < 500) {
+    while (!ret && scroll < maxScroll) {
       System.out.println("scroll");
-      scroll = scroll + 5;
+      scroll = scroll + 10;
       robotContext().getScrollRobot().scrollDown(scroll);
       ret = clickOnCustom(id);
     }
-    if (scroll == 500){
+    if (scroll == maxScroll){
       throw new FxRobotException("Node "+id+" not found! Scroll timeout!");
     }
-
-    //Reload scene
-    scene = stage.getScene();
+    return this;
   }
 
   private void restartScroll() {
@@ -161,25 +161,10 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     scene = stage.getScene();
   }
 
-  protected void clickOnImportedConfig(String path) {
-    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
-    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
-    String idToClick = "#";
-    String search = path.replaceAll("/", "_").replaceAll("\\\\", "_");
-    for (Node node : vbox.getChildren()) {
-      RadioButton rb = (RadioButton) node;
-      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\", "_");
-      if (text.endsWith(search)) {
-        idToClick += rb.getId();
-      }
-    }
-    clickOn(idToClick);
-  }
-
   protected void writeText(String id, String text) {
     TextField txtField = (TextField) scene.lookup(id);
     int length = txtField.getText().length();
-    clickOn(id).eraseText(length).write(text);
+    clickOnScroll(id).eraseText(length).write(text);
   }
 
   protected void waitForCheckFiles(int maxTimeout) {

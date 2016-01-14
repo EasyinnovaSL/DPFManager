@@ -3,10 +3,13 @@ package dpfmanager.gui;
 import dpfmanager.MainApp;
 import dpfmanager.shell.modules.reporting.ReportRow;
 import javafx.scene.Node;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import com.google.gson.JsonObject;
@@ -49,7 +52,7 @@ public class FileCheckTest extends ApplicationTest {
 
     //import config file
     MainApp.setTestParam("import", inputConfigPath);
-    clickOn("#importButton");
+    clickOnScroll("#importButton");
     clickOnImportedConfig(inputConfigPath);
     writeText("#txtBox1", inputFilePath);
     clickOnAndReload("#checkFilesButton");
@@ -87,6 +90,21 @@ public class FileCheckTest extends ApplicationTest {
     textArea = (TextArea) scene.lookup("#textAreaReport");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
     Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
+  }
+
+  private void clickOnImportedConfig(String path) {
+    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
+    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
+    String idToClick = "#";
+    String search = path.replaceAll("/", "_").replaceAll("\\\\", "_");
+    for (Node node : vbox.getChildren()) {
+      RadioButton rb = (RadioButton) node;
+      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\", "_");
+      if (text.endsWith(search)) {
+        idToClick += rb.getId();
+      }
+    }
+    clickOnScroll(idToClick);
   }
 }
 

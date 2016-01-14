@@ -8,59 +8,57 @@
 
 <VBox id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
-        <BorderPane><top>
-            <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
-                <VBox>
-                    <children>
-                        <Pane fx:id="topMenuImage" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
-                            <Button id="butChecker" layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor></Button>
-                            <Button id="butAbout" layoutX="560.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoAbout" prefHeight="20.0" prefWidth="55.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor>
-                            </Button>
-                        </Pane>
-                    </children>
-                </VBox>
-                <VBox fx:id="box0">
-                    <children>
-                        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-                            <children>
-                                <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="74.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
-                                    <content>
-                                        <AnchorPane id="pane1">
-                                            <children>
-                                                <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimagereport" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                    <!--<image> <Image url="@../images/report.png" /></image>-->
-                                                </ImageView>
-                                                <Button id="button_load" layoutX="390.0" layoutY="770.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" styleClass="button-check" stylesheets="@/styles/style.css" text="Load more..." textFill="WHITE">
-                                                    <font>
-                                                        <Font name="System Bold" size="10.5" />
-                                                    </font>
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                                <Button id="button_more" layoutX="520.0" layoutY="770.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="25.0" prefWidth="64.0" styleClass="button-check" stylesheets="@/styles/style.css" text="Back" textFill="WHITE">
-                                                    <font>
-                                                        <Font name="System Bold" size="10.5" />
-                                                    </font>
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                            </children>
-                                        </AnchorPane>
-                                    </content>
-                                </ScrollPane>
-                            </children>
-                        </AnchorPane>
-                    </children>
-                </VBox>
-            </SplitPane>
-        </top></BorderPane>
+        <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
+            <VBox>
+                <children>
+                    <Pane fx:id="topMenuImage" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
+                        <Button id="butChecker" layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                        <Button id="butAbout" layoutX="560.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoAbout" prefHeight="20.0" prefWidth="55.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </Pane>
+                </children>
+            </VBox>
+            <VBox fx:id="box0">
+                <children>
+                    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="74.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                                <content>
+                                    <AnchorPane id="pane1">
+                                        <children>
+                                            <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimagereport" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <!--<image> <Image url="@../images/report.png" /></image>-->
+                                            </ImageView>
+                                            <Button id="button_load" layoutX="390.0" layoutY="770.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" styleClass="button-check" stylesheets="@/styles/style.css" text="Load more..." textFill="WHITE">
+                                                <font>
+                                                    <Font name="System Bold" size="10.5" />
+                                                </font>
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button id="button_more" layoutX="520.0" layoutY="770.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="25.0" prefWidth="64.0" styleClass="button-check" stylesheets="@/styles/style.css" text="Back" textFill="WHITE">
+                                                <font>
+                                                    <Font name="System Bold" size="10.5" />
+                                                </font>
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                        </children>
+                                    </AnchorPane>
+                                </content>
+                            </ScrollPane>
+                        </children>
+                    </AnchorPane>
+                </children>
+            </VBox>
+        </SplitPane>
   </children>
 </VBox>
