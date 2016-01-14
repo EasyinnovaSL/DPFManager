@@ -37,32 +37,14 @@ public class ButtonCheckTest extends ApplicationTest {
     System.out.println("Running check buttons test...");
 
     // Continue 3 button
-//    clickOnAndReload("#newButton");
-//    clickOnAndReload("#continue1");
-//    clickOnAndReload("#continue2");
-//    scroll(10, VerticalDirection.DOWN);
-//    reloadScene();
-//    Button but = (Button) scene.lookup("#continue3");
-//    clickOnAndReload("#continue3");
-//    FxAssert.verifyThat("#continue3", NodeMatchers.isNull());
+    clickOnAndReload("#newButton");
+    clickOnAndReload("#continue1");
+    clickOnAndReload("#continue2");
+    clickOnAndReload("#continue3");
+    FxAssert.verifyThat("#continue3", NodeMatchers.isNull());
 
     // Check files button
-//    clickOnAndReload("#butChecker");
-//    moveTo(100, 100);
-//    robotContext().getMouseRobot().scroll(100);
-//    sleep(2000);
-//    robotContext().getMouseRobot().scroll(0);
-//    sleep(2000);
-
-//    scroll(100, VerticalDirection.DOWN);
-//    sleep(1000);
-//    Optional<Node> trys = this.lookup("#checkFilesButton").tryQueryFirst();
-//    moveTo("#checkFilesButton");
-//    FxRobot rob = new FxRobot();
-//    NodeQuery query = rob.lookup("#checkFilesButton");
-//    Node n = query.queryFirst();
-//    boolean visible = n.isVisible();
-
+    clickOnAndReload("#butChecker");
     clickOnAndReload("#checkFilesButton");
     clickOnAndReload("#butReport");
     FxAssert.verifyThat("#tab_reports", NodeMatchers.isNull());

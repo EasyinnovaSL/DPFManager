@@ -30,17 +30,17 @@ public class TopMenuButtonsTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
 
     // checker -- about
-    clickOnAndReloadOld("#butAbout");
+    clickOnAndReload("#butAbout");
     // about -- reports
-    clickOnAndReloadOld("#butReport");
+    clickOnAndReload("#butReport");
     // reports -- checker
-    clickOnAndReloadOld("#butChecker");
+    clickOnAndReload("#butChecker");
     // checker -- reports
-    clickOnAndReloadOld("#butReport");
+    clickOnAndReload("#butReport");
     // reports -- about
-    clickOnAndReloadOld("#butAbout");
+    clickOnAndReload("#butAbout");
     // about -- checker
-    clickOnAndReloadOld("#butChecker");
+    clickOnAndReload("#butChecker");
     // test we are back to conformance checker
     FxAssert.verifyThat("#checkFilesButton", NodeMatchers.isNotNull());
   }
