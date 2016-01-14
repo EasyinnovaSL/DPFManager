@@ -28,10 +28,8 @@ public class FailTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
     System.out.println("Running check buttons test...");
 
-    clickOn("#checkFilesButton");
-    reloadScene();
-    clickOn("#butReport");
-    reloadScene();
+    clickOnAndReloadOld("#checkFilesButton");
+    clickOnAndReloadOld("#butReport");
     FxAssert.verifyThat("#tab_reports", NodeMatchers.isNull());
   }
 }
