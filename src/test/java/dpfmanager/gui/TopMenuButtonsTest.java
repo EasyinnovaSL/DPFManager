@@ -31,20 +31,22 @@ public class TopMenuButtonsTest extends ApplicationTest {
 
     // checker -- about
     clickOnAndReload("#butAbout");
+    FxAssert.verifyThat("#butAbout", NodeMatchers.isNull());
     // about -- reports
     clickOnAndReload("#butReport");
+    FxAssert.verifyThat("#butReport", NodeMatchers.isNull());
     // reports -- checker
     clickOnAndReload("#butChecker");
-    sleep(1000);
-    reloadScene();
+    FxAssert.verifyThat("#butChecker", NodeMatchers.isNull());
     // checker -- reports
     clickOnAndReload("#butReport");
+    FxAssert.verifyThat("#butReport", NodeMatchers.isNull());
     // reports -- about
     clickOnAndReload("#butAbout");
+    FxAssert.verifyThat("#butAbout", NodeMatchers.isNull());
     // about -- checker
     clickOnAndReload("#butChecker");
-    // test we are back to conformance checker
-    FxAssert.verifyThat("#checkFilesButton", NodeMatchers.isNotNull());
+    FxAssert.verifyThat("#butChecker", NodeMatchers.isNull());
   }
 
 }

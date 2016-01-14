@@ -23,7 +23,7 @@ public class FailTest extends ApplicationTest {
   }
 
   @Test
-  public void testButtonsBelow() throws Exception {
+  public void testButtonsNoScroll() throws Exception {
     //Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
     System.out.println("Running check buttons test...");

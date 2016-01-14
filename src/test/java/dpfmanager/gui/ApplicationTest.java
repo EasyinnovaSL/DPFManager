@@ -36,7 +36,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   final static int width = 970;
-  final static int height = 950;
+  final static int height = 500;
 
   static Stage stage;
   protected Scene scene;
@@ -52,7 +52,6 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       stage.setScene(new Scene(sceneRoot, width, height));
       stage.setX(0);
       stage.setY(0);
-      stage.setMinHeight(height);
 
       stage.show();
       stage.toBack();
@@ -89,7 +88,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     FxToolkit.hideStage();
   }
 
-  public void clickOnAndReload(String id){
+  public void clickOnAndReloadOld(String id){
     clickOn(id);
     scene = stage.getScene();
   }
@@ -101,12 +100,11 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     //Click and scroll
     clickOnAndReload(id);
     Node node = scene.lookup(id);
-    if (node == null)
     restartScroll();
-    while (node != null && scroll < 500) {
+    while (node != null && scroll < 100) {
       System.out.println("scroll");
       scroll = scroll + 5;
-      robotContext().getMouseRobot().scroll(scroll);
+      robotContext().getScrollRobot().scrollDown(scroll);
       clickOnAndReload(id);
       node = scene.lookup(id);
     }
@@ -115,17 +113,21 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
   }
 
-  public void clickOnAndReloadNew(String id) throws FxRobotException {
-    //Move to the window
-    moveTo(100, 100);
-
+  public void clickOnAndReload(String id) throws FxRobotException {
     //Click and scroll
     boolean ret = clickOnCustom(id);
+    if (ret){
+      scene = stage.getScene();
+      return;
+    }
+
+    // Else Scroll
+    moveTo(100, 100);
     restartScroll();
     while (!ret && scroll < 500) {
       System.out.println("scroll");
       scroll = scroll + 5;
-      robotContext().getMouseRobot().scroll(scroll);
+      robotContext().getScrollRobot().scrollDown(scroll);
       ret = clickOnCustom(id);
     }
     if (scroll == 500){
@@ -138,7 +140,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   private void restartScroll() {
     if (scroll > 0){ //Return to initial scroll
-      robotContext().getMouseRobot().scroll(scroll*-1);
+      robotContext().getScrollRobot().scrollUp(scroll);
       scroll = 0;
     }
   }
