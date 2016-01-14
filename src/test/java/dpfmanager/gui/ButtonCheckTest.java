@@ -43,6 +43,11 @@ public class ButtonCheckTest extends ApplicationTest {
 
     // Check files button
 //    clickOnAndReload("#butChecker");
+    moveTo(100, 100);
+//    robotContext().getMouseRobot().scroll(100);
+    robotContext().getScrollRobot().scrollDown(100);
+//    scroll(100, VerticalDirection.DOWN);
+//    sleep(1000);
     clickOnAndReload("#checkFilesButton");
     clickOnAndReload("#butReport");
     FxAssert.verifyThat("#tab_reports", NodeMatchers.isNull());

@@ -30,7 +30,7 @@
                 </VBox>
                 <VBox id="box0">
                     <children>
-                                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
+                                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
                                     <content>
                                         <AnchorPane id="pane0">
                                             <children>
