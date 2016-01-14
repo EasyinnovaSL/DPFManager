@@ -58,6 +58,7 @@
 }
 
 .button-check{
+	/*-fx-background-color: #007e05;*/
 	-fx-background-color: transparent;
 	-fx-border-width     : 0px   ;
 	-fx-border-radius: 0 0 0 0;

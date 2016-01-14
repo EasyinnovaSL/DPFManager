@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.testfx.api.FxRobot;
+import org.testfx.api.FxRobotException;
 import org.testfx.api.FxToolkit;
 import org.testfx.toolkit.ApplicationFixture;
 
@@ -28,17 +29,18 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   //Set properties for headless mode (Windows only)
   static {
     if (SystemUtils.IS_OS_WINDOWS) {
-      System.setProperty("testfx.robot", "glass");
-      System.setProperty("testfx.headless", "true");
+//      System.setProperty("testfx.robot", "glass");
+//      System.setProperty("testfx.headless", "true");
     }
   }
 
   final static int width = 970;
-  final static int height = 500;
+  final static int height = 950;
 
   static Stage stage;
   protected Scene scene;
   static SpreadsheetView view;
+  private int scroll = 0;
 
   public static Stage launch(Class<? extends Application> appClass, String... appArgs) throws Exception {
     stage = FxToolkit.registerPrimaryStage();
@@ -86,41 +88,76 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     FxToolkit.hideStage();
   }
 
-  public void clickOnAndReload(String id){
-    clickOn(id);
+  public void clickOnAndReload(String id) throws FxRobotException {
+    //Move to the window
+    moveTo(100, 100);
+
+    //Click and scroll
+    boolean ret = clickOnCustom(id);
+    restartScroll();
+    while (!ret && scroll < 500) {
+      scroll = scroll + 5;
+      robotContext().getMouseRobot().scroll(scroll);
+      ret = clickOnCustom(id);
+    }
+    if (scroll == 500){
+      throw new FxRobotException("Node "+id+" not found! Scroll timeout!");
+    }
+
+    //Reload scene
     scene = stage.getScene();
   }
 
-  public void reloadScene(){
+  private void restartScroll() {
+    if (scroll > 0){ //Return to initial scroll
+      robotContext().getMouseRobot().scroll(scroll*-1);
+      scroll = 0;
+    }
+  }
+
+  private boolean clickOnCustom(String id) {
+    try {
+      clickOn(id);
+      return true;
+    } catch (FxRobotException ex) {
+      if (ex.getMessage().contains("but no nodes were visible")) {
+        return false;
+      }
+      throw ex;
+    }
+  }
+
+  public void reloadScene() {
     scene = stage.getScene();
   }
 
-  protected void clickOnImportedConfig(String path){
+  protected void clickOnImportedConfig(String path) {
     AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
     VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
     String idToClick = "#";
-    String search = path.replaceAll("/","_").replaceAll("\\\\","_");
-    for (Node node : vbox.getChildren()){
+    String search = path.replaceAll("/", "_").replaceAll("\\\\", "_");
+    for (Node node : vbox.getChildren()) {
       RadioButton rb = (RadioButton) node;
-      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\","_");
-      if (text.endsWith(search)){
+      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\", "_");
+      if (text.endsWith(search)) {
         idToClick += rb.getId();
       }
     }
     clickOn(idToClick);
   }
-  protected void writeText(String id, String text){
+
+  protected void writeText(String id, String text) {
     TextField txtField = (TextField) scene.lookup(id);
     int length = txtField.getText().length();
     clickOn(id).eraseText(length).write(text);
   }
 
-  protected void waitForCheckFiles(int maxTimeout){
+  protected void waitForCheckFiles(int maxTimeout) {
     sleep(1000);
     int timeout = 0;
     boolean finish = false;
     while (!finish && timeout < maxTimeout) {
-      System.out.println("Inside timeout "+timeout);
+      System.out.println("Inside timeout " + timeout);
       reloadScene();
       Node node = scene.lookup("#loadingPane");
       if (node != null) {
@@ -131,7 +168,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       }
     }
     sleep(1000);
-    Assert.assertNotEquals("Check files reached timeout! ("+maxTimeout+"s)", maxTimeout, timeout);
+    Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 
 }
