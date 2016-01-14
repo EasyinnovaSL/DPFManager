@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -91,6 +92,27 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   public void clickOnAndReload(String id){
     clickOn(id);
     scene = stage.getScene();
+  }
+
+  public void clickOnAndReloadScroll(String id) throws FxRobotException {
+    //Move to the window
+    moveTo(100, 100);
+
+    //Click and scroll
+    clickOnAndReload(id);
+    Node node = scene.lookup(id);
+    if (node == null)
+    restartScroll();
+    while (node != null && scroll < 500) {
+      System.out.println("scroll");
+      scroll = scroll + 5;
+      robotContext().getMouseRobot().scroll(scroll);
+      clickOnAndReload(id);
+      node = scene.lookup(id);
+    }
+    if (scroll == 500){
+      throw new FxRobotException("Node "+id+" not found! Scroll timeout!");
+    }
   }
 
   public void clickOnAndReloadNew(String id) throws FxRobotException {

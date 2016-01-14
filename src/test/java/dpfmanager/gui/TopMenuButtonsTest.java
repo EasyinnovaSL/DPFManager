@@ -35,6 +35,8 @@ public class TopMenuButtonsTest extends ApplicationTest {
     clickOnAndReload("#butReport");
     // reports -- checker
     clickOnAndReload("#butChecker");
+    sleep(1000);
+    reloadScene();
     // checker -- reports
     clickOnAndReload("#butReport");
     // reports -- about
