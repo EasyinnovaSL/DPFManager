@@ -9,11 +9,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="rootMain" alignment="TOP_CENTER" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox fx:id="rootMain" alignment="TOP_CENTER" prefHeight="990.0" prefWidth="1016.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
-        <BorderPane><top>
             <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
-                <VBox>
+                <VBox alignment="TOP_CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0">
                     <children>
                         <Pane fx:id="topMenuImage1" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
                             <Button id="butReport" fx:id="butReport" layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
@@ -31,9 +30,7 @@
                 </VBox>
                 <VBox id="box0">
                     <children>
-                        <AnchorPane id="paneMain" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
-                            <children>
-                                <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER">
+                                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
                                     <content>
                                         <AnchorPane id="pane0">
                                             <children>
@@ -116,11 +113,8 @@
                                         </AnchorPane>
                                     </content>
                                 </ScrollPane>
-                            </children>
-                        </AnchorPane>
                     </children>
                 </VBox>
             </SplitPane>
-        </top></BorderPane>
   </children>
 </VBox>

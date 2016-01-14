@@ -2,6 +2,7 @@ package dpfmanager.gui;
 
 import dpfmanager.MainApp;
 import javafx.geometry.VerticalDirection;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 
@@ -10,7 +11,6 @@ import org.testfx.api.FxAssert;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 
-import java.awt.*;
 
 /**
  * Created by Adrià Llorens on 13/01/2016.
@@ -36,12 +36,10 @@ public class ButtonCheckTest extends ApplicationTest {
 //    clickOnAndReload("#continue1");
 //    clickOnAndReload("#continue2");
 //    scroll(10, VerticalDirection.DOWN);
-//    moveTo("#continue3");
-////    clickOnAndReload("#continue3");
-//    this.press(MouseButton.PRIMARY);
-//    sleep(250);
-//    this.release(MouseButton.PRIMARY);
-//    FxAssert.verifyThat("#continue4", NodeMatchers.isNotNull());
+//    reloadScene();
+//    Button but = (Button) scene.lookup("#continue3");
+//    clickOnAndReload("#continue3");
+//    FxAssert.verifyThat("#continue3", NodeMatchers.isNull());
 
     // Check files button
 //    clickOnAndReload("#butChecker");
