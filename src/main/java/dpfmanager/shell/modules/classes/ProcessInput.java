@@ -51,6 +51,7 @@ public class ProcessInput {
    * @param checkEP           the check ep
    * @param checkIT           the check it
    * @param checkPC           the check pc
+   * @param scene           the JavaFX scene
    */
   public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT, boolean checkPC, Scene scene) {
     this.allowedExtensions = allowedExtensions;

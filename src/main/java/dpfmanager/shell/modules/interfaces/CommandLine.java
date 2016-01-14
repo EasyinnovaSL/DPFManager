@@ -130,6 +130,8 @@ public class CommandLine extends UserInterface {
         }
       } else if (arg.equals("-s")) {
         silence = true;
+      } else if (arg.equals("-r")) {
+        recursive = Integer.MAX_VALUE;
       } else if (arg.startsWith("-r") && isNumeric(arg.substring(2))) {
         recursive = Integer.parseInt(arg.substring(2));
       } else if (arg.equals("-configuration")) {

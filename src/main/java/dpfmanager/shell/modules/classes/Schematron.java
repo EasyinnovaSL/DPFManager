@@ -252,21 +252,23 @@ public class Schematron extends CamelTestSupport {
   /**
    * Test xml string.
    *
-   * @param xmlFile the xml file
+   * @param xmlFileOriginal the xml file
    * @param schema  the schema
    * @return the string
    * @throws Exception the exception
    */
-  public String testXML(String xmlFile, String schema) throws Exception {
+  public String testXML(String xmlFileOriginal, String schema) throws Exception {
     String result;
     try {
+      String xmlFile = xmlFileOriginal;
+      if (!xmlFileOriginal.contains("<?xml version"))
+        xmlFile = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + xmlFile;
       InputStream sc = getInputStream(schema);
-      String payload = xmlFile;
       TransformerFactory factory = new TransformerFactoryImpl();
       factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR));
       Templates rules = TemplatesFactory.newInstance().newTemplates(sc);
       SchematronProcessor proc = SchematronProcessorFactory.newScehamtronEngine(rules);
-      result = proc.validate(payload);
+      result = proc.validate(xmlFile);
       result = result.substring(0, result.indexOf("<!--")) + result.substring(result.indexOf("-->")+3);
     } catch (Exception ex) {
       result = "";

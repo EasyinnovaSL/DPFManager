@@ -570,6 +570,7 @@ public class ReportGenerator {
    *
    * @param reportName the output file name
    * @param ir         the individual report
+   * @param outputFolder the output report folder
    */
   public void generateIndividualReport(String reportName, IndividualReport ir, String outputFolder) {
     String output;
