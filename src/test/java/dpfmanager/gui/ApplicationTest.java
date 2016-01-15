@@ -1,6 +1,5 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.modules.reporting.ReportGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -40,7 +39,9 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   final static int width = 970;
-  final static int height = 950;
+  final static int height = 800;
+  final static int baseW = 0;
+  final static int baseH = 25;
 
   static Stage stage;
   protected Scene scene;
@@ -54,8 +55,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       StackPane sceneRoot = new StackPane(view);
 
       stage.setScene(new Scene(sceneRoot, width, height));
-      stage.setX(0);
-      stage.setY(0);
+      stage.setX(baseW);
+      stage.setY(baseH);
 
       stage.show();
       stage.toBack();
@@ -98,7 +99,26 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     reloadScene();
   }
 
-  //Main click with scroll
+  public void clickOnAndReloadScroll(String id) throws FxRobotException {
+    //Move to the window
+    moveTo(100 + baseW, 100 + baseH);
+
+    //Click and scroll
+    clickOnAndReload(id);
+    Node node = scene.lookup(id);
+    restartScroll();
+    while (node != null && scroll < 100) {
+      System.out.println("scroll");
+      scroll = scroll + 5;
+      robotContext().getScrollRobot().scrollDown(scroll);
+      clickOnAndReload(id);
+      node = scene.lookup(id);
+    }
+    if (scroll == 500){
+      throw new FxRobotException("Node "+id+" not found! Scroll timeout!");
+    }
+  }
+
   public ApplicationTest clickOnScroll(String id) throws FxRobotException {
     //Click without scroll
     boolean ret = clickOnCustom(id);
@@ -109,7 +129,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
     // Else Scroll
     int maxScroll = 200;
-    moveTo(100, 100);
+    moveTo(100+baseW, 100+baseH);
     restartScroll();
     while (!ret && scroll < maxScroll) {
       scroll = scroll + 10;
