@@ -48,7 +48,7 @@ public class FileCheckTest extends ApplicationTest {
   public void testFileCheck() throws Exception {
     //Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
-    System.out.println("Running check file test...");
+    System.out.println("Running file check test...");
 
     //import config file
     MainApp.setTestParam("import", inputConfigPath);
