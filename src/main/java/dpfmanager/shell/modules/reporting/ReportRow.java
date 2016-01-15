@@ -269,20 +269,11 @@ public class ReportRow {
    */
   public static ReportRow createRowFromXml(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
-    String stime = "";
     String input = "";
     File parent = new File(file.getParent());
     int n = countFiles(parent, ".xml") - 1 - countFiles(parent, "_fixed.xml");
     String xml = readFullFile(file.getPath(), Charset.defaultCharset());
-    try {
-      Path pfile = Paths.get(file.getPath());
-      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
-      stime = attr.creationTime().toString();
-      stime = stime.substring(stime.indexOf("T")+1);
-      stime = stime.substring(0, stime.indexOf("."));
-    } catch (IOException e) {
-
-    }
+    String stime = getStime(file.getPath());
     int passed = 0, errors = 0, warnings = 0, score = 0;
     File folder = new File(file.getParentFile().getAbsolutePath());
     for (final File fileEntry : folder.listFiles()) {
@@ -356,20 +347,11 @@ public class ReportRow {
    */
   public static ReportRow createRowFromHtml(String reportDay, File file) {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
-    String stime = "";
     File parent = new File(file.getParent() + "/html");
     int n = countFiles(parent, ".html") - countFiles(parent, "_fixed.html");
     String html = readFullFile(file.getPath(), Charset.defaultCharset());
     int passed = 0, errors = 0, warnings = 0, score = 0;
-    try {
-      Path pfile = Paths.get(file.getPath());
-      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
-      stime = attr.creationTime().toString();
-      stime = stime.substring(stime.indexOf("T")+1);
-      stime = stime.substring(0, stime.indexOf("."));
-    } catch (IOException e) {
-
-    }
+    String stime = getStime(file.getPath());
     String input = "";
     File folder = new File(file.getParentFile().getAbsolutePath() + "/html");
     if (folder.exists()) {
@@ -474,16 +456,7 @@ public class ReportRow {
     int passed = 0, errors = 0, warnings = 0, score = 0;
     String json = readFullFile(file.getPath(), Charset.defaultCharset());
     JsonObject jObj = new JsonParser().parse(json).getAsJsonObject();
-    String stime = "";
-    try {
-      Path pfile = Paths.get(file.getPath());
-      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
-      stime = attr.creationTime().toString();
-      stime = stime.substring(stime.indexOf("T")+1);
-      stime = stime.substring(0, stime.indexOf("."));
-    } catch (IOException e) {
-
-    }
+    String stime = getStime(file.getPath());
     String input = "";
     File folder = new File(file.getParentFile().getAbsolutePath());
     for (final File fileEntry : folder.listFiles()) {
@@ -556,16 +529,7 @@ public class ReportRow {
     String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
     String n = "?";
     String passed = "?", errors = "?", warnings = "?", score = "?";
-    String stime = "";
-    try {
-      Path pfile = Paths.get(file.getPath());
-      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
-      stime = attr.creationTime().toString();
-      stime = stime.substring(stime.indexOf("T")+1);
-      stime = stime.substring(0, stime.indexOf("."));
-    } catch (IOException e) {
-
-    }
+    String stime = getStime(file.getPath());
     String input = "";
     File folder = new File(file.getParentFile().getAbsolutePath());
     for (final File fileEntry : folder.listFiles()) {
@@ -585,6 +549,24 @@ public class ReportRow {
 
     ReportRow row = new ReportRow(sdate, stime, input, n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
     return row;
+  }
+
+  private static String getStime(String path){
+    try {
+      String stime = "";
+      Path pfile = Paths.get(path);
+      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
+      stime = attr.creationTime().toString();
+      stime = stime.substring(stime.indexOf("T")+1);
+      int index = stime.indexOf(".");
+      if (index == -1){
+        index = stime.indexOf("Z");
+      }
+      stime = stime.substring(0, index);
+      return stime;
+    } catch (Exception e) {
+      return "";
+    }
   }
 }
 

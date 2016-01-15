@@ -40,7 +40,7 @@ public class ButtonCheckTest extends ApplicationTest {
     clickOnAndReload("#newButton");
     clickOnAndReload("#continue1");
     clickOnAndReload("#continue2");
-    clickOnAndReloadScroll("#continue3");
+    clickOnAndReload("#continue3");
     FxAssert.verifyThat("#continue3", NodeMatchers.isNull());
 
     // Check files button

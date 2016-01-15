@@ -50,6 +50,9 @@ public class FileCheckTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
     System.out.println("Running file check test...");
 
+    //Get the current reports number
+    int nReports = getCurrentReports();
+
     //import config file
     MainApp.setTestParam("import", inputConfigPath);
     clickOnScroll("#importButton");
@@ -63,7 +66,7 @@ public class FileCheckTest extends ApplicationTest {
     clickOnAndReload("#butReport");
     TableView<ReportRow> table = (TableView) scene.lookup("#tab_reports");
     ReportRow row = table.getItems().get(0);
-    Assert.assertEquals("Reports table rows", 1, table.getItems().size());
+    Assert.assertEquals("Reports table rows", nReports+1, table.getItems().size());
     Assert.assertEquals("Report row N files", "3", row.getNfiles());
     Assert.assertEquals("Report row N passed", "1 passed", row.getPassed());
     Assert.assertEquals("Report row N errors", "2 errors", row.getErrors());
@@ -90,21 +93,6 @@ public class FileCheckTest extends ApplicationTest {
     textArea = (TextArea) scene.lookup("#textAreaReport");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
     Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
-  }
-
-  private void clickOnImportedConfig(String path) {
-    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
-    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
-    String idToClick = "#";
-    String search = path.replaceAll("/", "_").replaceAll("\\\\", "_");
-    for (Node node : vbox.getChildren()) {
-      RadioButton rb = (RadioButton) node;
-      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\", "_");
-      if (text.endsWith(search)) {
-        idToClick += rb.getId();
-      }
-    }
-    clickOnScroll(idToClick);
   }
 }
 

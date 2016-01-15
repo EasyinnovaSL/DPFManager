@@ -223,6 +223,7 @@
 			<artifactId>testfx-core</artifactId>
 			<version>4.0.1-alpha</version>
 			<type>jar</type>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -230,6 +231,7 @@
 			<artifactId>testfx-junit</artifactId>
 			<version>4.0.1-alpha</version>
 			<type>jar</type>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -385,6 +387,7 @@
 						</executions>
 					</plugin>
 					<plugin>
+						<!--WINDOWS-->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.19.1</version>
@@ -393,12 +396,13 @@
 							<additionalClasspathElements>
 								<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
 							</additionalClasspathElements>
-							<excludes>
-								<exclude>**/*Test.java</exclude>
-							</excludes>
-							<includes>
-								<include>RunTestOnly.java</include>
-							</includes>
+							<!--<excludes>-->
+								<!--<exclude>dpfmanager.gui</exclude>-->
+								<!--<exclude>dpfmanager.commandline</exclude>-->
+							<!--</excludes>-->
+							<!--<includes>-->
+								<!--<include>dpfmanager.RunTestOnly</include>-->
+							<!--</includes>-->
 						</configuration>
 					</plugin>
 				</plugins>
@@ -511,6 +515,26 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					
+					<plugin>
+						<!-- LINUX MAC -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.19.1</version>
+						<configuration>
+							<reuseForks>false</reuseForks>
+							<additionalClasspathElements>
+								<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
+							</additionalClasspathElements>
+							<!--<excludes>-->
+								<!--<exclude>dpfmanager.gui</exclude>-->
+								<!--<exclude>dpfmanager.commandline</exclude>-->
+							<!--</excludes>-->
+							<!--<includes>-->
+								<!--<include>dpfmanager.RunTestOnly</include>-->
+							<!--</includes>-->
+						</configuration>
 					</plugin>
 				</plugins>
 				<resources>

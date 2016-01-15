@@ -1010,7 +1010,7 @@ public class MainApp extends Application {
       );
 
       TableColumn colFile = new TableColumn("Input");
-      colFile.setMinWidth(230);
+      colFile.setMinWidth(200);
       colFile.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("input")
       );
@@ -1046,7 +1046,7 @@ public class MainApp extends Application {
       );
 
       TableColumn colFormats = new TableColumn("Formats");
-      colFormats.setMinWidth(90);
+      colFormats.setMinWidth(150);
       colFormats.setCellValueFactory(
           new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
       );
@@ -1057,7 +1057,7 @@ public class MainApp extends Application {
       tabReports.setLayoutX(82.0);
       tabReports.setLayoutY(270.0);
       tabReports.setPrefHeight(470.0);
-      tabReports.setPrefWidth(835.0);
+      tabReports.setPrefWidth(840.0);
       tabReports.setCursor(Cursor.DEFAULT);
 
       changeColumnTextColor(colDate, Color.LIGHTGRAY);
@@ -1099,6 +1099,8 @@ public class MainApp extends Application {
       alert.setHeaderText("An error occured");
       alert.setContentText(ex.toString());
       alert.showAndWait();
+      System.out.println(ex.toString());
+      ex.printStackTrace();
     }
   }
 

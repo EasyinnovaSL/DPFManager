@@ -1,5 +1,6 @@
 package dpfmanager.gui;
 
+import dpfmanager.shell.modules.reporting.ReportGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -22,6 +23,9 @@ import org.testfx.api.FxRobotException;
 import org.testfx.api.FxToolkit;
 import org.testfx.toolkit.ApplicationFixture;
 
+import java.io.File;
+import java.util.List;
+
 /**
  * Created by Adrià Llorens on 30/12/2015.
  */
@@ -36,7 +40,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   final static int width = 970;
-  final static int height = 500;
+  final static int height = 950;
 
   static Stage stage;
   protected Scene scene;
@@ -94,28 +98,9 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     reloadScene();
   }
 
-  public void clickOnAndReloadScroll(String id) throws FxRobotException {
-    //Move to the window
-    moveTo(100, 100);
-
-    //Click and scroll
-    clickOnAndReload(id);
-    Node node = scene.lookup(id);
-    restartScroll();
-    while (node != null && scroll < 100) {
-      System.out.println("scroll");
-      scroll = scroll + 5;
-      robotContext().getScrollRobot().scrollDown(scroll);
-      clickOnAndReload(id);
-      node = scene.lookup(id);
-    }
-    if (scroll == 500){
-      throw new FxRobotException("Node "+id+" not found! Scroll timeout!");
-    }
-  }
-
+  //Main click with scroll
   public ApplicationTest clickOnScroll(String id) throws FxRobotException {
-    //Click and scroll
+    //Click without scroll
     boolean ret = clickOnCustom(id);
     if (ret){
       scene = stage.getScene();
@@ -127,7 +112,6 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     moveTo(100, 100);
     restartScroll();
     while (!ret && scroll < maxScroll) {
-      System.out.println("scroll");
       scroll = scroll + 10;
       robotContext().getScrollRobot().scrollDown(scroll);
       ret = clickOnCustom(id);
@@ -172,7 +156,6 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     int timeout = 0;
     boolean finish = false;
     while (!finish && timeout < maxTimeout) {
-      System.out.println("Inside timeout " + timeout);
       reloadScene();
       Node node = scene.lookup("#loadingPane");
       if (node != null) {
@@ -186,4 +169,33 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 
+  protected int getCurrentReports(){
+    int nReports = 0;
+    String path = ReportGenerator.getReportsFolder();
+    File reports = new File(path);
+
+    File[] dates = reports.listFiles();
+    for (File date : dates){
+      if (date.isDirectory()){
+        File[] ids = date.listFiles();
+        nReports = nReports + ids.length;
+      }
+    }
+    return nReports;
+  }
+
+  protected void clickOnImportedConfig(String path) {
+    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
+    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
+    String idToClick = "#";
+    String search = path.replaceAll("/", "_").replaceAll("\\\\", "_");
+    for (Node node : vbox.getChildren()) {
+      RadioButton rb = (RadioButton) node;
+      String text = rb.getText().replaceAll("/", "_").replaceAll("\\\\", "_");
+      if (text.endsWith(search)) {
+        idToClick += rb.getId();
+      }
+    }
+    clickOnScroll(idToClick);
+  }
 }
