@@ -1,5 +1,6 @@
 package dpfmanager.gui;
 
+import dpfmanager.shell.modules.reporting.ReportGenerator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
