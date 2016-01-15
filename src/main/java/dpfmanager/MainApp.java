@@ -221,7 +221,7 @@ public class MainApp extends Application {
       CreateDefaultConfigurationFiles();
     } else {
       ShowMain();
-      resize(thestage.getScene(), thestage.getWidth() - 1);
+//      resize(thestage.getScene(), thestage.getWidth() - 1);
     }
   }
 
@@ -277,7 +277,7 @@ public class MainApp extends Application {
 
     thestage.setTitle("DPFManager");
     thestage.setScene(scenemain);
-    thestage.sizeToScene();
+//    thestage.sizeToScene();
     thestage.show();
 
     SplitPane splitPa1 = (SplitPane) scenemain.lookup("#splitPa1");

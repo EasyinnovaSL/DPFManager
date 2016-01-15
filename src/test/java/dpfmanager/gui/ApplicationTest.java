@@ -36,7 +36,9 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   final static int width = 970;
-  final static int height = 500;
+  final static int height = 800;
+  final static int baseW = 0;
+  final static int baseH = 25;
 
   static Stage stage;
   protected Scene scene;
@@ -50,8 +52,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       StackPane sceneRoot = new StackPane(view);
 
       stage.setScene(new Scene(sceneRoot, width, height));
-      stage.setX(0);
-      stage.setY(0);
+      stage.setX(baseW);
+      stage.setY(baseH);
 
       stage.show();
       stage.toBack();
@@ -96,7 +98,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   public void clickOnAndReloadScroll(String id) throws FxRobotException {
     //Move to the window
-    moveTo(100, 100);
+    moveTo(100 + baseW, 100 + baseH);
 
     //Click and scroll
     clickOnAndReload(id);
@@ -124,7 +126,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
     // Else Scroll
     int maxScroll = 200;
-    moveTo(100, 100);
+    moveTo(100+baseW, 100+baseH);
     restartScroll();
     while (!ret && scroll < maxScroll) {
       System.out.println("scroll");
