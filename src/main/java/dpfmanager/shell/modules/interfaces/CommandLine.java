@@ -111,7 +111,7 @@ public class CommandLine extends UserInterface {
           outputFolder = params.get(++idx);
           File tmp = new File(outputFolder);
           if (!tmp.exists()) {
-            if (!tmp.mkdir()) {
+            if (!tmp.mkdirs()) {
               System.out.println("Cannot create the output folder. Ignoring ouput folder.");
               outputFolder = null;
             }

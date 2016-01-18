@@ -144,6 +144,46 @@ public class ReportGeneratorTest extends TestCase {
     Platform.exit();
   }
 
+  public void testReportsFileGenerateFolder() throws Exception {
+    UserInterface.setFeedback(false);
+
+    String[] args = new String[4];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = "testFolder1/testFolder2";
+
+    Application.Parameters params=new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        for (String arg : args) listRaw.add(arg);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw=new ArrayList<String>();
+        for (String arg : args) listRaw.add(arg);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+
+    String path = "testFolder1/testFolder2";
+
+    File directori = new File(path);
+    assertEquals(4, directori.list().length);
+    Platform.exit();
+  }
+
   public void testReportsFolder() throws Exception {
     UserInterface.setFeedback(false);
 
