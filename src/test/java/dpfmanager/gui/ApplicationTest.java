@@ -40,7 +40,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   final static int width = 970;
-  final static int height = 800;
+  final static int height = 500;
   final static int baseW = 0;
   final static int baseH = 25;
 
