@@ -196,7 +196,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     File reports = new File(path);
 
     File[] dates = reports.listFiles();
-    if (dates.length == 0){
+    if (dates == null || dates.length == 0){
       return 0;
     }
     for (File date : dates){
