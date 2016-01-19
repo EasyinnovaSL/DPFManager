@@ -1,0 +1,8 @@
+ISO	Baseline
+ISO	Tiff/IT
+FORMAT	HTML
+FORMAT	XML
+FORMAT	JSON
+FORMAT	PDF
+RULE	ImageHeight,<,1000
+FIX	Artist,Add Tag,EasyTest
