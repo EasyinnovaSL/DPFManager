@@ -174,10 +174,13 @@ public class ReportPDF extends ReportGeneric {
       contentStream.drawXObject( ximage, pos_x, pos_y, image_width, image_height );
       if (check) new File(imgPath).delete();
 
-      // Image name
+      // Image name & path
       font_size = 12;
       pos_y += image_height;
       writeText(contentStream, ir.getFileName(), pos_x + image_width + 10, pos_y - 12, font, font_size);
+      font_size = 11;
+      pos_y -= 20;
+      writeText(contentStream, ir.getFilePath(), pos_x + image_width + 10, pos_y - 12, font, font_size);
 
       // Image alert
       pos_y -= 30;
