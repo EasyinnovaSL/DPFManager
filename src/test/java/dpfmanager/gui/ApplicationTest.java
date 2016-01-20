@@ -8,10 +8,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Light;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import com.google.common.base.Optional;
 
 import org.apache.commons.lang.SystemUtils;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
@@ -21,8 +24,10 @@ import org.junit.Before;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxRobotException;
 import org.testfx.api.FxToolkit;
+import org.testfx.service.query.NodeQuery;
 import org.testfx.toolkit.ApplicationFixture;
 
+import java.awt.*;
 import java.io.File;
 import java.util.List;
 
@@ -100,27 +105,18 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     reloadScene();
   }
 
-  public void clickOnAndReloadScroll(String id) throws FxRobotException {
-    //Move to the window
-    moveTo(100 + baseW, 100 + baseH);
-
-    //Click and scroll
-    clickOnAndReload(id);
-    Node node = scene.lookup(id);
-    restartScroll();
-    while (node != null && scroll < 100) {
-      System.out.println("scroll");
-      scroll = scroll + 5;
-      robotContext().getScrollRobot().scrollDown(scroll);
-      clickOnAndReload(id);
-      node = scene.lookup(id);
-    }
-    if (scroll == 500){
-      throw new FxRobotException("Node "+id+" not found! Scroll timeout!");
-    }
-  }
-
   public ApplicationTest clickOnScroll(String id) throws FxRobotException {
+    // Check if the node if at limit. Position < height + base Height - 5
+    // If it is, make one scroll and finish
+    if (moveToCustom(id)){
+      int y = getMousePosition();
+      int minH = height + baseH -5;
+      int maxH = height +baseH +5;
+      if (minH < y && y < maxH){
+        makeScroll(1);
+      }
+    }
+
     //Click without scroll
     boolean ret = clickOnCustom(id);
     if (ret){
@@ -129,12 +125,10 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
 
     // Else Scroll
-    int maxScroll = 200;
-    moveTo(100+baseW, 100+baseH);
+    int maxScroll = 150;
     restartScroll();
     while (!ret && scroll < maxScroll) {
-      scroll = scroll + 10;
-      robotContext().getScrollRobot().scrollDown(scroll);
+      makeScroll(5);
       ret = clickOnCustom(id);
     }
     if (scroll == maxScroll){
@@ -144,15 +138,34 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   private void restartScroll() {
+    moveTo(100+baseW, 100+baseH);
     if (scroll > 0){ //Return to initial scroll
       robotContext().getScrollRobot().scrollUp(scroll);
       scroll = 0;
     }
   }
 
+  private void makeScroll(int x){
+    moveTo(100+baseW, 100+baseH);
+    scroll = scroll + x;
+    robotContext().getScrollRobot().scrollDown(scroll);
+  }
+
   private boolean clickOnCustom(String id) {
     try {
       clickOn(id);
+      return true;
+    } catch (FxRobotException ex) {
+      if (ex.getMessage().contains("but no nodes were visible")) {
+        return false;
+      }
+      throw ex;
+    }
+  }
+
+  private boolean moveToCustom(String id) {
+    try {
+      moveTo(id);
       return true;
     } catch (FxRobotException ex) {
       if (ex.getMessage().contains("but no nodes were visible")) {
@@ -188,6 +201,11 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
     sleep(1000);
     Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
+  }
+
+  private int getMousePosition(){
+    Point point = MouseInfo.getPointerInfo().getLocation();
+    return (int) point.getY();
   }
 
   protected int getCurrentReports(){
