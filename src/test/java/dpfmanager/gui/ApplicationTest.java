@@ -113,7 +113,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       int minH = height + baseH -5;
       int maxH = height +baseH +5;
       if (minH < y && y < maxH){
-        makeScroll(1);
+        makeScroll(1,true);
       }
     }
 
@@ -128,7 +128,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     int maxScroll = 150;
     restartScroll();
     while (!ret && scroll < maxScroll) {
-      makeScroll(5);
+      makeScroll(10,false);
       ret = clickOnCustom(id);
     }
     if (scroll == maxScroll){
@@ -138,15 +138,17 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   private void restartScroll() {
-    moveTo(100+baseW, 100+baseH);
+    moveTo(100 + baseW, 100 + baseH);
     if (scroll > 0){ //Return to initial scroll
       robotContext().getScrollRobot().scrollUp(scroll);
       scroll = 0;
     }
   }
 
-  private void makeScroll(int x){
-    moveTo(100+baseW, 100+baseH);
+  private void makeScroll(int x, boolean move){
+    if (move) {
+      moveTo(100 + baseW, 100 + baseH);
+    }
     scroll = scroll + x;
     robotContext().getScrollRobot().scrollDown(scroll);
   }

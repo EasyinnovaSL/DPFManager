@@ -50,40 +50,39 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnScroll("#radProf1");
     clickOnScroll("#radProf2");
     clickOnScroll("#radProf4");
-//    clickOnAndReload("#continue1");
-    FxAssert.verifyThat("#radProf4", new isChecked());
+    clickOnAndReload("#continue1");
 
-//    // 3 - Add Rule
-//    addRule("ImageWidth", ">", "500");
-//    addRule("ImageHeight", "<", "1000");
-//    clickOnScroll("#ID0 #removeButton");
-//    clickOnAndReload("#continue2");
-//
-//    // 4 - Repot format
-//    clickOnScroll("#chkHtml");
-//    clickOnScroll("#chkPdf");
-//    clickOnAndReload("#continue3");
-//
-//    // 5 - Add Fix
-//    addFix("Add Tag", "Artist", "EasyTest");
-//    addFix("Remove Tag", "Copyright", "Easyinnova");
-//    clickOnScroll("#ID3 #removeButton");
-//    clickOnAndReload("#continue4");
-//
-//    // 6 - Save the report
-//    MainApp.setTestParam("saveConfig",outputPath);
-//    clickOnScroll("#saveReportButton");
-//
-//    // Print generated file
-////    System.out.println("\nOutput file:");
-////    printFile(outputPath);
-////    System.out.println("\nExpected file:");
-////    printFile(expectedPath);
-//
-//    // Compare Result
-//    String expected = FileUtils.readFileToString(new File(expectedPath), "utf-8").replace("\r", "");
-//    String output = FileUtils.readFileToString(new File(outputPath), "utf-8").replace("\r", "");
-//    Assert.assertEquals("Config files differ!", expected, output);
+    // 3 - Add Rule
+    addRule("ImageWidth", ">", "500");
+    addRule("ImageHeight", "<", "1000");
+    clickOnScroll("#ID0 #removeButton");
+    clickOnAndReload("#continue2");
+
+    // 4 - Repot format
+    clickOnScroll("#chkHtml");
+    clickOnScroll("#chkPdf");
+    clickOnAndReload("#continue3");
+
+    // 5 - Add Fix
+    addFix("Add Tag", "Artist", "EasyTest");
+    addFix("Remove Tag", "Copyright", "Easyinnova");
+    clickOnScroll("#ID3 #removeButton");
+    clickOnAndReload("#continue4");
+
+    // 6 - Save the report
+    MainApp.setTestParam("saveConfig",outputPath);
+    clickOnScroll("#saveReportButton");
+
+    // Print generated file
+//    System.out.println("\nOutput file:");
+//    printFile(outputPath);
+//    System.out.println("\nExpected file:");
+//    printFile(expectedPath);
+
+    // Compare Result
+    String expected = FileUtils.readFileToString(new File(expectedPath), "utf-8").replace("\r", "");
+    String output = FileUtils.readFileToString(new File(outputPath), "utf-8").replace("\r", "");
+    Assert.assertEquals("Config files differ!", expected, output);
   }
 
   private void addRule(String tag, String op, String text) {
