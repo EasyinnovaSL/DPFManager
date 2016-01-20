@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.function.Predicate;
 
+import javax.xml.bind.SchemaOutputResolver;
+
 /**
  * Created by Adrià Llorens on 30/12/2015.
  */
@@ -70,7 +72,10 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnScroll("#saveReportButton");
 
     // Print generated file
-//    printFile(outputPath);
+    System.out.println("\nOutput file:");
+    printFile(outputPath);
+    System.out.println("\nExpected file:");
+    printFile(expectedPath);
 
     // Compare Result
     String expected = FileUtils.readFileToString(new File(expectedPath), "utf-8").replace("\r", "");
