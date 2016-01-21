@@ -239,6 +239,16 @@ public class ReportXml extends ReportGeneric {
   private static Element buildReportIndividual(Document doc, IndividualReport ir) {
     Element report = doc.createElement("report");
 
+    // file info
+    Element fileInfoStructure = doc.createElement("file_info");
+    Element nameElement = doc.createElement("name");
+    nameElement.setTextContent(ir.getFileName());
+    Element pathElement = doc.createElement("fullpath");
+    pathElement.setTextContent(ir.getFilePath());
+    fileInfoStructure.appendChild(nameElement);
+    fileInfoStructure.appendChild(pathElement);
+    report.appendChild(fileInfoStructure);
+
     // tiff structure
     Element tiffStructureElement = doc.createElement("tiff_structure");
     Element ifdTree = doc.createElement("ifdTree");

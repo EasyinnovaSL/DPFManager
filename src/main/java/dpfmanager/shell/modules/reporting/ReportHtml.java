@@ -68,6 +68,7 @@ public class ReportHtml extends ReportGeneric {
 
     // Basic info
     htmlBody = htmlBody.replace("##IMG_NAME##", ir.getFileName());
+    htmlBody = htmlBody.replace("##IMG_FILEPATH##", ir.getFilePath());
     int epErr = ir.getNEpErr(), epWar = ir.getNEpWar();
     int blErr = ir.getNBlErr(), blWar = ir.getNBlWar();
     int itErr = ir.getNItErr(), itWar = ir.getNItWar();
