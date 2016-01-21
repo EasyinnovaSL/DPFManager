@@ -1,25 +1,16 @@
 package dpfmanager;
 
-import static java.io.File.separator;
-
-import dpfmanager.shell.modules.classes.Schematron;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
-import javafx.application.Platform;
 
-import com.easyinnova.tiff.io.TiffInputStream;
-import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.reader.TiffReader;
-import com.easyinnova.tiff.writer.TiffWriter;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -27,18 +18,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 /**
  * Created by easy on 13/10/2015.
  */
 public class FixerTest extends TestCase {
   TiffReader tr;
-
-  @After
-  public static void afterClass() {
-    Platform.exit();
-  }
 
   /**
    * Pre test.
@@ -137,8 +122,6 @@ public class FixerTest extends TestCase {
 
     FileUtils.deleteDirectory(new File(path));
 
-    Platform.exit();
-
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }
@@ -219,8 +202,6 @@ public class FixerTest extends TestCase {
 
     FileUtils.deleteDirectory(new File(path));
 
-    Platform.exit();
-
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }
@@ -299,8 +280,6 @@ public class FixerTest extends TestCase {
     assertEquals(xml_modif.contains("GPS"), false);
 
     FileUtils.deleteDirectory(new File(path));
-
-    Platform.exit();
 
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
@@ -402,8 +381,6 @@ public class FixerTest extends TestCase {
     assertEquals(html_modif.contains("Bilevel.tif.html"), true);
 
     FileUtils.deleteDirectory(new File(path));
-
-    Platform.exit();
 
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));

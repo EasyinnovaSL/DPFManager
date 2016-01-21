@@ -39,7 +39,7 @@
                                     <content>
                                         <AnchorPane prefHeight="944.0" prefWidth="974.0" styleClass="backabout" stylesheets="@/styles/style.css">
                                             <children>
-                                                <Label layoutX="27.0" layoutY="43.0" styleClass="clabel" stylesheets="@/styles/style.css" text="About DPF Manager">
+                                                <Label layoutX="27.0" layoutY="43.0" styleClass="clabel" id="aboutTitle" stylesheets="@/styles/style.css" text="About DPF Manager">
                                                     <font>
                                                         <Font name="System Bold" size="18.0" />
                                                     </font>

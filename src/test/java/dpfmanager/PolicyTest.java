@@ -3,18 +3,13 @@ package dpfmanager;
 import dpfmanager.shell.modules.interfaces.CommandLine;
 import dpfmanager.shell.modules.interfaces.UserInterface;
 import javafx.application.Application;
-import javafx.application.Platform;
 
 import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -23,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 /**
  * Created by easy on 13/10/2015.
@@ -104,7 +98,6 @@ public class PolicyTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -121,8 +114,6 @@ public class PolicyTest extends TestCase {
     assertEquals(xml_orig.contains("failed-assert"), true);
 
     FileUtils.deleteDirectory(new File(path));
-
-    Platform.exit();
 
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
@@ -180,7 +171,6 @@ public class PolicyTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -197,8 +187,6 @@ public class PolicyTest extends TestCase {
     assertEquals(xml_orig.contains("failed-assert"), false);
 
     FileUtils.deleteDirectory(new File(path));
-
-    Platform.exit();
 
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
@@ -256,7 +244,6 @@ public class PolicyTest extends TestCase {
 
     CommandLine cl = new CommandLine(params);
     cl.launch();
-    Platform.exit();
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -273,8 +260,6 @@ public class PolicyTest extends TestCase {
     assertEquals(xml_orig.contains("failed-assert"), true);
 
     FileUtils.deleteDirectory(new File(path));
-
-    Platform.exit();
 
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
