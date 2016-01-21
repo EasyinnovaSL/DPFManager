@@ -72,15 +72,16 @@ public class Gui extends UserInterface {
   }
 
   public void addRule(Scene scene, String tag, String operator, String value) {
-    Button addRule = (Button)scene.lookup("#addRule");
-    Button continueButton = (Button)scene.lookup("#continueButton");
-    Line line = (Line)scene.lookup("#line");
+    Button addRule = (Button) scene.lookup("#addRule");
+    Button continueButton = (Button) scene.lookup("#continue2");
+    Line line = (Line) scene.lookup("#line");
     int dif = 50;
     double xRule = addRule.getLayoutX() - 100;
     double yRule = addRule.getLayoutY();
 
     // Add combobox
     ComboBox comboBox = new ComboBox();
+    comboBox.setId("comboBoxTag");
     for (Field field : getFields()) {
       comboBox.getItems().add(field.getName());
     }
@@ -103,11 +104,11 @@ public class Gui extends UserInterface {
             .otherwise(new SimpleStringProperty(styleButton)
             )
     );
-    remove.setId("ID" + uniqueId);
+    remove.setId("removeButton");
     remove.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent e) {
-        deleteRule(remove.getId(), scene);
+        deleteRule(remove.getParent().getId(), scene);
       }
     });
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -116,13 +117,13 @@ public class Gui extends UserInterface {
         addOperator(item, scene);
       }
     });
-    HBox hBox = new HBox (comboBox, remove);
+    HBox hBox = new HBox(comboBox, remove);
     hBox.setId("ID" + uniqueId++);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
 
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
     ap2.getChildren().add(hBox);
 
     addRule.setLayoutY(addRule.getLayoutY() + dif);
@@ -162,6 +163,7 @@ public class Gui extends UserInterface {
               ComboBox comboBox = (ComboBox) nodeIn;
               if (comboBox.getValue() != null && comboBox.getValue().equals(item)) {
                 ComboBox comboOp = new ComboBox();
+                comboOp.setId("comboBoxOp");
                 for (String operator : operators) {
                   comboOp.getItems().add(operator);
                 }
@@ -172,7 +174,7 @@ public class Gui extends UserInterface {
                 if (hBox1.getChildren().get(1) instanceof ComboBox) {
                   ComboBox bla = (ComboBox) hBox1.getChildren().get(1);
                   String val = (String) bla.getValue();
-                  if (val!=null){
+                  if (val != null) {
                     delete_combobox = false;
                   }
                 }
@@ -189,6 +191,7 @@ public class Gui extends UserInterface {
                   hBox1.getChildren().add(comboOp);
                   if (values == null) {
                     TextField value = new NumberTextField();
+                    value.setId("textField");
                     value.getStyleClass().add("txtRule");
                     if (selectedValue != null) {
                       value.setText(selectedValue);
@@ -216,10 +219,10 @@ public class Gui extends UserInterface {
   }
 
   void deleteRule(String id, Scene scene) {
-    Button addRule = (Button)scene.lookup("#addRule");
-    Button continueButton = (Button)scene.lookup("#continueButton");
-    Line line = (Line)scene.lookup("#line");
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    Button addRule = (Button) scene.lookup("#addRule");
+    Button continueButton = (Button) scene.lookup("#continue2");
+    Line line = (Line) scene.lookup("#line");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
     ArrayList<Node> lRemove = new ArrayList<Node>();
     for (Node node : ap2.getChildren()) {
       if (node instanceof HBox) {
@@ -236,9 +239,9 @@ public class Gui extends UserInterface {
     for (Node node : lRemove) {
       ap2.getChildren().remove(node);
     }
-    if (addRule.getLayoutY()>339) {
+    if (addRule.getLayoutY() > 339) {
       addRule.setLayoutY(addRule.getLayoutY() - 50);
-      if (line.getLayoutY()>defaultLineYlayout){
+      if (line.getLayoutY() > defaultLineYlayout) {
         line.setLayoutY(line.getLayoutY() - 50);
         continueButton.setLayoutY(continueButton.getLayoutY() - 50);
       }
@@ -246,11 +249,11 @@ public class Gui extends UserInterface {
   }
 
   public void loadIsos(Scene scene, Configuration config) {
-    CheckBox radProf1 = (CheckBox)scene.lookup("#radProf1");
-    CheckBox radProf2 = (CheckBox)scene.lookup("#radProf2");
-    CheckBox radProf3 = (CheckBox)scene.lookup("#radProf3");
-    CheckBox radProf4 = (CheckBox)scene.lookup("#radProf4");
-    CheckBox radProf5 = (CheckBox)scene.lookup("#radProf5");
+    CheckBox radProf1 = (CheckBox) scene.lookup("#radProf1");
+    CheckBox radProf2 = (CheckBox) scene.lookup("#radProf2");
+    CheckBox radProf3 = (CheckBox) scene.lookup("#radProf3");
+    CheckBox radProf4 = (CheckBox) scene.lookup("#radProf4");
+    CheckBox radProf5 = (CheckBox) scene.lookup("#radProf5");
     radProf1.setSelected(config.getIsos().contains("Baseline"));
     radProf2.setSelected(config.getIsos().contains("Tiff/EP"));
     radProf3.setSelected(config.getIsos().contains("Tiff/IT"));
@@ -288,10 +291,10 @@ public class Gui extends UserInterface {
   }
 
   public void loadFormats(Scene scene, Configuration config) {
-    CheckBox chkHtml = (CheckBox)scene.lookup("#chkHtml");
-    CheckBox chkXml = (CheckBox)scene.lookup("#chkXml");
-    CheckBox chkJson = (CheckBox)scene.lookup("#chkJson");
-    CheckBox chkPdf = (CheckBox)scene.lookup("#chkPdf");
+    CheckBox chkHtml = (CheckBox) scene.lookup("#chkHtml");
+    CheckBox chkXml = (CheckBox) scene.lookup("#chkXml");
+    CheckBox chkJson = (CheckBox) scene.lookup("#chkJson");
+    CheckBox chkPdf = (CheckBox) scene.lookup("#chkPdf");
     chkHtml.setSelected(config.getFormats().contains("HTML"));
     chkXml.setSelected(config.getFormats().contains("XML"));
     chkJson.setSelected(config.getFormats().contains("JSON"));
@@ -299,8 +302,8 @@ public class Gui extends UserInterface {
   }
 
   public void loadOutput(Scene scene, Configuration config) {
-    CheckBox chkOutput = (CheckBox)scene.lookup("#chkDefaultOutput");
-    TextField txtOutput = (TextField)scene.lookup("#txtOutput");
+    CheckBox chkOutput = (CheckBox) scene.lookup("#chkDefaultOutput");
+    TextField txtOutput = (TextField) scene.lookup("#txtOutput");
     if (config.getOutput() != null) {
       chkOutput.setSelected(false);
       txtOutput.setText(config.getOutput());
@@ -322,8 +325,8 @@ public class Gui extends UserInterface {
   }
 
   public void saveOutput(Scene scene, Configuration config) {
-    CheckBox chkDefaultOutput = (CheckBox)scene.lookup("#chkDefaultOutput");
-    TextField txtOutput = (TextField)scene.lookup("#txtOutput");
+    CheckBox chkDefaultOutput = (CheckBox) scene.lookup("#chkDefaultOutput");
+    TextField txtOutput = (TextField) scene.lookup("#txtOutput");
     if (!chkDefaultOutput.isSelected()) {
       config.setOutput(txtOutput.getText());
     }
@@ -388,19 +391,19 @@ public class Gui extends UserInterface {
     fixes.ReadAutofixes(scene);
   }
 
-  public void addFix (Scene scene) {
+  public void addFix(Scene scene) {
     addFix(scene, null, null, null);
   }
 
   public void addAutoFix(Scene scene, String tag, String value) {
-    CheckBox autoFix = (CheckBox)scene.lookup("#" + tag);
+    CheckBox autoFix = (CheckBox) scene.lookup("#" + tag);
     autoFix.setSelected(value.equals("Yes"));
   }
 
-  public void addFix (Scene scene, String tag, String operator, String value) {
-    Button addFix = (Button)scene.lookup("#addFix");
-    Button continueButton = (Button)scene.lookup("#continueButton");
-    Line line = (Line)scene.lookup("#line");
+  public void addFix(Scene scene, String tag, String operator, String value) {
+    Button addFix = (Button) scene.lookup("#addFix");
+    Button continueButton = (Button) scene.lookup("#continue2");
+    Line line = (Line) scene.lookup("#line");
 
     int dif = 50;
     double xRule = addFix.getLayoutX() - 100;
@@ -408,6 +411,7 @@ public class Gui extends UserInterface {
 
     // Add combobox
     ComboBox comboBox = new ComboBox();
+    comboBox.setId("comboBoxAction");
     for (String fix : getFixes()) {
       comboBox.getItems().add(fix);
     }
@@ -436,21 +440,21 @@ public class Gui extends UserInterface {
             .otherwise(new SimpleStringProperty(styleButton)
             )
     );
-    remove.setId("ID" + uniqueId);
+    remove.setId("removeButton");
     remove.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent e) {
-        deleteFix(remove.getId(), scene);
+        deleteFix(remove.getParent().getId(), scene);
       }
     });
 
-    HBox hBox = new HBox (comboBox, remove);
+    HBox hBox = new HBox(comboBox, remove);
     hBox.setId("ID" + uniqueId++);
     hBox.setSpacing(5);
     hBox.setLayoutX(xRule);
     hBox.setLayoutY(yRule);
 
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
     ap2.getChildren().add(hBox);
 
     addFix.setLayoutY(addFix.getLayoutY() + dif);
@@ -472,7 +476,7 @@ public class Gui extends UserInterface {
 
   private void addFixValue(String item, Scene scene, String selectedOperator, String selectedValue) {
     Boolean delete_combobox;
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
     for (Node node : ap2.getChildren()) {
       delete_combobox = true;
       if (node instanceof HBox) {
@@ -482,27 +486,26 @@ public class Gui extends UserInterface {
             ComboBox comboBox = (ComboBox) nodeIn;
             if (comboBox.getValue() != null && comboBox.getValue().equals(item)) {
               ComboBox comboOp = new ComboBox();
+              comboOp.setId("comboBoxField");
               for (String field : getFixFields()) {
                 comboOp.getItems().add(field);
               }
-              if (selectedOperator != null ) {
+              if (selectedOperator != null) {
                 comboOp.setValue(selectedOperator);
               }
               Button bRemove = null;
               if (hBox1.getChildren().get(1) instanceof ComboBox) {
                 ComboBox bla = (ComboBox) hBox1.getChildren().get(1);
                 String val = (String) bla.getValue();
-                if (val!=null){
+                if (val != null) {
                   delete_combobox = false;
                 }
               }
               if (delete_combobox) {
                 while (hBox1.getChildren().size() > 1) {
-                  for (int i=1;i<hBox1.getChildren().size();i++)
-                  {
-                    if (hBox1.getChildren().get(i) instanceof Button)
-                    {
-                      bRemove = (Button)hBox1.getChildren().get(i);
+                  for (int i = 1; i < hBox1.getChildren().size(); i++) {
+                    if (hBox1.getChildren().get(i) instanceof Button) {
+                      bRemove = (Button) hBox1.getChildren().get(i);
                     }
                     hBox1.getChildren().remove(i);
                   }
@@ -512,6 +515,7 @@ public class Gui extends UserInterface {
 
                 if (item.equals("Add Tag")) {
                   TextField value = new TextField();
+                  value.setId("textField");
                   value.getStyleClass().add("txtFix");
                   if (selectedValue != null) {
                     value.setText(selectedValue);
@@ -530,10 +534,10 @@ public class Gui extends UserInterface {
   }
 
   void deleteFix(String id, Scene scene) {
-    Button addFix = (Button)scene.lookup("#addFix");
-    Button continueButton = (Button)scene.lookup("#continueButton");
-    Line line = (Line)scene.lookup("#line");
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
+    Button addFix = (Button) scene.lookup("#addFix");
+    Button continueButton = (Button) scene.lookup("#continue2");
+    Line line = (Line) scene.lookup("#line");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
     ArrayList<Node> lRemove = new ArrayList<Node>();
     for (Node node : ap2.getChildren()) {
       if (node instanceof HBox) {
@@ -550,9 +554,9 @@ public class Gui extends UserInterface {
     for (Node node : lRemove) {
       ap2.getChildren().remove(node);
     }
-    if (addFix.getLayoutY()>339) {
+    if (addFix.getLayoutY() > 339) {
       addFix.setLayoutY(addFix.getLayoutY() - 50);
-      if (line.getLayoutY()>defaultLineYlayout){
+      if (line.getLayoutY() > defaultLineYlayout) {
         line.setLayoutY(line.getLayoutY() - 50);
         continueButton.setLayoutY(continueButton.getLayoutY() - 50);
       }
@@ -560,7 +564,7 @@ public class Gui extends UserInterface {
   }
 
   void setLabel(String labelName, Scene scene, String txt) {
-    Label lab = (Label)scene.lookup("#" + labelName);
+    Label lab = (Label) scene.lookup("#" + labelName);
     lab.setText(txt);
   }
 
