@@ -55,6 +55,11 @@ public class ReportGeneric {
       BufferedImage img = scale(image, width, height);
 
       ImageIO.write(img, "jpg", new File(outputfile));
+      img.flush();
+      img = null;
+      image.flush();
+      image = null;
+      System.gc();
     } catch (Exception e) {
       return false;
     }

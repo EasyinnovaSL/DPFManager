@@ -35,6 +35,7 @@ import java.util.zip.ZipFile;
  */
 public class ProcessInput {
   private ReportGenerator reportGenerator;
+  public boolean outOfmemory = false;
   /**
    * The Allowed extensions.
    */
@@ -117,13 +118,19 @@ public class ProcessInput {
       }
     }
     // Global report
-    String summaryXml =
-        reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
-            silence);
+    String summaryXml = null;
+    try {
+      summaryXml =
+          reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
+              silence);
+    } catch (OutOfMemoryError e) {
+      System.err.println("Out of memory.");
+      outOfmemory = true;
+    }
 
     // Send report over FTP (only for alpha testing)
     try {
-      if(UserInterface.getFeedback()) {
+      if(UserInterface.getFeedback() && summaryXml != null) {
         sendFtpCamel(reportGenerator, summaryXml);
       }
     } catch (Exception e) {
@@ -170,18 +177,27 @@ public class ProcessInput {
         });
       }
       List<IndividualReport> indReports = processFile(filename, internalReportFolder, outputFolder);
+      if (outOfmemory){
+        break;
+      }
       if (indReports.size() > 0) {
         individuals.addAll(indReports);
       }
     }
     // Global report
-    String summaryXml =
-        reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
-            silence);
+    String summaryXml = null;
+    try {
+      summaryXml =
+          reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
+              silence);
+    } catch (OutOfMemoryError e) {
+      System.err.println("Out of memory.");
+      outOfmemory = true;
+    }
 
     // Send report over FTP (only for alpha testing)
     try {
-      if(UserInterface.getFeedback()) {
+      if(UserInterface.getFeedback() && summaryXml != null) {
         sendFtpCamel(reportGenerator, summaryXml);
       }
     } catch (Exception e) {
@@ -224,6 +240,10 @@ public class ProcessInput {
             if (ir != null) {
               indReports.add(ir);
             }
+            else{
+              outOfmemory = true;
+              break;
+            }
             File file = new File(filename2);
             file.delete();
           }
@@ -243,6 +263,9 @@ public class ProcessInput {
           if (ir != null) {
             indReports.add(ir);
           }
+          else{
+            outOfmemory = true;
+          }
           File file = new File(filename2);
           file.delete();
         } else {
@@ -257,6 +280,9 @@ public class ProcessInput {
         ir = processTiffFile(filename, filename, internalReportFolder, outputFolder);
         if (ir != null) {
           indReports.add(ir);
+        }
+        else{
+          outOfmemory = true;
         }
       } catch (Exception ex) {
         System.err.println("Error in File " + filename);
@@ -350,6 +376,8 @@ public class ProcessInput {
       System.err.println("Error loading Tiff library dependencies");
     } catch (ReadIccConfigIOException e) {
       System.err.println("Error loading Tiff library dependencies");
+    } catch (OutOfMemoryError error){
+      System.err.println("Out of memory");
     }
     return null;
   }

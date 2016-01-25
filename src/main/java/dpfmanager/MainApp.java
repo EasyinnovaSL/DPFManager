@@ -540,6 +540,18 @@ public class MainApp extends Application {
           ArrayList<String> formats = config.getFormats();
 
           String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), formats.contains("PDF"), config.getOutput(), true, config.getRules(), config.getFixes());
+          if (pi.outOfmemory){
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("An error occured");
+                alert.setContentText("Out of memory");
+                alert.showAndWait();
+              }
+            });
+          }
 
           if (formats.contains("HTML")) {
             ShowReport(filename, "html");
@@ -572,11 +584,16 @@ public class MainApp extends Application {
           }
 
         } catch (Exception ex) {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Error");
-          alert.setHeaderText("An error occured");
-          alert.setContentText(ex.toString());
-          alert.showAndWait();
+          Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+              Alert alert = new Alert(Alert.AlertType.ERROR);
+              alert.setTitle("Error");
+              alert.setHeaderText("An error occured");
+              alert.setContentText(ex.toString());
+              alert.showAndWait();
+            }
+          });
         }
         return 0;
       }
@@ -586,6 +603,12 @@ public class MainApp extends Application {
     Thread th = new Thread(task);
     th.setDaemon(true);
     th.start();
+
+//    Alert alert = new Alert(Alert.AlertType.ERROR);
+//    alert.setTitle("Error");
+//    alert.setHeaderText("An error ocurred");
+//    alert.setContentText("Out of memory!");
+//    alert.showAndWait();
   }
 
   private void ShowReport(String filename, String format) {
