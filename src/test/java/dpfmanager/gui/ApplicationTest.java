@@ -106,10 +106,14 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   public ApplicationTest clickOnScroll(String id) throws FxRobotException {
+    return clickOnScroll(id,true);
+  }
+
+  public ApplicationTest clickOnScroll(String id, boolean restart) throws FxRobotException {
     // Check if the node if at limit. Position < height + base Height - 5
     // If it is, make one scroll and finish
     if (moveToCustom(id)){
-      int y = getMousePosition();
+      int y = getMousePositionY();
       int minH = height + baseH -5;
       int maxH = height +baseH +5;
       if (minH < y && y < maxH){
@@ -126,7 +130,9 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
     // Else Scroll
     int maxScroll = 150;
-    restartScroll();
+    if (restart) {
+      restartScroll();
+    }
     while (!ret && scroll < maxScroll) {
       makeScroll(10,false);
       ret = clickOnCustom(id);
@@ -205,9 +211,14 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 
-  private int getMousePosition(){
+  private int getMousePositionY(){
     Point point = MouseInfo.getPointerInfo().getLocation();
     return (int) point.getY();
+  }
+
+  private int getMousePositionX(){
+    Point point = MouseInfo.getPointerInfo().getLocation();
+    return (int) point.getX();
   }
 
   protected int getCurrentReports(){
@@ -240,6 +251,10 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
         idToClick += rb.getId();
       }
     }
-    clickOnScroll(idToClick);
+    Assert.assertNotEquals("Import config file failed!", "#", idToClick);
+
+    // Move inside pane
+    moveTo("#pane1");
+    clickOnScroll(idToClick,false);
   }
 }

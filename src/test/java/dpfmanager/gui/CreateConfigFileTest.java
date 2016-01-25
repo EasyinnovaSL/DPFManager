@@ -24,7 +24,7 @@ import javax.xml.bind.SchemaOutputResolver;
  */
 public class CreateConfigFileTest extends ApplicationTest {
 
-  private String outputPath = "/tmp/config.dpf";
+  private String outputPath = "temp/config.dpf";
   private String expectedPath = "src/test/resources/ConfigFiles/config.dpf";
 
   Stage stage = null;
@@ -69,6 +69,9 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnScroll("#ID3 #removeButton");
     clickOnAndReload("#continue4");
 
+    // Create temp folder
+    createTempFolder();
+
     // 6 - Save the report
     MainApp.setTestParam("saveConfig",outputPath);
     clickOnScroll("#saveReportButton");
@@ -83,6 +86,9 @@ public class CreateConfigFileTest extends ApplicationTest {
     String expected = FileUtils.readFileToString(new File(expectedPath), "utf-8").replace("\r", "");
     String output = FileUtils.readFileToString(new File(outputPath), "utf-8").replace("\r", "");
     Assert.assertEquals("Config files differ!", expected, output);
+
+    // Delete temp folder
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   private void addRule(String tag, String op, String text) {
@@ -121,6 +127,13 @@ public class CreateConfigFileTest extends ApplicationTest {
     Assert.assertEquals("ComboBox Field inside 'Add Fix' failed", 3, comboBoxFix.getItems().size());
 
     uniqueId++;
+  }
+
+  private void createTempFolder(){
+    File folder = new File("temp");
+    if (!folder.exists()){
+      folder.mkdirs();
+    }
   }
 
   private void printFile(String outputPath) throws Exception {
