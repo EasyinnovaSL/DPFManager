@@ -12,53 +12,51 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
-        <BorderPane><top>
-            <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
-                <VBox>
-                    <children>
-                        <Pane fx:id="topMenuImage2" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
-                            <Button id="butChecker" layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor></Button>
-                            <Button id="butReport" layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor>
-                            </Button>
-                        </Pane>
-                    </children>
-                </VBox>
-                <VBox id="box0">
-                    <children>
-                        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
-                            <children>
-                                <ScrollPane prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
-                                    <content>
-                                        <AnchorPane prefHeight="944.0" prefWidth="974.0" styleClass="backabout" stylesheets="@/styles/style.css">
-                                            <children>
-                                                <Label layoutX="27.0" layoutY="43.0" styleClass="clabel" id="aboutTitle" stylesheets="@/styles/style.css" text="About DPF Manager">
-                                                    <font>
-                                                        <Font name="System Bold" size="18.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="27.0" layoutY="114.0" styleClass="clabel" text="DPF Manager is the most advanced TIFF conformance checker for digital preservation." wrapText="true" />
-                                                <Label layoutX="27.0" layoutY="138.0" prefHeight="50.0" prefWidth="565.0" styleClass="clabel" text="DPF Manager is promoted by Easy Innova, the Digital Humanities Lab of the University of Basel and the Agents Research Lab of the University of It is supported by many memory institutions." wrapText="true" />
-                                                <Label layoutX="27.0" layoutY="188.0" styleClass="clabel" text="DPF Manager has been created in parallel with Tiff Library 4J, an open source TIFF library for java." wrapText="true" />
-                                                <Label layoutX="27.0" layoutY="205.0" prefHeight="50.0" prefWidth="683.0" styleClass="clabel" text="This initiative has been boosted by PREFORMA, a PCP project that aims to address the challenge of implementing good quality standardised file formats for preserving data content in the long term." wrapText="true" />
-                                                <Label layoutX="27.0" layoutY="255.0" prefHeight="25.0" prefWidth="683.0" styleClass="clabel" text="Check the DPF Manager website for more information and manuals http://www.dpfmanager.org" wrapText="true" />
-                                                <Label id="lblVersion" layoutX="27.0" layoutY="63.0" prefHeight="25.0" prefWidth="182.0" styleClass="clabel" text="version " wrapText="true" />
-                                            </children>
-                                        </AnchorPane>
-                                    </content>
-                                </ScrollPane>
-                            </children>
-                        </AnchorPane>
-                    </children>
-                </VBox>
-            </SplitPane>
-        </top></BorderPane>
+        <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
+            <VBox maxHeight="50.0" minHeight="50.0">
+                <children>
+                    <Pane fx:id="topMenuImage2" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
+                        <Button id="butChecker" layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                        <Button id="butReport" layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </Pane>
+                </children>
+            </VBox>
+            <VBox id="box0">
+                <children>
+                    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
+                        <children>
+                            <ScrollPane prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.topAnchor="-1.0">
+                                <content>
+                                    <AnchorPane prefHeight="944.0" prefWidth="974.0" styleClass="backabout" stylesheets="@/styles/style.css">
+                                        <children>
+                                            <Label id="aboutTitle" layoutX="27.0" layoutY="43.0" styleClass="clabel" stylesheets="@/styles/style.css" text="About DPF Manager">
+                                                <font>
+                                                    <Font name="System Bold" size="18.0" />
+                                                </font>
+                                            </Label>
+                                            <Label layoutX="27.0" layoutY="114.0" styleClass="clabel" text="DPF Manager is the most advanced TIFF conformance checker for digital preservation." wrapText="true" />
+                                            <Label layoutX="27.0" layoutY="138.0" prefHeight="50.0" prefWidth="565.0" styleClass="clabel" text="DPF Manager is promoted by Easy Innova, the Digital Humanities Lab of the University of Basel and the Agents Research Lab of the University of It is supported by many memory institutions." wrapText="true" />
+                                            <Label layoutX="27.0" layoutY="188.0" styleClass="clabel" text="DPF Manager has been created in parallel with Tiff Library 4J, an open source TIFF library for java." wrapText="true" />
+                                            <Label layoutX="27.0" layoutY="205.0" prefHeight="50.0" prefWidth="683.0" styleClass="clabel" text="This initiative has been boosted by PREFORMA, a PCP project that aims to address the challenge of implementing good quality standardised file formats for preserving data content in the long term." wrapText="true" />
+                                            <Label layoutX="27.0" layoutY="255.0" prefHeight="25.0" prefWidth="683.0" styleClass="clabel" text="Check the DPF Manager website for more information and manuals http://www.dpfmanager.org" wrapText="true" />
+                                            <Label id="lblVersion" layoutX="27.0" layoutY="63.0" prefHeight="25.0" prefWidth="182.0" styleClass="clabel" text="version " wrapText="true" />
+                                        </children>
+                                    </AnchorPane>
+                                </content>
+                            </ScrollPane>
+                        </children>
+                    </AnchorPane>
+                </children>
+            </VBox>
+        </SplitPane>
   </children>
 </VBox>

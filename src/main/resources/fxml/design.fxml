@@ -12,7 +12,7 @@
 <VBox fx:id="rootMain" alignment="TOP_CENTER" prefHeight="990.0" prefWidth="1016.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
-            <VBox alignment="TOP_CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0">
+            <VBox maxHeight="50.0" minHeight="50.0" >
                 <children>
                     <Pane fx:id="topMenuImage1" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
                         <Button id="butReport" layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
@@ -30,89 +30,93 @@
             </VBox>
             <VBox id="box0">
                 <children>
-                    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
-                        <content>
-                            <AnchorPane id="pane0">
-                                <children>
-                                    <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage">
-                                        <!--<image><Image url="@../images/main.png" /></image>-->
-                                    </ImageView>
-                                    <ScrollPane hbarPolicy="AS_NEEDED" layoutX="254.0" layoutY="455.0" prefHeight="172.0" prefWidth="486.0" styleClass="paneRadios">
-                                        <AnchorPane id="pane1">
-                                            <children>
-                                                <!--
-                                                        <RadioButton fx:id="radEP" layoutX="23.0" layoutY="37.0" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/EP">
-                                              <toggleGroup>
-                                                                <ToggleGroup fx:id="conftoggleGroup" />
-                                              </toggleGroup></RadioButton>
-                                                        <RadioButton fx:id="radAll" layoutX="23.0" layoutY="75.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="All" toggleGroup="$conftoggleGroup" />
-                                                        <RadioButton fx:id="radIT" layoutX="23.0" layoutY="54.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT" toggleGroup="$conftoggleGroup" />
-                                                        <RadioButton fx:id="radBL" layoutX="23.0" layoutY="20.0" mnemonicParsing="false" selected="true" style="-fx-padding: 0 10 0 0;" styleClass="radio-button" stylesheets="@/styles/style.css" text="Baseline" toggleGroup="$conftoggleGroup" />
-                                                -->
-                                            </children>
-                                            <effect>
-                                                <ColorAdjust />
-                                            </effect>
-                                            <opaqueInsets>
-                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                            </opaqueInsets>
-                                            <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                            </cursor>
-                                        </AnchorPane>
-                                    </ScrollPane>
-                                    <Button fx:id="myButton" layoutX="641.0" layoutY="315.0" mnemonicParsing="false" onAction="#browseFile" prefHeight="37.0" prefWidth="106.0" style="" stylesheets="@/styles/style.css" text="Select" textFill="WHITE">
-                                        <font>
-                                            <Font name="System Bold" size="16.0" />
-                                        </font>
-                                        <cursor>
-                                            <Cursor fx:constant="HAND" />
-                                        </cursor>
-                                    </Button>
-                                    <Button layoutX="536.0" layoutY="423.0" mnemonicParsing="false" onAction="#infoConfig" prefHeight="21.0" prefWidth="12.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                        <cursor>
-                                            <Cursor fx:constant="HAND" />
-                                        </cursor>
-                                    </Button>
-                                    <Button layoutX="502.0" layoutY="277.0" mnemonicParsing="false" onAction="#infoFiles" prefHeight="20.0" prefWidth="22.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                        <cursor>
-                                            <Cursor fx:constant="HAND" />
-                                        </cursor>
-                                    </Button>
-                                    <TextField id="txtBox1" fx:id="txtFile" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
-                                        <cursor>
-                                            <Cursor fx:constant="TEXT" />
-                                        </cursor>
-                                    </TextField>
-                                    <Button id="importButton" layoutX="382.0" layoutY="642.0" mnemonicParsing="false" onAction="#openConfig" prefHeight="45.0" prefWidth="117.0" stylesheets="@/styles/style.css" text="IMPORT" textFill="#31C2F3" visible="true">
-                                        <cursor>
-                                            <Cursor fx:constant="HAND" />
-                                        </cursor>
-                                    </Button>
-                                    <Button id="newButton" layoutX="254.0" layoutY="642.0" mnemonicParsing="false" onAction="#newConfig" prefHeight="45.0" prefWidth="120.0" stylesheets="@/styles/style.css" text="NEW" textFill="#31C2F3" visible="true">
-                                        <cursor>
-                                            <Cursor fx:constant="HAND" />
-                                        </cursor>
-                                    </Button>
-                                    <Button id="editButton" layoutX="507.0" layoutY="642.0" mnemonicParsing="false" onAction="#editConfig" prefHeight="45.0" prefWidth="108.0" stylesheets="@/styles/style.css" text="EDIT" textFill="#31C2F3" visible="true">
-                                        <cursor>
-                                            <Cursor fx:constant="HAND" />
-                                        </cursor>
-                                    </Button>
-                                    <Button layoutX="623.0" layoutY="642.0" mnemonicParsing="false" onAction="#deleteConfig" prefHeight="45.0" prefWidth="118.0" stylesheets="@/styles/style.css" text="DELETE" textFill="#31C2F3" visible="true">
-                                        <cursor>
-                                            <Cursor fx:constant="HAND" />
-                                        </cursor>
-                                    </Button>
-                                    <Button id="checkFilesButton" fx:id="buttonRun" layoutX="383.0" layoutY="740.0" mnemonicParsing="false" onAction="#openFile" prefHeight="62.0" prefWidth="220.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                        <cursor>
-                                            <Cursor fx:constant="HAND" />
-                                        </cursor>
-                                    </Button>
-                                </children>
-                            </AnchorPane>
-                        </content>
-                    </ScrollPane>
+                    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
+                        <children>
+                            <ScrollPane prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.topAnchor="-1.0" hbarPolicy="NEVER">
+                                <content>
+                                    <AnchorPane id="pane0" prefHeight="944.0" prefWidth="974.0">
+                                        <children>
+                                            <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="mainimage">
+                                                <!--<image><Image url="@../images/main.png" /></image>-->
+                                            </ImageView>
+                                            <ScrollPane hbarPolicy="AS_NEEDED" layoutX="254.0" layoutY="455.0" prefHeight="172.0" prefWidth="486.0" styleClass="paneRadios">
+                                                <AnchorPane id="pane1">
+                                                    <children>
+                                                        <!--
+                                                                <RadioButton fx:id="radEP" layoutX="23.0" layoutY="37.0" mnemonicParsing="false" style="-fx-padding: 4 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/EP">
+                                                      <toggleGroup>
+                                                                        <ToggleGroup fx:id="conftoggleGroup" />
+                                                      </toggleGroup></RadioButton>
+                                                                <RadioButton fx:id="radAll" layoutX="23.0" layoutY="75.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="All" toggleGroup="$conftoggleGroup" />
+                                                                <RadioButton fx:id="radIT" layoutX="23.0" layoutY="54.0" mnemonicParsing="false" style="-fx-padding: 8 0 0 0;" stylesheets="@/styles/style.css" text="TIFF/IT" toggleGroup="$conftoggleGroup" />
+                                                                <RadioButton fx:id="radBL" layoutX="23.0" layoutY="20.0" mnemonicParsing="false" selected="true" style="-fx-padding: 0 10 0 0;" styleClass="radio-button" stylesheets="@/styles/style.css" text="Baseline" toggleGroup="$conftoggleGroup" />
+                                                        -->
+                                                    </children>
+                                                    <effect>
+                                                        <ColorAdjust />
+                                                    </effect>
+                                                    <opaqueInsets>
+                                                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                                    </opaqueInsets>
+                                                    <cursor>
+                                                        <Cursor fx:constant="HAND" />
+                                                    </cursor>
+                                                </AnchorPane>
+                                            </ScrollPane>
+                                            <Button fx:id="myButton" layoutX="641.0" layoutY="315.0" mnemonicParsing="false" onAction="#browseFile" prefHeight="37.0" prefWidth="106.0" style="" stylesheets="@/styles/style.css" text="Select" textFill="WHITE">
+                                                <font>
+                                                    <Font name="System Bold" size="16.0" />
+                                                </font>
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button layoutX="536.0" layoutY="423.0" mnemonicParsing="false" onAction="#infoConfig" prefHeight="21.0" prefWidth="12.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button layoutX="502.0" layoutY="277.0" mnemonicParsing="false" onAction="#infoFiles" prefHeight="20.0" prefWidth="22.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <TextField id="txtBox1" fx:id="txtFile" layoutX="255.0" layoutY="314.0" prefHeight="41.0" prefWidth="382.0" text="Select a file">
+                                                <cursor>
+                                                    <Cursor fx:constant="TEXT" />
+                                                </cursor>
+                                            </TextField>
+                                            <Button id="importButton" layoutX="382.0" layoutY="642.0" mnemonicParsing="false" onAction="#openConfig" prefHeight="45.0" prefWidth="117.0" stylesheets="@/styles/style.css" text="IMPORT" textFill="#31C2F3" visible="true">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button id="newButton" layoutX="254.0" layoutY="642.0" mnemonicParsing="false" onAction="#newConfig" prefHeight="45.0" prefWidth="120.0" stylesheets="@/styles/style.css" text="NEW" textFill="#31C2F3" visible="true">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button id="editButton" layoutX="507.0" layoutY="642.0" mnemonicParsing="false" onAction="#editConfig" prefHeight="45.0" prefWidth="108.0" stylesheets="@/styles/style.css" text="EDIT" textFill="#31C2F3" visible="true">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button layoutX="623.0" layoutY="642.0" mnemonicParsing="false" onAction="#deleteConfig" prefHeight="45.0" prefWidth="118.0" stylesheets="@/styles/style.css" text="DELETE" textFill="#31C2F3" visible="true">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button id="checkFilesButton" fx:id="buttonRun" layoutX="383.0" layoutY="740.0" mnemonicParsing="false" onAction="#openFile" prefHeight="62.0" prefWidth="220.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                        </children>
+                                    </AnchorPane>
+                                </content>
+                            </ScrollPane>
+                        </children>
+                    </AnchorPane>
                 </children>
             </VBox>
         </SplitPane>
