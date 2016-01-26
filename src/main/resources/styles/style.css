@@ -120,7 +120,7 @@
 
 .split-pane:vertical > .split-pane-divider {
     -fx-padding: 0;
-    -fx-border-color:  #333333;
+	-fx-border-width: 0;
     -fx-background-color: transparent;
     -fx-background-insets: 0;
 }
