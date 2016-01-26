@@ -104,11 +104,11 @@ public class FixerTest extends TestCase {
     String xml_orig = null;
     String xml_modif = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.xml")) {
+      if (file.equals("1-Bilevel.tif.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_orig = new String(encoded);
       }
-      if (file.equals("Bilevel.tif_fixed.xml")) {
+      if (file.equals("1-Bilevel.tif_fixed.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_modif = new String(encoded);
       }
@@ -186,11 +186,11 @@ public class FixerTest extends TestCase {
     String xml_orig = null;
     String xml_modif = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.xml")) {
+      if (file.equals("1-Bilevel.tif.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_orig = new String(encoded);
       }
-      if (file.equals("Bilevel.tif_fixed.xml")) {
+      if (file.equals("1-Bilevel.tif_fixed.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_modif = new String(encoded);
       }
@@ -266,11 +266,11 @@ public class FixerTest extends TestCase {
     String xml_orig = null;
     String xml_modif = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.xml")) {
+      if (file.equals("1-Bilevel.tif.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_orig = new String(encoded);
       }
-      if (file.equals("Bilevel.tif_fixed.xml")) {
+      if (file.equals("1-Bilevel.tif_fixed.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_modif = new String(encoded);
       }
@@ -348,11 +348,11 @@ public class FixerTest extends TestCase {
     String xml_orig = null;
     String xml_modif = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.xml")) {
+      if (file.equals("1-Bilevel.tif.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_orig = new String(encoded);
       }
-      if (file.equals("Bilevel.tif_fixed.xml")) {
+      if (file.equals("1-Bilevel.tif_fixed.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_modif = new String(encoded);
       }
@@ -366,11 +366,11 @@ public class FixerTest extends TestCase {
     String html_orig = null;
     String html_modif = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.html")) {
+      if (file.equals("1-Bilevel.tif.html")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
         html_orig = new String(encoded);
       }
-      if (file.equals("Bilevel.tif_fixed.html")) {
+      if (file.equals("1-Bilevel.tif_fixed.html")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
         html_modif = new String(encoded);
       }

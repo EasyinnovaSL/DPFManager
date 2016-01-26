@@ -42,6 +42,7 @@ public class ProcessInput {
   private boolean checkBL, checkEP, checkPC;
   private int checkIT;
   private Scene scene;
+  private int idReport;
 
   /**
    * Instantiates a new Process input.
@@ -100,6 +101,7 @@ public class ProcessInput {
     ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
     String internalReportFolder = ReportGenerator.createReportPath();
     int n=files.size();
+    idReport=1;
     for (final String filename : files) {
       System.out.println("");
       System.out.println("Processing file " + filename);
@@ -115,6 +117,7 @@ public class ProcessInput {
       if (indReports.size() > 0) {
         individuals.addAll(indReports);
       }
+      idReport++;
     }
     // Global report
     String summaryXml =
@@ -158,6 +161,7 @@ public class ProcessInput {
     ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
     String internalReportFolder = ReportGenerator.createReportPath();
     int n=files.size();
+    idReport=1;
     for (final String filename : files) {
       System.out.println("");
       System.out.println("Processing file " + filename);
@@ -173,6 +177,7 @@ public class ProcessInput {
       if (indReports.size() > 0) {
         individuals.addAll(indReports);
       }
+      idReport++;
     }
     // Global report
     String summaryXml =
@@ -337,7 +342,7 @@ public class ProcessInput {
           ir.checkIT = checkIT;
           ir.checkPC = checkPC;
 
-          internalReport(ir, tr, reportFilename, internalReportFolder, outputFolder);
+          internalReport(ir, reportFilename, internalReportFolder, outputFolder);
           to=null;
           tr=null;
           System.gc();
@@ -390,13 +395,12 @@ public class ProcessInput {
    * Report the results of the reading process to the console.
    *
    * @param ir the individual report
-   * @param tiffreader the tiff reader
    * @param realFilename the real filename
    * @param folder the internal report folder
    */
-  private void internalReport(IndividualReport ir, TiffReader tiffreader, String realFilename,
+  private void internalReport(IndividualReport ir, String realFilename,
                               String folder, String outputFolder) {
-    String outputfile = ReportGenerator.getReportName(folder, realFilename);
+    String outputfile = ReportGenerator.getReportName(folder, realFilename, idReport);
     reportGenerator.generateIndividualReport(outputfile, ir, outputFolder);
     System.out.println("Internal report '" + outputfile + "' created");
   }

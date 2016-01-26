@@ -87,7 +87,7 @@ public class ReportGeneratorTest extends TestCase {
 
     String html = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.html")) {
+      if (file.equals("1-Bilevel.tif.html")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
         html = new String(encoded);
       }
@@ -139,6 +139,48 @@ public class ReportGeneratorTest extends TestCase {
 
     File directori = new File(path);
     assertEquals(4, directori.list().length);
+  }
+
+  public void testReportsSubfoldersWithEqualFilenames() throws Exception {
+    UserInterface.setFeedback(false);
+
+    String[] args = new String[3];
+    args[0] = "-r";
+    args[1] = "src/test/resources/S2";
+    args[2] = "-s";
+
+    Application.Parameters params = new Application.Parameters() {
+      @Override
+      public List<String> getRaw() {
+        ArrayList<String> listRaw = new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        return listRaw;
+      }
+
+      @Override
+      public List<String> getUnnamed() {
+        ArrayList<String> listRaw = new ArrayList<String>();
+        listRaw.add(args[0]);
+        listRaw.add(args[1]);
+        listRaw.add(args[2]);
+        return listRaw;
+      }
+
+      @Override
+      public Map<String, String> getNamed() {
+        return null;
+      }
+    };
+
+    CommandLine cl = new CommandLine(params);
+    cl.launch();
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(7, directori.list().length);
   }
 
   public void testReportsFolder() throws Exception {

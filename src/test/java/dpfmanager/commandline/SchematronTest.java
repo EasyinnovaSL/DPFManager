@@ -192,7 +192,7 @@ public class SchematronTest extends TestCase {
     cl.launch();
 
     String path = getPath();
-    String xmlFile = path + "/Bilevel.tif.xml";
+    String xmlFile = path + "/1-Bilevel.tif.xml";
 
     assertEquals(true, new File(xmlFile).exists());
 

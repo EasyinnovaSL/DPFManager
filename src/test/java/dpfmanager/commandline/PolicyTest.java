@@ -104,7 +104,7 @@ public class PolicyTest extends TestCase {
 
     String xml_orig = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.xml")) {
+      if (file.equals("1-Bilevel.tif.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_orig = new String(encoded);
       }
@@ -177,7 +177,7 @@ public class PolicyTest extends TestCase {
 
     String xml_orig = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.xml")) {
+      if (file.equals("1-Bilevel.tif.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_orig = new String(encoded);
       }
@@ -250,7 +250,7 @@ public class PolicyTest extends TestCase {
 
     String xml_orig = null;
     for (String file : directori.list()) {
-      if (file.equals("Bilevel.tif.xml")) {
+      if (file.equals("1-Bilevel.tif.xml")) {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_orig = new String(encoded);
       }

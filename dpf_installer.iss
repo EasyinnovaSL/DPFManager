@@ -68,7 +68,8 @@ begin
           begin
              // Delete config files
              DeleteFile('{%HOMEPATH}\DPF Manager\*.dpf');
-             DeleteFile('{%HOMEPATH}\DPF Manager\setts.txt');
+             //DeleteFile('{%HOMEPATH}\DPF Manager\setts.txt');
+             DeleteFile('{%HOMEPATH}\DPF Manager\dpfmanager.properties');
              // Delete reports directory recursively
              DelTree('{%HOMEPATH}\DPF Manager\reports', True, True, True);
              // Delete DPF Manager user folder only if empty

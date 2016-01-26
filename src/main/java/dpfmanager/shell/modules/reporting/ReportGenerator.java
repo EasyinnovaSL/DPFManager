@@ -173,17 +173,18 @@ public class ReportGenerator {
    *
    * @param internalReportFolder the internal report folder
    * @param realFilename         the real file name
+   * @param idReport             the report id
    * @return the report name
    */
-  public static String getReportName(String internalReportFolder, String realFilename) {
-    String reportName = internalReportFolder + new File(realFilename).getName();
+  public static String getReportName(String internalReportFolder, String realFilename, int idReport) {
+    String reportName = internalReportFolder + idReport + "-" + new File(realFilename).getName();
     File file = new File(reportName);
     int index = 0;
     while (file.exists()) {
       index++;
       String ext = getFileType(reportName);
       reportName =
-          internalReportFolder
+          internalReportFolder + idReport + "-"
               + new File(realFilename.substring(0, realFilename.lastIndexOf(".")) + index + "." + ext)
               .getName();
       file = new File(reportName);
@@ -585,6 +586,7 @@ public class ReportGenerator {
     ir.setPCErrors(pcValidation1.getErrors());
     ir.setPCWarnings(pcValidation1.getWarnings());
     ir.setPcValidation(pcValidation1);
+    ir.setReportPath(reportName);
     if (html) {
       copyHtmlFolder(htmlFileStr);
       ReportHtml.parseIndividual(htmlFileStr, ir, htmlMode);
@@ -659,6 +661,8 @@ public class ReportGenerator {
         String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
         String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
         IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, itValidation);
+        int ind = ir.getReportPath().lastIndexOf(".tif");
+        ir2.setReportPath(ir.getReportPath().substring(0, ind) + "_fixed.tif");
         ir2.checkPC = ir.checkPC;
         ir2.checkBL = ir.checkBL;
         ir2.checkEP = ir.checkEP;

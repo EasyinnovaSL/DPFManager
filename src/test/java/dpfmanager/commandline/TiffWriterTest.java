@@ -92,8 +92,8 @@ public class TiffWriterTest extends TestCase {
     cl.launch();
 
     String path = getPath();
-    String xmlFile = path + "/Bilevel.tif.xml";
-    String xmlFile2 = path + "/Bilevel2.tif.xml";
+    String xmlFile = path + "/1-Bilevel.tif.xml";
+    String xmlFile2 = path + "/1-Bilevel2.tif.xml";
 
     assertXML(xmlFile, xmlFile2);
   }
