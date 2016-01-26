@@ -1495,6 +1495,16 @@ public class MainApp extends Application {
     Scene scene = thestage.getScene();
     AnchorPane ap2 = (AnchorPane) scene.lookup("#pane0");
     ap2.getChildren().add(bLoading);
+
+    VBox vbox = (VBox)  scene.lookup("#box0");
+    vbox.getStyleClass().add("loading2");
+
+    HBox bLoading2 = new HBox();
+    bLoading2.setPrefSize(2000, 200);
+    bLoading2.getStyleClass().add("loading2");
+
+    Pane topPane = (Pane) scene.lookup("#topMenuImage1");
+    topPane.getChildren().add(bLoading2);
   }
 
   private ObservableList<ReportRow> ReadReports(int start, int count) {
