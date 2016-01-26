@@ -36,6 +36,8 @@ import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 
+import java.io.File;
+
 /**
  * The Class ReportHtml.
  */
@@ -59,7 +61,7 @@ public class ReportHtml extends ReportGeneric {
     String htmlBody = ReportGenerator.readFilefromResources(templatePath);
 
     // Image
-    String imgPath = "img/" + ir.getFileName() + ".jpg";
+    String imgPath = "img/" + new File(ir.getReportPath()).getName() + ".jpg";
     boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
     if (!check) {
       imgPath = "img/noise.jpg";
@@ -157,11 +159,11 @@ public class ReportHtml extends ReportGeneric {
 
     if (mode == 1) {
       htmlBody = htmlBody.replaceAll("##CL_LINKR2##", "show");
-      htmlBody = htmlBody.replaceAll("##LINK2##", ir.getFileName() + "_fixed.html");
+      htmlBody = htmlBody.replaceAll("##LINK2##", new File(ir.getReportPath()).getName() + "_fixed.html");
     }
     if (mode == 2) {
       htmlBody = htmlBody.replaceAll("##CL_LINKR1##", "show");
-      htmlBody = htmlBody.replaceAll("##LINK1##", ir.getCompareReport().getFileName() + ".html");
+      htmlBody = htmlBody.replaceAll("##LINK1##", new File(ir.getCompareReport().getReportPath()).getName() + ".html");
     }
 
     String dif;
@@ -391,7 +393,7 @@ public class ReportHtml extends ReportGeneric {
       String imageBody;
       imageBody = ReportGenerator.readFilefromResources(imagePath);
       // Image
-      String imgPath = "html/img/" + ir.getFileName() + ".jpg";
+      String imgPath = "html/img/" + new File(ir.getReportPath()).getName() + ".jpg";
       boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
       if (!check) {
         imgPath = "html/img/noise.jpg";
@@ -432,7 +434,7 @@ public class ReportHtml extends ReportGeneric {
         imageBody = imageBody.replace("##PC_CLASS##", "hide");
       }
 
-      imageBody = imageBody.replace("##HREF##", "html/" + ir.getFileName() + ".html");
+      imageBody = imageBody.replace("##HREF##", "html/" + new File(ir.getReportPath()).getName() + ".html");
       if (ir.getBaselineErrors().size() > 0) {
         imageBody = imageBody.replace("##BL_ERR_C##", "error");
       } else {

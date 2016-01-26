@@ -52,6 +52,9 @@ public class IndividualReport {
   /** The file path. */
   private String filepath;
 
+  /** The file path. */
+  private String reportpath;
+
   /** The ifdNode count. */
   private int ifdCount;
 
@@ -168,6 +171,24 @@ public class IndividualReport {
    */
   public ValidationResult getPcValidation() {
     return pcValidation;
+  }
+
+  /**
+   * Sets report path.
+   *
+   * @param path the path
+   */
+  public void setReportPath(String path) {
+    reportpath = path;
+  }
+
+  /**
+   * Gets report path.
+   *
+   * @return the report path
+   */
+  public String getReportPath() {
+    return reportpath;
   }
 
   /**

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.image.*?>
@@ -7,111 +8,109 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox fx:id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
-        <BorderPane id="wizStep6"><top>
-            <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
-                <VBox>
-                    <children>
-                        <Pane fx:id="topMenuImage1" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
-                            <Button id="butChecker" layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor></Button>
-                            <Button id="butReport" layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor>
-                            </Button>
-                            <Button id="butAbout" layoutX="560.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoAbout" prefHeight="20.0" prefWidth="55.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor>
-                            </Button>
-                        </Pane>
-                    </children>
-                </VBox>
-                <VBox id="box0">
-                    <children>
-                        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
-                            <children>
-                                <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
-                                    <content>
-                                        <AnchorPane>
-                                            <children>
-                                                <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config6" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                    <!--<image><Image url="@../images/config6.png" /></image>-->
-                                                </ImageView>
-                                                <Button layoutX="384.0" layoutY="694.0" mnemonicParsing="false" onAction="#saveConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                                <Line fx:id="line" endX="710.0" layoutX="195.0" layoutY="652.0" startX="-100.0" stroke="WHITE" />
-                                                <Label fx:id="labIsos" layoutX="481.0" layoutY="341.0" text="TIFF/EP" textFill="WHITE">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label fx:id="labRules" layoutX="481.0" layoutY="407.0" text="Width: &gt;1000" textFill="WHITE">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label fx:id="labReports" layoutX="481.0" layoutY="478.0" text="Format HTML" textFill="WHITE">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label fx:id="labFixes" layoutX="481.0" layoutY="542.0" text="Remove Tag: Copyright" textFill="WHITE">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="481.0" layoutY="609.0" text="None" textFill="WHITE">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Button layoutX="377.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig1" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                                <Button layoutX="424.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig2" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                                <Button layoutX="468.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig3" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                                <Button layoutX="510.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                                <Button layoutX="554.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig5" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                                <Button visible="false" layoutX="598.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </Button>
-                                            </children>
-                                        </AnchorPane>
-                                    </content>
-                                </ScrollPane>
-                            </children>
-                        </AnchorPane>
-                    </children>
-                </VBox>
-            </SplitPane>
-        </top></BorderPane>
+        <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
+            <VBox>
+                <children>
+                    <Pane fx:id="topMenuImage1" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
+                        <Button id="butChecker" layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor></Button>
+                        <Button id="butReport" layoutX="470.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoReport" prefHeight="20.0" prefWidth="80.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                        <Button id="butAbout" layoutX="560.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoAbout" prefHeight="20.0" prefWidth="55.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </Pane>
+                </children>
+            </VBox>
+            <VBox id="box0">
+                <children>
+                    <AnchorPane id="wizStep6" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
+                        <children>
+                            <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                                <content>
+                                    <AnchorPane id="anchorPane">
+                                        <children>
+                                            <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config6" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <!--<image><Image url="@../images/config6.png" /></image>-->
+                                            </ImageView>
+                                            <Button id="saveReportButton" layoutX="384.0" layoutY="694.0" mnemonicParsing="false" onAction="#saveConfig" prefHeight="64.0" prefWidth="222.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Line fx:id="line" endX="710.0" layoutX="195.0" layoutY="652.0" startX="-100.0" stroke="WHITE" />
+                                            <Label fx:id="labIsos" layoutX="481.0" layoutY="341.0" text="TIFF/EP" textFill="WHITE">
+                                                <font>
+                                                    <Font size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label fx:id="labRules" layoutX="481.0" layoutY="407.0" text="Width: &gt;1000" textFill="WHITE">
+                                                <font>
+                                                    <Font size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label fx:id="labReports" layoutX="481.0" layoutY="478.0" text="Format HTML" textFill="WHITE">
+                                                <font>
+                                                    <Font size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label fx:id="labFixes" layoutX="481.0" layoutY="542.0" text="Remove Tag: Copyright" textFill="WHITE">
+                                                <font>
+                                                    <Font size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Label layoutX="481.0" layoutY="609.0" text="None" textFill="WHITE">
+                                                <font>
+                                                    <Font size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <Button id="step1" layoutX="377.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig1" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button id="step2" layoutX="424.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig2" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button id="step3" layoutX="468.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig3" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button id="step4" layoutX="510.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig4" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button id="step5" layoutX="554.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig5" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                            <Button layoutX="598.0" layoutY="207.0" mnemonicParsing="false" onAction="#gotoConfig6" prefHeight="25.0" prefWidth="25.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT" visible="false">
+                                                <cursor>
+                                                    <Cursor fx:constant="HAND" />
+                                                </cursor>
+                                            </Button>
+                                        </children>
+                                    </AnchorPane>
+                                </content>
+                            </ScrollPane>
+                        </children>
+                    </AnchorPane>
+                </children>
+            </VBox>
+        </SplitPane>
   </children>
 </VBox>

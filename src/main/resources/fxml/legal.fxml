@@ -25,7 +25,7 @@
                                             <Label layoutX="27.0" layoutY="109.0" prefHeight="42.0" prefWidth="774.0" text="Help us improve DPFManager by allowing us to collect the reports of the images that you test. The reports do not include any images or thumbnails and are sent anonymously." textFill="WHITE" wrapText="true" />
                                             <Label layoutX="27.0" layoutY="149.0" prefHeight="42.0" prefWidth="774.0" text="In case we found an issue with any of the reports (a tag in a TIFF file we didn't expect, a bug in DPF Manager), we would like to be able to contact you to let you know so we can find a solution. If you would like to get this pro-active support from us, please enter your contact details below:" textFill="WHITE" wrapText="true" />
                                             <Button layoutX="305.0" layoutY="576.0" mnemonicParsing="false" onAction="#proceed" prefHeight="40.0" prefWidth="206.0" styleClass="buttonlegal" text="Proceed" />
-                                            <Label layoutX="27.0" layoutY="43.0" text="Welcome to DPF Manager!" textFill="WHITE">
+                                            <Label id="welcomeText" layoutX="27.0" layoutY="43.0" text="Welcome to DPF Manager!" textFill="WHITE">
                                                 <font>
                                                    <Font name="System Bold" size="18.0" />
                                                 </font>

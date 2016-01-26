@@ -8,7 +8,9 @@ reports/
 easyinnova/
 *.dpf
 !src/main/resources/*.dpf
+!src/test/resources/ConfigFiles/*.dpf
 !config.dpf
 src/test/resources/TestWriter/Bilevel2.tif
 Output/
 src/test/resources/private/
+temp/

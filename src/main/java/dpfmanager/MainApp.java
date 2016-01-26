@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Victor Muñoz
  * @version 1.0
@@ -118,7 +106,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -137,11 +127,28 @@ public class MainApp extends Application {
   private boolean all_reports_loaded;
   private static boolean firstRun = true;
   static boolean editingConfig = false;
+  static Map<String, String> testValues;
 
-  @FXML private TextField txtFile;
-  @FXML private CheckBox chkFeedback, chkSubmit;
-  @FXML private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtOutput;
-  @FXML private TextArea txtWhy;
+  @FXML
+  private TextField txtFile;
+  @FXML
+  private CheckBox chkFeedback, chkSubmit;
+  @FXML
+  private TextField txtName, txtSurname, txtEmail, txtJob, txtOrganization, txtCountry, txtOutput;
+  @FXML
+  private TextArea txtWhy;
+
+  public static Stage getStage() {
+    return thestage;
+  }
+
+  public static void setTestParam(String key, String value) {
+    testValues.put(key, value);
+  }
+
+  public static String getTestParams(String key) {
+    return testValues.get(key);
+  }
 
   /**
    * The main method.
@@ -166,6 +173,7 @@ public class MainApp extends Application {
       thestage = stage;
       LOG.info("Starting JavaFX application");
       // GUI
+      testValues = new HashMap<>();
       LoadGui(params.getRaw().contains("-noDisc"));
     } else {
       // Command Line
@@ -198,7 +206,7 @@ public class MainApp extends Application {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         writer.write(txt);
         writer.close();
-      } catch (Exception ex ){
+      } catch (Exception ex) {
 
       }
     }
@@ -213,7 +221,7 @@ public class MainApp extends Application {
       CreateDefaultConfigurationFiles();
     } else {
       ShowMain();
-      resize(thestage.getScene(), thestage.getWidth()-1);
+//      resize(thestage.getScene(), thestage.getWidth() - 1);
     }
   }
 
@@ -269,7 +277,7 @@ public class MainApp extends Application {
 
     thestage.setTitle("DPFManager");
     thestage.setScene(scenemain);
-    thestage.sizeToScene();
+//    thestage.sizeToScene();
     thestage.show();
 
     SplitPane splitPa1 = (SplitPane) scenemain.lookup("#splitPa1");
@@ -324,6 +332,7 @@ public class MainApp extends Application {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
           RadioButton radio = new RadioButton();
+          radio.setId("radioConfig" + vBox.getChildren().size());
           radio.setText(fileEntry.getName());
           radio.setToggleGroup(group);
           vBox.getChildren().add(radio);
@@ -469,6 +478,7 @@ public class MainApp extends Application {
 
   @FXML
   protected void openFile(ActionEvent event) throws Exception {
+    System.out.println("Into open file");
     ArrayList<String> files = new ArrayList<String>();
     ArrayList<String> extensions = this.gui.getExtensions();
 
@@ -513,9 +523,9 @@ public class MainApp extends Application {
     ShowLoading();
 
     // Create a background task, because otherwise the loading message is not shown
-    Task<Integer> task = new Task<Integer>(){
+    Task<Integer> task = new Task<Integer>() {
       @Override
-      protected Integer call() throws Exception{
+      protected Integer call() throws Exception {
         try {
           if (new File(txtFile.getText()).isDirectory()) {
             File[] listOfFiles = new File(txtFile.getText()).listFiles();
@@ -732,13 +742,14 @@ public class MainApp extends Application {
         // If HTML show in webview
         if (format.equals("html")) {
           WebView browser = new WebView();
+          browser.setId("webViewReport");
           //double w = width-topImg.getWidth();
           browser.setMinWidth(thestage.getScene().getWidth());
           browser.setMinHeight(h);
           //browser.setMaxWidth(width);
           browser.setMaxHeight(h);
           final WebEngine webEngine = browser.getEngine();
-          webEngine.load("file:///" + file.replace("\\","/"));
+          webEngine.load("file:///" + file.replace("\\", "/"));
           splitPa.getItems().addAll(browser);
         }
         // If PDF show in new window
@@ -752,6 +763,7 @@ public class MainApp extends Application {
         // Else show in TextArea
         else {
           TextArea ta = new TextArea();
+          ta.setId("textAreaReport");
           ta.setMinWidth(thestage.getScene().getWidth());
           ta.setMinHeight(h);
           ta.setEditable(false);
@@ -868,7 +880,7 @@ public class MainApp extends Application {
     thestage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (!observable.getValue()){
+        if (!observable.getValue()) {
           thestage.setWidth(width);
         }
       }
@@ -895,7 +907,8 @@ public class MainApp extends Application {
       gui.saveOutput(scene, config);
     }
     if (scene.lookup("#wizStep4") != null) {
-      gui.saveFixes(scene, config);    }
+      gui.saveFixes(scene, config);
+    }
   }
 
   @FXML
@@ -950,11 +963,20 @@ public class MainApp extends Application {
 
   @FXML
   protected void saveConfig(ActionEvent event) throws Exception {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setInitialDirectory(new File(getConfigDir()));
-    fileChooser.setInitialFileName("config.dpf");
-    fileChooser.setTitle("Save Config");
-    File file = fileChooser.showSaveDialog(thestage);
+    File file;
+    String value = testValues.get("saveConfig");
+    if (value != null) {
+      //Save in specified output
+      file = new File(value);
+    } else {
+      //Open save dialog
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setInitialDirectory(new File(getConfigDir()));
+      fileChooser.setInitialFileName("config.dpf");
+      fileChooser.setTitle("Save Config");
+      file = fileChooser.showSaveDialog(thestage);
+    }
+
     if (file != null) {
       try {
         SaveConfig(file.getAbsolutePath());
@@ -1011,7 +1033,7 @@ public class MainApp extends Application {
       );
 
       TableColumn colFile = new TableColumn("Input");
-      colFile.setMinWidth(230);
+      colFile.setMinWidth(200);
       colFile.setCellValueFactory(
           new PropertyValueFactory<ReportRow, String>("input")
       );
@@ -1037,19 +1059,19 @@ public class MainApp extends Application {
       TableColumn colPassed = new TableColumn("Passed");
       colPassed.setMinWidth(60);
       colPassed.setCellValueFactory(
-              new PropertyValueFactory<ReportRow, String>("passed")
+          new PropertyValueFactory<ReportRow, String>("passed")
       );
 
       TableColumn<ReportRow, String> colScore = new TableColumn("Score");
       colScore.setMinWidth(80);
       colScore.setCellValueFactory(
-              new PropertyValueFactory("score")
+          new PropertyValueFactory("score")
       );
 
       TableColumn colFormats = new TableColumn("Formats");
-      colFormats.setMinWidth(90);
+      colFormats.setMinWidth(150);
       colFormats.setCellValueFactory(
-              new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
+          new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
       );
 
       tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
@@ -1058,7 +1080,7 @@ public class MainApp extends Application {
       tabReports.setLayoutX(82.0);
       tabReports.setLayoutY(270.0);
       tabReports.setPrefHeight(470.0);
-      tabReports.setPrefWidth(835.0);
+      tabReports.setPrefWidth(840.0);
       tabReports.setCursor(Cursor.DEFAULT);
 
       changeColumnTextColor(colDate, Color.LIGHTGRAY);
@@ -1086,7 +1108,7 @@ public class MainApp extends Application {
         }
       });
 
-      if(all_reports_loaded) {
+      if (all_reports_loaded) {
         button_load.setVisible(false);
       }
 
@@ -1100,6 +1122,8 @@ public class MainApp extends Application {
       alert.setHeaderText("An error occured");
       alert.setContentText(ex.toString());
       alert.showAndWait();
+      System.out.println(ex.toString());
+      ex.printStackTrace();
     }
   }
 
@@ -1182,6 +1206,7 @@ public class MainApp extends Application {
 
               for (String i : item.keySet()) {
                 ImageView icon = new ImageView();
+                icon.setId("but" + i);
                 icon.setFitHeight(20);
                 icon.setFitWidth(20);
                 icon.setImage(new Image("images/format_" + i + ".png"));
@@ -1263,25 +1288,34 @@ public class MainApp extends Application {
 
   @FXML
   protected void openConfig(ActionEvent event) {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Open Config");
-    fileChooser.setInitialDirectory(new File(getConfigDir()));
-    fileChooser.setInitialFileName("config.dpf");
-    File file = fileChooser.showOpenDialog(thestage);
+    File file;
+    String value = testValues.get("import");
+    if (value != null) {
+      //test mode
+      file = new File(value);
+    } else {
+      //Ask for file
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Open Config");
+      fileChooser.setInitialDirectory(new File(getConfigDir()));
+      fileChooser.setInitialFileName("config.dpf");
+      file = fileChooser.showOpenDialog(thestage);
+    }
+
     try {
       if (file != null) {
         Scene scene = thestage.getScene();
-        AnchorPane pan = (AnchorPane)scene.lookup("#pane1");
+        AnchorPane pan = (AnchorPane) scene.lookup("#pane1");
         VBox vbox = (VBox) pan.getChildren().get(0);
         final ToggleGroup group;
         if (!vbox.getChildren().isEmpty()) {
           RadioButton radio_old = (RadioButton) vbox.getChildren().get(0);
           group = radio_old.getToggleGroup();
-        }
-        else{
+        } else {
           group = new ToggleGroup();
         }
         RadioButton radio = new RadioButton();
+        radio.setId("radioConfig" + vbox.getChildren().size());
         radio.setText(file.getAbsolutePath());
         radio.setToggleGroup(group);
         vbox.getChildren().add(radio);
@@ -1296,9 +1330,9 @@ public class MainApp extends Application {
   }
 
   @FXML
-  protected void deleteConfig(ActionEvent event) throws Exception{
+  protected void deleteConfig(ActionEvent event) throws Exception {
     Scene scene = thestage.getScene();
-    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
+    AnchorPane ap3 = (AnchorPane) scene.lookup("#pane1");
     boolean oneChecked = false;
     for (Node node : ap3.getChildren()) {
       if (node instanceof VBox) {
@@ -1315,10 +1349,10 @@ public class MainApp extends Application {
               ButtonType buttonYes = new ButtonType("Yes");
               alert.getButtonTypes().setAll(buttonNo, buttonYes);
               Optional<ButtonType> result = alert.showAndWait();
-              if (result.get() == buttonYes){
+              if (result.get() == buttonYes) {
                 File file = new File(getConfigDir() + "/" + radio.getText());
                 vBox1.getChildren().remove(nodeIn);
-                if (!file.delete()){
+                if (!file.delete()) {
                   Alert alert2 = new Alert(Alert.AlertType.ERROR);
                   alert2.setTitle("Error");
                   alert2.setHeaderText("There was an error deleting the configuration file");
@@ -1341,9 +1375,9 @@ public class MainApp extends Application {
   }
 
   @FXML
-  protected void editConfig(ActionEvent event) throws Exception{
+  protected void editConfig(ActionEvent event) throws Exception {
     Scene scene = thestage.getScene();
-    AnchorPane ap3 = (AnchorPane)scene.lookup("#pane1");
+    AnchorPane ap3 = (AnchorPane) scene.lookup("#pane1");
     boolean oneChecked = false;
     for (Node node : ap3.getChildren()) {
       if (node instanceof VBox) {
@@ -1416,8 +1450,7 @@ public class MainApp extends Application {
           setDefaultBrowseDirectory(new File(sfiles).getParent());
         }
       }
-    }
-    else{
+    } else {
       DirectoryChooser folderChooser = new DirectoryChooser();
       folderChooser.setTitle("Open Folder");
       folderChooser.setInitialDirectory(new File(getDefaultBrowseDirectory()));
@@ -1446,6 +1479,7 @@ public class MainApp extends Application {
 
   private void ShowLoading() {
     HBox loading = new HBox();
+    loading.setId("loadingPane");
     Label msg = new Label("Processing...");
     msg.setId("lblLoading");
     loading.setLayoutY(300);
@@ -1459,7 +1493,7 @@ public class MainApp extends Application {
     bLoading.getChildren().add(loading);
 
     Scene scene = thestage.getScene();
-    AnchorPane ap2 = (AnchorPane)scene.lookup("#pane0");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane0");
     ap2.getChildren().add(bLoading);
   }
 
@@ -1492,7 +1526,7 @@ public class MainApp extends Application {
 
         // Convert to ints for ordering
         Integer[] int_directories = new Integer[directories2.length];
-        for(int j = 0; j < directories2.length; j++) {
+        for (int j = 0; j < directories2.length; j++) {
           int_directories[j] = Integer.parseInt(directories2[j]);
         }
 
@@ -1507,25 +1541,20 @@ public class MainApp extends Application {
 
             if (index >= start && index < start + count) {
               ReportRow rr = null;
+              File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
+              File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
               File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-              if (reportHtml.exists()) {
+              File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
+              if (reportXml.exists()) {
+                rr = ReportRow.createRowFromXml(reportDay, reportXml);
+              } else if (reportJson.exists()) {
+                rr = ReportRow.createRowFromJson(reportDay, reportJson);
+              } else if (reportHtml.exists()) {
                 rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
-              } else {
-                File report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-                if (report.exists()) {
-                  rr = ReportRow.createRowFromXml(reportDay, report);
-                } else {
-                  File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
-                  if (reportJson.exists()) {
-                    rr = ReportRow.createRowFromJson(reportDay, reportJson);
-                  } else {
-                    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
-                    if (reportPdf.exists()) {
-                      rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
-                    }
-                  }
-                }
+              } else if (reportPdf.exists()) {
+                rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
               }
+
 
               for (String format : available_formats) {
                 File report;
@@ -1544,7 +1573,7 @@ public class MainApp extends Application {
               }
 
               // Check if all done
-              if(i == directories.length -1 && j == directories2.length -1) {
+              if (i == directories.length - 1 && j == directories2.length - 1) {
                 all_reports_loaded = true;
               }
             }
@@ -1561,11 +1590,10 @@ public class MainApp extends Application {
   }
 
   @FXML
-  private void checkChanged(ActionEvent event)
-  {
-    CheckBox cb = (CheckBox)thestage.getScene().lookup("#chkDefaultOutput");
-    TextField tb = (TextField)thestage.getScene().lookup("#txtOutput");
-    Button but = (Button)thestage.getScene().lookup("#butOutput");
+  private void checkChanged(ActionEvent event) {
+    CheckBox cb = (CheckBox) thestage.getScene().lookup("#chkDefaultOutput");
+    TextField tb = (TextField) thestage.getScene().lookup("#txtOutput");
+    Button but = (Button) thestage.getScene().lookup("#butOutput");
     but.setVisible(!cb.isSelected());
     tb.setVisible(!cb.isSelected());
   }
