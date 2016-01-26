@@ -21,7 +21,7 @@
 <VBox fx:id="rootMain" alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="785.0" prefWidth="974.0" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
     <children>
         <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
-            <VBox>
+            <VBox maxHeight="50" minHeight="50">
                 <children>
                     <Pane fx:id="topMenuImage1" maxHeight="50" minHeight="50" stylesheets="@/styles/style.css">
                         <Button id="butChecker" layoutX="290.0" layoutY="10.0" mnemonicParsing="false" onAction="#gotoMain" prefHeight="20.0" prefWidth="170.0" styleClass="button-check" stylesheets="@/styles/style.css" textFill="TRANSPARENT">
@@ -43,11 +43,11 @@
             </VBox>
             <VBox id="box0">
                 <children>
-                    <AnchorPane id="wizStep3" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
+                    <AnchorPane id="wizStep3" style="-fx-border-width: 0; -fx-border-color: #000;" VBox.vgrow="ALWAYS">
                         <children>
-                            <ScrollPane hbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                            <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.topAnchor="-1.0">
                                 <content>
-                                    <AnchorPane id="pane3" prefHeight="1000.0" prefWidth="906.0">
+                                    <AnchorPane id="pane3" prefHeight="944.0" prefWidth="974.0">
                                         <children>
                                             <ImageView fitHeight="1000.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" styleClass="config3" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                 <!--<image><Image url="@../images/config3.png" /></image>-->

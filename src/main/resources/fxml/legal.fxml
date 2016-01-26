@@ -10,11 +10,11 @@
         <SplitPane fx:id="splitPa1" orientation="VERTICAL">
             <VBox>
                 <children>
-                    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+                    <AnchorPane style="-fx-border-width: 0; -fx-border-color: #000; -fx-background-color: #333333; " VBox.vgrow="ALWAYS">
                         <children>
-                            <ScrollPane prefHeight="944.0" prefWidth="974.0" style="-fx-background-color: #333333;" AnchorPane.bottomAnchor="-40.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                            <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER" prefHeight="944.0" prefWidth="974.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.topAnchor="-1.0">
                                 <content>
-                                    <AnchorPane prefHeight="511.0" prefWidth="841.0">
+                                    <AnchorPane prefHeight="944.0" prefWidth="974.0">
                                         <children>
                                             <ImageView fitWidth="1500.0" focusTraversable="true" layoutX="0" layoutY="0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" styleClass="backgr" AnchorPane.bottomAnchor="195.741943359375" AnchorPane.topAnchor="-195.0">
 <!--                                                 <image>
