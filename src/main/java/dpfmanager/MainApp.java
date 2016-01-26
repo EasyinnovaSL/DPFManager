@@ -521,7 +521,6 @@ public class MainApp extends Application {
     }
 
     ShowLoading();
-    if (true) return;
 
     // Create a background task, because otherwise the loading message is not shown
     Task<Integer> task = new Task<Integer>() {
