@@ -108,12 +108,7 @@ public class ProcessInput {
       System.out.println("Processing file " + filename);
       List<IndividualReport> indReports = processFile(filename, internalReportFolder, outputFolder);
       if (scene != null) {
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n);
-          }
-        });
+        Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
       }
       if (indReports.size() > 0) {
         individuals.addAll(indReports);
@@ -173,12 +168,7 @@ public class ProcessInput {
       System.out.println("");
       System.out.println("Processing file " + filename);
       if (scene != null) {
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n);
-          }
-        });
+        Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
       }
       List<IndividualReport> indReports = processFile(filename, internalReportFolder, outputFolder);
       if (outOfmemory){

@@ -221,7 +221,6 @@ public class MainApp extends Application {
       CreateDefaultConfigurationFiles();
     } else {
       ShowMain();
-//      resize(thestage.getScene(), thestage.getWidth() - 1);
     }
   }
 
@@ -309,12 +308,7 @@ public class MainApp extends Application {
           for (File file : db.getFiles()) {
             filePath = file.getAbsolutePath();
             dropped = filePath;
-            Platform.runLater(new Runnable() {
-              @Override
-              public void run() {
-                SetFile();
-              }
-            });
+            Platform.runLater(() -> SetFile());
             break;
           }
         }
@@ -551,15 +545,12 @@ public class MainApp extends Application {
 
           String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), formats.contains("PDF"), config.getOutput(), true, config.getRules(), config.getFixes());
           if (pi.outOfmemory){
-            Platform.runLater(new Runnable() {
-              @Override
-              public void run() {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("An error occured");
-                alert.setContentText("Out of memory");
-                alert.showAndWait();
-              }
+            Platform.runLater(() -> {
+              Alert alert = new Alert(Alert.AlertType.ERROR);
+              alert.setTitle("Error");
+              alert.setHeaderText("An error occured");
+              alert.setContentText("Out of memory");
+              alert.showAndWait();
             });
           }
 
@@ -570,39 +561,38 @@ public class MainApp extends Application {
           } else if (formats.contains("JSON")) {
             ShowReport(filename, "json");
           } else if (formats.contains("PDF")) {
-            new Thread(new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  Desktop.getDesktop().open(new File(filename));
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
+            new Thread(() -> {
+              try {
+                Desktop.getDesktop().open(new File(filename));
+              } catch (IOException e) {
+                e.printStackTrace();
               }
             }).start();
 
-            Platform.runLater(new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  gotoMain(event);
-                } catch (Exception e) {
-                  e.printStackTrace();
-                }
+            Platform.runLater(() -> {
+              try {
+                gotoMain(event);
+              } catch (Exception e) {
+                e.printStackTrace();
               }
             });
           }
 
         } catch (Exception ex) {
-          Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-              Alert alert = new Alert(Alert.AlertType.ERROR);
-              alert.setTitle("Error");
-              alert.setHeaderText("An error occured");
-              alert.setContentText(ex.toString());
-              alert.showAndWait();
-            }
+          Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error occured");
+            alert.setContentText(ex.toString());
+            alert.showAndWait();
+          });
+        } catch (OutOfMemoryError er){
+          Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error occured");
+            alert.setContentText("Out of memory");
+            alert.showAndWait();
           });
         }
         return 0;
@@ -622,119 +612,119 @@ public class MainApp extends Application {
   }
 
   private void ShowReport(String filename, String format) {
-    System.out.println("Showing report...");
-    String styleBackground = "-fx-background-image: url('/images/topMenu.png'); " +
-        "-fx-background-position: center center; " +
-        "-fx-background-repeat: repeat-x;";
-    String styleButton = "-fx-background-color: transparent;\n" +
-        "\t-fx-border-width     : 0px   ;\n" +
-        "\t-fx-border-radius: 0 0 0 0;\n" +
-        "\t-fx-background-radius: 0 0 0";
-    String styleButtonPressed = "-fx-background-color: rgba(255, 255, 255, 0.2);";
+    try {
 
-    Scene sceneReport = new Scene(new Group(), thestage.getScene().getWidth(), thestage.getScene().getHeight());
+      System.out.println("Showing report...");
+      String styleBackground = "-fx-background-image: url('/images/topMenu.png'); " +
+          "-fx-background-position: center center; " +
+          "-fx-background-repeat: repeat-x;";
+      String styleButton = "-fx-background-color: transparent;\n" +
+          "\t-fx-border-width     : 0px   ;\n" +
+          "\t-fx-border-radius: 0 0 0 0;\n" +
+          "\t-fx-background-radius: 0 0 0";
+      String styleButtonPressed = "-fx-background-color: rgba(255, 255, 255, 0.2);";
 
-    VBox root = new VBox();
-    SplitPane splitPa = new SplitPane();
-    splitPa.setOrientation(Orientation.VERTICAL);
+      Scene sceneReport = new Scene(new Group(), thestage.getScene().getWidth(), thestage.getScene().getHeight());
 
-    Pane topImg = new Pane();
-    topImg.setStyle(styleBackground);
-    topImg.setMinWidth(thestage.getScene().getWidth());
-    topImg.setMinHeight(50);
-    topImg.setMaxHeight(50);
+      VBox root = new VBox();
+      SplitPane splitPa = new SplitPane();
+      splitPa.setOrientation(Orientation.VERTICAL);
 
-    // Button go to main
-    Button checker = new Button();
-    checker.setMinWidth(170);
-    checker.setMinHeight(30);
-    checker.setLayoutY(5.0);
-    checker.setId("butChecker");
+      Pane topImg = new Pane();
+      topImg.setStyle(styleBackground);
+      topImg.setMinWidth(thestage.getScene().getWidth());
+      topImg.setMinHeight(50);
+      topImg.setMaxHeight(50);
 
-    checker.setCursor(Cursor.HAND);
-    checker.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        try {
-          //gotoReport(event);
-          gotoMain(event);
-        } catch (Exception e) {
-          e.printStackTrace();
+      // Button go to main
+      Button checker = new Button();
+      checker.setMinWidth(170);
+      checker.setMinHeight(30);
+      checker.setLayoutY(5.0);
+      checker.setId("butChecker");
+
+      checker.setCursor(Cursor.HAND);
+      checker.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          try {
+            //gotoReport(event);
+            gotoMain(event);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
-      }
-    });
-    checker.styleProperty().bind(
-        Bindings
-            .when(checker.pressedProperty())
-            .then(
-                new SimpleStringProperty(styleButtonPressed)
-            ).otherwise(
-            new SimpleStringProperty(styleButton)
-        )
-    );
+      });
+      checker.styleProperty().bind(
+          Bindings
+              .when(checker.pressedProperty())
+              .then(
+                  new SimpleStringProperty(styleButtonPressed)
+              ).otherwise(
+              new SimpleStringProperty(styleButton)
+          )
+      );
 
-    // Button go to reports
-    Button report = new Button();
-    report.setMinWidth(80);
-    report.setMinHeight(30);
-    report.setLayoutY(5.0);
-    report.setId("butReport");
+      // Button go to reports
+      Button report = new Button();
+      report.setMinWidth(80);
+      report.setMinHeight(30);
+      report.setLayoutY(5.0);
+      report.setId("butReport");
 
-    report.setCursor(Cursor.HAND);
-    report.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        try {
-          gotoReport(event);
-        } catch (Exception e) {
-          e.printStackTrace();
+      report.setCursor(Cursor.HAND);
+      report.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          try {
+            gotoReport(event);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
-      }
-    });
-    report.styleProperty().bind(
-        Bindings
-            .when(report.pressedProperty())
-            .then(
-                new SimpleStringProperty(styleButtonPressed)
-            ).otherwise(
-            new SimpleStringProperty(styleButton)
-        )
-    );
+      });
+      report.styleProperty().bind(
+          Bindings
+              .when(report.pressedProperty())
+              .then(
+                  new SimpleStringProperty(styleButtonPressed)
+              ).otherwise(
+              new SimpleStringProperty(styleButton)
+          )
+      );
 
-    // Button go to about
-    Button about = new Button();
-    about.setMinWidth(55);
-    about.setMinHeight(30);
-    about.setLayoutY(5.0);
-    about.setId("butAbout");
+      // Button go to about
+      Button about = new Button();
+      about.setMinWidth(55);
+      about.setMinHeight(30);
+      about.setLayoutY(5.0);
+      about.setId("butAbout");
 
-    about.setCursor(Cursor.HAND);
-    about.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        try {
-          gotoAbout(event);
-        } catch (Exception e) {
-          e.printStackTrace();
+      about.setCursor(Cursor.HAND);
+      about.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          try {
+            gotoAbout(event);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
-      }
-    });
-    about.styleProperty().bind(
-        Bindings
-            .when(about.pressedProperty())
-            .then(
-                new SimpleStringProperty(styleButtonPressed)
-            ).otherwise(
-            new SimpleStringProperty(styleButton)
-        )
-    );
+      });
+      about.styleProperty().bind(
+          Bindings
+              .when(about.pressedProperty())
+              .then(
+                  new SimpleStringProperty(styleButtonPressed)
+              ).otherwise(
+              new SimpleStringProperty(styleButton)
+          )
+      );
 
-    topImg.getChildren().addAll(checker, report, about);
+      topImg.getChildren().addAll(checker, report, about);
 
-    // Create a task to be run later, in order to avoid conflicts between threads
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
+      // Create a task to be run later, in order to avoid conflicts between threads
+      Platform.runLater(() -> {
         double h = thestage.getScene().getHeight() - topImg.getHeight() - 50;
         splitPa.getItems().addAll(topImg);
         String file = filename;
@@ -815,8 +805,17 @@ public class MainApp extends Application {
 
         thestage.sizeToScene();
         topMenuPositioning(sceneReport);
-      }
-    });
+      });
+    }
+    catch (OutOfMemoryError er){
+      Platform.runLater(() -> {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("An error occured");
+        alert.setContentText("Out of memory");
+        alert.showAndWait();
+      });
+    }
   }
 
   @FXML
@@ -825,24 +824,35 @@ public class MainApp extends Application {
   }
 
   void LoadSceneXml(String fxmlFile) throws Exception {
-    LOG.debug("Loading FXML for main view from: {}", fxmlFile);
+    try{
+      LOG.debug("Loading FXML for main view from: {}", fxmlFile);
 
-    FXMLLoader loader = new FXMLLoader();
-    Parent rootNode1 = loader.load(getClass().getResourceAsStream(fxmlFile));
-    Scene scene = new Scene(rootNode1, thestage.getScene().getWidth(), thestage.getScene().getHeight());
-    scene.getStylesheets().add("/styles/style.css");
+      FXMLLoader loader = new FXMLLoader();
+      Parent rootNode1 = loader.load(getClass().getResourceAsStream(fxmlFile));
+      Scene scene = new Scene(rootNode1, thestage.getScene().getWidth(), thestage.getScene().getHeight());
+      scene.getStylesheets().add("/styles/style.css");
 
-    thestage.setTitle("DPFManager");
-    thestage.setScene(scene);
-    thestage.sizeToScene();
-    thestage.show();
+      thestage.setTitle("DPFManager");
+      thestage.setScene(scene);
+      thestage.sizeToScene();
+      thestage.show();
 
-    SplitPane splitPa1 = (SplitPane) scene.lookup("#splitPa1");
-    splitPa1.lookupAll(".split-pane-divider").stream()
-        .forEach(
-            div -> div.setMouseTransparent(true));
+      SplitPane splitPa1 = (SplitPane) scene.lookup("#splitPa1");
+      splitPa1.lookupAll(".split-pane-divider").stream()
+          .forEach(
+              div -> div.setMouseTransparent(true));
 
-    topMenuPositioning(scene);
+      topMenuPositioning(scene);
+    }
+    catch (OutOfMemoryError er){
+      Platform.runLater(() -> {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("An error occured");
+        alert.setContentText("Out of memory");
+        alert.showAndWait();
+      });
+    }
   }
 
   void resize(Scene scene, Number newSceneWidth) {
