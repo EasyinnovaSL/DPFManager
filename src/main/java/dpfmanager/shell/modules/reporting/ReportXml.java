@@ -113,7 +113,12 @@ public class ReportXml extends ReportGeneric {
 
     // Photometric
     el = doc.createElement("photometric");
-    el.setTextContent(ifd.getMetadata().get("PhotometricInterpretation").getFirstNumericValue()+"");
+    TagValue tagv = ifd.getMetadata().get("PhotometricInterpretation");
+    if (tagv != null) {
+      el.setTextContent(tagv.getFirstNumericValue() + "");
+    } else {
+      el.setTextContent("null");
+    }
     ifdNode.appendChild(el);
 
     // SubImage
@@ -286,12 +291,16 @@ public class ReportXml extends ReportGeneric {
 
     // tags
     for (ReportTag tag : getTags(ir)) {
-      infoElement = doc.createElement(tag.tv.getName());
-      infoElement.setTextContent(tag.tv.toString());
-      infoElement.setAttribute(tag.tv.getName(), tag.tv.toString());
-      infoElement.setAttribute("id", tag.tv.getId() + "");
-      infoElement.setAttribute("type", tag.dif + "");
-      report.appendChild(infoElement);
+      try {
+        infoElement = doc.createElement(tag.tv.getName());
+        infoElement.setTextContent(tag.tv.toString());
+        infoElement.setAttribute(tag.tv.getName(), tag.tv.toString());
+        infoElement.setAttribute("id", tag.tv.getId() + "");
+        infoElement.setAttribute("type", tag.dif + "");
+        report.appendChild(infoElement);
+      } catch (Exception ex) {
+        ex.toString();
+      }
     }
 
     // implementation checker
