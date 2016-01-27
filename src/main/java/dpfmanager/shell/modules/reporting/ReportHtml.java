@@ -343,10 +343,28 @@ public class ReportHtml extends ReportGeneric {
     int index = 0;
     TiffDocument td = ir.getTiffModel();
     IFD ifd = td.getFirstIFD();
+    boolean hasIFDList = false;
+    if (ifd != null && ifd.hasNextIFD()) {
+      hasIFDList = ifd.hasNextIFD();
+    }
     while (ifd != null) {
       String typ = " - Main image";
-      if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Thumbnail";
-      ul += "<li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick='showIfd("+index+++")'>" + ifd.toString() + typ + "</a>";
+      if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()){
+        typ = " - Thumbnail";
+      }
+      String aIni = "";
+      String aBody = " " + ifd.toString() + typ;
+      String aEnd = "";
+      if (hasIFDList){
+        String bold = "";
+        if (index == 0){
+          bold = "bold";
+        }
+        aIni = "<a id='liifd" + index + "' href='javascript:void(0)' onclick='showIfd(" + index + ")' class='liifdlist " + bold + "'>";
+        aEnd = "</a>";
+      }
+      ul += "<li><i class=\"fa fa-file-o\"></i>" + aIni + aBody + aEnd;
+      index++;
       if (ifd.getsubIFD() != null) {
         typ="";
         if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Main image";
