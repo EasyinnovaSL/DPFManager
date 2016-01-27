@@ -427,7 +427,7 @@ public class ProcessInput {
    * @param folder the internal report folder
    */
   private void internalReport(IndividualReport ir, String realFilename,
-                              String folder, String outputFolder) {
+                              String folder, String outputFolder) throws OutOfMemoryError{
     String outputfile = ReportGenerator.getReportName(folder, realFilename, idReport);
     reportGenerator.generateIndividualReport(outputfile, ir, outputFolder);
     System.out.println("Internal report '" + outputfile + "' created");

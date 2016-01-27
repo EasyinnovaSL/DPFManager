@@ -573,7 +573,7 @@ public class ReportGenerator {
    * @param ir         the individual report
    * @param outputFolder the output report folder
    */
-  public void generateIndividualReport(String reportName, IndividualReport ir, String outputFolder) {
+  public void generateIndividualReport(String reportName, IndividualReport ir, String outputFolder) throws OutOfMemoryError{
     String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
@@ -667,11 +667,27 @@ public class ReportGenerator {
         ir2.checkBL = ir.checkBL;
         ir2.checkEP = ir.checkEP;
         ir2.checkIT = ir.checkIT;
+
+        //Save fixed tiffs
+        String pathFixed = "";
+        if (outputFolder == null) {
+          new File(nameFixedTif).delete();
+        } else {
+          File dir = new File(outputFolder + "/fixed/");
+          if (!dir.exists()) dir.mkdir();
+          pathFixed = outputFolder + "/fixed/" + new File(nameOriginalTif).getName();
+          Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
+          ir2.setFilePath(pathFixed);
+          System.out.println("Fixed file " + pathFixed + " created");
+        }
+        ir2.setFilePath(pathFixed);
+        ir2.setFileName(new File(nameOriginalTif).getName() +" Fixed");
+
+        //Make reports
         output = ReportXml.parseIndividual(xmlFileStr, ir2, rules);
         ValidationResult pcValidation2 = getPcValidation(output);
         ir2.setPcValidation(pcValidation2);
         ir2.setCompareReport(ir);
-        ir2.setFileName(ir.getFileName() + "_fixed");
         if (html) {
           ReportHtml.parseIndividual(htmlFileStr, ir2, 2);
         }
@@ -683,16 +699,6 @@ public class ReportGenerator {
         }
         if (!xml) {
           ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
-        }
-
-        if (outputFolder == null) {
-          new File(nameFixedTif).delete();
-        } else {
-          File dir = new File(outputFolder + "/fixed/");
-          if (!dir.exists()) dir.mkdir();
-          String pathFixed = outputFolder + "/fixed/" + new File(nameOriginalTif).getName();
-          Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
-          System.out.println("Fixed file " + pathFixed + " created");
         }
       } catch (Exception ex) {
         System.out.println("Error creating report of fixed image");

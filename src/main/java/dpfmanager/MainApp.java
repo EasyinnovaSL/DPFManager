@@ -1555,13 +1555,13 @@ public class MainApp extends Application {
               File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
               File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
               File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
-              if (reportXml.exists()) {
+              if (reportXml.exists() && reportXml.length() > 0) {
                 rr = ReportRow.createRowFromXml(reportDay, reportXml);
-              } else if (reportJson.exists()) {
+              } else if (reportJson.exists() && reportJson.length() > 0) {
                 rr = ReportRow.createRowFromJson(reportDay, reportJson);
-              } else if (reportHtml.exists()) {
+              } else if (reportHtml.exists() && reportHtml.length() > 0) {
                 rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
-              } else if (reportPdf.exists()) {
+              } else if (reportPdf.exists() && reportPdf.length() > 0) {
                 rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
               }
 
@@ -1574,7 +1574,7 @@ public class MainApp extends Application {
                   report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
                 }
 
-                if (report.exists()) {
+                if (report.exists() && report.length() > 0) {
                   rr.addFormat(format, report.getPath());
                 }
               }
