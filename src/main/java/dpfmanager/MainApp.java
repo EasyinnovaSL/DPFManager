@@ -1555,30 +1555,33 @@ public class MainApp extends Application {
               File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
               File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
               File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
+
               if (reportXml.exists() && reportXml.length() > 0) {
                 rr = ReportRow.createRowFromXml(reportDay, reportXml);
-              } else if (reportJson.exists() && reportJson.length() > 0) {
+              }
+              if (rr == null && reportJson.exists() && reportJson.length() > 0) {
                 rr = ReportRow.createRowFromJson(reportDay, reportJson);
-              } else if (reportHtml.exists() && reportHtml.length() > 0) {
+              }
+              if (rr == null && reportHtml.exists() && reportHtml.length() > 0) {
                 rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
-              } else if (reportPdf.exists() && reportPdf.length() > 0) {
+              }
+              if (rr == null && reportPdf.exists() && reportPdf.length() > 0) {
                 rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
               }
 
-
-              for (String format : available_formats) {
-                File report;
-                if (format == "json" || format == "xml") {
-                  report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
-                } else {
-                  report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
-                }
-
-                if (report.exists() && report.length() > 0) {
-                  rr.addFormat(format, report.getPath());
-                }
-              }
               if (rr != null) {
+                for (String format : available_formats) {
+                  File report;
+                  if (format == "json" || format == "xml") {
+                    report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
+                  } else {
+                    report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
+                  }
+
+                  if (report.exists() && report.length() > 0) {
+                    rr.addFormat(format, report.getPath());
+                  }
+                }
                 data.add(rr);
               }
 

@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.slf4j:jcl-over-slf4j:1.6.1">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/jcl-over-slf4j/1.6.1/jcl-over-slf4j-1.6.1.jar!/" />
+      <root url="jar://C:/Program Files (x86)/apache-maven-3.3.3/repository/org/slf4j/jcl-over-slf4j/1.6.1/jcl-over-slf4j-1.6.1.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/jcl-over-slf4j/1.6.1/jcl-over-slf4j-1.6.1-javadoc.jar!/" />
+      <root url="jar://C:/Program Files (x86)/apache-maven-3.3.3/repository/org/slf4j/jcl-over-slf4j/1.6.1/jcl-over-slf4j-1.6.1-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/jcl-over-slf4j/1.6.1/jcl-over-slf4j-1.6.1-sources.jar!/" />
+      <root url="jar://C:/Program Files (x86)/apache-maven-3.3.3/repository/org/slf4j/jcl-over-slf4j/1.6.1/jcl-over-slf4j-1.6.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
