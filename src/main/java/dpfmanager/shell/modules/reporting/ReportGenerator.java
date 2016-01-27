@@ -675,7 +675,7 @@ public class ReportGenerator {
         } else {
           File dir = new File(outputFolder + "/fixed/");
           if (!dir.exists()) dir.mkdir();
-          pathFixed = outputFolder + "/fixed/" + new File(nameOriginalTif).getName();
+          pathFixed = outputFolder + "/fixed/" + new File(ir.getReportPath()).getName();
           Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
           ir2.setFilePath(pathFixed);
           System.out.println("Fixed file " + pathFixed + " created");
