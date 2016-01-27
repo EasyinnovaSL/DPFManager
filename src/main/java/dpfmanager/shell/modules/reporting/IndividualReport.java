@@ -255,6 +255,15 @@ public class IndividualReport {
   }
 
   /**
+   * Set file path.
+   *
+   * @param path the new file name
+   */
+  public void setFilePath(String path) {
+    filepath = path;
+  }
+
+  /**
    * Saves the ifd node.
    *
    * @param ifd the ifd
