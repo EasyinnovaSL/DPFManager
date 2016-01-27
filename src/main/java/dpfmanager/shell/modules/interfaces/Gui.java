@@ -330,6 +330,9 @@ public class Gui extends UserInterface {
     if (!chkDefaultOutput.isSelected()) {
       config.setOutput(txtOutput.getText());
     }
+    else{
+      config.setOutput(null);
+    }
   }
 
   public void getAutofixes(Scene scene) throws Exception {
