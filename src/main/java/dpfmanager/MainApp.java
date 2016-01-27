@@ -123,7 +123,7 @@ public class MainApp extends Application {
   private static String dropped;
   private static Gui gui;
   private final ToggleGroup group = new ToggleGroup();
-  private final int reports_loaded = 50;
+  public static int reports_loaded = 50;
   private boolean all_reports_loaded;
   private static boolean firstRun = true;
   static boolean editingConfig = false;
