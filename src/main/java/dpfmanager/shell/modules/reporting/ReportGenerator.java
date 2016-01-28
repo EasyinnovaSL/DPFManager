@@ -481,7 +481,7 @@ public class ReportGenerator {
           try {
             Class cls = this.getClass();
             ClassLoader cLoader = cls.getClassLoader();
-            String [] arrayFiles = new String[15];
+            String [] arrayFiles = new String[16];
             File [] arrayFoulders = new File[4];
             //files in js folder
             arrayFiles[0] = "html/js/jquery-1.9.1.min.js";
@@ -500,11 +500,12 @@ public class ReportGenerator {
             arrayFiles[9] = "html/fonts/fontawesome-webfont.svg";
             arrayFiles[10] = "html/fonts/fontawesome-webfont.eot";
             arrayFiles[11] = "html/fonts/FontAwesome.otf";
+            arrayFiles[12] = "html/fonts/Roboto-Bold.ttf";
 
             //files in css folder
-            arrayFiles[12] = "html/css/font-awesome.css";
-            arrayFiles[13] = "html/css/default.css";
-            arrayFiles[14] = "html/css/bootstrap.css";
+            arrayFiles[13] = "html/css/font-awesome.css";
+            arrayFiles[14] = "html/css/default.css";
+            arrayFiles[15] = "html/css/bootstrap.css";
 
             arrayFoulders[0] = new File(targetPath + File.separator + "html/js/");
             arrayFoulders[1] = new File(targetPath + File.separator + "html/img/");
