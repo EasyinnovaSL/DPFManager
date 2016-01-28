@@ -170,35 +170,35 @@ public class UserInterface {
   }
 
   public static String getVersion() {
-    Properties prop = new Properties();
-    InputStream input = null;
+    //Properties prop = new Properties();
+    //InputStream input = null;
 
-    try {
+    //try {
+      //String ver = UserInterface.class.getPackage().getImplementationVersion();
 
-      String filename = ".properties";
-      input = MainApp.class.getClassLoader().getResourceAsStream(filename);
-      if(input==null){
-        return "";
-      }
+      //String filename = ".properties";
+      //input = MainApp.class.getClassLoader().getResourceAsStream(filename);
+      //if(input==null){
+      //  return "";
+      //}
 
       // load a properties file
-      prop.load(input);
+      //prop.load(input);
 
       // get the property value and print it out
-      return prop.getProperty("version");
-
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    } finally {
-      if (input != null) {
-        try {
-          input.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    return "";
+      //return prop.getProperty("version");
+    //} catch (IOException ex) {
+    //  ex.printStackTrace();
+    //} finally {
+    //  if (input != null) {
+    //    try {
+    //      input.close();
+    //    } catch (IOException e) {
+    //      e.printStackTrace();
+    //    }
+    //  }
+    //}
+    return "1.4";
   }
 
   public static boolean getFeedback() {

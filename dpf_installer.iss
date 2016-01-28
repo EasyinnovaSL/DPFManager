@@ -41,7 +41,6 @@ Source: "target\jfx\app\DPF Manager-jfx.jar"; DestDir: "{app}"; Flags: ignorever
 Source: "target\jfx\app\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion
 Source: "additionalResources\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "additionalResources\*.dpf"; DestDir: "{%HOMEPATH}\DPF Manager"; Flags: ignoreversion
-Source: "additionalResources\*.txt"; DestDir: "{%HOMEPATH}\DPF Manager"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

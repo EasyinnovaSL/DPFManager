@@ -323,6 +323,17 @@ public class ReportRow {
     }
   }
 
+  public static ReportRow createEmptyRow(String reportDay) {
+    try {
+      String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
+
+      ReportRow row = new ReportRow(sdate, "?", "?", "?", "? errors", "? warnings", "? passed", "? %");
+      return row;
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
   /**
    * Create row from html report row.
    *

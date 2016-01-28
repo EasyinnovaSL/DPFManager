@@ -1613,6 +1613,9 @@ public class MainApp extends Application {
                   }
                 }
                 data.add(rr);
+              } else {
+                rr = ReportRow.createEmptyRow(reportDay);
+                data.add(rr);
               }
 
               // Check if all done
