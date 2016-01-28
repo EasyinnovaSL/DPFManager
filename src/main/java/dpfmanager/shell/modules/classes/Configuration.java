@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -75,10 +76,20 @@ public class Configuration {
    * Instantiates a new Configuration.
    */
   public Configuration() {
-    isos = new ArrayList<String>();
+    isos = new ArrayList<>();
     rules = new Rules();
-    formats = new ArrayList<String>();
+    formats = new ArrayList<>();
     fixes = new Fixes();
+  }
+
+  /**
+   * Instantiates a new Configuration with params
+   */
+  public Configuration(Rules rules, Fixes fixes, ArrayList<String> formats) {
+    isos = new ArrayList<>();
+    this.rules = rules;
+    this.formats = formats;
+    this.fixes = fixes;
   }
 
   /**

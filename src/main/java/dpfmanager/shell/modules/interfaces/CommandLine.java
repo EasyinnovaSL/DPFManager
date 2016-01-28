@@ -210,14 +210,20 @@ public class CommandLine extends UserInterface {
         if (explicitoutput) {
           config.setOutput(outputFolder);
         }
-        ProcessInput pi = new ProcessInput(allowedExtensions);
-        pi.ProcessFiles(files, config, outputFolder);
-        System.out.println("Report generated successfully.");
-      } else {
-        ProcessInput pi = new ProcessInput(allowedExtensions, true, true, 0, false, null);
-        pi.ProcessFiles(files, xml, json, html, pdf, outputFolder, silence, null, null);
-        System.out.println("Report generated successfully.");
+      } else { //Create it
+        config = new Configuration(null,null,new ArrayList<>());
+        if (xml) config.getFormats().add("XML");
+        if (pdf) config.getFormats().add("PDF");
+        if (html) config.getFormats().add("HTML");
+        if (json) config.getFormats().add("JSON");
+        config.getIsos().add("Baseline");
+        config.getIsos().add("Tiff/EP");
+        config.getIsos().add("Tiff/IT");
+        config.setOutput(outputFolder);
       }
+      ProcessInput pi = new ProcessInput(allowedExtensions);
+      pi.ProcessFiles(files, config, silence);
+      System.out.println("Report generated successfully.");
     }
   }
 
