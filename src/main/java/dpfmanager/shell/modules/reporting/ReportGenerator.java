@@ -67,6 +67,7 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -297,6 +298,18 @@ public class ReportGenerator {
     this.json = json;
     this.html = html;
     this.pdf = pdf;
+  }
+
+  /**
+   * Set the output formats given a list.
+   *
+   * @param formats the formats list
+   */
+  public void setReportsFormats(List<String> formats) {
+    this.xml = formats.contains("XML");
+    this.json = formats.contains("JSON");
+    this.html = formats.contains("HTML");
+    this.pdf = formats.contains("PDF");
   }
 
   /**

@@ -49,28 +49,18 @@ public class ProcessInput {
    * Instantiates a new Process input.
    *
    * @param allowedExtensions the allowed extensions
-   * @param checkBL           the check bl
-   * @param checkEP           the check ep
-   * @param checkIT           the check it
-   * @param checkPC           the check pc
-   * @param scene           the JavaFX scene
-   */
-  public ProcessInput(List<String> allowedExtensions, boolean checkBL, boolean checkEP, int checkIT, boolean checkPC, Scene scene) {
-    this.allowedExtensions = allowedExtensions;
-    this.checkBL = checkBL;
-    this.checkEP = checkEP;
-    this.checkIT = checkIT;
-    this.checkPC = checkPC;
-    this.scene = scene;
-  }
-
-  /**
-   * Instantiates a new Process input.
-   *
-   * @param allowedExtensions the allowed extensions
    */
   public ProcessInput(List<String> allowedExtensions) {
     this.allowedExtensions = allowedExtensions;
+  }
+
+  /**
+   * Sets the scene.
+   *
+   * @param scene the scene
+   */
+  public void setScene(Scene scene) {
+    this.scene = scene;
   }
 
   /**
@@ -78,23 +68,23 @@ public class ProcessInput {
    *
    * @param files        the files
    * @param config       the config
-   * @param outputFolder the output folder
    * @return the string
    */
-  public String ProcessFiles(ArrayList<String> files, Configuration config, String outputFolder) {
+  public String ProcessFiles(ArrayList<String> files, Configuration config, boolean silence) {
     checkBL = config.getIsos().contains("Baseline");
     checkEP = config.getIsos().contains("Tiff/EP");
     checkIT = -1;
     if (config.getIsos().contains("Tiff/IT")) checkIT = 0;
     if (config.getIsos().contains("Tiff/IT-1")) checkIT = 1;
     if (config.getIsos().contains("Tiff/IT-2")) checkIT = 2;
-    checkPC = config.getRules().getRules().size() > 0;
-    ArrayList<String> formats = config.getFormats();
-
-    boolean silence = true;
+    if (config.getRules() != null){
+      checkPC = config.getRules().getRules().size() > 0;
+    } else{
+      checkPC = false;
+    }
 
     reportGenerator = new ReportGenerator();
-    reportGenerator.setReportsFormats(formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), formats.contains("PDF"));
+    reportGenerator.setReportsFormats(config.getFormats());
     reportGenerator.setRules(config.getRules());
     reportGenerator.setFixes(config.getFixes());
 
@@ -106,7 +96,7 @@ public class ProcessInput {
     for (final String filename : files) {
       System.out.println("");
       System.out.println("Processing file " + filename);
-      List<IndividualReport> indReports = processFile(filename, internalReportFolder, outputFolder);
+      List<IndividualReport> indReports = processFile(filename, internalReportFolder, config.getOutput());
       if (scene != null) {
         Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
       }
@@ -118,9 +108,7 @@ public class ProcessInput {
     // Global report
     String summaryXml = null;
     try {
-      summaryXml =
-          reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
-              silence);
+      summaryXml = reportGenerator.makeSummaryReport(internalReportFolder, individuals, config.getOutput(), silence);
     } catch (OutOfMemoryError e) {
       System.err.println("Out of memory.");
       outOfmemory = true;
@@ -135,79 +123,7 @@ public class ProcessInput {
       e.printStackTrace();
     }
 
-    String htmlFileStr = internalReportFolder + "report.html";
-    return htmlFileStr;
-  }
-
-  /**
-   * Process files string.
-   *
-   * @param files        the files
-   * @param xml          the xml
-   * @param json         the json
-   * @param html         the html
-   * @param pdf          the pdf
-   * @param outputFolder the output folder
-   * @param silence      the silence
-   * @param rules        the rules
-   * @param fixes        the fixes
-   * @return the string
-   */
-  public String ProcessFiles(ArrayList<String> files, boolean xml, boolean json, boolean html, boolean pdf, String outputFolder, boolean silence, Rules rules, Fixes fixes) {
-    reportGenerator = new ReportGenerator();
-    reportGenerator.setReportsFormats(xml, json, html, pdf);
-    reportGenerator.setRules(rules);
-    reportGenerator.setFixes(fixes);
-
-    // Process files
-    ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
-    String internalReportFolder = ReportGenerator.createReportPath();
-    int n=files.size();
-    idReport=1;
-    for (final String filename : files) {
-      System.out.println("");
-      System.out.println("Processing file " + filename);
-      if (scene != null) {
-        Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
-      }
-      List<IndividualReport> indReports = processFile(filename, internalReportFolder, outputFolder);
-      if (outOfmemory){
-        break;
-      }
-      if (indReports.size() > 0) {
-        individuals.addAll(indReports);
-      }
-      idReport++;
-    }
-    // Global report
-    String summaryXml = null;
-    try {
-      summaryXml =
-          reportGenerator.makeSummaryReport(internalReportFolder, individuals, outputFolder,
-              silence);
-    } catch (OutOfMemoryError e) {
-      System.err.println("Out of memory.");
-      outOfmemory = true;
-    }
-
-    // Send report over FTP (only for alpha testing)
-    try {
-      if(UserInterface.getFeedback() && summaryXml != null) {
-        sendFtpCamel(reportGenerator, summaryXml);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    if (html) {
-      return internalReportFolder + "report.html";
-    } else if (xml) {
-      return internalReportFolder + "summary.xml";
-    } else if (json) {
-      return internalReportFolder + "summary.json";
-    } else {
-      return internalReportFolder + "report.pdf";
-    }
+    return internalReportFolder;
   }
 
   /**

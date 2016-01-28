@@ -266,30 +266,12 @@ public class ReportRow {
   public static ReportRow createRowFromXml(String reportDay, File file) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
-      String input = "";
       File parent = new File(file.getParent());
       int n = countFiles(parent, ".xml") - 1 - countFiles(parent, "_fixed.xml");
       String xml = readFullFile(file.getPath(), Charset.defaultCharset());
       String stime = getStime(file.getPath());
       int passed = 0, errors = 0, warnings = 0, score = 0;
-      File folder = new File(file.getParentFile().getAbsolutePath());
-      for (final File fileEntry : folder.listFiles()) {
-        if (!fileEntry.isDirectory()) {
-          if (fileEntry.getPath().toLowerCase().endsWith(".xml")) {
-            if (!fileEntry.getAbsolutePath().equals(file.getAbsolutePath())) {
-              if (input.length() > 0) input += ", ";
-              String fname = fileEntry.getName();
-              if (fname.toLowerCase().endsWith(".xml"))
-                fname = fname.substring(0, fname.length() - 4);
-              if (fname.toLowerCase().endsWith(".tif"))
-                fname = fname.substring(0, fname.length() - 4);
-              if (fname.toLowerCase().endsWith(".tiff"))
-                fname = fname.substring(0, fname.length() - 5);
-              input += fname;
-            }
-          }
-        }
-      }
+      String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".xml");
 
       // Passed
       if (xml.indexOf("<valid_files>") >= 0) {
@@ -356,27 +338,8 @@ public class ReportRow {
       String html = readFullFile(file.getPath(), Charset.defaultCharset());
       int passed = 0, errors = 0, warnings = 0, score = 0;
       String stime = getStime(file.getPath());
-      String input = "";
-      File folder = new File(file.getParentFile().getAbsolutePath() + "/html");
-      if (folder.exists()) {
-        for (final File fileEntry : folder.listFiles()) {
-          if (!fileEntry.isDirectory()) {
-            if (fileEntry.getPath().toLowerCase().endsWith(".html")) {
-              if (!fileEntry.getAbsolutePath().equals(file.getAbsolutePath())) {
-                if (input.length() > 0) input += ", ";
-                String fname = fileEntry.getName();
-                if (fname.toLowerCase().endsWith(".html"))
-                  fname = fname.substring(0, fname.length() - 5);
-                if (fname.toLowerCase().endsWith(".tif"))
-                  fname = fname.substring(0, fname.length() - 4);
-                if (fname.toLowerCase().endsWith(".tiff"))
-                  fname = fname.substring(0, fname.length() - 5);
-                input += fname;
-              }
-            }
-          }
-        }
-      }
+      File folder = new File(file.getParentFile().getAbsolutePath()+"/html");
+      String input = parseInputFiles(folder,file.getAbsolutePath(),".html");
 
       // Passed
       if (html.indexOf("id=\"pie-global\"") >= 0) {
@@ -465,25 +428,7 @@ public class ReportRow {
       String json = readFullFile(file.getPath(), Charset.defaultCharset());
       JsonObject jObj = new JsonParser().parse(json).getAsJsonObject();
       String stime = getStime(file.getPath());
-      String input = "";
-      File folder = new File(file.getParentFile().getAbsolutePath());
-      for (final File fileEntry : folder.listFiles()) {
-        if (!fileEntry.isDirectory()) {
-          if (fileEntry.getPath().toLowerCase().endsWith(".json")) {
-            if (!fileEntry.getAbsolutePath().equals(file.getAbsolutePath())) {
-              if (input.length() > 0) input += ", ";
-              String fname = fileEntry.getName();
-              if (fname.toLowerCase().endsWith(".json"))
-                fname = fname.substring(0, fname.length() - 5);
-              if (fname.toLowerCase().endsWith(".tif"))
-                fname = fname.substring(0, fname.length() - 4);
-              if (fname.toLowerCase().endsWith(".tiff"))
-                fname = fname.substring(0, fname.length() - 5);
-              input += fname;
-            }
-          }
-        }
-      }
+      String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".json");
 
       // Passed
       if (jObj.has("stats")) {
@@ -545,31 +490,40 @@ public class ReportRow {
       String n = "?";
       String passed = "?", errors = "?", warnings = "?", score = "?";
       String stime = getStime(file.getPath());
-      String input = "";
-      File folder = new File(file.getParentFile().getAbsolutePath());
-      for (final File fileEntry : folder.listFiles()) {
-        if (!fileEntry.isDirectory()) {
-          if (fileEntry.getPath().toLowerCase().endsWith(".pdf")) {
-            if (!fileEntry.getAbsolutePath().equals(file.getAbsolutePath())) {
-              if (input.length() > 0) input += ", ";
-              String fname = fileEntry.getName();
-              if (fname.toLowerCase().endsWith(".pdf"))
-                fname = fname.substring(0, fname.length() - 4);
-              if (fname.toLowerCase().endsWith(".tif"))
-                fname = fname.substring(0, fname.length() - 4);
-              if (fname.toLowerCase().endsWith(".tiff"))
-                fname = fname.substring(0, fname.length() - 5);
-              input += fname;
-            }
-          }
-        }
-      }
+      String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".pdf");
 
       ReportRow row = new ReportRow(sdate, stime, input, n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
       return row;
     } catch (Exception e) {
       return null;
     }
+  }
+
+  private static String parseInputFiles(File folder, String filePath, String ext){
+    String input = "";
+    int count = 0;
+    for (final File fileEntry : folder.listFiles()) {
+      if (!fileEntry.isDirectory()) {
+        if (fileEntry.getPath().toLowerCase().endsWith(ext)) {
+          if (!fileEntry.getAbsolutePath().equals(filePath)) {
+            if (input.length() > 0) input += ", ";
+            String fname = fileEntry.getName();
+            if (fname.toLowerCase().endsWith(ext))
+              fname = fname.substring(0, fname.length() - ext.length());
+            if (fname.toLowerCase().endsWith(".tif"))
+              fname = fname.substring(0, fname.length() - 4);
+            if (fname.toLowerCase().endsWith(".tiff"))
+              fname = fname.substring(0, fname.length() - 5);
+            input += fname;
+            if (count == 5){
+              break;
+            }
+            count++;
+          }
+        }
+      }
+    }
+    return input;
   }
 
   private static String getStime(String path) {

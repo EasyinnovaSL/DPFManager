@@ -540,11 +540,12 @@ public class MainApp extends Application {
           if (config.getIsos().contains("Tiff/IT-1")) it = 1;
           if (config.getIsos().contains("Tiff/IT-2")) it = 2;
 
-          ProcessInput pi = new ProcessInput(extensions, bl, ep, it, config.getRules().getRules().size() > 0, thestage.getScene());
+          ProcessInput pi = new ProcessInput(extensions);
+          pi.setScene(thestage.getScene());
           ArrayList<String> formats = config.getFormats();
 
-          String filename = pi.ProcessFiles(files, formats.contains("XML"), formats.contains("JSON"), formats.contains("HTML"), formats.contains("PDF"), config.getOutput(), true, config.getRules(), config.getFixes());
-          if (pi.outOfmemory){
+          String filefolder = pi.ProcessFiles(files, config, true);
+          if (pi.outOfmemory) {
             Platform.runLater(() -> {
               Alert alert = new Alert(Alert.AlertType.ERROR);
               alert.setTitle("Error");
@@ -555,15 +556,15 @@ public class MainApp extends Application {
           }
 
           if (formats.contains("HTML")) {
-            ShowReport(filename, "html");
+            ShowReport(filefolder + "report.html", "html");
           } else if (formats.contains("XML")) {
-            ShowReport(filename, "xml");
+            ShowReport(filefolder + "summary.xml", "xml");
           } else if (formats.contains("JSON")) {
-            ShowReport(filename, "json");
+            ShowReport(filefolder + "summary.json", "json");
           } else if (formats.contains("PDF")) {
             new Thread(() -> {
               try {
-                Desktop.getDesktop().open(new File(filename));
+                Desktop.getDesktop().open(new File(filefolder + "report.pdf"));
               } catch (IOException e) {
                 e.printStackTrace();
               }
@@ -586,7 +587,7 @@ public class MainApp extends Application {
             alert.setContentText(ex.toString());
             alert.showAndWait();
           });
-        } catch (OutOfMemoryError er){
+        } catch (OutOfMemoryError er) {
           Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -603,12 +604,6 @@ public class MainApp extends Application {
     Thread th = new Thread(task);
     th.setDaemon(true);
     th.start();
-
-//    Alert alert = new Alert(Alert.AlertType.ERROR);
-//    alert.setTitle("Error");
-//    alert.setHeaderText("An error ocurred");
-//    alert.setContentText("Out of memory!");
-//    alert.showAndWait();
   }
 
   private void ShowReport(String filename, String format) {
@@ -673,14 +668,11 @@ public class MainApp extends Application {
       report.setId("butReport");
 
       report.setCursor(Cursor.HAND);
-      report.setOnAction(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-          try {
-            gotoReport(event);
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+      report.setOnAction(event -> {
+        try {
+          gotoReport(event);
+        } catch (Exception e) {
+          e.printStackTrace();
         }
       });
       report.styleProperty().bind(
@@ -724,90 +716,119 @@ public class MainApp extends Application {
       topImg.getChildren().addAll(checker, report, about);
 
       // Create a task to be run later, in order to avoid conflicts between threads
-      Platform.runLater(() -> {
-        double h = thestage.getScene().getHeight() - topImg.getHeight() - 50;
-        splitPa.getItems().addAll(topImg);
-        String file = filename;
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          double h = thestage.getScene().getHeight() - topImg.getHeight() - 50;
+          splitPa.getItems().
 
-        // If HTML show in webview
-        if (format.equals("html")) {
-          WebView browser = new WebView();
-          browser.setId("webViewReport");
-          //double w = width-topImg.getWidth();
-          browser.setMinWidth(thestage.getScene().getWidth());
-          browser.setMinHeight(h);
-          //browser.setMaxWidth(width);
-          browser.setMaxHeight(h);
-          final WebEngine webEngine = browser.getEngine();
-          webEngine.load("file:///" + file.replace("\\", "/"));
-          splitPa.getItems().addAll(browser);
-        }
-        // If PDF show in new window
-        else if (format.equals("pdf")) {
-          try {
-            Desktop.getDesktop().open(new File(file));
-          } catch (IOException e) {
-            e.printStackTrace();
+              addAll(topImg);
+
+          String file = filename;
+
+          // If HTML show in webview
+          if (format.equals("html"))
+
+          {
+            WebView browser = new WebView();
+            browser.setId("webViewReport");
+            //double w = width-topImg.getWidth();
+            browser.setMinWidth(thestage.getScene().getWidth());
+            browser.setMinHeight(h);
+            //browser.setMaxWidth(width);
+            browser.setMaxHeight(h);
+            final WebEngine webEngine = browser.getEngine();
+            webEngine.load("file:///" + file.replace("\\", "/"));
+            splitPa.getItems().addAll(browser);
           }
-        }
-        // Else show in TextArea
-        else {
-          TextArea ta = new TextArea();
-          ta.setId("textAreaReport");
-          ta.setMinWidth(thestage.getScene().getWidth());
-          ta.setMinHeight(h);
-          ta.setEditable(false);
+          // If PDF show in new window
+          else if (format.equals("pdf"))
 
-          String content = "";
-
-          try {
-            BufferedReader input = new BufferedReader(new FileReader(file));
+          {
             try {
-              String line;
-              while ((line = input.readLine()) != null) {
-                if (!content.equals("")) {
-                  content += "\n";
-                }
-                content += line;
-              }
-            } finally {
-              input.close();
+              Desktop.getDesktop().open(new File(file));
+            } catch (IOException e) {
+              e.printStackTrace();
             }
-          } catch (IOException ex) {
-            ex.printStackTrace();
+          }
+          // Else show in TextArea
+          else
+
+          {
+            TextArea ta = new TextArea();
+            ta.setId("textAreaReport");
+            ta.setMinWidth(thestage.getScene().getWidth());
+            ta.setMinHeight(h);
+            ta.setEditable(false);
+
+            String content = "";
+
+            try {
+              BufferedReader input = new BufferedReader(new FileReader(file));
+              try {
+                String line;
+                while ((line = input.readLine()) != null) {
+                  if (!content.equals("")) {
+                    content += "\n";
+                  }
+                  content += line;
+                }
+              } finally {
+                input.close();
+              }
+            } catch (IOException ex) {
+              ex.printStackTrace();
+            }
+
+            if (format.equals("json")) {
+              content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
+            }
+
+            ta.setText(content);
+
+            splitPa.getItems().addAll(ta);
           }
 
-          if (format.equals("json")) {
-            content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
-          }
+          splitPa.setDividerPosition(0, 0.5f);
+          root.getChildren().
 
-          ta.setText(content);
+              addAll(splitPa);
 
-          splitPa.getItems().addAll(ta);
+          sceneReport.setRoot(root);
+
+          thestage.setScene(sceneReport);
+
+          //Set invisible the divisor line
+          splitPa.lookupAll(".split-pane-divider").
+
+              stream()
+
+              .
+
+                  forEach(
+                      div
+
+                          -> div.setStyle("-fx-padding: 0;\n" +
+                          "    -fx-background-color: transparent;\n" +
+                          "    -fx-background-insets: 0;\n" +
+                          "    -fx-shape: \" \";"));
+          splitPa.lookupAll(".split-pane-divider").
+
+              stream()
+
+              .
+
+                  forEach(
+                      div
+
+                          -> div.setMouseTransparent(true));
+
+          thestage.sizeToScene();
+
+          topMenuPositioning(sceneReport);
         }
-
-        splitPa.setDividerPosition(0, 0.5f);
-        root.getChildren().addAll(splitPa);
-        sceneReport.setRoot(root);
-
-        thestage.setScene(sceneReport);
-
-        //Set invisible the divisor line
-        splitPa.lookupAll(".split-pane-divider").stream()
-            .forEach(
-                div -> div.setStyle("-fx-padding: 0;\n" +
-                    "    -fx-background-color: transparent;\n" +
-                    "    -fx-background-insets: 0;\n" +
-                    "    -fx-shape: \" \";"));
-        splitPa.lookupAll(".split-pane-divider").stream()
-            .forEach(
-                div -> div.setMouseTransparent(true));
-
-        thestage.sizeToScene();
-        topMenuPositioning(sceneReport);
       });
-    }
-    catch (OutOfMemoryError er){
+    } catch (OutOfMemoryError er) {
       Platform.runLater(() -> {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -824,7 +845,7 @@ public class MainApp extends Application {
   }
 
   void LoadSceneXml(String fxmlFile) throws Exception {
-    try{
+    try {
       LOG.debug("Loading FXML for main view from: {}", fxmlFile);
 
       FXMLLoader loader = new FXMLLoader();
@@ -843,8 +864,7 @@ public class MainApp extends Application {
               div -> div.setMouseTransparent(true));
 
       topMenuPositioning(scene);
-    }
-    catch (OutOfMemoryError er){
+    } catch (OutOfMemoryError er) {
       Platform.runLater(() -> {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -1506,7 +1526,7 @@ public class MainApp extends Application {
     AnchorPane ap2 = (AnchorPane) scene.lookup("#pane0");
     ap2.getChildren().add(bLoading);
 
-    VBox vbox = (VBox)  scene.lookup("#box0");
+    VBox vbox = (VBox) scene.lookup("#box0");
     vbox.getStyleClass().add("loading2");
 
     HBox bLoading2 = new HBox();
