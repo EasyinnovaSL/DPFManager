@@ -1,5 +1,9 @@
+@font-face {
+	font-family: "Roboto Bold";
+	src: url("../fonts/Roboto-Bold.ttf");
+}
+
 body{
-	font-family: Arial, sans-serif;
     font-family: 'Roboto', sans-serif;
 	font-weight: 400;
 	background-color: #333333;
@@ -67,7 +71,7 @@ img {
 .CustomTable2 td{
 	padding: 5px;
 	margin-right: 15px;
-	font-family: Arial Black, sans-serif;
+	font-family: Roboto Bold, sans-serif;
 }
 
 /* Resize */
@@ -141,7 +145,7 @@ img {
 	display:inline-block;
 	cursor:pointer;
 	color:#ffffff;
-	font-family: Arial Black, sans-serif;
+	font-family: Roboto Bold, sans-serif;
 	font-size:15px;
 	padding:6px 24px;
 	text-decoration:none;
@@ -230,13 +234,13 @@ h1:after {
 h2{
 	color: #AAAAAA;
 	font-size: 30px;
-	font-family: Arial Black, sans-serif;
+	font-family: Roboto Bold, sans-serif;
 }
 
 h3{
 	color: #00CDFF;
 	font-size: 35px;
-	font-family: Arial Black, sans-serif;
+	font-family: Roboto Bold, sans-serif;
 	
     text-align: center;
 }
@@ -320,7 +324,7 @@ h4 i{
 }
 
 .bold{
-	font-family: Arial Black, sans-serif;
+	font-family: Roboto Bold, sans-serif;
 }
 
 .warning{
