@@ -381,15 +381,16 @@ public class CommandLine extends UserInterface {
    * Shows program usage.
    */
   static void displayHelp() {
-    System.out.println("Usage: dpfmanager [options] input1 [input2 ... inputN]");
-    System.out.println("(the inputs can be single TIF files, directories, zip files or URLs)");
+    System.out.println("Usage: dpfmanager [options] source1 [source2 ... sourceN]");
+    System.out.println("(the sources can be single TIF files, directories, zip files or URLs)");
     System.out.println("Options:");
     System.out.println("    -help: Displays this help message");
     System.out.println("    -v: Shows application version number");
     System.out.println("    -gui: Launches graphical user interface");
     System.out.println("    -configuration <filename>: Selects a configuration file");
-    System.out.println("    -o <path>: Specifies the output folder (overriding the one specified in the configuration file, if selected).");
+    //System.out.println("    -o <path>: Specifies the output folder (overriding the one specified in the configuration file, if selected).");
     System.out.println("    -r[deepness]: Check directories recursively, with the specified depth. Default is '-r1'");
-    System.out.println("    -reportformat '[xml, json, pdf, html]': Specifies the report format. Default is 'xml,html'.");
+    System.out.println("    -s: Silent execution (do not open the report at the end)");
+    //System.out.println("    -reportformat '[xml, json, pdf, html]': Specifies the report format. Default is 'xml,html'.");
   }
 }
