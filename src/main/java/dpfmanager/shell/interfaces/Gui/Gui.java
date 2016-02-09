@@ -344,7 +344,7 @@ public class Gui extends UserInterface {
     AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
     boolean first = true;
     for (String className : classes) {
-      autofix fix = (autofix) Class.forName("dpfmanager.shell.modules.conformancechecker.MetadataFixer.autofixes." + className).newInstance();
+      autofix fix = (autofix) Class.forName("dpfmanager.shell.conformancechecker.MetadataFixer.autofixes." + className).newInstance();
 
       CheckBox check = new CheckBox();
       check.setText(fix.getDescription());

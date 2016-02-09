@@ -648,7 +648,7 @@ public class ReportGenerator {
             }
           } else {
             String className = fix.getTag();
-            autofix autofix = (autofix)Class.forName("dpfmanager.shell.modules.conformancechecker.MetadataFixer.autofixes." + className).newInstance();
+            autofix autofix = (autofix)Class.forName("dpfmanager.shell.conformancechecker.MetadataFixer.autofixes." + className).newInstance();
             autofix.run(td);
           }
         }
