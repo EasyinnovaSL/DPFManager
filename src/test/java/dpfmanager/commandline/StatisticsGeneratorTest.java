@@ -1,8 +1,8 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.modules.interfaces.CommandLine;
-import dpfmanager.shell.modules.interfaces.UserInterface;
-import dpfmanager.shell.modules.reporting.ReportGenerator;
+import dpfmanager.shell.interfaces.Cli.CommandLine;
+import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.reporting.ReportGenerator;
 import javafx.application.Application;
 
 import com.google.gson.stream.JsonReader;

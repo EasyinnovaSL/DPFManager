@@ -1,10 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.MainApp;
-import javafx.scene.Node;
-import javafx.scene.control.RadioButton;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import dpfmanager.shell.MainApp;
 import javafx.stage.Stage;
 
 import org.junit.Test;

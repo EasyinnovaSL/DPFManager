@@ -227,7 +227,6 @@
 			<version>8.40.10</version>
 		</dependency>
 		<!--End Test Gui dependencies-->
-
 	</dependencies>
 
 	<profiles>
@@ -247,7 +246,7 @@
 						<artifactId>javafx-maven-plugin</artifactId>
 						<version>8.1.5</version>
 						<configuration>
-							<mainClass>dpfmanager.MainApp</mainClass>
+							<mainClass>dpfmanager.shell.MainApp</mainClass>
 							<verbose>true</verbose>
 							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
 							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
@@ -307,7 +306,7 @@
 									<errTitle>encc</errTitle>
 									<icon>${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</icon>
 									<classPath>
-										<mainClass>dpfmanager.MainApp</mainClass>
+										<mainClass>dpfmanager.shell.MainApp</mainClass>
 										<addDependencies>false</addDependencies>
 										<preCp>anything</preCp>
 									</classPath>
@@ -429,7 +428,7 @@
 						<artifactId>javafx-maven-plugin</artifactId>
 						<version>8.1.5</version>
 						<configuration>
-							<mainClass>dpfmanager.MainApp</mainClass>
+							<mainClass>dpfmanager.shell.MainApp</mainClass>
 							<verbose>true</verbose>
 							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
 							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>

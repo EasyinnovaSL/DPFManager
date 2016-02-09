@@ -1,18 +1,14 @@
 package dpfmanager.gui;
 
-import dpfmanager.MainApp;
-import dpfmanager.shell.modules.reporting.ReportGenerator;
+import dpfmanager.shell.MainApp;
+import dpfmanager.shell.reporting.ReportGenerator;
 import javafx.stage.Stage;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
-import org.testfx.api.FxToolkit;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 

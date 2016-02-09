@@ -1,20 +1,15 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.modules.reporting.ReportGenerator;
+import dpfmanager.shell.reporting.ReportGenerator;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.Light;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import com.google.common.base.Optional;
 
 import org.apache.commons.lang.SystemUtils;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
@@ -24,12 +19,10 @@ import org.junit.Before;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxRobotException;
 import org.testfx.api.FxToolkit;
-import org.testfx.service.query.NodeQuery;
 import org.testfx.toolkit.ApplicationFixture;
 
 import java.awt.*;
 import java.io.File;
-import java.util.List;
 
 /**
  * Created by Adrià Llorens on 30/12/2015.

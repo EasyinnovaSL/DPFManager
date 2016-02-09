@@ -1,19 +1,11 @@
 package dpfmanager.gui;
 
-import dpfmanager.MainApp;
-import javafx.geometry.VerticalDirection;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.input.MouseButton;
+import dpfmanager.shell.MainApp;
 import javafx.stage.Stage;
-
-import com.google.common.base.Optional;
 
 import org.junit.Test;
 import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
 import org.testfx.matcher.base.NodeMatchers;
-import org.testfx.service.query.NodeQuery;
 import org.testfx.util.WaitForAsyncUtils;
 
 

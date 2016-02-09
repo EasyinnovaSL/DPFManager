@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="rootMain" alignment="TOP_CENTER" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.MainApp">
+<VBox fx:id="rootMain" alignment="TOP_CENTER" stylesheets="@/styles/style.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.shell.MainApp">
     <children>
         <SplitPane fx:id="splitPa1" dividerPositions="0.05" orientation="VERTICAL">
             <VBox maxHeight="50" minHeight="50">

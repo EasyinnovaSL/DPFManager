@@ -1,7 +1,7 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.modules.interfaces.CommandLine;
-import dpfmanager.shell.modules.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.Cli.CommandLine;
+import dpfmanager.shell.interfaces.UserInterface;
 import javafx.application.Application;
 
 import com.easyinnova.tiff.reader.TiffReader;

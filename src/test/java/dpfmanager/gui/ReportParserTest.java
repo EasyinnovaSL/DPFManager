@@ -1,23 +1,12 @@
 package dpfmanager.gui;
 
-import dpfmanager.MainApp;
-import dpfmanager.shell.modules.reporting.ReportRow;
-import javafx.scene.Node;
-import javafx.scene.control.RadioButton;
+import dpfmanager.shell.MainApp;
+import dpfmanager.shell.reporting.ReportRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.testfx.api.FxAssert;
-import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.util.Arrays;
