@@ -276,7 +276,7 @@ public class TiffConformanceChecker {
     if (classes == null) {
       System.out.println("Loading autofixes through reflection");
       try {
-        Reflections reflections = new Reflections("dpfmanager.shell.modules.conformancechecker.MetadataFixer.autofixes", new SubTypesScanner(false));
+        Reflections reflections = new Reflections("dpfmanager.shell.conformancechecker.MetadataFixer.autofixes", new SubTypesScanner(false));
         Set<Class<? extends Object>> classesSet = reflections.getSubTypesOf(Object.class);
 
         classes = new ArrayList<String>();
