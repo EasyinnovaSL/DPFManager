@@ -238,6 +238,10 @@ public class TiffConformanceChecker implements ConformanceChecker {
     return null;
   }
 
+  public static String getAutofixesClassPath() {
+    return "dpfmanager.shell.conformancechecker.MetadataFixer.autofixes";
+  }
+
   /**
    * Adds a element to the XML object.
    *
@@ -284,7 +288,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
     if (classes == null) {
       System.out.println("Loading autofixes through reflection");
       try {
-        Reflections reflections = new Reflections("dpfmanager.shell.conformancechecker.MetadataFixer.autofixes", new SubTypesScanner(false));
+        Reflections reflections = new Reflections(TiffConformanceChecker.getAutofixesClassPath(), new SubTypesScanner(false));
         Set<Class<? extends Object>> classesSet = reflections.getSubTypesOf(Object.class);
 
         classes = new ArrayList<String>();

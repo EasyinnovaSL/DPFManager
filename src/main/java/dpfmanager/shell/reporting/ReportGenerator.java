@@ -36,6 +36,7 @@ import dpfmanager.shell.conformancechecker.MetadataFixer.Fix;
 import dpfmanager.shell.conformancechecker.MetadataFixer.Fixes;
 import dpfmanager.shell.conformancechecker.MetadataFixer.autofixes.autofix;
 import dpfmanager.shell.conformancechecker.PolicyChecker.Rules;
+import dpfmanager.shell.conformancechecker.TiffConformanceChecker;
 import dpfmanager.shell.interfaces.UserInterface;
 
 import com.easyinnova.tiff.io.TiffInputStream;
@@ -588,7 +589,7 @@ public class ReportGenerator {
             }
           } else {
             String className = fix.getTag();
-            autofix autofix = (autofix)Class.forName("dpfmanager.shell.conformancechecker.MetadataFixer.autofixes." + className).newInstance();
+            autofix autofix = (autofix)Class.forName(TiffConformanceChecker.getAutofixesClassPath() + "." + className).newInstance();
             autofix.run(td);
           }
         }
