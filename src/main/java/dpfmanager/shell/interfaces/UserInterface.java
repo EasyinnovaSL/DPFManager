@@ -44,8 +44,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * The Class UserInterface.
  */
 public class UserInterface {
-  private ArrayList<String> extensions;
-  private ArrayList<String> isos;
   private ArrayList<Field> fields;
   private String selectedFile;
 
@@ -65,24 +63,6 @@ public class UserInterface {
    */
   public void setSelectedFile(String filename){
     selectedFile = filename;
-  }
-
-  /**
-   * Gets extensions.
-   *
-   * @return the extensions
-   */
-  public ArrayList<String> getExtensions() {
-    return extensions;
-  }
-
-  /**
-   * Gets isos.
-   *
-   * @return the isos
-   */
-  public ArrayList<String> getIsos() {
-    return isos;
   }
 
   /**
@@ -123,9 +103,8 @@ public class UserInterface {
    * Load conformance checker.
    */
   public void LoadConformanceChecker() {
-    extensions = TiffConformanceChecker.getConformanceCheckerExtensions();
-    isos = TiffConformanceChecker.getConformanceCheckerStandards();
-    fields = TiffConformanceChecker.getConformanceCheckerFields();
+    TiffConformanceChecker cc = new TiffConformanceChecker();
+    fields = cc.getConformanceCheckerFields();
   }
 
   public static String getVersion() {

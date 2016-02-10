@@ -34,22 +34,9 @@ import java.util.zip.ZipFile;
  * Created by easy on 04/09/2015.
  */
 public class ProcessInput {
-  private ReportGenerator reportGenerator;
   public boolean outOfmemory = false;
-  private List<String> allowedExtensions;
-  private boolean checkBL, checkEP, checkPC;
-  private int checkIT;
   private Scene scene;
   private int idReport;
-
-  /**
-   * Instantiates a new Process input.
-   *
-   * @param allowedExtensions the allowed extensions
-   */
-  public ProcessInput(List<String> allowedExtensions) {
-    this.allowedExtensions = allowedExtensions;
-  }
 
   /**
    * Sets the scene.
@@ -63,29 +50,12 @@ public class ProcessInput {
   /**
    * Process files string.
    *
-   * @param files        the files
-   * @param config       the config
+   * @param files   the files
+   * @param config  the config
+   * @param silence the silence
    * @return the string
    */
   public String ProcessFiles(ArrayList<String> files, Configuration config, boolean silence) {
-    checkBL = config.getIsos().contains("Baseline");
-    checkEP = config.getIsos().contains("Tiff/EP");
-    checkIT = -1;
-    if (config.getIsos().contains("Tiff/IT")) checkIT = 0;
-    if (config.getIsos().contains("Tiff/IT-1")) checkIT = 1;
-    if (config.getIsos().contains("Tiff/IT-2")) checkIT = 2;
-    if (config.getRules() != null){
-      checkPC = config.getRules().getRules().size() > 0;
-    } else{
-      checkPC = false;
-    }
-
-    reportGenerator = new ReportGenerator();
-    reportGenerator.setReportsFormats(config.getFormats());
-    reportGenerator.setRules(config.getRules());
-    reportGenerator.setFixes(config.getFixes());
-
-    // Process files
     ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
     String internalReportFolder = ReportGenerator.createReportPath();
     int n=files.size();
@@ -93,7 +63,7 @@ public class ProcessInput {
     for (final String filename : files) {
       System.out.println("");
       System.out.println("Processing file " + filename);
-      List<IndividualReport> indReports = processFile(filename, internalReportFolder, config.getOutput());
+      List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
       if (scene != null) {
         Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
       }
@@ -106,7 +76,7 @@ public class ProcessInput {
     // Global report
     String summaryXml = null;
     try {
-      summaryXml = reportGenerator.makeSummaryReport(internalReportFolder, individuals, config.getOutput(), silence);
+      summaryXml = ReportGenerator.makeSummaryReport(internalReportFolder, individuals, config, silence);
     } catch (OutOfMemoryError e) {
       System.err.println("Out of memory.");
       outOfmemory = true;
@@ -124,6 +94,13 @@ public class ProcessInput {
     return internalReportFolder;
   }
 
+  private List<ConformanceChecker> getConformanceCheckers() {
+    TiffConformanceChecker tiffcc = new TiffConformanceChecker();
+    ArrayList<ConformanceChecker> l = new ArrayList<>();
+    l.add(tiffcc);
+    return l;
+  }
+
   /**
    * Process a Tiff file.
    *
@@ -131,7 +108,7 @@ public class ProcessInput {
    * @param internalReportFolder the internal report folder
    * @return the list
    */
-  private List<IndividualReport> processFile(String filename, String internalReportFolder, String outputFolder) {
+  private List<IndividualReport> processFile(String filename, String internalReportFolder, Configuration config) {
     List<IndividualReport> indReports = new ArrayList<IndividualReport>();
     IndividualReport ir = null;
     if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
@@ -142,19 +119,21 @@ public class ProcessInput {
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
           ZipEntry entry = entries.nextElement();
-          if (isTiff(entry.getName())) {
-            InputStream stream = zipFile.getInputStream(entry);
-            String filename2 = createTempFile(internalReportFolder, entry.getName(), stream);
-            ir = processTiffFile(filename2, entry.getName(), internalReportFolder, outputFolder);
-            if (ir != null) {
-              indReports.add(ir);
-            }
-            else{
-              outOfmemory = true;
+          for (ConformanceChecker cc : getConformanceCheckers()) {
+            if (cc.acceptsFile(entry.getName())) {
+              InputStream stream = zipFile.getInputStream(entry);
+              String filename2 = createTempFile(internalReportFolder, entry.getName(), stream);
+              ir = cc.processFile(filename2, entry.getName(), internalReportFolder, config, idReport);
+              if (ir != null) {
+                indReports.add(ir);
+              } else{
+                outOfmemory = true;
+                break;
+              }
+              File file = new File(filename2);
+              file.delete();
               break;
             }
-            File file = new File(filename2);
-            file.delete();
           }
         }
         zipFile.close();
@@ -164,41 +143,53 @@ public class ProcessInput {
     } else if (isUrl(filename)) {
       // URL
       try {
-        if (isTiff(filename)) {
-          InputStream input = new java.net.URL(filename).openStream();
-          String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
-          filename = java.net.URLDecoder.decode(filename, "UTF-8");
-          ir = processTiffFile(filename2, filename, internalReportFolder, outputFolder);
-          if (ir != null) {
-            indReports.add(ir);
+        boolean found = false;
+        for (ConformanceChecker cc : getConformanceCheckers()) {
+          if (cc.acceptsFile(filename)) {
+            InputStream input = new java.net.URL(filename).openStream();
+            String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
+            filename = java.net.URLDecoder.decode(filename, "UTF-8");
+            ir = cc.processFile(filename2, filename, internalReportFolder, config, idReport);
+            if (ir != null) {
+              indReports.add(ir);
+            } else{
+              outOfmemory = true;
+            }
+            File file = new File(filename2);
+            file.delete();
+            found = true;
+            break;
           }
-          else{
-            outOfmemory = true;
-          }
-          File file = new File(filename2);
-          file.delete();
-        } else {
+        }
+        if (!found) {
           System.err.println("The file in the URL " + filename + " is not a Tiff");
         }
       } catch (Exception ex) {
         System.out.println("Error in URL " + filename);
       }
-    } else if (isTiff(filename)) {
-      // File
-      try {
-        ir = processTiffFile(filename, filename, internalReportFolder, outputFolder);
-        if (ir != null) {
-          indReports.add(ir);
-        }
-        else{
-          outOfmemory = true;
-        }
-      } catch (Exception ex) {
-        System.err.println("Error in File " + filename);
-      }
     } else {
-      // Anything else
-      System.err.println("File " + filename + " is not a Tiff");
+      boolean found = false;
+      for (ConformanceChecker cc : getConformanceCheckers()) {
+        if (cc.acceptsFile(filename)) {
+          // File
+          try {
+            ir = cc.processFile(filename, filename, internalReportFolder, config, idReport);
+            if (ir != null) {
+              indReports.add(ir);
+            } else{
+              outOfmemory = true;
+            }
+          } catch (Exception ex) {
+            System.err.println("Error in File " + filename);
+          }
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        // Anything else
+        System.err.println("File " + filename + " is not a Tiff");
+      }
     }
     return indReports;
   }
@@ -232,69 +223,6 @@ public class ProcessInput {
   }
 
   /**
-   * Process tiff file.
-   *
-   * @param pathToFile the path in local disk to the file
-   * @param reportFilename the file name that will be displayed in the report
-   * @param internalReportFolder the internal report folder
-   * @param outputFolder the output report folder (optional)
-   * @return the individual report
-   * @throws ReadTagsIOException the read tags io exception
-   * @throws ReadIccConfigIOException the read icc config io exception
-   */
-  private IndividualReport processTiffFile(String pathToFile, String reportFilename,
-                                           String internalReportFolder, String outputFolder) throws ReadTagsIOException, ReadIccConfigIOException {
-    try {
-      TiffReader tr = new TiffReader();
-      int result = tr.readFile(pathToFile);
-      switch (result) {
-        case -1:
-          System.out.println("File '" + pathToFile + "' does not exist");
-          break;
-        case -2:
-          System.out.println("IO Exception in file '" + pathToFile + "'");
-          break;
-        case 0:
-          TiffDocument to = tr.getModel();
-
-          ValidationResult baselineVal = null;
-          if (checkBL) baselineVal = tr.getBaselineValidation();
-          ValidationResult epValidation = null;
-          if (checkEP) epValidation = tr.getTiffEPValidation();
-          ValidationResult itValidation = null;
-          if (checkIT >= 0) itValidation = tr.getTiffITValidation(checkIT);
-          String pathNorm = reportFilename.replaceAll("\\\\", "/");
-          String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, pathToFile, to, baselineVal, epValidation, itValidation);
-          ir.checkBL = checkBL;
-          ir.checkEP = checkEP;
-          ir.checkIT = checkIT;
-          ir.checkPC = checkPC;
-
-          // Generate individual report
-          String outputfile = ReportGenerator.getReportName(internalReportFolder, reportFilename, idReport);
-          reportGenerator.generateIndividualReport(outputfile, ir, outputFolder);
-          System.out.println("Internal report '" + outputfile + "' created");
-
-          to=null;
-          tr=null;
-          System.gc();
-          return ir;
-        default:
-          System.out.println("Unknown result (" + result + ") in file '" + pathToFile + "'");
-          break;
-      }
-    } catch (ReadTagsIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
-    } catch (ReadIccConfigIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
-    } catch (OutOfMemoryError error){
-      System.err.println("Out of memory");
-    }
-    return null;
-  }
-
-  /**
    * Checks if is url.
    *
    * @param filename the filename
@@ -311,25 +239,8 @@ public class ProcessInput {
   }
 
   /**
-   * Checks if is tiff.
-   *
-   * @param filename the filename
-   * @return true, if is tiff
-   */
-  private boolean isTiff(String filename) {
-    boolean isTiff = false;
-    for (String extension : allowedExtensions) {
-      if (filename.toLowerCase().endsWith(extension.toLowerCase())) {
-        isTiff = true;
-      }
-    }
-    return isTiff;
-  }
-
-  /**
    * Send ftp.
    *
-   * @param reportGenerator the report generator
    * @param summaryXml the summary xml
    * @throws NoSuchAlgorithmException the no such algorithm exception
    */
