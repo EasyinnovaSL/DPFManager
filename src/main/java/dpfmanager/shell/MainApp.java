@@ -593,7 +593,7 @@ public class MainApp extends Application {
           ArrayList<String> formats = config.getFormats();
 
           String filefolder = pi.ProcessFiles(files, config, true);
-          if (pi.outOfmemory) {
+          if (pi.isOutOfmemory()) {
             Platform.runLater(() -> {
               Alert alert = new Alert(Alert.AlertType.ERROR);
               alert.setTitle("Error");
