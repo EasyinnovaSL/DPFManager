@@ -523,7 +523,6 @@ public class MainApp extends Application {
   @FXML
   protected void openFile(ActionEvent event) throws Exception {
     ArrayList<String> files = new ArrayList<String>();
-    ArrayList<String> extensions = this.gui.getExtensions();
 
     if (txtFile.getText().equals("Select a file")) {
       Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -589,12 +588,12 @@ public class MainApp extends Application {
           if (config.getIsos().contains("Tiff/IT-1")) it = 1;
           if (config.getIsos().contains("Tiff/IT-2")) it = 2;
 
-          ProcessInput pi = new ProcessInput(extensions);
+          ProcessInput pi = new ProcessInput();
           pi.setScene(thestage.getScene());
           ArrayList<String> formats = config.getFormats();
 
           String filefolder = pi.ProcessFiles(files, config, true);
-          if (pi.outOfmemory) {
+          if (pi.isOutOfmemory()) {
             Platform.runLater(() -> {
               Alert alert = new Alert(Alert.AlertType.ERROR);
               alert.setTitle("Error");

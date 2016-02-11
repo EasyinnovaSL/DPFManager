@@ -31,10 +31,12 @@
 
 package dpfmanager.shell.reporting;
 
+import dpfmanager.shell.conformancechecker.Configuration;
 import dpfmanager.shell.conformancechecker.MetadataFixer.Fix;
 import dpfmanager.shell.conformancechecker.MetadataFixer.Fixes;
 import dpfmanager.shell.conformancechecker.MetadataFixer.autofixes.autofix;
 import dpfmanager.shell.conformancechecker.PolicyChecker.Rules;
+import dpfmanager.shell.conformancechecker.TiffConformanceChecker;
 import dpfmanager.shell.interfaces.UserInterface;
 
 import com.easyinnova.tiff.io.TiffInputStream;
@@ -75,25 +77,6 @@ import java.util.zip.ZipInputStream;
  * The Class ReportGenerator.
  */
 public class ReportGenerator {
-
-  /** If generates the XML report. */
-  private boolean xml;
-
-  /** If generates the JSON report. */
-  private boolean json;
-
-  /** If generates the HTML report. */
-  private boolean html;
-
-  /** If generates the PDF report. */
-  private boolean pdf = true;
-
-  /** Policy checker rules. */
-  private Rules rules;
-
-  /** Policy checker fixes. */
-  private Fixes fixes;
-
   /**
    * Create report path string.
    *
@@ -286,51 +269,6 @@ public class ReportGenerator {
   }
 
   /**
-   * Set the output formats.
-   *
-   * @param xml  the XML boolean.
-   * @param json the JSON boolean.
-   * @param html the HTML boolean.
-   * @param pdf  the PDF boolean.
-   */
-  public void setReportsFormats(boolean xml, boolean json, boolean html, boolean pdf) {
-    this.xml = xml;
-    this.json = json;
-    this.html = html;
-    this.pdf = pdf;
-  }
-
-  /**
-   * Set the output formats given a list.
-   *
-   * @param formats the formats list
-   */
-  public void setReportsFormats(List<String> formats) {
-    this.xml = formats.contains("XML");
-    this.json = formats.contains("JSON");
-    this.html = formats.contains("HTML");
-    this.pdf = formats.contains("PDF");
-  }
-
-  /**
-   * Sets rules.
-   *
-   * @param rules the rules
-   */
-  public void setRules(Rules rules) {
-    this.rules = rules;
-  }
-
-  /**
-   * Sets fixes.
-   *
-   * @param fixes the fixes
-   */
-  public void setFixes(Fixes fixes) {
-    this.fixes = fixes;
-  }
-
-  /**
    * Copy a file or directory from source to target.
    *
    * @param sourceLocation the source path.
@@ -449,7 +387,7 @@ public class ReportGenerator {
    *
    * @param name the name
    */
-  private void copyHtmlFolder(String name) {
+  private static void copyHtmlFolder(String name) {
     // Get the target folder
     File nameFile = new File(name);
     String absolutePath = nameFile.getAbsolutePath();
@@ -479,7 +417,7 @@ public class ReportGenerator {
           ZipInputStream zip;
           String jarFolder;
           try {
-            Class cls = this.getClass();
+            Class cls = ReportGenerator.class;
             ClassLoader cLoader = cls.getClassLoader();
             String [] arrayFiles = new String[16];
             File [] arrayFoulders = new File[4];
@@ -585,15 +523,17 @@ public class ReportGenerator {
    *
    * @param reportName the output file name
    * @param ir         the individual report
-   * @param outputFolder the output report folder
    */
-  public void generateIndividualReport(String reportName, IndividualReport ir, String outputFolder) throws OutOfMemoryError{
+  public static void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError{
     String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
     String htmlFileStr = reportName + ".html";
     String pdfFileStr = reportName + ".pdf";
     int htmlMode = 0;
+
+    Fixes fixes = config.getFixes();
+    Rules rules = config.getRules();
     if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
     output = ReportXml.parseIndividual(xmlFileStr, ir, rules);
     ValidationResult pcValidation1 = getPcValidation(output);
@@ -601,17 +541,18 @@ public class ReportGenerator {
     ir.setPCWarnings(pcValidation1.getWarnings());
     ir.setPcValidation(pcValidation1);
     ir.setReportPath(reportName);
-    if (html) {
+
+    if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
       ReportHtml.parseIndividual(htmlFileStr, ir, htmlMode);
     }
-    if (json) {
+    if (config.getFormats().contains("JSON")) {
       ReportJson.xmlToJson(output, jsonFileStr);
     }
-    if (pdf) {
+    if (config.getFormats().contains("PDF")) {
       ReportPDF.parseIndividual(pdfFileStr, ir);
     }
-    if (!xml) {
+    if (!config.getFormats().contains("XML")) {
       ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
     }
 
@@ -648,7 +589,7 @@ public class ReportGenerator {
             }
           } else {
             String className = fix.getTag();
-            autofix autofix = (autofix)Class.forName("dpfmanager.shell.conformancechecker.MetadataFixer.autofixes." + className).newInstance();
+            autofix autofix = (autofix)Class.forName(TiffConformanceChecker.getAutofixesClassPath() + "." + className).newInstance();
             autofix.run(td);
           }
         }
@@ -684,6 +625,7 @@ public class ReportGenerator {
 
         //Save fixed tiffs
         String pathFixed = "";
+        String outputFolder = config.getOutput();
         if (outputFolder == null) {
           new File(nameFixedTif).delete();
         } else {
@@ -703,16 +645,17 @@ public class ReportGenerator {
         ValidationResult pcValidation2 = getPcValidation(output);
         ir2.setPcValidation(pcValidation2);
         ir2.setCompareReport(ir);
-        if (html) {
+
+        if (config.getFormats().contains("HTML")) {
           ReportHtml.parseIndividual(htmlFileStr, ir2, 2);
         }
-        if (json) {
+        if (config.getFormats().contains("JSON")) {
           ReportJson.xmlToJson(output, jsonFileStr);
         }
-        if (pdf) {
+        if (config.getFormats().contains("PDF")) {
           ReportPDF.parseIndividual(pdfFileStr, ir2);
         }
-        if (!xml) {
+        if (!config.getFormats().contains("XML")) {
           ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
         }
       } catch (Exception ex) {
@@ -727,7 +670,7 @@ public class ReportGenerator {
    * @param output the output
    * @return the pc validation
    */
-  ValidationResult getPcValidation(String output) {
+  static ValidationResult getPcValidation(String output) {
     ValidationResult valid = new ValidationResult();
     int index = output.indexOf("<svrl:failed-assert");
     while (index > -1) {
@@ -745,12 +688,11 @@ public class ReportGenerator {
    *
    * @param internalReportFolder the internal report folder
    * @param individuals          the individual reports list
-   * @param outputFolder         the output folder
    * @param silence              the silence
    * @return the string
    */
-  public String makeSummaryReport(String internalReportFolder,
-      ArrayList<IndividualReport> individuals, String outputFolder, boolean silence) {
+  public static String makeSummaryReport(String internalReportFolder,
+      ArrayList<IndividualReport> individuals, Configuration config, boolean silence) {
     GlobalReport gr = new GlobalReport();
     for (final IndividualReport individual : individuals) {
       gr.addIndividual(individual);
@@ -763,23 +705,25 @@ public class ReportGenerator {
     String htmlFileStr = internalReportFolder + "report.html";
     String pdfFileStr = internalReportFolder + "report.pdf";
     output = ReportXml.parseGlobal(xmlFileStr, gr);
-    if (html) {
+
+    if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
       ReportHtml.parseGlobal(htmlFileStr, gr);
       if (!silence) {
         //showToUser(htmlFileStr);
       }
     }
-    if (json) {
+    if (config.getFormats().contains("JSON")) {
       ReportJson.xmlToJson(output, jsonFileStr);
     }
-    if (pdf) {
+    if (config.getFormats().contains("PDF")) {
       ReportPDF.parseGlobal(pdfFileStr, gr);
     }
-    if (!xml) {
+    if (!config.getFormats().contains("XML")) {
       ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
     }
 
+    String outputFolder = config.getOutput();
     if (outputFolder != null) {
       File htmlFile = new File(htmlFileStr);
       File outFolder = new File(outputFolder);

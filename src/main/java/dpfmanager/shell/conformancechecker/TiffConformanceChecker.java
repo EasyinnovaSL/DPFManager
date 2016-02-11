@@ -32,6 +32,14 @@
 package dpfmanager.shell.conformancechecker;
 
 import dpfmanager.shell.conformancechecker.MetadataFixer.autofixes.clearPrivateData;
+import dpfmanager.shell.reporting.IndividualReport;
+import dpfmanager.shell.reporting.ReportGenerator;
+
+import com.easyinnova.tiff.model.ReadIccConfigIOException;
+import com.easyinnova.tiff.model.ReadTagsIOException;
+import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.ValidationResult;
+import com.easyinnova.tiff.reader.TiffReader;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -66,7 +74,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * The Class TiffConformanceChecker.
  */
-public class TiffConformanceChecker {
+public class TiffConformanceChecker implements ConformanceChecker {
   /**
    * Gets the conformance checker options.
    *
@@ -175,7 +183,7 @@ public class TiffConformanceChecker {
     return output;
   }
 
-  public static ArrayList<String> getConformanceCheckerExtensions() {
+  public ArrayList<String> getConformanceCheckerExtensions() {
     String xml = getConformanceCheckerOptions();
     Document doc = convertStringToDocument(xml);
 
@@ -188,7 +196,7 @@ public class TiffConformanceChecker {
     return extensions;
   }
 
-  public static ArrayList<String> getConformanceCheckerStandards() {
+  public ArrayList<String> getConformanceCheckerStandards() {
     String xml = getConformanceCheckerOptions();
     Document doc = convertStringToDocument(xml);
 
@@ -201,7 +209,7 @@ public class TiffConformanceChecker {
     return standards;
   }
 
-  public static ArrayList<Field> getConformanceCheckerFields() {
+  public ArrayList<Field> getConformanceCheckerFields() {
     String xml = getConformanceCheckerOptions();
     Document doc = convertStringToDocument(xml);
 
@@ -228,6 +236,10 @@ public class TiffConformanceChecker {
       e.printStackTrace();
     }
     return null;
+  }
+
+  public static String getAutofixesClassPath() {
+    return "dpfmanager.shell.conformancechecker.MetadataFixer.autofixes";
   }
 
   /**
@@ -276,7 +288,7 @@ public class TiffConformanceChecker {
     if (classes == null) {
       System.out.println("Loading autofixes through reflection");
       try {
-        Reflections reflections = new Reflections("dpfmanager.shell.conformancechecker.MetadataFixer.autofixes", new SubTypesScanner(false));
+        Reflections reflections = new Reflections(TiffConformanceChecker.getAutofixesClassPath(), new SubTypesScanner(false));
         Set<Class<? extends Object>> classesSet = reflections.getSubTypesOf(Object.class);
 
         classes = new ArrayList<String>();
@@ -313,7 +325,7 @@ public class TiffConformanceChecker {
   public static String RunTiffConformanceCheckerAndSendReport(String path) {
     String report_xml = null;
     try {
-      ProcessInput pi = new ProcessInput(getConformanceCheckerExtensions());
+      ProcessInput pi = new ProcessInput();
       ArrayList<String> files = new ArrayList<String>();
       files.add(path);
       Configuration config = new Configuration();
@@ -336,6 +348,96 @@ public class TiffConformanceChecker {
       ex.printStackTrace();
     }
     return report_xml;
+  }
+
+  /**
+   * Process tiff file.
+   *
+   * @param pathToFile the path in local disk to the file
+   * @param reportFilename the file name that will be displayed in the report
+   * @param internalReportFolder the internal report folder
+   * @return the individual report
+   * @throws ReadTagsIOException the read tags io exception
+   * @throws ReadIccConfigIOException the read icc config io exception
+   */
+  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config,
+                                          int idReport) throws ReadTagsIOException, ReadIccConfigIOException {
+    try {
+      TiffReader tr = new TiffReader();
+      int result = tr.readFile(pathToFile);
+      switch (result) {
+        case -1:
+          System.out.println("File '" + pathToFile + "' does not exist");
+          break;
+        case -2:
+          System.out.println("IO Exception in file '" + pathToFile + "'");
+          break;
+        case 0:
+          boolean checkBL = config.getIsos().contains("Baseline");
+          boolean checkEP = config.getIsos().contains("Tiff/EP");
+          int checkIT = -1;
+          boolean checkPC = false;
+          if (config.getIsos().contains("Tiff/IT")) checkIT = 0;
+          if (config.getIsos().contains("Tiff/IT-1")) checkIT = 1;
+          if (config.getIsos().contains("Tiff/IT-2")) checkIT = 2;
+          if (config.getRules() != null){
+            checkPC = config.getRules().getRules().size() > 0;
+          }
+          String outputFolder = config.getOutput();
+
+          TiffDocument to = tr.getModel();
+
+          ValidationResult baselineVal = null;
+          if (checkBL) baselineVal = tr.getBaselineValidation();
+          ValidationResult epValidation = null;
+          if (checkEP) epValidation = tr.getTiffEPValidation();
+          ValidationResult itValidation = null;
+          if (checkIT >= 0) itValidation = tr.getTiffITValidation(checkIT);
+          String pathNorm = reportFilename.replaceAll("\\\\", "/");
+          String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
+          IndividualReport ir = new IndividualReport(name, pathToFile, to, baselineVal, epValidation, itValidation);
+          ir.checkBL = checkBL;
+          ir.checkEP = checkEP;
+          ir.checkIT = checkIT;
+          ir.checkPC = checkPC;
+
+          // Generate individual report
+          String outputfile = ReportGenerator.getReportName(internalReportFolder, reportFilename, idReport);
+          ReportGenerator.generateIndividualReport(outputfile, ir, config);
+          System.out.println("Internal report '" + outputfile + "' created");
+
+          to=null;
+          tr=null;
+          System.gc();
+          return ir;
+        default:
+          System.out.println("Unknown result (" + result + ") in file '" + pathToFile + "'");
+          break;
+      }
+    } catch (ReadTagsIOException e) {
+      System.err.println("Error loading Tiff library dependencies");
+    } catch (ReadIccConfigIOException e) {
+      System.err.println("Error loading Tiff library dependencies");
+    } catch (OutOfMemoryError error){
+      System.err.println("Out of memory");
+    }
+    return null;
+  }
+
+  /**
+   * Checks if is tiff.
+   *
+   * @param filename the filename
+   * @return true, if is tiff
+   */
+  public boolean acceptsFile(String filename) {
+    boolean isTiff = false;
+    for (String extension : getConformanceCheckerExtensions()) {
+      if (filename.toLowerCase().endsWith(extension.toLowerCase())) {
+        isTiff = true;
+      }
+    }
+    return isTiff;
   }
 }
 

@@ -22,30 +22,19 @@ package dpfmanager.shell.interfaces;
 import dpfmanager.shell.conformancechecker.TiffConformanceChecker;
 import dpfmanager.shell.conformancechecker.Field;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Properties;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * The Class UserInterface.
  */
 public class UserInterface {
-  private ArrayList<String> extensions;
-  private ArrayList<String> isos;
   private ArrayList<Field> fields;
   private String selectedFile;
 
@@ -65,24 +54,6 @@ public class UserInterface {
    */
   public void setSelectedFile(String filename){
     selectedFile = filename;
-  }
-
-  /**
-   * Gets extensions.
-   *
-   * @return the extensions
-   */
-  public ArrayList<String> getExtensions() {
-    return extensions;
-  }
-
-  /**
-   * Gets isos.
-   *
-   * @return the isos
-   */
-  public ArrayList<String> getIsos() {
-    return isos;
   }
 
   /**
@@ -123,9 +94,8 @@ public class UserInterface {
    * Load conformance checker.
    */
   public void LoadConformanceChecker() {
-    extensions = TiffConformanceChecker.getConformanceCheckerExtensions();
-    isos = TiffConformanceChecker.getConformanceCheckerStandards();
-    fields = TiffConformanceChecker.getConformanceCheckerFields();
+    TiffConformanceChecker cc = new TiffConformanceChecker();
+    fields = cc.getConformanceCheckerFields();
   }
 
   public static String getVersion() {

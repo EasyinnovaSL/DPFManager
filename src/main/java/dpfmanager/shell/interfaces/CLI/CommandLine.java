@@ -222,7 +222,7 @@ public class CommandLine extends UserInterface {
         config.getIsos().add("Tiff/IT");
         config.setOutput(outputFolder);
       }
-      ProcessInput pi = new ProcessInput(allowedExtensions);
+      ProcessInput pi = new ProcessInput();
       pi.ProcessFiles(files, config, silence);
       System.out.println("Report generated successfully.");
     }

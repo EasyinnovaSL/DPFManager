@@ -7,12 +7,6 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 
-import com.easyinnova.tiff.model.ReadIccConfigIOException;
-import com.easyinnova.tiff.model.ReadTagsIOException;
-import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationResult;
-import com.easyinnova.tiff.reader.TiffReader;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,88 +25,70 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Created by easy on 04/09/2015.
+ * Created by Victor Muñoz on 04/09/2015.
  */
 public class ProcessInput {
-  private ReportGenerator reportGenerator;
-  public boolean outOfmemory = false;
-  private List<String> allowedExtensions;
-  private boolean checkBL, checkEP, checkPC;
-  private int checkIT;
+  private boolean outOfmemory = false;
   private Scene scene;
   private int idReport;
 
   /**
-   * Instantiates a new Process input.
+   * Sets the GUI scene.
    *
-   * @param allowedExtensions the allowed extensions
-   */
-  public ProcessInput(List<String> allowedExtensions) {
-    this.allowedExtensions = allowedExtensions;
-  }
-
-  /**
-   * Sets the scene.
-   *
-   * @param scene the scene
+   * @param scene the javafx scene
    */
   public void setScene(Scene scene) {
     this.scene = scene;
   }
 
   /**
-   * Process files string.
+   * An out of memory occurred.
    *
-   * @param files        the files
-   * @param config       the config
-   * @return the string
+   * @return the boolean
+   */
+  public boolean isOutOfmemory() {
+    return outOfmemory;
+  }
+
+  /**
+   * Process a list of files and generate individual ang global reports.
+   *
+   * @param files   the files
+   * @param config  the config
+   * @param silence do not open the report at the end
+   * @return the path to the internal report folder
    */
   public String ProcessFiles(ArrayList<String> files, Configuration config, boolean silence) {
-    checkBL = config.getIsos().contains("Baseline");
-    checkEP = config.getIsos().contains("Tiff/EP");
-    checkIT = -1;
-    if (config.getIsos().contains("Tiff/IT")) checkIT = 0;
-    if (config.getIsos().contains("Tiff/IT-1")) checkIT = 1;
-    if (config.getIsos().contains("Tiff/IT-2")) checkIT = 2;
-    if (config.getRules() != null){
-      checkPC = config.getRules().getRules().size() > 0;
-    } else{
-      checkPC = false;
-    }
-
-    reportGenerator = new ReportGenerator();
-    reportGenerator.setReportsFormats(config.getFormats());
-    reportGenerator.setRules(config.getRules());
-    reportGenerator.setFixes(config.getFixes());
-
-    // Process files
-    ArrayList<IndividualReport> individuals = new ArrayList<IndividualReport>();
+    ArrayList<IndividualReport> individuals = new ArrayList<>();
     String internalReportFolder = ReportGenerator.createReportPath();
     int n=files.size();
     idReport=1;
+
+    // Process each input of the list which can be a file, folder, zip or url
     for (final String filename : files) {
       System.out.println("");
       System.out.println("Processing file " + filename);
-      List<IndividualReport> indReports = processFile(filename, internalReportFolder, config.getOutput());
+
+      // Process the input and get a list of individual reports
+      List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
+      individuals.addAll(indReports);
+
       if (scene != null) {
         Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
-      }
-      if (indReports.size() > 0) {
-        individuals.addAll(indReports);
       }
       idReport++;
     }
 
-    // Global report
+    // Generate global report
     String summaryXml = null;
     try {
-      summaryXml = reportGenerator.makeSummaryReport(internalReportFolder, individuals, config.getOutput(), silence);
+      summaryXml = ReportGenerator.makeSummaryReport(internalReportFolder, individuals, config, silence);
     } catch (OutOfMemoryError e) {
       System.err.println("Out of memory.");
       outOfmemory = true;
     }
 
-    // Send report over FTP (only for alpha testing)
+    // Send report over FTP
     try {
       if(UserInterface.getFeedback() && summaryXml != null) {
         sendFtpCamel(summaryXml);
@@ -125,34 +101,62 @@ public class ProcessInput {
   }
 
   /**
-   * Process a Tiff file.
-   *
-   * @param filename the filename
-   * @param internalReportFolder the internal report folder
-   * @return the list
+   * Get the list of conformance checkers available to use.
    */
-  private List<IndividualReport> processFile(String filename, String internalReportFolder, String outputFolder) {
-    List<IndividualReport> indReports = new ArrayList<IndividualReport>();
-    IndividualReport ir = null;
+  private List<ConformanceChecker> getConformanceCheckers() {
+    TiffConformanceChecker tiffcc = new TiffConformanceChecker();
+    ArrayList<ConformanceChecker> l = new ArrayList<>();
+    l.add(tiffcc);
+    return l;
+  }
+
+  /**
+   * Get the appropiate conformance checker to run the given file.
+   */
+  private ConformanceChecker getConformanceCheckerForFile(String filename) {
+    ConformanceChecker result = null;
+    for (ConformanceChecker cc : getConformanceCheckers()) {
+      if (cc.acceptsFile(filename)) {
+        result = cc;
+        break;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Process an input.
+   *
+   * @param filename the source path
+   * @param internalReportFolder the internal report folder
+   * @param config the report configuration
+   * @return generated list of individual reports
+   */
+  private List<IndividualReport> processFile(String filename, String internalReportFolder, Configuration config) {
+    List<IndividualReport> indReports = new ArrayList<>();
+    IndividualReport ir;
     if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
-      // Zip File
+      // Compressed File
       try {
-        System.err.println(filename);
+        System.out.println(filename);
         ZipFile zipFile = new ZipFile(filename);
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
+          // Process each file contained in the compressed file
           ZipEntry entry = entries.nextElement();
-          if (isTiff(entry.getName())) {
+          ConformanceChecker cc = getConformanceCheckerForFile(entry.getName());
+          if (cc != null) {
             InputStream stream = zipFile.getInputStream(entry);
+            // Extracts the file and creates a temporary file to store it and process it
             String filename2 = createTempFile(internalReportFolder, entry.getName(), stream);
-            ir = processTiffFile(filename2, entry.getName(), internalReportFolder, outputFolder);
+            ir = cc.processFile(filename2, entry.getName(), internalReportFolder, config, idReport);
             if (ir != null) {
               indReports.add(ir);
-            }
-            else{
+            } else{
               outOfmemory = true;
               break;
             }
+            // Delete the temporary file
             File file = new File(filename2);
             file.delete();
           }
@@ -164,17 +168,19 @@ public class ProcessInput {
     } else if (isUrl(filename)) {
       // URL
       try {
-        if (isTiff(filename)) {
+        ConformanceChecker cc = getConformanceCheckerForFile(filename);
+        if (cc != null) {
+          // Download the file and store it in a temporary file
           InputStream input = new java.net.URL(filename).openStream();
           String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
           filename = java.net.URLDecoder.decode(filename, "UTF-8");
-          ir = processTiffFile(filename2, filename, internalReportFolder, outputFolder);
+          ir = cc.processFile(filename2, filename, internalReportFolder, config, idReport);
           if (ir != null) {
             indReports.add(ir);
-          }
-          else{
+          } else{
             outOfmemory = true;
           }
+          // Delete the temporary file
           File file = new File(filename2);
           file.delete();
         } else {
@@ -183,35 +189,38 @@ public class ProcessInput {
       } catch (Exception ex) {
         System.out.println("Error in URL " + filename);
       }
-    } else if (isTiff(filename)) {
-      // File
-      try {
-        ir = processTiffFile(filename, filename, internalReportFolder, outputFolder);
-        if (ir != null) {
-          indReports.add(ir);
-        }
-        else{
-          outOfmemory = true;
-        }
-      } catch (Exception ex) {
-        System.err.println("Error in File " + filename);
-      }
     } else {
-      // Anything else
-      System.err.println("File " + filename + " is not a Tiff");
+      // File
+      ConformanceChecker cc = getConformanceCheckerForFile(filename);
+      if (cc != null) {
+        try {
+          ir = cc.processFile(filename, filename, internalReportFolder, config, idReport);
+          if (ir != null) {
+            indReports.add(ir);
+          } else{
+            outOfmemory = true;
+          }
+        } catch (Exception ex) {
+          System.err.println("Error in File " + filename);
+        }
+      } else {
+        System.err.println("File " + filename + " is not a Tiff");
+      }
     }
     return indReports;
   }
 
   /**
-   * Creates the temp file.
+   * Creates a temporary file to store the input stream.
    *
-   * @param name the name
-   * @param stream the stream
-   * @return the string
+   * @param folder the folder to store the created temporary file
+   * @param name the name of the temporary file
+   * @param stream the input stream
+   * @return the path to the created temporary file
    * @throws IOException Signals that an I/O exception has occurred.
    */
   private String createTempFile(String folder, String name, InputStream stream) throws IOException {
+    // Create the path to the temporary file
     String filename2 = "x" + name;
     if (filename2.contains("/")) {
       filename2 = filename2.substring(filename2.lastIndexOf("/") + 1);
@@ -220,6 +229,8 @@ public class ProcessInput {
       filename2 = "x" + filename2;
     }
     filename2 = folder + "/" + filename2;
+
+    // Write the file
     File targetFile = new File(filename2);
     OutputStream outStream = new FileOutputStream(targetFile);
     byte[] buffer = new byte[8 * 1024];
@@ -232,73 +243,10 @@ public class ProcessInput {
   }
 
   /**
-   * Process tiff file.
-   *
-   * @param pathToFile the path in local disk to the file
-   * @param reportFilename the file name that will be displayed in the report
-   * @param internalReportFolder the internal report folder
-   * @param outputFolder the output report folder (optional)
-   * @return the individual report
-   * @throws ReadTagsIOException the read tags io exception
-   * @throws ReadIccConfigIOException the read icc config io exception
-   */
-  private IndividualReport processTiffFile(String pathToFile, String reportFilename,
-                                           String internalReportFolder, String outputFolder) throws ReadTagsIOException, ReadIccConfigIOException {
-    try {
-      TiffReader tr = new TiffReader();
-      int result = tr.readFile(pathToFile);
-      switch (result) {
-        case -1:
-          System.out.println("File '" + pathToFile + "' does not exist");
-          break;
-        case -2:
-          System.out.println("IO Exception in file '" + pathToFile + "'");
-          break;
-        case 0:
-          TiffDocument to = tr.getModel();
-
-          ValidationResult baselineVal = null;
-          if (checkBL) baselineVal = tr.getBaselineValidation();
-          ValidationResult epValidation = null;
-          if (checkEP) epValidation = tr.getTiffEPValidation();
-          ValidationResult itValidation = null;
-          if (checkIT >= 0) itValidation = tr.getTiffITValidation(checkIT);
-          String pathNorm = reportFilename.replaceAll("\\\\", "/");
-          String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, pathToFile, to, baselineVal, epValidation, itValidation);
-          ir.checkBL = checkBL;
-          ir.checkEP = checkEP;
-          ir.checkIT = checkIT;
-          ir.checkPC = checkPC;
-
-          // Generate individual report
-          String outputfile = ReportGenerator.getReportName(internalReportFolder, reportFilename, idReport);
-          reportGenerator.generateIndividualReport(outputfile, ir, outputFolder);
-          System.out.println("Internal report '" + outputfile + "' created");
-
-          to=null;
-          tr=null;
-          System.gc();
-          return ir;
-        default:
-          System.out.println("Unknown result (" + result + ") in file '" + pathToFile + "'");
-          break;
-      }
-    } catch (ReadTagsIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
-    } catch (ReadIccConfigIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
-    } catch (OutOfMemoryError error){
-      System.err.println("Out of memory");
-    }
-    return null;
-  }
-
-  /**
-   * Checks if is url.
+   * Checks if the filename is an URL.
    *
    * @param filename the filename
-   * @return true, if is url
+   * @return true, if it is a url
    */
   private boolean isUrl(String filename) {
     boolean ok = true;
@@ -311,35 +259,18 @@ public class ProcessInput {
   }
 
   /**
-   * Checks if is tiff.
+   * Sends the report to the preforma FTP.
    *
-   * @param filename the filename
-   * @return true, if is tiff
-   */
-  private boolean isTiff(String filename) {
-    boolean isTiff = false;
-    for (String extension : allowedExtensions) {
-      if (filename.toLowerCase().endsWith(extension.toLowerCase())) {
-        isTiff = true;
-      }
-    }
-    return isTiff;
-  }
-
-  /**
-   * Send ftp.
-   *
-   * @param reportGenerator the report generator
    * @param summaryXml the summary xml
-   * @throws NoSuchAlgorithmException the no such algorithm exception
+   * @throws NoSuchAlgorithmException An error occurred
    */
   private void sendFtpCamel(String summaryXml)
       throws NoSuchAlgorithmException {
     String ftp = "84.88.145.109";
     String user = "preformaapp";
     String password = "2.eX#lh>";
-
     CamelContext context = new DefaultCamelContext();
+
     try {
       context.addRoutes(new RouteBuilder() {
         public void configure() {
