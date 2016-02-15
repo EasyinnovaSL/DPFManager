@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Button?>
+<AnchorPane style="-fx-border-width: 0;" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label id="welcomeText" layoutX="27.0" layoutY="43.0" styleClass="clabel-title" text="Welcome to DPF Manager!"/>
+        <Label layoutX="27.0" layoutY="83.0" prefHeight="29.0" prefWidth="814.0" styleClass="clabel" text="DPF manager is currently under development and early adopters like you are very welcome." wrapText="true" />
+        <Label layoutX="27.0" layoutY="109.0" prefHeight="42.0" prefWidth="774.0" styleClass="clabel" text="Help us improve DPFManager by allowing us to collect the reports of the images that you test. The reports do not include any images or thumbnails and are sent anonymously." wrapText="true" />
+        <Label layoutX="27.0" layoutY="149.0" prefHeight="42.0" prefWidth="774.0" styleClass="clabel" text="In case we found an issue with any of the reports (a tag in a TIFF file we didn't expect, a bug in DPF Manager), we would like to be able to contact you to let you know so we can find a solution. If you would like to get this pro-active support from us, please enter your contact details below:" wrapText="true" />
+        <CheckBox fx:id="chkSubmit" layoutX="27.0" layoutY="208.0" mnemonicParsing="false" selected="true" styleClass="checklegal" text="I want to collaborate with the project" />
+        <TextField fx:id="txtEmail" layoutX="27.0" layoutY="244.0" prefHeight="31.0" prefWidth="375.0" promptText="Your email" styleClass="inputlegal" />
+        <TextField fx:id="txtName" layoutX="413.0" layoutY="244.0" prefHeight="31.0" prefWidth="375.0" promptText="Your name" styleClass="inputlegal" />
+        <TextField fx:id="txtSurname" layoutX="27.0" layoutY="292.0" prefHeight="31.0" prefWidth="375.0" promptText="Your surname" styleClass="inputlegal" />
+        <TextField fx:id="txtJob" layoutX="413.0" layoutY="292.0" prefHeight="31.0" prefWidth="375.0" promptText="Job role" styleClass="inputlegal" />
+        <TextField fx:id="txtOrganization" layoutX="27.0" layoutY="339.0" prefHeight="31.0" prefWidth="375.0" promptText="Organization" styleClass="inputlegal" />
+        <TextField fx:id="txtCountry" layoutX="413.0" layoutY="339.0" prefHeight="31.0" prefWidth="375.0" promptText="Country" styleClass="inputlegal" />
+        <TextArea fx:id="txtWhy" layoutX="27.0" layoutY="389.0" prefHeight="113.0" prefWidth="761.0" promptText="Why do you want to use DPFManager?" styleClass="inputlegal" />
+        <CheckBox fx:id="chkFeedback" layoutX="27.0" layoutY="531.0" mnemonicParsing="false" selected="true" styleClass="checklegal" text="I authorize the DPF Manager to automatically send feedback"/>
+        <Button id="proceeed" layoutX="305.0" layoutY="576.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="206.0" styleClass="buttonlegal" text="Proceed" />
+    </children>
+</AnchorPane>

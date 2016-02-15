@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.jrebirth.ui.config.sub.SubConfig6Controller">
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+        </rowConstraints>
+        <children>
+            <HBox>
+                <ImageView focusTraversable="true" preserveRatio="true">
+                    <image><Image url="@../../images/tab-buttons/tab-1-blue.png" /></image>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </ImageView>
+                <Label styleClass="label-info" text="Implementation checker" />
+                <GridPane.margin>
+                    <Insets left="200.0" />
+                </GridPane.margin>
+            </HBox>
+            <Label fx:id="labIsos" styleClass="label-white" GridPane.columnIndex="1" />
+        </children>
+        <VBox.margin>
+            <Insets bottom="10.0" top="15.0" />
+        </VBox.margin>
+    </GridPane>
+    <ImageView focusTraversable="true" preserveRatio="true">
+        <image><Image url="@../../images/line2.png" /></image>
+        <VBox.margin>
+            <Insets left="65.0" right="65.0" />
+        </VBox.margin>
+    </ImageView>
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+        </rowConstraints>
+        <children>
+            <HBox>
+                <ImageView focusTraversable="true" preserveRatio="true">
+                    <image><Image url="@../../images/tab-buttons/tab-2-blue.png" /></image>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </ImageView>
+                <Label styleClass="label-info" text="Policy checker" />
+                <GridPane.margin>
+                    <Insets left="200.0" />
+                </GridPane.margin>
+            </HBox>
+            <Label fx:id="labRules" styleClass="label-white" GridPane.columnIndex="1" />
+        </children>
+        <VBox.margin>
+            <Insets bottom="10.0" top="10.0" />
+        </VBox.margin>
+    </GridPane>
+    <ImageView focusTraversable="true" preserveRatio="true">
+        <image><Image url="@../../images/line2.png" /></image>
+        <VBox.margin>
+            <Insets left="65.0" right="65.0" />
+        </VBox.margin>
+    </ImageView>
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+        </rowConstraints>
+        <children>
+            <HBox>
+                <ImageView focusTraversable="true" preserveRatio="true">
+                    <image><Image url="@../../images/tab-buttons/tab-3-blue.png" /></image>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </ImageView>
+                <Label styleClass="label-info" text="Report" />
+                <GridPane.margin>
+                    <Insets left="200.0" />
+                </GridPane.margin>
+            </HBox>
+            <Label fx:id="labReports" styleClass="label-white" GridPane.columnIndex="1" />
+        </children>
+        <VBox.margin>
+            <Insets bottom="10.0" top="10.0" />
+        </VBox.margin>
+    </GridPane>
+    <ImageView focusTraversable="true" preserveRatio="true">
+        <image><Image url="@../../images/line2.png" /></image>
+        <VBox.margin>
+            <Insets left="65.0" right="65.0" />
+        </VBox.margin>
+    </ImageView>
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+        </rowConstraints>
+        <children>
+            <HBox>
+                <ImageView focusTraversable="true" preserveRatio="true">
+                    <image><Image url="@../../images/tab-buttons/tab-4-blue.png" /></image>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </ImageView>
+                <Label styleClass="label-info" text="Metadata fixer" />
+                <GridPane.margin>
+                    <Insets left="200.0" />
+                </GridPane.margin>
+            </HBox>
+            <Label fx:id="labFixes" styleClass="label-white" GridPane.columnIndex="1" />
+        </children>
+        <VBox.margin>
+            <Insets bottom="10.0" top="10.0" />
+        </VBox.margin>
+    </GridPane>
+    <ImageView focusTraversable="true" preserveRatio="true">
+        <image><Image url="@../../images/line2.png" /></image>
+        <VBox.margin>
+            <Insets left="65.0" right="65.0" />
+        </VBox.margin>
+    </ImageView>
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints />
+        </rowConstraints>
+        <children>
+            <HBox>
+                <ImageView focusTraversable="true" preserveRatio="true">
+                    <image><Image url="@../../images/tab-buttons/tab-5-blue.png" /></image>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </ImageView>
+                <Label styleClass="label-info" text="Periodical checks" />
+                <GridPane.margin>
+                    <Insets left="200.0" />
+                </GridPane.margin>
+            </HBox>
+            <Label fx:id="labPeriodical" styleClass="label-white" text="None" GridPane.columnIndex="1" />
+        </children>
+        <VBox.margin>
+            <Insets bottom="15.0" top="10.0" />
+        </VBox.margin>
+    </GridPane>
+</VBox>

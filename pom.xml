@@ -228,6 +228,32 @@
 		</dependency>
 		<!--End Test Gui dependencies-->
 
+		<!--jRebirth-->
+        <!--<dependency>-->
+            <!--<groupId>ch.qos.logback</groupId>-->
+            <!--<artifactId>logback-classic</artifactId>-->
+            <!--<version>1.0.13</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.jrebirth.af</groupId>
+            <artifactId>core</artifactId>
+            <version>8.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jrebirth.af</groupId>
+            <artifactId>component</artifactId>
+            <version>8.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jrebirth.af</groupId>
+            <artifactId>preloader</artifactId>
+            <version>8.0.5</version>
+        </dependency>
+        <!--End jRebirth-->
+
 	</dependencies>
 
 	<profiles>

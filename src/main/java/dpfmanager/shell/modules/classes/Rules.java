@@ -6,6 +6,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class Rules {
    * @param scene the scene
    */
   public void Read(Scene scene) {
+    // TODO eliminar
     rules.clear();
     Boolean wrong_format = false;
     AnchorPane ap2 = (AnchorPane)scene.lookup("#pane1");
@@ -77,6 +79,57 @@ public class Rules {
         }
       }
       wrong_format = false;
+    }
+  }
+
+  /**
+   * Read.
+   *
+   * @param rulesBox the vbox node
+   */
+  public void Read(VBox rulesBox) {
+    rules.clear();
+    boolean wrong_format = false;
+    for (Node n : rulesBox.getChildren()){
+      HBox hbox = (HBox) n;
+      String tag = null, operator = null, value = null;
+      if (hbox.getChildren().size() != 4){
+        wrong_format = true;
+      }
+      else {
+        ComboBox comboBox = (ComboBox) hbox.getChildren().get(0);
+        if (comboBox.getValue() != null) {
+          tag = comboBox.getValue().toString();
+        }
+        else{
+          wrong_format = true;
+        }
+
+        ComboBox comboOp = (ComboBox) hbox.getChildren().get(1);
+        if (comboOp.getValue() != null) {
+          operator = comboOp.getValue().toString();
+        }
+        else{
+          wrong_format = true;
+        }
+
+        Node nodeVal = hbox.getChildren().get(2);
+        if (nodeVal instanceof ComboBox) {
+          ComboBox comboVal = (ComboBox) nodeVal;
+          value = comboVal.getValue().toString();
+        } else if (nodeVal instanceof TextField) {
+          TextField textVal = (TextField) nodeVal;
+          value = textVal.getText();
+          if (value.isEmpty() || Pattern.matches("[a-zA-Z ]+", value)) {
+            wrong_format = true;
+          }
+        }
+      }
+
+      if (!wrong_format) {
+        Rule rule = new Rule(tag, operator, value);
+        rules.add(rule);
+      }
     }
   }
 

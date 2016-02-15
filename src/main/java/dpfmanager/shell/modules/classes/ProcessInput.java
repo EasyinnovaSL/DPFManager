@@ -43,6 +43,7 @@ public class ProcessInput {
   private boolean checkBL, checkEP, checkPC;
   private int checkIT;
   private Scene scene;
+  private Label label;
   private int idReport;
 
   /**
@@ -61,6 +62,15 @@ public class ProcessInput {
    */
   public void setScene(Scene scene) {
     this.scene = scene;
+  }
+
+  /**
+   * Sets the label.
+   *
+   * @param label the label
+   */
+  public void setLabelLoading(Label label) {
+    this.label = label;
   }
 
   /**
@@ -99,6 +109,9 @@ public class ProcessInput {
       List<IndividualReport> indReports = processFile(filename, internalReportFolder, config.getOutput());
       if (scene != null) {
         Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
+      }
+      if (label != null) {
+        Platform.runLater(() -> label.setText("Processing..." + (files.indexOf(filename) + 1) + "/" + n));
       }
       if (indReports.size() > 0) {
         individuals.addAll(indReports);

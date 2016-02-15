@@ -93,6 +93,13 @@ public class Configuration {
   }
 
   /**
+   * Set the default values for a new configuration
+   */
+  public void initDefault(){
+    addISO("Baseline");
+  }
+
+  /**
    * Sets output.
    *
    * @param path the path
@@ -221,8 +228,10 @@ public class Configuration {
     for (int i=0;i<fixes.getFixes().size();i++) {
       Fix fix = fixes.getFixes().get(i);
       String val = "";
-      if (fix.getValue() != null) val = "'" + fix.getValue() + "'";
-      txt += (fix.getOperator() + " " + fix.getTag() + " " + val).trim();
+      String op = fix.getOperator();
+      if (op == null) op = "";
+      if (fix.getValue() != null && !fix.getValue().isEmpty()) val = "'" + fix.getValue() + "'";
+      txt += (op + " " + fix.getTag() + " " + val).trim();
       if (i+1 < fixes.getFixes().size()) txt += ", ";
     }
     return txt;

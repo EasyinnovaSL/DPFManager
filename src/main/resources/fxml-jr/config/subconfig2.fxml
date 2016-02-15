@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<VBox id="wizStep2" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.jrebirth.ui.config.sub.SubConfig2Controller">
+    <VBox fx:id="rulesBox">
+        <VBox.margin>
+            <Insets left="250.0" />
+        </VBox.margin>
+    </VBox>
+    <Button id="addRule" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" onAction="#addRule" prefWidth="180.0" styleClass="secondary-button" text="Add Rule" />
+</VBox>
