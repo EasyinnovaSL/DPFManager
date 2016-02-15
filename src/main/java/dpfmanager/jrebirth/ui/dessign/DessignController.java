@@ -3,7 +3,7 @@ package dpfmanager.jrebirth.ui.dessign;
 import dpfmanager.RebirthApp;
 import dpfmanager.jrebirth.ui.config.ConfigModel;
 import dpfmanager.jrebirth.ui.main.MainModel;
-import dpfmanager.jrebirth.ui.reports.ReportsModel;
+import dpfmanager.jrebirth.ui.report.ReportsModel;
 import dpfmanager.shell.modules.classes.ProcessInput;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;

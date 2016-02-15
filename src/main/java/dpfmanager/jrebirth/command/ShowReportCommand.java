@@ -1,7 +1,7 @@
 package dpfmanager.jrebirth.command;
 
 import dpfmanager.jrebirth.ui.main.MainModel;
-import dpfmanager.jrebirth.ui.reports.ReportsModel;
+import dpfmanager.jrebirth.ui.report.ReportsModel;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

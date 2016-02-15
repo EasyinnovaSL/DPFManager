@@ -1,6 +1,6 @@
 package dpfmanager.jrebirth.command;
 
-import dpfmanager.jrebirth.ui.reports.ReportsModel;
+import dpfmanager.jrebirth.ui.report.ReportsModel;
 
 import org.jrebirth.af.api.wave.Wave;
 import org.jrebirth.af.api.wave.WaveBean;

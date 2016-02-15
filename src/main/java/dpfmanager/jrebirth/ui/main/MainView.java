@@ -2,7 +2,7 @@ package dpfmanager.jrebirth.ui.main;
 
 import dpfmanager.jrebirth.ui.about.AboutModel;
 import dpfmanager.jrebirth.ui.dessign.DessignModel;
-import dpfmanager.jrebirth.ui.reports.ReportsModel;
+import dpfmanager.jrebirth.ui.report.ReportsModel;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.collections.ListChangeListener;

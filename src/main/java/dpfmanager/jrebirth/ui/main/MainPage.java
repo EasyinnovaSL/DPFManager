@@ -4,7 +4,7 @@ import dpfmanager.jrebirth.ui.about.AboutModel;
 import dpfmanager.jrebirth.ui.config.ConfigModel;
 import dpfmanager.jrebirth.ui.dessign.DessignModel;
 import dpfmanager.jrebirth.ui.firsttime.FirstTimeModel;
-import dpfmanager.jrebirth.ui.reports.ReportsModel;
+import dpfmanager.jrebirth.ui.report.ReportsModel;
 
 import org.jrebirth.af.api.key.UniqueKey;
 import org.jrebirth.af.api.ui.Model;
