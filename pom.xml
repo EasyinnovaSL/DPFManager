@@ -229,12 +229,6 @@
 		<!--End Test Gui dependencies-->
 
 		<!--jRebirth-->
-        <!--<dependency>-->
-            <!--<groupId>ch.qos.logback</groupId>-->
-            <!--<artifactId>logback-classic</artifactId>-->
-            <!--<version>1.0.13</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.jrebirth.af</groupId>
             <artifactId>core</artifactId>
@@ -273,7 +267,7 @@
 						<artifactId>javafx-maven-plugin</artifactId>
 						<version>8.1.5</version>
 						<configuration>
-							<mainClass>dpfmanager.MainApp</mainClass>
+							<mainClass>dpfmanager.shell.MainApp</mainClass>
 							<verbose>true</verbose>
 							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
 							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
@@ -333,7 +327,7 @@
 									<errTitle>encc</errTitle>
 									<icon>${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</icon>
 									<classPath>
-										<mainClass>dpfmanager.MainApp</mainClass>
+										<mainClass>dpfmanager.shell.MainApp</mainClass>
 										<addDependencies>false</addDependencies>
 										<preCp>anything</preCp>
 									</classPath>
@@ -455,7 +449,7 @@
 						<artifactId>javafx-maven-plugin</artifactId>
 						<version>8.1.5</version>
 						<configuration>
-							<mainClass>dpfmanager.MainApp</mainClass>
+							<mainClass>dpfmanager.shell.MainApp</mainClass>
 							<verbose>true</verbose>
 							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
 							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>

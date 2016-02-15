@@ -1,6 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.MainApp;
+import dpfmanager.shell.MainApp;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -9,15 +9,12 @@ import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.testfx.api.FxAssert;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import com.google.common.base.Predicate;
-
-import javax.xml.bind.SchemaOutputResolver;
 
 /**
  * Created by Adrià Llorens on 30/12/2015.

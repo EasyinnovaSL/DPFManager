@@ -1,7 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.MainApp;
-import dpfmanager.gui.ApplicationTest;
+import dpfmanager.shell.MainApp;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
