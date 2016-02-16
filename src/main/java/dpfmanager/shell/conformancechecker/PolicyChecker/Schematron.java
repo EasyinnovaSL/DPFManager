@@ -1,6 +1,7 @@
 package dpfmanager.shell.conformancechecker.PolicyChecker;
 
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
+import dpfmanager.shell.interfaces.Old.UserInterface;
 
 import net.sf.saxon.TransformerFactoryImpl;
 
@@ -151,9 +152,9 @@ public class Schematron extends CamelTestSupport {
           pattern.appendChild(newrule);
         }
 
-        String tempname = UserInterface.getConfigDir() + "/rules2.sch";
+        String tempname = DPFManagerProperties.getConfigDir() + "/rules2.sch";
         int idx = 3;
-        while (new File(tempname).exists()) tempname = UserInterface.getConfigDir() + "/rules" + idx++ + ".sch";
+        while (new File(tempname).exists()) tempname = DPFManagerProperties.getConfigDir() + "/rules" + idx++ + ".sch";
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();

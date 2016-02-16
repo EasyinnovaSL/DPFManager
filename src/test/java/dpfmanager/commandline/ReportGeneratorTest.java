@@ -1,7 +1,7 @@
 package dpfmanager.commandline;
 
 import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
 import dpfmanager.shell.reporting.ReportGenerator;
 import javafx.application.Application;
 
@@ -30,7 +30,7 @@ public class ReportGeneratorTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -42,7 +42,7 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   public void testHTMLTags() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -103,7 +103,7 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   public void testReportsFile() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -142,7 +142,7 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   public void testReportsSubfoldersWithEqualFilenames() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "-r";
@@ -184,7 +184,7 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   public void testReportsFolder() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small";
@@ -223,7 +223,7 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   public void testReportsZip() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small.zip";
@@ -262,7 +262,7 @@ public class ReportGeneratorTest extends TestCase {
   }
 
   public void testReportsURL() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String dirWeb = "http://dpfmanager.org/img/Bilevel.tif";
     try {

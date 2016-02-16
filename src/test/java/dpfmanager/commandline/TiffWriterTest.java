@@ -3,7 +3,8 @@ package dpfmanager.commandline;
 import static java.io.File.separator;
 
 import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
+import dpfmanager.shell.interfaces.Old.UserInterface;
 import dpfmanager.shell.reporting.ReportGenerator;
 import javafx.application.Application;
 
@@ -37,7 +38,7 @@ public class TiffWriterTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -49,7 +50,7 @@ public class TiffWriterTest extends TestCase {
   }
 
   public void testReports1() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/TestWriter";

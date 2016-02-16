@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<VBox id="wizStep1" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.jrebirth.ui.config.sub.SubConfig1Controller">
+<VBox id="wizStep1" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.shell.interfaces.Gui.ui.config.sub.SubConfig1Controller">
     <Label styleClass="label-info" text="Standards">
       <VBox.margin>
          <Insets left="20.0" />

@@ -1,7 +1,8 @@
 package dpfmanager.commandline;
 
 import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
+import dpfmanager.shell.interfaces.Old.UserInterface;
 import dpfmanager.shell.reporting.ReportGenerator;
 import javafx.application.Application;
 
@@ -29,7 +30,7 @@ public class MultipleReportGeneratorTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -41,7 +42,7 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   public void testReportsXML() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "src/test/resources/Small/";
@@ -82,7 +83,7 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   public void testReportsKoPdf() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
@@ -128,7 +129,7 @@ public class MultipleReportGeneratorTest extends TestCase {
   }
 
   public void testReportsPDF() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[3];
     args[0] = "src/test/resources/Small/";

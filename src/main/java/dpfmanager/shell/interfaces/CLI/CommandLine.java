@@ -29,7 +29,8 @@ import com.easyinnova.tiff.profiles.TiffEPProfile;
 import dpfmanager.shell.conformancechecker.Configuration;
 import dpfmanager.shell.conformancechecker.ProcessInput;
 import dpfmanager.shell.conformancechecker.TiffConformanceChecker;
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
+import dpfmanager.shell.interfaces.Old.UserInterface;
 import dpfmanager.shell.reporting.ReportGenerator;
 
 import org.w3c.dom.Document;
@@ -190,7 +191,7 @@ public class CommandLine extends UserInterface {
     }
 
     if (version) {
-      String sversion = getVersion();
+      String sversion = DPFManagerProperties.getVersion();
       System.out.println("DPF Manager version " + sversion);
     }
     if (argsError) {

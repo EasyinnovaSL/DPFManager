@@ -1,11 +1,8 @@
 package dpfmanager.gui;
 
-import dpfmanager.RebirthApp;
 import dpfmanager.shell.MainApp;
-import javafx.scene.Node;
 import javafx.stage.Stage;
 
-import org.jrebirth.af.api.concurrent.JRebirthRunnable;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.matcher.base.NodeMatchers;
@@ -21,7 +18,7 @@ public class ButtonCheckTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(RebirthApp.class, "-gui", "-noDisc");
+    stage = launch(MainApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 

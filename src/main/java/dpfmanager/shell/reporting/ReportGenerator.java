@@ -37,7 +37,8 @@ import dpfmanager.shell.conformancechecker.MetadataFixer.Fixes;
 import dpfmanager.shell.conformancechecker.MetadataFixer.autofixes.autofix;
 import dpfmanager.shell.conformancechecker.PolicyChecker.Rules;
 import dpfmanager.shell.conformancechecker.TiffConformanceChecker;
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
+import dpfmanager.shell.interfaces.Old.UserInterface;
 
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -69,7 +70,6 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -122,7 +122,7 @@ public class ReportGenerator {
    * @return the reports folder
    */
   public static String getReportsFolder() {
-    String path = UserInterface.getConfigDir() + "/reports";
+    String path = DPFManagerProperties.getConfigDir() + "/reports";
     return path;
   }
 

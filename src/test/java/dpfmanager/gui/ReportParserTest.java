@@ -1,8 +1,8 @@
 package dpfmanager.gui;
 
-import dpfmanager.RebirthApp;
-import dpfmanager.jrebirth.ui.main.MainModel;
-import dpfmanager.jrebirth.ui.report.ReportsModel;
+import dpfmanager.shell.MainApp;
+import dpfmanager.shell.interfaces.Gui.ui.main.MainModel;
+import dpfmanager.shell.interfaces.Gui.ui.report.ReportsModel;
 import dpfmanager.shell.reporting.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -28,7 +28,7 @@ public class ReportParserTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(RebirthApp.class, "-gui", "-noDisc");
+    stage = launch(MainApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 

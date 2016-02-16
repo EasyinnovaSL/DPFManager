@@ -1,7 +1,7 @@
 package dpfmanager.commandline;
 
 import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
 import dpfmanager.shell.reporting.ReportGenerator;
 import javafx.application.Application;
 
@@ -38,7 +38,7 @@ public class StatisticsGeneratorTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -50,7 +50,7 @@ public class StatisticsGeneratorTest extends TestCase {
   }
 
   public void testStatistics() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[4];
     args[0] = "src/test/resources/Small/Bilevel.tif";
@@ -98,7 +98,7 @@ public class StatisticsGeneratorTest extends TestCase {
   }
 
   public void testStatistics2() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/";

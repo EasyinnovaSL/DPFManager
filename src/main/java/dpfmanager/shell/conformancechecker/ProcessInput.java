@@ -1,6 +1,7 @@
 package dpfmanager.shell.conformancechecker;
 
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
+import dpfmanager.shell.interfaces.Old.UserInterface;
 import dpfmanager.shell.reporting.IndividualReport;
 import dpfmanager.shell.reporting.ReportGenerator;
 import javafx.application.Platform;
@@ -103,7 +104,7 @@ public class ProcessInput {
 
     // Send report over FTP
     try {
-      if(UserInterface.getFeedback() && summaryXml != null) {
+      if(DPFManagerProperties.getFeedback() && summaryXml != null) {
         sendFtpCamel(summaryXml);
       }
     } catch (Exception e) {

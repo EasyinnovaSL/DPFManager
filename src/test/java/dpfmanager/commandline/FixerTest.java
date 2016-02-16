@@ -1,7 +1,8 @@
 package dpfmanager.commandline;
 
 import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.DPFManagerProperties;
+import dpfmanager.shell.interfaces.Old.UserInterface;
 import javafx.application.Application;
 
 import com.easyinnova.tiff.reader.TiffReader;
@@ -30,7 +31,7 @@ public class FixerTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -42,7 +43,7 @@ public class FixerTest extends TestCase {
   }
 
   public void testAddRemoveTag() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -127,7 +128,7 @@ public class FixerTest extends TestCase {
   }
 
   public void testAddExistingTag() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -207,7 +208,7 @@ public class FixerTest extends TestCase {
   }
 
   public void testAutofixPrivateData() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -286,7 +287,7 @@ public class FixerTest extends TestCase {
   }
 
   public void testReports() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();

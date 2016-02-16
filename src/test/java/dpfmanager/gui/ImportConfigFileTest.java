@@ -1,7 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.RebirthApp;
-import dpfmanager.jrebirth.ui.main.MainModel;
+import dpfmanager.shell.MainApp;
+import dpfmanager.shell.interfaces.Gui.ui.main.MainModel;
 import javafx.stage.Stage;
 
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class ImportConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(RebirthApp.class, "-gui", "-noDisc");
+    stage = launch(MainApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 

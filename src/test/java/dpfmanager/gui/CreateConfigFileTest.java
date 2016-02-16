@@ -1,8 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.RebirthApp;
-import dpfmanager.jrebirth.ui.main.MainModel;
 import dpfmanager.shell.MainApp;
+import dpfmanager.shell.interfaces.Gui.ui.main.MainModel;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -31,7 +30,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(RebirthApp.class, "-gui", "-noDisc");
+    stage = launch(MainApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 
