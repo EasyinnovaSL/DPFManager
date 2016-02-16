@@ -30,6 +30,7 @@ import java.util.zip.ZipFile;
 public class ProcessInput {
   private boolean outOfmemory = false;
   private Scene scene;
+  private Label label;
   private int idReport;
 
   /**
@@ -39,6 +40,15 @@ public class ProcessInput {
    */
   public void setScene(Scene scene) {
     this.scene = scene;
+  }
+
+  /**
+   * Sets the label.
+   *
+   * @param label the label
+   */
+  public void setLabelLoading(Label label) {
+    this.label = label;
   }
 
   /**
@@ -75,6 +85,9 @@ public class ProcessInput {
 
       if (scene != null) {
         Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
+      }
+      if (label != null) {
+        Platform.runLater(() -> label.setText("Processing..." + (files.indexOf(filename) + 1) + "/" + n));
       }
       idReport++;
     }

@@ -1,7 +1,7 @@
 package dpfmanager.jrebirth.ui.report;
 
 import dpfmanager.jrebirth.ui.main.MainModel;
-import dpfmanager.shell.modules.reporting.ReportRow;
+import dpfmanager.shell.reporting.ReportRow;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -387,6 +387,7 @@ public class ReportsView extends DefaultView<ReportsModel, ScrollPane, ReportsCo
 
     if (webView == null) {
       webView = new WebView();
+      webView.setId("webViewReport");
       reportsVbox.getChildren().add(webView);
       webEngine = webView.getEngine();
     }

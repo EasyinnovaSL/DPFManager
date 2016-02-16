@@ -1,8 +1,8 @@
 package dpfmanager.jrebirth.ui.dessign;
 
-import dpfmanager.shell.modules.classes.Configuration;
-import dpfmanager.shell.modules.classes.Field;
-import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
+import dpfmanager.shell.conformancechecker.Configuration;
+import dpfmanager.shell.conformancechecker.Field;
+import dpfmanager.shell.conformancechecker.TiffConformanceChecker;
 
 import org.jrebirth.af.core.ui.DefaultModel;
 import org.w3c.dom.Document;

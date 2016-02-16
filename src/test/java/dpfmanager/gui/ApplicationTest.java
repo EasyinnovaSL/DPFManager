@@ -64,6 +64,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     FxToolkit.setupApplication(appClass, appArgs);
     FxToolkit.toolkitContext().getRegisteredStage().setWidth(width);
     FxToolkit.toolkitContext().getRegisteredStage().setHeight(height);
+    // Wait for application to start
+    Thread.sleep(3000);
     return stage;
   }
 
@@ -95,6 +97,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   //Main click function + reload
   public void clickOnAndReload(String id){
     clickOnScroll(id);
+    sleep(250);
     reloadScene();
   }
 
@@ -192,7 +195,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     boolean finish = false;
     while (!finish && timeout < maxTimeout) {
       reloadScene();
-      Node node = scene.lookup("#loadingPane");
+      Node node = scene.lookup("#loadingVbox");
       if (node != null) {
         timeout++;
         sleep(1000);
@@ -233,8 +236,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   protected void clickOnImportedConfig(String path) {
-    AnchorPane ap = (AnchorPane) scene.lookup("#pane1");  //Get Anchor Pane
-    VBox vbox = (VBox) ap.getChildren().get(0);           //Get VBox
+    VBox vbox = (VBox) scene.lookup("#vBoxConfig");  //Get VBox
     String idToClick = "#";
     String search = path.replaceAll("/", "_").replaceAll("\\\\", "_");
     for (Node node : vbox.getChildren()) {
@@ -247,7 +249,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertNotEquals("Import config file failed!", "#", idToClick);
 
     // Move inside pane
-    moveTo("#pane1");
+    moveTo("#vBoxConfig");
     clickOnScroll(idToClick,false);
   }
 }

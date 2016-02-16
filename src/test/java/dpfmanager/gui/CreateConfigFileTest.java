@@ -1,5 +1,7 @@
 package dpfmanager.gui;
 
+import dpfmanager.RebirthApp;
+import dpfmanager.jrebirth.ui.main.MainModel;
 import dpfmanager.shell.MainApp;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -29,7 +31,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(RebirthApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 
@@ -47,31 +49,34 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnScroll("#radProf1");
     clickOnScroll("#radProf2");
     clickOnScroll("#radProf4");
-    clickOnAndReload("#continue1");
+    clickOnAndReload("#continue");
 
     // 3 - Add Rule
     addRule("ImageWidth", ">", "500");
     addRule("ImageHeight", "<", "1000");
     clickOnScroll("#ID0 #removeButton");
-    clickOnAndReload("#continue2");
+    clickOnAndReload("#continue");
 
     // 4 - Repot format
     clickOnScroll("#chkHtml");
     clickOnScroll("#chkPdf");
-    clickOnAndReload("#continue3");
+    clickOnAndReload("#continue");
 
     // 5 - Add Fix
     addFix("Add Tag", "Artist", "EasyTest");
     addFix("Remove Tag", "Copyright", "Easyinnova");
     clickOnScroll("#ID3 #removeButton");
-    clickOnAndReload("#continue4");
+    clickOnAndReload("#continue");
+
+    // Skip step 5
+    clickOnAndReload("#continue");
 
     // Create temp folder
     createTempFolder();
 
     // 6 - Save the report
-    MainApp.setTestParam("saveConfig",outputPath);
-    clickOnScroll("#saveReportButton");
+    MainModel.setTestParam("saveConfig", outputPath);
+    clickOnScroll("#continue");
 
     // Print generated file
 //    System.out.println("\nOutput file:");
@@ -112,14 +117,18 @@ public class CreateConfigFileTest extends ApplicationTest {
 
     //Set the rule parameters
     clickOnScroll("#ID" + uniqueId + " #comboBoxAction").clickOn(action);
-    clickOnScroll("#ID" + uniqueId + " #comboBoxField").clickOn(field);
+    // Start Hack FIXME: combo box only shows 2 params
+    clickOnScroll("#ID" + uniqueId + " #comboBoxOp");
+    clickOnScroll("#ID" + uniqueId + " #comboBoxOp");
+    // End Hack
+    clickOnScroll("#ID" + uniqueId + " #comboBoxOp").clickOn(field);
     if (action.equals("Add Tag")) {
       clickOnScroll("#ID" + uniqueId + " #textField").write(text);
     }
 
     //Check combobox items size
     ComboBox comboBoxAction = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxAction");
-    ComboBox comboBoxFix = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxField");
+    ComboBox comboBoxFix = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxOp");
     Assert.assertEquals("ComboBox Action inside 'Add Fix' failed", 2, comboBoxAction.getItems().size());
     Assert.assertEquals("ComboBox Field inside 'Add Fix' failed", 3, comboBoxFix.getItems().size());
 

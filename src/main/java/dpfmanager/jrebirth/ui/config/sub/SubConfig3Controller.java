@@ -4,7 +4,7 @@ import dpfmanager.RebirthApp;
 import dpfmanager.jrebirth.ui.config.ConfigController;
 import dpfmanager.jrebirth.ui.config.ConfigModel;
 import dpfmanager.jrebirth.ui.config.ConfigView;
-import dpfmanager.shell.modules.classes.Configuration;
+import dpfmanager.shell.conformancechecker.Configuration;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

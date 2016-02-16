@@ -1,8 +1,11 @@
 package dpfmanager.gui;
 
+import dpfmanager.RebirthApp;
 import dpfmanager.shell.MainApp;
+import javafx.scene.Node;
 import javafx.stage.Stage;
 
+import org.jrebirth.af.api.concurrent.JRebirthRunnable;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.matcher.base.NodeMatchers;
@@ -18,7 +21,7 @@ public class ButtonCheckTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(RebirthApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 
@@ -30,15 +33,15 @@ public class ButtonCheckTest extends ApplicationTest {
 
     // Continue 3 button
     clickOnAndReload("#newButton");
-    clickOnAndReload("#continue1");
-    clickOnAndReload("#continue2");
-    clickOnAndReload("#continue3");
-    FxAssert.verifyThat("#continue3", NodeMatchers.isNull());
+    clickOnAndReload("#continue");
+    clickOnAndReload("#continue");
+    clickOnAndReload("#continue");
+    FxAssert.verifyThat("#included4", NodeMatchers.isVisible());
 
     // Check files button
-    clickOnAndReload("#butChecker");
+    clickOnAndReload("#butDessign");
     clickOnAndReload("#checkFilesButton");
-    clickOnAndReload("#butReport");
+    clickOnAndReload("#butReports");
     FxAssert.verifyThat("#tab_reports", NodeMatchers.isNull());
   }
 }

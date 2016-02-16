@@ -1,6 +1,8 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
+import dpfmanager.RebirthApp;
+import dpfmanager.jrebirth.ui.main.MainModel;
+import dpfmanager.jrebirth.ui.report.ReportsModel;
 import dpfmanager.shell.reporting.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -26,7 +28,7 @@ public class ReportParserTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(RebirthApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 
@@ -44,20 +46,20 @@ public class ReportParserTest extends ApplicationTest {
     // --
     List<String> list = Arrays.asList(configHtml, configJson, configXml);
     for (String configFile : list) {
-      MainApp.setTestParam("import", configFile);
+      MainModel.setTestParam("import", configFile);
       clickOnScroll("#importButton");
       clickOnImportedConfig(configFile);
       writeText("#txtBox1", inputFiles);
       clickOnAndReload("#checkFilesButton");
       waitForCheckFiles(60);
       System.out.println("Current config: "+configFile);
-      clickOnAndReload("#butChecker");
+      clickOnAndReload("#butDessign");
     }
 
     // Go to reports and check them
-    clickOnAndReload("#butReport");
+    clickOnAndReload("#butReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tab_reports");
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 3, MainApp.reports_loaded), table.getItems().size());
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_loaded), table.getItems().size());
     checkValidRow(table.getItems().get(0), "XML"); //Xml
     checkValidRow(table.getItems().get(1), "JSON"); //Json
     checkValidRow(table.getItems().get(2), "HTML"); //Html

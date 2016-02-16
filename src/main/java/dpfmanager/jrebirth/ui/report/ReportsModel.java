@@ -1,7 +1,7 @@
 package dpfmanager.jrebirth.ui.report;
 
-import dpfmanager.shell.modules.reporting.ReportGenerator;
-import dpfmanager.shell.modules.reporting.ReportRow;
+import dpfmanager.shell.reporting.ReportGenerator;
+import dpfmanager.shell.reporting.ReportRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

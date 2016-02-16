@@ -1,6 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
+import dpfmanager.RebirthApp;
+import dpfmanager.jrebirth.ui.main.MainModel;
 import javafx.stage.Stage;
 
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class ImportConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(RebirthApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 
@@ -30,7 +31,7 @@ public class ImportConfigFileTest extends ApplicationTest {
     System.out.println("Running import and edit config file test...");
 
     //Set the input path
-    MainApp.setTestParam("import", inputPath);
+    MainModel.setTestParam("import", inputPath);
 
     //Import it
     clickOnScroll("#importButton");

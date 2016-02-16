@@ -124,6 +124,7 @@ public class DessignView extends DefaultView<DessignModel, ScrollPane, DessignCo
 
   private void addConfigFiles(){
     vBoxConfig = new VBox();
+    vBoxConfig.setId("vBoxConfig");
     vBoxConfig.setSpacing(3);
     vBoxConfig.setPadding(new Insets(5));
     File folder = new File(getModel().getModel(MainModel.class).getConfigDir());

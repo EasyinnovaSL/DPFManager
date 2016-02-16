@@ -4,7 +4,7 @@ import dpfmanager.RebirthApp;
 import dpfmanager.jrebirth.ui.config.ConfigModel;
 import dpfmanager.jrebirth.ui.main.MainModel;
 import dpfmanager.jrebirth.ui.report.ReportsModel;
-import dpfmanager.shell.modules.classes.ProcessInput;
+import dpfmanager.shell.conformancechecker.ProcessInput;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -131,12 +131,12 @@ public class DessignController extends DefaultController<DessignModel, DessignVi
                   }
                 }
 
-                ProcessInput pi = new ProcessInput(extensions);
+                ProcessInput pi = new ProcessInput();
                 pi.setLabelLoading(lblLoading);
                 ArrayList<String> formats = getModel().getConfig().getFormats();
 
                 String filefolder = pi.ProcessFiles(files, getModel().getConfig(), true);
-                if (pi.outOfmemory) {
+                if (pi.isOutOfmemory()) {
                   Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");

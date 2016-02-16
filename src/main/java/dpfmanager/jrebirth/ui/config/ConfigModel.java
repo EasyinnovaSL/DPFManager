@@ -2,8 +2,8 @@ package dpfmanager.jrebirth.ui.config;
 
 import dpfmanager.jrebirth.ui.dessign.DessignModel;
 import dpfmanager.jrebirth.ui.main.MainModel;
-import dpfmanager.shell.modules.classes.Configuration;
-import dpfmanager.shell.modules.classes.Field;
+import dpfmanager.shell.conformancechecker.Configuration;
+import dpfmanager.shell.conformancechecker.Field;
 
 import org.jrebirth.af.core.ui.DefaultModel;
 

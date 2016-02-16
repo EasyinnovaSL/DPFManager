@@ -3,11 +3,11 @@ package dpfmanager.jrebirth.ui.config.sub;
 import dpfmanager.jrebirth.ui.config.ConfigController;
 import dpfmanager.jrebirth.ui.config.ConfigModel;
 import dpfmanager.jrebirth.ui.config.ConfigView;
-import dpfmanager.shell.modules.autofixes.autofix;
-import dpfmanager.shell.modules.classes.Configuration;
-import dpfmanager.shell.modules.classes.Fix;
-import dpfmanager.shell.modules.classes.Fixes;
-import dpfmanager.shell.modules.conformancechecker.TiffConformanceChecker;
+import dpfmanager.shell.conformancechecker.Configuration;
+import dpfmanager.shell.conformancechecker.MetadataFixer.Fix;
+import dpfmanager.shell.conformancechecker.MetadataFixer.Fixes;
+import dpfmanager.shell.conformancechecker.MetadataFixer.autofixes.autofix;
+import dpfmanager.shell.conformancechecker.TiffConformanceChecker;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -65,12 +65,6 @@ public class SubConfig4Controller extends AbstractFXMLController<ConfigModel, Co
 
   public void saveFixes(Configuration config) {
     Fixes fixes = config.getFixes();
-    /*if (chkAutoFixLE != null && chkAutoFixLE.isSelected())
-      fixes.addFixFromTxt("ByteOrder,LittleEndian");
-    if (chkAutoFixBE != null && chkAutoFixBE.isSelected())
-      fixes.addFixFromTxt("ByteOrder,BigEndian");
-    if (chkAutoFixPersonal != null && chkAutoFixPersonal.isSelected())
-      fixes.addFixFromTxt("PrivateData,Clear");*/
     fixes.ReadFixes(fixesBox);
     fixes.ReadAutofixes(autoFixesBox);
   }
@@ -96,7 +90,7 @@ public class SubConfig4Controller extends AbstractFXMLController<ConfigModel, Co
     for (String className : classes) {
       autofix fix = null;
       try {
-        fix = (autofix) Class.forName("dpfmanager.shell.modules.autofixes." + className).newInstance();
+        fix = (autofix) Class.forName("dpfmanager.shell.conformancechecker.MetadataFixer.autofixes." + className).newInstance();
       } catch (Exception e) {
         e.printStackTrace();
       }
