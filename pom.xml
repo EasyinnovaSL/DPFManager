@@ -33,6 +33,7 @@
 		<developer>
 			<name>Xavier Tarrés</name>
 			<email>xavitarres@easyinnova.com</email>
+			<organization>Easy Innova</organization>
 			<url>https://github.com/XaviTarres</url>
 			<id>XaviTarres</id>
 		</developer>
@@ -41,6 +42,12 @@
 			<email>victormunoz@easyinnova.com</email>
 			<organization>Easy Innova</organization>
 			<organizationUrl>http://www.easyinnova.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Adrià Llorens Martinez</name>
+			<email>adriallorens@easyinnova.com</email>
+			<organization>Easy Innova</organization>
+			<url>https://github.com/Adri7</url>
 		</developer>
 		<developer>
 			<name>Carlos García Rubio</name>
