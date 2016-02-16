@@ -98,6 +98,9 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   public void clickOnAndReload(String id){
     clickOnScroll(id);
     sleep(250);
+    if (id.equals("#butReports")){
+      sleep(250);
+    }
     reloadScene();
   }
 
