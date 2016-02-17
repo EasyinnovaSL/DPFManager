@@ -30,11 +30,11 @@ public final class MainApp extends DefaultApplication<StackPane> {
    */
   public static void main(final String... args) {
     Parameters params = new ParametersImpl(args);
+    System.out.println(params.getRaw().toString());
+    System.out.println(params.getRaw().size());
     if (params == null || params.getRaw().size() == 0 || (params.getRaw().size() > 0 && params.getRaw().contains("-gui"))) {
       // GUI
       LOG.info("Starting JavaFX application");
-      boolean noDisc = params.getRaw().contains("-noDisc");
-      MainModel.setNoDisc(noDisc);
       Application.launch(args);
     } else {
       // Command Line
@@ -44,9 +44,6 @@ public final class MainApp extends DefaultApplication<StackPane> {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Class<? extends Model> getFirstModelClass() {
     return MainModel.class;
@@ -61,6 +58,8 @@ public final class MainApp extends DefaultApplication<StackPane> {
   protected void customizeStage(final Stage stage){
     thestage = stage;
     thestage.setMinWidth(400);
+    boolean noDisc = getParameters().getRaw().contains("-noDisc");
+    MainModel.setNoDisc(noDisc);
   }
 
   public static Stage getMyStage() {
