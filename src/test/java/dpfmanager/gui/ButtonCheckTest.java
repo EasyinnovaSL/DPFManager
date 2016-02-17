@@ -1,8 +1,10 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.MainApp;
+import javafx.scene.Node;
 import javafx.stage.Stage;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.matcher.base.NodeMatchers;
@@ -33,7 +35,7 @@ public class ButtonCheckTest extends ApplicationTest {
     clickOnAndReload("#continue");
     clickOnAndReload("#continue");
     clickOnAndReload("#continue");
-    FxAssert.verifyThat("#included4", NodeMatchers.isVisible());
+    Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#included4").isVisible());
 
     // Check files button
     clickOnAndReload("#butDessign");

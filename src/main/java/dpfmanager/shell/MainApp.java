@@ -30,8 +30,6 @@ public final class MainApp extends DefaultApplication<StackPane> {
    */
   public static void main(final String... args) {
     Parameters params = new ParametersImpl(args);
-    System.out.println(params.getRaw().toString());
-    System.out.println(params.getRaw().size());
     if (params == null || params.getRaw().size() == 0 || (params.getRaw().size() > 0 && params.getRaw().contains("-gui"))) {
       // GUI
       LOG.info("Starting JavaFX application");

@@ -188,8 +188,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   protected void writeText(String id, String text) {
     TextField txtField = (TextField) scene.lookup(id);
-    int length = txtField.getText().length();
-    clickOnScroll(id).eraseText(length).write(text);
+    txtField.clear();
+    clickOnScroll(id).write(text);
   }
 
   protected void waitForCheckFiles(int maxTimeout) {
