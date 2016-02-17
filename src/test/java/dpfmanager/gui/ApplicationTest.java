@@ -101,6 +101,9 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     if (id.equals("#butReports")){
       sleep(250);
     }
+    if (id.equals("#newButton")){
+      sleep(500);
+    }
     reloadScene();
   }
 

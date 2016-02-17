@@ -35,7 +35,13 @@ public class ButtonCheckTest extends ApplicationTest {
     clickOnAndReload("#continue");
     clickOnAndReload("#continue");
     clickOnAndReload("#continue");
-    Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#included4").isVisible());
+    boolean b1 = scene.lookup("#included3").isVisible();
+    boolean b2 = scene.lookup("#included4").isVisible();
+    boolean b3 = scene.lookup("#addFix").isVisible();
+    System.out.println("b1: "+b1);
+    System.out.println("b2: "+b2);
+    System.out.println("b3: "+b3);
+    Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#addFix").isVisible());
 
     // Check files button
     clickOnAndReload("#butDessign");
