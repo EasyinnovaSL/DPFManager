@@ -239,11 +239,6 @@ public class DessignController extends DefaultController<DessignModel, DessignVi
     getView().getImportButton().setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        System.out.println("Line 1");
-        System.out.println("Line 2");
-        System.out.println("Line 3");
-        System.out.println("Line 4");
-        System.out.println("Line 5");
         File file;
         String value = MainModel.getTestParams("import");
         if (value != null) {

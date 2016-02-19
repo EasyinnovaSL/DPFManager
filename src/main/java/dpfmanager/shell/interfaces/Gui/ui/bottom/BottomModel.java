@@ -1,5 +1,6 @@
 package dpfmanager.shell.interfaces.Gui.ui.bottom;
 
+import org.jrebirth.af.core.ui.fxml.AbstractFXMLModel;
 import org.jrebirth.af.core.ui.fxml.DefaultFXMLModel;
 
 /**
