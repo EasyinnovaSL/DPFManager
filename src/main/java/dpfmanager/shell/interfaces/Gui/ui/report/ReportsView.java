@@ -124,8 +124,6 @@ public class ReportsView extends DefaultView<ReportsModel, ScrollPane, ReportsCo
       addData();
       showReports();
 
-//      getModel().callCommand(ParseReportsCommand.class);
-
       // Show report from check
       getController().shoReportIfNeeded();
     } catch (Exception ex) {

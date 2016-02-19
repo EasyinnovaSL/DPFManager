@@ -1,37 +1,38 @@
 package dpfmanager.shell.interfaces.Gui.ui.main;
 
 import dpfmanager.shell.interfaces.Gui.ui.about.AboutModel;
+import dpfmanager.shell.interfaces.Gui.ui.bottom.BottomModel;
 import dpfmanager.shell.interfaces.Gui.ui.dessign.DessignModel;
 import dpfmanager.shell.interfaces.Gui.ui.report.ReportsModel;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import dpfmanager.shell.interfaces.Gui.ui.stack.StackModel;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 
 import org.jrebirth.af.api.exception.CoreException;
-import org.jrebirth.af.component.ui.stack.StackModel;
 import org.jrebirth.af.core.ui.DefaultView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by Adrià Llorens on 01/02/2016.
  */
 public final class MainView extends DefaultView<MainModel, BorderPane, MainController> {
-
-  /**
-   * The class logger.
-   */
-  private static final Logger LOGGER = LoggerFactory.getLogger(MainView.class);
 
   private ToggleButton showDessign;
   private ToggleButton showReports;
@@ -45,7 +46,11 @@ public final class MainView extends DefaultView<MainModel, BorderPane, MainContr
 
   private FlowPane flowPane;
   private StackPane stackPane;
+  private AnchorPane mainPane;
+  private SplitPane mainSplit;
+  private Button showBottom;
 
+  private Node divider;
 
   /**
    * Default Constructor.
@@ -58,7 +63,7 @@ public final class MainView extends DefaultView<MainModel, BorderPane, MainContr
     stackPane = (StackPane) model.getModel(StackModel.class, MainPage.class).getRootNode();
     stackPane.getStyleClass().add("background-main");
     stackPane.setId("mainPane");
-    getRootNode().setCenter(stackPane);
+    stackPane.setMinHeight(150);
     getRootNode().getStyleClass().add("background-main");
   }
 
@@ -67,6 +72,45 @@ public final class MainView extends DefaultView<MainModel, BorderPane, MainContr
    */
   @Override
   protected void initView() {
+    /* Bottom Pane */
+
+    // Main Split
+    mainSplit = new SplitPane();
+    mainSplit.setId("mainSplit");
+    mainSplit.setOrientation(Orientation.VERTICAL);
+    mainSplit.setDividerPositions(0.8);
+    mainSplit.getStyleClass().add("background-main");
+
+    mainPane = new AnchorPane();
+    mainPane.setId("mainPane");
+    mainPane.getStyleClass().add("background-main");
+    mainPane.getChildren().add(mainSplit);
+    AnchorPane.setTopAnchor(mainSplit, 0.0);
+    AnchorPane.setBottomAnchor(mainSplit, 0.0);
+    AnchorPane.setLeftAnchor(mainSplit, 0.0);
+    AnchorPane.setRightAnchor(mainSplit, 0.0);
+
+    mainSplit.getItems().add(stackPane);
+    mainSplit.getItems().add(getModel().getModel(BottomModel.class).getRootNode());
+    getRootNode().setCenter(mainPane);
+
+    // Show bottom button
+    showBottom = new Button();
+    showBottom.setText("Show");
+    showBottom.getStyleClass().addAll("bot-button");
+    showBottom.setVisible(false);
+    showBottom.setManaged(false);
+    showBottom.setPadding(new Insets(4, 5, 4, 5));
+
+    mainPane.getChildren().add(showBottom);
+    AnchorPane.setBottomAnchor(showBottom, 0.0);
+    AnchorPane.setRightAnchor(showBottom, 0.0);
+
+    // Hide Bottom pane
+    getModel().getModel(BottomModel.class).getController().hideBottomPane();
+
+    /* Top Buttons */
+
     showDessign = new ToggleButton("Conformance Checker");
     showDessign.getStyleClass().add("top-button");
     showDessign.setId("butDessign");
@@ -80,17 +124,18 @@ public final class MainView extends DefaultView<MainModel, BorderPane, MainContr
     showAbout.getStyleClass().add("top-button");
     showAbout.setId("butAbout");
 
-    // Hidden button
+    // Hidden Buttons
     showConfig = new ToggleButton("");
     showConfig.setId("butConfig");
     showConfig.setVisible(false);
     showConfig.setManaged(false);
+
     showFirstTime = new ToggleButton("");
     showFirstTime.setId("butFirst");
     showFirstTime.setVisible(false);
     showFirstTime.setManaged(false);
 
-    final ToggleGroup group = new PersistentButtonToggleGroup();
+    ToggleGroup group = new PersistentButtonToggleGroup();
     group.getToggles().addAll(showDessign, showReports, showAbout, showConfig, showFirstTime);
 
     flowPane = new FlowPane();
@@ -152,16 +197,11 @@ public final class MainView extends DefaultView<MainModel, BorderPane, MainContr
     }
   }
 
-  @Override
-  public void reload() {
-    super.reload();
-    // Custom code to process when the view is displayed the 1+n time
-  }
-
-  @Override
-  public void hide() {
-    super.hide();
-    // Custom code to process when the view is hidden
+  private Node getDivider(){
+    if (divider == null){
+      divider = mainPane.lookup("#mainSplit > .split-pane-divider");
+    }
+    return divider;
   }
 
   public void enableFlowPane(){
@@ -179,6 +219,46 @@ public final class MainView extends DefaultView<MainModel, BorderPane, MainContr
 //    stackPane.getStyleClass().remove("background-loading");
 //    stackPane.getStyleClass().add("background-main");
     flowPane.setDisable(false);
+  }
+
+  public void hideBottomPane(){
+    // Hide divider
+    double pos = mainSplit.getDividerPositions()[0];
+    getModel().setDividerPositionV(pos);
+    if (getDivider() != null){
+      if (getDivider().getStyleClass().contains("show-divider")) {
+        getDivider().getStyleClass().remove("show-divider");
+      }
+      getDivider().setVisible(false);
+      getDivider().setManaged(false);
+    }
+
+    // Show button
+    showBottom.setVisible(true);
+    showBottom.setManaged(true);
+  }
+
+  public void showBottomPane(){
+    // Show divider
+    double pos = getModel().getDividerPositionV();
+    mainSplit.setDividerPositions(pos);
+    if (getDivider() != null){
+      if (!getDivider().getStyleClass().contains("show-divider")) {
+        getDivider().getStyleClass().add("show-divider");
+      }
+      getDivider().setVisible(true);
+      getDivider().setManaged(true);
+    }
+
+    // Hide button
+    showBottom.setVisible(false);
+    showBottom.setManaged(false);
+  }
+
+  /* Getters */
+
+  public Button getShowBottom() {
+    return showBottom;
   }
 
   public ToggleButton getShowDessign() {

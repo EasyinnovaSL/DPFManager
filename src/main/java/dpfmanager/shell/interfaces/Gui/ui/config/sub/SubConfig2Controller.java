@@ -7,7 +7,7 @@ import dpfmanager.shell.conformancechecker.Configuration;
 import dpfmanager.shell.conformancechecker.Field;
 import dpfmanager.shell.conformancechecker.PolicyChecker.Rule;
 import dpfmanager.shell.conformancechecker.PolicyChecker.Rules;
-import dpfmanager.shell.interfaces.Gui.customFx.NumberTextField;
+import dpfmanager.shell.interfaces.Gui.reimplemented.NumberTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -111,9 +111,9 @@ public class SubConfig2Controller extends AbstractFXMLController<ConfigModel, Co
     });
 
     //Add to view
-    hbox.getChildren().addAll(comboBox,remove);
+    hbox.getChildren().addAll(comboBox, remove);
     rulesBox.getChildren().add(hbox);
-    rulesBox.setMargin(hbox, new Insets(0,0,15,0));
+    rulesBox.setMargin(hbox, new Insets(0, 0, 15, 0));
 
     if (operator != null) {
       addOperator(tag, hbox, remove, operator, value);

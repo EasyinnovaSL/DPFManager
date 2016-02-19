@@ -1,6 +1,13 @@
 package dpfmanager.shell.interfaces.Gui.ui.main;
 
+import dpfmanager.shell.MainApp;
+import dpfmanager.shell.interfaces.Gui.reimplemented.Console;
+import dpfmanager.shell.interfaces.Gui.ui.bottom.BottomModel;
+import dpfmanager.shell.interfaces.Gui.ui.config.ConfigModel;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
 
 import org.jrebirth.af.api.exception.CoreException;
 import org.jrebirth.af.component.ui.stack.StackWaves;
@@ -8,6 +15,8 @@ import org.jrebirth.af.core.ui.DefaultController;
 import org.jrebirth.af.core.wave.Builders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.PrintStream;
 
 /**
  * Created by Adrià Llorens on 01/02/2016.
@@ -28,9 +37,16 @@ public final class MainController extends DefaultController<MainModel, MainView>
     super(view);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
+  protected void initEventHandlers() throws CoreException {
+    getView().getShowBottom().setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        getModel().getModel(BottomModel.class).getController().showBottomPane();
+      }
+    });
+  }
+
   @Override
   protected void initEventAdapters() throws CoreException {
     // Manage Ui Command Button

@@ -20,8 +20,8 @@ public class ShowCustomModelCommand extends DefaultMultiBeanCommand<DisplayModel
   protected List<UniqueKey<? extends Command>> defineSubCommand() {
     return Arrays.asList(new UniqueKey[]{
         getCommandKey(ShowModelCommand.class, new Object[0]),
-        getCommandKey(FadeTransitionCommand.class, new Object[0]),
-        getCommandKey(DetachModelCommand.class, new Object[0])
+        getCommandKey(SimpleTransitionCommand.class, new Object[0])
+//        getCommandKey(DetachModelCommand.class, new Object[0])
     });
   }
 }

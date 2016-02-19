@@ -1,5 +1,6 @@
 package dpfmanager.shell.interfaces.Gui.ui.dessign;
 
+import dpfmanager.shell.interfaces.Gui.ui.bottom.BottomModel;
 import dpfmanager.shell.interfaces.Gui.ui.main.MainModel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

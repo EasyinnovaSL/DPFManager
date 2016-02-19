@@ -2,7 +2,11 @@ package dpfmanager.shell.interfaces.Gui.ui.main;
 
 import dpfmanager.shell.interfaces.DPFManagerProperties;
 import dpfmanager.shell.interfaces.Gui.command.ErrorCommand;
+import dpfmanager.shell.interfaces.Gui.ui.bottom.BottomController;
+import dpfmanager.shell.interfaces.Gui.ui.bottom.BottomModel;
 import dpfmanager.shell.interfaces.Gui.ui.stack.StackModel;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
 
 import org.jrebirth.af.core.ui.DefaultModel;
 import org.slf4j.Logger;
@@ -25,13 +29,13 @@ public final class MainModel extends DefaultModel<MainModel, MainView> {
   private ErrorCommand errorCommand;
   static Map<String, String> testValues;
   static boolean noDisc = false;
+  private double dividerPositionV;
 
   @Override
   protected void initModel() {
     super.initModel();
     errorCommand = getCommand(ErrorCommand.class);
     testValues = new HashMap<>();
-    getView().getRootNode().setCenter(getModel(StackModel.class, MainPage.class).getRootNode());
   }
 
   @Override
@@ -57,6 +61,14 @@ public final class MainModel extends DefaultModel<MainModel, MainView> {
 
   public static String getTestParams(String key) {
     return testValues.get(key);
+  }
+
+  public double getDividerPositionV() {
+    return dividerPositionV;
+  }
+
+  public void setDividerPositionV(double dividerPositionV) {
+    this.dividerPositionV = dividerPositionV;
   }
 
   public void showReports(){

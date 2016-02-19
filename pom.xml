@@ -268,6 +268,22 @@
 			<!-- Build Settings -->
 			<build>
 				<finalName>DPF Manager</finalName>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<filtering>false</filtering>
+						<directory>src/main/java</directory>
+						<includes>
+							<include>**/*.fxml</include>
+							<include>**/*.properties</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.java</exclude>
+						</excludes>
+					</resource>
+				</resources>
 				<plugins>
 					<plugin>
 						<groupId>com.zenjava</groupId>
@@ -417,6 +433,9 @@
 							<!--<includes>-->
 								<!--<include>dpfmanager.RunTestOnly</include>-->
 							<!--</includes>-->
+							<includes>
+								<include>dpfmanager.shell.Bottom.fxml</include>
+							</includes>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -434,6 +453,16 @@
 								<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
 							</nonFilteredFileExtensions>
 						</configuration>
+						<resource>
+							<filtering>false</filtering>
+							<directory>src/main/java</directory>
+							<includes>
+								<include>*.fxml</include>
+							</includes>
+							<excludes>
+								<exclude>**/*.java</exclude>
+							</excludes>
+						</resource>
 					</plugin>
 				</plugins>
 			</build>
@@ -450,6 +479,22 @@
 			<!-- Build Settings -->
 			<build>
 				<finalName>DPF Manager</finalName>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<filtering>false</filtering>
+						<directory>src/main/java</directory>
+						<includes>
+							<include>**/*.fxml</include>
+							<include>**/*.properties</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.java</exclude>
+						</excludes>
+					</resource>
+				</resources>
 				<plugins>
 					<plugin>
 						<groupId>com.zenjava</groupId>
