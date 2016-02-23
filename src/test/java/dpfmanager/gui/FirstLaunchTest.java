@@ -1,7 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.OldApp;
-import dpfmanager.shell.reporting.ReportGenerator;
+import dpfmanager.shell.Old.OldApp;
+import dpfmanager.shell.modules.report.ReportGenerator;
 import javafx.stage.Stage;
 
 import org.junit.AfterClass;

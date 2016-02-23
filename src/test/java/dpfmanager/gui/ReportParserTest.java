@@ -1,9 +1,9 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
-import dpfmanager.shell.interfaces.Gui.ui.main.MainModel;
-import dpfmanager.shell.interfaces.Gui.ui.report.ReportsModel;
-import dpfmanager.shell.reporting.ReportRow;
+import dpfmanager.shell.gui.ui.main.MainModel;
+import dpfmanager.shell.gui.ui.report.ReportsModel;
+import dpfmanager.shell.interfaces.GuiApp;
+import dpfmanager.shell.modules.report.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
@@ -28,7 +28,7 @@ public class ReportParserTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 
@@ -52,7 +52,7 @@ public class ReportParserTest extends ApplicationTest {
       writeText("#txtBox1", inputFiles);
       clickOnAndReload("#checkFilesButton");
       waitForCheckFiles(60);
-      System.out.println("Current config: "+configFile);
+      System.out.println("Current config: " + configFile);
       clickOnAndReload("#butDessign");
     }
 
@@ -65,11 +65,11 @@ public class ReportParserTest extends ApplicationTest {
     checkValidRow(table.getItems().get(2), "HTML"); //Html
   }
 
-  private void checkValidRow(ReportRow row, String type){
-    Assert.assertEquals("Report row N files ("+type+")", "2", row.getNfiles());
-    Assert.assertEquals("Report row N passed ("+type+")", "1 passed", row.getPassed());
-    Assert.assertEquals("Report row N errors ("+type+")", "1 errors", row.getErrors());
-    Assert.assertEquals("Report row N warnings ("+type+")", "1 warnings", row.getWarnings());
+  private void checkValidRow(ReportRow row, String type) {
+    Assert.assertEquals("Report row N files (" + type + ")", "2", row.getNfiles());
+    Assert.assertEquals("Report row N passed (" + type + ")", "1 passed", row.getPassed());
+    Assert.assertEquals("Report row N errors (" + type + ")", "1 errors", row.getErrors());
+    Assert.assertEquals("Report row N warnings (" + type + ")", "1 warnings", row.getWarnings());
     Assert.assertEquals("Report row score (" + type + ")", "50%", row.getScore());
   }
 }

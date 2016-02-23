@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="mainPane" prefHeight="150.0" prefWidth="807.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.shell.interfaces.Gui.ui.bottom.BottomController">
+<AnchorPane id="mainPane" prefHeight="150.0" prefWidth="807.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.shell.gui.ui.bottom.BottomController">
     <children>
         <SplitPane id="mainSplit" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" styleClass="background-main" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>

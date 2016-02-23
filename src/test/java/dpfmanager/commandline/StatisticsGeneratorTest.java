@@ -1,8 +1,8 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.DPFManagerProperties;
-import dpfmanager.shell.reporting.ReportGenerator;
+import dpfmanager.shell.interfaces.CommandLineApp;
+import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.modules.report.ReportGenerator;
 import javafx.application.Application;
 
 import com.google.gson.stream.JsonReader;
@@ -84,7 +84,7 @@ public class StatisticsGeneratorTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     String path = getPath();
@@ -127,7 +127,7 @@ public class StatisticsGeneratorTest extends TestCase {
     };
 
     //MainApp.main(args);
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     String path = getPath();

@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<VBox id="wizStep3" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.shell.interfaces.Gui.ui.config.sub.SubConfig3Controller">
+<VBox id="wizStep3" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.shell.gui.ui.config.sub.SubConfig3Controller">
     <VBox alignment="TOP_CENTER">
         <Label styleClass="label-info" text="Format" />
         <Pane styleClass="separator-line">

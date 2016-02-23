@@ -1,7 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
-import dpfmanager.shell.interfaces.Gui.ui.main.MainModel;
+import dpfmanager.shell.interfaces.GuiApp;
+import dpfmanager.shell.gui.ui.main.MainModel;
 import javafx.stage.Stage;
 
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class ImportConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 

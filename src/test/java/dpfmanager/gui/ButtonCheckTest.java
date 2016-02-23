@@ -1,7 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
-import javafx.scene.Node;
+import dpfmanager.shell.interfaces.GuiApp;
 import javafx.stage.Stage;
 
 import org.junit.Assert;
@@ -20,7 +19,7 @@ public class ButtonCheckTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 

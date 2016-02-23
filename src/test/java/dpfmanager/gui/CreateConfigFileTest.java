@@ -1,11 +1,13 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
-import dpfmanager.shell.interfaces.Gui.ui.main.MainModel;
+import dpfmanager.shell.interfaces.GuiApp;
+import dpfmanager.shell.gui.ui.main.MainModel;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
+
+import com.google.common.base.Predicate;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -15,7 +17,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import com.google.common.base.Predicate;
 
 /**
  * Created by Adrià Llorens on 30/12/2015.
@@ -30,7 +31,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 

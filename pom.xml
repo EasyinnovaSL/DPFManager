@@ -112,26 +112,44 @@
 		</dependency>
 
 		<!-- Logging -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+
+		<!--LogBack-->
+		<!--<dependency>-->
+			<!--<groupId>ch.qos.logback</groupId>-->
+			<!--<artifactId>logback-classic</artifactId>-->
+			<!--<version>1.0.13</version>-->
+		<!--</dependency>-->
+
+		<!--SLF4J-->
+		<!--<dependency>-->
+			<!--<groupId>org.slf4j</groupId>-->
+			<!--<artifactId>slf4j-api</artifactId>-->
+			<!--<version>1.7.5</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.slf4j</groupId>-->
+			<!--<artifactId>jcl-over-slf4j</artifactId>-->
+			<!--<version>1.7.5</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.slf4j</groupId>-->
+			<!--<artifactId>slf4j-log4j12</artifactId>-->
+			<!--<version>1.7.5</version>-->
+		<!--</dependency>-->
+
+		<!--LOG4J-->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
+			<version>1.2.17</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-nop</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+
+		<!--End Logging-->
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -290,7 +308,7 @@
 						<artifactId>javafx-maven-plugin</artifactId>
 						<version>8.1.5</version>
 						<configuration>
-							<mainClass>dpfmanager.shell.MainApp</mainClass>
+							<mainClass>dpfmanager.shell.core.MainApp</mainClass>
 							<verbose>true</verbose>
 							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
 							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
@@ -350,7 +368,7 @@
 									<errTitle>encc</errTitle>
 									<icon>${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</icon>
 									<classPath>
-										<mainClass>dpfmanager.shell.MainApp</mainClass>
+										<mainClass>dpfmanager.shell.core.MainApp</mainClass>
 										<addDependencies>false</addDependencies>
 										<preCp>anything</preCp>
 									</classPath>
@@ -453,16 +471,6 @@
 								<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
 							</nonFilteredFileExtensions>
 						</configuration>
-						<resource>
-							<filtering>false</filtering>
-							<directory>src/main/java</directory>
-							<includes>
-								<include>*.fxml</include>
-							</includes>
-							<excludes>
-								<exclude>**/*.java</exclude>
-							</excludes>
-						</resource>
 					</plugin>
 				</plugins>
 			</build>
@@ -501,7 +509,7 @@
 						<artifactId>javafx-maven-plugin</artifactId>
 						<version>8.1.5</version>
 						<configuration>
-							<mainClass>dpfmanager.shell.MainApp</mainClass>
+							<mainClass>dpfmanager.shell.core.MainApp</mainClass>
 							<verbose>true</verbose>
 							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
 							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>

@@ -1,8 +1,8 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.DPFManagerProperties;
-import dpfmanager.shell.reporting.ReportGenerator;
+import dpfmanager.shell.interfaces.CommandLineApp;
+import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.modules.report.ReportGenerator;
 import javafx.application.Application;
 
 import com.easyinnova.tiff.reader.TiffReader;
@@ -79,7 +79,7 @@ public class ReportGeneratorTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     File directori = new File(path + "/html");
@@ -132,7 +132,7 @@ public class ReportGeneratorTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     String path = getPath();
@@ -174,7 +174,7 @@ public class ReportGeneratorTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     String path = getPath();
@@ -213,7 +213,7 @@ public class ReportGeneratorTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     String path = getPath();
@@ -252,7 +252,7 @@ public class ReportGeneratorTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     String path = getPath();
@@ -293,7 +293,7 @@ public class ReportGeneratorTest extends TestCase {
         }
       };
 
-      CommandLine cl = new CommandLine(params);
+      CommandLineApp cl = new CommandLineApp(params);
       cl.launch();
 
       String path = getPath();
@@ -350,7 +350,7 @@ public class ReportGeneratorTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     String path = getPath();

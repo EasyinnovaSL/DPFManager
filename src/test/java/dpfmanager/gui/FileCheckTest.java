@@ -1,9 +1,9 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
-import dpfmanager.shell.interfaces.Gui.ui.main.MainModel;
-import dpfmanager.shell.interfaces.Gui.ui.report.ReportsModel;
-import dpfmanager.shell.reporting.ReportRow;
+import dpfmanager.shell.gui.ui.main.MainModel;
+import dpfmanager.shell.gui.ui.report.ReportsModel;
+import dpfmanager.shell.interfaces.GuiApp;
+import dpfmanager.shell.modules.report.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
@@ -30,7 +30,7 @@ public class FileCheckTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 

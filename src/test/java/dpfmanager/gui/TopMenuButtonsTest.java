@@ -1,6 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
+import dpfmanager.shell.interfaces.GuiApp;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -19,7 +19,7 @@ public class TopMenuButtonsTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception{
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-noDisc");
     scene = stage.getScene();
   }
 
