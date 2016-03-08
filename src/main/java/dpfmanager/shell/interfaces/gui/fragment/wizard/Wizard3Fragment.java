@@ -1,9 +1,8 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.tiff.Configuration;
-import dpfmanager.shell.interfaces.GuiApp;
-import dpfmanager.shell.interfaces.gui.ui.config.ConfigController;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -48,7 +47,7 @@ public class Wizard3Fragment {
   public Wizard3Fragment() {
   }
 
-  public void clear(){
+  public void clear() {
     txtOutput.clear();
     chkDefaultOutput.setSelected(true);
     chkHtml.setSelected(false);
@@ -93,12 +92,11 @@ public class Wizard3Fragment {
 
   @FXML
   protected void changeDefault(ActionEvent event) throws Exception {
-    if (chkDefaultOutput.isSelected()){
+    if (chkDefaultOutput.isSelected()) {
       hboxOutput.setVisible(false);
       hboxOutput.setManaged(false);
       txtOutput.clear();
-    }
-    else{
+    } else {
       hboxOutput.setVisible(true);
       hboxOutput.setManaged(true);
     }
@@ -109,7 +107,7 @@ public class Wizard3Fragment {
     DirectoryChooser folderChooser = new DirectoryChooser();
     folderChooser.setTitle("Select Output Folder");
     //folderChooser.setInitialDirectory(new File(getDefaultBrowseDirectory()));
-    File directory = folderChooser.showDialog(GuiApp.getMyStage());
+    File directory = folderChooser.showDialog(GuiWorkbench.getMyStage());
     if (directory != null) {
       txtOutput.setText(directory.getPath());
       //setDefaultBrowseDirectory(directory.getPath());

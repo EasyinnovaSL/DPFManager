@@ -2,13 +2,12 @@ package dpfmanager.shell.interfaces.gui.component.dessign;
 
 import dpfmanager.conformancechecker.tiff.ProcessInput;
 import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.interfaces.GuiApp;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
-import dpfmanager.shell.jacp.core.workbench.GuiWorkbench;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -47,7 +46,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           FileChooser fileChooser = new FileChooser();
           fileChooser.setTitle("Open File");
           fileChooser.setInitialDirectory(new File(configDir));
-          List<File> files = fileChooser.showOpenMultipleDialog(GuiApp.getMyStage());
+          List<File> files = fileChooser.showOpenMultipleDialog(GuiWorkbench.getMyStage());
           if (files != null) {
             String sfiles = "";
             for (File file : files) {
@@ -64,7 +63,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           DirectoryChooser folderChooser = new DirectoryChooser();
           folderChooser.setTitle("Open Folder");
           folderChooser.setInitialDirectory(new File(configDir));
-          File directory = folderChooser.showDialog(GuiApp.getMyStage());
+          File directory = folderChooser.showDialog(GuiWorkbench.getMyStage());
           if (directory != null) {
             txtFile = directory.getPath();
             DPFManagerProperties.setDefaultDir(directory.getPath());
@@ -96,7 +95,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           Alert alert = new Alert(Alert.AlertType.WARNING);
           alert.setTitle("Alert");
           alert.setHeaderText("Please select a configuration file");
-          alert.initOwner(GuiApp.getMyStage());
+          alert.initOwner(GuiWorkbench.getMyStage());
           alert.showAndWait();
           return;
         }
@@ -104,7 +103,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           Alert alert = new Alert(Alert.AlertType.ERROR);
           alert.setTitle("Error");
           alert.setHeaderText("Error reading configuration file");
-          alert.initOwner(GuiApp.getMyStage());
+          alert.initOwner(GuiWorkbench.getMyStage());
           alert.showAndWait();
           return;
         } else {
@@ -220,7 +219,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           Alert alert = new Alert(Alert.AlertType.WARNING);
           alert.setTitle("Alert");
           alert.setHeaderText("Please select a configuration file");
-          alert.initOwner(GuiApp.getMyStage());
+          alert.initOwner(GuiWorkbench.getMyStage());
           alert.showAndWait();
         }
       }
@@ -273,7 +272,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
               Alert alert2 = new Alert(Alert.AlertType.ERROR);
               alert2.setTitle("Error");
               alert2.setHeaderText("There was an error deleting the configuration file");
-              alert2.initOwner(GuiApp.getMyStage());
+              alert2.initOwner(GuiWorkbench.getMyStage());
               alert2.showAndWait();
             }
           }
@@ -281,7 +280,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           Alert alert = new Alert(Alert.AlertType.WARNING);
           alert.setTitle("Alert");
           alert.setHeaderText("Please select a configuration file");
-          alert.initOwner(GuiApp.getMyStage());
+          alert.initOwner(GuiWorkbench.getMyStage());
           alert.showAndWait();
         }
       }
@@ -297,7 +296,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
         alert.setTitle("Help");
         alert.setHeaderText("The path to the files to check");
         alert.setContentText("This can be either a single file or a folder. Only the files with a valid TIF file extension will be processed.");
-        alert.initOwner(GuiApp.getMyStage());
+        alert.initOwner(GuiWorkbench.getMyStage());
         alert.showAndWait();
       }
     });
@@ -310,7 +309,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
         alert.setTitle("Help");
         alert.setHeaderText("Configuration files define the options to check the files (ISO, report format and policy rules)");
         alert.setContentText("You can either create a new configuration file, import a new one from disk, or edit/delete one from the list");
-        alert.initOwner(GuiApp.getMyStage());
+        alert.initOwner(GuiWorkbench.getMyStage());
         alert.showAndWait();
       }
     });

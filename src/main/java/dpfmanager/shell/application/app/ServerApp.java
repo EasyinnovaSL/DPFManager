@@ -1,4 +1,4 @@
-package dpfmanager.shell.core.app;
+package dpfmanager.shell.application.app;
 
 /**
  * Created by Adrià Llorens on 03/03/2016.

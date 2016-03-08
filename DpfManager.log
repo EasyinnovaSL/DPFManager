@@ -1425,3 +1425,15 @@ java.lang.NullPointerException
 2016-03-08 11:39:35 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
 2016-03-08 11:39:35 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
 2016-03-08 11:39:35 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-08 12:02:31 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@27adc826: startup date [Tue Mar 08 12:02:31 CET 2016]; root of context hierarchy
+2016-03-08 12:02:31 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-08 12:02:32 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-08 12:02:32 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-08 12:03:56 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@26fcf90b: startup date [Tue Mar 08 12:03:56 CET 2016]; root of context hierarchy
+2016-03-08 12:03:56 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-08 12:03:56 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-08 12:03:56 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-08 12:08:13 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@42c36048: startup date [Tue Mar 08 12:08:13 CET 2016]; root of context hierarchy
+2016-03-08 12:08:13 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-08 12:08:13 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-08 12:08:13 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring

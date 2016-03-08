@@ -1,8 +1,8 @@
 package dpfmanager.shell.core;
 
-import dpfmanager.shell.core.app.CommandLineApp;
-import dpfmanager.shell.core.app.GuiApp;
-import dpfmanager.shell.core.app.ServerApp;
+import dpfmanager.shell.application.app.CommandLineApp;
+import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.application.app.ServerApp;
 
 import java.util.Arrays;
 import java.util.List;

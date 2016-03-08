@@ -29,12 +29,12 @@
         </layout>
     </appender>
 
-    <appender name="textarea" class="dpfmanager.shell.modules.messages.core.TextAreaAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern"
-                   value="%-5p %c{1} - %m%n" />
-        </layout>
-    </appender>
+    <!--<appender name="textarea" class="dpfmanager.shell.modules.messages.core.TextAreaAppender">-->
+        <!--<layout class="org.apache.log4j.PatternLayout">-->
+            <!--<param name="ConversionPattern"-->
+                   <!--value="%-5p %c{1} - %m%n" />-->
+        <!--</layout>-->
+    <!--</appender>-->
 
     <appender name="file" class="org.apache.log4j.RollingFileAppender">
         <param name="append" value="true" />
@@ -49,7 +49,7 @@
 
     <root>
         <level value="INFO" />
-        <appender-ref ref="textarea" />
+        <!--<appender-ref ref="textarea" />-->
         <appender-ref ref="console" />
         <appender-ref ref="file" />
     </root>

@@ -1,8 +1,8 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.interfaces.gui.ui.main.MainModel;
-import dpfmanager.shell.interfaces.gui.ui.report.ReportsModel;
-import dpfmanager.shell.interfaces.GuiApp;
+import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -44,7 +44,7 @@ public class FileCheckTest extends ApplicationTest {
     int nReports = getCurrentReports();
 
     //import config file and check files
-    MainModel.setTestParam("import", inputConfigPath);
+    GuiWorkbench.setTestParam("import", inputConfigPath);
     clickOnScroll("#importButton");
     clickOnImportedConfig(inputConfigPath);
     writeText("#txtBox1", inputFilePath);

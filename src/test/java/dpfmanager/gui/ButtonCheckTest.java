@@ -1,6 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.interfaces.GuiApp;
+import dpfmanager.shell.application.app.GuiApp;
 import javafx.stage.Stage;
 
 import org.junit.Assert;

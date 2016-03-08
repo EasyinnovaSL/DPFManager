@@ -1,8 +1,8 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.interfaces.gui.ui.main.MainModel;
-import dpfmanager.shell.interfaces.gui.ui.report.ReportsModel;
-import dpfmanager.shell.interfaces.GuiApp;
+import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -46,7 +46,7 @@ public class ReportParserTest extends ApplicationTest {
     // --
     List<String> list = Arrays.asList(configHtml, configJson, configXml);
     for (String configFile : list) {
-      MainModel.setTestParam("import", configFile);
+      GuiWorkbench.setTestParam("import", configFile);
       clickOnScroll("#importButton");
       clickOnImportedConfig(configFile);
       writeText("#txtBox1", inputFiles);

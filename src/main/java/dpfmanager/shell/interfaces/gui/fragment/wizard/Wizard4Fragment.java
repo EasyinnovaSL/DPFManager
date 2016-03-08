@@ -5,7 +5,6 @@ import dpfmanager.conformancechecker.tiff.MetadataFixer.Fix;
 import dpfmanager.conformancechecker.tiff.MetadataFixer.Fixes;
 import dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.shell.interfaces.gui.ui.config.ConfigController;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.interfaces.gui.component.config.ConfigModel;
 import javafx.beans.value.ChangeListener;
@@ -49,18 +48,18 @@ public class Wizard4Fragment {
   @FXML
   private VBox fixesBox;
 
-  private Map<String,CheckBox> autoFixesMap;
+  private Map<String, CheckBox> autoFixesMap;
   private ConfigModel model;
 
   public Wizard4Fragment() {
     initAutoFixes();
   }
 
-  public void clear(){
+  public void clear() {
     // FX Thread
     fixesBox.getChildren().clear();
-    for (Node node : autoFixesBox.getChildren()){
-      if (node instanceof CheckBox){
+    for (Node node : autoFixesBox.getChildren()) {
+      if (node instanceof CheckBox) {
         CheckBox check = (CheckBox) node;
         check.setSelected(false);
       }
@@ -68,7 +67,7 @@ public class Wizard4Fragment {
 
     // Show autofixes
     autoFixesBox.getChildren().clear();
-    for (String key : autoFixesMap.keySet()){
+    for (String key : autoFixesMap.keySet()) {
       autoFixesBox.getChildren().add(autoFixesMap.get(key));
     }
   }
@@ -135,7 +134,7 @@ public class Wizard4Fragment {
     for (String fix : getModel().getFixes()) {
       comboBox.getItems().add(fix);
     }
-    if (action != null){
+    if (action != null) {
       comboBox.setValue(action);
     }
 
@@ -160,22 +159,22 @@ public class Wizard4Fragment {
     });
 
     //Add to view
-    hbox.getChildren().addAll(comboBox,remove);
+    hbox.getChildren().addAll(comboBox, remove);
     fixesBox.getChildren().add(hbox);
-    fixesBox.setMargin(hbox, new Insets(0,0,15,0));
+    fixesBox.setMargin(hbox, new Insets(0, 0, 15, 0));
 
-    if (tag != null){
+    if (tag != null) {
       addTag(action, hbox, remove, tag, value);
     }
   }
 
-  private void addTag(String item, HBox hbox, Button remove, String tagLoad, String valueLoad){
+  private void addTag(String item, HBox hbox, Button remove, String tagLoad, String valueLoad) {
     ArrayList<String> tags = getModel().getFixFields();
 
     //Remove button X
     hbox.getChildren().remove(remove);
 
-    if (hbox.getChildren().size() > 1){
+    if (hbox.getChildren().size() > 1) {
       Node aux = hbox.getChildren().get(0);
       hbox.getChildren().clear();
       hbox.getChildren().add(aux);
@@ -189,7 +188,7 @@ public class Wizard4Fragment {
       for (String tag : tags) {
         comboOp.getItems().add(tag);
       }
-      if (tagLoad != null){
+      if (tagLoad != null) {
         comboOp.setValue(tagLoad);
       }
       hbox.getChildren().add(comboOp);
@@ -200,7 +199,7 @@ public class Wizard4Fragment {
       TextField value = new TextField();
       value.setId("textField");
       value.getStyleClass().add("txtFix");
-      if (valueLoad != null){
+      if (valueLoad != null) {
         value.setText(valueLoad);
       }
       hbox.getChildren().add(value);

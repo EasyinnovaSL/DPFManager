@@ -1,7 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.interfaces.GuiApp;
-import dpfmanager.shell.interfaces.gui.ui.main.MainModel;
+import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -75,7 +75,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     createTempFolder();
 
     // 6 - Save the report
-    MainModel.setTestParam("saveConfig", outputPath);
+    GuiWorkbench.setTestParam("saveConfig", outputPath);
     clickOnScroll("#continue");
 
     // Print generated file

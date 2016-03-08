@@ -1,20 +1,20 @@
-package dpfmanager.shell.application;
+package dpfmanager.shell.application.app;
 
-import dpfmanager.shell.interfaces.console.workbench.ConsoleWorkbench;
 import dpfmanager.shell.application.launcher.noui.CommandLauncher;
+import dpfmanager.shell.interfaces.console.workbench.ConsoleWorkbench;
+import javafx.application.Application;
 import javafx.stage.Stage;
 
-import org.jacpfx.api.annotations.Resource;
-import org.jacpfx.rcp.context.Context;
 import org.jacpfx.rcp.workbench.FXWorkbench;
 
 /**
  * Created by Adrià Llorens on 01/03/2016.
  */
-public abstract class CommandApplication extends CommandLauncher {
+public class CommandLineApp extends CommandLauncher {
 
-  @Resource
-  public Context context;
+  public static void main(String[] args) {
+    Application.launch(args);
+  }
 
   @Override
   protected Class<? extends FXWorkbench> getWorkbenchClass() {
@@ -24,8 +24,8 @@ public abstract class CommandApplication extends CommandLauncher {
   @Override
   protected String[] getBasePackages() {
     return new String[]{
-        "dpfmanager.shell.jacp.modules",                    // Dpf Modules
-        "dpfmanager.shell.jacp.interfaces.console"          // Console Prespective
+        "dpfmanager.shell.modules",                    // Dpf Modules
+        "dpfmanager.shell.interfaces.console"          // Console Prespective
     };
   }
 
@@ -38,4 +38,5 @@ public abstract class CommandApplication extends CommandLauncher {
   public String getXmlConfig() {
     return "DpfSpring.xml";
   }
+
 }
