@@ -21,6 +21,6 @@
         <TextField fx:id="txtCountry" layoutX="413.0" layoutY="339.0" prefHeight="31.0" prefWidth="375.0" promptText="Country" styleClass="inputlegal" />
         <TextArea fx:id="txtWhy" layoutX="27.0" layoutY="389.0" prefHeight="113.0" prefWidth="761.0" promptText="Why do you want to use DPFManager?" styleClass="inputlegal" />
         <CheckBox fx:id="chkFeedback" layoutX="27.0" layoutY="531.0" mnemonicParsing="false" selected="true" styleClass="checklegal" text="I authorize the DPF Manager to automatically send feedback"/>
-        <Button id="proceeed" layoutX="305.0" layoutY="576.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="206.0" styleClass="buttonlegal" text="Proceed" />
+        <Button onAction="#proceed" layoutX="305.0" layoutY="576.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="206.0" styleClass="buttonlegal" text="Proceed" />
     </children>
 </AnchorPane>

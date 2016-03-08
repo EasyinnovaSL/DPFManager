@@ -1,5 +1,7 @@
 package dpfmanager.shell.modules;
 
+import dpfmanager.shell.core.modules.DpfModule;
+
 import org.jrebirth.af.api.wave.Wave;
 import org.jrebirth.af.api.wave.annotation.OnWave;
 import org.jrebirth.af.api.wave.contract.WaveType;
@@ -88,6 +90,5 @@ public class SampleService extends DefaultService {
 
     return 93;
   }
-
 
 }

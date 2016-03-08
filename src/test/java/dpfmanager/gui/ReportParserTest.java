@@ -1,7 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.gui.ui.main.MainModel;
-import dpfmanager.shell.gui.ui.report.ReportsModel;
+import dpfmanager.shell.interfaces.gui.ui.main.MainModel;
+import dpfmanager.shell.interfaces.gui.ui.report.ReportsModel;
 import dpfmanager.shell.interfaces.GuiApp;
 import dpfmanager.shell.modules.report.ReportRow;
 import javafx.scene.control.TableView;

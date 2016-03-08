@@ -1,13 +1,13 @@
 package dpfmanager.shell.interfaces;
 
-import dpfmanager.shell.gui.resources.DpfStyles;
-import dpfmanager.shell.gui.ui.main.MainModel;
+import dpfmanager.shell.Old.UserInterface;
+import dpfmanager.shell.interfaces.gui.resources.DpfStyles;
+import dpfmanager.shell.interfaces.gui.ui.main.MainModel;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import org.apache.log4j.Logger;
 import org.jrebirth.af.api.ui.Model;
 import org.jrebirth.af.core.application.DefaultApplication;
 
@@ -16,8 +16,6 @@ import org.jrebirth.af.core.application.DefaultApplication;
  */
 public final class GuiApp extends DefaultApplication<StackPane> {
 
-  //  private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
-  private static final Logger LOG = Logger.getLogger(GuiApp.class);
   private static Stage thestage;
 
   /**

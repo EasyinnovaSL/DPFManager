@@ -32,7 +32,7 @@
             <HBox alignment="CENTER">
                 <children>
                    <Label styleClass="label-info" text="Files" />
-                   <Button id="fileInfoBut" mnemonicParsing="false" styleClass="button-info">
+                   <Button fx:id="fileInfoBut" mnemonicParsing="false" styleClass="button-info">
                       <HBox.margin>
                          <Insets left="5.0" />
                       </HBox.margin>
@@ -46,16 +46,16 @@
             </Pane>
             <HBox alignment="CENTER">
                 <children>
-                    <TextField id="txtBox1" maxHeight="41.0" maxWidth="382.0" minHeight="41.0" prefWidth="382.0" text="Select a file">
+                    <TextField fx:id="inputText" maxHeight="41.0" maxWidth="382.0" minHeight="41.0" prefWidth="382.0" text="Select a file">
                         <cursor>
                             <Cursor fx:constant="TEXT" />
                         </cursor>
                     </TextField>
-                    <Button id="selectButton" mnemonicParsing="false" styleClass="secondary-button" text="Select">
+                    <Button fx:id="selectButton" mnemonicParsing="false" styleClass="secondary-button" text="Select">
                   <HBox.margin>
                      <Insets left="5.0" />
                   </HBox.margin></Button>
-               <ComboBox id="comboChoice" prefWidth="150.0" styleClass="combo-dpf">
+               <ComboBox fx:id="comboChoice" prefWidth="150.0" styleClass="combo-dpf">
                   <HBox.margin>
                      <Insets left="5.0" />
                   </HBox.margin>
@@ -68,7 +68,7 @@
             <HBox alignment="CENTER">
                 <children>
                     <Label styleClass="label-info" text="Configuration" />
-                    <Button id="configInfoBut" mnemonicParsing="false" styleClass="button-info">
+                    <Button fx:id="configInfoBut" mnemonicParsing="false" styleClass="button-info">
                         <HBox.margin>
                             <Insets left="5.0" />
                         </HBox.margin>
@@ -80,7 +80,7 @@
                     <Insets bottom="6.0" top="3.0" />
                 </VBox.margin>
             </Pane>
-            <ScrollPane id="configScroll" hbarPolicy="AS_NEEDED" maxWidth="504.0" minHeight="175.0" prefHeight="175.0" prefWidth="504.0" styleClass="paneRadios">
+            <ScrollPane fx:id="configScroll" hbarPolicy="AS_NEEDED" maxWidth="504.0" minHeight="175.0" prefHeight="175.0" prefWidth="504.0" styleClass="paneRadios">
                 <VBox.margin>
                    <Insets bottom="15.0" />
                 </VBox.margin>
@@ -90,19 +90,19 @@
             </ScrollPane>
             <HBox alignment="CENTER">
                 <children>
-                    <Button id="newButton" mnemonicParsing="false" styleClass="button-trans" text="NEW">
+                    <Button fx:id="newButton" mnemonicParsing="false" styleClass="button-trans" text="NEW">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button id="importButton" mnemonicParsing="false" styleClass="button-trans" text="IMPORT">
+                    <Button fx:id="importButton" mnemonicParsing="false" styleClass="button-trans" text="IMPORT">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button id="editButton" mnemonicParsing="false" styleClass="button-trans" text="EDIT">
+                    <Button fx:id="editButton" mnemonicParsing="false" styleClass="button-trans" text="EDIT">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button id="deleteButton" mnemonicParsing="false" styleClass="button-trans" text="DELETE" />
+                    <Button fx:id="deleteButton" mnemonicParsing="false" styleClass="button-trans" text="DELETE" />
                 </children>
                 <VBox.margin>
                    <Insets bottom="15.0" />
@@ -114,13 +114,13 @@
                     <Insets bottom="20.0" left="65.0" right="65.0" />
                 </VBox.margin>
             </ImageView>
-         <Button id="checkFilesButton" mnemonicParsing="false" styleClass="main-button" text="Check files">
+         <Button fx:id="checkFilesButton" mnemonicParsing="false" styleClass="main-button" text="Check files">
             <VBox.margin>
                <Insets bottom="30.0" />
             </VBox.margin>
          </Button>
         </VBox>
-        <VBox id="loadingVbox" alignment="TOP_CENTER" styleClass="loading2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox fx:id="loadingVbox" alignment="TOP_CENTER" styleClass="loading2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="loading">
                <VBox.margin>
@@ -130,7 +130,7 @@
                   <Insets bottom="50.0" left="20.0" right="20.0" top="50.0" />
                </padding>
                <children>
-                  <Label id="lblLoading" text="Processing..." />
+                  <Label fx:id="lblLoading" text="Processing..." />
                </children>
             </HBox>
          </children></VBox>

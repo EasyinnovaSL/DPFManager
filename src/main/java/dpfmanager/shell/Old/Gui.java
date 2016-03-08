@@ -37,7 +37,7 @@ import dpfmanager.conformancechecker.tiff.MetadataFixer.Fixes;
 import dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.PolicyChecker.Rule;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.shell.gui.reimplemented.NumberTextField;
+import dpfmanager.shell.interfaces.gui.reimplemented.NumberTextField;
 import dpfmanager.conformancechecker.tiff.Field;
 import dpfmanager.conformancechecker.tiff.PolicyChecker.Rules;
 import javafx.beans.binding.Bindings;

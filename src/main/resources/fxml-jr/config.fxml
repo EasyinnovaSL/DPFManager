@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 <AnchorPane id="pane2" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox id="dessignVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -19,35 +20,35 @@
             </ImageView>
             <Label styleClass="mainTitle" text="NEW CONFIGURATION" />
             <HBox alignment="TOP_CENTER" maxHeight="20.0" minHeight="20.0" prefHeight="20.0">
-                <Button id="step1" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step1" onAction="#gotoConfig1" mnemonicParsing="false" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="15.0" />
                     </HBox.margin>
                 </Button>
-                <ImageView id="configArrow" focusTraversable="true" preserveRatio="true" translateY="24.0">
+                <ImageView fx:id="configArrow" focusTraversable="true" preserveRatio="true" translateY="24.0">
                     <image><Image url="@../images/tab-buttons/config-arow.png" /></image>
                 </ImageView>
-                <Button id="step2" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step2" onAction="#gotoConfig2" mnemonicParsing="false" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="35.0" />
                     </HBox.margin>
                 </Button>
-                <Button id="step3" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step3" onAction="#gotoConfig3" mnemonicParsing="false" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="35.0" />
                     </HBox.margin>
                 </Button>
-                <Button id="step4" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step4" onAction="#gotoConfig4" mnemonicParsing="false" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="35.0" />
                     </HBox.margin>
                 </Button>
-                <Button id="step5" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step5" onAction="#gotoConfig5" mnemonicParsing="false" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="35.0" />
                     </HBox.margin>
                 </Button>
-                <Button id="step6" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step6" onAction="#gotoConfig6" mnemonicParsing="false" styleClass="config-but">
                 </Button>
                 <VBox.margin>
                     <Insets bottom="12.0" top="10.0" />
@@ -60,13 +61,13 @@
                 </VBox.margin>
             </ImageView>
             <HBox alignment="TOP_CENTER">
-                <ImageView id="stepImage" focusTraversable="true" preserveRatio="true">
+                <ImageView fx:id="stepImage" focusTraversable="true" preserveRatio="true">
                     <image><Image url="@../images/tab-buttons/tab-1-blue.png" /></image>
                     <HBox.margin>
                         <Insets right="10" />
                     </HBox.margin>
                 </ImageView>
-                <Label id="stepTitle" styleClass="config-title" text="IMPLEMENTATION CHECKER" />
+                <Label fx:id="stepTitle" styleClass="config-title" text="IMPLEMENTATION CHECKER" />
                 <VBox.margin>
                     <Insets bottom="5.0" top="5.0" />
                 </VBox.margin>
@@ -78,12 +79,13 @@
                 </VBox.margin>
             </ImageView>
 
-            <fx:include id="included1" source="config/subconfig1.fxml" />
-            <fx:include id="included2" source="config/subconfig2.fxml" />
-            <fx:include id="included3" source="config/subconfig3.fxml" />
-            <fx:include id="included4" source="config/subconfig4.fxml" />
-            <fx:include id="included5" source="config/subconfig5.fxml" />
-            <fx:include id="included6" source="config/subconfig6.fxml" />
+            <VBox fx:id="wizard"></VBox>
+            <!--<fx:include fx:id="included1" source="config/subconfig1.fxml" />-->
+            <!--<fx:include fx:id="included2" source="config/subconfig2.fxml" />-->
+            <!--<fx:include fx:id="included3" source="config/subconfig3.fxml" />-->
+            <!--<fx:include fx:id="included4" source="config/subconfig4.fxml" />-->
+            <!--<fx:include fx:id="included5" source="config/subconfig5.fxml" />-->
+            <!--<fx:include fx:id="included6" source="config/subconfig6.fxml" />-->
 
             <ImageView focusTraversable="true" preserveRatio="true">
                 <image> <Image url="@../images/lineBottom.png" /></image>
@@ -91,7 +93,7 @@
                     <Insets bottom="20.0" left="65.0" right="65.0" top="30" />
                 </VBox.margin>
             </ImageView>
-            <Button id="continue" mnemonicParsing="false" styleClass="main-button" text="Continue">
+            <Button fx:id="continueButton" onAction="#doContinue" mnemonicParsing="false" styleClass="main-button" text="Continue">
                 <VBox.margin>
                     <Insets bottom="30.0" />
                 </VBox.margin>

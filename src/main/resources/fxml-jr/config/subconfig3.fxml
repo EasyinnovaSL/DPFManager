@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -10,7 +15,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<VBox id="wizStep3" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dpfmanager.shell.gui.ui.config.sub.SubConfig3Controller">
+
+<VBox id="wizStep3" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <VBox alignment="TOP_CENTER">
         <Label styleClass="label-info" text="Format" />
         <Pane styleClass="separator-line">
@@ -76,7 +82,7 @@
             <Insets bottom="15.0" left="250.0" />
         </VBox.margin>
     </CheckBox>
-   <HBox fx:id="hboxOutput" alignment="CENTER_LEFT">
+   <HBox fx:id="hboxOutput" alignment="CENTER_LEFT" visible="false" managed="false">
       <VBox.margin>
          <Insets bottom="15.0" left="250.0" />
       </VBox.margin>

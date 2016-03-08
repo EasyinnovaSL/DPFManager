@@ -238,7 +238,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
   }
 
   public static String getAutofixesClassPath() {
-    return "dpfmanager.shell.services.conformancechecker.MetadataFixer.autofixes";
+    return "dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes";
   }
 
   /**

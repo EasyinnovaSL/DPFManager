@@ -1,7 +1,7 @@
 package dpfmanager.shell.core.command;
 
-import dpfmanager.shell.gui.ui.main.MainModel;
-import dpfmanager.shell.gui.ui.report.ReportsModel;
+import dpfmanager.shell.interfaces.gui.ui.main.MainModel;
+import dpfmanager.shell.interfaces.gui.ui.report.ReportsModel;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

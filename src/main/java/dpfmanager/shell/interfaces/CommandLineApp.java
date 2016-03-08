@@ -33,6 +33,7 @@ import dpfmanager.shell.Old.UserInterface;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.ReportGenerator;
 
+import org.jrebirth.af.core.application.DefaultApplication;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Application.Parameters;
+import javafx.scene.layout.StackPane;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -74,7 +76,7 @@ public class CommandLineApp extends UserInterface {
    */
   public CommandLineApp(Parameters args) {
     this.args = args.getRaw();
-    allowedExtensions = new ArrayList<String>();
+    allowedExtensions = new ArrayList<>();
   }
 
   /**
@@ -84,14 +86,14 @@ public class CommandLineApp extends UserInterface {
    */
   public CommandLineApp(List<String> args) {
     this.args = args;
-    allowedExtensions = new ArrayList<String>();
+    allowedExtensions = new ArrayList<>();
   }
 
   /**
    * Launch.
    */
   public void launch() {
-    ArrayList<String> files = new ArrayList<String>();
+    ArrayList<String> files = new ArrayList<>();
     String outputFolder = null;
 
     boolean explicitformats = false;

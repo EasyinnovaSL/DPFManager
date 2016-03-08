@@ -3,8 +3,7 @@ package dpfmanager.shell.core;
 
 import dpfmanager.shell.interfaces.CommandLineApp;
 import dpfmanager.shell.interfaces.GuiApp;
-
-import org.apache.log4j.Logger;
+import dpfmanager.shell.interfaces.cli.CliApp;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,20 +13,15 @@ import java.util.List;
  */
 class MainApp {
 
-  private static final Logger LOG = Logger.getLogger(MainApp.class);
-
   public static void main(String[] args) {
     List<String> params = Arrays.asList(args);
     if (params.isEmpty() || params.contains("-gui")){
-      LOG.info("Starting JavaFX application\n");
       GuiApp.main(args);
     }
-    else if (params.contains("-server")){
-      LOG.info("Starting server mode\n");
-      LOG.error("Not implemented yet, closing app.");
+    else if (params.contains("-test")){
+      CliApp.main(args);
     }
     else {
-      LOG.info("Starting command line application\n");
       CommandLineApp cl = new CommandLineApp(params);
       cl.launch();
     }

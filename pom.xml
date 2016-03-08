@@ -74,6 +74,7 @@
 
 	<properties>
 		<slf4j.version>1.6.1</slf4j.version>
+		<jacp.version>2.1</jacp.version>
 	    <maven.compiler.source>1.8</maven.compiler.source>
 	    <maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -254,11 +255,11 @@
 		<!--End Test Gui dependencies-->
 
 		<!--jRebirth-->
-        <dependency>
-            <groupId>org.jrebirth.af</groupId>
-            <artifactId>core</artifactId>
-            <version>8.0.5</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.jrebirth.af</groupId>-->
+            <!--<artifactId>core</artifactId>-->
+            <!--<version>8.0.5</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.jrebirth.af</groupId>
@@ -272,6 +273,39 @@
             <version>8.0.5</version>
         </dependency>
         <!--End jRebirth-->
+
+		<!--JacpFX-->
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.API</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.JavaFX</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.JavaFXControls</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.JavaFXLauncher</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.JavaFXSpring</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!--End JacpFX-->
 
 	</dependencies>
 

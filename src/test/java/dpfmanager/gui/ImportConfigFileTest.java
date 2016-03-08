@@ -1,7 +1,7 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.interfaces.GuiApp;
-import dpfmanager.shell.gui.ui.main.MainModel;
+import dpfmanager.shell.interfaces.gui.ui.main.MainModel;
 import javafx.stage.Stage;
 
 import org.junit.Test;
