@@ -1,15 +1,25 @@
 package dpfmanager.shell.core.modules;
 
+import dpfmanager.shell.core.config.BasicConfig;
+import javafx.event.Event;
+
+import org.jacpfx.api.message.Message;
+import org.jacpfx.rcp.component.CallbackComponent;
+import org.jacpfx.rcp.context.Context;
+
 /**
- * Created by Adrià Llorens on 23/02/2016.
+ * Created by Adrià Llorens on 02/03/2016.
  */
-public abstract class DpfModule {
+public abstract class DpfModule implements CallbackComponent {
 
-  public DpfModule() {
+  // Fix Jacp Bug
+  protected Object answer(Context context, Message<Event, Object> message, Object returned) {
+    String target = message.getSourceId();
+    if (target.contains(BasicConfig.WORKBENCH)){
+      target = target.substring(BasicConfig.WORKBENCH.length() +1);
+    }
+    context.send(target, returned);
+    return null;
   }
-
-  public abstract void start();
-
-  public abstract void stop();
 
 }
