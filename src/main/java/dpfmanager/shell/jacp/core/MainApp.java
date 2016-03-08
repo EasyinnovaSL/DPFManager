@@ -1,4 +1,4 @@
-package dpfmanager.shell.jacp;
+package dpfmanager.shell.jacp.core;
 
 import dpfmanager.shell.jacp.core.app.CommandLineApp;
 import dpfmanager.shell.jacp.core.app.GuiApp;
