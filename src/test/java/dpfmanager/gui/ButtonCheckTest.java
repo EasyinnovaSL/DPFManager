@@ -19,7 +19,7 @@ public class ButtonCheckTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(GuiApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
@@ -31,9 +31,9 @@ public class ButtonCheckTest extends ApplicationTest {
 
     // Continue 3 button
     clickOnAndReload("#newButton");
-    clickOnAndReload("#continue");
-    clickOnAndReload("#continue");
-    clickOnAndReload("#continue");
+    clickOnAndReload("#continueButton");
+    clickOnAndReload("#continueButton");
+    clickOnAndReload("#continueButton");
     Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#addFix").isVisible());
 
     // Check files button

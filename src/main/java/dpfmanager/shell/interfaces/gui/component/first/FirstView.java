@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
  */
 @DeclarativeView(id = GuiConfig.COMPONENT_FIRST,
     name = GuiConfig.COMPONENT_FIRST,
-    viewLocation = "/fxml-jr/first.fxml",
+    viewLocation = "/fxml/first.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_FIRST)
 public class FirstView implements FXComponent {

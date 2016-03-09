@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
  */
 @DeclarativeView(id = GuiConfig.COMPONENT_DESSIGN,
     name = GuiConfig.COMPONENT_DESSIGN,
-    viewLocation = "/fxml-jr/dessign.fxml",
+    viewLocation = "/fxml/dessign.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_DESSIGN)
 public class DessignView extends DpfView<DessignModel, DessignController> implements FXComponent {

@@ -28,7 +28,7 @@ public class ReportParserTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(GuiApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
@@ -49,18 +49,18 @@ public class ReportParserTest extends ApplicationTest {
       GuiWorkbench.setTestParam("import", configFile);
       clickOnScroll("#importButton");
       clickOnImportedConfig(configFile);
-      writeText("#txtBox1", inputFiles);
+      writeText("#inputText", inputFiles);
       clickOnAndReload("#checkFilesButton");
       waitForCheckFiles(60);
       System.out.println("Current config: " + configFile);
-      clickOnAndReload("#butDessign");
+      clickOnAndReloadTop("#butDessign");
     }
 
     // Go to reports and check them
-    clickOnAndReload("#butReports");
-    TableView<ReportRow> table = (TableView) scene.lookup("#tab_reports");
+    clickOnAndReloadTop("#butReports");
+    TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_loaded), table.getItems().size());
-    checkValidRow(table.getItems().get(0), "XML"); //Xml
+    checkValidRow(table.getItems().get(0), "XML");  //Xml
     checkValidRow(table.getItems().get(1), "JSON"); //Json
     checkValidRow(table.getItems().get(2), "HTML"); //Html
   }

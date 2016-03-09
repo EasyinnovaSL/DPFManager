@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
  */
 @DeclarativeView(id = GuiConfig.COMPONENT_CONFIG,
     name = GuiConfig.COMPONENT_CONFIG,
-    viewLocation = "/fxml-jr/config.fxml",
+    viewLocation = "/fxml/config.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_CONFIG)
 public class ConfigView extends DpfView<ConfigModel, ConfigController> implements FXComponent {

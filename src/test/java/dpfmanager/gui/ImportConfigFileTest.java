@@ -20,7 +20,7 @@ public class ImportConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(GuiApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 

@@ -14,5 +14,5 @@
             <Insets left="250.0" />
         </VBox.margin>
     </VBox>
-    <Button id="addFix" maxWidth="180.0" minWidth="180.0" onAction="#addFix" mnemonicParsing="false" prefWidth="180.0" styleClass="secondary-button" text="Add Fix"/>
+    <Button id="addFixButton" maxWidth="180.0" minWidth="180.0" onAction="#addFix" mnemonicParsing="false" prefWidth="180.0" styleClass="secondary-button" text="Add Fix"/>
 </VBox>

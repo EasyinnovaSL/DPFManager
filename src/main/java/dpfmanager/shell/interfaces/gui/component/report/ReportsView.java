@@ -59,7 +59,7 @@ import java.util.ResourceBundle;
  */
 @DeclarativeView(id = GuiConfig.COMPONENT_REPORTS,
     name = GuiConfig.COMPONENT_REPORTS,
-    viewLocation = "/fxml-jr/summary.fxml",
+    viewLocation = "/fxml/summary.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_REPORTS)
 public class ReportsView extends DpfView<ReportsModel, ReportsController> implements FXComponent {
@@ -418,8 +418,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
     textArea.setText(content);
     textArea.setVisible(true);
     textArea.setManaged(true);
-    textArea.setMinHeight(reportsVbox.getHeight());
-    textArea.setMaxHeight(reportsVbox.getHeight());
+    textArea.setPrefHeight(reportsVbox.getHeight());
   }
 
   public void hideTextArea() {

@@ -31,7 +31,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(GuiApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
@@ -49,34 +49,34 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnScroll("#radProf1");
     clickOnScroll("#radProf2");
     clickOnScroll("#radProf4");
-    clickOnAndReload("#continue");
+    clickOnAndReload("#continueButton");
 
     // 3 - Add Rule
     addRule("ImageWidth", ">", "500");
     addRule("ImageHeight", "<", "1000");
     clickOnScroll("#ID0 #removeButton");
-    clickOnAndReload("#continue");
+    clickOnAndReload("#continueButton");
 
     // 4 - Repot format
     clickOnScroll("#chkHtml");
     clickOnScroll("#chkPdf");
-    clickOnAndReload("#continue");
+    clickOnAndReload("#continueButton");
 
     // 5 - Add Fix
     addFix("Add Tag", "Artist", "EasyTest");
     addFix("Remove Tag", "Copyright", "Easyinnova");
     clickOnScroll("#ID3 #removeButton");
-    clickOnAndReload("#continue");
+    clickOnAndReload("#continueButton");
 
     // Skip step 5
-    clickOnAndReload("#continue");
+    clickOnAndReload("#continueButton");
 
     // Create temp folder
     createTempFolder();
 
     // 6 - Save the report
     GuiWorkbench.setTestParam("saveConfig", outputPath);
-    clickOnScroll("#continue");
+    clickOnScroll("#continueButton");
 
     // Print generated file
 //    System.out.println("\nOutput file:");
@@ -95,7 +95,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   private void addRule(String tag, String op, String text) {
     // First click Add Rule Button
-    clickOn("#addRule");
+    clickOn("#addRuleButton");
 
     //Set the rule parameters
     clickOnScroll("#ID" + uniqueId + " #comboBoxTag").clickOn(tag);
@@ -113,14 +113,10 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   private void addFix(String action, String field, String text) {
     // First click Add Fix Button
-    clickOnScroll("#addFix");
+    clickOnScroll("#addFixButton");
 
     //Set the rule parameters
     clickOnScroll("#ID" + uniqueId + " #comboBoxAction").clickOn(action);
-    // Start Hack FIXME: combo box only shows 2 params
-    clickOnScroll("#ID" + uniqueId + " #comboBoxOp");
-    clickOnScroll("#ID" + uniqueId + " #comboBoxOp");
-    // End Hack
     clickOnScroll("#ID" + uniqueId + " #comboBoxOp").clickOn(field);
     if (action.equals("Add Tag")) {
       clickOnScroll("#ID" + uniqueId + " #textField").write(text);

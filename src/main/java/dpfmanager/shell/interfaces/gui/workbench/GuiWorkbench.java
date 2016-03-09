@@ -53,11 +53,16 @@ public class GuiWorkbench implements FXWorkbench {
 
   @Override
   public void handleInitialLayout(Message<Event, Object> action, WorkbenchLayout<Node> layout, Stage stage) {
-    layout.setWorkbenchXYSize(970, 950);
-    layout.setStyle(StageStyle.DECORATED);
     parameters = GuiLauncher.getMyParameters();
     testValues = new HashMap<>();
     thestage = stage;
+    layout.setWorkbenchXYSize(970, 950);
+    if (parameters.getRaw().contains("-test")) {
+      layout.setStyle(StageStyle.UNDECORATED);
+    }
+    else{
+      layout.setStyle(StageStyle.DECORATED);
+    }
   }
 
   @Override
@@ -77,6 +82,6 @@ public class GuiWorkbench implements FXWorkbench {
   }
 
   public static boolean getFirstTime(){
-    return !parameters.getRaw().contains("-noDisc") && DPFManagerProperties.getFirstTime();
+    return !parameters.getRaw().contains("-test") && DPFManagerProperties.getFirstTime();
   }
 }

@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
  */
 @DeclarativeView(id = GuiConfig.COMPONENT_ABOUT,
     name = GuiConfig.COMPONENT_ABOUT,
-    viewLocation = "/fxml-jr/about.fxml",
+    viewLocation = "/fxml/about.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_ABOUT)
 public class AboutView implements FXComponent {

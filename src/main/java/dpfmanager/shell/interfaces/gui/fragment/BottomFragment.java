@@ -22,7 +22,7 @@ import org.jacpfx.rcp.context.Context;
  * Created by Adrià Llorens on 03/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_BOTTOM,
-    viewLocation = "/fxml-jr/bottom.fxml",
+    viewLocation = "/fxml/bottom.fxml",
     scope = Scope.SINGLETON)
 public class BottomFragment {
 

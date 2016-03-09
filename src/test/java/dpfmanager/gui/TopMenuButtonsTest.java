@@ -19,7 +19,7 @@ public class TopMenuButtonsTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception{
-    stage = launch(GuiApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
@@ -29,22 +29,22 @@ public class TopMenuButtonsTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
 
     // checker -- about
-    clickOnAndReload("#butAbout");
+    clickOnAndReloadTop("#butAbout");
     FxAssert.verifyThat("#pane2", NodeMatchers.isNotNull());
     // about -- reports
-    clickOnAndReload("#butReports");
+    clickOnAndReloadTop("#butReports");
     FxAssert.verifyThat("#pane1", NodeMatchers.isNotNull());
     // reports -- checker
-    clickOnAndReload("#butDessign");
+    clickOnAndReloadTop("#butDessign");
     FxAssert.verifyThat("#pane0", NodeMatchers.isNotNull());
     // checker -- reports
-    clickOnAndReload("#butReports");
+    clickOnAndReloadTop("#butReports");
     FxAssert.verifyThat("#pane1", NodeMatchers.isNotNull());
     // reports -- about
-    clickOnAndReload("#butAbout");
+    clickOnAndReloadTop("#butAbout");
     FxAssert.verifyThat("#pane2", NodeMatchers.isNotNull());
     // about -- checker
-    clickOnAndReload("#butDessign");
+    clickOnAndReloadTop("#butDessign");
     FxAssert.verifyThat("#pane0", NodeMatchers.isNotNull());
   }
 

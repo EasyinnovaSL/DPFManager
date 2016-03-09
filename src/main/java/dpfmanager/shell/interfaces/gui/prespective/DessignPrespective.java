@@ -93,7 +93,5 @@ public class DessignPrespective extends DpfAbstractPrespective {
         context.send(GuiConfig.PRESPECTIVE_DESSIGN, new ConsoleMessage(ConsoleMessage.Type.SHOW));
       }
     });
-
-    hideBottomPane(context);
   }
 }

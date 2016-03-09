@@ -5,10 +5,12 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import org.apache.commons.lang.SystemUtils;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
@@ -48,23 +50,16 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   public static Stage launch(Class<? extends Application> appClass, String... appArgs) throws Exception {
     stage = FxToolkit.registerPrimaryStage();
-    FxToolkit.setupStage(stage -> {
-      view = new SpreadsheetView();
-      StackPane sceneRoot = new StackPane(view);
-
-      stage.setScene(new Scene(sceneRoot, width, height));
-      stage.setX(baseW);
-      stage.setY(baseH);
-
-      stage.show();
-      stage.toBack();
-      stage.toFront();
-    });
     FxToolkit.setupApplication(appClass, appArgs);
-    FxToolkit.toolkitContext().getRegisteredStage().setWidth(width);
-    FxToolkit.toolkitContext().getRegisteredStage().setHeight(height);
+
+    //Custom size
+    stage.setWidth(width);
+    stage.setHeight(height);
+    stage.setX(0);
+    stage.setY(0);
+
     // Wait for application to start
-    Thread.sleep(3000);
+    Thread.sleep(2000);
     return stage;
   }
 
@@ -96,29 +91,37 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   //Main click function + reload
   public void clickOnAndReload(String id){
     clickOnScroll(id);
-    sleep(250);
-    if (id.equals("#butReports")){
-      sleep(250);
-    }
-    if (id.equals("#newButton")){
-      sleep(500);
-    }
+    reloadScene();
+  }
+
+  //Main click function + reload (top pane)
+  public void clickOnAndReloadTop(String id){
+    clickOnScroll(id, true, true);
     reloadScene();
   }
 
   public ApplicationTest clickOnScroll(String id) throws FxRobotException {
-    return clickOnScroll(id,true);
+    return clickOnScroll(id,true, false);
   }
 
   public ApplicationTest clickOnScroll(String id, boolean restart) throws FxRobotException {
+    return clickOnScroll(id,restart, false);
+  }
+
+  public ApplicationTest clickOnScroll(String id, boolean restart, boolean topItems ) throws FxRobotException {
     // Check if the node if at limit. Position < height + base Height - 5
     // If it is, make one scroll and finish
     if (moveToCustom(id)){
       int y = getMousePositionY();
       int minH = height + baseH -5;
       int maxH = height +baseH +5;
+      // Check limits
       if (minH < y && y < maxH){
         makeScroll(1,true);
+      }
+      // Check under top bar
+      if (y < 50 && !topItems) {
+        restartScroll();
       }
     }
 
@@ -197,6 +200,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   protected void waitForCheckFiles(int maxTimeout) {
     sleep(1000);
     int timeout = 0;
+
+    // Wait processing pane
     boolean finish = false;
     while (!finish && timeout < maxTimeout) {
       reloadScene();
@@ -208,7 +213,20 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
         finish = true;
       }
     }
-    sleep(1000);
+
+    // Wait load report
+    finish = false;
+    while (!finish && timeout < maxTimeout) {
+      reloadScene();
+      Node node = scene.lookup("#butDessign");
+      if (node == null) {
+        timeout++;
+        sleep(1000);
+      } else {
+        finish = true;
+      }
+    }
+
     Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 
@@ -241,7 +259,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   protected void clickOnImportedConfig(String path) {
-    VBox vbox = (VBox) scene.lookup("#vBoxConfig");  //Get VBox
+    VBox vbox = (VBox) scene.lookup("#vBoxConfig");                         //Get VBox
+    ScrollPane scrollPane = (ScrollPane) scene.lookup("#configScroll");   //Get ScrollPane
     String idToClick = "#";
     String search = path.replaceAll("/", "_").replaceAll("\\\\", "_");
     for (Node node : vbox.getChildren()) {
@@ -253,8 +272,20 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
     Assert.assertNotEquals("Import config file failed!", "#", idToClick);
 
-    // Move inside pane
+    // Move inside configuration pane
     moveTo("#vBoxConfig");
+
+    // Check button in limit
+    moveTo(idToClick);
+    int limitY = (int) (scrollPane.localToScreen(scrollPane.getBoundsInLocal()).getMinY() + scrollPane.getHeight());
+    int currentY = getMousePositionY();
+    if (currentY > limitY-2){
+      // Move inside configuration pane and scroll down
+      moveTo("#vBoxConfig");
+      makeScroll(1, false);
+    }
+
+    // Now click and scroll
     clickOnScroll(idToClick,false);
   }
 }
