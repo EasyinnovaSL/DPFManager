@@ -72,6 +72,8 @@ public class FileCheckTest extends ApplicationTest {
 
     //Check xml
     clickOnAndReloadTop("#butReports");
+    // Wait for table to load
+    Thread.sleep(5000);
     clickOnAndReload("#tabReports #butxml");
     Thread.sleep(1000);
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
@@ -82,6 +84,8 @@ public class FileCheckTest extends ApplicationTest {
 
     //Check json
     clickOnAndReloadTop("#butReports");
+    // Wait for table to load
+    Thread.sleep(5000);
     clickOnAndReload("#tabReports #butjson");
     Thread.sleep(1000);
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
