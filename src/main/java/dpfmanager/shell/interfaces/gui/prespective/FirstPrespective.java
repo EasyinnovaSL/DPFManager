@@ -37,7 +37,7 @@ public class FirstPrespective implements FXPerspective {
   public void onStartPerspective(PerspectiveLayout perspectiveLayout, FXComponentLayout layout, ResourceBundle resourceBundle) {
     // Center Component
     StackPane centerPane = new StackPane();
-    centerPane.getStylesheets().add("/styles-jr/main.css");
+    centerPane.getStylesheets().add("/styles/main.css");
     centerPane.setAlignment(Pos.TOP_CENTER);
 
     // Attach to prespective

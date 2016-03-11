@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane id="pane2" style="-fx-border-width: 0;" styleClass="background-main" stylesheets="@../styles-jr/main.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="pane2" style="-fx-border-width: 0;" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label id="aboutTitle" layoutX="27.0" layoutY="43.0" styleClass="clabel-title" text="About DPF Manager" />
         <Label layoutX="27.0" layoutY="114.0" styleClass="clabel" text="DPF Manager is the most advanced TIFF conformance checker for digital preservation." wrapText="true" />

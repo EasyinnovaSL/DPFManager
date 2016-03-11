@@ -14,7 +14,7 @@ import org.jacpfx.rcp.context.Context;
  * Created by Adrià Llorens on 08/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_6,
-    viewLocation = "/fxml-jr/config/subconfig6.fxml",
+    viewLocation = "/fxml/config/subconfig6.fxml",
     scope = Scope.SINGLETON)
 public class Wizard6Fragment {
 

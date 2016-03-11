@@ -96,7 +96,7 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
 
   protected BorderPane constructBorderPane(PerspectiveLayout perspectiveLayout, Node top, Node center) {
     BorderPane borderPane = new BorderPane();
-    borderPane.getStylesheets().add("/styles-jr/main.css");
+    borderPane.getStylesheets().add("/styles/main.css");
     LayoutUtil.GridPaneUtil.setFullGrow(ALWAYS, borderPane);
     perspectiveLayout.registerRootComponent(borderPane);
     borderPane.setTop(top);

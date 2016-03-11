@@ -22,7 +22,7 @@ import java.io.File;
  * Created by Adrià Llorens on 08/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_3,
-    viewLocation = "/fxml-jr/config/subconfig3.fxml",
+    viewLocation = "/fxml/config/subconfig3.fxml",
     scope = Scope.SINGLETON)
 public class Wizard3Fragment {
 

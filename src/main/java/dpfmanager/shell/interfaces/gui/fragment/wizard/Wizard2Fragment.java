@@ -31,7 +31,8 @@ import java.util.ArrayList;
  * Created by Adrià Llorens on 08/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_2,
-    viewLocation = "/fxml-jr/config/subconfig2.fxml",
+    viewLocation = "/fxml/config/subconfig2.fxml",
+    localeID = "en_US",
     scope = Scope.SINGLETON)
 public class Wizard2Fragment {
 

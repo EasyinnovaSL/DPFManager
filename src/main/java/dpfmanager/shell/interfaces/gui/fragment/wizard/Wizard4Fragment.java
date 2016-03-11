@@ -35,7 +35,7 @@ import java.util.Map;
  * Created by Adrià Llorens on 08/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_4,
-    viewLocation = "/fxml-jr/config/subconfig4.fxml",
+    viewLocation = "/fxml/config/subconfig4.fxml",
     scope = Scope.SINGLETON)
 public class Wizard4Fragment {
 
