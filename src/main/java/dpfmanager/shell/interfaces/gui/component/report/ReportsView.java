@@ -82,6 +82,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
   private TableColumn<ReportRow, String> colScore;
   private TableColumn colFormats;
   private ScrollPane scrollPane = null;
+  private boolean firsttime = true;
 
   private ChangeListener<Number> listenerHeigth;
   final private double DEFAULT_SCROLL_WIDTH = 970;
@@ -92,6 +93,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
       ReportsMessage rMessage = (ReportsMessage) message.getMessageBody();
       if (rMessage.isTable()) {
         showReports();
+        addData();
       } else if (rMessage.isReport()) {
         showSingleReport(rMessage.getReportType(), rMessage.getPath());
       } else if (rMessage.isScroll()) {
@@ -120,10 +122,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
     // Init MVC
     setModel(new ReportsModel());
     setController(new ReportsController());
-
     addHeaders();
-    addData();
-
     getController().initButtonsHandlers();
   }
 
@@ -216,6 +215,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
 
   public void addData() {
     // Add data
+    getModel().clearData();
     getModel().readReports();
     ObservableList<ReportRow> data = getModel().getData();
     tabReports.setItems(data);

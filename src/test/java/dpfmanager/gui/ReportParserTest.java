@@ -58,6 +58,8 @@ public class ReportParserTest extends ApplicationTest {
 
     // Go to reports and check them
     clickOnAndReloadTop("#butReports");
+    // Wait for table to load
+    Thread.sleep(5000);
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_loaded), table.getItems().size());
     checkValidRow(table.getItems().get(0), "XML");  //Xml

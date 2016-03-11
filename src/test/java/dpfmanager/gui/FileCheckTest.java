@@ -44,16 +44,18 @@ public class FileCheckTest extends ApplicationTest {
     int nReports = getCurrentReports();
 
     //import config file and check files
-//    GuiWorkbench.setTestParam("import", inputConfigPath);
-//    clickOnScroll("#importButton");
-//    clickOnImportedConfig(inputConfigPath);
-//    writeText("#inputText", inputFilePath);
-//    clickOnAndReload("#checkFilesButton");
-//    FxAssert.verifyThat("#loadingVbox", NodeMatchers.isVisible()); //Check loading screen
-//    waitForCheckFiles(60);
+    GuiWorkbench.setTestParam("import", inputConfigPath);
+    clickOnScroll("#importButton");
+    clickOnImportedConfig(inputConfigPath);
+    writeText("#inputText", inputFilePath);
+    clickOnAndReload("#checkFilesButton");
+    FxAssert.verifyThat("#loadingVbox", NodeMatchers.isVisible()); //Check loading screen
+    waitForCheckFiles(60);
 
     //Check table view
     clickOnAndReloadTop("#butReports");
+    // Wait for table to load
+    Thread.sleep(5000);
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     ReportRow row = table.getItems().get(0);
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_loaded), table.getItems().size());

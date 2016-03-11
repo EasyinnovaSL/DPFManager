@@ -97,6 +97,7 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
   protected BorderPane constructBorderPane(PerspectiveLayout perspectiveLayout, Node top, Node center) {
     BorderPane borderPane = new BorderPane();
     borderPane.getStylesheets().add("/styles/main.css");
+    borderPane.getStyleClass().add("background-main");
     LayoutUtil.GridPaneUtil.setFullGrow(ALWAYS, borderPane);
     perspectiveLayout.registerRootComponent(borderPane);
     borderPane.setTop(top);
@@ -105,6 +106,7 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
   }
 
   protected ScrollPane constructScrollPane(Node content) {
+    content.getStyleClass().add("background-main");
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setFitToHeight(true);
     scrollPane.setFitToWidth(true);
@@ -167,13 +169,11 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
   }
 
   public void showBottomPane(Context context) {
-    ManagedFragmentHandler<BottomFragment> fragment = context.getManagedFragmentHandler(BottomFragment.class);
-
     // Show stack pane
     NodeUtil.showStack(bottomPane);
 
     // Show divider
-    mainSplit.setDividerPositions(fragment.getController().getPosV());
+    mainSplit.setDividerPositions(0.8);
     if (getDivider() != null) {
       if (!getDivider().getStyleClass().contains("show-divider")) {
         getDivider().getStyleClass().add("show-divider");
@@ -185,18 +185,15 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
     NodeUtil.hideNode(showButton);
 
     // Save it
-    fragment.getController().setVisible(true);
-    fragment.getController().setCurrentPrespective(context.getId());
+    context.getManagedFragmentHandler(BottomFragment.class).getController().setVisible(true);
+    context.getManagedFragmentHandler(BottomFragment.class).getController().setCurrentPrespective(context.getId());
   }
 
   public void hideBottomPane(Context context) {
-    ManagedFragmentHandler<BottomFragment> fragment = context.getManagedFragmentHandler(BottomFragment.class);
-
     // Hide stack pane
     NodeUtil.hideStack(bottomPane);
 
     // Hide divider
-    fragment.getController().setPosV(mainSplit.getDividerPositions()[0]);
     if (getDivider() != null) {
       if (getDivider().getStyleClass().contains("show-divider")) {
         getDivider().getStyleClass().remove("show-divider");
@@ -208,6 +205,6 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
     NodeUtil.showNode(showButton);
 
     // Save it
-    fragment.getController().setVisible(false);
+    context.getManagedFragmentHandler(BottomFragment.class).getController().setVisible(false);
   }
 }

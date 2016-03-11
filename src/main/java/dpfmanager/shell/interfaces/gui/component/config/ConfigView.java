@@ -77,7 +77,6 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> implement
   @Override
   public Node postHandle(Node node, Message<Event, Object> message) {
     if (message.getMessageBody() instanceof ConfigMessage) {
-      initAllFragments();
       getController().clearAllSteps();
       gotoConfig(1);
     }
@@ -91,6 +90,8 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> implement
     setController(new ConfigController());
 
     stepsButtons = Arrays.asList(step1, step2, step3, step4, step5 ,step6);
+
+    initAllFragments();
   }
 
   private void initAllFragments() {

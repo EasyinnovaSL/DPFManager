@@ -106,6 +106,10 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
     }
   }
 
+  public void clearData() {
+    data.clear();
+  }
+
   public ObservableList<ReportRow> getData() {
     return data;
   }

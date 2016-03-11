@@ -48,3 +48,75 @@
 2016-03-11 12:46:35 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
 2016-03-11 12:46:35 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
 2016-03-11 12:46:35 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:48:18 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@6c7c2331: startup date [Fri Mar 11 12:48:18 CET 2016]; root of context hierarchy
+2016-03-11 12:48:18 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:48:18 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:48:18 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:48:37 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@f002329: startup date [Fri Mar 11 12:48:37 CET 2016]; root of context hierarchy
+2016-03-11 12:48:37 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:48:37 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:48:37 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:49:01 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@4e4f8310: startup date [Fri Mar 11 12:49:01 CET 2016]; root of context hierarchy
+2016-03-11 12:49:01 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:49:01 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:49:01 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:49:35 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@f002329: startup date [Fri Mar 11 12:49:35 CET 2016]; root of context hierarchy
+2016-03-11 12:49:35 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:49:35 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:49:35 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:50:12 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@42c36048: startup date [Fri Mar 11 12:50:12 CET 2016]; root of context hierarchy
+2016-03-11 12:50:13 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:50:13 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:50:13 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:53:21 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@4e4f8310: startup date [Fri Mar 11 12:53:21 CET 2016]; root of context hierarchy
+2016-03-11 12:53:21 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:53:21 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:53:21 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:53:53 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@72ff03f2: startup date [Fri Mar 11 12:53:53 CET 2016]; root of context hierarchy
+2016-03-11 12:53:53 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:53:53 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:53:53 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:54:24 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@6c7c2331: startup date [Fri Mar 11 12:54:24 CET 2016]; root of context hierarchy
+2016-03-11 12:54:24 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:54:25 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:54:25 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:55:03 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@26fcf90b: startup date [Fri Mar 11 12:55:03 CET 2016]; root of context hierarchy
+2016-03-11 12:55:03 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:55:04 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:55:04 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:56:05 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@72ff03f2: startup date [Fri Mar 11 12:56:05 CET 2016]; root of context hierarchy
+2016-03-11 12:56:05 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:56:05 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:56:05 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:56:29 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@317d61de: startup date [Fri Mar 11 12:56:29 CET 2016]; root of context hierarchy
+2016-03-11 12:56:29 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:56:29 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:56:29 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:58:57 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@f002329: startup date [Fri Mar 11 12:58:57 CET 2016]; root of context hierarchy
+2016-03-11 12:58:57 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:58:57 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:58:57 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 12:59:20 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@42c36048: startup date [Fri Mar 11 12:59:20 CET 2016]; root of context hierarchy
+2016-03-11 12:59:20 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 12:59:20 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 12:59:20 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 13:00:48 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@72ff03f2: startup date [Fri Mar 11 13:00:48 CET 2016]; root of context hierarchy
+2016-03-11 13:00:48 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 13:00:48 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 13:00:49 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 13:01:22 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@4e4f8310: startup date [Fri Mar 11 13:01:22 CET 2016]; root of context hierarchy
+2016-03-11 13:01:23 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 13:01:23 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 13:01:23 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 13:05:02 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@601b8ad9: startup date [Fri Mar 11 13:05:02 CET 2016]; root of context hierarchy
+2016-03-11 13:05:02 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 13:05:03 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 13:05:03 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 13:07:41 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@6c7c2331: startup date [Fri Mar 11 13:07:41 CET 2016]; root of context hierarchy
+2016-03-11 13:07:41 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 13:07:41 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 13:07:42 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2016-03-11 13:08:45 INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@f002329: startup date [Fri Mar 11 13:08:45 CET 2016]; root of context hierarchy
+2016-03-11 13:08:45 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [DpfSpring.xml]
+2016-03-11 13:08:45 INFO  XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [basic.xml]
+2016-03-11 13:08:45 INFO  AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring

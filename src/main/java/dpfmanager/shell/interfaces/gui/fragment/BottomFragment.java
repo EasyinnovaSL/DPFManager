@@ -68,8 +68,6 @@ public class BottomFragment {
 
   private double pos;
 
-  private double posV;
-
   private boolean firsttime = true;
 
   private boolean visible = false;
@@ -203,14 +201,6 @@ public class BottomFragment {
     if (getDivider().getStyleClass().contains("hide-divider")) {
       getDivider().getStyleClass().remove("hide-divider");
     }
-  }
-
-  public double getPosV() {
-    return posV;
-  }
-
-  public void setPosV(double posV) {
-    this.posV = posV;
   }
 
 }
