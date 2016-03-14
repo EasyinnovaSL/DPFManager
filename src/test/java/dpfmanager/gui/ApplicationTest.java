@@ -41,7 +41,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   final static int width = 970;
   final static int height = 500;
   final static int baseW = 0;
-  final static int baseH = 25;
+  final static int baseH = 0;
 
   static Stage stage;
   protected Scene scene;
@@ -55,8 +55,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     //Custom size
     stage.setWidth(width);
     stage.setHeight(height);
-    stage.setX(0);
-    stage.setY(0);
+    stage.setX(baseW);
+    stage.setY(baseH);
 
     // Wait for application to start
     Thread.sleep(2000);
@@ -91,12 +91,14 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   //Main click function + reload
   public void clickOnAndReload(String id){
     clickOnScroll(id);
+    sleep(250);
     reloadScene();
   }
 
   //Main click function + reload (top pane)
   public void clickOnAndReloadTop(String id){
     clickOnScroll(id, true, true);
+    sleep(250);
     reloadScene();
   }
 
@@ -122,6 +124,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       // Check under top bar
       if (y < 50 && !topItems) {
         restartScroll();
+        restart = false;
       }
     }
 

@@ -34,13 +34,13 @@ public class ButtonCheckTest extends ApplicationTest {
     clickOnAndReload("#continueButton");
     clickOnAndReload("#continueButton");
     clickOnAndReload("#continueButton");
-    Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#addFix").isVisible());
+    Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#addFixButton").isVisible());
 
     // Check files button
     clickOnAndReload("#butDessign");
     clickOnAndReload("#checkFilesButton");
     clickOnAndReload("#butReports");
-    FxAssert.verifyThat("#tab_reports", NodeMatchers.isNull());
+    FxAssert.verifyThat("#tabReports", NodeMatchers.isNull());
   }
 }
 
