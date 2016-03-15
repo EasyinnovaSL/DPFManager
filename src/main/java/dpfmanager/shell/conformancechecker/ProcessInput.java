@@ -97,6 +97,10 @@ public class ProcessInput {
       e.printStackTrace();
     }
 
+    if (!new File(internalReportFolder).exists()) {
+     internalReportFolder = null;
+    }
+
     return internalReportFolder;
   }
 
@@ -266,6 +270,7 @@ public class ProcessInput {
    */
   private void sendFtpCamel(String summaryXml)
       throws NoSuchAlgorithmException {
+    System.out.println("Sending feedback");
     String ftp = "84.88.145.109";
     String user = "preformaapp";
     String password = "2.eX#lh>";
@@ -284,5 +289,6 @@ public class ProcessInput {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    System.out.println("Feedback sent");
   }
 }

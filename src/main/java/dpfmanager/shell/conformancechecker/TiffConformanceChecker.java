@@ -383,7 +383,6 @@ public class TiffConformanceChecker implements ConformanceChecker {
           if (config.getRules() != null){
             checkPC = config.getRules().getRules().size() > 0;
           }
-          String outputFolder = config.getOutput();
 
           TiffDocument to = tr.getModel();
 

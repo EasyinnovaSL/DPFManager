@@ -625,6 +625,22 @@ public class MainApp extends Application {
                 e.printStackTrace();
               }
             });
+          } else {
+            Platform.runLater(() -> {
+              Alert alert = new Alert(Alert.AlertType.ERROR);
+              alert.setTitle("Error");
+              alert.setHeaderText("No output format file was selected");
+              alert.setContentText(formats.toString());
+              alert.showAndWait();
+            });
+
+            Platform.runLater(() -> {
+              try {
+                gotoMain(event);
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            });
           }
 
         } catch (Exception ex) {
@@ -1634,7 +1650,7 @@ public class MainApp extends Application {
   protected void infoConfig(ActionEvent event) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle("Help");
-    alert.setHeaderText("Configuration files define the options to check the files (ISO, report format and policy rules)");
+    alert.setHeaderText("Configuration files define the options to check the files (ISO, report format and policy RulesObject)");
     alert.setContentText("You can either create a new configuration file, import a new one from disk, or edit/delete one from the list");
     alert.showAndWait();
   }

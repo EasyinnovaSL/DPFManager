@@ -141,6 +141,10 @@ public class CommandLine extends UserInterface {
           config = new Configuration();
           try {
             config.ReadFile(xmlConfig);
+            if (config.getFormats().size() == 0) {
+              System.out.println("No report format was specified in the config file.");
+              //argsError = true;
+            }
           } catch (Exception ex) {
             System.out.println("Incorrect configuration file '" + xmlConfig + "'");
             argsError = true;
@@ -223,8 +227,10 @@ public class CommandLine extends UserInterface {
         config.setOutput(outputFolder);
       }
       ProcessInput pi = new ProcessInput();
-      pi.ProcessFiles(files, config, silence);
-      System.out.println("Report generated successfully.");
+      String path = pi.ProcessFiles(files, config, silence);
+      if (path != null) {
+        System.out.println("Report generated successfully.");
+      }
     }
   }
 
