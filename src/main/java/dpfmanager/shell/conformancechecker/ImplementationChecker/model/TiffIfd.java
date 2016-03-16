@@ -17,7 +17,6 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
   int duplicateTags;
   int strips;
   int tiles;
-  int sppEqualsBps;
   int correctExtraSamples;
   int onlyNecessaryExtraSamples;
   int validBitsPerSample;
@@ -25,6 +24,7 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
   int correctTiles;
   int correctStrips;
   String type = "";
+  String sclass = "image";
 
   @XmlAttribute
   public void setType(String type) {
@@ -33,6 +33,15 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
 
   public String getType() {
     return type;
+  }
+
+  @XmlAttribute(name = "class")
+  public void setClassElement(String sclass) {
+    this.sclass = sclass;
+  }
+
+  public String getClassElement() {
+    return sclass;
   }
 
   @XmlAttribute
@@ -84,14 +93,6 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
 
   public int getTiles() {
     return tiles;
-  }
-
-  public void setSppEqualsBps(int sppEqualsBps) {
-    this.sppEqualsBps = sppEqualsBps;
-  }
-
-  public int getSppEqualsBps() {
-    return sppEqualsBps;
   }
 
   public void setCorrectExtraSamples(int correctExtraSamples) {
@@ -149,7 +150,6 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("duplicateTags", duplicateTags + ""));
     childs.add(new TiffSingleNode("strips", strips + ""));
     childs.add(new TiffSingleNode("tiles", tiles + ""));
-    childs.add(new TiffSingleNode("sppEqualsBps", sppEqualsBps + ""));
     childs.add(new TiffSingleNode("correctExtraSamples", correctExtraSamples + ""));
     childs.add(new TiffSingleNode("onlyNecessaryExtraSamples", onlyNecessaryExtraSamples + ""));
     childs.add(new TiffSingleNode("validBitsPerSample", validBitsPerSample + ""));
@@ -157,6 +157,7 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("correctTiles", correctTiles + ""));
     childs.add(new TiffSingleNode("correctStrips", correctStrips + ""));
     childs.add(new TiffSingleNode("type", type));
+    childs.add(new TiffSingleNode("class", sclass));
     childs.add(tags);
     if (subchilds) {
       List<TiffNode> subobjects = tags.getChildren(subchilds);
@@ -167,5 +168,11 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
 
   public String getContext() {
     return "ifd";
+  }
+
+  @Override
+  public String toString() {
+    String s = "ifd " + n;
+    return s;
   }
 }

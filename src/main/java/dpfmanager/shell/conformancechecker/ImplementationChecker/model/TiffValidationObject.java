@@ -1,8 +1,12 @@
 package dpfmanager.shell.conformancechecker.ImplementationChecker.model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -58,7 +62,7 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
       if (node == null) {
         // Why?
       } else {
-        if (node.getContext().equals(context) || context.equals("*")) {
+        if (node.contextMatch(context)) {
           objectsFromContext.add(node);
         }
       }
@@ -68,5 +72,21 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
 
   public String getContext() {
     return "tiffValidationObject";
+  }
+
+  public void writeXml(String filename) {
+    try {
+      File file = new File(filename);
+      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
+      Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+      // output pretty printed
+      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+      jaxbMarshaller.marshal(this, file);
+      //jaxbMarshaller.marshal(tiffValidate, System.out);
+    } catch (JAXBException e) {
+      e.printStackTrace();
+    }
   }
 }

@@ -7,7 +7,9 @@ import dpfmanager.shell.conformancechecker.ImplementationChecker.rules.Clausules
 import dpfmanager.shell.conformancechecker.ImplementationChecker.rules.ImplementationCheckerObject;
 import dpfmanager.shell.conformancechecker.ImplementationChecker.rules.RuleElement;
 import dpfmanager.shell.conformancechecker.ImplementationChecker.rules.RuleObject;
+import dpfmanager.shell.conformancechecker.ImplementationChecker.rules.RuleResult;
 import dpfmanager.shell.conformancechecker.ImplementationChecker.rules.RulesObject;
+import dpfmanager.shell.reporting.ReportGenerator;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,7 +18,13 @@ import javax.xml.parsers.*;
 import org.xml.sax.*;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +33,58 @@ import java.util.List;
  */
 public class Validator {
   TiffValidationObject model;
+  List<RuleResult> result;
+
+  public List<RuleResult> getResult() {
+    return result;
+  }
+
+  public List<RuleResult> getErrors() {
+    List<RuleResult> errors = new ArrayList<>();
+    for (RuleResult res : result) {
+      if (!res.ok()) {
+        errors.add(res);
+      }
+    }
+    return errors;
+  }
+
+  /**
+   * Read filefrom resources string.
+   *
+   * @param pathStr the path str
+   * @return the string
+   */
+  public static InputStream getFileFromResources(String pathStr) {
+    InputStream fis = null;
+    Path path = Paths.get(pathStr);
+    try {
+      if (Files.exists(path)) {
+        // Look in current dir
+        fis = new FileInputStream(pathStr);
+      } else {
+        // Look in JAR
+        Class cls = ReportGenerator.class;
+        ClassLoader cLoader = cls.getClassLoader();
+        fis = cLoader.getResourceAsStream(pathStr);
+      }
+    } catch (FileNotFoundException e) {
+      System.err.println("File " + pathStr + " not found in dir.");
+    }
+
+    return fis;
+  }
 
   public void validate(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    result = new ArrayList<>();
+
     JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(new File(path));
 
     jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
     jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-    ImplementationCheckerObject rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(new File("BaselineProfileChecker.xml"));
+    ImplementationCheckerObject rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources("BaselineProfileChecker.xml"));
 
     for (RulesObject ruleSet : rules.getRules()) {
       for (RuleObject rule : ruleSet.getRules()) {
@@ -65,7 +116,7 @@ public class Validator {
           countField = countField.substring(0, countField.indexOf(")"));
           String checkop = clausule.substring(clausule.indexOf(")") + 1).trim();
 
-          RuleElement field = new RuleElement(countField, node);
+          RuleElement field = new RuleElement(countField, node, model);
           List<TiffNode> childs = field.getChildren();
           int n = childs.size();
           if (checkop.startsWith("==")) {
@@ -81,16 +132,17 @@ public class Validator {
         } else if (clausule.contains("==") || clausule.contains(">") || clausule.contains("<")) {
           // Check field values
           String operation = clausule.contains("==") ? "==" : (clausule.contains(">") ? ">" : "<");
-          RuleElement op1 = new RuleElement(clausule.substring(0, clausule.indexOf(operation)), node);
+          RuleElement op1 = new RuleElement(clausule.substring(0, clausule.indexOf(operation)), node, model);
           String value = op1.getValue();
           if (value == null) return;
-          String op2 = getValue(clausule.substring(clausule.indexOf(operation) + operation.length()).trim());
-          if (operation.equals("==")) ok = value.equals(op2);
-          else if (operation.equals(">")) ok = Integer.parseInt(value) > Integer.parseInt(op2);
-          else ok = Integer.parseInt(value) < Integer.parseInt(op2);
+          RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
+          String value2 = op2.getValue();
+          if (operation.equals("==")) ok = value.equals(value2);
+          else if (operation.equals(">")) ok = Float.parseFloat(value) > Float.parseFloat(value2);
+          else ok = Float.parseFloat(value) < Float.parseFloat(value2);
         } else {
           // Check field exists
-          RuleElement elem = new RuleElement(clausule, node);
+          RuleElement elem = new RuleElement(clausule, node, model);
           ok = elem.getChildren().size() > 0;
         }
 
@@ -105,29 +157,9 @@ public class Validator {
     }
 
     if (ok) {
-      System.out.println("Rule OK " + rule.toString() + " on node " + node.toString());
+      result.add(new RuleResult(true, "Rule OK " + rule.toString() + " on node " + node.toString()));
     } else {
-      System.out.println("Rule KO " + rule.toString() + " on node " + node.toString());
+      result.add(new RuleResult(false, "Rule KO " + rule.toString() + " on node " + node.toString()));
     }
-  }
-
-  String getValue(String field) {
-    String val = field;
-    if (val.contains("$")) {
-      val = val.replace("$", "");
-      TiffNode node = null;
-      String[] parts = val.split("\\.");
-      for (String nodeName : parts) {
-        if (node == null) {
-          if (model.getContext().equals(nodeName))
-            node = model;
-        } else {
-          node = node.getChild(nodeName);
-        }
-        if (node == null) return null;
-      }
-      val = node.getValue();
-    }
-    return val;
   }
 }

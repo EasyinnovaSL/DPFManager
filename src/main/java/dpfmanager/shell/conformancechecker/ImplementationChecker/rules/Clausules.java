@@ -38,7 +38,7 @@ public class Clausules {
       if (expr.length() == 0) break;
       String op = expr.substring(0, 2);
       if (operator == null) operator = op;
-      else if (op != operator) {
+      else if (!op.equals(operator)) {
         return false;
       }
       expr = expr.substring(2).trim();

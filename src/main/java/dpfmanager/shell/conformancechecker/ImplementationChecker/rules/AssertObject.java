@@ -38,6 +38,7 @@ public class AssertObject {
   @Override
   public String toString() {
     String s = "";
-    s += test;
+    s += value;
     return s;
-  }}
+  }
+}

@@ -108,4 +108,10 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
   public String getContext() {
     return "tag";
   }
+
+  @Override
+  public String toString() {
+    String s = "tag " + id + " " + name;
+    return s;
+  }
 }

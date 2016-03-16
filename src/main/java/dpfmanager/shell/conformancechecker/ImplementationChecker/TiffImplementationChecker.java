@@ -31,7 +31,7 @@ import javax.xml.bind.Marshaller;
 public class TiffImplementationChecker {
   private TiffDocument tiffDoc;
 
-  public void CreateValidationObject(TiffDocument tiffDoc) {
+  public TiffValidationObject CreateValidationObject(TiffDocument tiffDoc) {
     this.tiffDoc = tiffDoc;
     TiffValidationObject tiffValidate = new TiffValidationObject();
 
@@ -57,19 +57,7 @@ public class TiffImplementationChecker {
     ifds.setIfds(ifdsList);
     tiffValidate.setIfds(ifds);
 
-    try {
-      File file = new File("file.xml");
-      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
-      Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-      // output pretty printed
-      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-      jaxbMarshaller.marshal(tiffValidate, file);
-      //jaxbMarshaller.marshal(tiffValidate, System.out);
-    } catch (JAXBException e) {
-      e.printStackTrace();
-    }
+    return tiffValidate;
   }
 
   public TiffIfd CreateIFDValidation(IFD ifd, int n) {
@@ -111,7 +99,7 @@ public class TiffImplementationChecker {
       }
       if (metadata.get("Compression").getFirstNumericValue() == 1 && pixelSize >= 8) {
         int calculatedImageLength = 0;
-        int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripOffsets");
+        int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripBYTECount");
         int nsc = metadata.get(id).getCardinality();
         for (int i = 0; i < nsc; i++) {
           calculatedImageLength += metadata.get(id).getValue().get(i).toInt();
@@ -148,17 +136,12 @@ public class TiffImplementationChecker {
 
     // Check pixel samples bits
     if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample"))
-        && metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SampesPerPixel"))) {
-      boolean sppEqualsBps = true;
+        && metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SamplesPerPixel"))) {
       boolean correctExtraSamples = true;
       boolean onlyNecessaryExtraSamples = true;
       boolean validBitsPerSample = true;
       boolean equalBitsPerSampleValues = true;
-      long spp = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("SamplesPerPixel")).getFirstNumericValue();
       int bps = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample")).getValue().size();
-      if (spp != bps) {
-        sppEqualsBps = false;
-      }
 
       if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ExtraSamples"))) {
         int ext = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("ExtraSamples")).getValue().size();
@@ -184,7 +167,6 @@ public class TiffImplementationChecker {
         }
       }
 
-      tiffIfd.setSppEqualsBps(sppEqualsBps ? 1 : 0);
       tiffIfd.setCorrectExtraSamples(correctExtraSamples ? 1 : 0);
       tiffIfd.setOnlyNecessaryExtraSamples(onlyNecessaryExtraSamples ? 1 : 0);
       tiffIfd.setValidBitsPerSample(validBitsPerSample ? 1 : 0);
@@ -263,6 +245,7 @@ public class TiffImplementationChecker {
       ifd.setTags(tiffTags);
       ifd.setTagOrdering(correctTagOrdering ? 1 : 0);
       ifd.setDuplicateTags(duplicatedTags ? 1 : 0);
+      ifd.setClassElement("exif");
       tt.setExif(ifd);
     } else if (tv.getId() == 700) {
       // XMP
