@@ -2,6 +2,7 @@ package dpfmanager.gui;
 
 import dpfmanager.shell.modules.report.ReportGenerator;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
@@ -9,6 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -40,8 +42,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   final static int width = 970;
   final static int height = 500;
-  final static int baseW = 0;
-  final static int baseH = 0;
+  static int baseW = 0;
+  static int baseH = 0;
 
   static Stage stage;
   protected Scene scene;
@@ -51,6 +53,11 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   public static Stage launch(Class<? extends Application> appClass, String... appArgs) throws Exception {
     stage = FxToolkit.registerPrimaryStage();
     FxToolkit.setupApplication(appClass, appArgs);
+
+    //Set the base width and height
+    Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+    baseW = (int) primaryScreenBounds.getMinX();
+    baseH = (int) primaryScreenBounds.getMinY();
 
     //Custom size
     stage.setWidth(width);
@@ -88,17 +95,25 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     FxToolkit.hideStage();
   }
 
-  //Main click function + reload
   public void clickOnAndReload(String id){
+    clickOnAndReload(id, 250);
+  }
+
+  public void clickOnAndReloadTop(String id){
+    clickOnAndReloadTop(id, 250);
+  }
+
+  //Main click function + wait + reload
+  public void clickOnAndReload(String id, int milis){
     clickOnScroll(id);
-    sleep(250);
+    sleep(milis);
     reloadScene();
   }
 
-  //Main click function + reload (top pane)
-  public void clickOnAndReloadTop(String id){
+  //Main click function + wait + reload (top pane)
+  public void clickOnAndReloadTop(String id, int milis){
     clickOnScroll(id, true, true);
-    sleep(250);
+    sleep(milis);
     reloadScene();
   }
 
@@ -111,14 +126,51 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   public ApplicationTest clickOnScroll(String id, boolean restart, boolean topItems ) throws FxRobotException {
+    // First go to the button and decide if we need scroll or not
+    if (!moveToCustom(id)){
+      // We need scroll
+      boolean ret = false;
+      int maxScroll = 150;
+      if (restart) {
+        restartScroll();
+      }
+      while (!ret && scroll < maxScroll) {
+        makeScroll(10,false);
+        ret = moveToCustom(id);
+      }
+      if (scroll == maxScroll){
+        throw new FxRobotException("Node "+id+" not found! Scroll timeout!");
+      }
+    }
+
+    // Now check if we are under top bar
+    int y = getMousePositionY();
+    if (y < baseH+50 && !topItems) {
+      restartScroll();
+      return clickOnScroll(id, false, topItems);
+    }
+
+    // Now we can move to the button, lets check if it is at bounds of scene
+    int minH = height + baseH -5;
+    if (minH < y){
+      // We are at limit, so make one scroll more
+      makeScroll(1,true);
+    }
+
+    // Finally we can click the button
+    clickOnCustom(id);
+    scene = stage.getScene();
+    return this;
+  }
+
+  public ApplicationTest clickOnScrollFUNCIONAL(String id, boolean restart, boolean topItems ) throws FxRobotException {
     // Check if the node if at limit. Position < height + base Height - 5
     // If it is, make one scroll and finish
     if (moveToCustom(id)){
       int y = getMousePositionY();
       int minH = height + baseH -5;
-      int maxH = height +baseH +5;
       // Check limits
-      if (minH < y && y < maxH){
+      if (minH < y){
         makeScroll(1,true);
       }
       // Check under top bar
@@ -142,12 +194,26 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
     while (!ret && scroll < maxScroll) {
       makeScroll(10,false);
-      ret = clickOnCustom(id);
+      ret = checkAndClick(id);
     }
     if (scroll == maxScroll){
       throw new FxRobotException("Node "+id+" not found! Scroll timeout!");
     }
     return this;
+  }
+
+  //Try to click checking bounds
+  private boolean checkAndClick(String id){
+    if (moveToCustom(id)){
+      int y = getMousePositionY();
+      int minH = height + baseH -5;
+      // Check limits
+      if (minH < y){
+        makeScroll(1,true);
+      }
+      return clickOnCustom(id);
+    }
+    return false;
   }
 
   private void restartScroll() {
@@ -197,7 +263,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   protected void writeText(String id, String text) {
     TextField txtField = (TextField) scene.lookup(id);
     txtField.clear();
-    clickOnScroll(id).write(text);
+    txtField.setText(text);
   }
 
   protected void waitForCheckFiles(int maxTimeout) {

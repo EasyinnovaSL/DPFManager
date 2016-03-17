@@ -95,6 +95,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
         showReports();
         addData();
       } else if (rMessage.isReport()) {
+        getModel().setReload(true);
         showSingleReport(rMessage.getReportType(), rMessage.getPath());
       } else if (rMessage.isScroll()) {
         scrollPane = rMessage.getScrollPane();
@@ -215,8 +216,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
 
   public void addData() {
     // Add data
-    getModel().clearData();
-    getModel().readReports();
+    getModel().readIfNeed();
     ObservableList<ReportRow> data = getModel().getData();
     tabReports.setItems(data);
     addChartScore();

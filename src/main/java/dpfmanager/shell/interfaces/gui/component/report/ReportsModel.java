@@ -19,9 +19,19 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
   private boolean all_reports_loaded = false;
   public static int reports_loaded = 50;
   private ObservableList<ReportRow> data;
+  private boolean reload;
 
   public ReportsModel(){
+    reload = true;
     data = FXCollections.observableArrayList(new ArrayList<>());
+  }
+
+  public void readIfNeed(){
+    if (reload){
+      clearData();
+      readReports();
+      reload = false;
+    }
   }
 
   public void readReports() {
@@ -104,6 +114,10 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
         }
       }
     }
+  }
+
+  public void setReload(boolean r){
+    reload = r;
   }
 
   public void clearData() {

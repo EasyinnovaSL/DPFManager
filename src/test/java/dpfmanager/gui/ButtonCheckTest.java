@@ -1,6 +1,10 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
+import javafx.application.Platform;
+import javafx.event.EventType;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import org.junit.Assert;
@@ -30,16 +34,19 @@ public class ButtonCheckTest extends ApplicationTest {
     System.out.println("Running check buttons test...");
 
     // Continue 3 button
-    clickOnAndReload("#newButton");
+    clickOnAndReload("#newButton",1000);
+    Assert.assertTrue("New button fail.", scene.lookup("#step1").getStyleClass().contains("blue-but"));
     clickOnAndReload("#continueButton");
+    Assert.assertTrue("Continue of step 1 fail.", scene.lookup("#step2").getStyleClass().contains("blue-but"));
     clickOnAndReload("#continueButton");
+    Assert.assertTrue("Continue of step 2 fail.", scene.lookup("#step2").getStyleClass().contains("blue-but"));
     clickOnAndReload("#continueButton");
-    Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#addFixButton").isVisible());
+    Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#step4").getStyleClass().contains("blue-but"));
 
     // Check files button
-    clickOnAndReload("#butDessign");
+    clickOnAndReloadTop("#butDessign");
     clickOnAndReload("#checkFilesButton");
-    clickOnAndReload("#butReports");
+    clickOnAndReloadTop("#butReports");
     FxAssert.verifyThat("#tabReports", NodeMatchers.isNull());
   }
 }
