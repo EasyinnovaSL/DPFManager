@@ -34,7 +34,7 @@ public class ButtonCheckTest extends ApplicationTest {
     System.out.println("Running check buttons test...");
 
     // Continue 3 button
-    clickOnAndReload("#newButton",1000);
+    clickOnAndReload("#newButton",5000);
     Assert.assertTrue("New button fail.", scene.lookup("#step1").getStyleClass().contains("blue-but"));
     clickOnAndReload("#continueButton");
     Assert.assertTrue("Continue of step 1 fail.", scene.lookup("#step2").getStyleClass().contains("blue-but"));
