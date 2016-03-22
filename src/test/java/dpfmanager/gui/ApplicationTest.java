@@ -151,7 +151,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
 
     // Now we can move to the button, lets check if it is at bounds of scene
-    int minH = height + baseH -5;
+    int minH = height + baseH -25;
     if (minH < y){
       // We are at limit, so make one scroll more
       makeScroll(1,true);

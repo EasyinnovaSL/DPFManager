@@ -6,6 +6,6 @@ import dpfmanager.commandline.*;
 /**
  * Created by Adrià Llorens on 13/01/2016.
  */
-public class RunTestOnly extends ReportParserTest {
+public class RunTestOnly extends ImportConfigFileTest {
   //Remember: mvn install -DskipTests
 }

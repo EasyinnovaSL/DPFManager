@@ -53,7 +53,7 @@ public class ReportParserTest extends ApplicationTest {
       clickOnAndReload("#checkFilesButton");
       waitForCheckFiles(60);
       System.out.println("Current config: " + configFile);
-      clickOnAndReloadTop("#butDessign",1000);
+      clickOnAndReloadTop("#butDessign",3000);
     }
 
     // Go to reports and check them

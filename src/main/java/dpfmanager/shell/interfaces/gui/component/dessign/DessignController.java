@@ -124,6 +124,8 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
             am.add(GuiConfig.PRESPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
             getContext().send(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
 
+            getView().hideLoading();
+
           } catch (Exception ex) {
             Platform.runLater(() -> {
               Alert alert = new Alert(Alert.AlertType.ERROR);
