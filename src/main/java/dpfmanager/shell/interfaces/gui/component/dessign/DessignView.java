@@ -2,13 +2,22 @@ package dpfmanager.shell.interfaces.gui.component.dessign;
 
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.ArrayMessage;
+import dpfmanager.shell.core.messages.ConfigMessage;
+import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -27,6 +36,7 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -37,7 +47,7 @@ import java.util.ResourceBundle;
     viewLocation = "/fxml/dessign.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_DESSIGN)
-public class DessignView extends DpfView<DessignModel, DessignController> implements FXComponent {
+public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @Resource
   private Context context;
@@ -49,38 +59,24 @@ public class DessignView extends DpfView<DessignModel, DessignController> implem
   @FXML
   private ScrollPane configScroll;
   @FXML
-  private Button selectButton;
-  @FXML
   private TextField inputText;
   @FXML
   private Label lblLoading;
-  @FXML
-  private Button checkFilesButton;
-
-  @FXML
-  private Button fileInfoBut;
-  @FXML
-  private Button configInfoBut;
-
-  @FXML
-  private Button newButton;
-  @FXML
-  private Button importButton;
-  @FXML
-  private Button editButton;
-  @FXML
-  private Button deleteButton;
 
   private VBox vBoxConfig;
   private ToggleGroup group;
 
   @Override
-  public Node handle(final Message<Event, Object> message) {
-    return null;
+  public void sendMessage(String target, Object dpfMessage) {
+    context.send(target, dpfMessage);
   }
 
   @Override
-  public Node postHandle(Node node, Message<Event, Object> message) {
+  public void handleMessageOnWorker(DpfMessage message) {
+  }
+
+  @Override
+  public Node handleMessageOnFX(DpfMessage message) {
     return null;
   }
 
@@ -111,9 +107,6 @@ public class DessignView extends DpfView<DessignModel, DessignController> implem
 
     // Add Config files
     addConfigFiles();
-
-    // Init buttons actions
-    getController().initEventHandlers();
   }
 
   private void addConfigFiles(){
@@ -159,38 +152,84 @@ public class DessignView extends DpfView<DessignModel, DessignController> implem
     loadingVbox.setManaged(false);
   }
 
-  /** Getters */
+  /** FXML Events Handlers */
 
-  public Button getDeleteButton() {
-    return deleteButton;
+  @FXML
+  protected void selectFileClicked(ActionEvent event) throws Exception {
+    getController().selectInputAction();
   }
 
-  public Button getEditButton() {
-    return editButton;
+  @FXML
+  protected void checkFilesClicked(ActionEvent event) throws Exception {
+    getController().mainCheckFiles();
   }
 
-  public Button getImportButton() {
-    return importButton;
+  @FXML
+  protected void showFileInfo(ActionEvent event) throws Exception {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Help");
+    alert.setHeaderText("The path to the files to check");
+    alert.setContentText("This can be either a single file or a folder. Only the files with a valid TIF file extension will be processed.");
+    alert.initOwner(GuiWorkbench.getMyStage());
+    alert.showAndWait();
   }
 
-  public Button getNewButton() {
-    return newButton;
+  @FXML
+  protected void showConfigInfo(ActionEvent event) throws Exception {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Help");
+    alert.setHeaderText("Configuration files define the options to check the files (ISO, report format and policy rules)");
+    alert.setContentText("You can either create a new configuration file, import a new one from disk, or edit/delete one from the list");
+    alert.initOwner(GuiWorkbench.getMyStage());
+    alert.showAndWait();
   }
+
+  @FXML
+  protected void newButtonClicked(ActionEvent event) throws Exception {
+    ArrayMessage am = new ArrayMessage();
+    am.add(GuiConfig.PRESPECTIVE_CONFIG, new UiMessage());
+    am.add(GuiConfig.PRESPECTIVE_CONFIG+"."+GuiConfig.COMPONENT_CONFIG,new ConfigMessage(ConfigMessage.Type.NEW));
+    getContext().send(GuiConfig.PRESPECTIVE_CONFIG, am);
+  }
+
+  @FXML
+  protected void importButtonClicked(ActionEvent event) throws Exception {
+    getController().performImportConfigAction();
+  }
+
+  @FXML
+  protected void editButtonClicked(ActionEvent event) throws Exception {
+//    getController().performEditConfigAction();
+    getController().testAction();
+  }
+
+  @FXML
+  protected void deleteButtonClicked(ActionEvent event) throws Exception {
+    RadioButton radio = getSelectedConfig();
+    if (radio != null) {
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+      alert.setTitle("Delete configuration file");
+      alert.setHeaderText("Are you sure to delete the configuration file '" + radio.getText() + "'?");
+      alert.setContentText("The physical file in disk will be also removed");
+      ButtonType buttonNo = new ButtonType("No");
+      ButtonType buttonYes = new ButtonType("Yes");
+      alert.getButtonTypes().setAll(buttonNo, buttonYes);
+      Optional<ButtonType> result = alert.showAndWait();
+      if (result.get() == buttonYes) {
+        getController().performDeleteConfigAction(radio.getText());
+      }
+    } else {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("Alert");
+      alert.setHeaderText("Please select a configuration file");
+      alert.initOwner(GuiWorkbench.getMyStage());
+      alert.showAndWait();
+    }
+  }
+
 
   public RadioButton getSelectedConfig(){
     return (RadioButton) group.getSelectedToggle();
-  }
-
-  public Button getFileInfoBut(){
-    return fileInfoBut;
-  }
-
-  public Button getConfigInfoBut(){
-    return configInfoBut;
-  }
-
-  public Button getSelectButton() {
-    return selectButton;
   }
 
   public ComboBox getComboChoice() {
@@ -199,10 +238,6 @@ public class DessignView extends DpfView<DessignModel, DessignController> implem
 
   public TextField getInputText() {
     return inputText;
-  }
-
-  public Button getCheckFilesButton() {
-    return checkFilesButton;
   }
 
   public Label getLblLoading() {

@@ -1,6 +1,8 @@
 package dpfmanager.shell.interfaces.gui.component.config;
 
 import dpfmanager.shell.core.messages.ConfigMessage;
+import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard1Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard2Fragment;
@@ -39,7 +41,7 @@ import java.util.ResourceBundle;
     viewLocation = "/fxml/config.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_CONFIG)
-public class ConfigView extends DpfView<ConfigModel, ConfigController> implements FXComponent {
+public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   @Resource
   private Context context;
@@ -62,21 +64,25 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> implement
   private List<Button> stepsButtons;
 
   @Override
-  public Node handle(final Message<Event, Object> message) {
-    if (message.getMessageBody() instanceof ConfigMessage) {
-      ConfigMessage cMessage = (ConfigMessage) message.getMessageBody();
+  public void sendMessage(String target, Object dpfMessage) {
+    context.send(target, dpfMessage);
+  }
+
+  @Override
+  public void handleMessageOnWorker(DpfMessage message) {
+    if (message instanceof ConfigMessage) {
+      ConfigMessage cMessage = (ConfigMessage) message;
       if (cMessage.isNew()) {
         getModel().initNewConfig();
       } else if (cMessage.isEdit()) {
         getModel().initEditConfig(cMessage.getPath());
       }
     }
-    return null;
   }
 
   @Override
-  public Node postHandle(Node node, Message<Event, Object> message) {
-    if (message.getMessageBody() instanceof ConfigMessage) {
+  public Node handleMessageOnFX(DpfMessage message) {
+    if (message instanceof ConfigMessage) {
       getController().clearAllSteps();
       gotoConfig(1);
     }

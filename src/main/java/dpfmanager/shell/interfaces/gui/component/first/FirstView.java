@@ -1,6 +1,8 @@
 package dpfmanager.shell.interfaces.gui.component.first;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.adapter.DpfSimpleView;
+import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
@@ -34,7 +36,7 @@ import java.util.ResourceBundle;
     viewLocation = "/fxml/first.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_FIRST)
-public class FirstView implements FXComponent {
+public class FirstView extends DpfSimpleView {
 
   @Resource
   private Context context;
@@ -47,19 +49,18 @@ public class FirstView implements FXComponent {
   private CheckBox chkSubmit, chkFeedback;
 
   @Override
-  public Node handle(final Message<Event, Object> message) {
-    return null;
+  public void handleMessageOnWorker(DpfMessage message) {
   }
 
   @Override
-  public Node postHandle(Node node, Message<Event, Object> message) {
+  public Node handleMessageOnFX(DpfMessage message) {
     return null;
   }
 
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
     if (!GuiWorkbench.getFirstTime()){
-      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
+      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage());
     }
   }
 
@@ -148,7 +149,7 @@ public class FirstView implements FXComponent {
       }
 
       // Show main
-      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
+      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage());
     } catch (Exception ex) {
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setTitle("Error");
@@ -156,6 +157,11 @@ public class FirstView implements FXComponent {
       alert.setContentText(ex.toString());
       alert.showAndWait();
     }
+  }
+
+  @Override
+  public void sendMessage(String target, Object message) {
+    context.send(target, message);
   }
 
 }

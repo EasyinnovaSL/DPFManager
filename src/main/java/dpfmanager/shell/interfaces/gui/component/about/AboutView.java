@@ -1,6 +1,11 @@
 package dpfmanager.shell.interfaces.gui.component.about;
 
+import dpfmanager.shell.core.adapter.DpfSimpleView;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.mvc.DpfView;
+import dpfmanager.shell.interfaces.gui.component.config.ConfigController;
+import dpfmanager.shell.interfaces.gui.component.config.ConfigModel;
 import javafx.event.Event;
 import javafx.scene.Node;
 
@@ -22,23 +27,27 @@ import java.util.ResourceBundle;
     viewLocation = "/fxml/about.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_ABOUT)
-public class AboutView implements FXComponent {
+public class AboutView extends DpfSimpleView {
 
   @Resource
   private Context context;
 
   @Override
-  public Node handle(final Message<Event, Object> message) {
-    return null;
+  public void handleMessageOnWorker(DpfMessage message) {
   }
 
   @Override
-  public Node postHandle(Node node, Message<Event, Object> message) {
+  public Node handleMessageOnFX(DpfMessage message) {
     return null;
   }
 
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
+  }
+
+  @Override
+  public void sendMessage(String target, Object message) {
+    context.send(target, message);
   }
 
 }

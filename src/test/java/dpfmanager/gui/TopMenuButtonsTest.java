@@ -29,22 +29,22 @@ public class TopMenuButtonsTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
 
     // checker -- about
-    clickOnAndReloadTop("#butAbout");
+    clickOnAndReloadTop("#butAbout",1000);
     FxAssert.verifyThat("#pane2", NodeMatchers.isNotNull());
     // about -- reports
-    clickOnAndReloadTop("#butReports");
+    clickOnAndReloadTop("#butReports",4000);
     FxAssert.verifyThat("#pane1", NodeMatchers.isNotNull());
     // reports -- checker
-    clickOnAndReloadTop("#butDessign");
+    clickOnAndReloadTop("#butDessign",1000);
     FxAssert.verifyThat("#pane0", NodeMatchers.isNotNull());
     // checker -- reports
-    clickOnAndReloadTop("#butReports");
+    clickOnAndReloadTop("#butReports",4000);
     FxAssert.verifyThat("#pane1", NodeMatchers.isNotNull());
     // reports -- about
-    clickOnAndReloadTop("#butAbout");
+    clickOnAndReloadTop("#butAbout",1000);
     FxAssert.verifyThat("#pane2", NodeMatchers.isNotNull());
     // about -- checker
-    clickOnAndReloadTop("#butDessign");
+    clickOnAndReloadTop("#butDessign",1000);
     FxAssert.verifyThat("#pane0", NodeMatchers.isNotNull());
   }
 

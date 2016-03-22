@@ -1,13 +1,17 @@
-package dpfmanager.shell.interfaces.gui.prespective;
+package dpfmanager.shell.core.adapter;
 
 import static javafx.scene.layout.Priority.ALWAYS;
 
+import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.SwitchMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.fragment.BottomFragment;
+import dpfmanager.shell.interfaces.gui.fragment.BarFragment;
+import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
 import javafx.event.Event;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -35,44 +39,55 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
   protected StackPane bottomPane;
   protected SplitPane mainSplit;
   protected Button showButton;
+  protected StackPane bottomBar;
+
+  protected ManagedFragmentHandler<BarFragment> fragmentBar;
 
   /**
    * Handle default messages
    */
   @Override
   public void handlePerspective(Message<Event, Object> message, PerspectiveLayout perspectiveLayout) {
-    // Only tract Dpf Messages
-    if (message.getMessageBody() instanceof DpfMessage) {
-      DpfMessage dpfMessage = (DpfMessage) message.getMessageBody();
-      if (dpfMessage instanceof UiMessage) {
-        UiMessage uiMessage = (UiMessage) dpfMessage;
-        switchUiActions(uiMessage);
-      } else {
-        // Send to overriden method
-        handleMessage(dpfMessage, perspectiveLayout);
+    if (message.isMessageBodyTypeOf(ArrayMessage.class)) {
+      // Array message
+      ArrayMessage aMessage = message.getTypedMessageBody(ArrayMessage.class);
+      tractMessage(aMessage.getFirstMessage(), perspectiveLayout);
+      if (aMessage.hasNext()) {
+        aMessage.removeFirst();
+        getContext().send(aMessage.getFirstTarget(), aMessage);
       }
+    } else if (message.isMessageBodyTypeOf(DpfMessage.class)) {
+      // Single message
+      DpfMessage dpfMessage = message.getTypedMessageBody(DpfMessage.class);
+      tractMessage(dpfMessage, perspectiveLayout);
     }
   }
 
-  private void switchUiActions(UiMessage uiMessage) {
-    switch (uiMessage.getType()) {
-      case INIT:
-        onInit();
-        break;
-      case RELOAD:
-        onReload();
-        break;
-      case SHOW:
+  private void tractMessage(DpfMessage dpfMessage, PerspectiveLayout perspectiveLayout) {
+    if (dpfMessage.isTypeOf(UiMessage.class)) {
+      // On Show Perspective
+      UiMessage um = dpfMessage.getTypedMessage(UiMessage.class);
+      if (um.isShow()){
         onShow();
-        break;
-      case HIDE:
-        onHide();
-        break;
+      } else{
+        onReload();
+      }
+    }else if (dpfMessage.isTypeOf(WidgetMessage.class)) {
+      WidgetMessage wm = dpfMessage.getTypedMessage(WidgetMessage.class);
+      showHideBottomPane(wm.isShow());
+    } else{
+      handleMessage(dpfMessage, perspectiveLayout);
     }
+  }
 
-    if (uiMessage.hasNext()){
-      sendMessage(uiMessage.getNext(), uiMessage.getMessage());
-    }
+  public void onShow(){
+    getContext().getManagedFragmentHandler(TopFragment.class).getController().setCurrentToggle(getContext().getId());
+    showHideBottomPane(getContext().getManagedFragmentHandler(BarFragment.class).getController().isVisible());
+    onShowCustom();
+  }
+
+  public void onReload(){
+    onReloadCustom();
   }
 
   /**
@@ -80,20 +95,15 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
    */
   public abstract void handleMessage(DpfMessage dpfMessage, PerspectiveLayout layout);
 
-  public abstract void sendMessage(String target, DpfMessage dpfMessage);
+  public abstract Context getContext();
 
-  public void onInit() {
-  }
+  public void onShowCustom(){}
 
-  public void onReload() {
-  }
+  public void onReloadCustom(){}
 
-  public void onShow() {
-  }
-
-  public void onHide() {
-  }
-
+  /**
+   * Construct UI methods
+   */
   protected BorderPane constructBorderPane(PerspectiveLayout perspectiveLayout, Node top, Node center) {
     BorderPane borderPane = new BorderPane();
     borderPane.getStylesheets().add("/styles/main.css");
@@ -128,29 +138,22 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
     return mainSplit;
   }
 
-  protected AnchorPane constructMainPane(SplitPane mainSplit, Button show) {
+  protected AnchorPane constructMainPane(SplitPane mainSplit, Node bar) {
     AnchorPane mainPane = new AnchorPane();
     mainPane.setId("mainPane");
     mainPane.getStyleClass().add("background-main");
     mainPane.getChildren().add(mainSplit);
     AnchorPane.setTopAnchor(mainSplit, 0.0);
-    AnchorPane.setBottomAnchor(mainSplit, 0.0);
+    AnchorPane.setBottomAnchor(mainSplit, 21.0);
     AnchorPane.setLeftAnchor(mainSplit, 0.0);
     AnchorPane.setRightAnchor(mainSplit, 0.0);
 
-    mainPane.getChildren().add(show);
-    AnchorPane.setBottomAnchor(show, 0.0);
-    AnchorPane.setRightAnchor(show, 0.0);
+    mainPane.getChildren().add(bar);
+    AnchorPane.setBottomAnchor(bar, 0.0);
+    AnchorPane.setRightAnchor(bar, 0.0);
+    AnchorPane.setLeftAnchor(bar, 0.0);
 
     return mainPane;
-  }
-
-  protected Button constructShowButton() {
-    Button showBottom = new Button();
-    showBottom.setText("Show");
-    showBottom.getStyleClass().addAll("bot-button");
-    showBottom.setPadding(new Insets(4, 5, 4, 5));
-    return showBottom;
   }
 
   protected Node getDivider() {
@@ -160,36 +163,32 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
     return divider;
   }
 
-  public void showHideBottomPane(Context context, boolean toShow) {
+  /**
+   * Bottom Widget methods
+   */
+  public void showHideBottomPane(boolean toShow) {
     if (toShow) {
-      showBottomPane(context);
+      showBottomPane();
     } else {
-      hideBottomPane(context);
+      hideBottomPane();
     }
   }
 
-  public void showBottomPane(Context context) {
+  public void showBottomPane() {
     // Show stack pane
     NodeUtil.showStack(bottomPane);
 
     // Show divider
-    mainSplit.setDividerPositions(0.8);
     if (getDivider() != null) {
       if (!getDivider().getStyleClass().contains("show-divider")) {
         getDivider().getStyleClass().add("show-divider");
       }
       NodeUtil.showNode(getDivider());
     }
-
-    // Hide button
-    NodeUtil.hideNode(showButton);
-
-    // Save it
-    context.getManagedFragmentHandler(BottomFragment.class).getController().setVisible(true);
-    context.getManagedFragmentHandler(BottomFragment.class).getController().setCurrentPrespective(context.getId());
+    mainSplit.setDividerPositions(0.8);
   }
 
-  public void hideBottomPane(Context context) {
+  public void hideBottomPane() {
     // Hide stack pane
     NodeUtil.hideStack(bottomPane);
 
@@ -200,11 +199,5 @@ public abstract class DpfAbstractPrespective implements FXPerspective {
       }
       NodeUtil.hideNode(getDivider());
     }
-
-    // Show button
-    NodeUtil.showNode(showButton);
-
-    // Save it
-    context.getManagedFragmentHandler(BottomFragment.class).getController().setVisible(false);
   }
 }

@@ -40,7 +40,8 @@ import java.util.Map;
         GuiConfig.PRESPECTIVE_DESSIGN,
         GuiConfig.PRESPECTIVE_REPORTS,
         GuiConfig.PRESPECTIVE_ABOUT,
-        GuiConfig.PRESPECTIVE_CONFIG
+        GuiConfig.PRESPECTIVE_CONFIG,
+        GuiConfig.PRESPECTIVE_SHOW
     }
 )
 public class GuiWorkbench implements FXWorkbench {

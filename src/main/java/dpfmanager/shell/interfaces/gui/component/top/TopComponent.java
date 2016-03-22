@@ -1,6 +1,8 @@
 package dpfmanager.shell.interfaces.gui.component.top;
 
+import dpfmanager.shell.core.adapter.DpfSimpleView;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
 import javafx.event.Event;
 import javafx.scene.Node;
@@ -23,7 +25,7 @@ import java.util.ResourceBundle;
     name = "TopPane",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_TOP)
-public class TopComponent implements FXComponent {
+public class TopComponent extends DpfSimpleView {
 
   private FlowPane flowPane;
 
@@ -31,20 +33,22 @@ public class TopComponent implements FXComponent {
   private Context context;
 
   @Override
-  public Node handle(final Message<Event, Object> message) {
-    // runs in worker thread
-    return null;
+  public void handleMessageOnWorker(DpfMessage message) {
   }
 
   @Override
-  public Node postHandle(Node arg0, Message<Event, Object> message) {
-      // runs in FX application thread
-      return flowPane;
+  public Node handleMessageOnFX(DpfMessage message) {
+    return flowPane;
   }
 
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
     flowPane = (FlowPane) context.getManagedFragmentHandler(TopFragment.class).getFragmentNode();
+  }
+
+  @Override
+  public void sendMessage(String target, Object message) {
+    context.send(target, message);
   }
 
 }

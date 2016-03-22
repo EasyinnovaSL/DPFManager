@@ -1,15 +1,19 @@
 package dpfmanager.shell.interfaces.gui.component.report;
 
-import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.ArrayMessage;
+import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.core.messages.ShowMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
+import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.report.ReportRow;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -20,24 +24,17 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.web.WebView;
 import javafx.util.Callback;
-
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
@@ -47,11 +44,6 @@ import org.jacpfx.rcp.component.FXComponent;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ResourceBundle;
 
 /**
@@ -62,7 +54,7 @@ import java.util.ResourceBundle;
     viewLocation = "/fxml/summary.fxml",
     active = true,
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_REPORTS)
-public class ReportsView extends DpfView<ReportsModel, ReportsController> implements FXComponent {
+public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
   @Resource
   private Context context;
@@ -72,49 +64,29 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
   private Button loadMore;
   @FXML
   private TableView<ReportRow> tabReports;
-  @FXML
-  private VBox reportsVbox;
-  @FXML
-  private TextArea textArea;
-  @FXML
-  private WebView webView;
 
   private TableColumn<ReportRow, String> colScore;
   private TableColumn colFormats;
-  private ScrollPane scrollPane = null;
-  private boolean firsttime = true;
-
-  private ChangeListener<Number> listenerHeigth;
-  final private double DEFAULT_SCROLL_WIDTH = 970;
 
   @Override
-  public Node handle(Message<Event, Object> message) {
-    if (message.getMessageBody() instanceof ReportsMessage) {
-      ReportsMessage rMessage = (ReportsMessage) message.getMessageBody();
-      if (rMessage.isTable()) {
-        showReports();
-        addData();
-      } else if (rMessage.isReport()) {
-        getModel().setReload(true);
-        showSingleReport(rMessage.getReportType(), rMessage.getPath());
-      } else if (rMessage.isScroll()) {
-        scrollPane = rMessage.getScrollPane();
-        attachListeners();
-      }
-    }
-    return null;
+  public void sendMessage(String target, Object dpfMessage) {
+    context.send(target, dpfMessage);
   }
 
   @Override
-  public Node postHandle(Node node, Message<Event, Object> message) {
-    if (message.getMessageBody() instanceof ReportsMessage) {
-      ReportsMessage rMessage = (ReportsMessage) message.getMessageBody();
-      if (rMessage.isReport()) {
-        if (rMessage.getReportType().equals("html")) {
-          showWebView(rMessage.getPath());
-        }
+  public void handleMessageOnWorker(DpfMessage message) {
+    if (message instanceof ReportsMessage) {
+      ReportsMessage rMessage = (ReportsMessage) message;
+      if (rMessage.isReload()) {
+        getModel().setReload(true);
+      } else if (rMessage.isShow()){
+        addData();
       }
     }
+  }
+
+  @Override
+  public Node handleMessageOnFX(DpfMessage message) {
     return null;
   }
 
@@ -124,74 +96,57 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
     setModel(new ReportsModel());
     setController(new ReportsController());
     addHeaders();
-    getController().initButtonsHandlers();
-  }
-
-  private void attachListeners() {
-    //Declare listeners
-    listenerHeigth = new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        webView.setMinHeight((Double) newValue);
-        webView.setPrefHeight((Double) newValue);
-        webView.setMaxHeight((Double) newValue);
-        textArea.setMinHeight((Double) newValue);
-        textArea.setPrefHeight((Double) newValue);
-        textArea.setMaxHeight((Double) newValue);
-      }
-    };
-    scrollPane.heightProperty().addListener(listenerHeigth);
   }
 
   private void addHeaders() {
     TableColumn colDate = new TableColumn("Date");
-    colDate.setMinWidth(85);
+    setMinMaxWidth(colDate, 85);
     colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
     TableColumn colTime = new TableColumn("Time");
-    colTime.setMinWidth(75);
+    setMinMaxWidth(colTime, 75);
     colTime.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("time")
     );
 
-    TableColumn colFile = new TableColumn("Input");
-    colFile.setMinWidth(200);
-    colFile.setCellValueFactory(
-        new PropertyValueFactory<ReportRow, String>("input")
-    );
-
     TableColumn colN = new TableColumn("#Files");
-    colN.setMinWidth(50);
+    setMinMaxWidth(colN, 50);
     colN.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("nfiles")
     );
 
+    TableColumn colFile = new TableColumn("Input");
+    setMinMaxWidth(colFile, 200);
+    colFile.setCellValueFactory(
+        new PropertyValueFactory<ReportRow, String>("input")
+    );
+
     TableColumn colErrors = new TableColumn("Errors");
-    colErrors.setMinWidth(60);
+    setMinMaxWidth(colErrors, 65);
     colErrors.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("errors")
     );
 
     TableColumn colWarnings = new TableColumn("Warnings");
-    colWarnings.setMinWidth(60);
+    setMinMaxWidth(colWarnings, 65);
     colWarnings.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("warnings")
     );
 
     TableColumn colPassed = new TableColumn("Passed");
-    colPassed.setMinWidth(60);
+    setMinMaxWidth(colPassed, 65);
     colPassed.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("passed")
     );
 
     colScore = new TableColumn("Score");
-    colScore.setMinWidth(80);
+    setMinMaxWidth(colScore, 65);
     colScore.setCellValueFactory(
         new PropertyValueFactory("score")
     );
 
     colFormats = new TableColumn("Formats");
-    colFormats.setMinWidth(150);
+    setMinMaxWidth(colFormats, 150);
     colFormats.setCellValueFactory(
         new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
     );
@@ -214,6 +169,12 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
     changeColumnTextColor(colScore, Color.LIGHTGRAY);
   }
 
+  private void setMinMaxWidth(TableColumn column, int width){
+    column.setMinWidth(width);
+    column.setPrefWidth(width);
+    column.setMaxWidth(width);
+  }
+
   public void addData() {
     // Add data
     getModel().readIfNeed();
@@ -223,8 +184,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
     addFormatIcons();
 
     if (getModel().isAllReportsLoaded()) {
-      loadMore.setVisible(false);
-      loadMore.setManaged(false);
+      NodeUtil.hideNode(loadMore);
     }
   }
 
@@ -318,7 +278,10 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
                 icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
                   @Override
                   public void handle(MouseEvent event) {
-                    getContext().send(new ReportsMessage(ReportsMessage.Type.REPORT, type, path));
+                    ArrayMessage am = new ArrayMessage();
+                    am.add(GuiConfig.PRESPECTIVE_SHOW, new UiMessage());
+                    am.add(GuiConfig.PRESPECTIVE_SHOW+"."+GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
+                    getContext().send(GuiConfig.PRESPECTIVE_SHOW, am);
                   }
                 });
 
@@ -364,112 +327,16 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> implem
     });
   }
 
-  private void showSingleReport(String type, String path) {
-    System.out.println("Showing report...");
-    switch (type) {
-      case "xml":
-        showTextArea(getContent(path));
-        break;
-      case "json":
-        String content = getContent(path);
-        content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
-        showTextArea(content);
-        break;
-      case "pdf":
-        try {
-          Desktop.getDesktop().open(new File(path));
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        break;
-      default:
-        break;
-    }
+  @FXML
+  protected void loadMoreReports(ActionEvent event) throws Exception {
+    getController().loadMoreReports();
   }
 
-  private String getContent(String path) {
-    String content = "";
-    try {
-      BufferedReader input = new BufferedReader(new FileReader(path));
-      try {
-        String line;
-        while ((line = input.readLine()) != null) {
-          if (!content.equals("")) {
-            content += "\n";
-          }
-          content += line;
-        }
-      } finally {
-        input.close();
-      }
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    }
-    return content;
+  public void hideLoadMore() {
+    NodeUtil.hideNode(loadMore);
   }
 
-  /**
-   * Show Hide
-   */
-
-  public void showTextArea(String content) {
-    showHideChilds(false);
-
-    textArea.setText(content);
-    textArea.setVisible(true);
-    textArea.setManaged(true);
-    textArea.setPrefHeight(reportsVbox.getHeight());
-  }
-
-  public void hideTextArea() {
-    textArea.setVisible(false);
-    textArea.setManaged(false);
-    textArea.clear();
-  }
-
-  public void showWebView(String path) {
-    showHideChilds(false);
-
-    webView.getEngine().load("file:///" + path.replace("\\", "/"));
-    NodeUtil.showNode(webView);
-    if (scrollPane != null) {
-      resizeScrollPane();
-    }
-  }
-
-  private void resizeScrollPane(){
-    webView.setPrefHeight(scrollPane.getHeight());
-    webView.setPrefWidth(scrollPane.getWidth());
-    scrollPane.setMaxWidth(Double.MAX_VALUE);
-  }
-
-  public void hideWebView() {
-    NodeUtil.hideNode(webView);
-  }
-
-  public void showReports() {
-    showHideChilds(true);
-    hideTextArea();
-    hideWebView();
-    if (scrollPane != null) {
-      scrollPane.setMaxWidth(DEFAULT_SCROLL_WIDTH);
-    }
-  }
-
-  private void showHideChilds(boolean visible) {
-    for (Node child : reportsVbox.getChildren()) {
-      child.setVisible(visible);
-      child.setManaged(visible);
-    }
-  }
-
-  /** Getters */
-
-  public Button getLoadMore(){
-    return loadMore;
-  }
-
-  public Context getContext(){
+  public Context getContext() {
     return context;
   }
 

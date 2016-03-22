@@ -1,6 +1,8 @@
 package dpfmanager.shell.interfaces.gui.prespective;
 
+import dpfmanager.shell.core.adapter.DpfAbstractPrespective;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.DpfMessage;
 import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
@@ -23,14 +25,13 @@ import java.util.ResourceBundle;
     name = GuiConfig.PRESPECTIVE_FIRST,
     components = { GuiConfig.COMPONENT_FIRST }
 )
-public class FirstPrespective implements FXPerspective {
+public class FirstPrespective extends DpfAbstractPrespective {
 
   @Resource
   public Context context;
 
   @Override
-  public void handlePerspective(Message<Event, Object> message, PerspectiveLayout perspectiveLayout) {
-
+  public void handleMessage(DpfMessage dpfMessage, PerspectiveLayout layout) {
   }
 
   @PostConstruct
@@ -45,6 +46,11 @@ public class FirstPrespective implements FXPerspective {
 
     // Define main pane
     perspectiveLayout.registerRootComponent(centerPane);
+  }
+
+  @Override
+  public Context getContext() {
+    return context;
   }
 
 }

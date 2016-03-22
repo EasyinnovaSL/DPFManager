@@ -334,6 +334,12 @@
     -fx-min-height: 15;
 }
 
+.bot-big-separator{
+    -fx-background-color: #F2F2F2;
+    -fx-max-height: 21;
+    -fx-min-height: 21;
+}
+
 .bot-label {
     -fx-background-color: transparent;
     -fx-text-fill: #1cc2ff;
@@ -351,8 +357,9 @@
 
 .bot-hbox {
     -fx-background-color: #333333;
-    -fx-border-width: 0 0 2 0;
+    -fx-border-width: 2 0 0 0;
     -fx-border-color: #F2F2F2;
+    -fx-padding: 0 0 2 0;
 }
 .bot-button{
     -fx-background-color: black;
@@ -371,19 +378,19 @@
     -fx-background-color: #F2F2F2;
     -fx-padding: 0 0 0 0;
 }
-
-.split-pane:horizontal .split-pane-divider {
-    -fx-background-color: #F2F2F2;
-    -fx-padding: 0 1 0 1;
-}
-
-.split-pane:horizontal .split-pane-divider.hide-divider {
-    -fx-padding: 0 0 0 0;
-}
-
 .split-pane:vertical .split-pane-divider.show-divider {
     -fx-padding: 0 1 0 1;
 }
+
+.split-pane:horizontal .split-pane-divider {
+    -fx-background-color: #F2F2F2;
+    -fx-padding: 0 0 0 0;
+}
+
+.split-pane:horizontal .split-pane-divider.show-divider {
+    -fx-padding: 0 1 0 1;
+}
+
 
 /* Table View */
 
@@ -449,7 +456,7 @@
 }
 
 .console-area{
-    -fx-background-color: transparent;
+    -fx-background-color: black;
     -fx-text-fill: #1cc2ff;
     -fx-border-width: 0;
 }
@@ -458,7 +465,7 @@
 .console-area .viewport,
 .console-area .content{
     -fx-border-width: 0;
-    -fx-background-color: transparent;
+    -fx-background-color: black;
 }
 
 .console-area .viewport{

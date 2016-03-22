@@ -32,7 +32,7 @@
             <HBox alignment="CENTER">
                 <children>
                    <Label styleClass="label-info" text="Files" />
-                   <Button fx:id="fileInfoBut" mnemonicParsing="false" styleClass="button-info">
+                   <Button fx:id="fileInfoBut" onAction="#showFileInfo" mnemonicParsing="false" styleClass="button-info">
                       <HBox.margin>
                          <Insets left="5.0" />
                       </HBox.margin>
@@ -51,7 +51,7 @@
                             <Cursor fx:constant="TEXT" />
                         </cursor>
                     </TextField>
-                    <Button fx:id="selectButton" mnemonicParsing="false" styleClass="secondary-button" text="Select">
+                    <Button fx:id="selectButton" onAction="#selectFileClicked" mnemonicParsing="false" styleClass="secondary-button" text="Select">
                   <HBox.margin>
                      <Insets left="5.0" />
                   </HBox.margin></Button>
@@ -68,7 +68,7 @@
             <HBox alignment="CENTER">
                 <children>
                     <Label styleClass="label-info" text="Configuration" />
-                    <Button fx:id="configInfoBut" mnemonicParsing="false" styleClass="button-info">
+                    <Button fx:id="configInfoBut" onAction="#showConfigInfo" mnemonicParsing="false" styleClass="button-info">
                         <HBox.margin>
                             <Insets left="5.0" />
                         </HBox.margin>
@@ -90,19 +90,19 @@
             </ScrollPane>
             <HBox alignment="CENTER">
                 <children>
-                    <Button fx:id="newButton" mnemonicParsing="false" styleClass="button-trans" text="NEW">
+                    <Button fx:id="newButton" onAction="#newButtonClicked" mnemonicParsing="false" styleClass="button-trans" text="NEW">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button fx:id="importButton" mnemonicParsing="false" styleClass="button-trans" text="IMPORT">
+                    <Button fx:id="importButton" onAction="#importButtonClicked" mnemonicParsing="false" styleClass="button-trans" text="IMPORT">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button fx:id="editButton" mnemonicParsing="false" styleClass="button-trans" text="EDIT">
+                    <Button fx:id="editButton" onAction="#editButtonClicked" mnemonicParsing="false" styleClass="button-trans" text="EDIT">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button fx:id="deleteButton" mnemonicParsing="false" styleClass="button-trans" text="DELETE" />
+                    <Button fx:id="deleteButton" onAction="#deleteButtonClicked" mnemonicParsing="false" styleClass="button-trans" text="DELETE" />
                 </children>
                 <VBox.margin>
                    <Insets bottom="15.0" />
@@ -114,7 +114,7 @@
                     <Insets bottom="20.0" left="65.0" right="65.0" />
                 </VBox.margin>
             </ImageView>
-         <Button fx:id="checkFilesButton" mnemonicParsing="false" styleClass="main-button" text="Check files">
+         <Button fx:id="checkFilesButton" onAction="#checkFilesClicked" mnemonicParsing="false" styleClass="main-button" text="Check files">
             <VBox.margin>
                <Insets bottom="30.0" />
             </VBox.margin>

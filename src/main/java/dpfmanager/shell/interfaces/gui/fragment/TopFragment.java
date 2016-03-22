@@ -1,7 +1,7 @@
 package dpfmanager.shell.interfaces.gui.fragment;
 
-import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.UiMessage;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -45,13 +45,15 @@ public class TopFragment extends FlowPane {
   private Rectangle rectReports;
   private Rectangle rectAbout;
 
-  public static String ButDessign = "butDessign";
-  public static String ButReports = "butReports";
-  public static String ButAbout = "butAbout";
-  public static String ButConfig = "butConfig";
+  private String ButDessign = "butDessign";
+  private String ButReports = "butReports";
+  private String ButAbout = "butAbout";
+
+  private String currentId;
 
   public TopFragment() {
     topButtons = new ArrayList<>();
+    currentId = "";
 
     // Show buttons
     showDessign = new ToggleButton("Conformance Checker");
@@ -119,8 +121,22 @@ public class TopFragment extends FlowPane {
     return rect;
   }
 
+  // Decide witch toggle will be blue by perspective id
   public void setCurrentToggle(String id) {
-    makeBlue(getToggleById(id));
+    currentId = id;
+    String finalId = "";
+    if (id.equals(GuiConfig.PRESPECTIVE_DESSIGN) || id.equals(GuiConfig.PRESPECTIVE_CONFIG)) {
+      finalId = ButDessign;
+    } else if (id.equals(GuiConfig.PRESPECTIVE_REPORTS) || id.equals(GuiConfig.PRESPECTIVE_SHOW)) {
+      finalId = ButReports;
+    } else if (id.equals(GuiConfig.PRESPECTIVE_ABOUT)) {
+      finalId = ButAbout;
+    }
+    makeBlue(getToggleById(finalId));
+  }
+
+  public String getCurrentId() {
+    return currentId;
   }
 
   private ToggleButton getToggleById(String id) {
@@ -150,7 +166,6 @@ public class TopFragment extends FlowPane {
                   if (source.equals(target)) {
                     doReload(target.getId());
                   } else {
-                    doHide(source.getId());
                     showHideTriangles(target.getId());
                     doShow(target.getId());
                   }
@@ -164,20 +179,6 @@ public class TopFragment extends FlowPane {
                     }
                   }
                   return null;
-                }
-
-                private void doHide(String id) {
-                  switch (id) {
-                    case "butDessign":
-                      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.HIDE));
-                      break;
-                    case "butReports":
-                      context.send(GuiConfig.PRESPECTIVE_REPORTS, new UiMessage(UiMessage.Type.HIDE));
-                      break;
-                    case "butAbout":
-                      context.send(GuiConfig.PRESPECTIVE_ABOUT, new UiMessage(UiMessage.Type.HIDE));
-                      break;
-                  }
                 }
 
                 private void doShow(String id) {

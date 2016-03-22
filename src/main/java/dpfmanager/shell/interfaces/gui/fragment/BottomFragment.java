@@ -1,17 +1,14 @@
 package dpfmanager.shell.interfaces.gui.fragment;
 
-import dpfmanager.shell.core.messages.ConsoleMessage;
-import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
-import javafx.event.ActionEvent;
+import dpfmanager.shell.core.messages.LogMessage;
+import dpfmanager.shell.core.util.NodeUtil;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
@@ -30,141 +27,122 @@ public class BottomFragment {
   private Context context;
 
   @FXML
-  private TextArea consoleArea;
-
+  private AnchorPane botAnchor;
   @FXML
   private SplitPane botSplit;
 
   @FXML
-  private AnchorPane botAnchor;
-  @FXML
   private AnchorPane consoleAnchor;
   @FXML
   private AnchorPane taskAnchor;
-  @FXML
-  private VBox vboxBottom;
 
   @FXML
-  private StackPane consoleSeparator;
-  @FXML
-  private StackPane tasksSeparator;
-
-  // Buttons
-  @FXML
-  private Button consoleButInConsole;
-  @FXML
-  private Button taskButInConsole;
-  @FXML
-  private Button consoleButInTask;
-  @FXML
-  private Button taskButInTask;
-
-  @FXML
-  private Button hideBottomTask;
-  @FXML
-  private Button hideBottomConsole;
+  private TextArea consoleArea;
 
   private Node divider;
-
   private double pos;
-
   private boolean firsttime = true;
-
-  private boolean visible = false;
-
-  private String currentPrespective;
 
   // Main functions
 
   public void init() {
     if (firsttime){
       setDefault();
+      addDividerListener();
+      sendConsoleHandler();
       firsttime = false;
     }
   }
 
+  private void sendConsoleHandler(){
+    context.send(BasicConfig.MODULE_LOGS, new LogMessage(consoleArea));
+  }
+
+  private void addDividerListener(){
+//    for (Divider divider : botSplit.getDividers()){
+//      divider.positionProperty().addListener(new ChangeListener<Number>() {
+//        @Override
+//        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//          botSplitBar.setDividerPositions((double) newValue);
+//        }
+//      });
+//    }
+
+//    for (Divider divider : botSplitBar.getDividers()){
+//      divider.positionProperty().addListener(new ChangeListener<Number>() {
+//        @Override
+//        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//          botSplit.setDividerPositions((double) newValue);
+//        }
+//      });
+//    }
+  }
+
   public void setDefault() {
     pos = 0.7;
-    NodeUtil.hideNode(taskButInConsole);
-    NodeUtil.hideNode(consoleButInTask);
-    NodeUtil.hideNode(consoleSeparator);
-    NodeUtil.hideNode(tasksSeparator);
-    NodeUtil.hideNode(hideBottomConsole);
-    NodeUtil.showNode(hideBottomTask);
-  }
-
-  private void resetDefault() {
-    setDefault();
-    showDivider();
-    NodeUtil.showAnchor(taskAnchor);
-    NodeUtil.showAnchor(consoleAnchor);
-    botSplit.setDividerPositions(pos);
-  }
-
-  public boolean isVisible() {
-    return visible;
-  }
-
-  public void setVisible(boolean visible) {
-    this.visible = visible;
-  }
-
-  // Console pane
-
-  @FXML
-  protected void closeConsolePane(ActionEvent event) throws Exception {
-    saveDividerPos();
     NodeUtil.hideAnchor(consoleAnchor);
-    NodeUtil.showNode(consoleButInTask);
-    botSplit.setDividerPositions(0.0);
-    hideDivider();
-    if (!taskAnchor.isVisible()) {
-      resetDefault();
-      context.send(GuiConfig.COMPONENT_BOTTOM, "hide");
-    } else {
-      NodeUtil.showNode(hideBottomTask);
-      NodeUtil.showNode(tasksSeparator);
-    }
-  }
-
-  @FXML
-  protected void showTaskPane(ActionEvent event) throws Exception {
-    NodeUtil.showAnchor(taskAnchor);
-    NodeUtil.hideNode(taskButInConsole);
-    NodeUtil.hideNode(consoleSeparator);
-    NodeUtil.hideNode(tasksSeparator);
-    botSplit.setDividerPositions(pos);
-    showDivider();
-    NodeUtil.showNode(hideBottomTask);
-    NodeUtil.hideNode(hideBottomConsole);
-  }
-
-  // Tasks pane
-
-  @FXML
-  protected void showConsolePane(ActionEvent event) throws Exception {
-    NodeUtil.showAnchor(consoleAnchor);
-    NodeUtil.hideNode(consoleButInTask);
-    NodeUtil.hideNode(consoleSeparator);
-    NodeUtil.hideNode(tasksSeparator);
-    botSplit.setDividerPositions(pos);
-    showDivider();
-  }
-
-  @FXML
-  protected void closeTaskPane(ActionEvent event) throws Exception {
-    saveDividerPos();
     NodeUtil.hideAnchor(taskAnchor);
-    NodeUtil.showNode(taskButInConsole);
-    botSplit.setDividerPositions(1.0);
-    hideDivider();
-    if (!consoleAnchor.isVisible()) {
-      resetDefault();
-      context.send(GuiConfig.COMPONENT_BOTTOM, "hide");
-    } else {
-      NodeUtil.showNode(hideBottomConsole);
-      NodeUtil.showNode(consoleSeparator);
+  }
+
+  public boolean isConsoleVisible(){
+    return consoleAnchor.isVisible();
+  }
+
+  public boolean isTasksVisible(){
+    return taskAnchor.isVisible();
+  }
+
+  /**
+   * Main functions
+   */
+  public void showConsole(){
+    NodeUtil.showAnchor(consoleAnchor);
+    if (taskAnchor.isVisible()){
+      showDivider();
+    } else{
+      hideDivider(1.0);
     }
+  }
+
+  public void hideConsole(){
+    NodeUtil.hideAnchor(consoleAnchor);
+    if (taskAnchor.isVisible()){
+      hideDivider(0.0);
+    }
+  }
+
+  public void showTasks(){
+    NodeUtil.showAnchor(taskAnchor);
+    if (consoleAnchor.isVisible()){
+      showDivider();
+    } else{
+      hideDivider(0.0);
+    }
+  }
+
+  public void hideTasks(){
+    NodeUtil.hideAnchor(taskAnchor);
+    if (consoleAnchor.isVisible()){
+      hideDivider(1.0);
+    }
+  }
+
+  /**
+   * Divider functions
+   */
+  private void hideDivider(double pos) {
+    saveDividerPos();
+    if (getDivider().getStyleClass().contains("show-divider")) {
+      getDivider().getStyleClass().remove("show-divider");
+    }
+    botSplit.setDividerPositions(pos);
+  }
+
+  private void showDivider() {
+    if (!getDivider().getStyleClass().contains("show-divider")) {
+      getDivider().getStyleClass().add("show-divider");
+    }
+    botSplit.setDividerPositions(pos);
   }
 
   private void saveDividerPos() {
@@ -179,28 +157,6 @@ public class BottomFragment {
       divider = botSplit.lookup("#botSplit > .split-pane-divider");
     }
     return divider;
-  }
-
-  // All Pane
-
-  @FXML
-  protected void hidePane(ActionEvent event) throws Exception {
-    context.send(currentPrespective, new ConsoleMessage(ConsoleMessage.Type.HIDE));
-  }
-  public void setCurrentPrespective(String id){
-    currentPrespective = id;
-  }
-
-  private void hideDivider() {
-    if (!getDivider().getStyleClass().contains("hide-divider")) {
-      getDivider().getStyleClass().add("hide-divider");
-    }
-  }
-
-  private void showDivider() {
-    if (getDivider().getStyleClass().contains("hide-divider")) {
-      getDivider().getStyleClass().remove("hide-divider");
-    }
   }
 
 }

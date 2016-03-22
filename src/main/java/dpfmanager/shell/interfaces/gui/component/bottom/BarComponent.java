@@ -1,6 +1,11 @@
 package dpfmanager.shell.interfaces.gui.component.bottom;
 
+import dpfmanager.shell.core.adapter.DpfSimpleView;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.SwitchMessage;
+import dpfmanager.shell.core.messages.WidgetMessage;
+import dpfmanager.shell.interfaces.gui.fragment.BarFragment;
 import dpfmanager.shell.interfaces.gui.fragment.BottomFragment;
 import javafx.event.Event;
 import javafx.scene.Node;
@@ -17,33 +22,37 @@ import org.jacpfx.rcp.context.Context;
 import java.util.ResourceBundle;
 
 /**
- * Created by Adrià Llorens on 03/03/2016.
+ * Created by Adrià Llorens on 21/03/2016.
  */
-@View(id = GuiConfig.COMPONENT_BOTTOM,
-    name = GuiConfig.COMPONENT_BOTTOM,
+@View(id = GuiConfig.COMPONENT_BAR,
+    name = GuiConfig.COMPONENT_BAR,
     active = true,
-    initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_BOTTOM)
-public class BottomComponent implements FXComponent {
+    initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_BAR)
+public class BarComponent extends DpfSimpleView {
 
   @Resource
   private Context context;
 
-  private ManagedFragmentHandler<BottomFragment> fragment;
+  private ManagedFragmentHandler<BarFragment> fragment;
 
   @Override
-  public Node handle(Message<Event, Object> message) {
-    return null;
+  public void handleMessageOnWorker(DpfMessage message) {
   }
 
   @Override
-  public Node postHandle(Node node, Message<Event, Object> message) {
+  public Node handleMessageOnFX(DpfMessage message) {
     return fragment.getFragmentNode();
   }
 
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
-    fragment = context.getManagedFragmentHandler(BottomFragment.class);
+    fragment = context.getManagedFragmentHandler(BarFragment.class);
     fragment.getController().init();
+  }
+
+  @Override
+  public void sendMessage(String target, Object message) {
+    context.send(target, message);
   }
 
 }

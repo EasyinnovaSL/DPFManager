@@ -5,6 +5,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.interfaces.gui.fragment.BarFragment;
+import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -20,20 +21,20 @@ import org.jacpfx.rcp.context.Context;
 import java.util.ResourceBundle;
 
 /**
- * Created by Adrià Llorens on 07/03/2016.
+ * Created by Adrià Llorens on 17/03/2016.
  */
-@Perspective(id = GuiConfig.PRESPECTIVE_CONFIG,
-    name = GuiConfig.PRESPECTIVE_CONFIG,
+@Perspective(id = GuiConfig.PRESPECTIVE_SHOW,
+    name = GuiConfig.PRESPECTIVE_SHOW,
     active = false,
     components = {
         GuiConfig.COMPONENT_TOP,
-        GuiConfig.COMPONENT_CONFIG,
+        GuiConfig.COMPONENT_SHOW,
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
         BasicConfig.MODULE_LOGS
     }
 )
-public class ConfigPrespective extends DpfAbstractPrespective {
+public class ShowReportPrespective extends DpfAbstractPrespective {
 
   @Resource
   public Context context;
@@ -62,10 +63,10 @@ public class ConfigPrespective extends DpfAbstractPrespective {
     bottomBar.setAlignment(Pos.BOTTOM_CENTER);
 
     // Attach to prespective
-    mainSplit = constructSplitPane(constructScrollPane(centerPane), bottomPane);
+    mainSplit = constructSplitPane(centerPane, bottomPane);
     mainPane = constructMainPane(mainSplit, bottomBar);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_TOP, topPane);
-    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_CONFIG, centerPane);
+    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_SHOW, centerPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_PANE, bottomPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_BAR, bottomBar);
 
@@ -77,4 +78,5 @@ public class ConfigPrespective extends DpfAbstractPrespective {
   public Context getContext() {
     return context;
   }
+
 }
