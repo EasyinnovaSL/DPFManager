@@ -29,4 +29,9 @@ public class RulesObject {
   public List<RuleObject> getRules() {
     return rules;
   }
+
+  @Override
+  public String toString() {
+    return description;
+  }
 }

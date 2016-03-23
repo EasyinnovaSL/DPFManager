@@ -19,6 +19,8 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
   int offset;
   String value;
   TiffIfd exif;
+  TiffIfd subifd;
+  TiffIfd globalparameters;
   Hashtable<String, String> iptc;
 
   public void setId(int id) {
@@ -79,6 +81,22 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     return exif;
   }
 
+  public void setSubIfd(TiffIfd subifd) {
+    this.subifd = subifd;
+  }
+
+  public TiffIfd getSubIfd() {
+    return subifd;
+  }
+
+  public void setGlobalParameters(TiffIfd globalparameters) {
+    this.globalparameters = globalparameters;
+  }
+
+  public TiffIfd getGlobalParameters() {
+    return globalparameters;
+  }
+
   public void setIptc(Hashtable<String, String> iptc) {
     this.iptc = iptc;
   }
@@ -97,6 +115,15 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("value", value));
     if (exif !=null) {
       childs.add(exif);
+    }
+    if (subifd !=null) {
+      childs.add(subifd);
+      if (subchilds) {
+        childs.addAll(subifd.getChildren(subchilds));
+      }
+    }
+    if (globalparameters !=null) {
+      childs.add(globalparameters);
     }
     if (subchilds) {
       //List<TiffNode> subobjects = exif.getChildren();

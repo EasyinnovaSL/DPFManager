@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class RuleObject {
   String context;
   String reference;
+  int critical;
   AssertObject assertion;
   List<DiagnosticObject> diagnostics = null;
 
@@ -41,6 +42,15 @@ public class RuleObject {
 
   public String getReference() {
     return reference;
+  }
+
+  @XmlAttribute
+  public void setCritical(int critical) {
+    this.critical = critical;
+  }
+
+  public int getCritical() {
+    return critical;
   }
 
   @XmlElement(name = "assert")

@@ -1,6 +1,6 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.interfaces.Cli.CommandLine;
+import dpfmanager.shell.interfaces.CLI.CommandLine;
 import dpfmanager.shell.interfaces.UserInterface;
 import javafx.application.Application;
 

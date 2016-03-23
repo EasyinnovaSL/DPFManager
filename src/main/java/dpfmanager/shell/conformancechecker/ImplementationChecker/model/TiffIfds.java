@@ -3,6 +3,7 @@ package dpfmanager.shell.conformancechecker.ImplementationChecker.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -10,6 +11,9 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class TiffIfds extends TiffNode implements TiffNodeInterface {
   List<TiffIfd> ifds = null;
+
+  @XmlAttribute
+  int circularReference;
 
   @XmlElement(name = "ifd")
   public void setIfds(List<TiffIfd> ifds) {
@@ -22,11 +26,14 @@ public class TiffIfds extends TiffNode implements TiffNodeInterface {
 
   public List<TiffNode> getChildren(boolean subchilds) {
     List<TiffNode> childs = new ArrayList<TiffNode>();
-    for (TiffIfd ifd : ifds) {
-      childs.add(ifd);
-      if (subchilds) {
-        List<TiffNode> subobjects = ifd.getChildren(subchilds);
-        childs.addAll(subobjects);
+    childs.add(new TiffSingleNode("circularReference", circularReference + ""));
+    if (ifds != null) {
+      for (TiffIfd ifd : ifds) {
+        childs.add(ifd);
+        if (subchilds) {
+          List<TiffNode> subobjects = ifd.getChildren(subchilds);
+          childs.addAll(subobjects);
+        }
       }
     }
     return childs;
@@ -34,5 +41,13 @@ public class TiffIfds extends TiffNode implements TiffNodeInterface {
 
   public String getContext() {
     return "ifds";
+  }
+
+  public void setCircularReference(boolean circularReference) {
+    this.circularReference = circularReference ? 1 : 0;
+  }
+
+  public int getCircularReference() {
+    return circularReference;
   }
 }

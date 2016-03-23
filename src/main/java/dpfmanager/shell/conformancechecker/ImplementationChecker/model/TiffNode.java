@@ -83,11 +83,17 @@ public class TiffNode implements TiffNodeInterface {
     else {
       String contextBase = context.substring(0, context.indexOf("["));
       if (getContext().equals(contextBase)) {
-        String childName = context.substring(context.indexOf("[") + 1);
-        childName = childName.substring(0, childName.indexOf("]"));
-        String childValue = childName.substring(childName.indexOf("=") + 1).trim();
-        childName = childName.substring(0, childName.indexOf("=")).trim();
-        if (hasChild(childName) && getChild(childName).getValue().equals(childValue)) return true;
+        String sFilter = context.substring(context.indexOf("[") + 1);
+        sFilter = sFilter.substring(0, sFilter.indexOf("]"));
+        boolean matches = true;
+        String[] filters = sFilter.split(",");
+        for (String filter : filters) {
+          String childValue = filter.substring(filter.indexOf("=") + 1).trim();
+          String childName = filter.substring(0, filter.indexOf("=")).trim();
+          if (!hasChild(childName) || !getChild(childName).getValue().equals(childValue))
+            matches = false;
+        }
+        return matches;
       }
     }
     return false;

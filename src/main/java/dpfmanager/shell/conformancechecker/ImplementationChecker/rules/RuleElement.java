@@ -51,6 +51,9 @@ public class RuleElement {
     if (fieldName.contains("%")) {
       val = val.substring(0, val.indexOf("%"));
     }
+    if (fieldName.contains("*")) {
+      val = val.substring(0, val.indexOf("*"));
+    }
     return val.trim();
   }
 
@@ -59,6 +62,10 @@ public class RuleElement {
     if (this.fieldName.contains("%")) {
       String op = this.fieldName.substring(this.fieldName.indexOf("%") + 1);
       val = (Integer.parseInt(value) % Integer.parseInt(op)) + "";
+    }
+    if (this.fieldName.contains("*")) {
+      String op = this.fieldName.substring(this.fieldName.indexOf("*") + 1);
+      val = (Integer.parseInt(value) * Integer.parseInt(op)) + "";
     }
     return val;
   }
@@ -107,6 +114,12 @@ public class RuleElement {
       } catch (Exception ex) {
 
       }
+    }
+    if (value.startsWith("[") && value.endsWith("]")) {
+      String val = value.substring(1);
+      val = val.substring(0, val.length() - 1);
+      val = val.split(",")[0];
+      value = val;
     }
     return value;
   }

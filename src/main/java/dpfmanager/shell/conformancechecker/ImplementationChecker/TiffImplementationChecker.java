@@ -14,6 +14,7 @@ import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
+import com.github.jaiimageio.impl.plugins.tiff.TIFFIFD;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,6 +31,11 @@ import javax.xml.bind.Marshaller;
  */
 public class TiffImplementationChecker {
   private TiffDocument tiffDoc;
+  boolean setITFields = false;
+
+  public void setITFields(boolean setITFields) {
+    this.setITFields = setITFields;
+  }
 
   public TiffValidationObject CreateValidationObject(TiffDocument tiffDoc) {
     this.tiffDoc = tiffDoc;
@@ -49,11 +55,21 @@ public class TiffImplementationChecker {
     IFD ifd = tiffDoc.getFirstIFD();
     List<TiffIfd> ifdsList = new ArrayList<TiffIfd>();
     int n = 1;
+    HashSet<Integer> usedOffsets = new HashSet<>();
+    usedOffsets.add(tiffDoc.getFirstIFDOffset());
+    boolean circularReference = false;
     while (ifd != null) {
       ifdsList.add(CreateIFDValidation(ifd, n++));
+      if (usedOffsets.contains(ifd.getNextOffset())) {
+        circularReference = true;
+        break;
+      } else {
+        usedOffsets.add(ifd.getNextOffset());
+      }
       ifd = ifd.getNextIFD();
     }
     TiffIfds ifds = new TiffIfds();
+    ifds.setCircularReference(circularReference);
     ifds.setIfds(ifdsList);
     tiffValidate.setIfds(ifds);
 
@@ -61,13 +77,26 @@ public class TiffImplementationChecker {
   }
 
   public TiffIfd CreateIFDValidation(IFD ifd, int n) {
-    IfdTags metadata = ifd.getMetadata();
+    boolean hasSubIfd = ifd.hasSubIFD();
+    boolean thumbnail = hasSubIfd && ifd.getsubIFD().getImageSize() > ifd.getImageSize();
+    IfdTags metadata;
+    if (!hasSubIfd) {
+      metadata = ifd.getMetadata();
+    } else if (!thumbnail) {
+      metadata = ifd.getMetadata();
+    } else {
+      metadata = ifd.getsubIFD().getMetadata();
+    }
+
     TiffIfd tiffIfd = new TiffIfd();
     tiffIfd.setN(n);
     List<TiffTag> tags = new ArrayList<TiffTag>();
     int prevTagId = -1;
     boolean correctTagOrdering = true;
     boolean duplicatedTags = false;
+    boolean correctCompression = true;
+    boolean correctPhotometricCasuistic = true;
+    boolean correctYcbcr = true;
     HashSet tagIds = new HashSet<>();
     for (TagValue tv : ifd.getTags().getTags()) {
       if (tv.getId() <= prevTagId) {
@@ -90,6 +119,7 @@ public class TiffImplementationChecker {
     tiffIfd.setTiles(ifd.hasTiles() ? 1 : 0);
     tiffIfd.setCorrectStrips(1);
     tiffIfd.setCorrectTiles(1);
+    tiffIfd.setOffset(ifd.getNextOffset());
 
     // Strips check
     if (ifd.hasStrips()) {
@@ -167,10 +197,80 @@ public class TiffImplementationChecker {
         }
       }
 
+      // Check correct compression
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("Compression")) && metadata.get("Compression").getFirstNumericValue() == 1) {
+        if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("CompressedBitsPerPixel"))) {
+          correctCompression = false;
+        }
+      }
+
+      // Check photometric casuistic
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation"))) {
+        int photo = (int) metadata.get("PhotometricInterpretation").getFirstNumericValue();
+        if (photo != 6) {
+          if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrCoefficients"))) correctPhotometricCasuistic = false;
+          if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrSubSampling"))) correctPhotometricCasuistic = false;
+          if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrPositioning"))) correctPhotometricCasuistic = false;
+          if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ReferenceBlackWhite"))) correctPhotometricCasuistic = false;
+        }
+        long spp = 0;
+        if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SamplesPerPixel")))
+          spp = metadata.get("SamplesPerPixel").getFirstNumericValue();
+        if (photo == 2 || photo == 3) {
+          if (spp != 3) {
+            correctPhotometricCasuistic = false;
+          }
+        } else if (photo == 1 || photo == 32803) {
+          if (spp != 1) {
+            correctPhotometricCasuistic = false;
+          }
+          if (photo == 32803) {
+            if (!metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("CFARepeatPatternDim"))) correctPhotometricCasuistic = false;
+            else if (metadata.get("CFARepeatPatternDim").getCardinality() != 2) correctPhotometricCasuistic = false;
+            if (!metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("CFAPattern"))) correctPhotometricCasuistic = false;
+          }
+        }
+      }
+
+      // Check YcbCr
+      int nycbcr = 0;
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrCoefficients")))
+        nycbcr++;
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrSubSampling")))
+        nycbcr++;
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrPositioning")))
+        nycbcr++;
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ReferenceBlackWhite")))
+        nycbcr++;
+      if (nycbcr > 0 && nycbcr != 4) {
+        if (!metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("CFARepeatPatternDim"))) correctYcbcr = false;
+        else if (metadata.get("CFARepeatPatternDim").getCardinality() != 3) correctPhotometricCasuistic = false;
+        if (!metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrSubSampling"))) correctYcbcr = false;
+        else if (metadata.get("YCbCrSubSampling").getCardinality() != 2) correctPhotometricCasuistic = false;
+        if (!metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrPositioning"))) correctYcbcr = false;
+        else if (metadata.get("YCbCrPositioning").getCardinality() != 1) correctPhotometricCasuistic = false;
+        if (!metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ReferenceBlackWhite"))) correctYcbcr = false;
+        else if (metadata.get("ReferenceBlackWhite").getCardinality() != 6) correctPhotometricCasuistic = false;
+      }
+      if (thumbnail) {
+        if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrCoefficients"))) correctYcbcr = false;
+        if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrSubSampling"))) correctYcbcr = false;
+        if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrPositioning"))) correctYcbcr = false;
+        if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ReferenceBlackWhite"))) correctYcbcr = false;
+      }
+
+      // IT Fields
+      if (setITFields) {
+        setITFields(ifd, tiffIfd);
+      }
+
       tiffIfd.setCorrectExtraSamples(correctExtraSamples ? 1 : 0);
       tiffIfd.setOnlyNecessaryExtraSamples(onlyNecessaryExtraSamples ? 1 : 0);
       tiffIfd.setValidBitsPerSample(validBitsPerSample ? 1 : 0);
       tiffIfd.setEqualBitsPerSampleValues(equalBitsPerSampleValues ? 1 : 0);
+      tiffIfd.setCorrectCompression(correctCompression ? 1 : 0);
+      tiffIfd.setCorrectPhotometricCasuistic(correctPhotometricCasuistic ? 1 : 0);
+      tiffIfd.setCorrectYcbcr(correctYcbcr ? 1 : 0);
     }
 
     // Check image type
@@ -212,6 +312,188 @@ public class TiffImplementationChecker {
     return tiffIfd;
   }
 
+  void setITFields(IFD ifd, TiffIfd tiffIfd) {
+    IfdTags metadata = ifd.getMetadata();
+    int sft = -1;
+    int photo = -1;
+    int bps = -1;
+    int planar = -1;
+    int comp = -1;
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SubfileType"))) {
+      sft = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("SubfileType")).getFirstNumericValue();
+    }
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("Compression"))) {
+      comp = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("Compression")).getFirstNumericValue();
+    }
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation"))) {
+      photo = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")).getFirstNumericValue();
+    }
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample"))) {
+      bps = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample")).getFirstNumericValue();
+    }
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration"))) {
+      planar = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration")).getFirstNumericValue();
+    }
+
+    // Determination of TIFF/IT file type
+    if (sft == 1 || sft == -1) {
+      if (comp == 1 || comp == 32895) {
+        if (photo == 5) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 32768) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 2) {
+            if (bps > 1) {
+              tiffIfd.setFiletype("ct");
+            } else if (bps == 1) {
+              tiffIfd.setFiletype("sd");
+            }
+          }
+        } else if (photo == 2) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 32768) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 2) {
+            tiffIfd.setFiletype("ct");
+          }
+        } else if (photo == 8) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 32768) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 2) {
+            tiffIfd.setFiletype("ct");
+          }
+        } else if (photo == 0 || photo == 1) {
+          if (bps == 1) {
+            tiffIfd.setFiletype("bp");
+          } else if (bps > 1) {
+            tiffIfd.setFiletype("mp");
+          }
+        }
+      } else if (comp == 4) {
+        if (photo == 0 || photo == 1) {
+          tiffIfd.setFiletype("bp");
+        } else if (photo == 5) {
+          tiffIfd.setFiletype("sd");
+        }
+      } else if (comp == 7) {
+        if (photo == 5) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          }
+        } else if (photo == 2) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          }
+        } else if (photo == 6) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          }
+        } else if (photo == 8) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          }
+        } else if (photo == 0 || photo == 1) {
+          if (bps > 1) {
+            tiffIfd.setFiletype("mp");
+          }
+        }
+      } else if (comp == 8) {
+        if (photo == 5) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 32768) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 2) {
+            if (bps > 1) {
+              tiffIfd.setFiletype("ct");
+            } else if (bps == 1) {
+              tiffIfd.setFiletype("sd");
+            }
+          }
+        } else if (photo == 2) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 32768) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 2) {
+            tiffIfd.setFiletype("ct");
+          }
+        } else if (photo == 8) {
+          if (planar == 1) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 32768) {
+            tiffIfd.setFiletype("ct");
+          } else if (planar == 2) {
+            tiffIfd.setFiletype("ct");
+          }
+        } else if (photo == 0 || photo == 1) {
+          if (bps == 1) {
+            tiffIfd.setFiletype("bp");
+          } else if (bps > 1) {
+            tiffIfd.setFiletype("mp");
+          }
+        }
+      } else if (comp == 32896) {
+        tiffIfd.setFiletype("lw");
+      } else if (comp == 32897) {
+        tiffIfd.setFiletype("hc");
+      } else if (comp == 32898) {
+        tiffIfd.setFiletype("bp");
+      } else if (((sft >> 3) & 1) == 1) {
+        tiffIfd.setFiletype("fp");
+      }
+    }
+
+    if (tiffIfd.getFiletype().equals("ct")) {
+      boolean rgb =
+          metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation"))
+              && metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")).getFirstNumericValue() == 2;
+      boolean lab =
+          metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation"))
+              && metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")).getFirstNumericValue() == 8;
+      if (rgb) {
+        tiffIfd.setImgtype("rgb");
+      } else if (lab) {
+        tiffIfd.setImgtype("lab");
+      } else {
+        tiffIfd.setImgtype("norgblab");
+      }
+    }
+  }
+
+  TiffIfd createIfdNode(TagValue tv, String nodeName) {
+    TiffIfd ifd = new TiffIfd();
+    List<TiffTag> tags = new ArrayList<TiffTag>();
+    int prevTagId = -1;
+    boolean correctTagOrdering = true;
+    boolean duplicatedTags = false;
+    HashSet tagIds = new HashSet<>();
+    IFD exif = (IFD) tv.getValue().get(0);
+    for (TagValue tvv : exif.getTags().getTags()) {
+      if (tvv.getId() <= prevTagId) {
+        correctTagOrdering = false;
+      }
+      if (tagIds.contains(tvv.getId())) {
+        duplicatedTags = true;
+      } else {
+        tagIds.add(tvv.getId());
+      }
+      prevTagId = tvv.getId();
+      tags.add(CreateTiffTag(tvv));
+    }
+    TiffTags tiffTags = new TiffTags();
+    tiffTags.setTags(tags);
+    ifd.setTags(tiffTags);
+    ifd.setTagOrdering(correctTagOrdering ? 1 : 0);
+    ifd.setDuplicateTags(duplicatedTags ? 1 : 0);
+    ifd.setClassElement(nodeName);
+    return ifd;
+  }
+
   public TiffTag CreateTiffTag(TagValue tv) {
     TiffTag tt = new TiffTag();
     tt.setId(tv.getId());
@@ -221,32 +503,16 @@ public class TiffImplementationChecker {
     tt.setOffset(tv.getReadOffset());
     if (tv.getId() == 34665) {
       // EXIF
-      TiffIfd ifd = new TiffIfd();
-      List<TiffTag> tags = new ArrayList<TiffTag>();
-      int prevTagId = -1;
-      boolean correctTagOrdering = true;
-      boolean duplicatedTags = false;
-      HashSet tagIds = new HashSet<>();
-      IFD exif = (IFD) tv.getValue().get(0);
-      for (TagValue tvv : exif.getTags().getTags()) {
-        if (tvv.getId() <= prevTagId) {
-          correctTagOrdering = false;
-        }
-        if (tagIds.contains(tvv.getId())) {
-          duplicatedTags = true;
-        } else {
-          tagIds.add(tvv.getId());
-        }
-        prevTagId = tvv.getId();
-        tags.add(CreateTiffTag(tvv));
-      }
-      TiffTags tiffTags = new TiffTags();
-      tiffTags.setTags(tags);
-      ifd.setTags(tiffTags);
-      ifd.setTagOrdering(correctTagOrdering ? 1 : 0);
-      ifd.setDuplicateTags(duplicatedTags ? 1 : 0);
-      ifd.setClassElement("exif");
+      TiffIfd ifd = createIfdNode(tv, "exif");
       tt.setExif(ifd);
+    } else if (tv.getId() == 330) {
+      // SubIFD
+      TiffIfd ifd = createIfdNode(tv, "subifd");
+      tt.setSubIfd(ifd);
+    } else if (tv.getId() == 400) {
+      // GlobalParametersIFD
+      TiffIfd ifd = createIfdNode(tv, "globalparameters");
+      tt.setGlobalParameters(ifd);
     } else if (tv.getId() == 700) {
       // XMP
     } else if (tv.getId() == 33723) {

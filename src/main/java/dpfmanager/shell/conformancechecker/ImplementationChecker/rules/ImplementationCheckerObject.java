@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ImplementationCheckerObject {
   String title;
   String description;
+  List<IncludeObject> includes = null;
   List<RulesObject> rules = null;
 
   public void setTitle(String title) {
@@ -22,6 +23,15 @@ public class ImplementationCheckerObject {
 
   public String getTitle() {
     return title;
+  }
+
+  @XmlElement(name = "include")
+  public void setIncludes(List<IncludeObject> includes) {
+    this.includes = includes;
+  }
+
+  public List<IncludeObject> getIncludes() {
+    return includes;
   }
 
   public void setDescription(String description) {

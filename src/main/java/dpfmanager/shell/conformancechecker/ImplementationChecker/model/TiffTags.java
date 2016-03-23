@@ -22,11 +22,13 @@ public class TiffTags extends TiffNode implements TiffNodeInterface {
 
   public List<TiffNode> getChildren(boolean subchilds) {
     List<TiffNode> childs = new ArrayList<TiffNode>();
-    for (TiffTag tag : tags) {
-      childs.add(tag);
-      if (subchilds) {
-        List<TiffNode> subobjects = tag.getChildren(subchilds);
-        childs.addAll(subobjects);
+    if (tags != null) {
+      for (TiffTag tag : tags) {
+        childs.add(tag);
+        if (subchilds) {
+          List<TiffNode> subobjects = tag.getChildren(subchilds);
+          childs.addAll(subobjects);
+        }
       }
     }
     return childs;

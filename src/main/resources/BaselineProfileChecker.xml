@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <implementationCheckerObject>
  
- <title>Baseline Implementation Checker</title>
+ <title>Tiff Baseline Implementation Checker</title>
 
  <description>Tiff Revision 6.0 Final - June 3, 1992</description>
  
  <rules description="header-check">
-  <rule context="tiffValidationObject">
+  <rule context="tiffValidationObject" critical="1">
    <assert test="{count(header)==1}" diagnostics="d1 d2">Header must exist and be unique</assert>
    <diagnostic id="d1" lang="en">Header must exist and be unique</diagnostic>
    <diagnostic id="d2" lang="es">Tiene que existir una única cabecera</diagnostic>
    <reference>Section 2, page 13</reference>
   </rule>
-  <rule context="header">
+  <rule context="header" critical="1">
    <assert test="{byteOrder}">ByteOrder must be defined</assert>
    <reference>Section 2, page 13</reference>
   </rule>
-  <rule context="header">
+  <rule context="header" critical="1">
    <assert test="{byteOrder=='BIG_ENDIAN'}||{byteOrder=='LITTLE_ENDIAN'}">ByteOrder must be BIG_ENDIAN or LITTLE_ENDIAN</assert>
    <reference>Section 2, page 13</reference>
   </rule>
@@ -36,7 +36,7 @@
    <reference>Section 2, page 13</reference>
   </rule>
   <rule context="*">
-   <assert test="{offset &gt; 7}">Bad offset position</assert>
+   <assert test="{offset &gt; 7}||{offset == 0}">Bad offset position</assert>
    <reference>Section 2, page 13</reference>
   </rule>
   <rule context="*">
@@ -49,6 +49,10 @@
   <rule context="tiffValidationObject">
    <assert test="{count(ifds) == 1}">The file must have IFDs</assert>
    <reference>Section 2, page 14</reference>
+  </rule>
+  <rule context="ifds">
+   <assert test="{circularReference == 0}">Circular reference</assert>
+   <reference></reference>
   </rule>
   <rule context="ifds">
    <assert test="{count(ifd) > 0}">At least 1 IFD must exist</assert>
@@ -78,6 +82,14 @@
    <reference></reference>
   </rule>
   <rule context="ifd[strips=1]">
+   <assert test="{tags.tag[name=StripOffsets]}">StripOffsets tag must exist for stripped images</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[strips=1]">
+   <assert test="{tags.tag[name=StripBYTECount]}">StripBYTECount tag must exist for stripped images</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[strips=1]">
    <assert test="{tags.tag[name=RowsPerStrip]}">RowsPerStrip tag must exist for stripped images</assert>
    <reference></reference>
   </rule>
@@ -90,6 +102,10 @@
  <rules description="tiles-check">
   <rule context="ifd[tiles=1]">
    <assert test="{tags.tag[name=TileOffsets].cardinality == tags.tag[name=TileBYTECounts].cardinality}">Inconsistent tile lengths</assert>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileOffsets]}">Missing required field for tiles TileOffsets</assert>
    <reference>Section 15, page 66</reference>
   </rule>
   <rule context="ifd[tiles=1]">
@@ -109,7 +125,7 @@
    <reference>Section 15, page 66</reference>
   </rule>
   <rule context="ifd[tiles=1]">
-   <assert test="{CorrectTiles}">Insufficient tiles</assert>
+   <assert test="{correctTiles == 1}">Insufficient tiles</assert>
    <reference>Section 15, page 66</reference>
   </rule>
  </rules>
@@ -1041,7 +1057,7 @@
    <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
   </rule>
   <rule context="tag[id=330]">
-   <assert test="{type=='LONG'} || {type=='IFD'}">Tag type does not match</assert>
+   <assert test="{type=='LONG'} || {type=='IFD'} || {type=='SUBIFD'}">Tag type does not match</assert>
   </rule>
   <rule context="tag[id=332]">
    <assert test="{type=='SHORT'}">Tag type does not match</assert>
@@ -1736,7 +1752,7 @@
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
    <reference></reference>
-  </rule>  
+  </rule>
  </rules>
 
 </implementationCheckerObject>
