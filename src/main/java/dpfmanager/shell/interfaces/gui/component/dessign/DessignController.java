@@ -118,11 +118,22 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
             }
 
             // Show reports
-            ArrayMessage am = new ArrayMessage();
-            am.add(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
-            am.add(GuiConfig.PRESPECTIVE_SHOW, new UiMessage());
-            am.add(GuiConfig.PRESPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
-            getContext().send(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
+            if (!type.isEmpty()) {
+              ArrayMessage am = new ArrayMessage();
+              am.add(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
+              am.add(GuiConfig.PRESPECTIVE_SHOW, new UiMessage());
+              am.add(GuiConfig.PRESPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
+              getContext().send(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
+            } else {
+              // No format
+              Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Warning");
+                alert.setHeaderText("No output format file was selected");
+                alert.setContentText(formats.toString());
+                alert.showAndWait();
+              });
+            }
 
             getView().hideLoading();
 

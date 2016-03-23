@@ -19,15 +19,14 @@ public class ReportsController extends DpfController<ReportsModel, ReportsView> 
   }
 
   public void loadMoreReports(){
-    getContext().send(BasicConfig.MODULE_LOGS, new LogMessage(this.getClass(), Level.INFO, "Count: "));
-//    try {
-//      getModel().readReports();
-//      if (getModel().isAllReportsLoaded()) {
-//        getView().hideLoadMore();
-//      }
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
+    try {
+      getModel().readReports();
+      if (getModel().isAllReportsLoaded()) {
+        getView().hideLoadMore();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 }

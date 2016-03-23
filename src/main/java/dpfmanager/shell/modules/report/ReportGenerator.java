@@ -291,7 +291,11 @@ public class ReportGenerator {
    */
   private static void copyDirectory(File source, File target) throws IOException {
     if (!target.exists()) {
-      target.mkdir();
+      boolean result = target.mkdir();
+      if (!result) {
+        System.err.println("Could not create the directory " + target.getPath());
+        return;
+      }
     }
     for (String f : source.list()) {
       copy(new File(source, f), new File(target, f));
@@ -731,8 +735,11 @@ public class ReportGenerator {
       try {
         copy(new File(targetPath), outFolder);
         if (!silence) {
-          Desktop desktop = Desktop.getDesktop();
-          desktop.open(outFolder);
+          File sumaryFile = new File(outFolder + "/" + htmlFile.getName());
+          if (sumaryFile.exists()) {
+            Desktop desktop = Desktop.getDesktop();
+            desktop.open(sumaryFile);
+          }
         }
       } catch (IOException e) {
         System.out.println("Cannot copy the report folder to the output path.");

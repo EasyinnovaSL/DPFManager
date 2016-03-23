@@ -96,9 +96,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
                   }
                 }
                 data.add(rr);
-              } else {
-                rr = ReportRow.createEmptyRow(reportDay);
-                data.add(rr);
+                index++;
               }
 
               // Check if all done
@@ -106,7 +104,6 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
                 all_reports_loaded = true;
               }
             }
-            index++;
           }
 
         } else {
