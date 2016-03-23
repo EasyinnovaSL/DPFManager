@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane fx:id="botAnchor" prefWidth="722.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <SplitPane fx:id="botSplit" dividerPositions="0.7" styleClass="background-main" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <items>
+
+                <AnchorPane fx:id="consoleAnchor">
+                    <TextArea fx:id="consoleArea" editable="false" styleClass="console-area" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                </AnchorPane>
+                <AnchorPane fx:id="taskAnchor">
+
+                </AnchorPane>
+            </items>
+        </SplitPane>
+    </children>
+</AnchorPane>

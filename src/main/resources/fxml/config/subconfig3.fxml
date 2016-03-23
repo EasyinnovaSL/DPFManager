@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox id="wizStep3" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox alignment="TOP_CENTER">
+        <Label styleClass="label-info" text="Format" />
+        <Pane styleClass="separator-line">
+            <VBox.margin>
+                <Insets bottom="6.0" top="3.0" />
+            </VBox.margin>
+        </Pane>
+    </VBox>
+    <CheckBox fx:id="chkHtml" mnemonicParsing="false" styleClass="checkreport" text="HTML">
+        <VBox.margin>
+            <Insets bottom="15.0" left="250.0" />
+        </VBox.margin>
+    </CheckBox>
+    <ImageView focusTraversable="true" preserveRatio="true">
+        <image><Image url="@../../images/line2.png" /></image>
+        <VBox.margin>
+            <Insets bottom="15.0" left="65.0" right="65.0" />
+        </VBox.margin>
+    </ImageView>
+    <CheckBox fx:id="chkXml" mnemonicParsing="false" styleClass="checkreport" text="XML">
+        <VBox.margin>
+            <Insets bottom="15.0" left="250.0" />
+        </VBox.margin>
+    </CheckBox>
+    <ImageView focusTraversable="true" preserveRatio="true">
+        <image><Image url="@../../images/line2.png" /></image>
+        <VBox.margin>
+            <Insets bottom="15.0" left="65.0" right="65.0" />
+        </VBox.margin>
+    </ImageView>
+    <CheckBox fx:id="chkJson" mnemonicParsing="false" styleClass="checkreport" text="JSON">
+        <VBox.margin>
+            <Insets bottom="15.0" left="250.0" />
+        </VBox.margin>
+    </CheckBox>
+    <ImageView focusTraversable="true" preserveRatio="true">
+        <image><Image url="@../../images/line2.png" /></image>
+        <VBox.margin>
+            <Insets bottom="15.0" left="65.0" right="65.0" />
+        </VBox.margin>
+    </ImageView>
+    <CheckBox fx:id="chkPdf" mnemonicParsing="false" styleClass="checkreport" text="PDF">
+        <VBox.margin>
+            <Insets bottom="15.0" left="250.0" />
+        </VBox.margin>
+    </CheckBox>
+    <ImageView focusTraversable="true" preserveRatio="true">
+        <image><Image url="@../../images/line2.png" /></image>
+        <VBox.margin>
+            <Insets bottom="15.0" left="65.0" right="65.0" />
+        </VBox.margin>
+    </ImageView>
+    <VBox alignment="TOP_CENTER">
+        <Label styleClass="label-info" text="Output" />
+        <Pane styleClass="separator-line">
+            <VBox.margin>
+                <Insets bottom="21.0" top="3.0" />
+            </VBox.margin>
+        </Pane>
+    </VBox>
+    <CheckBox id="chkDefaultOutput" fx:id="chkDefaultOutput" mnemonicParsing="false" onAction="#changeDefault" selected="true" styleClass="checkreport" text="Default">
+        <VBox.margin>
+            <Insets bottom="15.0" left="250.0" />
+        </VBox.margin>
+    </CheckBox>
+   <HBox fx:id="hboxOutput" alignment="CENTER_LEFT" visible="false" managed="false">
+      <VBox.margin>
+         <Insets bottom="15.0" left="250.0" />
+      </VBox.margin>
+      <children>
+         <TextField fx:id="txtOutput" maxHeight="41.0" maxWidth="382.0" minHeight="41.0" minWidth="382.0" />
+         <Button fx:id="butOutput" mnemonicParsing="false" onAction="#browseOutput" styleClass="secondary-button" text="Select">
+            <HBox.margin>
+               <Insets left="10.0" />
+            </HBox.margin>
+         </Button>
+      </children>
+   </HBox>
+</VBox>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
+<AnchorPane fx:id="botAnchor" maxHeight="21.0" minHeight="21.0" prefHeight="21.0" prefWidth="970.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <SplitPane fx:id="botSplitBar" dividerPositions="0.7" maxHeight="21.0" minHeight="21.0" prefHeight="21.0" styleClass="background-main" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+            <items>
+                <HBox fx:id="hboxConsole" alignment="CENTER_LEFT" maxHeight="21.0" minHeight="21.0" prefHeight="21.0" styleClass="bot-hbox">
+                    <children>
+                        <Button fx:id="consoleButInConsole" onAction="#showHideConsoleInConsole" styleClass="top-button" text="Console">
+                            <padding>
+                                <Insets bottom="2.0" left="3.0" right="3.0" top="2.0" />
+                            </padding>
+                            <HBox.margin>
+                                <Insets left="3.0" />
+                            </HBox.margin>
+                        </Button>
+                        <StackPane fx:id="consoleSeparator" maxWidth="2.0" minWidth="2.0" prefWidth="2.0" styleClass="bot-separator">
+                            <HBox.margin>
+                                <Insets left="3.0" right="3.0" />
+                            </HBox.margin>
+                        </StackPane>
+                        <Button fx:id="taskButInConsole" mnemonicParsing="false" onAction="#showHideTasksInConsole" styleClass="top-button" text="Tasks">
+                            <padding>
+                                <Insets bottom="2.0" left="3.0" right="3.0" top="2.0" />
+                            </padding>
+                        </Button>
+                        <Separator opacity="0.0" prefWidth="1.0" HBox.hgrow="ALWAYS">
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                        </Separator>
+                    </children>
+                </HBox>
+                <HBox fx:id="hboxTask" alignment="CENTER_LEFT" maxHeight="21.0" minHeight="21.0" prefHeight="21.0" styleClass="bot-hbox">
+                    <children>
+                        <Button fx:id="consoleButInTask" onAction="#showHideConsoleInTask" mnemonicParsing="false" styleClass="top-button" text="Console">
+                            <padding>
+                                <Insets bottom="2.0" left="3.0" right="3.0" top="2.0" />
+                            </padding>
+                            <HBox.margin>
+                                <Insets left="3.0" />
+                            </HBox.margin>
+                        </Button>
+                        <StackPane fx:id="tasksSeparator" maxWidth="2.0" minWidth="2.0" prefWidth="2.0" styleClass="bot-separator">
+                            <HBox.margin>
+                                <Insets left="3.0" right="3.0" />
+                            </HBox.margin>
+                        </StackPane>
+                        <Button fx:id="taskButInTask" onAction="#showHideTaskInTask" styleClass="top-button" text="Tasks">
+                            <padding>
+                                <Insets bottom="2.0" left="3.0" right="1.0" top="2.0" />
+                            </padding>
+                            <HBox.margin>
+                                <Insets right="3.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Separator opacity="0.0" prefWidth="1.0" HBox.hgrow="ALWAYS">
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                        </Separator>
+                    </children>
+                </HBox>
+            </items>
+        </SplitPane>
+    </children>
+</AnchorPane>

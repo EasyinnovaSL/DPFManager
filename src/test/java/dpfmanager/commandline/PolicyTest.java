@@ -1,7 +1,7 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.UserInterface;
+import dpfmanager.shell.interfaces.console.commandline.CommandLineApp;
+import dpfmanager.shell.core.DPFManagerProperties;
 import javafx.application.Application;
 
 import com.easyinnova.tiff.reader.TiffReader;
@@ -30,7 +30,7 @@ public class PolicyTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -42,7 +42,7 @@ public class PolicyTest extends TestCase {
   }
 
   public void testAddRemoveTag() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -96,7 +96,7 @@ public class PolicyTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     File directori = new File(path);
@@ -120,7 +120,7 @@ public class PolicyTest extends TestCase {
   }
 
   public void testEndianessOk() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -169,7 +169,7 @@ public class PolicyTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     File directori = new File(path);
@@ -193,7 +193,7 @@ public class PolicyTest extends TestCase {
   }
 
   public void testEndianessKo() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
@@ -242,7 +242,7 @@ public class PolicyTest extends TestCase {
       }
     };
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     File directori = new File(path);

@@ -2,9 +2,9 @@ package dpfmanager.commandline;
 
 import static java.io.File.separator;
 
-import dpfmanager.shell.interfaces.Cli.CommandLine;
-import dpfmanager.shell.interfaces.UserInterface;
-import dpfmanager.shell.reporting.ReportGenerator;
+import dpfmanager.shell.interfaces.console.commandline.CommandLineApp;
+import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.modules.report.ReportGenerator;
 import javafx.application.Application;
 
 import com.easyinnova.tiff.io.TiffInputStream;
@@ -37,7 +37,7 @@ public class TiffWriterTest extends TestCase {
    */
   @Before
   public void PreTest() {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     boolean ok = true;
     try {
@@ -49,7 +49,7 @@ public class TiffWriterTest extends TestCase {
   }
 
   public void testReports1() throws Exception {
-    UserInterface.setFeedback(false);
+    DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/TestWriter";
@@ -88,7 +88,7 @@ public class TiffWriterTest extends TestCase {
     };
 
 
-    CommandLine cl = new CommandLine(params);
+    CommandLineApp cl = new CommandLineApp(params);
     cl.launch();
 
     String path = getPath();

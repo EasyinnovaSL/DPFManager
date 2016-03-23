@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<AnchorPane id="pane0" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox id="dessignVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView focusTraversable="true" preserveRatio="true" styleClass="main-logo">
+                <image> <Image url="@../images/logo.png" /></image>
+                <VBox.margin>
+                    <Insets bottom="60.0" top="40.0" />
+                </VBox.margin>
+            </ImageView>
+            <Label styleClass="mainTitle" text="CONFORMANCE CHECKER" />
+            <ImageView focusTraversable="true" preserveRatio="true">
+                <image> <Image url="@../images/lineTop.png" /></image>
+                <VBox.margin>
+                    <Insets bottom="30.0" left="65.0" right="65.0" top="10.0" />
+                </VBox.margin>
+            </ImageView>
+            <HBox alignment="CENTER">
+                <children>
+                   <Label styleClass="label-info" text="Files" />
+                   <Button fx:id="fileInfoBut" onAction="#showFileInfo" mnemonicParsing="false" styleClass="button-info">
+                      <HBox.margin>
+                         <Insets left="5.0" />
+                      </HBox.margin>
+                   </Button>
+                </children>
+            </HBox>
+            <Pane styleClass="separator-line">
+                <VBox.margin>
+                    <Insets bottom="6.0" top="3.0" />
+                </VBox.margin>
+            </Pane>
+            <HBox alignment="CENTER">
+                <children>
+                    <TextField fx:id="inputText" maxHeight="41.0" maxWidth="382.0" minHeight="41.0" prefWidth="382.0" text="Select a file">
+                        <cursor>
+                            <Cursor fx:constant="TEXT" />
+                        </cursor>
+                    </TextField>
+                    <Button fx:id="selectButton" onAction="#selectFileClicked" mnemonicParsing="false" styleClass="secondary-button" text="Select">
+                  <HBox.margin>
+                     <Insets left="5.0" />
+                  </HBox.margin></Button>
+               <ComboBox fx:id="comboChoice" prefWidth="150.0" styleClass="combo-dpf">
+                  <HBox.margin>
+                     <Insets left="5.0" />
+                  </HBox.margin>
+               </ComboBox>
+                </children>
+            <VBox.margin>
+               <Insets bottom="30.0" />
+            </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER">
+                <children>
+                    <Label styleClass="label-info" text="Configuration" />
+                    <Button fx:id="configInfoBut" onAction="#showConfigInfo" mnemonicParsing="false" styleClass="button-info">
+                        <HBox.margin>
+                            <Insets left="5.0" />
+                        </HBox.margin>
+                    </Button>
+                </children>
+            </HBox>
+            <Pane styleClass="separator-line">
+                <VBox.margin>
+                    <Insets bottom="6.0" top="3.0" />
+                </VBox.margin>
+            </Pane>
+            <ScrollPane fx:id="configScroll" hbarPolicy="AS_NEEDED" maxWidth="504.0" minHeight="175.0" prefHeight="175.0" prefWidth="504.0" styleClass="paneRadios">
+                <VBox.margin>
+                   <Insets bottom="15.0" />
+                </VBox.margin>
+                <cursor>
+                   <Cursor fx:constant="HAND" />
+                </cursor>
+            </ScrollPane>
+            <HBox alignment="CENTER">
+                <children>
+                    <Button fx:id="newButton" onAction="#newButtonClicked" mnemonicParsing="false" styleClass="button-trans" text="NEW">
+                      <HBox.margin>
+                         <Insets right="8.0" />
+                      </HBox.margin></Button>
+                    <Button fx:id="importButton" onAction="#importButtonClicked" mnemonicParsing="false" styleClass="button-trans" text="IMPORT">
+                      <HBox.margin>
+                         <Insets right="8.0" />
+                      </HBox.margin></Button>
+                    <Button fx:id="editButton" onAction="#editButtonClicked" mnemonicParsing="false" styleClass="button-trans" text="EDIT">
+                      <HBox.margin>
+                         <Insets right="8.0" />
+                      </HBox.margin></Button>
+                    <Button fx:id="deleteButton" onAction="#deleteButtonClicked" mnemonicParsing="false" styleClass="button-trans" text="DELETE" />
+                </children>
+                <VBox.margin>
+                   <Insets bottom="15.0" />
+                </VBox.margin>
+            </HBox>
+            <ImageView focusTraversable="true" preserveRatio="true">
+                <image> <Image url="@../images/lineBottom.png" /></image>
+                <VBox.margin>
+                    <Insets bottom="20.0" left="65.0" right="65.0" />
+                </VBox.margin>
+            </ImageView>
+         <Button fx:id="checkFilesButton" onAction="#checkFilesClicked" mnemonicParsing="false" styleClass="main-button" text="Check files">
+            <VBox.margin>
+               <Insets bottom="30.0" />
+            </VBox.margin>
+         </Button>
+        </VBox>
+        <VBox fx:id="loadingVbox" alignment="TOP_CENTER" styleClass="loading2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="loading">
+               <VBox.margin>
+                  <Insets left="275.0" right="275.0" top="400.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="50.0" left="20.0" right="20.0" top="50.0" />
+               </padding>
+               <children>
+                  <Label fx:id="lblLoading" text="Processing..." />
+               </children>
+            </HBox>
+         </children></VBox>
+    </children>
+</AnchorPane>

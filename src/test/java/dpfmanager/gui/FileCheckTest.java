@@ -1,7 +1,9 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
-import dpfmanager.shell.reporting.ReportRow;
+import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.report.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
@@ -28,7 +30,7 @@ public class FileCheckTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
@@ -41,44 +43,44 @@ public class FileCheckTest extends ApplicationTest {
     //Get the current reports number
     int nReports = getCurrentReports();
 
-    //import config file
-    MainApp.setTestParam("import", inputConfigPath);
+    //import config file and check files
+    GuiWorkbench.setTestParam("import", inputConfigPath);
     clickOnScroll("#importButton");
     clickOnImportedConfig(inputConfigPath);
-    writeText("#txtBox1", inputFilePath);
+    writeText("#inputText", inputFilePath);
     clickOnAndReload("#checkFilesButton");
-    FxAssert.verifyThat("#loadingPane", NodeMatchers.isNotNull()); //Check loading screen
+    FxAssert.verifyThat("#loadingVbox", NodeMatchers.isVisible()); //Check loading screen
     waitForCheckFiles(60);
 
     //Check table view
-    clickOnAndReload("#butReport");
-    TableView<ReportRow> table = (TableView) scene.lookup("#tab_reports");
+    clickOnAndReloadTop("#butReports",5000);
+    TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     ReportRow row = table.getItems().get(0);
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, MainApp.reports_loaded), table.getItems().size());
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_loaded), table.getItems().size());
     Assert.assertEquals("Report row N files", "3", row.getNfiles());
     Assert.assertEquals("Report row N passed", "1 passed", row.getPassed());
     Assert.assertEquals("Report row N errors", "2 errors", row.getErrors());
     Assert.assertEquals("Report row N warnings", "0 warnings", row.getWarnings());
 
     //Check html && pdf exists
-    FxAssert.verifyThat("#tab_reports #buthtml", NodeMatchers.isNotNull());
-    clickOnAndReload("#tab_reports #buthtml");
-    FxAssert.verifyThat("#webViewReport", NodeMatchers.isNotNull());
+    FxAssert.verifyThat("#tabReports #buthtml", NodeMatchers.isNotNull());
+    clickOnAndReload("#tabReports #buthtml", 1000);
+    FxAssert.verifyThat("#webView", NodeMatchers.isNotNull());
 
     //Check xml
-    clickOnAndReload("#butReport");
-    clickOnAndReload("#tab_reports #butxml");
-    FxAssert.verifyThat("#textAreaReport", NodeMatchers.isNotNull());
-    TextArea textArea = (TextArea) scene.lookup("#textAreaReport");
+    clickOnAndReloadTop("#butReports", 5000);
+    clickOnAndReload("#tabReports #butxml", 1000);
+    FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
+    TextArea textArea = (TextArea) scene.lookup("#textArea");
     String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     String initial = textArea.getText().substring(0,expected.length());
     Assert.assertEquals("Report xml", expected, initial);
 
     //Check json
-    clickOnAndReload("#butReport");
-    clickOnAndReload("#tab_reports #butjson");
-    FxAssert.verifyThat("#textAreaReport", NodeMatchers.isNotNull());
-    textArea = (TextArea) scene.lookup("#textAreaReport");
+    clickOnAndReloadTop("#butReports", 5000);
+    clickOnAndReload("#tabReports #butjson", 1000);
+    FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
+    textArea = (TextArea) scene.lookup("#textArea");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
     Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
   }

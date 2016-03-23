@@ -1,8 +1,0 @@
-/* Application wide styles */
-
-
-/* Component specific styles */
-
-.mainimage{
-	-fx-image: url("../images/main.png");
-}

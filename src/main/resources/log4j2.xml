@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+<Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+        <PatternLayout>
+            <MarkerPatternSelector defaultPattern="%-5p [%logger{36}] - %msg%n">
+                <PatternMatch key="PLAIN" pattern="%msg%n"/>
+            </MarkerPatternSelector>
+        </PatternLayout>
+    </Console>
+    <TextAreaAppender name="TextArea" maxLines="100">
+        <PatternLayout>
+            <MarkerPatternSelector defaultPattern="%-5p [%logger{36}] - %msg%n">
+                <PatternMatch key="PLAIN" pattern="%msg%n"/>
+            </MarkerPatternSelector>
+        </PatternLayout>
+    </TextAreaAppender>
+    <File name="File" fileName="DpfManager.log" immediateFlush="false" append="true">
+        <PatternLayout pattern="%d{dd/MM HH:mm} %-5p [%logger{36}] - %msg%n"/>
+    </File>
+    <Async name="Async">
+        <AppenderRef ref="File"/>
+    </Async>
+</Appenders>
+<Loggers>
+    <Root level="debug" additivity="false">
+        <AppenderRef ref="Console"/>
+        <AppenderRef ref="TextArea"/>
+        <AppenderRef ref="Async" level="info"/>
+    </Root>
+</Loggers>
+</Configuration>

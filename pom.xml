@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<!-- More Project Information -->
-	<name>dpf_manager</name>
+	<name>DPF Manager</name>
 	<description>Dpf manager</description>
 	<url>http://www.dpfmanager.org</url>
 	<inceptionYear>2015</inceptionYear>
@@ -33,6 +33,7 @@
 		<developer>
 			<name>Xavier Tarrés</name>
 			<email>xavitarres@easyinnova.com</email>
+			<organization>Easy Innova</organization>
 			<url>https://github.com/XaviTarres</url>
 			<id>XaviTarres</id>
 		</developer>
@@ -41,6 +42,12 @@
 			<email>victormunoz@easyinnova.com</email>
 			<organization>Easy Innova</organization>
 			<organizationUrl>http://www.easyinnova.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Adrià Llorens Martinez</name>
+			<email>adriallorens@easyinnova.com</email>
+			<organization>Easy Innova</organization>
+			<url>https://github.com/Adri7</url>
 		</developer>
 		<developer>
 			<name>Carlos García Rubio</name>
@@ -66,10 +73,14 @@
 	</distributionManagement>
 
 	<properties>
-		<slf4j.version>1.6.1</slf4j.version>
+		<jacp.version>2.1</jacp.version>
 	    <maven.compiler.source>1.8</maven.compiler.source>
 	    <maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!--Build properties-->
+		<main.class>dpfmanager.shell.core.app.MainApp</main.class>
+		<gui.class>dpfmanager.shell.core.app.MainGuiApp</gui.class>
+		<console.class>dpfmanager.shell.core.app.MainConsoleApp</console.class>
 	</properties>
 
 	<repositories>
@@ -104,27 +115,27 @@
 		    <version>1.3.0</version>
 		</dependency>
 
-		<!-- Logging -->
 		<dependency>
+			<!--LOG4J2 Api-->
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+		<dependency>
+			<!--LOG4J2 Core-->
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+		<dependency>
+			<!--Avoid schematron slf4j log error-->
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
+			<artifactId>slf4j-nop</artifactId>
+			<version>1.7.19</version>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -227,9 +238,159 @@
 			<version>8.40.10</version>
 		</dependency>
 		<!--End Test Gui dependencies-->
+
+		<!--JacpFX-->
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.API</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.JavaFX</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.JavaFXControls</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.JavaFXLauncher</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacpfx</groupId>
+			<artifactId>jacpfx.JavaFXSpring</artifactId>
+			<version>${jacp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!--End JacpFX-->
+
 	</dependencies>
 
+	<!--Common Build Plugins-->
+	<build>
+		<plugins>
+
+			<!-- Resources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<nonFilteredFileExtensions>
+						<nonFilteredFileExtension>otf</nonFilteredFileExtension>
+						<nonFilteredFileExtension>eot</nonFilteredFileExtension>
+						<nonFilteredFileExtension>svg</nonFilteredFileExtension>
+						<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+						<nonFilteredFileExtension>woff</nonFilteredFileExtension>
+						<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
+				</configuration>
+			</plugin>
+
+			<!-- Create Jar -->
+			<plugin>
+				<groupId>com.zenjava</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>8.1.5</version>
+				<configuration>
+					<mainClass>${main.class}</mainClass>
+					<verbose>true</verbose>
+					<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
+					<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
+					<deployDir>${project.basedir}/src/main/deploy</deployDir>
+					<vendor>${project.build.finalName}</vendor>
+					<nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
+					<bundleType>ALL</bundleType>
+					<bundler>ALL</bundler>
+					<nativeReleaseVersion>${project.version}</nativeReleaseVersion>
+					<needShortcut>true</needShortcut>
+					<needMenu>true</needMenu>
+					<appName>${project.name}</appName>
+					<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
+				</configuration>
+				<executions>
+					<execution>
+						<!-- Build Jar -->
+						<id>create-jfxjar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!--Checkstyle-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.15</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>6.1.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<!--Java Doc-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<configuration>
+					<stylesheetfile>${basedir}/stylesheet.css</stylesheetfile>
+					<docfilessubdirs>true</docfilessubdirs>
+					<links>
+						<link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+					</links>
+					<sourcepath>${basedir}/src</sourcepath>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!--Tests plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<reuseForks>false</reuseForks>
+					<additionalClasspathElements>
+						<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
+					</additionalClasspathElements>
+					<!--<excludes>-->
+						<!--<exclude>dpfmanager.gui</exclude>-->
+						<!--<exclude>dpfmanager.commandline</exclude>-->
+					<!--</excludes>-->
+					<!--<includes>-->
+						<!--<include>dpfmanager.RunTestOnly</include>-->
+					<!--</includes>-->
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
 	<profiles>
+		<!--Windows Profile-->
 		<profile>
 			<id>windows</id>
 			<activation>
@@ -237,59 +398,10 @@
 					<family>Windows</family>
 				</os>
 			</activation>
-			<!-- Build Settings -->
 			<build>
 				<finalName>DPF Manager</finalName>
 				<plugins>
-					<plugin>
-						<groupId>com.zenjava</groupId>
-						<artifactId>javafx-maven-plugin</artifactId>
-						<version>8.1.5</version>
-						<configuration>
-							<mainClass>dpfmanager.shell.MainApp</mainClass>
-							<verbose>true</verbose>
-							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
-							<deployDir>${project.basedir}/src/main/deploy</deployDir>
-							<!--<vendor>${project.organization.name}</vendor>-->
-							<vendor>${project.build.finalName}</vendor>
-							<nativeOutputDir>${project.organization.name}</nativeOutputDir>
-							<bundleType>ALL</bundleType>
-							<bundler>ALL</bundler>
-							<nativeReleaseVersion>${project.version}</nativeReleaseVersion>
-							<needShortcut>true</needShortcut>
-							<needMenu>true</needMenu>
-							<appName>${project.build.finalName}</appName>
-							<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
-							<!--<addPackagerJar>true</addPackagerJar>-->
-							<!--<jfxCallFromCLI>true</jfxCallFromCLI>-->
-						</configuration>
-						<executions>
-							<execution>
-								<!-- required before build-native -->
-								<id>create-jfxjar</id>
-								<phase>package</phase>
-								<goals>
-									<goal>build-jar</goal>
-								</goals>
-							</execution>
-							<!--					<execution>
-                                                    <id>create-native</id>
-                                                    <phase>package</phase>
-                                                    <goals>
-                                                        <goal>build-native</goal>
-                                                    </goals>
-                                                </execution>
-                                                <execution>
-                                                    <id>create-web</id>
-                                                    <phase>package</phase>
-                                                    <goals>
-                                                        <goal>build-web</goal>
-                                                    </goals>
-                                                </execution>-->
-						</executions>
-					</plugin>
-
+					<!-- Build Command Line Exe -->
 					<plugin>
 						<groupId>com.akathist.maven.plugins.launch4j</groupId>
 						<artifactId>launch4j-maven-plugin</artifactId>
@@ -301,112 +413,69 @@
 								<goals><goal>launch4j</goal></goals>
 								<configuration>
 									<headerType>console</headerType>
-									<outfile>${project.build.directory}/jfx/app/${project.build.finalName}.exe</outfile>
-									<jar>${project.build.directory}/jfx/app/${project.build.finalName}-jfx.jar</jar>
-									<errTitle>encc</errTitle>
+									<outfile>${project.build.directory}/jfx/app/${project.build.finalName}-console.exe</outfile>
 									<icon>${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</icon>
+									<dontWrapJar>true</dontWrapJar>
+									<jar>${project.build.finalName}-jfx.jar</jar>
 									<classPath>
-										<mainClass>dpfmanager.shell.MainApp</mainClass>
+										<mainClass>${console.class}</mainClass>
 										<addDependencies>false</addDependencies>
 										<preCp>anything</preCp>
 									</classPath>
 									<jre>
 										<minVersion>1.8.0</minVersion>
 									</jre>
-									<versionInfo>
-										<fileVersion>1.2.3.4</fileVersion>
-										<txtFileVersion>txt file version?</txtFileVersion>
-										<fileDescription>a description</fileDescription>
-										<copyright>my copyright</copyright>
-										<productVersion>4.3.2.1</productVersion>
-										<txtProductVersion>txt product version</txtProductVersion>
-										<productName>E-N-C-C</productName>
-										<internalName>ccne</internalName>
-										<originalFilename>original.exe</originalFilename>
-									</versionInfo>
 								</configuration>
 							</execution>
-
 						</executions>
-
 					</plugin>
 
+					<!-- Build Gui Exe and installer -->
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-checkstyle-plugin</artifactId>
-						<version>2.15</version>
-						<dependencies>
-							<dependency>
-								<groupId>com.puppycrawl.tools</groupId>
-								<artifactId>checkstyle</artifactId>
-								<version>6.1.1</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.camel</groupId>
-						<artifactId>camel-maven-plugin</artifactId>
-						<version>2.15.2</version>
-						<configuration>
-							<applicationContextUri>META-INF/spring/*.xml;YOUR_FILE_NAME_IN_THE_CLASS_PATH.xml</applicationContextUri>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9.1</version>
-						<configuration>
-							<stylesheetfile>${basedir}/stylesheet.css</stylesheetfile>
-							<docfilessubdirs>true</docfilessubdirs>
-							<links>
-								<link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-							</links>
-							<sourcepath>${basedir}/src</sourcepath>
-						</configuration>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2.1</version>
 						<executions>
 							<execution>
-								<id>attach-javadocs</id>
+								<id>package-exe</id>
+								<phase>package</phase>
 								<goals>
-									<goal>jar</goal>
+									<goal>exec</goal>
 								</goals>
+								<configuration>
+									<executable>${env.JAVA_HOME}/bin/javapackager</executable>
+									<arguments>
+										<argument>-deploy</argument>
+										<argument>-native</argument>
+										<argument>exe</argument>
+										<argument>-embedjnlp</argument>
+										<argument>-appclass</argument>
+										<argument>${gui.class}</argument>
+										<!--Customize params-->
+										<argument>-name</argument>
+										<argument>${project.name}</argument>
+										<argument>-title</argument>
+										<argument>${project.name}</argument>
+										<argument>-vendor</argument>
+										<argument>${project.name}</argument>
+										<!--Input files params-->
+										<argument>-srcdir</argument>
+										<argument>${project.build.directory}/jfx/app</argument>
+										<!--Bundle params-->
+										<argument>-BappVersion=${project.version}</argument>
+										<argument>-Bicon=${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</argument>
+										<!--Output params-->
+										<argument>-outdir</argument>
+										<argument>${project.build.directory}/jfx/native</argument>
+										<argument>-outfile</argument>
+										<argument>${project.name}</argument>
+										<argument>-v</argument>
+									</arguments>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<!--WINDOWS-->
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.19.1</version>
-						<configuration>
-							<reuseForks>false</reuseForks>
-							<additionalClasspathElements>
-								<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
-							</additionalClasspathElements>
-							<!--<excludes>-->
-								<!--<exclude>dpfmanager.gui</exclude>-->
-								<!--<exclude>dpfmanager.commandline</exclude>-->
-							<!--</excludes>-->
-							<!--<includes>-->
-								<!--<include>dpfmanager.RunTestOnly</include>-->
-							<!--</includes>-->
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.6</version>
-						<configuration>
-							<encoding>UTF-8</encoding>
-							<nonFilteredFileExtensions>
-								<nonFilteredFileExtension>otf</nonFilteredFileExtension>
-								<nonFilteredFileExtension>eot</nonFilteredFileExtension>
-								<nonFilteredFileExtension>svg</nonFilteredFileExtension>
-								<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
-								<nonFilteredFileExtension>woff</nonFilteredFileExtension>
-								<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
-							</nonFilteredFileExtensions>
-						</configuration>
-					</plugin>
+
 				</plugins>
 			</build>
 		</profile>
@@ -419,135 +488,62 @@
 					<family>!Windows</family>
 				</os>
 			</activation>
-			<!-- Build Settings -->
 			<build>
 				<finalName>DPF Manager</finalName>
 				<plugins>
+
+					<!--Create Installer-->
 					<plugin>
-						<groupId>com.zenjava</groupId>
-						<artifactId>javafx-maven-plugin</artifactId>
-						<version>8.1.5</version>
-						<configuration>
-							<mainClass>dpfmanager.shell.MainApp</mainClass>
-							<verbose>true</verbose>
-							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
-							<deployDir>${project.basedir}/src/main/deploy</deployDir>
-							<!--<vendor>${project.organization.name}</vendor>-->
-							<vendor>${project.build.finalName}</vendor>
-							<nativeOutputDir>${project.organization.name}</nativeOutputDir>
-							<bundleType>ALL</bundleType>
-							<bundler>ALL</bundler>
-							<nativeReleaseVersion>${project.version}</nativeReleaseVersion>
-							<needShortcut>true</needShortcut>
-							<needMenu>true</needMenu>
-							<appName>${project.build.finalName}</appName>
-							<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
-							<!--<addPackagerJar>true</addPackagerJar>-->
-							<!--<jfxCallFromCLI>true</jfxCallFromCLI>-->
-						</configuration>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2.1</version>
 						<executions>
 							<execution>
-								<!-- required before build-native -->
-								<id>create-jfxjar</id>
+								<id>package-exe</id>
 								<phase>package</phase>
 								<goals>
-									<goal>build-jar</goal>
+									<goal>exec</goal>
 								</goals>
-							</execution>
-							<execution>
-								<id>create-native</id>
-								<phase>package</phase>
-								<goals>
-									<goal>build-native</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>create-web</id>
-								<phase>package</phase>
-								<goals>
-									<goal>build-web</goal>
-								</goals>
+								<configuration>
+									<executable>javapackager</executable>
+									<arguments>
+										<argument>-deploy</argument>
+										<argument>-native</argument>
+										<argument>installer</argument>
+										<argument>-embedjnlp</argument>
+										<argument>-appclass</argument>
+										<argument>${main.class}</argument>
+										<!--Customize params-->
+										<argument>-name</argument>
+										<argument>${project.name}</argument>
+										<argument>-title</argument>
+										<argument>${project.name}</argument>
+										<argument>-vendor</argument>
+										<argument>${project.name}</argument>
+										<!--Input files params-->
+										<argument>-srcdir</argument>
+										<argument>${project.build.directory}/jfx/app</argument>
+										<argument>-srcfiles</argument>
+										<argument>${project.build.finalName}-jfx.jar</argument>
+										<argument>-srcdir</argument>
+										<argument>${project.build.directory}/jfx/app</argument>
+										<argument>-srcfiles</argument>
+										<argument>lib</argument>
+										<!--Bundle params-->
+										<argument>-BappVersion=${project.version}</argument>
+										<argument>-Bicon=${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</argument>
+										<!--Output params-->
+										<argument>-outdir</argument>
+										<argument>${project.build.directory}/jfx/native</argument>
+										<argument>-outfile</argument>
+										<argument>${project.name}</argument>
+										<argument>-v</argument>
+									</arguments>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
 
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-checkstyle-plugin</artifactId>
-						<version>2.15</version>
-						<dependencies>
-							<dependency>
-								<groupId>com.puppycrawl.tools</groupId>
-								<artifactId>checkstyle</artifactId>
-								<version>6.1.1</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.camel</groupId>
-						<artifactId>camel-maven-plugin</artifactId>
-						<configuration>
-							<applicationContextUri>META-INF/spring/*.xml;YOUR_FILE_NAME_IN_THE_CLASS_PATH.xml</applicationContextUri>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9.1</version>
-						<configuration>
-							<stylesheetfile>${basedir}/stylesheet.css</stylesheetfile>
-							<docfilessubdirs>true</docfilessubdirs>
-							<links>
-								<link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-							</links>
-							<sourcepath>${basedir}/src</sourcepath>
-						</configuration>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					
-					<plugin>
-						<!-- LINUX MAC -->
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.19.1</version>
-						<configuration>
-							<reuseForks>false</reuseForks>
-							<additionalClasspathElements>
-								<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
-							</additionalClasspathElements>
-							<!--<excludes>-->
-								<!--<exclude>dpfmanager.gui</exclude>-->
-								<!--<exclude>dpfmanager.commandline</exclude>-->
-							<!--</excludes>-->
-							<!--<includes>-->
-								<!--<include>dpfmanager.RunTestOnly</include>-->
-							<!--</includes>-->
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.6</version>
-						<configuration>
-							<encoding>UTF-8</encoding>
-							<nonFilteredFileExtensions>
-								<nonFilteredFileExtension>otf</nonFilteredFileExtension>
-								<nonFilteredFileExtension>eot</nonFilteredFileExtension>
-								<nonFilteredFileExtension>svg</nonFilteredFileExtension>
-								<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
-								<nonFilteredFileExtension>woff</nonFilteredFileExtension>
-								<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
-							</nonFilteredFileExtensions>
-						</configuration>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>

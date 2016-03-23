@@ -1,6 +1,6 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.conformancechecker.TiffConformanceChecker;
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 
 import junit.framework.TestCase;
 

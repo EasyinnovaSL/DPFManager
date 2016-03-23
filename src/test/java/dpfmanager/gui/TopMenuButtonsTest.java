@@ -1,6 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
+import dpfmanager.shell.application.app.GuiApp;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -19,33 +19,33 @@ public class TopMenuButtonsTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception{
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
   @Test
   public void testTopMenuButtons() throws Exception {
-    //Wait for async events
+    // Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
 
     // checker -- about
-    clickOnAndReload("#butAbout");
-    FxAssert.verifyThat("#butAbout", NodeMatchers.isNull());
+    clickOnAndReloadTop("#butAbout",1000);
+    FxAssert.verifyThat("#pane2", NodeMatchers.isNotNull());
     // about -- reports
-    clickOnAndReload("#butReport");
-    FxAssert.verifyThat("#butReport", NodeMatchers.isNull());
+    clickOnAndReloadTop("#butReports",4000);
+    FxAssert.verifyThat("#pane1", NodeMatchers.isNotNull());
     // reports -- checker
-    clickOnAndReload("#butChecker");
-    FxAssert.verifyThat("#butChecker", NodeMatchers.isNull());
+    clickOnAndReloadTop("#butDessign",1000);
+    FxAssert.verifyThat("#pane0", NodeMatchers.isNotNull());
     // checker -- reports
-    clickOnAndReload("#butReport");
-    FxAssert.verifyThat("#butReport", NodeMatchers.isNull());
+    clickOnAndReloadTop("#butReports",4000);
+    FxAssert.verifyThat("#pane1", NodeMatchers.isNotNull());
     // reports -- about
-    clickOnAndReload("#butAbout");
-    FxAssert.verifyThat("#butAbout", NodeMatchers.isNull());
+    clickOnAndReloadTop("#butAbout",1000);
+    FxAssert.verifyThat("#pane2", NodeMatchers.isNotNull());
     // about -- checker
-    clickOnAndReload("#butChecker");
-    FxAssert.verifyThat("#butChecker", NodeMatchers.isNull());
+    clickOnAndReloadTop("#butDessign",1000);
+    FxAssert.verifyThat("#pane0", NodeMatchers.isNotNull());
   }
 
 }

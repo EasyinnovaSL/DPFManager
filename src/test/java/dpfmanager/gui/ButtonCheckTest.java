@@ -1,8 +1,13 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
+import dpfmanager.shell.application.app.GuiApp;
+import javafx.application.Platform;
+import javafx.event.EventType;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.matcher.base.NodeMatchers;
@@ -18,7 +23,7 @@ public class ButtonCheckTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
@@ -29,17 +34,20 @@ public class ButtonCheckTest extends ApplicationTest {
     System.out.println("Running check buttons test...");
 
     // Continue 3 button
-    clickOnAndReload("#newButton");
-    clickOnAndReload("#continue1");
-    clickOnAndReload("#continue2");
-    clickOnAndReload("#continue3");
-    FxAssert.verifyThat("#continue3", NodeMatchers.isNull());
+    clickOnAndReload("#newButton",5000);
+    Assert.assertTrue("New button fail.", scene.lookup("#step1").getStyleClass().contains("blue-but"));
+    clickOnAndReload("#continueButton");
+    Assert.assertTrue("Continue of step 1 fail.", scene.lookup("#step2").getStyleClass().contains("blue-but"));
+    clickOnAndReload("#continueButton");
+    Assert.assertTrue("Continue of step 2 fail.", scene.lookup("#step2").getStyleClass().contains("blue-but"));
+    clickOnAndReload("#continueButton");
+    Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#step4").getStyleClass().contains("blue-but"));
 
     // Check files button
-    clickOnAndReload("#butChecker");
+    clickOnAndReloadTop("#butDessign");
     clickOnAndReload("#checkFilesButton");
-    clickOnAndReload("#butReport");
-    FxAssert.verifyThat("#tab_reports", NodeMatchers.isNull());
+    clickOnAndReloadTop("#butReports");
+    FxAssert.verifyThat("#tabReports", NodeMatchers.isNull());
   }
 }
 

@@ -1,7 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
-import dpfmanager.shell.reporting.ReportGenerator;
+import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.modules.report.ReportGenerator;
 import javafx.stage.Stage;
 
 import org.junit.AfterClass;
@@ -23,7 +23,7 @@ public class FirstLaunchTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception{
-    stage = launch(MainApp.class);
+    stage = launch(GuiApp.class);
     scene = stage.getScene();
   }
 

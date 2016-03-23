@@ -1,10 +1,13 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.MainApp;
+import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
+
+import com.google.common.base.Predicate;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -14,7 +17,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import com.google.common.base.Predicate;
 
 /**
  * Created by Adrià Llorens on 30/12/2015.
@@ -29,7 +31,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    stage = launch(MainApp.class, "-gui", "-noDisc");
+    stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
@@ -40,38 +42,41 @@ public class CreateConfigFileTest extends ApplicationTest {
     System.out.println("Running create config file test...");
 
     // 1 - Click New Button
-    clickOnAndReload("#newButton");
+    clickOnAndReload("#newButton",2000);
 
     // 2 - Deselect tiff baseline and Select Tiff/EP & TIFF/IT-P1
     // 1: Baseline   2: EP   3: IT   4: ITP1   5: IT-P2
     clickOnScroll("#radProf1");
     clickOnScroll("#radProf2");
     clickOnScroll("#radProf4");
-    clickOnAndReload("#continue1");
+    clickOnAndReload("#continueButton");
 
     // 3 - Add Rule
     addRule("ImageWidth", ">", "500");
     addRule("ImageHeight", "<", "1000");
     clickOnScroll("#ID0 #removeButton");
-    clickOnAndReload("#continue2");
+    clickOnAndReload("#continueButton");
 
     // 4 - Repot format
     clickOnScroll("#chkHtml");
     clickOnScroll("#chkPdf");
-    clickOnAndReload("#continue3");
+    clickOnAndReload("#continueButton");
 
     // 5 - Add Fix
     addFix("Add Tag", "Artist", "EasyTest");
     addFix("Remove Tag", "Copyright", "Easyinnova");
     clickOnScroll("#ID3 #removeButton");
-    clickOnAndReload("#continue4");
+    clickOnAndReload("#continueButton");
+
+    // Skip step 5
+    clickOnAndReload("#continueButton");
 
     // Create temp folder
     createTempFolder();
 
     // 6 - Save the report
-    MainApp.setTestParam("saveConfig",outputPath);
-    clickOnScroll("#saveReportButton");
+    GuiWorkbench.setTestParam("saveConfig", outputPath);
+    clickOnScroll("#continueButton");
 
     // Print generated file
 //    System.out.println("\nOutput file:");
@@ -90,7 +95,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   private void addRule(String tag, String op, String text) {
     // First click Add Rule Button
-    clickOn("#addRule");
+    clickOn("#addRuleButton");
 
     //Set the rule parameters
     clickOnScroll("#ID" + uniqueId + " #comboBoxTag").clickOn(tag);
@@ -108,18 +113,18 @@ public class CreateConfigFileTest extends ApplicationTest {
 
   private void addFix(String action, String field, String text) {
     // First click Add Fix Button
-    clickOnScroll("#addFix");
+    clickOnScroll("#addFixButton");
 
     //Set the rule parameters
     clickOnScroll("#ID" + uniqueId + " #comboBoxAction").clickOn(action);
-    clickOnScroll("#ID" + uniqueId + " #comboBoxField").clickOn(field);
+    clickOnScroll("#ID" + uniqueId + " #comboBoxOp").clickOn(field);
     if (action.equals("Add Tag")) {
       clickOnScroll("#ID" + uniqueId + " #textField").write(text);
     }
 
     //Check combobox items size
     ComboBox comboBoxAction = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxAction");
-    ComboBox comboBoxFix = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxField");
+    ComboBox comboBoxFix = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxOp");
     Assert.assertEquals("ComboBox Action inside 'Add Fix' failed", 2, comboBoxAction.getItems().size());
     Assert.assertEquals("ComboBox Field inside 'Add Fix' failed", 3, comboBoxFix.getItems().size());
 
