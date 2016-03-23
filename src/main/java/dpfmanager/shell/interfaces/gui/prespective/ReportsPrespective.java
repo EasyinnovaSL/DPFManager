@@ -55,6 +55,11 @@ public class ReportsPrespective extends DpfAbstractPrespective {
     context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.SHOW));
   }
 
+  @Override
+  public void onReloadCustom() {
+    context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.SHOW));
+  }
+
   @PostConstruct
   public void onStartPerspective(PerspectiveLayout perspectiveLayout, FXComponentLayout layout, ResourceBundle resourceBundle) {
     // Top Buttons component

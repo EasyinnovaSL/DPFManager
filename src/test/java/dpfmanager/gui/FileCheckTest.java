@@ -53,7 +53,7 @@ public class FileCheckTest extends ApplicationTest {
     waitForCheckFiles(60);
 
     //Check table view
-    clickOnAndReloadTop("#butReports",4000);
+    clickOnAndReloadTop("#butReports",5000);
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     ReportRow row = table.getItems().get(0);
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_loaded), table.getItems().size());
@@ -68,18 +68,16 @@ public class FileCheckTest extends ApplicationTest {
     FxAssert.verifyThat("#webView", NodeMatchers.isNotNull());
 
     //Check xml
-    clickOnAndReloadTop("#butReports", 10000);
-    clickOnAndReload("#tabReports #butxml", 5000);
+    clickOnAndReloadTop("#butReports", 5000);
+    clickOnAndReload("#tabReports #butxml", 1000);
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     TextArea textArea = (TextArea) scene.lookup("#textArea");
     String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    System.out.println("Textarea: ");
-    System.out.println(textArea.getText());
     String initial = textArea.getText().substring(0,expected.length());
     Assert.assertEquals("Report xml", expected, initial);
 
     //Check json
-    clickOnAndReloadTop("#butReports", 3000);
+    clickOnAndReloadTop("#butReports", 5000);
     clickOnAndReload("#tabReports #butjson", 1000);
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     textArea = (TextArea) scene.lookup("#textArea");

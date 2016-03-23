@@ -15,10 +15,9 @@ import java.util.logging.Logger;
 public class MainConsoleApp {
 
   public static void main(String[] args) {
-    // Hack, remove all JacpFX logs
+    // Initial, set log level to severe (remove JacpFX logs)
     Logger rootLog = Logger.getLogger("");
-    rootLog.setLevel( Level.SEVERE );
-    rootLog.getHandlers()[0].setLevel(Level.SEVERE );
+    rootLog.setLevel(Level.SEVERE);
 
     List<String> params = Arrays.asList(args);
     if (params.contains("-server")){

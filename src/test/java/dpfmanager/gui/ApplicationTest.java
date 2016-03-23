@@ -26,6 +26,8 @@ import org.testfx.toolkit.ApplicationFixture;
 
 import java.awt.*;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Adrià Llorens on 30/12/2015.
@@ -72,6 +74,10 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   @Before
   public final void internalBefore() throws Exception {
+    // Initial, set log level to severe (remove JacpFX logs)
+    Logger rootLog = Logger.getLogger("");
+    rootLog.setLevel(Level.SEVERE);
+
     FxToolkit.setupApplication(this);
   }
 
