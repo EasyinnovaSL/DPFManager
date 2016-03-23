@@ -163,13 +163,22 @@ public class TopFragment extends FlowPane {
                 public void handle(final MouseEvent mouseEvent) {
                   ToggleButton source = getActual();
                   ToggleButton target = button;
-                  if (source.equals(target)) {
+                  if (source.equals(target) && samePerspective(target.getId())) {
                     doReload(target.getId());
                   } else {
                     showHideTriangles(target.getId());
                     doShow(target.getId());
                   }
                   mouseEvent.consume();
+                }
+
+                private boolean samePerspective(String id){
+                  if (id.equals(ButReports)){
+                    return currentId.equals(GuiConfig.PRESPECTIVE_REPORTS);
+                  } else if (id.equals(ButDessign)){
+                    return currentId.equals(GuiConfig.PRESPECTIVE_DESSIGN);
+                  }
+                  return false;
                 }
 
                 private ToggleButton getActual() {
