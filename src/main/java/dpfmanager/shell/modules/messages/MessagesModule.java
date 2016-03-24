@@ -21,6 +21,7 @@ import org.jacpfx.api.annotations.component.Component;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.context.Context;
 
+import java.io.PrintStream;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -50,6 +51,12 @@ public class MessagesModule extends DpfModule {
     if (lm.hasTextArea() && !TextAreaAppender.hasTextArea()){
       // Init text area handler
       TextAreaAppender.setTextArea(lm.getTextArea());
+      // HACK capture system.out
+      System.setOut(new PrintStream(System.out) {
+        public void println(String s) {
+          LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), s);
+        }
+      });
     }
     else {
       // Log message
@@ -57,7 +64,7 @@ public class MessagesModule extends DpfModule {
       clazz = clazz.substring(clazz.lastIndexOf(".") + 1, clazz.length());
       if (lm.getLevel().equals(Level.DEBUG)) {
         // use marker for custom pattern
-        LogManager.getLogger(clazz).log(lm.getLevel(), MarkerManager.getMarker("PLAIN"), lm.getMessage());
+        LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), lm.getMessage());
       } else {
         // Default pattern
         LogManager.getLogger(clazz).log(lm.getLevel(), lm.getMessage());
@@ -93,11 +100,8 @@ public class MessagesModule extends DpfModule {
     // Show in console
     String message = em.getException().getMessage();
     String exceptionText = AlertsManager.getExceptionText(em.getException());
-
-    String clazz = em.getException().getClass().toString();
-    clazz = clazz.substring(clazz.lastIndexOf(".") + 1, clazz.length());
-    LogManager.getLogger(clazz).log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), message);
-    LogManager.getLogger(clazz).log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), exceptionText);
+    LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), message);
+    LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), exceptionText);
 
     // Show alert
     Platform.runLater(new Runnable() {
