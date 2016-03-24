@@ -81,6 +81,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
+    if (message != null && message.isTypeOf(AlertMessage.class)){
+      AlertMessage am = message.getTypedMessage(AlertMessage.class);
+      RadioButton radio = getSelectedConfig();
+      if (radio != null && am.hasResult() && am.getResult()){
+        getController().performDeleteConfigAction(radio.getText());
+      }
+    }
     return null;
   }
 
@@ -198,11 +205,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   @FXML
   protected void editButtonClicked(ActionEvent event) throws Exception {
 //    getController().performEditConfigAction();
+
+
 //    DefaultErrorDialog ded = new DefaultErrorDialog("Title", "message");
 //    DefaultErrorDialogHandler deh = new DefaultErrorDialogHandler();
 //    Node n = deh.createExceptionDialog(new Throwable("OMG"));
 //    Label label = new Label("OMG");
-    getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
+    getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.EXCEPTION, "An exception ocurred!", new Exception("OMG!")));
 //    context.showModalDialog(alert.getDialogPane().getContent());
   }
 
@@ -210,17 +219,9 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   protected void deleteButtonClicked(ActionEvent event) throws Exception {
     RadioButton radio = getSelectedConfig();
     if (radio != null) {
-      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-      alert.setTitle("Delete configuration file");
-      alert.setHeaderText("Are you sure to delete the configuration file '" + radio.getText() + "'?");
-      alert.setContentText("The physical file in disk will be also removed");
-      ButtonType buttonNo = new ButtonType("No");
-      ButtonType buttonYes = new ButtonType("Yes");
-      alert.getButtonTypes().setAll(buttonNo, buttonYes);
-      Optional<ButtonType> result = alert.showAndWait();
-      if (result.get() == buttonYes) {
-        getController().performDeleteConfigAction(radio.getText());
-      }
+      AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, "Are you sure to delete the configuration file '" + radio.getText() + "'?", "The physical file in disk will be also removed");
+      am.setTitle("Delete configuration file");
+      getContext().send(BasicConfig.MODULE_MESSAGE, am);
     } else {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
     }

@@ -15,10 +15,11 @@ public abstract class DpfModule implements CallbackComponent {
 
   @Override
   public Object handle(final Message<Event, Object> message) {
+    String sId = message.getSourceId();
     if (message.isMessageBodyTypeOf(ArrayMessage.class)) {
       // Array message
       ArrayMessage aMessage = message.getTypedMessageBody(ArrayMessage.class);
-      tractMessage(aMessage.getFirstMessage());
+      tractMessage(aMessage.getFirstMessage(), sId);
       if (aMessage.hasNext()) {
         aMessage.removeFirst();
         getContext().send(aMessage.getFirstTarget(), aMessage);
@@ -26,12 +27,13 @@ public abstract class DpfModule implements CallbackComponent {
     } else if (message.isMessageBodyTypeOf(DpfMessage.class)) {
       // Single message
       DpfMessage dpfMessage = message.getTypedMessageBody(DpfMessage.class);
-      tractMessage(dpfMessage);
+      tractMessage(dpfMessage, sId);
     }
     return null;
   }
 
-  private void tractMessage(DpfMessage dpfMessage) {
+  private void tractMessage(DpfMessage dpfMessage, String source) {
+    dpfMessage.setSourceId(source);
     handleMessage(dpfMessage);
   }
 

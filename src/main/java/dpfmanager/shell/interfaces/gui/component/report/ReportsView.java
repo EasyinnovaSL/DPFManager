@@ -294,26 +294,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
                 ContextMenu contextMenu = new ContextMenu();
                 javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
-//                download.setOnAction(new EventHandler<ActionEvent>() {
-//                  @Override
-//                  public void handle(ActionEvent event) {
-//                    FileChooser fileChooser = new FileChooser();
-//                    fileChooser.setTitle("Save Report");
-//                    fileChooser.setInitialFileName(new File(item.get(i)).getName());
-//                    File file = fileChooser.showSaveDialog(getLocalFacade().getGlobalFacade().getApplication().getStage());
-//                    if (file != null) {
-//                      try {
-//                        Files.copy(Paths.get(new File(item.get(i)).getAbsolutePath()), Paths.get(file.getAbsolutePath()));
-//                      } catch (Exception ex) {
-//                        Alert alert = new Alert(Alert.AlertType.ERROR);
-//                        alert.setTitle("Error");
-//                        alert.setHeaderText("An error ocurred");
-//                        alert.setContentText("There was an error while saving the report file");
-//                        alert.showAndWait();
-//                      }
-//                    }
-//                  }
-//                });
                 contextMenu.getItems().add(download);
                 icon.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                   public void handle(ContextMenuEvent e) {

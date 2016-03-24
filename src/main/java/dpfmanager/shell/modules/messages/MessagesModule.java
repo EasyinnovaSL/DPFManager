@@ -1,14 +1,16 @@
 package dpfmanager.shell.modules.messages;
 
+import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.core.util.TextAreaAppender;
+import dpfmanager.shell.modules.messages.core.AlertsManager;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
-import dpfmanager.shell.core.adapter.DpfModule;
-import dpfmanager.shell.core.util.TextAreaAppender;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +20,7 @@ import org.jacpfx.api.annotations.component.Component;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.context.Context;
 
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -64,44 +67,25 @@ public class MessagesModule extends DpfModule {
       @Override
       public void run() {
         Alert alert;
+        // Create alert
         if (am.getType().equals(AlertMessage.Type.EXCEPTION)){
-          alert = createSimpleAlert(am);
+          alert = AlertsManager.createExceptionAlert(am);
+        } else if (am.getType().equals(AlertMessage.Type.CONFIRMATION)){
+          alert = AlertsManager.createConfirmationAlert(am);
         } else{
-          alert = createExceptionAlert(am);
+          alert = AlertsManager.createSimpleAlert(am);
         }
-        alert.show();
-      }
 
-      private Alert createSimpleAlert(AlertMessage am){
-        Alert alert = new Alert(parseType(am.getType()));
-        alert.setTitle(am.getTitle());
-        alert.setHeaderText(am.getHeader());
-        alert.setContentText(am.getContent());
-        alert.initOwner(GuiWorkbench.getMyStage());
-        return alert;
+        // Show alert
+        if (!am.getType().equals(AlertMessage.Type.CONFIRMATION)){
+          alert.show();
+        } else{
+          Optional<ButtonType> result = alert.showAndWait();
+          am.setResult(result.get().getButtonData().equals(ButtonData.YES));
+          context.send(am.getSourceId(), am);
+        }
       }
-
-      private Alert createExceptionAlert(AlertMessage am){
-        Alert alert = new Alert(parseType(am.getType()));
-        alert.setTitle(am.getTitle());
-        alert.setHeaderText(am.getHeader());
-        alert.setContentText(am.getContent());
-        alert.initOwner(GuiWorkbench.getMyStage());
-        return alert;
-      }
-
     });
-  }
-
-  private Alert.AlertType parseType(AlertMessage.Type type){
-    if (type.equals(AlertMessage.Type.ERROR) || type.equals(AlertMessage.Type.EXCEPTION)){
-      return Alert.AlertType.ERROR;
-    } else if (type.equals(AlertMessage.Type.WARNING) || type.equals(AlertMessage.Type.ALERT)){
-      return Alert.AlertType.WARNING;
-    } else if (type.equals(AlertMessage.Type.INFO)){
-      return Alert.AlertType.INFORMATION;
-    }
-    return null;
   }
 
   @PostConstruct
