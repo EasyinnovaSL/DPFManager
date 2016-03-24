@@ -51,7 +51,7 @@ public class ReportParserTest extends ApplicationTest {
       clickOnImportedConfig(configFile);
       writeText("#inputText", inputFiles);
       clickOnAndReload("#checkFilesButton");
-      waitForCheckFiles(60);
+      waitForCheckFiles();
       System.out.println("Current config: " + configFile);
       clickOnAndReloadTop("#butDessign","#pane-design");
     }

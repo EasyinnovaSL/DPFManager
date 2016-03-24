@@ -47,6 +47,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   static int baseW = 0;
   static int baseH = 0;
 
+  static int maxTimeout = 60;
+
   static Stage stage;
   protected Scene scene;
   static SpreadsheetView view;
@@ -118,8 +120,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     reloadScene();
     Node node = scene.lookup(search);
     int count = 0;
-    int max = 60; //seconds
-    while (node == null && count < max *4){
+    while (node == null && count < maxTimeout *4){
       sleep(250);
       count++;
       reloadScene();
@@ -143,8 +144,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     reloadScene();
     Node node = scene.lookup(search);
     int count = 0;
-    int max = 60; //seconds
-    while (node == null && count < max *4){
+    while (node == null && count < maxTimeout *4){
       sleep(250);
       count++;
       reloadScene();
@@ -308,7 +308,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     txtField.setText(text);
   }
 
-  protected void waitForCheckFiles(int maxTimeout) {
+  protected void waitForCheckFiles() {
     sleep(1000);
     int timeout = 0;
 

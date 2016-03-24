@@ -50,7 +50,7 @@ public class FileCheckTest extends ApplicationTest {
     writeText("#inputText", inputFilePath);
     clickOnAndReload("#checkFilesButton");
     FxAssert.verifyThat("#loadingVbox", NodeMatchers.isVisible()); //Check loading screen
-    waitForCheckFiles(60);
+    waitForCheckFiles();
 
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");
