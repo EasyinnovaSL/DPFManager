@@ -136,6 +136,12 @@
 			<version>1.7.19</version>
 		</dependency>
 
+		<dependency>
+			<!--Controls FX-->
+			<groupId>org.controlsfx</groupId>
+			<artifactId>controlsfx</artifactId>
+			<version>8.40.10</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -231,12 +237,6 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>org.controlsfx</groupId>
-			<artifactId>controlsfx</artifactId>
-			<version>8.40.10</version>
-		</dependency>
 		<!--End Test Gui dependencies-->
 
 		<!--JacpFX-->
@@ -294,39 +294,6 @@
 						<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
-			</plugin>
-
-			<!-- Create Jar -->
-			<plugin>
-				<groupId>com.zenjava</groupId>
-				<artifactId>javafx-maven-plugin</artifactId>
-				<version>8.1.5</version>
-				<configuration>
-					<mainClass>${main.class}</mainClass>
-					<verbose>true</verbose>
-					<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-					<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
-					<deployDir>${project.basedir}/src/main/deploy</deployDir>
-					<vendor>${project.build.finalName}</vendor>
-					<nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
-					<bundleType>ALL</bundleType>
-					<bundler>ALL</bundler>
-					<nativeReleaseVersion>${project.version}</nativeReleaseVersion>
-					<needShortcut>true</needShortcut>
-					<needMenu>true</needMenu>
-					<appName>${project.name}</appName>
-					<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
-				</configuration>
-				<executions>
-					<execution>
-						<!-- Build Jar -->
-						<id>create-jfxjar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>build-jar</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 
 			<!--Checkstyle-->
@@ -401,6 +368,39 @@
 			<build>
 				<finalName>DPF Manager</finalName>
 				<plugins>
+
+					<!-- Create Jar -->
+					<plugin>
+						<groupId>com.zenjava</groupId>
+						<artifactId>javafx-maven-plugin</artifactId>
+						<version>8.1.5</version>
+						<configuration>
+							<mainClass>${gui.class}</mainClass>
+							<verbose>true</verbose>
+							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
+							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
+							<deployDir>${project.basedir}/src/main/deploy</deployDir>
+							<vendor>${project.build.finalName}</vendor>
+							<nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
+							<bundleType>ALL</bundleType>
+							<bundler>ALL</bundler>
+							<nativeReleaseVersion>${project.version}</nativeReleaseVersion>
+							<needShortcut>true</needShortcut>
+							<needMenu>true</needMenu>
+							<appName>${project.name}</appName>
+							<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
+						</configuration>
+						<executions>
+							<execution>
+								<id>create-jfxjar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
 					<!-- Build Command Line Exe -->
 					<plugin>
 						<groupId>com.akathist.maven.plugins.launch4j</groupId>
@@ -491,6 +491,38 @@
 			<build>
 				<finalName>DPF Manager</finalName>
 				<plugins>
+
+					<!-- Create Jar -->
+					<plugin>
+						<groupId>com.zenjava</groupId>
+						<artifactId>javafx-maven-plugin</artifactId>
+						<version>8.1.5</version>
+						<configuration>
+							<mainClass>${main.class}</mainClass>
+							<verbose>true</verbose>
+							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
+							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
+							<deployDir>${project.basedir}/src/main/deploy</deployDir>
+							<vendor>${project.build.finalName}</vendor>
+							<nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
+							<bundleType>ALL</bundleType>
+							<bundler>ALL</bundler>
+							<nativeReleaseVersion>${project.version}</nativeReleaseVersion>
+							<needShortcut>true</needShortcut>
+							<needMenu>true</needMenu>
+							<appName>${project.name}</appName>
+							<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
+						</configuration>
+						<executions>
+							<execution>
+								<id>create-jfxjar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 
 					<!--Create Installer-->
 					<plugin>
