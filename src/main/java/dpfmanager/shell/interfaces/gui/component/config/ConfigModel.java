@@ -3,7 +3,9 @@ package dpfmanager.shell.interfaces.gui.component.config;
 import dpfmanager.conformancechecker.tiff.Configuration;
 import dpfmanager.conformancechecker.tiff.Field;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.mvc.DpfModel;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
 
 import java.util.ArrayList;
 
@@ -48,8 +50,7 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
       editingConfig = false;
       config = new Configuration();
       config.initDefault();
-      // TODO make alert
-      System.out.println("Cannot read config file. Starting new config instead.");
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Cannot read config file.", "Starting new config instead."));
     }
   }
 

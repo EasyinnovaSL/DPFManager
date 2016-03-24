@@ -6,6 +6,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.util.TextAreaAppender;
 import dpfmanager.shell.modules.messages.core.AlertsManager;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -40,6 +41,8 @@ public class MessagesModule extends DpfModule {
       tractLogMessage(dpfMessage.getTypedMessage(LogMessage.class));
     } else if (dpfMessage.isTypeOf(AlertMessage.class)){
       tractAlertMessage(dpfMessage.getTypedMessage(AlertMessage.class));
+    } else if (dpfMessage.isTypeOf(ExceptionMessage.class)){
+      tractExceptionMessage(dpfMessage.getTypedMessage(ExceptionMessage.class));
     }
   }
 
@@ -68,9 +71,7 @@ public class MessagesModule extends DpfModule {
       public void run() {
         Alert alert;
         // Create alert
-        if (am.getType().equals(AlertMessage.Type.EXCEPTION)){
-          alert = AlertsManager.createExceptionAlert(am);
-        } else if (am.getType().equals(AlertMessage.Type.CONFIRMATION)){
+        if (am.getType().equals(AlertMessage.Type.CONFIRMATION)){
           alert = AlertsManager.createConfirmationAlert(am);
         } else{
           alert = AlertsManager.createSimpleAlert(am);
@@ -84,6 +85,26 @@ public class MessagesModule extends DpfModule {
           am.setResult(result.get().getButtonData().equals(ButtonData.YES));
           context.send(am.getSourceId(), am);
         }
+      }
+    });
+  }
+
+  private void tractExceptionMessage(ExceptionMessage em){
+    // Show in console
+    String message = em.getException().getMessage();
+    String exceptionText = AlertsManager.getExceptionText(em.getException());
+
+    String clazz = em.getException().getClass().toString();
+    clazz = clazz.substring(clazz.lastIndexOf(".") + 1, clazz.length());
+    LogManager.getLogger(clazz).log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), message);
+    LogManager.getLogger(clazz).log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), exceptionText);
+
+    // Show alert
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        Alert alert = AlertsManager.createExceptionAlert(em);
+        alert.show();
       }
     });
   }

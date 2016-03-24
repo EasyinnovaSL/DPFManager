@@ -124,7 +124,7 @@ public class DPFManagerProperties {
       new File(System.getProperty("user.home") + "/DPF Manager").mkdir();
     }
     if (!new File(System.getProperty("user.home") + "/DPF Manager").exists()) {
-      System.out.println("Could not create user dir. Switching to app dir");
+//      System.out.println("Could not create user dir. Switching to app dir"); TODO
       return ".";
     }
     return System.getProperty("user.home") + "/DPF Manager";

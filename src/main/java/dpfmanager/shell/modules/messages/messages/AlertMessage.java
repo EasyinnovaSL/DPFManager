@@ -13,7 +13,6 @@ public class AlertMessage extends DpfMessage {
     INFO,
     WARNING,
     ERROR,
-    EXCEPTION,
     CONFIRMATION
   }
 
@@ -21,7 +20,6 @@ public class AlertMessage extends DpfMessage {
   private String title;
   private String header;
   private String content;
-  private Exception exception;
   private Boolean result = null;
 
   public AlertMessage(Type t, String h){
@@ -36,14 +34,6 @@ public class AlertMessage extends DpfMessage {
     title = getDefaultTitle(type);
     header = h;
     content = c;
-  }
-
-  public AlertMessage(Type t, String h, Exception e){
-    type = t;
-    title = getDefaultTitle(type);
-    header = h;
-    content = e.getMessage();
-    exception = e;
   }
 
   public void setTitle(String t){
@@ -71,8 +61,6 @@ public class AlertMessage extends DpfMessage {
       return "Help";
     } else if (type.equals(Type.ALERT)){
       return "Alert";
-    } else if (type.equals(Type.EXCEPTION)){
-      return "Exception";
     }
     return "";
   }
@@ -93,7 +81,4 @@ public class AlertMessage extends DpfMessage {
     return content;
   }
 
-  public Exception getException(){
-    return exception;
-  }
 }

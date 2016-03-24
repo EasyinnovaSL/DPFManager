@@ -8,6 +8,7 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -140,7 +141,7 @@ public class FirstView extends DpfSimpleView {
       // Show main
       context.send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage());
     } catch (Exception ex) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.EXCEPTION, "An exception occurred", ex));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception occurred", ex));
     }
   }
 
