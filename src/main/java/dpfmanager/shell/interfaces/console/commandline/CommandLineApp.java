@@ -30,7 +30,7 @@ import dpfmanager.conformancechecker.tiff.Configuration;
 import dpfmanager.conformancechecker.tiff.ProcessInput;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;

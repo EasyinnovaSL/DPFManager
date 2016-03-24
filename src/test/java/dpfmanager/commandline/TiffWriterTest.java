@@ -4,7 +4,7 @@ import static java.io.File.separator;
 
 import dpfmanager.shell.interfaces.console.commandline.CommandLineApp;
 import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Application;
 
 import com.easyinnova.tiff.io.TiffInputStream;

@@ -10,6 +10,7 @@ import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import javafx.event.ActionEvent;
@@ -87,6 +88,15 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       RadioButton radio = getSelectedConfig();
       if (radio != null && am.hasResult() && am.getResult()){
         getController().performDeleteConfigAction(radio.getText());
+      }
+    } else if (message != null && message.isTypeOf(LoadingMessage.class)){
+      LoadingMessage lm = message.getTypedMessage(LoadingMessage.class);
+      if (lm.isShow()){
+        showLoading();
+      } else if (lm.isHide()){
+        hideLoading();
+      } else if (lm.isText()){
+        lblLoading.setText(lm.getText());
       }
     }
     return null;

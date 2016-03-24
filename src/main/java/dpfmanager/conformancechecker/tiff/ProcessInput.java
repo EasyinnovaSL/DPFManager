@@ -1,8 +1,10 @@
 package dpfmanager.conformancechecker.tiff;
 
 import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.modules.report.IndividualReport;
-import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
+import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -11,6 +13,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,26 +32,16 @@ import java.util.zip.ZipFile;
  */
 public class ProcessInput {
   private boolean outOfmemory = false;
-  private Scene scene;
-  private Label label;
   private int idReport;
-
-  /**
-   * Sets the GUI scene.
-   *
-   * @param scene the javafx scene
-   */
-  public void setScene(Scene scene) {
-    this.scene = scene;
-  }
+  private Context context;
 
   /**
    * Sets the label.
    *
-   * @param label the label
+   * @param context the JacpFX Context
    */
-  public void setLabelLoading(Label label) {
-    this.label = label;
+  public void setContext(Context context) {
+    this.context = context;
   }
 
   /**
@@ -83,11 +76,8 @@ public class ProcessInput {
       List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
       individuals.addAll(indReports);
 
-      if (scene != null) {
-        Platform.runLater(() -> ((Label) scene.lookup("#lblLoading")).setText("Processing..." + (files.indexOf(filename)+1) + "/" + n));
-      }
-      if (label != null) {
-        Platform.runLater(() -> label.setText("Processing..." + (files.indexOf(filename) + 1) + "/" + n));
+      if (context != null) {
+        context.send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.TEXT, "Processing..." + (files.indexOf(filename) + 1) + "/" + n));
       }
       idReport++;
     }

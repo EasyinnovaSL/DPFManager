@@ -1,6 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -8,11 +8,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import org.apache.commons.lang.SystemUtils;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;

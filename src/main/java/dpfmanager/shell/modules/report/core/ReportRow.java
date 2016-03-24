@@ -1,4 +1,4 @@
-package dpfmanager.shell.modules.report;
+package dpfmanager.shell.modules.report.core;
 
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;

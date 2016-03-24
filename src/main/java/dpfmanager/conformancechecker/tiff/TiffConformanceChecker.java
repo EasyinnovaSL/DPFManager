@@ -32,8 +32,8 @@
 package dpfmanager.conformancechecker.tiff;
 
 import dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes.clearPrivateData;
-import dpfmanager.shell.modules.report.IndividualReport;
-import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;

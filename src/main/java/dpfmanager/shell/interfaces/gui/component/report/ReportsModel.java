@@ -1,8 +1,8 @@
 package dpfmanager.shell.interfaces.gui.component.report;
 
 import dpfmanager.shell.core.mvc.DpfModel;
-import dpfmanager.shell.modules.report.ReportGenerator;
-import dpfmanager.shell.modules.report.ReportRow;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

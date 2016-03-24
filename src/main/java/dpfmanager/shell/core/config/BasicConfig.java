@@ -11,5 +11,7 @@ public class BasicConfig {
    * Modules Components
    */
   public static final String MODULE_MESSAGE = "m001";
+  public static final String MODULE_REPORT = "m002";
+  public static final String MODULE_CONFORMANCE = "m003";
 
 }

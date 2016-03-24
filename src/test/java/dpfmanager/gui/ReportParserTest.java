@@ -3,7 +3,7 @@ package dpfmanager.gui;
 import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
-import dpfmanager.shell.modules.report.ReportRow;
+import dpfmanager.shell.modules.report.core.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 

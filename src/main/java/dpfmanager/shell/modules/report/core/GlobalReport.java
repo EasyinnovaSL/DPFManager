@@ -29,7 +29,7 @@
  * @since 23/6/2015
  */
 
-package dpfmanager.shell.modules.report;
+package dpfmanager.shell.modules.report.core;
 
 import java.util.ArrayList;
 import java.util.List;
