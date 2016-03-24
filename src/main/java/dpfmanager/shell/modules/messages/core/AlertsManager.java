@@ -2,6 +2,7 @@ package dpfmanager.shell.modules.messages.core;
 
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -42,18 +43,13 @@ public class AlertsManager {
     return alert;
   }
 
-  public static Alert createExceptionAlert(AlertMessage am){
-    Alert alert = new Alert(parseType(am.getType()));
+  public static Alert createExceptionAlert(ExceptionMessage am){
+    Alert alert = new Alert(Alert.AlertType.ERROR);
     alert.setTitle(am.getTitle());
     alert.setHeaderText(am.getHeader());
     alert.setContentText(am.getContent());
 
-    // Create expandable Exception.
-    StringWriter sw = new StringWriter();
-    PrintWriter pw = new PrintWriter(sw);
-    am.getException().printStackTrace(pw);
-    String exceptionText = sw.toString();
-
+    String exceptionText = getExceptionText(am.getException());
     Label label = new Label("The exception stacktrace was:");
 
     TextArea textArea = new TextArea(exceptionText);
@@ -76,8 +72,15 @@ public class AlertsManager {
     return alert;
   }
 
+  public static String getExceptionText(Exception ex){
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    ex.printStackTrace(pw);
+    return sw.toString();
+  }
+
   private static Alert.AlertType parseType(AlertMessage.Type type){
-    if (type.equals(AlertMessage.Type.ERROR) || type.equals(AlertMessage.Type.EXCEPTION)){
+    if (type.equals(AlertMessage.Type.ERROR)){
       return Alert.AlertType.ERROR;
     } else if (type.equals(AlertMessage.Type.WARNING) || type.equals(AlertMessage.Type.ALERT)){
       return Alert.AlertType.WARNING;

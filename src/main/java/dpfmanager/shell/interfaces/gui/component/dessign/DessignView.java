@@ -11,6 +11,7 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;

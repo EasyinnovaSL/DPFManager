@@ -1,12 +1,17 @@
 package dpfmanager.shell.interfaces.gui.component.show;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+
+import org.apache.logging.log4j.Level;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -24,7 +29,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
   }
 
   public void showSingleReport(String type, String path) {
-    System.out.println("Showing report...");
+    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Showing report..."));
     switch (type) {
       case "html":
         getView().showWebView(path);

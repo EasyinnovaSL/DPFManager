@@ -1,5 +1,6 @@
 package dpfmanager.shell.interfaces.gui.component.config;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard1Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard6Fragment;
 import dpfmanager.shell.core.DPFManagerProperties;
@@ -11,6 +12,8 @@ import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard3Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard4Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard5Fragment;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import javafx.stage.FileChooser;
 
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
@@ -58,7 +61,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
         getModel().saveConfig(file.getAbsolutePath());
         getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage());
       } catch (Exception ex) {
-        System.out.println(ex.getMessage());
+        getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
       }
     }
   }
