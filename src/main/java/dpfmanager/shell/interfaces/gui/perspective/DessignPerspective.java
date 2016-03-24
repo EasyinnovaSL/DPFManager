@@ -1,16 +1,14 @@
-package dpfmanager.shell.interfaces.gui.prespective;
+package dpfmanager.shell.interfaces.gui.perspective;
 
-import dpfmanager.shell.core.adapter.DpfAbstractPrespective;
+import dpfmanager.shell.core.adapter.DpfAbstractPerspective;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.interfaces.gui.fragment.BarFragment;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
 import org.jacpfx.api.annotations.Resource;
-import org.jacpfx.api.annotations.lifecycle.OnShow;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.api.annotations.perspective.Perspective;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
@@ -20,20 +18,20 @@ import org.jacpfx.rcp.context.Context;
 import java.util.ResourceBundle;
 
 /**
- * Created by Adrià Llorens on 07/03/2016.
+ * Created by Adrià Llorens on 25/02/2016.
  */
-@Perspective(id = GuiConfig.PRESPECTIVE_CONFIG,
-    name = GuiConfig.PRESPECTIVE_CONFIG,
+@Perspective(id = GuiConfig.PERSPECTIVE_DESSIGN,
+    name = GuiConfig.PERSPECTIVE_DESSIGN,
     active = false,
     components = {
         GuiConfig.COMPONENT_TOP,
-        GuiConfig.COMPONENT_CONFIG,
+        GuiConfig.COMPONENT_DESIGN,
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
-        BasicConfig.MODULE_LOGS
+        BasicConfig.MODULE_MESSAGE
     }
 )
-public class ConfigPrespective extends DpfAbstractPrespective {
+public class DessignPerspective extends DpfAbstractPerspective {
 
   @Resource
   public Context context;
@@ -53,7 +51,7 @@ public class ConfigPrespective extends DpfAbstractPrespective {
     StackPane centerPane = new StackPane();
     centerPane.setAlignment(Pos.TOP_CENTER);
 
-    // Bottom Component
+    // Bottom Pane Component
     bottomPane = new StackPane();
     bottomPane.setAlignment(Pos.BOTTOM_CENTER);
 
@@ -61,11 +59,11 @@ public class ConfigPrespective extends DpfAbstractPrespective {
     bottomBar = new StackPane();
     bottomBar.setAlignment(Pos.BOTTOM_CENTER);
 
-    // Attach to prespective
+    // Attach to PERSPECTIVE
     mainSplit = constructSplitPane(constructScrollPane(centerPane), bottomPane);
     mainPane = constructMainPane(mainSplit, bottomBar);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_TOP, topPane);
-    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_CONFIG, centerPane);
+    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_DESIGN, centerPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_PANE, bottomPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_BAR, bottomBar);
 

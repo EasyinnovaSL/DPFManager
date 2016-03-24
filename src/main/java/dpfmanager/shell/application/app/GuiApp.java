@@ -31,7 +31,7 @@ public class GuiApp extends GuiLauncher {
     return new String[]{
         "dpfmanager.shell.modules",                         // Dpf Modules
         "dpfmanager.shell.interfaces.gui.component",        // UI Components
-        "dpfmanager.shell.interfaces.gui.prespective",      // Prespectives
+        "dpfmanager.shell.interfaces.gui.perspective",      // Prespectives
         "dpfmanager.shell.interfaces.gui.fragment"          // Fragments
     };
   }

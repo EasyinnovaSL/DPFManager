@@ -3,6 +3,8 @@ package dpfmanager.shell.interfaces.gui.fragment;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.util.NodeUtil;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -62,6 +64,7 @@ public class BarFragment {
   public void init() {
     if (firsttime) {
       setDefault();
+      listenProperties();
       firsttime = false;
     }
   }
@@ -74,6 +77,15 @@ public class BarFragment {
     NodeUtil.showNode(consoleSeparator);
     NodeUtil.showNode(taskButInConsole);
     NodeUtil.hideNode(hboxTask);
+  }
+
+  private void listenProperties(){
+    botSplitBar.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        botSplitBar.setDividerPositions(1);
+      }
+    });
   }
 
   /**

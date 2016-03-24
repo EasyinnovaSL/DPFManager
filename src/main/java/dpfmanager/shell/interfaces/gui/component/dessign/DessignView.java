@@ -1,6 +1,7 @@
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
@@ -9,6 +10,7 @@ import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -33,7 +35,9 @@ import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.api.message.Message;
 import org.jacpfx.rcp.component.FXComponent;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
+import org.jacpfx.rcp.components.errorDialog.DefaultErrorDialog;
 import org.jacpfx.rcp.context.Context;
+import org.jacpfx.rcp.handler.DefaultErrorDialogHandler;
 
 import java.io.File;
 import java.util.Optional;
@@ -42,11 +46,11 @@ import java.util.ResourceBundle;
 /**
  * Created by Adrià Llorens on 25/02/2016.
  */
-@DeclarativeView(id = GuiConfig.COMPONENT_DESSIGN,
-    name = GuiConfig.COMPONENT_DESSIGN,
+@DeclarativeView(id = GuiConfig.COMPONENT_DESIGN,
+    name = GuiConfig.COMPONENT_DESIGN,
     viewLocation = "/fxml/dessign.fxml",
     active = true,
-    initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_DESSIGN)
+    initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_DESIGN)
 public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @Resource
@@ -166,30 +170,24 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @FXML
   protected void showFileInfo(ActionEvent event) throws Exception {
-    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Help");
-    alert.setHeaderText("The path to the files to check");
-    alert.setContentText("This can be either a single file or a folder. Only the files with a valid TIF file extension will be processed.");
-    alert.initOwner(GuiWorkbench.getMyStage());
-    alert.showAndWait();
+    String header = "The path to the files to check";
+    String content = "This can be either a single file or a folder. Only the files with a valid TIF file extension will be processed.";
+    getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, header, content));
   }
 
   @FXML
   protected void showConfigInfo(ActionEvent event) throws Exception {
-    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Help");
-    alert.setHeaderText("Configuration files define the options to check the files (ISO, report format and policy rules)");
-    alert.setContentText("You can either create a new configuration file, import a new one from disk, or edit/delete one from the list");
-    alert.initOwner(GuiWorkbench.getMyStage());
-    alert.showAndWait();
+    String header = "Configuration files define the options to check the files (ISO, report format and policy rules)";
+    String content = "You can either create a new configuration file, import a new one from disk, or edit/delete one from the list";
+    getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, header, content));
   }
 
   @FXML
   protected void newButtonClicked(ActionEvent event) throws Exception {
     ArrayMessage am = new ArrayMessage();
-    am.add(GuiConfig.PRESPECTIVE_CONFIG, new UiMessage());
-    am.add(GuiConfig.PRESPECTIVE_CONFIG+"."+GuiConfig.COMPONENT_CONFIG,new ConfigMessage(ConfigMessage.Type.NEW));
-    getContext().send(GuiConfig.PRESPECTIVE_CONFIG, am);
+    am.add(GuiConfig.PERSPECTIVE_CONFIG, new UiMessage());
+    am.add(GuiConfig.PERSPECTIVE_CONFIG+"."+GuiConfig.COMPONENT_CONFIG,new ConfigMessage(ConfigMessage.Type.NEW));
+    getContext().send(GuiConfig.PERSPECTIVE_CONFIG, am);
   }
 
   @FXML
@@ -199,7 +197,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @FXML
   protected void editButtonClicked(ActionEvent event) throws Exception {
-    getController().performEditConfigAction();
+//    getController().performEditConfigAction();
+//    DefaultErrorDialog ded = new DefaultErrorDialog("Title", "message");
+//    DefaultErrorDialogHandler deh = new DefaultErrorDialogHandler();
+//    Node n = deh.createExceptionDialog(new Throwable("OMG"));
+//    Label label = new Label("OMG");
+    getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
+//    context.showModalDialog(alert.getDialogPane().getContent());
   }
 
   @FXML
@@ -218,11 +222,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
         getController().performDeleteConfigAction(radio.getText());
       }
     } else {
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setTitle("Alert");
-      alert.setHeaderText("Please select a configuration file");
-      alert.initOwner(GuiWorkbench.getMyStage());
-      alert.showAndWait();
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
     }
   }
 

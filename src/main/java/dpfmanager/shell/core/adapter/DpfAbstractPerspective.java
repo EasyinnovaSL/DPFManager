@@ -31,7 +31,7 @@ import org.jacpfx.rcp.util.LayoutUtil;
 /**
  * Created by Adrià Llorens on 03/03/2016.
  */
-public abstract class DpfAbstractPrespective implements FXPerspective {
+public abstract class DpfAbstractPerspective implements FXPerspective {
 
   protected Node divider;
 

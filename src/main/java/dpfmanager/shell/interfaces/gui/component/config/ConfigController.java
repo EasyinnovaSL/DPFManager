@@ -56,7 +56,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     if (file != null) {
       try {
         getModel().saveConfig(file.getAbsolutePath());
-        getContext().send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage());
+        getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage());
       } catch (Exception ex) {
         System.out.println(ex.getMessage());
       }

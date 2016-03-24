@@ -1,5 +1,6 @@
-package dpfmanager.shell.core.messages;
+package dpfmanager.shell.modules.messages.messages;
 
+import dpfmanager.shell.core.messages.DpfMessage;
 import javafx.scene.control.TextArea;
 
 import org.apache.logging.log4j.Level;
@@ -44,4 +45,5 @@ public class LogMessage extends DpfMessage {
   public boolean hasTextArea() {
     return textArea != null;
   }
+
 }

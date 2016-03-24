@@ -6,7 +6,8 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
-import dpfmanager.shell.core.messages.LogMessage;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
@@ -38,29 +39,17 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     ArrayList<String> extensions = getModel().getExtensions();
 
     if (getView().getInputText().getText().equals("Select a file")) {
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setTitle("Alert");
-      alert.setHeaderText("Please select a file");
-      alert.showAndWait();
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a file"));
       return;
     }
 
     RadioButton radio = getView().getSelectedConfig();
     if (radio == null) {
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setTitle("Alert");
-      alert.setHeaderText("Please select a configuration file");
-      alert.initOwner(GuiWorkbench.getMyStage());
-      alert.showAndWait();
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
       return;
     }
     if (!getModel().readConfig(getFileByPath(radio.getText()).getAbsolutePath())) {
-      Alert alert = new Alert(Alert.AlertType.ERROR);
-      alert.setTitle("Error");
-      alert.setHeaderText("Error reading configuration file");
-      alert.initOwner(GuiWorkbench.getMyStage());
-      alert.showAndWait();
-      return;
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
     } else {
       // Everything OK!
       getView().showLoading();
@@ -91,13 +80,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
 
             String filefolder = pi.ProcessFiles(files, getModel().getConfig(), true);
             if (pi.isOutOfmemory()) {
-              Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("An error occured");
-                alert.setContentText("Out of memory");
-                alert.showAndWait();
-              });
+              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
             }
 
             // When finish, show report
@@ -120,39 +103,21 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
             // Show reports
             if (!type.isEmpty()) {
               ArrayMessage am = new ArrayMessage();
-              am.add(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
-              am.add(GuiConfig.PRESPECTIVE_SHOW, new UiMessage());
-              am.add(GuiConfig.PRESPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
-              getContext().send(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
+              am.add(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
+              am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
+              am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
+              getContext().send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
             } else {
               // No format
-              Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Warning");
-                alert.setHeaderText("No output format file was selected");
-                alert.setContentText(formats.toString());
-                alert.showAndWait();
-              });
+              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, "No output format file was selected", formats.toString()));
             }
 
             getView().hideLoading();
 
           } catch (Exception ex) {
-            Platform.runLater(() -> {
-              Alert alert = new Alert(Alert.AlertType.ERROR);
-              alert.setTitle("Error");
-              alert.setHeaderText("An error occured");
-              alert.setContentText(ex.toString());
-              alert.showAndWait();
-            });
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.EXCEPTION, "An exception occured", ex));
           } catch (OutOfMemoryError er) {
-            Platform.runLater(() -> {
-              Alert alert = new Alert(Alert.AlertType.ERROR);
-              alert.setTitle("Error");
-              alert.setHeaderText("An error occured");
-              alert.setContentText("Out of memory");
-              alert.showAndWait();
-            });
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
           }
           return 0;
         }
@@ -206,15 +171,11 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       String text = getView().getSelectedConfig().getText();
       String path = getFileByPath(text).getAbsolutePath();
       ArrayMessage am = new ArrayMessage();
-      am.add(GuiConfig.PRESPECTIVE_CONFIG, new UiMessage());
-      am.add(GuiConfig.PRESPECTIVE_CONFIG + "." + GuiConfig.COMPONENT_CONFIG, new ConfigMessage(ConfigMessage.Type.EDIT, path));
-      getContext().send(GuiConfig.PRESPECTIVE_CONFIG, am);
+      am.add(GuiConfig.PERSPECTIVE_CONFIG, new UiMessage());
+      am.add(GuiConfig.PERSPECTIVE_CONFIG + "." + GuiConfig.COMPONENT_CONFIG, new ConfigMessage(ConfigMessage.Type.EDIT, path));
+      getContext().send(GuiConfig.PERSPECTIVE_CONFIG, am);
     } else {
-      Alert alert = new Alert(Alert.AlertType.WARNING);
-      alert.setTitle("Alert");
-      alert.setHeaderText("Please select a configuration file");
-      alert.initOwner(GuiWorkbench.getMyStage());
-      alert.showAndWait();
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
     }
   }
 
@@ -244,16 +205,12 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     if (file.delete()) {
       getView().deleteSelectedConfig();
     } else {
-      Alert alert2 = new Alert(Alert.AlertType.ERROR);
-      alert2.setTitle("Error");
-      alert2.setHeaderText("There was an error deleting the configuration file");
-      alert2.initOwner(GuiWorkbench.getMyStage());
-      alert2.showAndWait();
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "There was an error deleting the configuration file"));
     }
   }
 
   public void testAction() {
-    getContext().send(GuiConfig.PRESPECTIVE_DESSIGN + "." + BasicConfig.MODULE_LOGS, new LogMessage(this.getClass(), Level.INFO, "Count: "));
+    getContext().send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.INFO, "Count: "));
 
 //    String hola = null;
 //    hola.isEmpty();
@@ -263,10 +220,10 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
 //    String type = "html";
 //    // Create the messages list
 //    ArrayMessage am = new ArrayMessage();
-//    am.add(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
-//    am.add(GuiConfig.PRESPECTIVE_SHOW, new UiMessage());
-//    am.add(GuiConfig.PRESPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
-//    getContext().send(GuiConfig.PRESPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
+//    am.add(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
+//    am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
+//    am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
+//    getContext().send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
   }
 
   private File getFileByPath(String path) {

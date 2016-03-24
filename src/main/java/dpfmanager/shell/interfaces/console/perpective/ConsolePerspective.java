@@ -1,4 +1,4 @@
-package dpfmanager.shell.interfaces.console;
+package dpfmanager.shell.interfaces.console.perpective;
 
 import dpfmanager.shell.application.launcher.noui.CommandLauncher;
 import dpfmanager.shell.core.config.ConsoleConfig;
@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
     name = ConsoleConfig.PRESPECTIVE,
     components = {  }
 )
-public class ConsolePrespective implements FXPerspective {
+public class ConsolePerspective implements FXPerspective {
 
   @Resource
   public Context context;

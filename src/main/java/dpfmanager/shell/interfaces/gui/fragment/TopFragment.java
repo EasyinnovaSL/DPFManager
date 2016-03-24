@@ -125,11 +125,11 @@ public class TopFragment extends FlowPane {
   public void setCurrentToggle(String id) {
     currentId = id;
     String finalId = "";
-    if (id.equals(GuiConfig.PRESPECTIVE_DESSIGN) || id.equals(GuiConfig.PRESPECTIVE_CONFIG)) {
+    if (id.equals(GuiConfig.PERSPECTIVE_DESSIGN) || id.equals(GuiConfig.PERSPECTIVE_CONFIG)) {
       finalId = ButDessign;
-    } else if (id.equals(GuiConfig.PRESPECTIVE_REPORTS) || id.equals(GuiConfig.PRESPECTIVE_SHOW)) {
+    } else if (id.equals(GuiConfig.PERSPECTIVE_REPORTS) || id.equals(GuiConfig.PERSPECTIVE_SHOW)) {
       finalId = ButReports;
-    } else if (id.equals(GuiConfig.PRESPECTIVE_ABOUT)) {
+    } else if (id.equals(GuiConfig.PERSPECTIVE_ABOUT)) {
       finalId = ButAbout;
     }
     makeBlue(getToggleById(finalId));
@@ -174,9 +174,9 @@ public class TopFragment extends FlowPane {
 
                 private boolean samePerspective(String id){
                   if (id.equals(ButReports)){
-                    return currentId.equals(GuiConfig.PRESPECTIVE_REPORTS);
+                    return currentId.equals(GuiConfig.PERSPECTIVE_REPORTS);
                   } else if (id.equals(ButDessign)){
-                    return currentId.equals(GuiConfig.PRESPECTIVE_DESSIGN);
+                    return currentId.equals(GuiConfig.PERSPECTIVE_DESSIGN);
                   }
                   return false;
                 }
@@ -193,13 +193,13 @@ public class TopFragment extends FlowPane {
                 private void doShow(String id) {
                   switch (id) {
                     case "butDessign":
-                      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
+                      context.send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
                       break;
                     case "butReports":
-                      context.send(GuiConfig.PRESPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
+                      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
                       break;
                     case "butAbout":
-                      context.send(GuiConfig.PRESPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
+                      context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
                       break;
                   }
                 }
@@ -227,13 +227,13 @@ public class TopFragment extends FlowPane {
                 private void doReload(String id) {
                   switch (id) {
                     case "butDessign":
-                      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.RELOAD));
+                      context.send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.RELOAD));
                       break;
                     case "butReports":
-                      context.send(GuiConfig.PRESPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));
+                      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));
                       break;
                     case "butAbout":
-                      context.send(GuiConfig.PRESPECTIVE_ABOUT, new UiMessage(UiMessage.Type.RELOAD));
+                      context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.RELOAD));
                       break;
                   }
                 }

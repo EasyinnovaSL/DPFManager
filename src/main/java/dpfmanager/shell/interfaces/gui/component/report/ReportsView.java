@@ -80,13 +80,19 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       if (rMessage.isReload()) {
         getModel().setReload(true);
       } else if (rMessage.isShow()){
-        addData();
+        readData();
       }
     }
   }
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
+    if (message instanceof ReportsMessage) {
+      ReportsMessage rMessage = (ReportsMessage) message;
+      if (rMessage.isShow()){
+        addData();
+      }
+    }
     return null;
   }
 
@@ -140,9 +146,9 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     );
 
     colScore = new TableColumn("Score");
-    setMinMaxWidth(colScore, 65);
+    setMinMaxWidth(colScore, 75);
     colScore.setCellValueFactory(
-        new PropertyValueFactory("score")
+        new PropertyValueFactory<ReportRow, String>("score")
     );
 
     colFormats = new TableColumn("Formats");
@@ -175,9 +181,13 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     column.setMaxWidth(width);
   }
 
-  public void addData() {
-    // Add data
+  private void readData() {
+    // Read data
     getModel().readIfNeed();
+  }
+
+  private void addData() {
+    // Add data
     ObservableList<ReportRow> data = getModel().getData();
     tabReports.setItems(data);
     addChartScore();
@@ -224,7 +234,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
               PieChart chart = new PieChart(pieChartData);
               chart.setId("pie_chart");
-
               chart.setMinSize(22, 22);
               chart.setMaxSize(22, 22);
 
@@ -239,8 +248,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
               box.getChildren().add(score_label);
 
               setGraphic(box);
-              setText(null);
-
             } else {
               setGraphic(null);
             }
@@ -279,9 +286,9 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
                   @Override
                   public void handle(MouseEvent event) {
                     ArrayMessage am = new ArrayMessage();
-                    am.add(GuiConfig.PRESPECTIVE_SHOW, new UiMessage());
-                    am.add(GuiConfig.PRESPECTIVE_SHOW+"."+GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
-                    getContext().send(GuiConfig.PRESPECTIVE_SHOW, am);
+                    am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
+                    am.add(GuiConfig.PERSPECTIVE_SHOW+"."+GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
+                    getContext().send(GuiConfig.PERSPECTIVE_SHOW, am);
                   }
                 });
 

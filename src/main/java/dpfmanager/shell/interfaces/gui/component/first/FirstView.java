@@ -2,10 +2,12 @@ package dpfmanager.shell.interfaces.gui.component.first;
 
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfSimpleView;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -60,7 +62,7 @@ public class FirstView extends DpfSimpleView {
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
     if (!GuiWorkbench.getFirstTime()){
-      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage());
+      context.send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage());
     }
   }
 
@@ -78,20 +80,12 @@ public class FirstView extends DpfSimpleView {
         if (txtCountry.getText().length() == 0) ok = false;
         if (txtWhy.getText().length() == 0) ok = false;
         if (!ok) {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Error");
-          alert.setHeaderText("Missing data");
-          alert.setContentText("Please fill in all the fields");
-          alert.showAndWait();
+          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Missing data", "Please fill in all the fields"));
           return;
         }
         if (txtEmail.getText().indexOf("@") < 0 || txtEmail.getText().indexOf("@") > txtEmail.getText().lastIndexOf(".")) {
           ok = false;
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Error");
-          alert.setHeaderText("Incorrect email");
-          alert.setContentText("Please write your email correctly");
-          alert.showAndWait();
+          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Incorrect email", "Please write your email correctly"));
         }
         if (ok) {
           String url = "http://dpfmanager.org/form.php";
@@ -135,12 +129,7 @@ public class FirstView extends DpfSimpleView {
           if (getok) {
             DPFManagerProperties.setFirstTime(false);
           } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("An error ocurred");
-            alert.setContentText("Sorry, we could not proceed your request. Try again the next time you run DPFmanager");
-            alert.showAndWait();
-
+            context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occurred", "Sorry, we could not proceed your request. Try again the next time you run DPFManager"));
             DPFManagerProperties.setFirstTime(true);
           }
         }
@@ -149,13 +138,9 @@ public class FirstView extends DpfSimpleView {
       }
 
       // Show main
-      context.send(GuiConfig.PRESPECTIVE_DESSIGN, new UiMessage());
+      context.send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage());
     } catch (Exception ex) {
-      Alert alert = new Alert(Alert.AlertType.ERROR);
-      alert.setTitle("Error");
-      alert.setHeaderText("An error occured");
-      alert.setContentText(ex.toString());
-      alert.showAndWait();
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.EXCEPTION, "An exception occurred", ex));
     }
   }
 

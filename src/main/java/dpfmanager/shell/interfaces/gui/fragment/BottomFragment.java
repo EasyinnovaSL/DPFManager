@@ -2,7 +2,7 @@ package dpfmanager.shell.interfaces.gui.fragment;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
-import dpfmanager.shell.core.messages.LogMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -55,7 +55,7 @@ public class BottomFragment {
   }
 
   private void sendConsoleHandler(){
-    context.send(BasicConfig.MODULE_LOGS, new LogMessage(consoleArea));
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(consoleArea));
   }
 
   private void addDividerListener(){

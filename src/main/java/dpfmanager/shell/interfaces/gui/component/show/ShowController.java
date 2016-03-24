@@ -39,7 +39,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
         break;
       case "pdf":
         try {
-          getView().getContext().send(GuiConfig.PRESPECTIVE_REPORTS,new UiMessage());
+          getView().getContext().send(GuiConfig.PERSPECTIVE_REPORTS,new UiMessage());
           Desktop.getDesktop().open(new File(path));
         } catch (IOException e) {
           e.printStackTrace();

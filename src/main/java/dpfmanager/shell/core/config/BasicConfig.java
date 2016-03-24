@@ -10,6 +10,6 @@ public class BasicConfig {
   /**
    * Modules Components
    */
-  public static final String MODULE_LOGS = "m001";
+  public static final String MODULE_MESSAGE = "m001";
 
 }

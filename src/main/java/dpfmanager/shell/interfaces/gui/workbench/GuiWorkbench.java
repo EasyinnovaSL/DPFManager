@@ -36,12 +36,12 @@ import java.util.Map;
 
 @Workbench(id = BasicConfig.WORKBENCH, name = BasicConfig.WORKBENCH,
     perspectives = {
-        GuiConfig.PRESPECTIVE_FIRST,
-        GuiConfig.PRESPECTIVE_DESSIGN,
-        GuiConfig.PRESPECTIVE_REPORTS,
-        GuiConfig.PRESPECTIVE_ABOUT,
-        GuiConfig.PRESPECTIVE_CONFIG,
-        GuiConfig.PRESPECTIVE_SHOW
+        GuiConfig.PERSPECTIVE_FIRST,
+        GuiConfig.PERSPECTIVE_DESSIGN,
+        GuiConfig.PERSPECTIVE_REPORTS,
+        GuiConfig.PERSPECTIVE_ABOUT,
+        GuiConfig.PERSPECTIVE_CONFIG,
+        GuiConfig.PERSPECTIVE_SHOW
     }
 )
 public class GuiWorkbench implements FXWorkbench {

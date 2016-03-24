@@ -35,6 +35,21 @@
     -fx-padding: 0;
 }
 
+/* Chart */
+#pie_chart {
+    -fx-padding: -8px;
+    -fx-pie-label-visible: false;
+    -fx-pie-legend-visible: false;
+    -fx-pie-title-visible: false;
+}
+
+.chart-pie {
+    -fx-border-width: 0px;
+    -fx-border-color:#31C2F3 ;
+}
+.data0.chart-pie { -fx-background-color: #33ccff; }
+.data1.chart-pie { -fx-background-color: #f2f2f2; }
+
 /* Elements */
 
 .separator-line{
@@ -578,4 +593,4 @@
 }
 .loading3 {
     -fx-background: rgba(255,255,255,0.4);
-}      
+}
