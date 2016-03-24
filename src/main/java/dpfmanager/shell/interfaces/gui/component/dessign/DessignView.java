@@ -204,15 +204,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @FXML
   protected void editButtonClicked(ActionEvent event) throws Exception {
-//    getController().performEditConfigAction();
-
-
-//    DefaultErrorDialog ded = new DefaultErrorDialog("Title", "message");
-//    DefaultErrorDialogHandler deh = new DefaultErrorDialogHandler();
-//    Node n = deh.createExceptionDialog(new Throwable("OMG"));
-//    Label label = new Label("OMG");
-    getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.EXCEPTION, "An exception ocurred!", new Exception("OMG!")));
-//    context.showModalDialog(alert.getDialogPane().getContent());
+    getController().performEditConfigAction();
   }
 
   @FXML

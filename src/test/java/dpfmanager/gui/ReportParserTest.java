@@ -53,11 +53,11 @@ public class ReportParserTest extends ApplicationTest {
       clickOnAndReload("#checkFilesButton");
       waitForCheckFiles(60);
       System.out.println("Current config: " + configFile);
-      clickOnAndReloadTop("#butDessign",3000);
+      clickOnAndReloadTop("#butDessign","#pane-design");
     }
 
     // Go to reports and check them
-    clickOnAndReloadTop("#butReports",4000);
+    clickOnAndReloadTop("#butReports","#pane-reports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_loaded), table.getItems().size());
     checkValidRow(table.getItems().get(0), "XML");  //Xml

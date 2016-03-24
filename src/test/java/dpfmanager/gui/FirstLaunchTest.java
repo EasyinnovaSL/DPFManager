@@ -56,7 +56,7 @@ public class FirstLaunchTest extends ApplicationTest {
   public void testFirstScreen() throws Exception {
     //Now init app
     WaitForAsyncUtils.waitForFxEvents();
-    FxAssert.verifyThat("#welcomeText", NodeMatchers.hasText("Welcome to DPF Manager!"));
+    FxAssert.verifyThat("#pane-first", NodeMatchers.isNotNull());
 
     //Check config file now exists
     File reportFolder = new File(ReportGenerator.getReportsFolder());

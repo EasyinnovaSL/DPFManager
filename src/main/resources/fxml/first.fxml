@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Button?>
-<AnchorPane style="-fx-border-width: 0;" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="pane-first" style="-fx-border-width: 0;" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label id="welcomeText" layoutX="27.0" layoutY="43.0" styleClass="clabel-title" text="Welcome to DPF Manager!"/>
         <Label layoutX="27.0" layoutY="83.0" prefHeight="29.0" prefWidth="814.0" styleClass="clabel" text="DPF manager is currently under development and early adopters like you are very welcome." wrapText="true" />

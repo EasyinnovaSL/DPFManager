@@ -29,23 +29,23 @@ public class TopMenuButtonsTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
 
     // checker -- about
-    clickOnAndReloadTop("#butAbout",1000);
-    FxAssert.verifyThat("#pane2", NodeMatchers.isNotNull());
+    clickOnAndReloadTop("#butAbout","#pane-about");
+    FxAssert.verifyThat("#pane-about", NodeMatchers.isNotNull());
     // about -- reports
-    clickOnAndReloadTop("#butReports",4000);
-    FxAssert.verifyThat("#pane1", NodeMatchers.isNotNull());
+    clickOnAndReloadTop("#butReports","#pane-reports");
+    FxAssert.verifyThat("#pane-reports", NodeMatchers.isNotNull());
     // reports -- checker
-    clickOnAndReloadTop("#butDessign",1000);
-    FxAssert.verifyThat("#pane0", NodeMatchers.isNotNull());
+    clickOnAndReloadTop("#butDessign","#pane-design");
+    FxAssert.verifyThat("#pane-design", NodeMatchers.isNotNull());
     // checker -- reports
-    clickOnAndReloadTop("#butReports",4000);
-    FxAssert.verifyThat("#pane1", NodeMatchers.isNotNull());
+    clickOnAndReloadTop("#butReports","#pane-reports");
+    FxAssert.verifyThat("#pane-reports", NodeMatchers.isNotNull());
     // reports -- about
-    clickOnAndReloadTop("#butAbout",1000);
-    FxAssert.verifyThat("#pane2", NodeMatchers.isNotNull());
+    clickOnAndReloadTop("#butAbout","#pane-about");
+    FxAssert.verifyThat("#pane-about", NodeMatchers.isNotNull());
     // about -- checker
-    clickOnAndReloadTop("#butDessign",1000);
-    FxAssert.verifyThat("#pane0", NodeMatchers.isNotNull());
+    clickOnAndReloadTop("#butDessign","#pane-design");
+    FxAssert.verifyThat("#pane-design", NodeMatchers.isNotNull());
   }
 
 }

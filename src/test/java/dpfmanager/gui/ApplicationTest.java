@@ -109,11 +109,47 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     clickOnAndReloadTop(id, 250);
   }
 
+  //Main click function + wait for node + reload
+  public void clickOnAndReload(String id, String search){
+    // Click first
+    clickOnScroll(id);
+
+    // Reload until node search is visible
+    reloadScene();
+    Node node = scene.lookup(search);
+    int count = 0;
+    int max = 60; //seconds
+    while (node == null && count < max *4){
+      sleep(250);
+      count++;
+      reloadScene();
+    }
+    sleep(250);
+  }
+
   //Main click function + wait + reload
   public void clickOnAndReload(String id, int milis){
     clickOnScroll(id);
     sleep(milis);
     reloadScene();
+  }
+
+  //Main click function + wait for node + reload (top pane)
+  public void clickOnAndReloadTop(String id, String search){
+    // Click first
+    clickOnScroll(id, true, true);
+
+    // Reload until node search is visible
+    reloadScene();
+    Node node = scene.lookup(search);
+    int count = 0;
+    int max = 60; //seconds
+    while (node == null && count < max *4){
+      sleep(250);
+      count++;
+      reloadScene();
+    }
+    sleep(250);
   }
 
   //Main click function + wait + reload (top pane)

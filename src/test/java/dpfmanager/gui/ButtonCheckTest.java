@@ -34,7 +34,7 @@ public class ButtonCheckTest extends ApplicationTest {
     System.out.println("Running check buttons test...");
 
     // Continue 3 button
-    clickOnAndReload("#newButton",5000);
+    clickOnAndReload("#newButton","#pane-config");
     Assert.assertTrue("New button fail.", scene.lookup("#step1").getStyleClass().contains("blue-but"));
     clickOnAndReload("#continueButton");
     Assert.assertTrue("Continue of step 1 fail.", scene.lookup("#step2").getStyleClass().contains("blue-but"));
@@ -44,10 +44,10 @@ public class ButtonCheckTest extends ApplicationTest {
     Assert.assertTrue("Continue of step 3 fail.", scene.lookup("#step4").getStyleClass().contains("blue-but"));
 
     // Check files button
-    clickOnAndReloadTop("#butDessign");
+    clickOnAndReloadTop("#butDessign", "#pane-design");
     clickOnAndReload("#checkFilesButton");
-    clickOnAndReloadTop("#butReports");
-    FxAssert.verifyThat("#tabReports", NodeMatchers.isNull());
+    clickOnAndReloadTop("#butAbout", 2000);
+    FxAssert.verifyThat("#pane-about", NodeMatchers.isNull());
   }
 }
 

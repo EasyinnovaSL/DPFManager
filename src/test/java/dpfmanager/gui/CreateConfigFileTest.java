@@ -42,7 +42,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     System.out.println("Running create config file test...");
 
     // 1 - Click New Button
-    clickOnAndReload("#newButton",2000);
+    clickOnAndReload("#newButton","#pane-config");
 
     // 2 - Deselect tiff baseline and Select Tiff/EP & TIFF/IT-P1
     // 1: Baseline   2: EP   3: IT   4: ITP1   5: IT-P2

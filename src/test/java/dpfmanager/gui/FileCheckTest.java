@@ -53,7 +53,7 @@ public class FileCheckTest extends ApplicationTest {
     waitForCheckFiles(60);
 
     //Check table view
-    clickOnAndReloadTop("#butReports",5000);
+    clickOnAndReloadTop("#butReports","#pane-reports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     ReportRow row = table.getItems().get(0);
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_loaded), table.getItems().size());
@@ -64,12 +64,12 @@ public class FileCheckTest extends ApplicationTest {
 
     //Check html && pdf exists
     FxAssert.verifyThat("#tabReports #buthtml", NodeMatchers.isNotNull());
-    clickOnAndReload("#tabReports #buthtml", 1000);
+    clickOnAndReload("#tabReports #buthtml", "#pane-show");
     FxAssert.verifyThat("#webView", NodeMatchers.isNotNull());
 
     //Check xml
-    clickOnAndReloadTop("#butReports", 5000);
-    clickOnAndReload("#tabReports #butxml", 1000);
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    clickOnAndReload("#tabReports #butxml", "#pane-show");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     TextArea textArea = (TextArea) scene.lookup("#textArea");
     String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
@@ -77,8 +77,8 @@ public class FileCheckTest extends ApplicationTest {
     Assert.assertEquals("Report xml", expected, initial);
 
     //Check json
-    clickOnAndReloadTop("#butReports", 5000);
-    clickOnAndReload("#tabReports #butjson", 1000);
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    clickOnAndReload("#tabReports #butjson", "#pane-show");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     textArea = (TextArea) scene.lookup("#textArea");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();

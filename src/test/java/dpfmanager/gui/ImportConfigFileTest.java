@@ -38,7 +38,7 @@ public class ImportConfigFileTest extends ApplicationTest {
     clickOnImportedConfig(inputPath);
 
     //Edit
-    clickOnAndReload("#editButton");
+    clickOnAndReload("#editButton","#pane-config");
 
     //Test step buttons
     clickOnAndReload("#step3");

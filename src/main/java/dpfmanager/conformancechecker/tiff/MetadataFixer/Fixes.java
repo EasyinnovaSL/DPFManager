@@ -43,7 +43,7 @@ public class Fixes {
     // TODO delete
     fixes.clear();
     Boolean wrong_format = false;
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane-reports");
     for (Node node : ap2.getChildren()) {
       if (node instanceof HBox) {
         HBox hBox1 = (HBox) node;
@@ -122,7 +122,7 @@ public class Fixes {
    */
   public void ReadAutofixes(Scene scene) {
     // TODO delete
-    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane1");
+    AnchorPane ap2 = (AnchorPane) scene.lookup("#pane-reports");
     for (Node node : ap2.getChildren()) {
       if (node instanceof CheckBox) {
         CheckBox check = (CheckBox) node;
