@@ -1,0 +1,1758 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementationCheckerObject>
+ 
+ <title>Tiff Baseline Implementation Checker</title>
+
+ <description>Tiff Revision 6.0 Final - June 3, 1992</description>
+ 
+ <rules description="header-check">
+  <rule context="tiffValidationObject" critical="1">
+   <assert test="{count(header)==1}" diagnostics="d1 d2">Header must exist and be unique</assert>
+   <diagnostic id="d1" lang="en">Header must exist and be unique</diagnostic>
+   <diagnostic id="d2" lang="es">Tiene que existir una única cabecera</diagnostic>
+   <reference>Section 2, page 13</reference>
+  </rule>
+  <rule context="header" critical="1">
+   <assert test="{byteOrder}">ByteOrder must be defined</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
+  <rule context="header" critical="1">
+   <assert test="{byteOrder=='BIG_ENDIAN'}||{byteOrder=='LITTLE_ENDIAN'}">ByteOrder must be BIG_ENDIAN or LITTLE_ENDIAN</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
+  <rule context="header">
+   <assert test="{magicNumber}">Magic Number must be defined</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
+  <rule context="header">
+   <assert test="{magicNumber==42}">Magic Number must be 42</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
+ </rules>
+
+ <rules description="global-rules">
+  <rule context="*">
+   <assert test="{offset%2==0}">Bad alignment in offset</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
+  <rule context="*">
+   <assert test="{offset &gt; 7}||{offset == 0}">Bad offset position</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
+  <rule context="*">
+   <assert test="{offset &lt; $tiffValidationObject.size$}">Bad offset position</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
+ </rules>
+ 
+ <rules description="ifd-structure-check">
+  <rule context="tiffValidationObject">
+   <assert test="{count(ifds) == 1}">The file must have IFDs</assert>
+   <reference>Section 2, page 14</reference>
+  </rule>
+  <rule context="ifds">
+   <assert test="{circularReference == 0}">Circular reference</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifds">
+   <assert test="{count(ifd) > 0}">At least 1 IFD must exist</assert>
+   <reference>Section 2, page 14</reference>
+  </rule>
+  <rule context="ifd">
+   <assert test="{tagOrdering == 1}">Tags must be in strict ascending order</assert>
+   <reference>Section 2, page 15</reference>
+  </rule>
+  <rule context="ifd">
+   <assert test="{duplicateTags == 0}">Tags cannot be duplicated</assert>
+   <reference>Section 2, page 15</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{count(tag[name=PhotometricInterpretation]) == 1}">Each IFD must have a Photometric Interpretation</assert>
+   <reference>Section 8, page 37</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{tag[name=PhotometricInterpretation] &gt; -1} &amp;&amp; {tag[name=PhotometricInterpretation] &lt; 11}">Photometric Interpretation value must be between 0 and 10</assert>
+   <reference>Section 8, page 27</reference>
+  </rule>
+ </rules>
+ 
+ <rules description="strips-check">
+  <rule context="ifd[strips=1]">
+   <assert test="{tags.tag[name=StripOffsets].cardinality == tags.tag[name=StripBYTECount].cardinality}">Inconsistent strip lengths</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[strips=1]">
+   <assert test="{tags.tag[name=StripOffsets]}">StripOffsets tag must exist for stripped images</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[strips=1]">
+   <assert test="{tags.tag[name=StripBYTECount]}">StripBYTECount tag must exist for stripped images</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[strips=1]">
+   <assert test="{tags.tag[name=RowsPerStrip]}">RowsPerStrip tag must exist for stripped images</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[strips=1]">
+   <assert test="{correctStrips == 1}">Calculated and declared image sizes do not match</assert>
+   <reference></reference>
+  </rule>
+ </rules>
+
+ <rules description="tiles-check">
+  <rule context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileOffsets].cardinality == tags.tag[name=TileBYTECounts].cardinality}">Inconsistent tile lengths</assert>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileOffsets]}">Missing required field for tiles TileOffsets</assert>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileWidth]}">Missing required field for tiles TileWidth</assert>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileLength]}">Missing required field for tiles TileLength</assert>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileWidth] &gt; 0}">Invalid value for field TileWidth</assert>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileLength] &gt; 0}">Invalid value for field TileLength</assert>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule context="ifd[tiles=1]">
+   <assert test="{correctTiles == 1}">Insufficient tiles</assert>
+   <reference>Section 15, page 66</reference>
+  </rule>
+ </rules>
+ 
+ <rules description="image-check">
+  <rule context="ifd[type=Bilevel]">
+   <assert test="{tags.tag[name=Compression] &gt; 0}">Invalid Compression for Bilevel image</assert>
+   <reference>Section 3, page 17</reference>
+  </rule>
+  <rule context="ifd[type=Grayscale]">
+   <assert test="{tags.tag[name=BitsPerSample] &gt; 0}">Invalid Bits per Sample for Grayscale image</assert>
+   <reference>Section 4, page 22</reference>
+  </rule>
+  <rule context="ifd[type=Grayscale]">
+   <assert test="{tags.tag[name=Compression] &gt; 0}">Invalid Compression for Grayscale image</assert>
+   <reference>Section 4, page 22</reference>
+  </rule>
+  <rule context="ifd[type=Pallete]">
+   <assert test="{tags.tag[name=Compression] &gt; 0}">Invalid Compression for Pallete image</assert>
+   <reference>Section 5, page 23</reference>
+  </rule>
+  <rule context="ifd[type=Pallete]">
+   <assert test="{tags.tag[name=BitsPerSample] == 4} || {tags.tag[name=BitsPerSample] == 8}">Invalid Bits per Sample for Pallete image</assert>
+   <reference>Section 5, page 23</reference>
+  </rule>
+  <rule context="ifd[type=Pallete]">
+   <assert test="{tags.tag[name=ColorMap].Cardinality == 3*2^BitsPerSample}">Incorrect Color Map Cardinality</assert>
+   <reference>Section 5, page 23</reference>
+  </rule>
+  <rule context="ifd[type=Transparency]">
+   <assert test="{tags.tag[name=BitsPerSample] == 1}">Invalid Bits per Sample for Transparency Mask image</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[type=Transparency]">
+   <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid Samples per Pixel for Transparency Mask image</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[type=CMYK]">
+   <assert test="{tags.tag[name=BitsPerSample]}">Bits per Sample must exist for CMYK image</assert>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule context="ifd[type=CMYK]">
+   <assert test="{tags.tag[name=SamplesPerPixel]}">Samples per Pixel must exist for CMYK image</assert>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule context="ifd[type=YCbCr]">
+   <assert test="{tags.tag[name=SamplesPerPixel] == 3}">Invalid Samples per Pixel for YCbCr image</assert>
+   <reference>Section 21, page 89</reference>
+  </rule>
+  <rule context="ifd[type=YCbCr]">
+   <assert test="{tags.tag[name=BitsPerSample] == 8}">Invalid Bits per Sample for YCbCr image</assert>
+   <reference>Section 21, page 89</reference>
+  </rule>
+  <rule context="ifd[type=CIELab]">
+   <assert test="{tags.tag[name=BitsPerSample] == 8}">Invalid Bits per Sample for CIELab image</assert>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule context="ifd[type=RGB]">
+   <assert test="{tags.tag[name=Compression] &gt; 0}">Invalid Compression for RGB image</assert>
+   <reference>Section 6, page 24</reference>
+  </rule>
+  <rule context="ifd[type=RGB]">
+   <assert test="{tags.tag[name=SamplesPerPixel] == 3}">Invalid Samples per Pixel for RGB image</assert>
+   <reference>Section 6, page 24</reference>
+  </rule>
+ </rules>
+ 
+ <rules description="tags-check">
+  <rule context="tags">
+   <assert test="{count(tag) > 0}">At least 1 tag must exist for each IFD</assert>
+   <reference>Section 2, page 14</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=ImageLength]}">Image Length tag must exist</assert>
+   <reference>Section 8, page 34</reference>
+  </rule>
+  <rule context="ifd">
+   <assert test="{tags.tag[name=ImageLength] > 0}">Image Length must be greater than 0</assert>
+   <reference>Section 8, page 34</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=ImageWidth]}">Image Width tag must exist</assert>
+   <reference>Section 8, page 34</reference>
+  </rule>
+  <rule context="ifd">
+   <assert test="{tags.tag[name=ImageWidth] > 0}">Image Width must be greater than 0</assert>
+   <reference>Section 8, page 34</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{tag[name=ResolutionUnit] == 1} || {tag[name=ResolutionUnit] == 2} || {tag[name=ResolutionUnit] == 3}">Resolution Unit possible values are 1, 2 and 3</assert>
+   <reference>Section 8, page 38</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{tag[name=XResolution] > 0}">X Resolution must be greater than 0</assert>
+   <reference>Section 8, page 41</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{tag[name=YResolution] > 0}">Y Resolution must be greater than 0</assert>
+   <reference>Section 8, page 41</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{tag[name=PlanarConfiguration] == 1} || {tag[name=PlanarConfiguration] == 2}">Planar configuration possible values are 1 and 2</assert>
+   <reference>Section 8, page 38</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{tag[name=Orientation] > 0} &amp;&amp; {tag[name=Orientation] &lt; 9}">Orientation possible values are between 1 and 8</assert>
+   <reference>Section 8, page 36</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{strips == 1} || {tiles == 1}">Image must be in either Strips or Tiles</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{strips == 0} || {tiles == 0}">Image cannot be in both Strips and Tiles</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{correctExtraSamples == 1}">Incorrect Extra Samples Count</assert>
+   <reference>Section 8, page 31</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{onlyNecessaryExtraSamples == 1}">Unnecessary Extra Samples</assert>
+   <reference>Section 8, page 31</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{validBitsPerSample == 1}">Invalid Bits per Sample</assert>
+   <reference>Section 8, page 29</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{equalBitsPerSampleValues == 1}">Distinct Bits per Sample values</assert>
+   <reference>Section 8, page 29</reference>
+  </rule>
+ </rules>
+ 
+ <rules description="tagtype-check">
+      <rule context="tag[id=40960]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=0]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=512]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=40961]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41985]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=1]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=513]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37377]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37378]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41986]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=2]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=514]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=40962]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37379]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=36867]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=3]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=515]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=40963]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41987]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=36868]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41988]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37380]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=4]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=40964]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41989]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=5]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=40965]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=517]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37381]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=6]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=518]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41990]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37382]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41991]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=7]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=519]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37383]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41992]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=8]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=520]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37384]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37385]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=9]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=521]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41993]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37386]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=10]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41994]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41995]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41483]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=11]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=12]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41484]">
+   <assert test="{type=='UNDE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41996]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=13]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=32781]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41486]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=14]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41487]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=15]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41488]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=16]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=17]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=529]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50706]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=18]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=530]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50707]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=19]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=531]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=20]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=532]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37396]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41492]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50708]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41493]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=21]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50709]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50710]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=22]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37398]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50711]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=23]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41495]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=24]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50712]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50713]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=25]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50714]">
+   <assert test="{type=='SHORT'} || {type=='BYTE'} || {type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=26]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50715]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=27]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50716]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=28]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=29]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50717]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50718]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=30]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50719]">
+   <assert test="{type=='SHORT'} || {type=='LONG'} || {type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50720]">
+   <assert test="{type=='SHORT'} || {type=='LONG'} || {type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=42016]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50721]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50722]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34850]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50723]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50724]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34852]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34853]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50725]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50726]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50727]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34855]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50728]">
+   <assert test="{type=='SHORT'} || {type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34856]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50729]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34857]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50730]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34858]">
+   <assert test="{type=='SSHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50731]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34859]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50732]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50733]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50734]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50735]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=559]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50736]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50737]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50738]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50739]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50740]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50741]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34377]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50778]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50779]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50780]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34908]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34909]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50781]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34910]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50784]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37500]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=33920]">
+   <assert test="{type=='DOUBLE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=33922]">
+   <assert test="{type=='DOUBLE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37510]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50827]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50828]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50829]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=33421]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50830]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50831]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50832]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37520]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50833]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37521]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50834]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37522]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=33432]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=33434]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=33437]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=32932]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=700]">
+   <assert test="{type=='BYTE'} || {type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50879]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34016]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34017]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34018]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34019]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34020]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34021]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34022]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34023]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34024]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34025]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34026]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34027]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34028]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34029]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34030]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34031]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34032]">
+   <assert test="{type=='BYTE'} || {type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50931]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50932]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50933]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50934]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50935]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50936]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50937]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50938]">
+   <assert test="{type=='FLOAT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50939]">
+   <assert test="{type=='FLOAT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50940]">
+   <assert test="{type=='FLOAT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50941]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=254]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50942]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=255]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41728]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=256]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37121]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=257]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41729]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=258]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=41730]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37122]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=259]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=262]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=263]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=264]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=265]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=266]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=269]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=270]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=33550]">
+   <assert test="{type=='DOUBLE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=271]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=272]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=273]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=274]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50964]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50965]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=277]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50966]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=278]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50967]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=279]">
+   <assert test="{type=='LONG'} || {type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=280]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50968]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=281]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50969]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50970]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=282]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50971]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=283]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=284]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50972]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50973]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=285]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50974]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=286]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50975]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=287]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=288]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=289]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=290]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=291]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=292]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50981]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=293]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=50982]">
+   <assert test="{type=='FLOAT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=296]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=297]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=300]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=301]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=305]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=306]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=315]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=316]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=317]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=318]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=319]">
+   <assert test="{type=='RATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=320]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=321]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=322]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=323]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=324]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=325]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=326]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=327]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=328]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=330]">
+   <assert test="{type=='LONG'} || {type=='IFD'} || {type=='SUBIFD'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=332]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=333]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=334]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=336]">
+   <assert test="{type=='BYTE'} || {type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=337]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=338]">
+   <assert test="{type=='BYTE'} || {type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=339]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=340]">
+   <assert test="{type=='ANY'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=341]">
+   <assert test="{type=='ANY'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=342]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=343]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=344]">
+   <assert test="{type=='DWORD'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=345]">
+   <assert test="{type=='DWORD'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=346]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=347]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=37724]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=351]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34665]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34675]">
+   <assert test="{type=='UNDEFINED'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=400]">
+   <assert test="{type=='IFD'} || {type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=401]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=402]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=403]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=404]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=405]">
+   <assert test="{type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34732]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34736]">
+   <assert test="{type=='DOUBLE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=433]">
+   <assert test="{type=='SRATIONAL'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34737]">
+   <assert test="{type=='ASCII'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=434]">
+   <assert test="{type=='SHORT'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=435]">
+   <assert test="{type=='LONG'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=33723]">
+   <assert test="{type=='UNDEFINED'} || {type=='BYTE'}">Tag type does not match</assert>
+  </rule>
+  <rule context="tag[id=34264]">
+   <assert test="{type=='DOUBLE'}">Tag type does not match</assert>
+  </rule>
+ </rules>
+ 
+ <rules description="tagcardinality-check">
+  <rule context="tag[id=40960]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=0]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=512]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=40961]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41985]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=1]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=513]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37377]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37378]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41986]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=2]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=514]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=40962]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37379]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=36867]">
+   <assert test="{cardinality==20}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=3]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=515]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=40963]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41987]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=36868]">
+   <assert test="{cardinality==20}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41988]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37380]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=4]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=40964]">
+   <assert test="{cardinality==13}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41989]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=5]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=40965]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37381]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=6]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41990]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37382]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41991]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=7]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37383]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41992]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37384]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37385]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=9]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41993]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37386]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=10]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41994]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41483]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=11]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=12]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41996]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=13]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41486]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=14]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41487]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=15]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41488]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=16]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=17]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=529]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50706]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=530]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50707]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=19]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=531]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=20]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=532]">
+   <assert test="{cardinality==6}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37396]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41492]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41493]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=21]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=22]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37398]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50711]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=23]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41495]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=24]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50713]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=25]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=26]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=29]">
+   <assert test="{cardinality==11}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50718]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=30]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50719]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50720]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=42016]">
+   <assert test="{cardinality==33}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34850]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34853]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50729]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34857]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50730]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50731]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34859]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50732]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50733]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50734]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50736]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50737]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50738]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50739]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50741]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50778]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50779]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50780]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34908]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50781]">
+   <assert test="{cardinality==16}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34910]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=33920]">
+   <assert test="{cardinality==17}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50829]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=33421]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=33434]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=33437]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50879]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34019]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34020]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34021]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34023]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34024]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34025]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34026]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34027]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34028]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34030]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34031]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50935]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50937]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50941]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=254]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=255]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41728]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=256]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37121]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=257]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=41729]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=37122]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=259]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=262]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=263]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=264]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=265]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=266]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=33550]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=274]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=277]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=278]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50969]">
+   <assert test="{cardinality==16}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50970]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=282]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=283]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=284]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50972]">
+   <assert test="{cardinality==16}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50973]">
+   <assert test="{cardinality==16}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50974]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50975]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=290]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=292]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=50981]">
+   <assert test="{cardinality==3}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=293]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=296]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=297]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=300]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=306]">
+   <assert test="{cardinality==20}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=317]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=318]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=319]">
+   <assert test="{cardinality==6}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=321]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=322]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=323]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=332]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=334]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=342]">
+   <assert test="{cardinality==6}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=344]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=345]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=346]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=351]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34665]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=400]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=401]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=402]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=403]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=404]">
+   <assert test="{cardinality==4}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=405]">
+   <assert test="{cardinality==1}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34732]">
+   <assert test="{cardinality==2}">Tag cardinality does not match</assert>
+  </rule>
+  <rule context="tag[id=34264]">
+   <assert test="{cardinality==16}">Tag cardinality does not match</assert>
+  </rule>
+ </rules>
+
+ <rules description="cardinality-formulas">
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=BitsPerSample].cardinality == tags.tag[name=SamplesPerPixel]}">Samples per Pixel and Bits per Sample count do not match</assert>
+   <reference>Section 8, page 29 and 39</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=MinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=MaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=ImageBaseColor].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <reference></reference>
+  </rule>
+ </rules>
+
+</implementationCheckerObject>

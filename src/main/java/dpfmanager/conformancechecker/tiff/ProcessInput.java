@@ -1,5 +1,6 @@
 package dpfmanager.conformancechecker.tiff;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.IndividualReport;
 import dpfmanager.shell.modules.report.ReportGenerator;

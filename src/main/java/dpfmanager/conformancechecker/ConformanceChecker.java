@@ -1,5 +1,7 @@
-package dpfmanager.conformancechecker.tiff;
+package dpfmanager.conformancechecker;
 
+import dpfmanager.conformancechecker.tiff.Configuration;
+import dpfmanager.conformancechecker.tiff.Field;
 import dpfmanager.shell.modules.report.IndividualReport;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
