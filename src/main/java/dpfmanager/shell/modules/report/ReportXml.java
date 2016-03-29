@@ -31,8 +31,8 @@
 
 package dpfmanager.shell.modules.report;
 
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Rules;
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Schematron;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
+import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;

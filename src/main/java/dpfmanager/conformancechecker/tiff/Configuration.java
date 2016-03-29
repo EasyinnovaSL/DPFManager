@@ -1,9 +1,9 @@
 package dpfmanager.conformancechecker.tiff;
 
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Rule;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.Fix;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.Fixes;
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Rules;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

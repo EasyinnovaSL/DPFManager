@@ -1,6 +1,6 @@
 package dpfmanager.commandline;
 
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Schematron;
+import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 import dpfmanager.shell.interfaces.console.commandline.CommandLineApp;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.ReportGenerator;

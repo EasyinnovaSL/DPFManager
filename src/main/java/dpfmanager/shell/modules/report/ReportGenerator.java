@@ -32,10 +32,10 @@
 package dpfmanager.shell.modules.report;
 
 import dpfmanager.conformancechecker.tiff.Configuration;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.Fix;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.Fixes;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes.autofix;
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Rules;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 

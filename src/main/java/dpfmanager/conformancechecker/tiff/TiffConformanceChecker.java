@@ -32,7 +32,7 @@
 package dpfmanager.conformancechecker.tiff;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes.clearPrivateData;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.shell.modules.report.IndividualReport;
 import dpfmanager.shell.modules.report.ReportGenerator;
 
@@ -239,7 +239,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
   }
 
   public static String getAutofixesClassPath() {
-    return "dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes";
+    return "dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes";
   }
 
   /**

@@ -2,8 +2,8 @@ package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.tiff.Configuration;
 import dpfmanager.conformancechecker.tiff.Field;
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Rule;
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Rules;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.util.NumberTextField;
 import dpfmanager.shell.interfaces.gui.component.config.ConfigModel;
