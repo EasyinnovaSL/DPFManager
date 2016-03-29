@@ -35,6 +35,7 @@ public class TopMenuButtonsTest extends ApplicationTest {
     clickOnAndReloadTop("#butReports","#pane-reports");
     FxAssert.verifyThat("#pane-reports", NodeMatchers.isNotNull());
     // reports -- checker
+    waitUntilExists("#butDessign");
     clickOnAndReloadTop("#butDessign","#pane-design");
     FxAssert.verifyThat("#pane-design", NodeMatchers.isNotNull());
     // checker -- reports
