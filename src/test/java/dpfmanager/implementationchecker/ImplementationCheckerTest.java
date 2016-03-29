@@ -96,34 +96,34 @@ public class ImplementationCheckerTest extends TestCase {
    * Valid examples set.
    */
   public void testValidExamples() {
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Small" + separator + "Bilevel.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Header" + separator + "Classic Intel.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Header" + separator + "Classic Motorola.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Colorspace" + separator + "F32.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD tree" + separator + "Recommended list.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD tree" + separator + "Old school E.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Chunky multistrip.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Chunky singlestrip.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Chunky tile.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Planar multistrip.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Planar singlestrip.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Planar tile.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Compression" + separator + "Motorola nopred nocomp.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Compression" + separator + "Motorola pred nocomp.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Compression" + separator + "Intel nopred nocomp.TIF", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Compression" + separator + "Intel pred nocomp.TIF", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Small" + separator + "Bilevel.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Header" + separator + "Classic Intel.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Header" + separator + "Classic Motorola.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Colorspace" + separator + "F32.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD tree" + separator + "Recommended list.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD tree" + separator + "Old school E.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Chunky multistrip.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Chunky singlestrip.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Chunky tile.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Planar multistrip.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Planar singlestrip.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Organization" + separator + "Planar tile.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Compression" + separator + "Motorola nopred nocomp.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Compression" + separator + "Motorola pred nocomp.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Compression" + separator + "Intel nopred nocomp.tif", 0);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Compression" + separator + "Intel pred nocomp.tif", 0);
   }
 
   /**
    * Invalid examples set.
    */
   public void testInvalidExamples() {
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Header" + separator + "Nonsense byteorder E.TIF", 1);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Header" + separator + "Nonsense byteorder E.tif", 1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "Block" + separator + "Bad alignment Classic E.tif", 3);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD Struct" + separator + "Insane tag count E.TIF", -1);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD Struct" + separator + "Circular E.TIF", 1);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD Struct" + separator + "Circular Short E.TIF", 1);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD Struct" + separator + "Beyond EOF E.TIF", 1);
-    //assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD Struct" + separator + "Premature EOF E.TIF", -1);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Insane tag count E.tif", -1);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Circular E.tif", 1);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Circular short E.tif", 1);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Beyond EOF E.tif", 1);
+    //assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Premature EOF E.tif", -1);
   }
 }
