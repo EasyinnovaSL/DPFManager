@@ -32,6 +32,8 @@
 package dpfmanager.shell.modules.report;
 
 import dpfmanager.conformancechecker.tiff.Configuration;
+import dpfmanager.conformancechecker.tiff.ProcessInput;
+import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
@@ -609,16 +611,20 @@ public class ReportGenerator {
         tr.readFile(nameFixedTif);
         TiffDocument to = tr.getModel();
 
-        ValidationResult baselineVal = null;
-        if (ir.checkBL) baselineVal = tr.getBaselineValidation();
-        ValidationResult epValidation = null;
-        if (ir.checkEP) epValidation = tr.getTiffEPValidation();
-        ValidationResult itValidation = null;
-        if (ir.checkIT >= 0) itValidation = tr.getTiffITValidation(ir.checkIT);
+        Validator baselineVal = null;
+        if (ir.checkBL) baselineVal = TiffConformanceChecker.getBaselineValidation(tr);
+        Validator epValidation = null;
+        if (ir.checkEP) epValidation = TiffConformanceChecker.getEPValidation(tr);
+        Validator it0Validation = null;
+        if (ir.checkIT) it0Validation = TiffConformanceChecker.getITValidation(0, tr);
+        Validator it1Validation = null;
+        if (ir.checkIT1) it1Validation = TiffConformanceChecker.getITValidation(1, tr);
+        Validator it2Validation = null;
+        if (ir.checkIT2) it2Validation = TiffConformanceChecker.getITValidation(2, tr);
 
         String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
         String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-        IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, itValidation);
+        IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
         int ind = ir.getReportPath().lastIndexOf(".tif");
         ir2.setReportPath(ir.getReportPath().substring(0, ind) + "_fixed.tif");
         ir2.checkPC = ir.checkPC;

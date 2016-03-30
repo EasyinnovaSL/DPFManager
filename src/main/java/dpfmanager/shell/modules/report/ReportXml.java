@@ -31,6 +31,7 @@
 
 package dpfmanager.shell.modules.report;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 
@@ -195,10 +196,10 @@ public class ReportXml extends ReportGeneric {
    * @param warnings the warnings
    */
   private static void addErrorsWarnings(Document doc, Element results,
-      List<ValidationEvent> errors, List<ValidationEvent> warnings) {
+      List<RuleResult> errors, List<RuleResult> warnings) {
     // errors
     for (int i = 0; i < errors.size(); i++) {
-      ValidationEvent value = errors.get(i);
+      RuleResult value = errors.get(i);
       Element error = doc.createElement("result");
 
       // level
@@ -216,7 +217,7 @@ public class ReportXml extends ReportGeneric {
 
     // warnings
     for (int i = 0; i < warnings.size(); i++) {
-      ValidationEvent value = warnings.get(i);
+      RuleResult value = warnings.get(i);
       Element warning = doc.createElement("result");
 
       // level
@@ -308,8 +309,8 @@ public class ReportXml extends ReportGeneric {
 
     // Baseline
     Element results = doc.createElement("results_baseline");
-    List<ValidationEvent> errors = ir.getBaselineErrors();
-    List<ValidationEvent> warnings = ir.getBaselineWarnings();
+    List<RuleResult> errors = ir.getBaselineErrors();
+    List<RuleResult> warnings = ir.getBaselineWarnings();
     if (errors != null && warnings != null) {
       addErrorsWarnings(doc, results, errors, warnings);
       implementationCheckerElement.appendChild(results);
@@ -326,8 +327,26 @@ public class ReportXml extends ReportGeneric {
 
     // TiffIT
     results = doc.createElement("results_tiffit");
-    errors = ir.getITErrors();
-    warnings = ir.getITWarnings();
+    errors = ir.getITErrors(0);
+    warnings = ir.getITWarnings(0);
+    if (errors != null && warnings != null) {
+      addErrorsWarnings(doc, results, errors, warnings);
+      implementationCheckerElement.appendChild(results);
+    }
+
+    // TiffIT-1
+    results = doc.createElement("results_tiffit_p1");
+    errors = ir.getITErrors(1);
+    warnings = ir.getITWarnings(1);
+    if (errors != null && warnings != null) {
+      addErrorsWarnings(doc, results, errors, warnings);
+      implementationCheckerElement.appendChild(results);
+    }
+
+    // TiffIT-2
+    results = doc.createElement("results_tiffit_p2");
+    errors = ir.getITErrors(2);
+    warnings = ir.getITWarnings(2);
     if (errors != null && warnings != null) {
       addErrorsWarnings(doc, results, errors, warnings);
       implementationCheckerElement.appendChild(results);
@@ -335,14 +354,18 @@ public class ReportXml extends ReportGeneric {
 
     // Total
     results = doc.createElement("results");
-    List<ValidationEvent> errorsTotal = new ArrayList<ValidationEvent>();
-    List<ValidationEvent> warningsTotal = new ArrayList<ValidationEvent>();
+    List<RuleResult> errorsTotal = new ArrayList<RuleResult>();
+    List<RuleResult> warningsTotal = new ArrayList<RuleResult>();
     if (ir.getBaselineErrors() != null) errorsTotal.addAll(ir.getBaselineErrors());
     if (ir.getEPErrors() != null) errorsTotal.addAll(ir.getEPErrors());
-    if (ir.getITErrors() != null) errorsTotal.addAll(ir.getITErrors());
+    if (ir.getITErrors(0) != null) errorsTotal.addAll(ir.getITErrors(0));
+    if (ir.getITErrors(1) != null) errorsTotal.addAll(ir.getITErrors(1));
+    if (ir.getITErrors(2) != null) errorsTotal.addAll(ir.getITErrors(2));
     if (ir.getBaselineWarnings() != null) warningsTotal.addAll(ir.getBaselineWarnings());
     if (ir.getEPWarnings() != null) warningsTotal.addAll(ir.getEPWarnings());
-    if (ir.getITWarnings() != null) warningsTotal.addAll(ir.getITWarnings());
+    if (ir.getITWarnings(0) != null) warningsTotal.addAll(ir.getITWarnings(0));
+    if (ir.getITWarnings(1) != null) warningsTotal.addAll(ir.getITWarnings(1));
+    if (ir.getITWarnings(2) != null) warningsTotal.addAll(ir.getITWarnings(2));
     addErrorsWarnings(doc, results, errorsTotal, warningsTotal);
     implementationCheckerElement.appendChild(results);
 

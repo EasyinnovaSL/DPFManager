@@ -47,7 +47,7 @@ public class SchematronTest extends TestCase {
   public void testSchematron1() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[3];
+    String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
 
@@ -55,16 +55,14 @@ public class SchematronTest extends TestCase {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
       @Override
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
@@ -105,7 +103,7 @@ public class SchematronTest extends TestCase {
   public void testSchematron2() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[3];
+    String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
 
@@ -113,16 +111,14 @@ public class SchematronTest extends TestCase {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
       @Override
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
@@ -169,16 +165,14 @@ public class SchematronTest extends TestCase {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
       @Override
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 

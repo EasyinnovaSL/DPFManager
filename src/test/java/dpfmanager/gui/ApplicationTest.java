@@ -182,6 +182,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       sleep(250);
       count++;
       reloadScene();
+      node = scene.lookup(search);
     }
     sleep(250);
   }
@@ -218,6 +219,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       sleep(250);
       count++;
       reloadScene();
+      node = scene.lookup(search);
     }
     sleep(250);
   }
@@ -235,6 +237,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       sleep(250);
       count++;
       reloadScene();
+      node = scene.lookup(id);
     }
   }
 

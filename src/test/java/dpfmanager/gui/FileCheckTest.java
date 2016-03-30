@@ -65,6 +65,7 @@ public class FileCheckTest extends ApplicationTest {
     //Check html && pdf exists
     FxAssert.verifyThat("#tabReports #buthtml", NodeMatchers.isNotNull());
     clickOnAndReload("#tabReports #buthtml", "#pane-show");
+    waitUntilExists("#webView");
     FxAssert.verifyThat("#webView", NodeMatchers.isNotNull());
 
     //Check xml

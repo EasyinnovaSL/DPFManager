@@ -6,6 +6,7 @@
     <description>ISO 12639:2004(E)</description>
     
     <include>BaselineProfileChecker.xml</include>
+    <include subsection="common">TiffITProfileChecker.xml</include>
     <include subsection="CT-common-it-rules">TiffITProfileChecker.xml</include>
     <include subsection="CT-newsbufiletype-check">TiffITP1ProfileChecker.xml</include>
     <include subsection="LW-common-it-rules">TiffITProfileChecker.xml</include>

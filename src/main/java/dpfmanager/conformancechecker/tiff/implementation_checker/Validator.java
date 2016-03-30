@@ -35,20 +35,14 @@ import java.util.List;
  */
 public class Validator {
   TiffValidationObject model;
-  List<RuleResult> result;
-
-  public List<RuleResult> getResult() {
-    return result;
-  }
+  ValidationResult result;
 
   public List<RuleResult> getErrors() {
-    List<RuleResult> errors = new ArrayList<>();
-    for (RuleResult res : result) {
-      if (!res.ok()) {
-        errors.add(res);
-      }
-    }
-    return errors;
+    return result.getErrors();
+  }
+
+  public List<RuleResult> getWarnings() {
+    return result.getWarnings();
   }
 
   /**
@@ -78,7 +72,7 @@ public class Validator {
   }
 
   void validate(String path, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    result = new ArrayList<>();
+    result = new ValidationResult();
 
     JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();

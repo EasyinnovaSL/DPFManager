@@ -61,20 +61,14 @@ public class StatisticsGeneratorTest extends TestCase {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
-        listRaw.add(args[2]);
-        listRaw.add(args[3]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
       @Override
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
-        listRaw.add(args[2]);
-        listRaw.add(args[3]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
@@ -107,16 +101,14 @@ public class StatisticsGeneratorTest extends TestCase {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
       @Override
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 

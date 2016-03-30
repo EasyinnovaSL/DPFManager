@@ -61,6 +61,16 @@
 			                        <td class="##F_IT_ERR_CLASS##">##F_IT_ERR##</td>
 			                        <td class="##F_IT_WAR_CLASS##">##F_IT_WAR##</td>
 			                    </tr>
+			                    <tr class="##ROW_IT1##">
+			                        <td>Tiff/IT-P1</td>
+			                        <td class="##F_IT1_ERR_CLASS##">##F_IT1_ERR##</td>
+			                        <td class="##F_IT1_WAR_CLASS##">##F_IT1_WAR##</td>
+			                    </tr>
+			                    <tr class="##ROW_IT2##">
+			                        <td>Tiff/IT-P2</td>
+			                        <td class="##F_IT2_ERR_CLASS##">##F_IT2_ERR##</td>
+			                        <td class="##F_IT2_WAR_CLASS##">##F_IT2_WAR##</td>
+			                    </tr>
 			                    <tr class="##ROW_PC##">
 			                        <td>Policy Checker</td>
 			                        <td class="##F_PC_ERR_CLASS##">##F_PC_ERR##</td>
@@ -135,6 +145,34 @@
 				            <th class="bold">Description</th>
 				        </tr>
 				        ##ROWS_IT##
+					</table>
+				</div>
+			</div>
+			<div class="row top30 bot50 ##IT1_VISIBLE##">
+				<div class="col-md-6">
+					<h4><i class="fa fa-check-square-o"></i>  Tiff/IT-P1 conformance</h4>
+					<span style="margin-left: 20px; display: ##IT1_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Tiff/IT-P1</span>
+					<table style="##IT1_ERR-WAR##" class="CustomTable3">
+				        <tr>
+				            <th class="bold">Type</th>
+				            <th class="bold">Location</th>
+				            <th class="bold">Description</th>
+				        </tr>
+				        ##ROWS_IT1##
+					</table>
+				</div>
+			</div>
+			<div class="row top30 bot50 ##IT2_VISIBLE##">
+				<div class="col-md-6">
+					<h4><i class="fa fa-check-square-o"></i>  Tiff/IT-P2 conformance</h4>
+					<span style="margin-left: 20px; display: ##IT2_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Tiff/IT-P2</span>
+					<table style="##IT2_ERR-WAR##" class="CustomTable3">
+				        <tr>
+				            <th class="bold">Type</th>
+				            <th class="bold">Location</th>
+				            <th class="bold">Description</th>
+				        </tr>
+				        ##ROWS_IT2##
 					</table>
 				</div>
 			</div>
