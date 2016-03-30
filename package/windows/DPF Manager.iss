@@ -27,7 +27,6 @@ SetupIconFile=DPF Manager\DPF Manager.ico
 UninstallDisplayIcon={app}\DPF Manager.ico
 UninstallDisplayName=DPF Manager
 ArchitecturesInstallIn64BitMode=x64
-OutputDir=easyinnova
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -38,7 +37,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "DPF Manager\DPF Manager.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "DPF Manager\app\DPF Manager-console.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "DPF Manager\*"; DestDir: "{app}"; Excludes: "*.exe"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "DPF Manager\*"; DestDir: "{app}"; Excludes: "*.exe,resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "DPF Manager\app\resources\*"; DestDir: "{app}"; Excludes: "*.dpf"; Flags: ignoreversion
+Source: "DPF Manager\app\resources\*.dpf"; DestDir: "{%HOMEPATH}\DPF Manager"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\DPFManager"; Filename: "{app}\DPF Manager.exe"

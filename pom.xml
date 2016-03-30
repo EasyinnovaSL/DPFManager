@@ -429,6 +429,30 @@
 						</executions>
 					</plugin>
 
+					<!--Copy resources-->
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.7</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/jfx/app/resources</outputDirectory>
+									<resources>
+										<resource>
+											<directory>package/resources</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
 					<!-- Build Gui Exe and installer -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -460,9 +484,6 @@
 										<!--Input files params-->
 										<argument>-srcdir</argument>
 										<argument>${project.build.directory}/jfx/app</argument>
-										<!--Bundle params-->
-										<!--<argument>-BappVersion=${project.version}</argument>-->
-										<!--<argument>-Bicon=${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</argument>-->
 										<!--Output params-->
 										<argument>-outdir</argument>
 										<argument>${project.build.directory}/jfx/native</argument>
