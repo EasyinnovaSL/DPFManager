@@ -329,6 +329,9 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+						<configuration>
+							<additionalparam>-Xdoclint:none</additionalparam>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -378,17 +381,13 @@
 							<mainClass>${gui.class}</mainClass>
 							<verbose>true</verbose>
 							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-							<jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
-							<deployDir>${project.basedir}/src/main/deploy</deployDir>
-							<vendor>${project.build.finalName}</vendor>
-							<nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
+							<jfxMainAppJarName>${project.name}-jfx.jar</jfxMainAppJarName>
+							<vendor>${project.name}</vendor>
 							<bundleType>ALL</bundleType>
 							<bundler>ALL</bundler>
-							<nativeReleaseVersion>${project.version}</nativeReleaseVersion>
 							<needShortcut>true</needShortcut>
 							<needMenu>true</needMenu>
 							<appName>${project.name}</appName>
-							<additionalAppResources>${project.basedir}/additionalResources</additionalAppResources>
 						</configuration>
 						<executions>
 							<execution>
@@ -413,10 +412,10 @@
 								<goals><goal>launch4j</goal></goals>
 								<configuration>
 									<headerType>console</headerType>
-									<outfile>${project.build.directory}/jfx/app/${project.build.finalName}-console.exe</outfile>
-									<icon>${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</icon>
+									<outfile>${project.build.directory}/jfx/app/${project.name}-console.exe</outfile>
+									<icon>${project.basedir}/package/windows/${project.name}.ico</icon>
 									<dontWrapJar>true</dontWrapJar>
-									<jar>${project.build.finalName}-jfx.jar</jar>
+									<jar>${project.name}-jfx.jar</jar>
 									<classPath>
 										<mainClass>${console.class}</mainClass>
 										<addDependencies>false</addDependencies>
@@ -462,8 +461,8 @@
 										<argument>-srcdir</argument>
 										<argument>${project.build.directory}/jfx/app</argument>
 										<!--Bundle params-->
-										<argument>-BappVersion=${project.version}</argument>
-										<argument>-Bicon=${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</argument>
+										<!--<argument>-BappVersion=${project.version}</argument>-->
+										<!--<argument>-Bicon=${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</argument>-->
 										<!--Output params-->
 										<argument>-outdir</argument>
 										<argument>${project.build.directory}/jfx/native</argument>
