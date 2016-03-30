@@ -38,7 +38,6 @@ import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
-import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -340,7 +339,7 @@ public class ReportPDF extends ReportGeneric {
         pos_y = init_posy;
       }
 
-      if (ir.checkIT) {
+      if (ir.checkIT0) {
         ReportPDF rpdf = new ReportPDF(contentStream);
         pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(0), ir.getITWarnings(0), pos_x, pos_y, "Tiff/IT");
         contentStream = rpdf.getContentStream();

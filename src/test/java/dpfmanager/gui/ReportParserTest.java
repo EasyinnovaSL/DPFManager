@@ -69,7 +69,7 @@ public class ReportParserTest extends ApplicationTest {
     Assert.assertEquals("Report row N files (" + type + ")", "2", row.getNfiles());
     Assert.assertEquals("Report row N passed (" + type + ")", "1 passed", row.getPassed());
     Assert.assertEquals("Report row N errors (" + type + ")", "1 errors", row.getErrors());
-    Assert.assertEquals("Report row N warnings (" + type + ")", "1 warnings", row.getWarnings());
+    Assert.assertEquals("Report row N warnings (" + type + ")", "0 warnings", row.getWarnings());
     Assert.assertEquals("Report row score (" + type + ")", "50%", row.getScore());
   }
 }

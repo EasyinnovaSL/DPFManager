@@ -484,7 +484,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
           IndividualReport ir = new IndividualReport(name, pathToFile, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
           ir.checkBL = checkBL;
           ir.checkEP = checkEP;
-          ir.checkIT = checkIT;
+          ir.checkIT0 = checkIT;
           ir.checkIT1 = checkIT1;
           ir.checkIT2 = checkIT2;
           ir.checkPC = checkPC;

@@ -125,7 +125,7 @@ public class IndividualReport {
   /**
    * Check Tiff/IT conformance.
    */
-  public boolean checkIT;
+  public boolean checkIT0;
 
   /**
    * Check Tiff/IT conformance.

@@ -616,7 +616,7 @@ public class ReportGenerator {
         Validator epValidation = null;
         if (ir.checkEP) epValidation = TiffConformanceChecker.getEPValidation(tr);
         Validator it0Validation = null;
-        if (ir.checkIT) it0Validation = TiffConformanceChecker.getITValidation(0, tr);
+        if (ir.checkIT0) it0Validation = TiffConformanceChecker.getITValidation(0, tr);
         Validator it1Validation = null;
         if (ir.checkIT1) it1Validation = TiffConformanceChecker.getITValidation(1, tr);
         Validator it2Validation = null;
@@ -630,7 +630,9 @@ public class ReportGenerator {
         ir2.checkPC = ir.checkPC;
         ir2.checkBL = ir.checkBL;
         ir2.checkEP = ir.checkEP;
-        ir2.checkIT = ir.checkIT;
+        ir2.checkIT0 = ir.checkIT0;
+        ir2.checkIT1 = ir.checkIT1;
+        ir2.checkIT2 = ir.checkIT2;
 
         //Save fixed tiffs
         String pathFixed = "";
