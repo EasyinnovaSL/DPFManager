@@ -86,9 +86,9 @@ public class TiffITCheckerTest extends TestCase {
 
   public void testValidTestP0Invalid() throws Exception {
     testInvalid("src" + separator + "test" + separator + "resources" + separator
-        + "IT Samples" + separator + "sample-IT.tif", 0, 1);
+        + "IT Samples" + separator + "sample-IT.tif", 0, -1);
     testInvalid("src" + separator + "test" + separator + "resources" + separator
-        + "IT Samples" + separator + "IMG_0887_EP.tif", 0, 2);
+        + "IT Samples" + separator + "IMG_0887_EP.tif", 0, -1);
   }
 
   public void testValidTestP1Valid() throws Exception {
