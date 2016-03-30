@@ -302,7 +302,7 @@ public class ReportHtml extends ReportGeneric {
 
     // IT
     rows = "";
-    if (ir.checkIT) {
+    if (ir.checkIT0) {
       if (ir.getITErrors(0) != null) {
         for (RuleResult val : ir.getITErrors(0)) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";

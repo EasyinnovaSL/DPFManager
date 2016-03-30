@@ -340,7 +340,7 @@ public class ReportPDF extends ReportGeneric {
         pos_y = init_posy;
       }
 
-      if (ir.checkIT) {
+      if (ir.checkIT0) {
         ReportPDF rpdf = new ReportPDF(contentStream);
         pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(0), ir.getITWarnings(0), pos_x, pos_y, "Tiff/IT");
         contentStream = rpdf.getContentStream();
