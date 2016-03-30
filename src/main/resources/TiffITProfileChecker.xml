@@ -6,6 +6,13 @@
     <description>ISO 12639:2004(E)</description>
     
     <include>BaselineProfileChecker.xml</include>
+    
+    <rules description="common">
+        <rule context="ifd[class=image]">
+            <assert test="{filetype==ct} || {filetype==lw} || {filetype==hc} || {filetype==mp} || {filetype==bp} || {filetype==bl} || {filetype==sd} || {filetype==fp}">Undefined file type</assert>
+            <reference>Page 52</reference>
+        </rule>
+    </rules>
 
     <rules description="CT-common-it-rules">
         <rule context="ifd[filetype=ct]">

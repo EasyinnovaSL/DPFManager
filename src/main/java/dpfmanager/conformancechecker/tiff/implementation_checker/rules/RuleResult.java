@@ -38,4 +38,12 @@ public class RuleResult {
   public TiffNode getNode() {
     return node;
   }
+
+  public String getLocation() {
+    return node.getContext();
+  }
+
+  public String getDescription() {
+    return message;
+  }
 }

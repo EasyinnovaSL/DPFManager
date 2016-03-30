@@ -31,6 +31,9 @@
 
 package dpfmanager.shell.modules.report;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.ValidationResult;
@@ -81,22 +84,34 @@ public class IndividualReport {
   private String photo;
 
   /** The baseline errors list. */
-  private List<ValidationEvent> errorsBl;
+  private List<RuleResult> errorsBl;
 
   /** The baseline warning list. */
-  private List<ValidationEvent> warningsBl;
+  private List<RuleResult> warningsBl;
 
   /** The Tiff EP errors list. */
-  private List<ValidationEvent> errorsEp;
+  private List<RuleResult> errorsEp;
 
   /** The Tiff EP warning list. */
-  private List<ValidationEvent> warningsEp;
+  private List<RuleResult> warningsEp;
 
   /** The Tiff IT errors list. */
-  private List<ValidationEvent> errorsIt;
+  private List<RuleResult> errorsIt0;
 
   /** The Tiff IT warning list. */
-  private List<ValidationEvent> warningsIt;
+  private List<RuleResult> warningsIt0;
+
+  /** The Tiff IT errors list. */
+  private List<RuleResult> errorsIt1;
+
+  /** The Tiff IT warning list. */
+  private List<RuleResult> warningsIt1;
+
+  /** The Tiff IT errors list. */
+  private List<RuleResult> errorsIt2;
+
+  /** The Tiff IT warning list. */
+  private List<RuleResult> warningsIt2;
 
   /** The Tiff PC errors list. */
   private List<ValidationEvent> errorsPc;
@@ -110,7 +125,17 @@ public class IndividualReport {
   /**
    * Check Tiff/IT conformance.
    */
-  public int checkIT;
+  public boolean checkIT;
+
+  /**
+   * Check Tiff/IT conformance.
+   */
+  public boolean checkIT1;
+
+  /**
+   * Check Tiff/IT conformance.
+   */
+  public boolean checkIT2;
 
   /**
    * Check Tiff/EP conformance.
@@ -144,13 +169,13 @@ public class IndividualReport {
    * @param itValidation       the IT validation
    */
   public IndividualReport(String name, String path, TiffDocument tiffModel,
-      ValidationResult baselineValidation, ValidationResult epValidation, ValidationResult itValidation) {
+                          Validator baselineValidation, Validator epValidation, Validator itValidation, Validator it1Validation, Validator it2Validation) {
     filename = name;
     filepath = path;
     ifdCount = 0;
     listIsimg = new ArrayList<Boolean>();
     listHasSubIfd = new ArrayList<Boolean>();
-    generate(tiffModel, baselineValidation, epValidation, itValidation);
+    generate(tiffModel, baselineValidation, epValidation, itValidation, it1Validation, it2Validation);
   }
 
   /**
@@ -281,7 +306,7 @@ public class IndividualReport {
     Double rest = 100.0;
     IndividualReport ir = this;
     if (ir.hasEpValidation()) rest -= ir.getEPErrors().size() * 12.5;
-    if (ir.hasItValidation()) rest -= ir.getITErrors().size() * 12.5;
+    if (ir.hasItValidation()) rest -= (ir.getITErrors(0).size() + ir.getITErrors(1).size() + ir.getITErrors(2).size()) * 12.5;
     if (ir.hasBlValidation()) rest -= ir.getBaselineErrors().size() * 12.5;
     if (rest < 0.0) {
       rest = 0.0;
@@ -295,10 +320,12 @@ public class IndividualReport {
    * @param tiffModel    the tiff model
    * @param validation   the baseline validation
    * @param epValidation the EP validation
-   * @param itValidation the IT validation
+   * @param it0Validation the IT validation
+   * @param it1Validation the IT-1 validation
+   * @param it2Validation the IT-2 validation
    */
-  public void generate(TiffDocument tiffModel, ValidationResult validation,
-      ValidationResult epValidation, ValidationResult itValidation) {
+  public void generate(TiffDocument tiffModel, Validator validation,
+                       Validator epValidation, Validator it0Validation, Validator it1Validation, Validator it2Validation) {
     this.tiffModel = tiffModel;
     // tiff structure
     IFD ifd = tiffModel.getFirstIFD();
@@ -347,9 +374,17 @@ public class IndividualReport {
       errorsEp = epValidation.getErrors();
       warningsEp = epValidation.getWarnings();
     }
-    if (itValidation != null) {
-      errorsIt = itValidation.getErrors();
-      warningsIt = itValidation.getWarnings();
+    if (it0Validation != null) {
+      errorsIt0 = it0Validation.getErrors();
+      warningsIt0 = it0Validation.getWarnings();
+    }
+    if (it1Validation != null) {
+      errorsIt1 = it1Validation.getErrors();
+      warningsIt1 = it1Validation.getWarnings();
+    }
+    if (it2Validation != null) {
+      errorsIt2 = it2Validation.getErrors();
+      warningsIt2 = it2Validation.getWarnings();
     }
   }
 
@@ -451,7 +486,18 @@ public class IndividualReport {
    * @return the boolean
    */
   public boolean hasItValidation(){
-    return errorsIt != null;
+    return errorsIt0 != null || errorsIt1 != null || errorsIt2 != null;
+  }
+
+  /**
+   * Has it validation boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasItValidation(int profile){
+    if (profile == 0) return errorsIt0 != null;
+    if (profile == 1) return errorsIt1 != null;
+    return errorsIt2 != null;
   }
 
   /**
@@ -468,8 +514,8 @@ public class IndividualReport {
    *
    * @return the errors
    */
-  public List<ValidationEvent> getBaselineErrors() {
-    if (errorsBl == null) return new ArrayList<ValidationEvent>();
+  public List<RuleResult> getBaselineErrors() {
+    if (errorsBl == null) return new ArrayList<RuleResult>();
     return errorsBl;
   }
 
@@ -478,8 +524,8 @@ public class IndividualReport {
    *
    * @return the warnings
    */
-  public List<ValidationEvent> getBaselineWarnings() {
-    if (warningsBl == null) return new ArrayList<ValidationEvent>();
+  public List<RuleResult> getBaselineWarnings() {
+    if (warningsBl == null) return new ArrayList<RuleResult>();
     return warningsBl;
   }
 
@@ -488,8 +534,8 @@ public class IndividualReport {
    *
    * @return the errors
    */
-  public List<ValidationEvent> getEPErrors() {
-    if (errorsEp == null) return new ArrayList<ValidationEvent>();
+  public List<RuleResult> getEPErrors() {
+    if (errorsEp == null) return new ArrayList<RuleResult>();
     return errorsEp;
   }
 
@@ -498,8 +544,8 @@ public class IndividualReport {
    *
    * @return the warnings
    */
-  public List<ValidationEvent> getEPWarnings() {
-    if (warningsEp == null) return new ArrayList<ValidationEvent>();
+  public List<RuleResult> getEPWarnings() {
+    if (warningsEp == null) return new ArrayList<RuleResult>();
     return warningsEp;
   }
 
@@ -508,9 +554,17 @@ public class IndividualReport {
    *
    * @return the errors
    */
-  public List<ValidationEvent> getITErrors() {
-    if (errorsIt == null) return new ArrayList<ValidationEvent>();
-    return errorsIt;
+  public List<RuleResult> getITErrors(int profile) {
+    if (profile == 0) {
+      if (errorsIt0 == null) return new ArrayList<RuleResult>();
+      return errorsIt0;
+    } else if (profile == 1) {
+      if (errorsIt1 == null) return new ArrayList<RuleResult>();
+      return errorsIt1;
+    } else {
+      if (errorsIt2 == null) return new ArrayList<RuleResult>();
+      return errorsIt2;
+    }
   }
 
   /**
@@ -518,9 +572,17 @@ public class IndividualReport {
    *
    * @return the warnings
    */
-  public List<ValidationEvent> getITWarnings() {
-    if (warningsIt == null) return new ArrayList<ValidationEvent>();
-    return warningsIt;
+  public List<RuleResult> getITWarnings(int profile) {
+    if (profile == 0) {
+      if (warningsIt0 == null) return new ArrayList<RuleResult>();
+      return warningsIt0;
+    } else if (profile == 1) {
+      if (warningsIt1 == null) return new ArrayList<RuleResult>();
+      return warningsIt1;
+    } else {
+      if (warningsIt2 == null) return new ArrayList<RuleResult>();
+      return warningsIt2;
+    }
   }
 
   /**
@@ -602,8 +664,8 @@ public class IndividualReport {
    *
    * @return the n it err
    */
-  public int getNItErr() {
-    return getITErrors() == null ? 0 : getITErrors().size();
+  public int getNItErr(int profile) {
+    return getITErrors(profile) == null ? 0 : getITErrors(profile).size();
   }
 
   /**
@@ -629,7 +691,7 @@ public class IndividualReport {
    *
    * @return the n it war
    */
-  public int getNItWar() {
-    return getITWarnings() == null ? 0 : getITWarnings().size();
+  public int getNItWar(int profile) {
+    return getITWarnings(profile) == null ? 0 : getITWarnings(profile).size();
   }
 }
