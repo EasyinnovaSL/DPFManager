@@ -552,58 +552,6 @@
                         </executions>
                     </plugin>
 
-					<!--Create Installer-->
-					<!--<plugin>-->
-						<!--<groupId>org.codehaus.mojo</groupId>-->
-						<!--<artifactId>exec-maven-plugin</artifactId>-->
-						<!--<version>1.2.1</version>-->
-						<!--<executions>-->
-							<!--<execution>-->
-								<!--<id>package-exe</id>-->
-								<!--<phase>package</phase>-->
-								<!--<goals>-->
-									<!--<goal>exec</goal>-->
-								<!--</goals>-->
-								<!--<configuration>-->
-									<!--<executable>javapackager</executable>-->
-									<!--<arguments>-->
-										<!--<argument>-deploy</argument>-->
-										<!--<argument>-native</argument>-->
-										<!--<argument>installer</argument>-->
-										<!--<argument>-embedjnlp</argument>-->
-										<!--<argument>-appclass</argument>-->
-										<!--<argument>${main.class}</argument>-->
-										<!--&lt;!&ndash;Customize params&ndash;&gt;-->
-										<!--<argument>-name</argument>-->
-										<!--<argument>${project.name}</argument>-->
-										<!--<argument>-title</argument>-->
-										<!--<argument>${project.name}</argument>-->
-										<!--<argument>-vendor</argument>-->
-										<!--<argument>${project.name}</argument>-->
-										<!--&lt;!&ndash;Input files params&ndash;&gt;-->
-										<!--<argument>-srcdir</argument>-->
-										<!--<argument>${project.build.directory}/jfx/app</argument>-->
-										<!--<argument>-srcfiles</argument>-->
-										<!--<argument>${project.build.finalName}-jfx.jar</argument>-->
-										<!--<argument>-srcdir</argument>-->
-										<!--<argument>${project.build.directory}/jfx/app</argument>-->
-										<!--<argument>-srcfiles</argument>-->
-										<!--<argument>lib</argument>-->
-										<!--&lt;!&ndash;Bundle params&ndash;&gt;-->
-										<!--<argument>-BappVersion=${project.version}</argument>-->
-										<!--<argument>-Bicon=${project.basedir}/src/main/deploy/windows/${project.build.finalName}.ico</argument>-->
-										<!--&lt;!&ndash;Output params&ndash;&gt;-->
-										<!--<argument>-outdir</argument>-->
-										<!--<argument>${project.build.directory}/jfx/native</argument>-->
-										<!--<argument>-outfile</argument>-->
-										<!--<argument>${project.name}</argument>-->
-										<!--<argument>-v</argument>-->
-									<!--</arguments>-->
-								<!--</configuration>-->
-							<!--</execution>-->
-						<!--</executions>-->
-					<!--</plugin>-->
-
 				</plugins>
 			</build>
 		</profile>
