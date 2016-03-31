@@ -407,15 +407,16 @@
 						<version>1.7.7</version>
 						<executions>
 							<execution>
-								<id>l4j-cli</id>
+								<id>l4j-clui</id>
 								<phase>package</phase>
 								<goals><goal>launch4j</goal></goals>
 								<configuration>
 									<headerType>console</headerType>
-									<outfile>${project.build.directory}/jfx/app/${project.name}-console.exe</outfile>
 									<icon>${project.basedir}/package/windows/${project.name}.ico</icon>
+									<jar>app/${project.name}-jfx.jar</jar>
+									<outfile>${project.build.directory}/jfx/app/dpf-manager-console.exe</outfile>
 									<dontWrapJar>true</dontWrapJar>
-									<jar>${project.name}-jfx.jar</jar>
+									<chdir>.</chdir>
 									<classPath>
 										<mainClass>${console.class}</mainClass>
 										<addDependencies>false</addDependencies>

@@ -38,14 +38,14 @@ Name: modifypath; Description: "Add application directory to your system path"
 
 [Files]
 Source: "DPF Manager\DPF Manager.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "DPF Manager\app\DPF Manager-console.exe"; DestDir: "{app}\app"; DestName: "dpf-manager-console.exe"; Flags: ignoreversion
+Source: "DPF Manager\app\dpf-manager-console.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "DPF Manager\*"; DestDir: "{app}"; Excludes: "*.exe,resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "DPF Manager\app\resources\*"; DestDir: "{app}"; Excludes: "*.dpf,*.iss"; Flags: ignoreversion
 Source: "DPF Manager\app\resources\*.dpf"; DestDir: "{%HOMEPATH}\DPF Manager"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\DPFManager"; Filename: "{app}\DPF Manager.exe"
-Name: "{commondesktop}\DPFManager"; Filename: "{app}\DPF Manager.exe"; Tasks: desktopicon
+Name: "{group}\DPF Manager"; Filename: "{app}\DPF Manager.exe"
+Name: "{commondesktop}\DPF Manager"; Filename: "{app}\DPF Manager.exe"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\DPF Manager.exe"; Description: "{cm:LaunchProgram,DPFManager}"; Flags: nowait postinstall skipifsilent
@@ -80,7 +80,7 @@ end;
 function ModPathDir(): TArrayOfString;
 begin
 	setArrayLength(Result, 1)
-	Result[0] := ExpandConstant('{app}\app');
+	Result[0] := ExpandConstant('{app}');
 end;
 // Fixed for javapackager
 #include "DPF Manager\app\resources\modpath.iss"
