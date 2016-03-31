@@ -1,7 +1,7 @@
 package dpfmanager.shell.interfaces.gui.component.config;
 
-import dpfmanager.conformancechecker.tiff.Configuration;
-import dpfmanager.conformancechecker.tiff.Field;
+import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.mvc.DpfModel;

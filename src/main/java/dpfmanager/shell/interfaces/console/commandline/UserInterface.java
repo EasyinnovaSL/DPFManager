@@ -20,7 +20,7 @@
 package dpfmanager.shell.interfaces.console.commandline;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.Field;
+import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.shell.core.DPFManagerProperties;
 
 import java.io.File;

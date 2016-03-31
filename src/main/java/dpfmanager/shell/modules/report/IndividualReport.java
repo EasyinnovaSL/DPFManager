@@ -158,6 +158,24 @@ public class IndividualReport {
 
   private String document;
 
+  private boolean containsData;
+
+  /**
+   * Constructor + generate.
+   *
+   * @param name               the name
+   * @param path               the path
+   */
+  public IndividualReport(String name, String path) {
+    filename = name;
+    filepath = path;
+    containsData = false;
+  }
+
+  public boolean containsData() {
+    return containsData;
+  }
+
   /**
    * Constructor + generate.
    *
@@ -175,6 +193,7 @@ public class IndividualReport {
     ifdCount = 0;
     listIsimg = new ArrayList<Boolean>();
     listHasSubIfd = new ArrayList<Boolean>();
+    containsData = true;
     generate(tiffModel, baselineValidation, epValidation, itValidation, it1Validation, it2Validation);
   }
 

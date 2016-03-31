@@ -486,6 +486,7 @@ public class ReportHtml extends ReportGeneric {
     // Parse individual Reports
     int index = 0;
     for (IndividualReport ir : gr.getIndividualReports()) {
+      if (!ir.containsData()) continue;
       String imageBody;
       imageBody = ReportGenerator.readFilefromResources(imagePath);
       // Image

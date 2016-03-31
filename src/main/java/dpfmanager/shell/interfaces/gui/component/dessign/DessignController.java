@@ -1,6 +1,6 @@
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
-import dpfmanager.conformancechecker.tiff.ProcessInput;
+import dpfmanager.conformancechecker.ProcessInput;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
@@ -14,9 +14,7 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;

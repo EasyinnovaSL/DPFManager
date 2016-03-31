@@ -590,6 +590,7 @@ public class ReportPDF extends ReportGeneric {
       // Full individual reports
       ArrayList<PDDocument> toClose = new ArrayList<PDDocument>();
       for (IndividualReport ir : gr.getIndividualReports()) {
+        if (!ir.containsData()) continue;
         PDDocument doc = PDDocument.load(ir.getPDFDocument());
         List<PDPage> l = doc.getDocumentCatalog().getAllPages();
         for (PDPage pag : l) {

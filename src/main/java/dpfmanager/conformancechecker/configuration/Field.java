@@ -1,4 +1,4 @@
-package dpfmanager.conformancechecker.tiff;
+package dpfmanager.conformancechecker.configuration;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

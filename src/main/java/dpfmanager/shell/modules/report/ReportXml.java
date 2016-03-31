@@ -254,120 +254,124 @@ public class ReportXml extends ReportGeneric {
     fileInfoStructure.appendChild(pathElement);
     report.appendChild(fileInfoStructure);
 
-    // tiff structure
-    Element tiffStructureElement = doc.createElement("tiff_structure");
-    Element ifdTree = doc.createElement("ifdTree");
-    int index = 0;
-    IFD ifd = ir.getTiffModel().getFirstIFD();
-    while (ifd != null) {
-      Element ifdNode = createIfdNode(doc, ir, ifd, index++);
-      ifdTree.appendChild(ifdNode);
-      ifd = ifd.getNextIFD();
-    }
-
-    tiffStructureElement.appendChild(ifdTree);
-    report.appendChild(tiffStructureElement);
-
-    // basic info
-    Element infoElement = doc.createElement("ImageWidth");
-    infoElement.setAttribute("ImageWidth", "" + ir.getWidth());
-    infoElement.setTextContent(ir.getWidth());
-    report.appendChild(infoElement);
-    infoElement = doc.createElement("ImageHeight");
-    infoElement.setAttribute("ImageHeight", "" + ir.getHeight());
-    infoElement.setTextContent(ir.getHeight());
-    report.appendChild(infoElement);
-    infoElement = doc.createElement("bitspersample");
-    infoElement.setTextContent(ir.getBitsPerSample());
-    report.appendChild(infoElement);
-    infoElement = doc.createElement("PixelDensity");
-    infoElement.setTextContent(ir.getPixelsDensity());
-    infoElement.setAttribute("PixelDensity", "" + (int)Double.parseDouble(ir.getPixelsDensity()));
-    report.appendChild(infoElement);
-    infoElement = doc.createElement("ByteOrder");
-    infoElement.setTextContent(ir.getEndianess());
-    infoElement.setAttribute("ByteOrder", ir.getEndianess());
-    report.appendChild(infoElement);
-
-    // tags
-    for (ReportTag tag : getTags(ir)) {
-      try {
-        infoElement = doc.createElement(tag.tv.getName());
-        infoElement.setTextContent(tag.tv.toString());
-        infoElement.setAttribute(tag.tv.getName(), tag.tv.toString());
-        infoElement.setAttribute("id", tag.tv.getId() + "");
-        infoElement.setAttribute("type", tag.dif + "");
-        report.appendChild(infoElement);
-      } catch (Exception ex) {
-        ex.toString();
+    if (ir.containsData()) {
+      // tiff structure
+      Element tiffStructureElement = doc.createElement("tiff_structure");
+      Element ifdTree = doc.createElement("ifdTree");
+      int index = 0;
+      IFD ifd = ir.getTiffModel().getFirstIFD();
+      while (ifd != null) {
+        Element ifdNode = createIfdNode(doc, ir, ifd, index++);
+        ifdTree.appendChild(ifdNode);
+        ifd = ifd.getNextIFD();
       }
-    }
 
-    // implementation checker
-    Element implementationCheckerElement = doc.createElement("implementation_checker");
-    report.appendChild(implementationCheckerElement);
+      tiffStructureElement.appendChild(ifdTree);
+      report.appendChild(tiffStructureElement);
 
-    // Baseline
-    Element results = doc.createElement("results_baseline");
-    List<RuleResult> errors = ir.getBaselineErrors();
-    List<RuleResult> warnings = ir.getBaselineWarnings();
-    if (errors != null && warnings != null) {
-      addErrorsWarnings(doc, results, errors, warnings);
+      // basic info
+      Element infoElement = doc.createElement("ImageWidth");
+      infoElement.setAttribute("ImageWidth", "" + ir.getWidth());
+      infoElement.setTextContent(ir.getWidth());
+      report.appendChild(infoElement);
+      infoElement = doc.createElement("ImageHeight");
+      infoElement.setAttribute("ImageHeight", "" + ir.getHeight());
+      infoElement.setTextContent(ir.getHeight());
+      report.appendChild(infoElement);
+      infoElement = doc.createElement("bitspersample");
+      infoElement.setTextContent(ir.getBitsPerSample());
+      report.appendChild(infoElement);
+      infoElement = doc.createElement("PixelDensity");
+      infoElement.setTextContent(ir.getPixelsDensity());
+      infoElement.setAttribute("PixelDensity", "" + (int) Double.parseDouble(ir.getPixelsDensity()));
+      report.appendChild(infoElement);
+      infoElement = doc.createElement("ByteOrder");
+      infoElement.setTextContent(ir.getEndianess());
+      infoElement.setAttribute("ByteOrder", ir.getEndianess());
+      report.appendChild(infoElement);
+
+      // tags
+      for (ReportTag tag : getTags(ir)) {
+        try {
+          infoElement = doc.createElement(tag.tv.getName());
+          infoElement.setTextContent(tag.tv.toString());
+          infoElement.setAttribute(tag.tv.getName(), tag.tv.toString());
+          infoElement.setAttribute("id", tag.tv.getId() + "");
+          infoElement.setAttribute("type", tag.dif + "");
+          report.appendChild(infoElement);
+        } catch (Exception ex) {
+          ex.toString();
+        }
+      }
+
+      // implementation checker
+      Element implementationCheckerElement = doc.createElement("implementation_checker");
+      report.appendChild(implementationCheckerElement);
+
+      // Baseline
+      Element results = doc.createElement("results_baseline");
+      List<RuleResult> errors = ir.getBaselineErrors();
+      List<RuleResult> warnings = ir.getBaselineWarnings();
+      if (errors != null && warnings != null) {
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // TiffEP
+      results = doc.createElement("results_tiffep");
+      errors = ir.getEPErrors();
+      warnings = ir.getEPWarnings();
+      if (errors != null && warnings != null) {
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // TiffIT
+      results = doc.createElement("results_tiffit");
+      errors = ir.getITErrors(0);
+      warnings = ir.getITWarnings(0);
+      if (errors != null && warnings != null) {
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // TiffIT-1
+      results = doc.createElement("results_tiffit_p1");
+      errors = ir.getITErrors(1);
+      warnings = ir.getITWarnings(1);
+      if (errors != null && warnings != null) {
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // TiffIT-2
+      results = doc.createElement("results_tiffit_p2");
+      errors = ir.getITErrors(2);
+      warnings = ir.getITWarnings(2);
+      if (errors != null && warnings != null) {
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // Total
+      results = doc.createElement("results");
+      List<RuleResult> errorsTotal = new ArrayList<RuleResult>();
+      List<RuleResult> warningsTotal = new ArrayList<RuleResult>();
+      if (ir.getBaselineErrors() != null) errorsTotal.addAll(ir.getBaselineErrors());
+      if (ir.getEPErrors() != null) errorsTotal.addAll(ir.getEPErrors());
+      if (ir.getITErrors(0) != null) errorsTotal.addAll(ir.getITErrors(0));
+      if (ir.getITErrors(1) != null) errorsTotal.addAll(ir.getITErrors(1));
+      if (ir.getITErrors(2) != null) errorsTotal.addAll(ir.getITErrors(2));
+      if (ir.getBaselineWarnings() != null) warningsTotal.addAll(ir.getBaselineWarnings());
+      if (ir.getEPWarnings() != null) warningsTotal.addAll(ir.getEPWarnings());
+      if (ir.getITWarnings(0) != null) warningsTotal.addAll(ir.getITWarnings(0));
+      if (ir.getITWarnings(1) != null) warningsTotal.addAll(ir.getITWarnings(1));
+      if (ir.getITWarnings(2) != null) warningsTotal.addAll(ir.getITWarnings(2));
+      addErrorsWarnings(doc, results, errorsTotal, warningsTotal);
       implementationCheckerElement.appendChild(results);
-    }
+    } else {
 
-    // TiffEP
-    results = doc.createElement("results_tiffep");
-    errors = ir.getEPErrors();
-    warnings = ir.getEPWarnings();
-    if (errors != null && warnings != null) {
-      addErrorsWarnings(doc, results, errors, warnings);
-      implementationCheckerElement.appendChild(results);
     }
-
-    // TiffIT
-    results = doc.createElement("results_tiffit");
-    errors = ir.getITErrors(0);
-    warnings = ir.getITWarnings(0);
-    if (errors != null && warnings != null) {
-      addErrorsWarnings(doc, results, errors, warnings);
-      implementationCheckerElement.appendChild(results);
-    }
-
-    // TiffIT-1
-    results = doc.createElement("results_tiffit_p1");
-    errors = ir.getITErrors(1);
-    warnings = ir.getITWarnings(1);
-    if (errors != null && warnings != null) {
-      addErrorsWarnings(doc, results, errors, warnings);
-      implementationCheckerElement.appendChild(results);
-    }
-
-    // TiffIT-2
-    results = doc.createElement("results_tiffit_p2");
-    errors = ir.getITErrors(2);
-    warnings = ir.getITWarnings(2);
-    if (errors != null && warnings != null) {
-      addErrorsWarnings(doc, results, errors, warnings);
-      implementationCheckerElement.appendChild(results);
-    }
-
-    // Total
-    results = doc.createElement("results");
-    List<RuleResult> errorsTotal = new ArrayList<RuleResult>();
-    List<RuleResult> warningsTotal = new ArrayList<RuleResult>();
-    if (ir.getBaselineErrors() != null) errorsTotal.addAll(ir.getBaselineErrors());
-    if (ir.getEPErrors() != null) errorsTotal.addAll(ir.getEPErrors());
-    if (ir.getITErrors(0) != null) errorsTotal.addAll(ir.getITErrors(0));
-    if (ir.getITErrors(1) != null) errorsTotal.addAll(ir.getITErrors(1));
-    if (ir.getITErrors(2) != null) errorsTotal.addAll(ir.getITErrors(2));
-    if (ir.getBaselineWarnings() != null) warningsTotal.addAll(ir.getBaselineWarnings());
-    if (ir.getEPWarnings() != null) warningsTotal.addAll(ir.getEPWarnings());
-    if (ir.getITWarnings(0) != null) warningsTotal.addAll(ir.getITWarnings(0));
-    if (ir.getITWarnings(1) != null) warningsTotal.addAll(ir.getITWarnings(1));
-    if (ir.getITWarnings(2) != null) warningsTotal.addAll(ir.getITWarnings(2));
-    addErrorsWarnings(doc, results, errorsTotal, warningsTotal);
-    implementationCheckerElement.appendChild(results);
 
     return report;
   }

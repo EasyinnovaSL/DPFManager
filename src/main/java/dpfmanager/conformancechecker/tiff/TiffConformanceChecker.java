@@ -31,7 +31,10 @@
 
 package dpfmanager.conformancechecker.tiff;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.ConformanceChecker;
+import dpfmanager.conformancechecker.configuration.Field;
+import dpfmanager.conformancechecker.ProcessInput;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
@@ -42,7 +45,6 @@ import dpfmanager.shell.modules.report.ReportGenerator;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.reader.TiffReader;
 
 import org.reflections.Reflections;

@@ -31,8 +31,7 @@
 
 package dpfmanager.shell.modules.report;
 
-import dpfmanager.conformancechecker.tiff.Configuration;
-import dpfmanager.conformancechecker.tiff.ProcessInput;
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;

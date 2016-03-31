@@ -1,6 +1,6 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
-import dpfmanager.conformancechecker.tiff.Configuration;
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;

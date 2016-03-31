@@ -1,4 +1,4 @@
-package dpfmanager.conformancechecker.tiff;
+package dpfmanager.conformancechecker.configuration;
 
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;

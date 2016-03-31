@@ -1,6 +1,6 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
-import dpfmanager.conformancechecker.tiff.Configuration;
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.GuiConfig;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;

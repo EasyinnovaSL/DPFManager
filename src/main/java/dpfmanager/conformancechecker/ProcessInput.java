@@ -1,6 +1,8 @@
-package dpfmanager.conformancechecker.tiff;
+package dpfmanager.conformancechecker;
 
-import dpfmanager.conformancechecker.ConformanceChecker;
+import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.conformancechecker.external.ExternalConformanceChecker;
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.IndividualReport;
 import dpfmanager.shell.modules.report.ReportGenerator;
@@ -125,6 +127,29 @@ public class ProcessInput {
     TiffConformanceChecker tiffcc = new TiffConformanceChecker();
     ArrayList<ConformanceChecker> l = new ArrayList<>();
     l.add(tiffcc);
+
+    String path = "D:\\Descargas\\MediaConch_CLI_16.02_Windows_x64\\MediaConch.exe";
+    ArrayList<String> params = new ArrayList<>();
+    params.add("-mc");
+    params.add("-fx");
+    ArrayList<String> standards = new ArrayList<>();
+    standards.add("MOV");
+    ArrayList<String> extensions = new ArrayList<>();
+    extensions.add("MOV");
+    ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
+    l.add(ext);
+
+    path = "C:\\Users\\easy\\verapdf\\verapdf.bat";
+    params = new ArrayList<>();
+    params.add("--format");
+    params.add("xml");
+    standards = new ArrayList<>();
+    standards.add("PDF");
+    extensions = new ArrayList<>();
+    extensions.add("PDF");
+    ext = new ExternalConformanceChecker(path, params, standards, extensions);
+    l.add(ext);
+
     return l;
   }
 
@@ -202,7 +227,7 @@ public class ProcessInput {
           File file = new File(filename2);
           file.delete();
         } else {
-          System.err.println("The file in the URL " + filename + " is not a Tiff");
+          System.err.println("The file in the URL " + filename + " is not an accepted format");
         }
       } catch (Exception ex) {
         System.out.println("Error in URL " + filename);
@@ -222,7 +247,7 @@ public class ProcessInput {
           System.err.println("Error in File " + filename);
         }
       } else {
-        System.err.println("File " + filename + " is not a Tiff");
+        System.err.println("File " + filename + " is not an accepted format");
       }
     }
     return indReports;
