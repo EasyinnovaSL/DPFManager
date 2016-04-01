@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.8 Embedded files - EF key</name>
+    <description>A file specification dictionary, as defined in ISO 32000-1:2008, 7.11.3, may contain the EF key, provided that the embedded file
+	is compliant with either ISO 19005-1 or this part of ISO 19005.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T17:50:11Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-8-t01" object="EmbeddedFile">
+			<description>A file specification dictionary, as defined in ISO 32000-1:2008, 7.11.3, may contain the EF key, provided that the embedded file is
+			compliant with either ISO 19005-1 or this part of ISO 19005.</description>
+			<test>isValidPDFA12 == true</test>
+			<error>
+				<message>An embedded file does not comply to either ISO 19005-1 or ISO 19005-2</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.8</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

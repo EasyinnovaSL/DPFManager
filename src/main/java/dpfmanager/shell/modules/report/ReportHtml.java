@@ -128,12 +128,12 @@ public class ReportHtml extends ReportGeneric {
       htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
       htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "display: none;");
     }
-    if (it0Err + it1Err + it2Err > 0) {
+    if (it0Err > 0) {
       htmlBody = htmlBody.replaceAll("##IT_OK##", "none");
       htmlBody = htmlBody.replaceAll("##IT_ERR##", "block");
       htmlBody = htmlBody.replaceAll("##IT_WAR##", "none");
       htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "");
-    } else if (it0War + it1War + it2War > 0) {
+    } else if (it0War > 0) {
       htmlBody = htmlBody.replaceAll("##IT_OK##", "none");
       htmlBody = htmlBody.replaceAll("##IT_ERR##", "none");
       htmlBody = htmlBody.replaceAll("##IT_WAR##", "block");
@@ -144,6 +144,39 @@ public class ReportHtml extends ReportGeneric {
       htmlBody = htmlBody.replaceAll("##IT_WAR##", "none");
       htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "display: none;");
     }
+    if (it1Err > 0) {
+      htmlBody = htmlBody.replaceAll("##IT1_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##IT1_ERR##", "block");
+      htmlBody = htmlBody.replaceAll("##IT1_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT1_ERR-WAR##", "");
+    } else if (it1War > 0) {
+      htmlBody = htmlBody.replaceAll("##IT1_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##IT1_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT1_WAR##", "block");
+      htmlBody = htmlBody.replaceAll("##IT1_ERR-WAR##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##IT1_OK##", "block");
+      htmlBody = htmlBody.replaceAll("##IT1_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT1_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT1_ERR-WAR##", "display: none;");
+    }
+    if (it2Err > 0) {
+      htmlBody = htmlBody.replaceAll("##IT2_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##IT2_ERR##", "block");
+      htmlBody = htmlBody.replaceAll("##IT2_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT2_ERR-WAR##", "");
+    } else if (it2War > 0) {
+      htmlBody = htmlBody.replaceAll("##IT2_OK##", "none");
+      htmlBody = htmlBody.replaceAll("##IT2_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT2_WAR##", "block");
+      htmlBody = htmlBody.replaceAll("##IT2_ERR-WAR##", "");
+    } else {
+      htmlBody = htmlBody.replaceAll("##IT2_OK##", "block");
+      htmlBody = htmlBody.replaceAll("##IT2_ERR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT2_WAR##", "none");
+      htmlBody = htmlBody.replaceAll("##IT2_ERR-WAR##", "display: none;");
+    }
+
     if (pcErr > 0) {
       htmlBody = htmlBody.replaceAll("##PC_OK##", "none");
       htmlBody = htmlBody.replaceAll("##PC_ERR##", "block");

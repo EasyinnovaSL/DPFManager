@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.6 String objects - Characters range</name>
+    <description>A hexadecimal string is written as a sequence of hexadecimal digits (0–9 and either A–F or a–f)</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20T17:33:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-6-t02" object="CosString">
+			<description>A hexadecimal string is written as a sequence of hexadecimal digits (0–9 and either A–F or a–f)</description>
+			<test>(isHex != true) || containsOnlyHex</test>
+			<error>
+				<message>Hexadecimal string contains non-white-space characters outside the range 0 to 9, A to F or a to f</message>
+			</error>
+			<reference>
+				<specification>ISO32000-1:2008</specification>
+				<clause>3.2.3</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

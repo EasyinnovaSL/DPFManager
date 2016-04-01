@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.9 Interactive Forms - Need Appearances</name>
+    <description>The NeedAppearances flag of the interactive form dictionary shall either not be present or shall be false</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-07-02T17:12:38Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-9-t01" object="PDAcroForm">
+			<description>The NeedAppearances flag of the interactive form dictionary shall either not be present or shall be false</description>
+			<test>NeedAppearances == null || NeedAppearances == false</test>
+			<error>
+				<message>The interactive form dictionary contains the NeedAppearances flag with value true</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.9</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

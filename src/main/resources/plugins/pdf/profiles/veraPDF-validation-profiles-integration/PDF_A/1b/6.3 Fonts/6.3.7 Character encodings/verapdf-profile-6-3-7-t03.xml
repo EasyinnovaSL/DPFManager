@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.3.7 Character encodings - Number of cmaps in the symbolic TrueType font program</name>
+    <description>Font programs' "cmap" tables for all symbolic TrueType fonts shall contain exactly one encoding</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-08-25T11:33:12Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-7-t03" object="TrueTypeFontProgram">
+			<description>Font programs' "cmap" tables for all symbolic TrueType fonts shall contain exactly one encoding</description>
+			<test>isSymbolic == false || nrCmaps == 1</test>
+			<error>
+				<message>The embedded font program for a symbolic TrueType font contains more than one cmap subtable</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1:2005/Cor.2:2011</specification>
+				<clause>6.3.7</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.7 Stream objects - 6.1.7.1 General - File specification</name>
+    <description>A stream dictionary shall not contain the F, FFilter, or FDecodeParams keys</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20T17:39:22Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-7-t03" object="CosStream">
+			<description>A stream dictionary shall not contain the F, FFilter, or FDecodeParams keys</description>
+			<test>F == null &amp;&amp; FFilter == null &amp;&amp; FDecodeParms == null</test>
+			<error>
+				<message>A stream object dictionary contains one of the F, FFilter, or FDecodeParms keys</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.1.7.1</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

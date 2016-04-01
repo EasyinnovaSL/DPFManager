@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.7.11 XMP Package - PDF/A Identification Schema.</name>
+    <description>The property "corr" is not specified in PDF/A Identification Schema in PDF/A-1 specification.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-30T13:21:00Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-7-11-t04" object="PDFAIdSchema">
+			<description>The property "corr" is not specified in PDF/A Identification Schema in PDF/A-1 specification.</description>
+			<test>corr == null</test>
+			<error>
+				<message>The "corr" property of the PDF/A Identification Schema should not be used in PDF/A-1 conforming file.</message>
+			</error>
+			<reference>
+				<specification>ISO 19005-1:2005</specification>
+				<clause>6.7.11</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

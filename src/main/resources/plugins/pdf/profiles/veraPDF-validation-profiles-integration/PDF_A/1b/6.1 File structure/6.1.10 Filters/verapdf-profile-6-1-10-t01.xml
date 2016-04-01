@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.1.10 Filters - LZW</name>
+    <description>The LZWDecode filter shall not be permitted</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-05-8T15:46:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-10-t01" object="CosStream">
+			<description>The LZWDecode filter shall not be permitted</description>
+			<test>filters == null || filters.indexOf("LZWDecode") == -1</test>
+			<error>
+				<message>LZW compression is used</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.1.10</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

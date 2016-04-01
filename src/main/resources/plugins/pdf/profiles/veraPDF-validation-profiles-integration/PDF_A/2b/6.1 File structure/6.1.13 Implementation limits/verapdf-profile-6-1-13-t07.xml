@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.12 Implementation limits - Indirect obejcts</name>
+    <description>A conforming file shall not contain more than 8388607 indirect objects</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20T8:59:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-13-t07" object="CosDocument">
+            <description>A conforming file shall not contain more than 8388607 indirect objects</description>
+            <test>nrIndirects &lt;= 8388607</test>
+            <error>
+                <message>Maximum number of indirect objects (8,388,607) in a PDF file exceeded</message>
+            </error>
+            <reference>
+                <specification>ISO19005-2:2011</specification>
+                <clause>6.1.13</clause>
+            </reference>
+        </rule>
+	</rules>
+</profile>

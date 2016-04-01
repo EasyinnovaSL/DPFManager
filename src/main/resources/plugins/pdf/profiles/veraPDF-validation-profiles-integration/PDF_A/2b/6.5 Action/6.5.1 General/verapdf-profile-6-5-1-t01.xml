@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.5 Actions - 6.5.1 General - Action types</name>
+    <description>The Launch, Sound, Movie, ResetForm, ImportData, Hide, SetOCGState, Rendition, Trans, GoTo3DView and JavaScript actions shall not be permitted. 
+	Additionally, the deprecated set-state and noop actions shall not be permitted.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T17:16:33Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-5-1-t01" object="PDAction">
+			<description>The Launch, Sound, Movie, ResetForm, ImportData, Hide, SetOCGState, Rendition, Trans, GoTo3DView and JavaScript actions shall not be permitted. 
+			Additionally, the deprecated set-state and noop actions shall not be permitted.</description>
+			<test>S == "GoTo" || S == "GoToR" || S == "GotToE" || S == "Thread" || S == "URI" || S == "Named" || S == "SubmitForm"</test>
+			<error>
+				<message>Unknown or not permitted action type</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2</specification>
+				<clause>6.5.1</clause>
+				<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>12.6.4.1, Table 198</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

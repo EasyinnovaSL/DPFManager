@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.5 Extended graphics state - Halftone type</name>
+    <description>All halftones in a conforming PDF/A-2 file shall have the value 1 or 5 for the HalftoneType key.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-24T23:58:21Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-5-t04" object="PDHalftone">
+			<description>All halftones in a conforming PDF/A-2 file shall have the value 1 or 5 for the HalftoneType key.</description>
+			<test>HalftoneType != null &amp;&amp; (HalftoneType == 1 || HalftoneType == 5)</test>
+			<error>
+				<message>A Halftone has type other than 1 or 5</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.5</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

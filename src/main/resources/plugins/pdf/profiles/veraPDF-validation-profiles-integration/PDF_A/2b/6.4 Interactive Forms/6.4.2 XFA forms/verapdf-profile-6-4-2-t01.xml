@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.4 Interactive Forms - 6.4.2 XFA forms - XFA key</name>
+    <description>The document's interactive form dictionary that forms the value of the AcroForm key in the document's Catalog of a PDF/A-2 file, 
+	if present, shall not contain the XFA key.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T22:09:38Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-4-2-t01" object="PDAcroForm">
+			<description>The document's interactive form dictionary that forms the value of the AcroForm key in the document's Catalog of a PDF/A-2 file, 
+			if present, shall not contain the XFA key.</description>
+			<test>XFA_size == 0</test>
+			<error>
+				<message>The interactive form dictionary contains the XFA key</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.4.2</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

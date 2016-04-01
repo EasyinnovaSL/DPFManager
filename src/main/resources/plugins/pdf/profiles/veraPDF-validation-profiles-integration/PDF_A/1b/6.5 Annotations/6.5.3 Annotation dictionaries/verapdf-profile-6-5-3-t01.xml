@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.5.3 Annotation dictionaries - Transparency</name>
+    <description>An annotation dictionary shall not contain the CA key with a value other than 1.0</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-30T23:12:45Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-5-3-t01" object="PDAnnot">
+			<description>An annotation dictionary shall not contain the CA key with a value other than 1.0</description>
+			<test>CA == null || CA == 1.0</test>
+			<error>
+				<message>An annotation dictionary contains the CA key with value other than 1.0</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.5.3</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

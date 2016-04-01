@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.10 Inline image dictionaries</name>
+    <description>The value of the F key in the Inline Image dictionary shall not be LZW, LZWDecode, Crypt, a value not listed in ISO 32000-1:2008, Table 6, 
+	or an array containing any such value.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20T17:45:34Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-10-t01" object="PDInlineImage">
+			<description>The value of the F key in the Inline Image dictionary shall not be LZW, LZWDecode, Crypt, a value not listed in ISO 32000-1:2008, Table 6, 
+			or an array containing any such value.</description>
+			<test>F == null || (F.indexOf("LZW") == -1 &amp;&amp; F.indexOf("Crypt") == -1)</test>
+			<error>
+				<message>Inline image uses LZW, Crypt or one of the unknown filters</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.1.10</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

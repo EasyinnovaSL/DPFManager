@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.7.2 Document Catalog Dictionary - Contains Metadata Key</name>
+    <description>The document catalog dictionary of a conforming file shall contain the Metadata key.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-26T14:30:10Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-7-2-t01" object="PDDocument">
+			<description>The document catalog dictionary of a conforming file shall contain the Metadata key.</description>
+			<test>metadata_size == 1</test>
+			<error>
+				<message>The document catalog dictionary doesn't contain metadata key.</message>
+			</error>
+			<reference>
+				<specification>ISO 19005-1:2005</specification>
+				<clause>6.7.2</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

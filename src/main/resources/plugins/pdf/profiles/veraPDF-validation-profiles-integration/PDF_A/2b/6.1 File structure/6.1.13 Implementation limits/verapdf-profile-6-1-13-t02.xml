@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.12 Implementation limits - Real</name>
+    <description>A conforming file shall not contain any real number outside the range of +/-3.403 x 10^38</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20T8:48:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-13-t02" object="CosReal">
+            <description>A conforming file shall not contain any real number outside the range of +/-3.403 x 10^38</description>
+            <test>(realValue &gt;= -3.403e+38) &amp;&amp; (realValue &lt;= 3.403e+38)</test>
+            <error>
+                <message>Real value out of range</message>
+            </error>
+            <reference>
+                <specification>ISO19005-2:2011</specification>
+                <clause>6.1.13</clause>
+            </reference>
+        </rule>
+	</rules>
+</profile>

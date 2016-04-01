@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.2.9 Rendering intents</name>
+    <description>Where a rendering intent is specified, its value shall be one of the four values defined in PDF Reference 
+	RelativeColorimetric, AbsoluteColorimetric, Perceptual or Saturation</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-23T22:35:56Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-9-t01" object="CosRenderingIntent">
+			<description>Where a rendering intent is specified, its value shall be one of the four values defined in PDF Reference
+			RelativeColorimetric, AbsoluteColorimetric, Perceptual or Saturation</description>
+			<test>internalRepresentation == "RelativeColorimetric" || internalRepresentation == "AbsoluteColorimetric" || internalRepresentation == "Perceptual" || internalRepresentation == "Saturation"</test>
+			<error>
+				<message>A rendering intent with non-standard value is used</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.2.9</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

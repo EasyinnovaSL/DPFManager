@@ -1,0 +1,83 @@
+package org.verapdf.model.external;
+
+import org.verapdf.model.baselayer.Object;
+import java.util.List;
+
+% Parent type for all external objects embedded into the PDF document
+type External extends Object {
+	
+}
+
+% Embedded ICC profile
+type ICCProfile extends External {
+	% value of the N key in the ICC profile stream dictionary
+	property N: Integer;
+	% a four-byte string identifying the device class of the profile (monitor, printer, scanner, abstract color space)
+	property deviceClass: String;
+	% a four-byte string identifying the device class of the profile (GRAY, RGB, CMYK, LAB)
+	property colorSpace: String;
+	% version of the ICC profile
+	property version: Decimal;
+	% true if the profile satisfies the corresponding ICC Specification
+	property isValid: Boolean;
+}
+
+% Embedded ICC profile used for ICCBasec color spaces
+type ICCInputProfile extends ICCProfile
+{
+
+}
+
+% Embedded ICC profile used as a destination profile in the output intent dictionary
+type ICCOutputProfile extends ICCProfile
+{
+	% subtype of the output profile
+	property S: String;
+}
+
+% embedded font program
+type FontProgram extends External {
+
+}
+
+% TrueType font program embedded into PDF document 
+type TrueTypeFontProgram extends FontProgram {
+	% true / false if the corresponding PDF Font is marked as symbolic / non-symbolic in its font dictionary
+	property isSymbolic: Boolean;
+	% number of cmap subtables in the font program
+	property nrCmaps: Integer;
+	% true if the font program contains the Microsoft Symbol (3,0 – Platform ID=3, Encoding ID=0) cmap subtable
+	property cmap30Present: Boolean;
+}
+
+% embedded CMap file
+type CMapFile extends External {
+	% the value of the WMode entry in the embedded CMap file
+	property WMode: Integer;
+	% the value of the WMode entry in the parent CMap dictionary
+	property dictWMode: Integer;
+}
+
+type JPEG2000 extends External {
+	% the number of colour channels
+	property nrColorChannels: Integer;
+	% the number of colour space specifications
+	property nrColorSpaceSpecs: Integer;
+	% the number of colour space specifications with APPROX filed set to 0x01
+	property nrColorSpacesWithApproxField: Integer;
+	% the METH entry in the 'colr' box specification
+	property colrMethod: Integer;
+	% EnumCS (enumerated color space) field of in the 'colr" box specification
+	property colrEnumCS: Integer;
+	% image bit depth
+	property bitDepth: Integer;
+	% true if the 'bpcc' box is present and, thus, the bit depth is not constant across all components
+	property bpccBoxPresent: Boolean;
+}
+
+type EmbeddedFile extends External {
+	% MIME type of the embedded file (/Subtype entry in the embedded file dictionary)
+	property Subtype: String;
+	% true if this file is a valid PDF/A document (Part 1 or Part 2) on its own
+	property isValidPDFA12: Boolean;
+}

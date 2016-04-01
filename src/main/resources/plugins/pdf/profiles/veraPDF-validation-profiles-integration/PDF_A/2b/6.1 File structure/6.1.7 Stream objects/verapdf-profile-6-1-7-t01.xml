@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.7 Stream objects - 6.1.7.1 General - Correct Length</name>
+    <description>The value of the Length key specified in the stream dictionary shall match the number of bytes in the file following the LINE FEED (0Ah) character
+	after the stream keyword and preceding the EOL marker before the endstream keyword.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20T17:36:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-7-t01" object="CosStream">
+			<description>The value of the Length key specified in the stream dictionary shall match the number of bytes in the file following the LINE FEED (0Ah) character
+			after the stream keyword and preceding the EOL marker before the endstream keyword.</description>
+			<test>isLengthCorrect</test>
+			<error>
+				<message>Actual length of the stream does not match the value of the Length key in the Stream dictionary</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.1.7.1</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.1.2 File header - PDF header</name>
+    <description>The % character of the file header shall occur at byte offset 0 of the file. 
+	The first line of a PDF file is a header identifying the version of the PDF specification to which the file conforms</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-05-8T15:46:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-2-t01" object="CosDocument">
+			<description>The % character of the file header shall occur at byte offset 0 of the file. 
+			The first line of a PDF file is a header identifying the version of the PDF specification to which the file conforms</description>
+			<test>headerOffset == 0 &amp;&amp; /%PDF-\d\.\d/.test(header)</test>
+			<error>
+				<message>File header does not start at byte offset 0 or does not correctly identify the version of the PDF document</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.1.2</clause>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>3.4.1</clause>
+				</reference>			
+			</reference>
+		</rule>
+	</rules>
+</profile>

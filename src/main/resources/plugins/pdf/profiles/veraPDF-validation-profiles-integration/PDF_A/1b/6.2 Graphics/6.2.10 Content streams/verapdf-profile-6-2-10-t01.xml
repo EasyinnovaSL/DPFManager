@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.2.10 Content streams</name>
+    <description>A content stream shall not contain any operators not defined in PDF Reference 
+	even if such operators are bracketed by the BX/EX compatibility operators</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-23T22:35:56Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-10-t01" object="Op_Undefined">
+			<description>A content stream shall not contain any operators not defined in PDF Reference
+			even if such operators are bracketed by the BX/EX compatibility operators</description>
+			<test>false</test>
+			<error>
+				<message>A content stream contains an operator not defined in PDF Reference</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.2.10</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

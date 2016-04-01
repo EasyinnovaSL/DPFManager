@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.12 Implementation limits - String</name>
+    <description>A conforming file shall not contain any string longer than 32767 bytes.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20Z8:53:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-13-t03" object="CosString">
+            <description>A conforming file shall not contain any string longer than 32767 bytes.</description>
+            <test>value.length() &lt; 32767</test>
+            <error>
+                <message>Maximum length of a String (32767) exceeded</message>
+            </error>
+            <reference>
+                <specification>ISO19005-2:2011</specification>
+                <clause>6.1.13</clause>
+            </reference>
+        </rule>
+	</rules>
+</profile>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.3 Output intent - DestOutputProfileRef entry</name>
+    <description>In addition, the DestOutputProfileRef key, as defined in ISO 15930-7:2010, Annex A, shall not be present in any PDF/X OutputIntent.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-24T23:30:37Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-3-t03" object="PDOutputIntent">
+			<description>In addition, the DestOutputProfileRef key, as defined in ISO 15930-7:2010, Annex A, shall not be present in any PDF/X OutputIntent.</description>
+			<test>DestOutputProfileRef_size == 0</test>
+			<error>
+				<message>The output intent dictionary contains forbidden entry DestOutputProfileRef</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.3</clause>
+				<reference>
+					<specification>ISO15930-7:2010</specification>
+					<clause>Annex A</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

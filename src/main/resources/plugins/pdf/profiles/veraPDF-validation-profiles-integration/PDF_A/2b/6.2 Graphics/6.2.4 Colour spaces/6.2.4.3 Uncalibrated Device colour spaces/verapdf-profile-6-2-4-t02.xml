@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.4 Colour Spaces - 6.2.4.3 Uncalibrated/Device colour spaces - DeviceRGB</name>
+    <description>DeviceRGB shall only be used if a device independent DefaultRGB colour space has been set when the
+	DeviceRGB colour space is used, or if the file has a PDF/A OutputIntent that contains an RGB destination profile.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-24T23:45:23Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-4-t02" object="PDDeviceRGB">
+			<description>DeviceRGB shall only be used if a device independent DefaultRGB colour space has been set when the DeviceRGB colour space is used,
+			or if the file has a PDF/A OutputIntent that contains an RGB destination profile.</description>
+			<test>gOutputCS != null &amp;&amp; gOutputCS == "RGB "</test>
+			<error>
+				<message>DeviceRGB colour space is used without RGB output intent profile</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.4.3</clause>
+			</reference>
+		</rule>
+	</rules>
+	<variables>
+		<variable name="gOutputCS" object="ICCOutputProfile">
+			<defaultValue>null</defaultValue>
+			<value>S == "GTS_PDFA1" ? colorSpace : gOutputCS</value>
+		</variable>
+	</variables>
+</profile>

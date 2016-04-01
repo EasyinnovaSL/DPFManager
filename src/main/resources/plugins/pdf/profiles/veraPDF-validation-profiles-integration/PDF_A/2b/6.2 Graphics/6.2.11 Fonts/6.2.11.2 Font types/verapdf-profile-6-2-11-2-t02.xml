@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.11 Fonts - 6.2.11.2 Font types - Subtype entry</name>
+    <description>All fonts and font programs used in a conforming file, regardless of rendering mode usage, shall conform to the provisions
+	in ISO 32000-1:2008, 9.6 and 9.7, as well as to the font specifications referenced by these provisions.
+	Subtype - name - (Required) The type of font; must be "Type1" for Type 1 fonts, "MMType1" for multiple master fonts, "TrueType" for TrueType fonts
+	"Type3" for Type 3 fonts, "Type0" for Type 0 fonts and "CIDFontType0" or "CIDFontType2" for CID fonts</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T12:56:38Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-11-2-t02" object="PDFont">
+			<description>All fonts and font programs used in a conforming file, regardless of rendering mode usage, shall conform to the provisions
+			in ISO 32000-1:2008, 9.6 and 9.7, as well as to the font specifications referenced by these provisions.
+			Subtype - name - (Required) The type of font; must be "Type1" for Type 1 fonts, "MMType1" for multiple master fonts, "TrueType" for TrueType fonts
+			"Type3" for Type 3 fonts, "Type0" for Type 0 fonts and "CIDFontType0" or "CIDFontType2" for CID fonts</description>
+			<test>Subtype == "Type1" || Subtype == "MMType1" || Subtype == "TrueType" || Subtype == "Type3" || Subtype == "Type0" 
+			|| Subtype == "CIDFontType0" || Subtype == "CIDFontType2"</test>
+			<error>
+				<message>A Font dictionary has missing or invalid Subtype entry</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.11.2</clause>
+				<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>9.6.2.1, Table 111</clause>
+				</reference>
+					<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>9.6.2.3</clause>
+				</reference>
+				<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>9.6.3</clause>
+				</reference>
+				<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>9.6.5, Table 112</clause>
+				</reference>
+				<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>9.7.4.1, Table 117</clause>
+				</reference>
+				<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>9.7.6.1, Table 121</clause>
+				</reference>		
+			</reference>
+		</rule>
+	</rules>
+</profile>

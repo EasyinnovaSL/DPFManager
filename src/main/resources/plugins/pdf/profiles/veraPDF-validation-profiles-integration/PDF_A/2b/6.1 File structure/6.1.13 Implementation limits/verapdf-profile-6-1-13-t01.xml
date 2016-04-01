@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.12 Implementation limits - Integer</name>
+    <description>A conforming file shall not contain any integer greater than 2147483647. A conforming file shall not contain any integer less than -2147483648.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20T8:44:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-13-t01" object="CosInteger">
+            <description>A conforming file shall not contain any integer greater than 2147483647. A conforming file shall not contain any integer less than -2147483648.</description>
+            <test>(intValue &lt;= 2147483647) &amp;&amp; (intValue &gt;= -2147483648)</test>
+            <error>
+                <message>Integer value out of range</message>
+            </error>
+            <reference>
+                <specification>ISO19005-2:2011</specification>
+                <clause>6.1.13</clause>
+            </reference>
+        </rule>
+	</rules>
+</profile>

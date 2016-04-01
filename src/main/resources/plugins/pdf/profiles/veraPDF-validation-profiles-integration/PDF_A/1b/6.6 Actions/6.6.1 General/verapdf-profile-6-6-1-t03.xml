@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.6.1 Actions General - Form fields</name>
+    <description>Interactive form fields shall not perform actions of any type.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-07-01T00:22:56Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-6-1-t03" object="PDAnnot">
+			<description>Interactive form fields shall not perform actions of any type</description>
+			<test>Subtype != "Widget" || A_size == 0</test>
+			<error>
+				<message>Interactive form field contains an action object ('A' key)</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.6.1</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.8.3 Artifacts - Structure element type</name>
+    <description>Each structure element dictionary in the structure hierarchy shall have a Type entry with the name value of StructElem</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-18-10T20:24:12Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-8-3-t02" object="PDStructElem">
+			<description>Each structure element dictionary in the structure hierarchy shall have a Type entry with the name value of StructElem</description>
+			<test>Type == "StructElem"</test>
+			<error>
+				<message>Missing or invalid Type entry in the structure element dictionary</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.8.3.3</clause>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>9.6.1</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

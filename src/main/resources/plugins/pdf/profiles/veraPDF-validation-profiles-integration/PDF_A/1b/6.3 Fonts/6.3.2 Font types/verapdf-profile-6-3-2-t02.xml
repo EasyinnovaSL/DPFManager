@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.3.2 Font types - Subtype entry</name>
+    <description>All fonts used in a conforming file shall conform to the font specifications defined in PDF Reference 5.5. 
+	Subtype - name - (Required) The type of font; must be "Type1" for Type 1 fonts, "MMType1" for multiple master fonts, "TrueType" for TrueType fonts
+	"Type3" for Type 3 fonts, "Type0" for Type 0 fonts and "CIDFontType0" or "CIDFontType2" for CID fonts</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-07-04T11:07:38Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-2-t02" object="PDFont">
+			<description>All fonts used in a conforming file shall conform to the font specifications defined in PDF Reference 5.5. 
+			Subtype - name - (Required) The type of font; must be "Type1" for Type 1 fonts, "MMType1" for multiple master fonts, "TrueType" for TrueType fonts
+			"Type3" for Type 3 fonts, "Type0" for Type 0 fonts and "CIDFontType0" or "CIDFontType2" for CID fonts</description>
+			<test>Subtype == "Type1" || Subtype == "MMType1" || Subtype == "TrueType" || Subtype == "Type3" || Subtype == "Type0" 
+			|| Subtype == "CIDFontType0" || Subtype == "CIDFontType2"</test>
+			<error>
+				<message>A Font dictionary has missing or invalid Subtype entry</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.3.2</clause>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>5.5.1 - Table 5.8</clause>
+				</reference>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>5.5.4 - Table 5.9</clause>
+				</reference>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>5.6.3 - Table 5.13</clause>
+				</reference>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>5.6.5 - Table 5.17</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.5 Actions - 6.5.1 General - Named actions</name>
+    <description>Named actions other than NextPage, PrevPage, FirstPage, and LastPage shall not be permitted.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T17:21:33Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-5-1-t02" object="PDNamedAction">
+			<description>Named actions other than NextPage, PrevPage, FirstPage, and LastPage shall not be permitted.</description>
+			<test>N == "NextPage" || N == "PrevPage" || N == "FirstPage" || N == "LastPage"</test>
+			<error>
+				<message>Unknown or not permitted named action</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.5.1</clause>
+				<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>12.6.4.11, Table 211</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

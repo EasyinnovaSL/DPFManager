@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.2.3 Colour Spaces - 6.2.3.3 Uncalibrated colour spaces - DeviceGray</name>
+    <description>If an uncalibrated colour space is used in a file then that file shall contain a PDF/A-1 OutputIntent, as defined in 6.2.2</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-07-14T17:24:18Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-3-t04" object="PDDeviceGray">
+			<description>If an uncalibrated colour space is used in a file then that file shall contain a PDF/A-1 OutputIntent, as defined in 6.2.2</description>
+			<test>gOutputCS != null</test>
+			<error>
+				<message>DeviceGray colour space is used without output intent profile</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.2.3.3</clause>
+			</reference>
+		</rule>
+	</rules>
+	<variables>
+		<variable name="gOutputCS" object="ICCOutputProfile">
+			<defaultValue>null</defaultValue>
+			<value>S == "GTS_PDFA1" ? colorSpace : gOutputCS</value>
+		</variable>
+	</variables>
+</profile>

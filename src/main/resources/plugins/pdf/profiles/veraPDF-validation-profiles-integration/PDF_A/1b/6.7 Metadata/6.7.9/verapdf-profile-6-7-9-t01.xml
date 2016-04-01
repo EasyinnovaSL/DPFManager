@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.7.9 XMP Package - Conforms to XMP Specification.</name>
+    <description>The metadata stream shall conform to XMP Specification.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-29T09:44:55Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-7-9-t01" object="XMPPackage">
+			<description>The metadata stream shall conform to XMP 2004 Specification and well formed PDFAExtension Schema for all extensions.</description>
+			<test>isMetadataValid</test>
+			<error>
+				<message>%1</message>
+				<argument>errorMessage</argument>
+			</error>
+			<reference>
+				<specification>ISO 19005-1:2005</specification>
+				<clause>6.7.9</clause>
+				<reference>
+					<specification>XMP Specification January 2004</specification>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

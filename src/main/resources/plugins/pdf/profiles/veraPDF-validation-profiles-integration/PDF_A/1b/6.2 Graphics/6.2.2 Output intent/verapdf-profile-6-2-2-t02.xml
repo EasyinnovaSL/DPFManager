@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.2.2 Output intent - Matching multiple output profiles</name>
+    <description>If a file's OutputIntents array contains more than one entry, then all entries that contain a DestOutputProfile
+	key shall have as the value of that key the same indirect object, which shall be a valid ICC profile stream</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-15T22:26:37Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-2-t02" object="PDOutputIntent">
+			<description>If a file's OutputIntents array contains more than one entry, then all entries that contain a DestOutputProfile
+			key shall have as the value of that key the same indirect object, which shall be a valid ICC profile stream</description>
+			<test>destOutputProfileIndirect == null || gOutputProfileIndirect == null || destOutputProfileIndirect == gOutputProfileIndirect</test>
+			<error>
+				<message>File's OutputIntents array contains output intent dictionaries with non-matching destination output profiles</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.2.2</clause>
+			</reference>
+		</rule>
+	</rules>
+	<variables>
+		<variable name="gOutputProfileIndirect" object="PDOutputIntent">
+			<defaultValue>null</defaultValue>
+			<value>gOutputProfileIndirect == null ? destOutputProfileIndirect : gOutputProfileIndirect</value>
+		</variable>
+	</variables>
+</profile>

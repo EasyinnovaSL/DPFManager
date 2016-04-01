@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.8 Embedded files - F and UF keys</name>
+    <description>The file specification dictionary for an embedded file shall contain the F and UF keys</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T17:54:37Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-8-t02" object="CosFileSpecification">
+			<description>The file specification dictionary for an embedded file shall contain the F and UF keys</description>
+			<test>EF_size == 0 || (F != null &amp;&amp; UF != null)</test>
+			<error>
+				<message>The file specification dictionary for an embedded file does not contain either F or EF key</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.8</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

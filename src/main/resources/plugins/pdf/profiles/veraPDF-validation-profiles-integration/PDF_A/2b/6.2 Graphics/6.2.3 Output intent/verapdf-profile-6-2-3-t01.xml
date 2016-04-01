@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.3 Output intent - Valid ICC output profile</name>
+    <description>	The profile stream that is the value of the DestOutputProfile key shall either be an output profile (Device Class = "prtr") or a monitor profile 
+	(Device Class = "mntr"). The profiles shall have a colour space of either "GRAY", "RGB", or "CMYK".
+	</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-22T08:50:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-3-t01" object="ICCOutputProfile">
+			<description>The profile stream that is the value of the DestOutputProfile key shall either be an output profile (Device Class = "prtr") or a monitor profile 
+			(Device Class = "mntr"). The profiles shall have a colour space of either "GRAY", "RGB", or "CMYK".</description>
+			<test>(deviceClass == "prtr" || deviceClass == "mntr") &amp;&amp; (colorSpace == "RGB " || colorSpace == "CMYK" || colorSpace == "GRAY") &amp;&amp; version &lt; 5.0</test>
+			<error>
+				<message>The embedded PDF/A Output Intent colour profile has invalid header</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.3</clause>
+				<reference>
+					<specification>ISO32000-1:2008</specification>
+					<clause>14.11.5</clause>
+				</reference>			
+			</reference>
+		</rule>
+	</rules>
+</profile>

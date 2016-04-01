@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.11 Fonts - 6.2.11.6 Character encodings - Non-symbolic TrueType fonts</name>
+    <description>No non-symbolic TrueType font shall define a Differences array unless all of the glyph names in
+	the Differences array are listed in the Adobe Glyph List and the embedded font program contains at least the
+	Microsoft Unicode (3,1 – Platform ID=3, Encoding ID=1) encoding in the "cmap" table.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T20:39:12Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-11-6-t02" object="PDTrueTypeFont">
+			<description>No non-symbolic TrueType font shall define a Differences array unless all of the glyph names in
+			the Differences array are listed in the Adobe Glyph List and the embedded font program contains at least the
+			Microsoft Unicode (3,1 – Platform ID=3, Encoding ID=1) encoding in the "cmap" table.</description>
+			<test>isSymbolic == true || (Encoding == "MacRomanEncoding" || Encoding == "WinAnsiEncoding") || (Encoding == "Custom" &amp;&amp; differencesAreUnicodeCompliant == true)</test>
+			<error>
+				<message>A non-symbolic TrueType font has encoding different from MacRomanEncoding or WinAnsiEncoding, or 
+				the glyphs in the Differences array can not be mapped to the embedded font glyphs via the Adobe Glyph List</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.11.6</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

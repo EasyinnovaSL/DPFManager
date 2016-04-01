@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.3.2 Font types - LastChat entry</name>
+    <description>All fonts used in a conforming file shall conform to the font specifications defined in PDF Reference 5.5. 
+	LastChar - integer - (Required except for the standard 14 fonts) The last character code defined in the font's Widths array</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-07-04T11:49:54Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-2-t05" object="PDSimpleFont">
+			<description>All fonts used in a conforming file shall conform to the font specifications defined in PDF Reference 5.5. 
+			FirstChar - integer - (Required except for the standard 14 fonts) The first character code defined in the font's Widths array</description>
+			<test>isStandard == true || LastChar != null</test>
+			<error>
+				<message>A non-standard simple font dictionary has missing or invalid LastChar entry</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.3.2</clause>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>5.5.1 - Table 5.8</clause>
+				</reference>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>5.5.4 - Table 5.9</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

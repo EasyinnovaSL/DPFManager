@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.1.4 Cross reference table - Spacings after xref</name>
+    <description>The xref keyword and the cross reference subsection header shall be separated by a single EOL marker</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-04T09:28:51Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-4-t02" object="CosXRef">
+			<description>The xref keyword and the cross reference subsection header shall be separated by a single EOL marker</description>
+			<test>xrefEOLMarkersComplyPDFA</test>
+			<error>
+				<message>Spacings after the 'xref' keyword iin the cross reference table do not comply PDF/A specification</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1:2005</specification>
+				<clause>6.1.4</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

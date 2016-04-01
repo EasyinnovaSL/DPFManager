@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.3.4 Embedded font programs</name>
+    <description>The font programs for all fonts used within a conforming file shall be embedded within that file, as defined in PDF Reference 5.8, 
+	except when the fonts are used exclusively with text rendering mode 3</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-07-04T12:43:21Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-4-t01" object="PDFont">
+			<description>The font programs for all fonts used within a conforming file shall be embedded within that file, as defined in PDF Reference 5.8, 
+			except when the fonts are used exclusively with text rendering mode 3</description>
+			<test>Subtype == "Type3" || Subtype == "Type0" || fontFile_size == 1</test>
+			<error>
+				<message>The font program is not embedded</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.3.4</clause>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>5.8</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

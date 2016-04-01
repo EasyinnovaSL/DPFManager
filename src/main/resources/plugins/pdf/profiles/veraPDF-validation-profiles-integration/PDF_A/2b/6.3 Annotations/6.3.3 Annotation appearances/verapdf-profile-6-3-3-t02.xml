@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.3.3 Annotations appearances - Normal appearance</name>
+    <description>For all annotation dictionaries containing an AP key, the appearance dictionary that it defines as its value shall
+	contain only the N key. If an annotation dictionary's Subtype key has a value of Widget and its FT key has a
+	value of Btn, the value of the N key shall be an appearance subdictionary, otherwise the value of the N key shall be an appearance stream.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T21:45:18Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-3-t02" object="PDAnnot">
+			<description>For all annotation dictionaries containing an AP key, the appearance dictionary that it defines as its value shall
+			contain only the N key. If an annotation dictionary's Subtype key has a value of Widget and its FT key has a
+			value of Btn, the value of the N key shall be an appearance subdictionary, otherwise the value of the N key shall be an appearance stream.</description>
+			<test>AP == null || ( AP == "N" &amp;&amp; ( N_type == "Stream" || (Subtype == "Widget" &amp;&amp; FT == "Btn" &amp;&amp; N_type == "Dict") ) )</test>
+			<error>
+				<message>Annotation's appearance dictionary contains entries other than N or the N entry has an invalid type</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.3.3</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

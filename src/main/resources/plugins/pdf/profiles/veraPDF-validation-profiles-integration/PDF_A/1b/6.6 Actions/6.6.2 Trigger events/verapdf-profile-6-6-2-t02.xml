@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.6.2 Trigger events - Form fields</name>
+    <description>A Field dictionary shall not include an AA entry for an additional-actions dictionary</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-07-02T17:05:31Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-6-2-t02" object="PDFormField">
+			<description>A Field dictionary shall not include an AA entry for an additional-actions dictionary</description>
+			<test>AA_size == 0</test>
+			<error>
+				<message>A Field dictionary contains an additional-actions dictionary (AA entry)</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.6.2, 6.9</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

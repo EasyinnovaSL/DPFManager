@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.8.2 Tagged PDF - 6.8.2.2 Mark information dictionary</name>
+    <description>The document catalog dictionary shall include a MarkInfo dictionary whose sole entry, Marked, shall have a value of true</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-18-10T20:29:33Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-8-2-t01" object="CosDocument">
+			<description>The document catalog dictionary shall include a MarkInfo dictionary whose sole entry, Marked, shall have a value of true</description>
+			<test>Marked == true</test>
+			<error>
+				<message>/Marked entry of the MarkInfo dictionary is not present in the document catalog or is set to false</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.8.2.2</clause>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>9.7.1</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

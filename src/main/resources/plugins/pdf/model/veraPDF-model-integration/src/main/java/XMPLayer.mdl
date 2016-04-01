@@ -1,0 +1,49 @@
+package org.verapdf.model.xmplayer;
+
+import org.verapdf.model.baselayer.Object;
+import java.util.List;
+
+% Parent type for all xmp objects
+type XMPObject extends Object {
+    
+}
+
+% XMP package
+type XMPPackage extends XMPObject {
+    % collection of all used schemas
+    link Schemas: XMPSchema*;
+    % true if metadata is valid
+    property isMetadataValid: Boolean;
+    % message of the error that occured while parsing xmp, null if there were no errors while parsing
+    property errorMessage: String;
+    % bytes attribute in header, null if it is not present
+    property bytes: String;
+    % encoding attribute in header, null if it is not present
+    property encoding: String;
+}
+
+% Main XMP package
+type XMPMainPackage extends XMPPackage {
+    % true if pdfaid schema (NSURI: http://www.aiim.org/pdfa/ns/id/) is present
+    property ispdfaidNSPresent: Boolean;
+}
+
+% XMP schema
+type XMPSchema extends XMPObject {
+    % schema's namespace URI
+    property uri: String;
+    % schema's prefix
+    property prefix: String;
+}
+
+% PDF/A Identification Schema (NSURI: http://www.aiim.org/pdfa/ns/id/, required prefix: pdfaid)
+type PDFAIdSchema extends XMPSchema {
+    % property part of pdfaid schema
+    property part: Integer;
+    % property conformance of pdfaid schema
+    property conformance: String;
+    % property amd of pdfaid schema
+    property amd: String;
+    % property corr of pdfaid schema
+    property corr: String;
+}

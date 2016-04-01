@@ -110,4 +110,9 @@ public class ExternalConformanceChecker implements ConformanceChecker {
     }
     return null;
   }
+
+  @Override
+  public String toString() {
+    return "ExternalConformanceChecker";
+  }
 }

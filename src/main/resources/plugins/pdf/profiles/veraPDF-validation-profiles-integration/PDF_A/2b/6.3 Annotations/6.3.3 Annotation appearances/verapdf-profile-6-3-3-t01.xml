@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.3.3 Annotations appearances - Normal appearance</name>
+    <description>Every annotation (including those whose Subtype value is Widget, as used for form fields), except for the two cases listed below,
+	shall have at least one appearance dictionary:
+	- annotations where the value of the Rect key consists of an array where value 1 is equal to value 3 and value 2 is equal to value 4;
+	- annotations whose Subtype value is Popup or Link.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T21:49:18Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-3-t01" object="PDAnnot">
+			<description>Every annotation (including those whose Subtype value is Widget, as used for form fields), except for the two cases listed below,
+			shall have at least one appearance dictionary:
+			- annotations where the value of the Rect key consists of an array where value 1 is equal to value 3 and value 2 is equal to value 4;
+			- annotations whose Subtype value is Popup or Link.</description>
+			<test>(width == 0 &amp;&amp; height ==0) || Subtype == "Popup" || Subtype == "Link" || AP != null</test>
+			<error>
+				<message>An annotation does not contain an appearance dictionary</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.3.3</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

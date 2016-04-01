@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.4 Interactive Forms - 6.4.2 XFA forms - NeedsRendering flag</name>
+    <description>A document's Catalog shall not contain the NeedsRendering key.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T22:11:38Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-4-2-t02" object="CosDocument">
+			<description>A document's Catalog shall not contain the NeedsRendering key.</description>
+			<test>NeedsRendering == false</test>
+			<error>
+				<message>A document's Catalog contains NeedsRendering flag set to true</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.4.2</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

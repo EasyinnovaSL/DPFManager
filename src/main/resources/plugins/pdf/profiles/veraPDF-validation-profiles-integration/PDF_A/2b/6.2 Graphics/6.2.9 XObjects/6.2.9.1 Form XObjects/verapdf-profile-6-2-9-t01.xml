@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.9 Form XObjects - 6.2.9.1 Form XObjects</name>
+    <description>A form XObject dictionary shall not contain any of the following: - the OPI key; - the Subtype2 key with a value of PS; - the PS key.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T12:02:12Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-9-t01" object="PDXForm">
+			<description>A form XObject dictionary shall not contain any of the following: - the OPI key; - the Subtype2 key with a value of PS; - the PS key.</description>
+			<test>(Subtype2 == null || Subtype2 != "PS") &amp;&amp; PS_size == 0 &amp;&amp; OPI_size == 0</test>
+			<error>
+				<message>The form XObject dictionary contains a PS key, or a Subtype2 key with value PS, or an OPI key</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.9.1</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.3.7 Character encodings - Non-symbolic TrueType fonts</name>
+    <description>All non-symbolic TrueType fonts shall specify MacRomanEncoding or WinAnsiEncoding, either as the value of the Encoding entry in the font dictionary
+	or as the value of the BaseEncoding entry in the dictionary that is the value of the Encoding entry in the font dictionary.
+	If the value of the Encoding entry is a dictionary, it shall not contain a Differences entry.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-08-25T11:25:12Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-7-t01" object="PDTrueTypeFont">
+			<description>All non-symbolic TrueType fonts shall specify MacRomanEncoding or WinAnsiEncoding, either as the value of the Encoding entry in the font dictionary
+			or as the value of the BaseEncoding entry in the dictionary that is the value of the Encoding entry in the font dictionary.
+			If the value of the Encoding entry is a dictionary, it shall not contain a Differences entry.</description>
+			<test>isSymbolic == true || (Encoding == "MacRomanEncoding" || Encoding == "WinAnsiEncoding")</test>
+			<error>
+				<message>A non-symbolic TrueType font has an encoding different from MacRomanEncoding or WinAnsiEncoding</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1:2005/Cor.2:2011</specification>
+				<clause>6.3.7</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

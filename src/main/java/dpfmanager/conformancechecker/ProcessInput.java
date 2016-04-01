@@ -128,27 +128,31 @@ public class ProcessInput {
     ArrayList<ConformanceChecker> l = new ArrayList<>();
     l.add(tiffcc);
 
-    String path = "D:\\Descargas\\MediaConch_CLI_16.02_Windows_x64\\MediaConch.exe";
-    ArrayList<String> params = new ArrayList<>();
-    params.add("-mc");
-    params.add("-fx");
-    ArrayList<String> standards = new ArrayList<>();
-    standards.add("MOV");
-    ArrayList<String> extensions = new ArrayList<>();
-    extensions.add("MOV");
-    ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
-    l.add(ext);
+    String path = "src/main/resources/plugins/video/MediaConch.exe";
+    if (new File(path).exists()) {
+      ArrayList<String> params = new ArrayList<>();
+      params.add("-mc");
+      params.add("-fx");
+      ArrayList<String> standards = new ArrayList<>();
+      standards.add("MOV");
+      ArrayList<String> extensions = new ArrayList<>();
+      extensions.add("MOV");
+      ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
+      l.add(ext);
+    }
 
-    path = "C:\\Users\\easy\\verapdf\\verapdf.bat";
-    params = new ArrayList<>();
-    params.add("--format");
-    params.add("xml");
-    standards = new ArrayList<>();
-    standards.add("PDF");
-    extensions = new ArrayList<>();
-    extensions.add("PDF");
-    ext = new ExternalConformanceChecker(path, params, standards, extensions);
-    l.add(ext);
+    if (new File(path).exists()) {
+      path = "src/main/resources/plugins/pdf/verapdf.bat";
+      ArrayList<String> params = new ArrayList<>();
+      params.add("--format");
+      params.add("xml");
+      ArrayList<String> standards = new ArrayList<>();
+      standards.add("PDF");
+      ArrayList<String> extensions = new ArrayList<>();
+      extensions.add("PDF");
+      ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
+      l.add(ext);
+    }
 
     return l;
   }
@@ -163,6 +167,11 @@ public class ProcessInput {
         result = cc;
         break;
       }
+    }
+    if (result != null) {
+      System.out.println("Conformance checker for file " + filename + ": " + result.toString());
+    } else {
+      System.out.println("Conformance checker for file " + filename + " not found");
     }
     return result;
   }

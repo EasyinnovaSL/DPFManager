@@ -361,10 +361,11 @@ public class TiffConformanceChecker implements ConformanceChecker {
 
   public static Validator getBaselineValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = null;
-    String xml = "file.xml";
+    String baseDir = ReportGenerator.getReportsFolder();
+    String xml = baseDir + "/file.xml";
     int idx = 1;
     while (new File(xml).exists()) {
-      xml = "file" + idx + ".xml";
+      xml = baseDir + "/file" + idx + ".xml";
       idx++;
     }
     TiffDocument td = tr.getModel();
@@ -383,10 +384,11 @@ public class TiffConformanceChecker implements ConformanceChecker {
 
   public static Validator getEPValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = null;
-    String xml = "file.xml";
+    String baseDir = ReportGenerator.getReportsFolder();
+    String xml = baseDir + "/file.xml";
     int idx = 1;
     while (new File(xml).exists()) {
-      xml = "file" + idx + ".xml";
+      xml = baseDir + "/file" + idx + ".xml";
       idx++;
     }
     TiffDocument td = tr.getModel();
@@ -405,10 +407,11 @@ public class TiffConformanceChecker implements ConformanceChecker {
 
   public static Validator getITValidation(int profile, TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = null;
-    String xml = "file.xml";
+    String baseDir = ReportGenerator.getReportsFolder();
+    String xml = baseDir + "/file.xml";
     int idx = 1;
     while (new File(xml).exists()) {
-      xml = "file" + idx + ".xml";
+      xml = baseDir + "/file" + idx + ".xml";
       idx++;
     }
     TiffDocument td = tr.getModel();
@@ -440,6 +443,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
   public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config,
                                           int idReport) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
+      System.out.println("Reading Tiff file");
       TiffReader tr = new TiffReader();
       int result = tr.readFile(pathToFile);
       switch (result) {
@@ -460,6 +464,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
             checkPC = config.getRules().getRules().size() > 0;
           }
 
+          System.out.println("Validating Tiff");
           Validator baselineVal = null;
           if (checkBL) {
             baselineVal = getBaselineValidation(tr);
@@ -481,6 +486,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
             it2Validation = getITValidation(2, tr);
           }
 
+          System.out.println("Creating report");
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, pathToFile, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
@@ -535,6 +541,11 @@ public class TiffConformanceChecker implements ConformanceChecker {
       }
     }
     return isTiff;
+  }
+
+  @Override
+  public String toString() {
+    return "TiffConformanceChecker";
   }
 }
 

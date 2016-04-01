@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.1.12 Implementation limits - Name</name>
+    <description>A conforming file shall not contain any name longer than 127 bytes.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-20T8:55:15Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-1-13-t04" object="CosName">
+            <description>A conforming file shall not contain any name longer than 127 bytes.</description>
+            <test>internalRepresentation.length() &lt;= 127</test>
+            <error>
+                <message>Maximum length of a Name (127) exceeded</message>
+            </error>
+            <reference>
+                <specification>ISO19005-2:2011</specification>
+                <clause>6.1.13</clause>
+            </reference>
+        </rule>
+	</rules>
+</profile>

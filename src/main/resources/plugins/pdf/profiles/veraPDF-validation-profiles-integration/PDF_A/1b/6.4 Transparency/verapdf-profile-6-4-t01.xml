@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.4 Transparency - SMask</name>
+    <description>If an SMask key appears in an ExtGState dictionary, its value shall be None</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-23T22:56:38Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-4-t01" object="PDExtGState">
+			<description>If an SMask key appears in an ExtGState dictionary, its value shall be None</description>
+			<test>SMask == null || SMask == "None"</test>
+			<error>
+				<message>An ExtGState contains SMask key with a value other than None</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.4</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

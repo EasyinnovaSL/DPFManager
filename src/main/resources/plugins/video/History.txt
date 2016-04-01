@@ -1,0 +1,89 @@
+﻿Notes :
+-------
++ Added
+- Deleted
+x Correction
+#number is the identifier of bug report (B), requested feature (F) or patch (P)
+bug reports and feature request are here :
+https://github.com/MediaArea/MediaConch_SourceCode
+
+
+Version 16.02, 2016-02-29
+-------------
+CLI is synchronous by default even if the server is active 
+Update of implementation checker tests, including some FFV1 checks
+Expanded REST API of the server
+
+Version 16.01, 2016-01-27
+-------------
+More Matroska validation tests
+Improved reports
+Verbosity option
+MediaConch server, with a REST API
+MediaConch CLI and GUI can communicate with MediaConch server
+Support of Qt 5.6 (QtWebKit dependancy is replaced by Qt QtWebEngine dependancy)
+Matroska: CRC-32 validation
+Matroska: support of padding/junk at the start of a segment
+Matroska: trace is activated for all elements (but report is still based on the first element met)
+Matroska: add an intermediate level in the trace for the raw stream parser
+Visual Studio 2015 project files
+
+Version 15.12, 2015-12-31
+-------------
+New icon
+Database support (speed improvement: file is parsed once, then policies are applied to the pre-analyzed content)
+More explicit licences (MediaConch and MediaInfo library are GPLv3+ and MPLv2+, list of third party libraries and their licences)
+Matroska: negative timecodes were not correctly handled
+Better support of non-English filenames
+Display format is applied also on invalid files
+Implementation tests now load logic from an XML representation of the Matroska EBML Schema
+Implementation tests on valid parent elements, element multiplicity, mandated child elements
+MediaTrace now documents the parser used for raw streams within Matroska.
+Sync tests with latest Matroska/EBML draft specifications.
+
+Version 15.11, 2015-11-30
+-------------
+Open all nodes by default for MediaInfo jstree
+Add system or user policies/displays group
+Detection of truncated Matroska files
+Documentation update
+Support of MKVMerge statistics tags (duration frame count, stream size, bit rate) per track
+Count of subtitle elements
+Frame rate detection algorithm revisited
+Showing precision of 1/1.001 frame rates (e.g. "23.976 (24000/1001) fps" and "23.976 (23976/1000) fps")
+
+Version 15.10, 2015-11-02
+-------------
+Implementation checker with some EBML tests
+Help updated and split (standard / advanced)
+More output combinations (e.g. implementation checker with Text, HTML, or XML output)
+MediaInfo XML export
+Text/HTML/XSL output support
+Several bug fixes
+
+Version 15.09, 2015-10-02
+-------------
+Support of XSLT policies
+
+Version 15.08, 2015-08-31
+-------------
+Improved FFV1 slice analysis
+Trace feature: XML malformed with Flags items (hotfix, flags meaning disabled in XML output)
+Trace feature: XML malformed with some MP4 files
+Trace feature: XML duplicated attributes
+Trace feature: versioned xsd, creating library name and version
+
+Version 15.07, 2015-08-06
+-------------
+Improved FFV1 slice analysis (currently activated only for 1st frame)
+Improved Schematron file editor
+
+Version 15.06, 2015-06-30
+-------------
+Basic Schematron validator (" --Policy=Shematronfile.sch" or " -p Shematronfile.sch")
+
+Version 15.05, 2015-05-31
+-------------
+Basic hard-coded policy checker (must be Matroska with FFV1 protected by CRC)
+Info tool (Text or XML)
+Trace tool (Text or XML)

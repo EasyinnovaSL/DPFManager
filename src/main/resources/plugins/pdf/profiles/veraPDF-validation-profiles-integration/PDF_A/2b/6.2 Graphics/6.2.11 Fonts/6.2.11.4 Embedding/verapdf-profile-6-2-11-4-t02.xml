@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.11 Fonts - 6.2.11.4 Embedding - Glyphs</name>
+    <description>Embedded fonts shall define all glyphs referenced for rendering within the conforming file.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T17:18:42Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-11-4-t02" object="Glyph">
+			<description>Embedded fonts shall define all glyphs referenced for rendering within the conforming file.</description>
+			<test>isGlyphPresent == true</test>
+			<error>
+				<message>Not all glyphs referenced for rendering are present in the embedded font program</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.11.4.1</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.5.2 Trigger events - Page</name>
+    <description>The Page dictionary shall not include an AA entry for an additional-actions dictionary.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T17:29:12Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-5-2-t02" object="PDPage">
+			<description>The Page dictionary shall not include an AA entry for an additional-actions dictionary.</description>
+			<test>AA_size == 0</test>
+			<error>
+				<message>The Page dictionary contains an additional-actions dictionary (AA entry)</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.5.2</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

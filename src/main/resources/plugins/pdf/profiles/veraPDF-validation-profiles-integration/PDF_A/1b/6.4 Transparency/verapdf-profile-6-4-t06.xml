@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.4 Transparency - Fill alpha</name>
+    <description>The following keys, if present in an ExtGState object, shall have the values shown: ca - 1.0</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-06-24T10:51:13Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-4-t06" object="PDExtGState">
+			<description>The following keys, if present in an ExtGState object, shall have the values shown: CA - 1.0</description>
+			<test>ca == null || ca - 1.0 &lt; 0.000001 &amp;&amp; ca - 1.0 &gt; -0.000001</test>
+			<error>
+				<message>An ExtGState dictionary contains the ca key (fill alpha) with a value other than 1.0</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.4</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

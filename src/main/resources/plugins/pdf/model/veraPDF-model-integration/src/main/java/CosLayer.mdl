@@ -1,0 +1,205 @@
+package org.verapdf.model.coslayer;
+
+import org.verapdf.model.baselayer.Object;
+import org.verapdf.model.pdlayer.PDMetadata;
+import org.verapdf.model.pdlayer.PDDocument;
+import org.verapdf.model.external.EmbeddedFile;
+
+% Parent type for all basic PDF objects
+type CosObject extends Object {
+
+}
+
+% Low-level PDF Document object 
+type CosDocument extends CosObject {
+	% number of indirect objects in the document
+	property nrIndirects: Integer;
+	% size of the byte sequence representing the document 
+	property size: Integer;
+	% version of the document
+	property version: Decimal;
+	% true if the OCProperties key is present in the document Catalog
+	property isOptionalContentPresent: Boolean;
+	%
+	property postEOFDataSize: Integer;
+	% true if Info dictionary is present and synchronized with the document metadata
+	property doesInfoMatchXMP: Boolean;
+	% id of the first page trailer, if the document is linearized. Null, if the document is not linearized
+	property firstPageID: String;
+	% id of the last trailer in the document
+	property lastID: String;
+	% true if the document is linearized
+	property isLinearized: Boolean;
+	% link to all embedded file specifications
+	link EmbeddedFiles: CosFileSpecification*;
+	% link to the document cross reference table
+	link xref: CosXRef;
+	% trailer dictionary (first page trailier for the linearized PDF or the last trailer in the document)
+	link trailer: CosTrailer;
+	% all indirect objects referred from the xref table
+	link indirectObjects: CosIndirect+;
+	%
+    property headerOffset: Integer;
+    %
+    property header: String;
+    %
+    property headerByte1: Integer;
+    property headerByte2: Integer;
+    property headerByte3: Integer;
+    property headerByte4: Integer;
+	% link to the high-level PDF Document structure
+	link document: PDDocument;
+	% the value of the /Marked entry in the MarkInfo dictionary (false, if this entry is missing)
+	property Marked: Boolean;
+	% link to the requirements array
+	link Requirements: CosDict*;
+	% NeedsRendering entry in the document's Catalog (false by default)
+	property NeedsRendering: Boolean;
+}
+
+% PDF Indirect object
+type CosIndirect extends CosObject {
+	% the direct contents of the indirect object
+	link directObject: CosObject;
+	% true if the spacings around object number, generation number, keywords 'obj' and 'endobj' comply to PDF/A standard
+	property spacingCompliesPDFA: Boolean;
+}
+
+% PDF null object	
+type CosNull extends CosObject {
+	
+}
+
+% PDF boolean object
+type CosBool extends CosObject {
+	% value of this object
+	property value: Boolean;
+}
+
+% Generic Number type
+type CosNumber extends CosObject {
+	% the string representing this object
+	property stringValue: String;
+	% truncated integer value
+	property intValue: Integer;
+	% original decimal value
+	property realValue: Decimal;
+}
+
+% PDF Real type	
+type CosReal extends CosNumber {
+
+}
+
+% PDF Integer type
+type CosInteger extends CosNumber {
+	
+}
+
+% PDF Name type	
+type CosName extends CosObject {
+	% Byte sequence representation of the Name object after applying escape mechanism
+	property internalRepresentation: String;
+}
+
+% PDF Name representing a Utf8 string
+type CosUnicodeName extends CosName {
+	% indicates if the Name represents a Unicode string correctly encoded by Utf8
+	property isValidUtf8: Boolean;
+	% the Unicode value of the Name object
+	property unicodeValue: String;
+}
+
+
+% PDF Name representing rendering intent	
+type CosRenderingIntent extends CosName {
+
+}	
+	
+% PDF String type
+type CosString extends CosObject {
+	% internal byte presentation of the string after decoding from hex format (for strings in hexadecimal format) or after decoding all escape sequences (for strings in standard format)
+	property value: String;
+	% true if the string is stored in Hex format
+	property isHex: Boolean;
+	% true if the all non-white-space characters if the hexadecimal string belong to the range 0-9, a-f, A-F
+	property containsOnlyHex: Boolean;
+	% for hexadecimal strings the number of Hex digits (non-white-space characters in the range 0-9, a-f, A-F); 0 for strings in standard format
+	property hexCount: Integer;
+}
+
+% PDF Dict type
+type CosDict extends CosObject {
+	% number of key/value pairs in the dictionary
+	property size: Integer;
+	% all keys of the dictionary
+	link keys: CosName*;
+	% all values of the dictionary
+	link values: CosObject*;
+	% XMP metadata if it is present
+	link metadata: PDMetadata?;
+}
+	
+% PDF Stream type
+type CosStream extends CosDict {
+	% value of the Length key in the Stream dictionary
+	property Length: Integer;
+	% concatenated (SPACE separated) names of all filters
+	property filters: String;
+	% represents value of F key or null if stream does not contain this key
+	property F: String;
+	% represents value of FFilter key or null if stream does not contain this key
+	property FFilter: String;
+	% represents value of FDecodeParms key or null if stream does not contain this key
+	property FDecodeParms: String;
+	% true if spacings around keywords 'stream' comply to the PDF/A standard
+	property streamKeywordCRLFCompliant: Boolean;
+	% true if spacings around keywords 'endstream' comply to the PDF/A standard
+	property endstreamKeywordEOLCompliant: Boolean;
+	% true if the value of Length key matches the actual length of the stream
+	property isLengthCorrect: Boolean;
+}
+
+% File specification dictionary
+type CosFileSpecification extends CosDict {
+   % link to the embedded file stream
+   link EF: EmbeddedFile?;
+   % a file specification string (F key)
+   property F: String;
+   % a unicode file specification (UF key)
+   property UF: String;
+   % the relationship between the component of the PDF document that refers to this file specification and the associated file (/AFRelationship key)
+   property AFRelationship: String;
+}
+	
+% Trailer of the document	
+type CosTrailer extends CosDict {
+	% true if the document is encrypted
+	property isEncrypted: Boolean;
+	% link to the Catalog dictionary of the PDF document
+	link Catalog: CosIndirect;
+}
+
+% PDF Array type	
+type CosArray extends CosObject {
+	% number of elements in the array
+	property size: Integer;
+	% all objects contained in the array
+	link elements: CosObject*;
+}
+	
+% Bounding box array
+type CosBBox extends CosArray {
+	property top: Decimal;
+	property bottom: Decimal;
+	property left: Decimal;
+	property right: Decimal;
+}
+
+% Cross reference table of the document
+type CosXRef extends CosObject {
+	% true if headers of all subsections of the cross reference table comply to PDF/A standard
+	property subsectionHeaderSpaceSeparated: Boolean;
+	% true if the 'xref' keyword and the following cross reference subsection header are separated by a single EOL marker
+	property xrefEOLMarkersComplyPDFA: Boolean;
+}

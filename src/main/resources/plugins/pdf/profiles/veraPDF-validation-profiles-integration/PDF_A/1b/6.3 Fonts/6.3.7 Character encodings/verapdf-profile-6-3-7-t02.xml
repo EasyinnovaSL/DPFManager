@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.3.7 Character encodings - Symbolic TrueType fonts</name>
+    <description> All symbolic TrueType fonts shall not specify an Encoding entry in the font dictionary</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-08-25T11:29:32Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-7-t02" object="PDTrueTypeFont">
+			<description> All symbolic TrueType fonts shall not specify an Encoding entry in the font dictionary</description>
+			<test>isSymbolic == false || Encoding == null</test>
+			<error>
+				<message>A symbolic TrueType font specifies an Encoding entry in its dictionary</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1:2005/Cor.2:2011</specification>
+				<clause>6.3.7</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

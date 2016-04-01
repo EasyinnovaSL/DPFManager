@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.3.2 Annotation dictionaries - Generic flag values</name>
+    <description>If present, the F key's Print flag bit shall be set to 1 and its Hidden, Invisible, ToggleNoView, and NoView flag bits shall be set to 0.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T21:16:34Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-2-t02" object="PDAnnot">
+			<description>If present, the F key's Print flag bit shall be set to 1 and its Hidden, Invisible, ToggleNoView, and NoView flag bits shall be set to 0.</description>
+			<test>F == null || ((F &amp; 1) == 0 &amp;&amp; (F &amp; 2) == 0 &amp;&amp; (F &amp; 4) == 1 &amp;&amp; (F &amp; 32) == 0 &amp;&amp; (F &amp; 256) == 0)</test>
+			<error>
+				<message>One of the annotation flags Hidden, Invisible, ToggleNoView, or NoView is set to 1, or the Print flag is set to 0</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2</specification>
+				<clause>6.3.2</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

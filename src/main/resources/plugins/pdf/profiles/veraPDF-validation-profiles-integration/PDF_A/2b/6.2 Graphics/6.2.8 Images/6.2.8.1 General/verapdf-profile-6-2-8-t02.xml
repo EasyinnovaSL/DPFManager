@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.2.8 Images - OPI</name>
+    <description>An Image dictionary shall not contain the OPI key.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T11:46:21Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-2-8-t02" object="PDXImage">
+			<description>An Image dictionary shall not contain the OPI key</description>
+			<test>OPI_size == 0</test>
+			<error>
+				<message>OPI key is present in the XObject dictionary(</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.2.8.1</clause>
+			</reference>
+		</rule>
+	</rules>
+</profile>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.3.1 Annotation types</name>
+    <description>Annotation types not defined in ISO 32000-1 shall not be permitted. Additionally, the 3D, Sound, Screen and Movie types shall not be permitted.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T21:03:18Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-1-t01" object="PDAnnot">
+			<description>Annotation types not defined in ISO 32000-1 shall not be permitted. Additionally, the 3D, Sound, Screen and Movie types shall not be permitted.</description>
+			<test>Subtype == "Text" || Subtype == "Link" || Subtype == "FreeText" || Subtype == "Line" || 
+			Subtype == "Square" || Subtype == "Circle" || Subtype == "Polygon" || Subtype == "PolyLine" ||
+			Subtype == "Highlight" || Subtype == "Underline" ||	Subtype == "Squiggly" || Subtype == "StrikeOut" || 
+			Subtype == "Stamp" || Subtype == "Caret" || Subtype == "Ink" || Subtype == "Popup" || 
+			Subtype == "FileAttachment" || Subtype == "Widget" || Subtype == "PrinterMark" || Subtype == "TrapNet" ||
+			Subtype == "Watermark" || Subtype == "Redact"</test>
+			<error>
+				<message>Unknown or not permitted annotation type</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.3.1</clause>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>12.5.6.1, Table 169</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

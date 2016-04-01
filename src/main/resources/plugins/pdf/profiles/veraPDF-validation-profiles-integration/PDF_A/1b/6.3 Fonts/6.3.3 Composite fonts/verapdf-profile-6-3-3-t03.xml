@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-1:2005 - 6.3.3 Composite fonts - CMaps</name>
+    <description>All CMaps used within a conforming file, except Identity-H and Identity-V, shall be embedded in that file as described in PDF Reference 5.6.4</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-07-04T12:37:11Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-3-3-t03" object="PDCMap">
+			<description>All CMaps used within a conforming file, except Identity-H and Identity-V, shall be embedded in that file as described in PDF Reference 5.6.4</description>
+			<test>CMapName == "Identity-H" || CMapName == "Identity-V" || embeddedFile_size == 1</test>
+			<error>
+				<message>A CMap is different from "Identity-H" or "Identity-V" and is not embedded</message>
+			</error>
+			<reference>
+				<specification>ISO19005-1</specification>
+				<clause>6.3.3.3</clause>
+				<reference>
+					<specification>PDF 1.4 Reference</specification>
+					<clause>5.6.4</clause>
+				</reference>
+			</reference>
+		</rule>
+	</rules>
+</profile>

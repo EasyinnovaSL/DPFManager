@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile xmlns="http://www.verapdf.org/ValidationProfile" model="org.verapdf.model.PDFA1a">
+    <name>ISO 19005-2:2011 - 6.4 Interactive forms - 6.4.1 General - Form field actions</name>
+    <description>A Widget annotation dictionary or Field dictionary shall not contain the A or AA keys.</description>
+    <creator>veraPDF Consortium</creator>
+    <created>2015-10-25T21:58:06Z</created>
+    <hash>sha-1 hash code</hash>
+    <rules>
+		<rule id="6-4-1-t02" object="PDFormField">
+			<description>A Widget annotation dictionary or Field dictionary shall not contain the A or AA keys.</description>
+			<test>AA_size == 0</test>
+			<error>
+				<message>A Form field dictionary contains the AA entry</message>
+			</error>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.4.1</clause>
+			</reference>
+			<reference>
+				<specification>ISO19005-2:2011</specification>
+				<clause>6.5.2</clause>
+			</reference>			
+		</rule>
+	</rules>
+</profile>
