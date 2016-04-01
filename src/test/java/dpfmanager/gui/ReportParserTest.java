@@ -47,6 +47,7 @@ public class ReportParserTest extends ApplicationTest {
     List<String> list = Arrays.asList(configHtml, configJson, configXml);
     for (String configFile : list) {
       GuiWorkbench.setTestParam("import", configFile);
+      waitUntilExists("#importButton");
       clickOnScroll("#importButton");
       clickOnImportedConfig(configFile);
       writeText("#inputText", inputFiles);
