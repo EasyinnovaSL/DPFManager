@@ -134,7 +134,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   public void selectInputAction() {
     String txtFile = null;
     ComboBox c = getView().getComboChoice();
-    String configDir = DPFManagerProperties.getConfigDir();
+    String configDir = DPFManagerProperties.getDefaultDir();
     if (c.getValue() == "File") {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open File");
