@@ -7,6 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
@@ -64,19 +65,16 @@ public class BarFragment {
   public void init() {
     if (firsttime) {
       setDefault();
-      listenProperties();
+//      listenProperties();
       firsttime = false;
     }
   }
 
   public void setDefault() {
-    pos = 1;
-    botSplitBar.setDividerPositions(pos);
     NodeUtil.showNode(hboxConsole);
     NodeUtil.showNode(consoleButInConsole);
     NodeUtil.showNode(consoleSeparator);
     NodeUtil.showNode(taskButInConsole);
-    NodeUtil.hideNode(hboxTask);
   }
 
   private void listenProperties(){
