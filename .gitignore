@@ -9,7 +9,7 @@ easyinnova/
 *.dpf
 !src/main/resources/*.dpf
 !src/test/resources/ConfigFiles/*.dpf
-!additionalResources/*.dpf
+!package/resources/*.dpf
 !config.dpf
 src/test/resources/TestWriter/Bilevel2.tif
 Output/
