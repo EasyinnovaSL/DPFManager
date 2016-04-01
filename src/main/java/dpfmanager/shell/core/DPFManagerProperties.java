@@ -1,5 +1,7 @@
 package dpfmanager.shell.core;
 
+import dpfmanager.shell.core.app.MainGuiApp;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,35 +16,18 @@ import java.util.Properties;
 public class DPFManagerProperties {
 
   public static String getVersion(){
-    //Properties prop = new Properties();
-    //InputStream input = null;
+    String filename = "version.properties";
+    InputStream input = MainGuiApp.class.getClassLoader().getResourceAsStream(filename);
 
-    //try {
-    //String ver = UserInterface.class.getPackage().getImplementationVersion();
-
-    //String filename = ".properties";
-    //input = MainApp.class.getClassLoader().getResourceAsStream(filename);
-    //if(input==null){
-    //  return "";
-    //}
-
-    // load a properties file
-    //prop.load(input);
-
-    // get the property value and print it out
-    //return prop.getProperty("version");
-    //} catch (IOException ex) {
-    //  ex.printStackTrace();
-    //} finally {
-    //  if (input != null) {
-    //    try {
-    //      input.close();
-    //    } catch (IOException e) {
-    //      e.printStackTrace();
-    //    }
-    //  }
-    //}
-    return "1.4";
+    try {
+      // load a properties file
+      Properties prop = new Properties();
+      prop.load(input);
+      return prop.getProperty("version");
+    }
+    catch (Exception e){
+      return "";
+    }
   }
 
   public static boolean getFeedback() {

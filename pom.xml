@@ -5,8 +5,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.easyinnova</groupId>
 	<artifactId>dpf_manager</artifactId>
-	<version>1.4</version>
 	<packaging>jar</packaging>
+
+    <!--Properties-->
+    <properties>
+        <jacp.version>2.1</jacp.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--Build properties-->
+        <main.class>dpfmanager.shell.core.app.MainApp</main.class>
+        <gui.class>dpfmanager.shell.core.app.MainGuiApp</gui.class>
+        <console.class>dpfmanager.shell.core.app.MainConsoleApp</console.class>
+    </properties>
 
 	<!-- More Project Information -->
 	<name>DPF Manager</name>
@@ -71,17 +82,6 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-
-	<properties>
-		<jacp.version>2.1</jacp.version>
-	    <maven.compiler.source>1.8</maven.compiler.source>
-	    <maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!--Build properties-->
-		<main.class>dpfmanager.shell.core.app.MainApp</main.class>
-		<gui.class>dpfmanager.shell.core.app.MainGuiApp</gui.class>
-		<console.class>dpfmanager.shell.core.app.MainConsoleApp</console.class>
-	</properties>
 
 	<repositories>
 		<repository>
@@ -277,6 +277,26 @@
 	<!--Common Build Plugins-->
 	<build>
 		<plugins>
+
+            <!-- Version -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>src/java/resources/version.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
 			<!-- Resources -->
 			<plugin>
@@ -528,7 +548,7 @@
                             <nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
                             <bundleType>ALL</bundleType>
                             <bundler>ALL</bundler>
-                            <nativeReleaseVersion>${project.version}</nativeReleaseVersion>
+                            <nativeReleaseVersion>${version}</nativeReleaseVersion>
                             <needShortcut>true</needShortcut>
                             <needMenu>true</needMenu>
                             <appName>${project.name}</appName>
