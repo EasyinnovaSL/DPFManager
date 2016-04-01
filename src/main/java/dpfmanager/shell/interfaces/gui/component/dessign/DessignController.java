@@ -188,15 +188,17 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       file = new File(value);
     } else {
       //Ask for file
-      String configDir = DPFManagerProperties.getConfigDir();
+      String configDir = DPFManagerProperties.getDefaultDir();
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open Config");
       fileChooser.setInitialDirectory(new File(configDir));
-      fileChooser.setInitialFileName("config.dpf");
+      FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("DPF config files (*.dpf)", "*.dpf");
+      fileChooser.getExtensionFilters().add(extFilter);
       file = fileChooser.showOpenDialog(GuiWorkbench.getMyStage());
     }
 
     if (file != null) {
+      DPFManagerProperties.setDefaultDir(file.getParent());
       getView().addConfigFile(file.getAbsolutePath());
     }
   }

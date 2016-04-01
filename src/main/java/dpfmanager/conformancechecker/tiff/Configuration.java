@@ -101,6 +101,7 @@ public class Configuration {
    */
   public void initDefault(){
     addISO("Baseline");
+    addFormat("HTML");
   }
 
   /**
