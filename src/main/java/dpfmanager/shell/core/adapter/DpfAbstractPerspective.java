@@ -2,18 +2,18 @@ package dpfmanager.shell.core.adapter;
 
 import static javafx.scene.layout.Priority.ALWAYS;
 
-import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.core.messages.SwitchMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.BarFragment;
 import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -106,16 +106,11 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
    * Construct UI methods
    */
   protected BorderPane constructBorderPane(PerspectiveLayout perspectiveLayout, Node top, Node center) {
-    StackPane centerStack = new StackPane();
-    centerStack.getStyleClass().add("background-main");
-    centerStack.setAlignment(Pos.TOP_CENTER);
-    centerStack.getChildren().add(center);
-
     BorderPane borderPane = new BorderPane();
     borderPane.getStylesheets().add("/styles/main.css");
     borderPane.getStyleClass().add("background-main");
     borderPane.setTop(top);
-    borderPane.setCenter(centerStack);
+    borderPane.setCenter(center);
     LayoutUtil.GridPaneUtil.setFullGrow(ALWAYS, borderPane);
     perspectiveLayout.registerRootComponent(borderPane);
     return borderPane;
@@ -123,13 +118,24 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
 
   protected ScrollPane constructScrollPane(Node content) {
     content.getStyleClass().add("background-main");
+
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setFitToHeight(true);
     scrollPane.setFitToWidth(true);
-    scrollPane.setMaxWidth(970);
     scrollPane.getStyleClass().add("background-main");
     scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+    // Center content
+    scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        if (scrollPane.getWidth() < GuiWorkbench.mainWidth){
+          scrollPane.setHvalue(0.5);
+        }
+      }
+    });
+
     scrollPane.setContent(content);
     return scrollPane;
   }
