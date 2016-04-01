@@ -3,6 +3,7 @@ package dpfmanager.shell.application.app;
 import dpfmanager.shell.application.launcher.ui.GuiLauncher;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import org.jacpfx.rcp.workbench.FXWorkbench;
@@ -18,7 +19,10 @@ public class GuiApp extends GuiLauncher {
 
   @Override
   protected void postInit(Stage stage) {
-
+    Image img = new Image("/gui-logo-white.png");
+    if (img != null) {
+      stage.getIcons().add(img);
+    }
   }
 
   @Override
