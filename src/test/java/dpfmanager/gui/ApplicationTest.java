@@ -1,12 +1,14 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.modules.report.ReportRow;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -234,6 +236,23 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Node node = scene.lookup(id);
     int count = 0;
     while (node == null && count < maxTimeout *4){
+      sleep(250);
+      count++;
+      reloadScene();
+      node = scene.lookup(id);
+    }
+  }
+
+  /**
+   * Wait until exists.
+   *
+   * @param id     the id
+   */
+  public void waitForTable(String id) {
+    reloadScene();
+    Node node = scene.lookup(id);
+    int count = 0;
+    while ((node == null || ((TableView)node).getItems().size() == 0) && count < maxTimeout *4){
       sleep(250);
       count++;
       reloadScene();
