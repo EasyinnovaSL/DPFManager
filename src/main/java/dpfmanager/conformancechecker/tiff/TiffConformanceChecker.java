@@ -510,19 +510,19 @@ public class TiffConformanceChecker implements ConformanceChecker {
           break;
       }
     } catch (ReadTagsIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
+      System.out.println("Error loading Tiff library dependencies (tags)");
     } catch (ReadIccConfigIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
+      System.out.println("Error loading Tiff library dependencies (icc)");
     } catch (OutOfMemoryError error){
-      System.err.println("Out of memory");
+      System.out.println("Out of memory");
     } catch (ParserConfigurationException e) {
-      System.err.println("Error in Tiff file");
+      System.out.println("Error in Tiff file (1)");
     } catch (IOException e) {
-      System.err.println("Error in Tiff file");
+      System.out.println("Error in Tiff file (2)");
     } catch (SAXException e) {
-      System.err.println("Error in Tiff file");
+      System.out.println("Error in Tiff file (3)");
     } catch (JAXBException e) {
-      System.err.println("Error in Tiff file");
+      System.out.println("Error in Tiff file (4)");
     }
     return null;
   }

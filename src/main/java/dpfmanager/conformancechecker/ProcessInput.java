@@ -128,7 +128,8 @@ public class ProcessInput {
     ArrayList<ConformanceChecker> l = new ArrayList<>();
     l.add(tiffcc);
 
-    String path = "src/main/resources/plugins/video/MediaConch.exe";
+    String path = "package/resources/plugins/video/MediaConch.exe";
+    if (!new File(path).exists()) path = "plugins/video/MediaConch.exe";
     if (new File(path).exists()) {
       ArrayList<String> params = new ArrayList<>();
       params.add("-mc");
@@ -141,8 +142,9 @@ public class ProcessInput {
       l.add(ext);
     }
 
+    path = "package/resources/plugins/pdf/verapdf.bat";
+    if (!new File(path).exists()) path = "plugins/pdf/verapdf.bat";
     if (new File(path).exists()) {
-      path = "src/main/resources/plugins/pdf/verapdf.bat";
       ArrayList<String> params = new ArrayList<>();
       params.add("--format");
       params.add("xml");
