@@ -128,7 +128,7 @@ public class UserInterface {
     //    }
     //  }
     //}
-    return "1.4";
+    return "2.0";
   }
 
   public static boolean getFeedback() {
