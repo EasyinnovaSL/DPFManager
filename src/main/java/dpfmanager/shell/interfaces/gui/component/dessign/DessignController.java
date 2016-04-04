@@ -213,20 +213,16 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   }
 
   public void testAction() {
-    getContext().send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.INFO, "Count: "));
-
-//    String hola = null;
-//    hola.isEmpty();
-
-//    // Simulate show report affter check
-//    String path = "C:\\Users\\Roser/DPF Manager/reports/20160317/9/report.html";
-//    String type = "html";
-//    // Create the messages list
-//    ArrayMessage am = new ArrayMessage();
-//    am.add(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
-//    am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-//    am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
-//    getContext().send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
+    try {
+      String nullable = null;
+      if (true) {
+        nullable.substring(2);
+      }
+    }
+    catch(Exception ex){
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
+    }
+//    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.INFO, "Info message"));
   }
 
   private File getFileByPath(String path) {

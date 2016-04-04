@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.messages;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
@@ -100,8 +101,9 @@ public class MessagesModule extends DpfModule {
     // Show in console
     String message = em.getException().getMessage();
     String exceptionText = AlertsManager.getExceptionText(em.getException());
-    LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), message);
-    LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), exceptionText);
+    LogManager.getLogger("").log(Level.ERROR, "An exception ocurred!");
+    LogManager.getLogger("").log(Level.ERROR, MarkerManager.getMarker("EXCEPTION"), message);
+    LogManager.getLogger("").log(Level.ERROR, MarkerManager.getMarker("EXCEPTION"), exceptionText);
 
     // Show alert
     Platform.runLater(new Runnable() {
@@ -115,6 +117,9 @@ public class MessagesModule extends DpfModule {
 
   @PostConstruct
   public void onPostConstructComponent(final ResourceBundle resourceBundle) {
+    if (System.getProperty("app.home") == null){
+      System.setProperty("app.home", DPFManagerProperties.getConfigDir());
+    }
   }
 
   @Override
