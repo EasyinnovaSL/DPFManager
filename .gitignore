@@ -16,4 +16,3 @@ Output/
 src/test/resources/private/
 temp/
 *.log
-dpf_manager.iml
