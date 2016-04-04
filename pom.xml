@@ -6,6 +6,7 @@
 	<groupId>com.easyinnova</groupId>
 	<artifactId>dpf_manager</artifactId>
 	<packaging>jar</packaging>
+	<version>2.0</version>
 
     <!--Properties-->
     <properties>
@@ -291,7 +292,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>src/java/resources/version.properties</file>
+                                <file>src/main/resources/version.properties</file>
                             </files>
                         </configuration>
                     </execution>
