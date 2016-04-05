@@ -96,14 +96,20 @@ public class ExternalConformanceChecker implements ConformanceChecker {
       String xmlFileStr = outputfile + ".xml";
       PrintWriter pw = new PrintWriter(xmlFileStr);
       String line;
+      String report = "";
       while ((line = br.readLine()) != null) {
         System.out.println(line);
         pw.write(line);
+        report += line + "\r\n";
       }
       pw.close();
       String pathNorm = reportFilename.replaceAll("\\\\", "/");
       String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
       IndividualReport ir = new IndividualReport(name, pathToFile);
+      ir.setConformanceCheckerReport(report);
+
+      ReportGenerator.generateIndividualReport(outputfile, ir, config);
+      System.out.println("Internal report '" + outputfile + "' created");
       return ir;
     } catch (IOException e) {
       e.printStackTrace();

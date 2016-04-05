@@ -445,6 +445,25 @@ public class ReportXml extends ReportGeneric {
   }
 
   /**
+   * Parse an individual report to XML format.
+   *
+   * @param xmlfile the file name.
+   * @param ir      the individual report.
+   * @return the XML string generated.
+   */
+  public static String writeProcomputedIndividual(String xmlfile, IndividualReport ir) {
+    String output = ir.getConformanceCheckerReport();
+    try {
+      PrintWriter out = new PrintWriter(xmlfile);
+      out.print(ir.getConformanceCheckerReport());
+      out.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return output;
+  }
+
+  /**
    * Parse a global report to XML format.
    *
    * @param xmlfile the file name.
