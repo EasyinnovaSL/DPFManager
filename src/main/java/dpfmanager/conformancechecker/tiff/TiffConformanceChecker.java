@@ -39,8 +39,8 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementat
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
-import dpfmanager.shell.modules.report.IndividualReport;
-import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;

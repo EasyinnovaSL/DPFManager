@@ -1,7 +1,6 @@
 package dpfmanager.shell.modules.conformancechecker;
 
-import dpfmanager.conformancechecker.tiff.ConformanceChecker;
-import dpfmanager.conformancechecker.tiff.ProcessInput;
+import dpfmanager.conformancechecker.ProcessInput;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;

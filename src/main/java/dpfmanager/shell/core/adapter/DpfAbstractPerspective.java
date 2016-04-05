@@ -10,6 +10,7 @@ import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.BarFragment;
 import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -39,7 +40,6 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
   protected AnchorPane mainPane;
   protected StackPane bottomPane;
   protected SplitPane mainSplit;
-  protected Button showButton;
   protected StackPane bottomBar;
 
   protected ManagedFragmentHandler<BarFragment> fragmentBar;
@@ -125,12 +125,21 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
     scrollPane.getStyleClass().add("background-main");
     scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollPane.setMaxWidth(GuiWorkbench.mainWidth);
 
     // Center content
     scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (scrollPane.getWidth() < GuiWorkbench.mainWidth){
+        if (scrollPane.getWidth() < GuiWorkbench.mainWidth) {
+          scrollPane.setHvalue(0.5);
+        }
+      }
+    });
+    scrollPane.hvalueProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        if (scrollPane.getWidth() < GuiWorkbench.mainWidth) {
           scrollPane.setHvalue(0.5);
         }
       }

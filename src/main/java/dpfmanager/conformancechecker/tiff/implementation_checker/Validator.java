@@ -10,7 +10,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleEleme
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RulesObject;
-import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

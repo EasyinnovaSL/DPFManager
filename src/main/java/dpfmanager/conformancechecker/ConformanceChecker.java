@@ -2,7 +2,7 @@ package dpfmanager.conformancechecker;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
-import dpfmanager.shell.modules.report.IndividualReport;
+import dpfmanager.shell.modules.report.core.IndividualReport;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;

@@ -8,9 +8,6 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;

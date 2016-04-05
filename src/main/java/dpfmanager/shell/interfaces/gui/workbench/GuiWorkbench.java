@@ -52,7 +52,7 @@ public class GuiWorkbench implements FXWorkbench {
   static Map<String, String> testValues;
 
   // Main sizes
-  public static int widthWindow = 970;
+  public static int widthWindow = 500;
   public static int heightWindow = 950;
 
   public static int minWidth = 400;

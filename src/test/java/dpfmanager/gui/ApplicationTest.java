@@ -1,7 +1,7 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.modules.report.ReportGenerator;
-import dpfmanager.shell.modules.report.ReportRow;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportRow;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
