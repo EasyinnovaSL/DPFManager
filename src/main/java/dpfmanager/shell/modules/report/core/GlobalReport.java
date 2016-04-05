@@ -55,7 +55,17 @@ public class GlobalReport {
   /**
    * Number of IT ok
    */
-  int nreportsItOk;
+  int nreportsIt0Ok;
+
+  /**
+   * Number of IT ok
+   */
+  int nreportsIt1Ok;
+
+  /**
+   * Number of IT ok
+   */
+  int nreportsIt2Ok;
 
   /**
    * Number of PC ok
@@ -69,7 +79,15 @@ public class GlobalReport {
   /**
    * The Has it.
    */
-  boolean hasIt;
+  boolean hasIt0;
+  /**
+   * The Has it.
+   */
+  boolean hasIt1;
+  /**
+   * The Has it.
+   */
+  boolean hasIt2;
   /**
    * The Has bl.
    */
@@ -81,11 +99,15 @@ public class GlobalReport {
   public GlobalReport() {
     reports = new ArrayList<IndividualReport>();
     nreportsEpOk = 0;
-    nreportsItOk = 0;
+    nreportsIt0Ok = 0;
+    nreportsIt1Ok = 0;
+    nreportsIt2Ok = 0;
     nreportsBlOk = 0;
     nreportsPcOk = 0;
     hasEp = false;
-    hasIt = false;
+    hasIt0 = false;
+    hasIt1 = false;
+    hasIt2 = false;
     hasBl = false;
   }
 
@@ -103,8 +125,26 @@ public class GlobalReport {
    *
    * @return the has it
    */
-  public boolean getHasIt() {
-    return hasIt;
+  public boolean getHasIt0() {
+    return hasIt0;
+  }
+
+  /**
+   * Gets has it.
+   *
+   * @return the has it
+   */
+  public boolean getHasIt1() {
+    return hasIt1;
+  }
+
+  /**
+   * Gets has it.
+   *
+   * @return the has it
+   */
+  public boolean getHasIt2() {
+    return hasIt2;
   }
 
   /**
@@ -134,9 +174,17 @@ public class GlobalReport {
         if (ir.getEPErrors().size()==0) nreportsEpOk++;
         hasEp = true;
       }
-      if (ir.hasItValidation()) {
-        if (ir.getITErrors().size()==0) nreportsItOk++;
-        hasIt = true;
+      if (ir.hasItValidation(0)) {
+        if (ir.getITErrors(0).size()==0) nreportsIt0Ok++;
+        hasIt0 = true;
+      }
+      if (ir.hasItValidation(1)) {
+        if (ir.getITErrors(1).size()==0) nreportsIt1Ok++;
+        hasIt1 = true;
+      }
+      if (ir.hasItValidation(2)) {
+        if (ir.getITErrors(2).size()==0) nreportsIt2Ok++;
+        hasIt2 = true;
       }
       if (ir.hasBlValidation()) {
         if (ir.getBaselineErrors().size()==0) nreportsBlOk++;
@@ -167,8 +215,14 @@ public class GlobalReport {
       if (ir.hasEpValidation()) {
         if (ir.getEPErrors().size() > 0) ok = false;
       }
-      if (ir.hasItValidation()) {
-        if (ir.getITErrors().size() > 0) ok = false;
+      if (ir.hasItValidation(0)) {
+        if (ir.getITErrors(0).size() > 0) ok = false;
+      }
+      if (ir.hasItValidation(1)) {
+        if (ir.getITErrors(1).size() > 0) ok = false;
+      }
+      if (ir.hasItValidation(2)) {
+        if (ir.getITErrors(2).size() > 0) ok = false;
       }
       if (ir.hasBlValidation()) {
         if (ir.getBaselineErrors().size() > 0) ok = false;
@@ -210,8 +264,25 @@ public class GlobalReport {
    *
    * @return the boolean
    */
-  public boolean hasIt() {
-    return hasIt;
+  public boolean hasIt0() {
+    return hasIt0;
+  }
+
+  /**
+   * Has it boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasIt1() {
+    return hasIt1;
+  }
+  /**
+   * Has it boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasIt2() {
+    return hasIt2;
   }
 
   /**
@@ -237,8 +308,26 @@ public class GlobalReport {
    *
    * @return nReportsOnlyIt reports it
    */
-  public int getReportsIt() {
-    return nreportsItOk;
+  public int getReportsIt0() {
+    return nreportsIt0Ok;
+  }
+
+  /**
+   * Get the count of reports with some error.
+   *
+   * @return nReportsOnlyIt reports it
+   */
+  public int getReportsIt1() {
+    return nreportsIt1Ok;
+  }
+
+  /**
+   * Get the count of reports with some error.
+   *
+   * @return nReportsOnlyIt reports it
+   */
+  public int getReportsIt2() {
+    return nreportsIt2Ok;
   }
 
   /**

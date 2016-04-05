@@ -3,6 +3,7 @@ package dpfmanager.shell.application.app;
 import dpfmanager.shell.application.launcher.noui.CommandLauncher;
 import dpfmanager.shell.interfaces.console.workbench.ConsoleWorkbench;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import org.jacpfx.rcp.workbench.FXWorkbench;
@@ -31,7 +32,10 @@ public class CommandLineApp extends CommandLauncher {
 
   @Override
   protected void postInit(Stage stage) {
-
+    Image img = new Image("/gui-logo-white.png");
+    if (img != null) {
+      stage.getIcons().add(img);
+    }
   }
 
   @Override

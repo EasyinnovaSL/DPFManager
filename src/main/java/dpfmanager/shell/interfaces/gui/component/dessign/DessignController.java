@@ -1,24 +1,31 @@
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
+import dpfmanager.conformancechecker.ProcessInput;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
-import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
-import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
+import javafx.concurrent.Task;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +34,9 @@ import java.util.List;
 public class DessignController extends DpfController<DessignModel, DessignView> {
 
   public void mainCheckFiles() {
+    ArrayList<String> files = new ArrayList<>();
+    ArrayList<String> extensions = getModel().getExtensions();
+
     if (getView().getInputText().getText().equals("Select a file")) {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a file"));
       return;
@@ -37,17 +47,92 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
       return;
     }
+    if (!getModel().readConfig(getFileByPath(radio.getText()).getAbsolutePath())) {
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
+    } else {
+      // Everything OK!
+      getView().showLoading();
+      Label lblLoading = getView().getLblLoading();
 
-    // Send to conformance checker module
-    String input = getView().getInputText().getText();
-    String path = getFileByPath(radio.getText()).getAbsolutePath();
-    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path));
+      // Create a background task, because otherwise the loading message is not shown
+      Task<Integer> task = new Task<Integer>() {
+        @Override
+        protected Integer call() throws Exception {
+          try {
+            TextField txtFile = getView().getInputText();
+            if (new File(txtFile.getText()).isDirectory()) {
+              File[] listOfFiles = new File(txtFile.getText()).listFiles();
+              for (int j = 0; j < listOfFiles.length; j++) {
+                if (listOfFiles[j].isFile()) {
+                  files.add(listOfFiles[j].getPath());
+                }
+              }
+            } else {
+              for (String sfile : txtFile.getText().split(";")) {
+                files.add(sfile);
+              }
+            }
+
+            ProcessInput pi = new ProcessInput();
+            pi.setLabelLoading(lblLoading);
+            ArrayList<String> formats = getModel().getConfig().getFormats();
+
+            String filefolder = pi.ProcessFiles(files, getModel().getConfig(), true);
+            if (pi.isOutOfmemory()) {
+              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
+            }
+
+            // When finish, show report
+            String type = "";
+            String path = "";
+            if (formats.contains("HTML")) {
+              type = "html";
+              path = filefolder + "report.html";
+            } else if (formats.contains("XML")) {
+              type = "xml";
+              path = filefolder + "summary.xml";
+            } else if (formats.contains("JSON")) {
+              type = "json";
+              path = filefolder + "summary.json";
+            } else if (formats.contains("PDF")) {
+              type = "pdf";
+              path = filefolder + "report.pdf";
+            }
+
+            // Show reports
+            if (!type.isEmpty()) {
+              ArrayMessage am = new ArrayMessage();
+              am.add(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
+              am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
+              am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
+              getContext().send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
+            } else {
+              // No format
+              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, "No output format file was selected", formats.toString()));
+            }
+
+            getView().hideLoading();
+
+          } catch (Exception ex) {
+            getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception occured", ex));
+          } catch (OutOfMemoryError er) {
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
+          }
+          return 0;
+        }
+      };
+
+      //start the background task
+      Thread th = new Thread(task);
+      th.setDaemon(true);
+      th.start();
+    }
   }
 
   public void selectInputAction() {
     String txtFile = null;
     ComboBox c = getView().getComboChoice();
-    String configDir = DPFManagerProperties.getConfigDir();
+    String configDir = DPFManagerProperties.getDefaultDir();
     if (c.getValue() == "File") {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open File");
@@ -101,15 +186,17 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       file = new File(value);
     } else {
       //Ask for file
-      String configDir = DPFManagerProperties.getConfigDir();
+      String configDir = DPFManagerProperties.getDefaultDir();
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open Config");
       fileChooser.setInitialDirectory(new File(configDir));
-      fileChooser.setInitialFileName("config.dpf");
+      FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("DPF config files (*.dpf)", "*.dpf");
+      fileChooser.getExtensionFilters().add(extFilter);
       file = fileChooser.showOpenDialog(GuiWorkbench.getMyStage());
     }
 
     if (file != null) {
+      DPFManagerProperties.setDefaultDir(file.getParent());
       getView().addConfigFile(file.getAbsolutePath());
     }
   }
@@ -124,20 +211,16 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   }
 
   public void testAction() {
-    getContext().send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.INFO, "Count: "));
-
-//    String hola = null;
-//    hola.isEmpty();
-
-//    // Simulate show report affter check
-//    String path = "C:\\Users\\Roser/DPF Manager/reports/20160317/9/report.html";
-//    String type = "html";
-//    // Create the messages list
-//    ArrayMessage am = new ArrayMessage();
-//    am.add(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
-//    am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-//    am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
-//    getContext().send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
+    try {
+      String nullable = null;
+      if (true) {
+        nullable.substring(2);
+      }
+    }
+    catch(Exception ex){
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
+    }
+//    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.INFO, "Info message"));
   }
 
   private File getFileByPath(String path) {

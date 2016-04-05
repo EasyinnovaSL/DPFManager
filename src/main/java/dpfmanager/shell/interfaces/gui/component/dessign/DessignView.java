@@ -187,6 +187,16 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   }
 
   @FXML
+  protected void onChangeInputType(ActionEvent event) throws Exception {
+    if (comboChoice.getValue() == "File"){
+      inputText.setText("Select a file");
+    } else if (comboChoice.getValue() == "Folder") {
+      inputText.setText("Select a folder");
+    }
+    getController().selectInputAction();
+  }
+
+  @FXML
   protected void showFileInfo(ActionEvent event) throws Exception {
     String header = "The path to the files to check";
     String content = "This can be either a single file or a folder. Only the files with a valid TIF file extension will be processed.";
@@ -204,7 +214,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   protected void newButtonClicked(ActionEvent event) throws Exception {
     ArrayMessage am = new ArrayMessage();
     am.add(GuiConfig.PERSPECTIVE_CONFIG, new UiMessage());
-    am.add(GuiConfig.PERSPECTIVE_CONFIG+"."+GuiConfig.COMPONENT_CONFIG,new ConfigMessage(ConfigMessage.Type.NEW));
+    am.add(GuiConfig.PERSPECTIVE_CONFIG + "." + GuiConfig.COMPONENT_CONFIG, new ConfigMessage(ConfigMessage.Type.NEW));
     getContext().send(GuiConfig.PERSPECTIVE_CONFIG, am);
   }
 

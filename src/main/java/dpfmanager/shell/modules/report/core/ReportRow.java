@@ -303,7 +303,7 @@ public class ReportRow {
           String[] list = xml.split("<report>");
           for (int i = 1; i < list.length; i++) {
             String sub = list[i];
-            if (sub.contains("warning")) {
+            if (sub.contains("<level>warning</level>")) {
               warnings++;
             }
           }
@@ -466,7 +466,7 @@ public class ReportRow {
         try {
           JsonArray jArray = jObj.get("individualreports").getAsJsonArray();
           for (JsonElement element : jArray) {
-            if (element.toString().contains("warning")) {
+            if (element.toString().contains("\"warning\"")) {
               warnings++;
             }
           }

@@ -54,17 +54,20 @@ public class FileCheckTest extends ApplicationTest {
 
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");
+    waitForTable("#tabReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     ReportRow row = table.getItems().get(0);
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_loaded), table.getItems().size());
     Assert.assertEquals("Report row N files", "3", row.getNfiles());
-    Assert.assertEquals("Report row N passed", "1 passed", row.getPassed());
-    Assert.assertEquals("Report row N errors", "2 errors", row.getErrors());
+    Assert.assertEquals("Report row N passed", "0 passed", row.getPassed());
+    Assert.assertEquals("Report row N errors", "3 errors", row.getErrors());
     Assert.assertEquals("Report row N warnings", "0 warnings", row.getWarnings());
 
     //Check html && pdf exists
+    waitUntilExists("#buthtml");
     FxAssert.verifyThat("#tabReports #buthtml", NodeMatchers.isNotNull());
     clickOnAndReload("#tabReports #buthtml", "#pane-show");
+    waitUntilExists("#webView");
     FxAssert.verifyThat("#webView", NodeMatchers.isNotNull());
 
     //Check xml

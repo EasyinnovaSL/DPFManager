@@ -32,6 +32,8 @@
 
 package dpfmanager.shell.modules.report.core;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.ValidationResult;
@@ -112,7 +114,9 @@ public class ReportPDF extends ReportGeneric {
     try {
       int epErr = ir.getNEpErr(), epWar = ir.getNEpWar();
       int blErr = ir.getNBlErr(), blWar = ir.getNBlWar();
-      int itErr = ir.getNItErr(), itWar = ir.getNItWar();
+      int it0Err = ir.getNItErr(0), it0War = ir.getNItWar(0);
+      int it1Err = ir.getNItErr(1), it2War = ir.getNItWar(1);
+      int it2Err = ir.getNItErr(2), it1War = ir.getNItWar(2);
       ValidationResult pcValidation = ir.getPcValidation();
       int pcErr = pcValidation.getErrors().size(), pcWar = pcValidation.getWarnings().size();
 
@@ -170,9 +174,9 @@ public class ReportPDF extends ReportGeneric {
       // Image alert
       pos_y -= 30;
       font_size = 9;
-      if (blErr + epErr + itErr + pcErr > 0) {
+      if (blErr + epErr + it0Err + it1Err + it2Err + pcErr > 0) {
         writeText(contentStream, "This file does NOT conform to conformance checker", pos_x + image_width + 10, pos_y, font, font_size, Color.red);
-      } else if (blWar + epWar + itWar + pcWar > 0) {
+      } else if (blWar + epWar + it0War + it1War + it2War + pcWar > 0) {
         writeText(contentStream, "This file conforms to conformance checker, BUT it has some warnings", pos_x + image_width + 1, pos_y, font, font_size, Color.orange);
       } else {
         writeText(contentStream, "This file conforms to conformance checker", pos_x + image_width + 1, pos_y, font, font_size, Color.green);
@@ -202,13 +206,29 @@ public class ReportPDF extends ReportGeneric {
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpWar(), epWar) : "";
         writeText(contentStream, epWar + dif, pos_x + image_width + 200, pos_y, font, font_size, epWar > 0 ? Color.orange : Color.black);
       }
-      if (ir.hasItValidation()) {
+      if (ir.hasItValidation(0)) {
         pos_y -= 20;
         writeText(contentStream, "Tiff/It", pos_x + image_width + 10, pos_y, font, font_size);
-        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(), itErr) : "";
-        writeText(contentStream, itErr + dif, pos_x + image_width + 150, pos_y, font, font_size, itErr > 0 ? Color.red : Color.black);
-        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(), itWar) : "";
-        writeText(contentStream, itWar + dif, pos_x + image_width + 200, pos_y, font, font_size, itWar > 0 ? Color.orange : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(0), it0Err) : "";
+        writeText(contentStream, it0Err + dif, pos_x + image_width + 150, pos_y, font, font_size, it0Err > 0 ? Color.red : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(0), it0War) : "";
+        writeText(contentStream, it0War + dif, pos_x + image_width + 200, pos_y, font, font_size, it0War > 0 ? Color.orange : Color.black);
+      }
+      if (ir.hasItValidation(0)) {
+        pos_y -= 20;
+        writeText(contentStream, "Tiff/It-P1", pos_x + image_width + 10, pos_y, font, font_size);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(1), it1Err) : "";
+        writeText(contentStream, it1Err + dif, pos_x + image_width + 150, pos_y, font, font_size, it1Err > 0 ? Color.red : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(1), it1War) : "";
+        writeText(contentStream, it1War + dif, pos_x + image_width + 200, pos_y, font, font_size, it1War > 0 ? Color.orange : Color.black);
+      }
+      if (ir.hasItValidation(0)) {
+        pos_y -= 20;
+        writeText(contentStream, "Tiff/It-P2", pos_x + image_width + 10, pos_y, font, font_size);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(2), it2Err) : "";
+        writeText(contentStream, it2Err + dif, pos_x + image_width + 150, pos_y, font, font_size, it2Err > 0 ? Color.red : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(2), it2War) : "";
+        writeText(contentStream, it2War + dif, pos_x + image_width + 200, pos_y, font, font_size, it2War > 0 ? Color.orange : Color.black);
       }
       pos_y -= 20;
       writeText(contentStream, "Policy checker", pos_x + image_width + 10, pos_y, font, font_size);
@@ -319,9 +339,29 @@ public class ReportPDF extends ReportGeneric {
         pos_y = init_posy;
       }
 
-      if (ir.checkIT >= 0) {
+      if (ir.checkIT0) {
         ReportPDF rpdf = new ReportPDF(contentStream);
-        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(), ir.getITWarnings(), pos_x, pos_y, "Tiff/IT");
+        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(0), ir.getITWarnings(0), pos_x, pos_y, "Tiff/IT");
+        contentStream = rpdf.getContentStream();
+      }
+      if (newPageNeeded(pos_y)) {
+        contentStream = newPage(contentStream, document);
+        pos_y = init_posy;
+      }
+
+      if (ir.checkIT1) {
+        ReportPDF rpdf = new ReportPDF(contentStream);
+        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(1), ir.getITWarnings(1), pos_x, pos_y, "Tiff/IT");
+        contentStream = rpdf.getContentStream();
+      }
+      if (newPageNeeded(pos_y)) {
+        contentStream = newPage(contentStream, document);
+        pos_y = init_posy;
+      }
+
+      if (ir.checkIT2) {
+        ReportPDF rpdf = new ReportPDF(contentStream);
+        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(2), ir.getITWarnings(2), pos_x, pos_y, "Tiff/IT");
         contentStream = rpdf.getContentStream();
       }
       if (newPageNeeded(pos_y)) {
@@ -331,7 +371,7 @@ public class ReportPDF extends ReportGeneric {
 
       if (ir.checkPC) {
         ReportPDF rpdf = new ReportPDF(contentStream);
-        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getPCErrors(), ir.getPCWarnings(), pos_x, pos_y, "Policy Checker");
+        pos_y = rpdf.writeErrorsWarnings2(document, font, ir.getPCErrors(), ir.getPCWarnings(), pos_x, pos_y, "Policy Checker");
         contentStream = rpdf.getContentStream();
       }
 
@@ -396,11 +436,23 @@ public class ReportPDF extends ReportGeneric {
         writeText(contentStream, gr.getReportsEp() + "", pos_x, pos_y, font, font_size, col);
         writeText(contentStream, "conforms to Tiff/EP Profile", pos_x + 30, pos_y, font, font_size, col);
       }
-      if (gr.getHasIt()){
+      if (gr.getHasIt0()){
         pos_y -= 15;
-        col = gr.getReportsIt() == gr.getReportsCount() ? Color.green : Color.red;
-        writeText(contentStream, gr.getReportsIt() + "", pos_x, pos_y, font, font_size, col);
+        col = gr.getReportsIt0() == gr.getReportsCount() ? Color.green : Color.red;
+        writeText(contentStream, gr.getReportsIt0() + "", pos_x, pos_y, font, font_size, col);
         writeText(contentStream, "conforms to Tiff/IT Profile", pos_x + 30, pos_y, font, font_size, col);
+      }
+      if (gr.getHasIt1()){
+        pos_y -= 15;
+        col = gr.getReportsIt1() == gr.getReportsCount() ? Color.green : Color.red;
+        writeText(contentStream, gr.getReportsIt2() + "", pos_x, pos_y, font, font_size, col);
+        writeText(contentStream, "conforms to Tiff/IT P1 Profile", pos_x + 30, pos_y, font, font_size, col);
+      }
+      if (gr.getHasIt2()){
+        pos_y -= 15;
+        col = gr.getReportsIt2() == gr.getReportsCount() ? Color.green : Color.red;
+        writeText(contentStream, gr.getReportsIt2() + "", pos_x, pos_y, font, font_size, col);
+        writeText(contentStream, "conforms to Tiff/IT P2 Profile", pos_x + 30, pos_y, font, font_size, col);
       }
 
       // Pie chart
@@ -482,11 +534,23 @@ public class ReportPDF extends ReportGeneric {
           writeText(contentStream, ir.getEPErrors().size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getEPErrors().size() > 0 ? Color.red : Color.black);
           writeText(contentStream, ir.getEPWarnings().size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getEPWarnings().size() > 0 ? Color.red : Color.black);
         }
-        if (ir.hasItValidation()) {
+        if (ir.hasItValidation(0)) {
           pos_y -= 10;
           writeText(contentStream, "Tiff/IT", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-          writeText(contentStream, ir.getITErrors().size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getITErrors().size() > 0 ? Color.red : Color.black);
-          writeText(contentStream, ir.getITWarnings().size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getITWarnings().size() > 0 ? Color.red : Color.black);
+          writeText(contentStream, ir.getITErrors(0).size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getITErrors(0).size() > 0 ? Color.red : Color.black);
+          writeText(contentStream, ir.getITWarnings(0).size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getITWarnings(0).size() > 0 ? Color.red : Color.black);
+        }
+        if (ir.hasItValidation(1)) {
+          pos_y -= 10;
+          writeText(contentStream, "Tiff/IT-1", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
+          writeText(contentStream, ir.getITErrors(1).size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getITErrors(1).size() > 0 ? Color.red : Color.black);
+          writeText(contentStream, ir.getITWarnings(1).size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getITWarnings(1).size() > 0 ? Color.red : Color.black);
+        }
+        if (ir.hasItValidation(2)) {
+          pos_y -= 10;
+          writeText(contentStream, "Tiff/IT-2", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
+          writeText(contentStream, ir.getITErrors(2).size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getITErrors(2).size() > 0 ? Color.red : Color.black);
+          writeText(contentStream, ir.getITWarnings(2).size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getITWarnings(2).size() > 0 ? Color.red : Color.black);
         }
         if (ir.checkPC) {
           pos_y -= 10;
@@ -526,6 +590,7 @@ public class ReportPDF extends ReportGeneric {
       // Full individual reports
       ArrayList<PDDocument> toClose = new ArrayList<PDDocument>();
       for (IndividualReport ir : gr.getIndividualReports()) {
+        if (!ir.containsData()) continue;
         PDDocument doc = PDDocument.load(ir.getPDFDocument());
         List<PDPage> l = doc.getDocumentCatalog().getAllPages();
         for (PDPage pag : l) {
@@ -571,7 +636,56 @@ public class ReportPDF extends ReportGeneric {
    * @return the int
    * @throws Exception the exception
    */
-  int writeErrorsWarnings(PDDocument document, PDFont font, List<ValidationEvent> errors, List<ValidationEvent> warnings, int pos_x, int posy, String type) throws Exception{
+  int writeErrorsWarnings(PDDocument document, PDFont font, List<RuleResult> errors, List<RuleResult> warnings, int pos_x, int posy, String type) throws Exception{
+    int total = 0;
+    int font_size = 10;
+    int pos_y = posy;
+    pos_y -= 20;
+    writeText(contentStream, type + " Conformance", pos_x, pos_y, font, font_size);
+
+    font_size = 8;
+    if ((errors != null && errors.size() > 0) || (warnings != null && warnings.size() > 0)) {
+      pos_y -= 20;
+      writeText(contentStream, "Type", pos_x, pos_y, font, font_size);
+      writeText(contentStream, "Location", pos_x + 50, pos_y, font, font_size);
+      writeText(contentStream, "Description", pos_x + 100, pos_y, font, font_size);
+    }
+    if (errors != null) {
+      for (RuleResult val : errors) {
+        pos_y -= 20;
+        if (newPageNeeded(pos_y)) {
+          contentStream = newPage(contentStream, document);
+          pos_y = init_posy;
+        }
+        writeText(contentStream, "Error", pos_x, pos_y, font, font_size, Color.red);
+        writeText(contentStream, val.getLocation(), pos_x + 50, pos_y, font, font_size);
+        writeText(contentStream, val.getDescription(), pos_x + 100, pos_y, font, font_size);
+        total++;
+      }
+    }
+    if (warnings != null) {
+      for (RuleResult val : warnings) {
+        pos_y -= 20;
+        if (newPageNeeded(pos_y)) {
+          contentStream = newPage(contentStream, document);
+          pos_y = init_posy;
+        }
+        writeText(contentStream, "Warning", pos_x, pos_y, font, font_size, Color.orange);
+        writeText(contentStream, val.getLocation(), pos_x + 50, pos_y, font, font_size);
+        writeText(contentStream, val.getDescription(), pos_x + 100, pos_y, font, font_size);
+        total++;
+      }
+    }
+    if (total == 0) {
+      pos_y -= 20;
+      PDXObjectImage ximage = new PDJpeg(document, getFileStreamFromResources("images/ok.jpg"));
+      contentStream.drawXObject( ximage, pos_x + 8, pos_y, 5, 5 );
+      writeText(contentStream, "This file conforms to " + type, pos_x + 15, pos_y, font, font_size, Color.green);
+    }
+    return pos_y;
+  }
+
+  int writeErrorsWarnings2(PDDocument document, PDFont font, List<ValidationEvent> errors, List<ValidationEvent> warnings, int pos_x, int posy, String type) throws Exception{
     int total = 0;
     int font_size = 10;
     int pos_y = posy;

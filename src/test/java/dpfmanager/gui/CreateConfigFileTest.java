@@ -58,7 +58,6 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnAndReload("#continueButton");
 
     // 4 - Repot format
-    clickOnScroll("#chkHtml");
     clickOnScroll("#chkPdf");
     clickOnAndReload("#continueButton");
 

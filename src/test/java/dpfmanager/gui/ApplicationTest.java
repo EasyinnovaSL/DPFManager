@@ -1,16 +1,20 @@
 package dpfmanager.gui;
 
-import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.ReportGenerator;
+import dpfmanager.shell.modules.report.ReportRow;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import org.apache.commons.lang.SystemUtils;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
@@ -40,18 +44,50 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
   }
 
+  /**
+   * The constant width.
+   */
   final static int width = 970;
+  /**
+   * The constant height.
+   */
   final static int height = 500;
+  /**
+   * The Base w.
+   */
   static int baseW = 0;
+  /**
+   * The Base h.
+   */
   static int baseH = 0;
 
+  /**
+   * The Max timeout.
+   */
   static int maxTimeout = 60;
 
+  /**
+   * The Stage.
+   */
   static Stage stage;
+  /**
+   * The Scene.
+   */
   protected Scene scene;
+  /**
+   * The View.
+   */
   static SpreadsheetView view;
   private int scroll = 0;
 
+  /**
+   * Launch stage.
+   *
+   * @param appClass the app class
+   * @param appArgs  the app args
+   * @return the stage
+   * @throws Exception the exception
+   */
   public static Stage launch(Class<? extends Application> appClass, String... appArgs) throws Exception {
     stage = FxToolkit.registerPrimaryStage();
     FxToolkit.setupApplication(appClass, appArgs);
@@ -72,6 +108,11 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     return stage;
   }
 
+  /**
+   * Internal before.
+   *
+   * @throws Exception the exception
+   */
   @Before
   public final void internalBefore() throws Exception {
     // Initial, set log level to severe (remove JacpFX logs)
@@ -81,6 +122,11 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     FxToolkit.setupApplication(this);
   }
 
+  /**
+   * Internal after.
+   *
+   * @throws Exception the exception
+   */
   @After
   public final void internalAfter() throws Exception {
     FxToolkit.cleanupStages();
@@ -101,15 +147,31 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     FxToolkit.hideStage();
   }
 
+  /**
+   * Click on and reload.
+   *
+   * @param id the id
+   */
   public void clickOnAndReload(String id){
     clickOnAndReload(id, 250);
   }
 
+  /**
+   * Click on and reload top.
+   *
+   * @param id the id
+   */
   public void clickOnAndReloadTop(String id){
     clickOnAndReloadTop(id, 250);
   }
 
-  //Main click function + wait for node + reload
+  /**
+   * Click on and reload.
+   *
+   * @param id     the id
+   * @param search the search
+   */
+//Main click function + wait for node + reload
   public void clickOnAndReload(String id, String search){
     // Click first
     clickOnScroll(id);
@@ -122,18 +184,31 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       sleep(250);
       count++;
       reloadScene();
+      node = scene.lookup(search);
     }
     sleep(250);
   }
 
-  //Main click function + wait + reload
+  /**
+   * Click on and reload.
+   *
+   * @param id    the id
+   * @param milis the milis
+   */
+//Main click function + wait + reload
   public void clickOnAndReload(String id, int milis){
     clickOnScroll(id);
     sleep(milis);
     reloadScene();
   }
 
-  //Main click function + wait for node + reload (top pane)
+  /**
+   * Click on and reload top.
+   *
+   * @param id     the id
+   * @param search the search
+   */
+//Main click function + wait for node + reload (top pane)
   public void clickOnAndReloadTop(String id, String search){
     // Click first
     clickOnScroll(id, true, true);
@@ -146,25 +221,90 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       sleep(250);
       count++;
       reloadScene();
+      node = scene.lookup(search);
     }
     sleep(250);
   }
 
-  //Main click function + wait + reload (top pane)
+  /**
+   * Wait until exists.
+   *
+   * @param id     the id
+   */
+  public void waitUntilExists(String id) {
+    reloadScene();
+    Node node = scene.lookup(id);
+    int count = 0;
+    while (node == null && count < maxTimeout *4){
+      sleep(250);
+      count++;
+      reloadScene();
+      node = scene.lookup(id);
+    }
+  }
+
+  /**
+   * Wait until exists.
+   *
+   * @param id     the id
+   */
+  public void waitForTable(String id) {
+    reloadScene();
+    Node node = scene.lookup(id);
+    int count = 0;
+    while ((node == null || ((TableView)node).getItems().size() == 0) && count < maxTimeout *4){
+      sleep(250);
+      count++;
+      reloadScene();
+      node = scene.lookup(id);
+    }
+  }
+
+  /**
+   * Click on and reload top.
+   *
+   * @param id    the id
+   * @param milis the milis
+   */
+//Main click function + wait + reload (top pane)
   public void clickOnAndReloadTop(String id, int milis){
     clickOnScroll(id, true, true);
     sleep(milis);
     reloadScene();
   }
 
+  /**
+   * Click on scroll application test.
+   *
+   * @param id the id
+   * @return the application test
+   * @throws FxRobotException the fx robot exception
+   */
   public ApplicationTest clickOnScroll(String id) throws FxRobotException {
     return clickOnScroll(id,true, false);
   }
 
+  /**
+   * Click on scroll application test.
+   *
+   * @param id      the id
+   * @param restart the restart
+   * @return the application test
+   * @throws FxRobotException the fx robot exception
+   */
   public ApplicationTest clickOnScroll(String id, boolean restart) throws FxRobotException {
     return clickOnScroll(id,restart, false);
   }
 
+  /**
+   * Click on scroll application test.
+   *
+   * @param id       the id
+   * @param restart  the restart
+   * @param topItems the top items
+   * @return the application test
+   * @throws FxRobotException the fx robot exception
+   */
   public ApplicationTest clickOnScroll(String id, boolean restart, boolean topItems ) throws FxRobotException {
     // First go to the button and decide if we need scroll or not
     if (!moveToCustom(id)){
@@ -203,6 +343,15 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     return this;
   }
 
+  /**
+   * Click on scroll funcional application test.
+   *
+   * @param id       the id
+   * @param restart  the restart
+   * @param topItems the top items
+   * @return the application test
+   * @throws FxRobotException the fx robot exception
+   */
   public ApplicationTest clickOnScrollFUNCIONAL(String id, boolean restart, boolean topItems ) throws FxRobotException {
     // Check if the node if at limit. Position < height + base Height - 5
     // If it is, make one scroll and finish
@@ -296,16 +445,28 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
   }
 
+  /**
+   * Reload scene.
+   */
   public void reloadScene() {
     scene = stage.getScene();
   }
 
+  /**
+   * Write text.
+   *
+   * @param id   the id
+   * @param text the text
+   */
   protected void writeText(String id, String text) {
     TextField txtField = (TextField) scene.lookup(id);
     txtField.clear();
     txtField.setText(text);
   }
 
+  /**
+   * Wait for check files.
+   */
   protected void waitForCheckFiles() {
     sleep(1000);
     int timeout = 0;
@@ -349,6 +510,11 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     return (int) point.getX();
   }
 
+  /**
+   * Get current reports int.
+   *
+   * @return the int
+   */
   protected int getCurrentReports(){
     int nReports = 0;
     String path = ReportGenerator.getReportsFolder();
@@ -367,6 +533,11 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     return nReports;
   }
 
+  /**
+   * Click on imported config.
+   *
+   * @param path the path
+   */
   protected void clickOnImportedConfig(String path) {
     VBox vbox = (VBox) scene.lookup("#vBoxConfig");                         //Get VBox
     ScrollPane scrollPane = (ScrollPane) scene.lookup("#configScroll");   //Get ScrollPane

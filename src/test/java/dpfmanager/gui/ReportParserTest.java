@@ -47,6 +47,7 @@ public class ReportParserTest extends ApplicationTest {
     List<String> list = Arrays.asList(configHtml, configJson, configXml);
     for (String configFile : list) {
       GuiWorkbench.setTestParam("import", configFile);
+      waitUntilExists("#importButton");
       clickOnScroll("#importButton");
       clickOnImportedConfig(configFile);
       writeText("#inputText", inputFiles);
@@ -58,6 +59,7 @@ public class ReportParserTest extends ApplicationTest {
 
     // Go to reports and check them
     clickOnAndReloadTop("#butReports","#pane-reports");
+    waitForTable("#tabReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_loaded), table.getItems().size());
     checkValidRow(table.getItems().get(0), "XML");  //Xml
@@ -69,7 +71,7 @@ public class ReportParserTest extends ApplicationTest {
     Assert.assertEquals("Report row N files (" + type + ")", "2", row.getNfiles());
     Assert.assertEquals("Report row N passed (" + type + ")", "1 passed", row.getPassed());
     Assert.assertEquals("Report row N errors (" + type + ")", "1 errors", row.getErrors());
-    Assert.assertEquals("Report row N warnings (" + type + ")", "1 warnings", row.getWarnings());
+    Assert.assertEquals("Report row N warnings (" + type + ")", "0 warnings", row.getWarnings());
     Assert.assertEquals("Report row score (" + type + ")", "50%", row.getScore());
   }
 }

@@ -55,7 +55,7 @@
                   <HBox.margin>
                      <Insets left="5.0" />
                   </HBox.margin></Button>
-               <ComboBox fx:id="comboChoice" prefWidth="150.0" styleClass="combo-dpf">
+               <ComboBox fx:id="comboChoice" onAction="#onChangeInputType" prefWidth="150.0" styleClass="combo-dpf">
                   <HBox.margin>
                      <Insets left="5.0" />
                   </HBox.margin>

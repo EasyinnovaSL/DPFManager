@@ -1,6 +1,6 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
-import dpfmanager.conformancechecker.tiff.Configuration;
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.event.ActionEvent;

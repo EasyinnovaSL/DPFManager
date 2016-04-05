@@ -56,8 +56,8 @@ public class TiffWriterTest extends TestCase {
     args[1] = "-s";
 
     tr = new TiffReader();
-    tr.readFile("src" + separator + "test" + separator + "resources" + separator + "TestWriter" + separator + "Bilevel.tif");
-    TiffInputStream ti = new TiffInputStream(new File("src" + separator + "test" + separator + "resources" + separator + "TestWriter" + separator + "Bilevel.tif"));
+    tr.readFile("src" + separator + "test" + separator + "resources" + separator + "TestWriter" + separator + "Bilevel1.tif");
+    TiffInputStream ti = new TiffInputStream(new File("src" + separator + "test" + separator + "resources" + separator + "TestWriter" + separator + "Bilevel1.tif"));
     TiffDocument td = tr.getModel();
 
     TiffWriter tw = new TiffWriter(ti);
@@ -68,16 +68,14 @@ public class TiffWriterTest extends TestCase {
       @Override
       public List<String> getRaw() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
       @Override
       public List<String> getUnnamed() {
         ArrayList<String> listRaw = new ArrayList<String>();
-        listRaw.add(args[0]);
-        listRaw.add(args[1]);
+        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
         return listRaw;
       }
 
@@ -92,7 +90,7 @@ public class TiffWriterTest extends TestCase {
     cl.launch();
 
     String path = getPath();
-    String xmlFile = path + "/1-Bilevel.tif.xml";
+    String xmlFile = path + "/1-Bilevel1.tif.xml";
     String xmlFile2 = path + "/1-Bilevel2.tif.xml";
 
     assertXML(xmlFile, xmlFile2);

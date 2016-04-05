@@ -5,6 +5,7 @@
         <PatternLayout>
             <MarkerPatternSelector defaultPattern="%-5p [%logger{36}] - %msg%n">
                 <PatternMatch key="PLAIN" pattern="%msg%n"/>
+                <PatternMatch key="EXCEPTION" pattern="%msg%n"/>
             </MarkerPatternSelector>
         </PatternLayout>
     </Console>
@@ -12,11 +13,16 @@
         <PatternLayout>
             <MarkerPatternSelector defaultPattern="%-5p [%logger{36}] - %msg%n">
                 <PatternMatch key="PLAIN" pattern="%msg%n"/>
+                <PatternMatch key="EXCEPTION" pattern="%msg%n"/>
             </MarkerPatternSelector>
         </PatternLayout>
     </TextAreaAppender>
-    <File name="File" fileName="DpfManager.log" immediateFlush="false" append="true">
-        <PatternLayout pattern="%d{dd/MM HH:mm} %-5p [%logger{36}] - %msg%n"/>
+    <File name="File" fileName="${sys:app.home}/DpfManager.log" immediateFlush="false" append="true">
+        <PatternLayout>
+            <MarkerPatternSelector defaultPattern="%d{dd/MM HH:mm} %-5p [%logger{36}] - %msg%n">
+                <PatternMatch key="EXCEPTION" pattern="%msg%n"/>
+            </MarkerPatternSelector>
+        </PatternLayout>
     </File>
     <Async name="Async">
         <AppenderRef ref="File"/>

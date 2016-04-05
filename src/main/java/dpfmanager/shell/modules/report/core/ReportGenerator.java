@@ -31,11 +31,12 @@
 
 package dpfmanager.shell.modules.report.core;
 
-import dpfmanager.conformancechecker.tiff.Configuration;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.Fix;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.Fixes;
-import dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes.autofix;
-import dpfmanager.conformancechecker.tiff.PolicyChecker.Rules;
+import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 
@@ -609,22 +610,28 @@ public class ReportGenerator {
         tr.readFile(nameFixedTif);
         TiffDocument to = tr.getModel();
 
-        ValidationResult baselineVal = null;
-        if (ir.checkBL) baselineVal = tr.getBaselineValidation();
-        ValidationResult epValidation = null;
-        if (ir.checkEP) epValidation = tr.getTiffEPValidation();
-        ValidationResult itValidation = null;
-        if (ir.checkIT >= 0) itValidation = tr.getTiffITValidation(ir.checkIT);
+        Validator baselineVal = null;
+        if (ir.checkBL) baselineVal = TiffConformanceChecker.getBaselineValidation(tr);
+        Validator epValidation = null;
+        if (ir.checkEP) epValidation = TiffConformanceChecker.getEPValidation(tr);
+        Validator it0Validation = null;
+        if (ir.checkIT0) it0Validation = TiffConformanceChecker.getITValidation(0, tr);
+        Validator it1Validation = null;
+        if (ir.checkIT1) it1Validation = TiffConformanceChecker.getITValidation(1, tr);
+        Validator it2Validation = null;
+        if (ir.checkIT2) it2Validation = TiffConformanceChecker.getITValidation(2, tr);
 
         String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
         String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-        IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, itValidation);
+        IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
         int ind = ir.getReportPath().lastIndexOf(".tif");
         ir2.setReportPath(ir.getReportPath().substring(0, ind) + "_fixed.tif");
         ir2.checkPC = ir.checkPC;
         ir2.checkBL = ir.checkBL;
         ir2.checkEP = ir.checkEP;
-        ir2.checkIT = ir.checkIT;
+        ir2.checkIT0 = ir.checkIT0;
+        ir2.checkIT1 = ir.checkIT1;
+        ir2.checkIT2 = ir.checkIT2;
 
         //Save fixed tiffs
         String pathFixed = "";

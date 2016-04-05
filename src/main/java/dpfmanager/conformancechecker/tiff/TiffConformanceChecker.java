@@ -31,14 +31,20 @@
 
 package dpfmanager.conformancechecker.tiff;
 
-import dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes.clearPrivateData;
-import dpfmanager.shell.modules.report.core.IndividualReport;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.conformancechecker.ConformanceChecker;
+import dpfmanager.conformancechecker.configuration.Field;
+import dpfmanager.conformancechecker.ProcessInput;
+import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
+import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
+import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.shell.modules.report.IndividualReport;
+import dpfmanager.shell.modules.report.ReportGenerator;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.reader.TiffReader;
 
 import org.reflections.Reflections;
@@ -48,9 +54,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.StringReader;
 import java.nio.ByteOrder;
 
@@ -62,8 +70,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -238,7 +248,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
   }
 
   public static String getAutofixesClassPath() {
-    return "dpfmanager.conformancechecker.tiff.MetadataFixer.autofixes";
+    return "dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes";
   }
 
   /**
@@ -349,6 +359,77 @@ public class TiffConformanceChecker implements ConformanceChecker {
     return report_xml;
   }
 
+  public static Validator getBaselineValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    Validator validation = null;
+    String baseDir = ReportGenerator.getReportsFolder();
+    String xml = baseDir + "/file.xml";
+    int idx = 1;
+    while (new File(xml).exists()) {
+      xml = baseDir + "/file" + idx + ".xml";
+      idx++;
+    }
+    TiffDocument td = tr.getModel();
+    TiffImplementationChecker tic = new TiffImplementationChecker();
+    TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
+    tiffValidation.writeXml(xml);
+
+    validation = new Validator();
+    validation.validateBaseline(xml);
+
+    if (new File(xml).exists()) {
+      new File(xml).delete();
+    }
+    return validation;
+  }
+
+  public static Validator getEPValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    Validator validation = null;
+    String baseDir = ReportGenerator.getReportsFolder();
+    String xml = baseDir + "/file.xml";
+    int idx = 1;
+    while (new File(xml).exists()) {
+      xml = baseDir + "/file" + idx + ".xml";
+      idx++;
+    }
+    TiffDocument td = tr.getModel();
+    TiffImplementationChecker tic = new TiffImplementationChecker();
+    TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
+    tiffValidation.writeXml(xml);
+
+    validation = new Validator();
+    validation.validateTiffEP(xml);
+
+    if (new File(xml).exists()) {
+      new File(xml).delete();
+    }
+    return validation;
+  }
+
+  public static Validator getITValidation(int profile, TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    Validator validation = null;
+    String baseDir = ReportGenerator.getReportsFolder();
+    String xml = baseDir + "/file.xml";
+    int idx = 1;
+    while (new File(xml).exists()) {
+      xml = baseDir + "/file" + idx + ".xml";
+      idx++;
+    }
+    TiffDocument td = tr.getModel();
+    TiffImplementationChecker tic = new TiffImplementationChecker();
+    TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
+    tiffValidation.writeXml(xml);
+
+    validation = new Validator();
+    if (profile == 0) validation.validateTiffIT(xml);
+    else if (profile == 1) validation.validateTiffITP1(xml);
+    else validation.validateTiffITP2(xml);
+
+    if (new File(xml).exists()) {
+      new File(xml).delete();
+    }
+    return validation;
+  }
+
   /**
    * Process tiff file.
    *
@@ -362,6 +443,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
   public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config,
                                           int idReport) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
+      System.out.println("Reading Tiff file");
       TiffReader tr = new TiffReader();
       int result = tr.readFile(pathToFile);
       switch (result) {
@@ -374,29 +456,45 @@ public class TiffConformanceChecker implements ConformanceChecker {
         case 0:
           boolean checkBL = config.getIsos().contains("Baseline");
           boolean checkEP = config.getIsos().contains("Tiff/EP");
-          int checkIT = -1;
+          boolean checkIT = config.getIsos().contains("Tiff/IT");
+          boolean checkIT1 = config.getIsos().contains("Tiff/IT-1");
+          boolean checkIT2 = config.getIsos().contains("Tiff/IT-2");
           boolean checkPC = false;
-          if (config.getIsos().contains("Tiff/IT")) checkIT = 0;
-          if (config.getIsos().contains("Tiff/IT-1")) checkIT = 1;
-          if (config.getIsos().contains("Tiff/IT-2")) checkIT = 2;
           if (config.getRules() != null){
             checkPC = config.getRules().getRules().size() > 0;
           }
 
-          TiffDocument to = tr.getModel();
+          System.out.println("Validating Tiff");
+          Validator baselineVal = null;
+          if (checkBL) {
+            baselineVal = getBaselineValidation(tr);
+          }
+          Validator epValidation = null;
+          if (checkEP) {
+            epValidation = getEPValidation(tr);
+          }
+          Validator it0Validation = null;
+          Validator it1Validation = null;
+          Validator it2Validation = null;
+          if (checkIT) {
+            it0Validation = getITValidation(0, tr);
+          }
+          if (checkIT1) {
+            it1Validation = getITValidation(1, tr);
+          }
+          if (checkIT2) {
+            it2Validation = getITValidation(2, tr);
+          }
 
-          ValidationResult baselineVal = null;
-          if (checkBL) baselineVal = tr.getBaselineValidation();
-          ValidationResult epValidation = null;
-          if (checkEP) epValidation = tr.getTiffEPValidation();
-          ValidationResult itValidation = null;
-          if (checkIT >= 0) itValidation = tr.getTiffITValidation(checkIT);
+          System.out.println("Creating report");
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, pathToFile, to, baselineVal, epValidation, itValidation);
+          IndividualReport ir = new IndividualReport(name, pathToFile, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
           ir.checkBL = checkBL;
           ir.checkEP = checkEP;
-          ir.checkIT = checkIT;
+          ir.checkIT0 = checkIT;
+          ir.checkIT1 = checkIT1;
+          ir.checkIT2 = checkIT2;
           ir.checkPC = checkPC;
 
           // Generate individual report
@@ -404,7 +502,6 @@ public class TiffConformanceChecker implements ConformanceChecker {
           ReportGenerator.generateIndividualReport(outputfile, ir, config);
           System.out.println("Internal report '" + outputfile + "' created");
 
-          to=null;
           tr=null;
           System.gc();
           return ir;
@@ -413,11 +510,19 @@ public class TiffConformanceChecker implements ConformanceChecker {
           break;
       }
     } catch (ReadTagsIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
+      System.out.println("Error loading Tiff library dependencies (tags)");
     } catch (ReadIccConfigIOException e) {
-      System.err.println("Error loading Tiff library dependencies");
+      System.out.println("Error loading Tiff library dependencies (icc)");
     } catch (OutOfMemoryError error){
-      System.err.println("Out of memory");
+      System.out.println("Out of memory");
+    } catch (ParserConfigurationException e) {
+      System.out.println("Error in Tiff file (1)");
+    } catch (IOException e) {
+      System.out.println("Error in Tiff file (2)");
+    } catch (SAXException e) {
+      System.out.println("Error in Tiff file (3)");
+    } catch (JAXBException e) {
+      System.out.println("Error in Tiff file (4)");
     }
     return null;
   }
@@ -436,6 +541,11 @@ public class TiffConformanceChecker implements ConformanceChecker {
       }
     }
     return isTiff;
+  }
+
+  @Override
+  public String toString() {
+    return "TiffConformanceChecker";
   }
 }
 
