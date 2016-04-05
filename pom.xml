@@ -18,6 +18,7 @@
         <main.class>dpfmanager.shell.core.app.MainApp</main.class>
         <gui.class>dpfmanager.shell.core.app.MainGuiApp</gui.class>
         <console.class>dpfmanager.shell.core.app.MainConsoleApp</console.class>
+        <version.util.class>dpfmanager.shell.core.util.VersionUtil</version.util.class>
     </properties>
 
 	<!-- More Project Information -->
@@ -278,27 +279,6 @@
 	<!--Common Build Plugins-->
 	<build>
 		<plugins>
-
-            <!-- Version -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>read-project-properties</goal>
-                        </goals>
-                        <configuration>
-                            <files>
-                                <file>src/main/resources/version.properties</file>
-                            </files>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
 			<!-- Resources -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -479,8 +459,22 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<version>1.4.0</version>
 						<executions>
+                            <execution>
+                                <id>read-version</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>${version.util.class}</mainClass>
+                                    <arguments>
+                                        <argument>${project.version}</argument>
+                                        <argument>${project.basedir}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
 							<execution>
 								<id>package-exe</id>
 								<phase>package</phase>
@@ -534,6 +528,29 @@
 				<finalName>DPF Manager</finalName>
 				<plugins>
 
+                    <!-- Update version -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>read-version</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>${version.util.class}</mainClass>
+                                    <arguments>
+                                        <argument>${project.version}</argument>
+                                        <argument>${project.basedir}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
 					<!-- Create Jar and Installer -->
                     <plugin>
                         <groupId>com.zenjava</groupId>
@@ -549,7 +566,7 @@
                             <nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
                             <bundleType>ALL</bundleType>
                             <bundler>ALL</bundler>
-                            <nativeReleaseVersion>${version}</nativeReleaseVersion>
+                            <nativeReleaseVersion>${project.version}</nativeReleaseVersion>
                             <needShortcut>true</needShortcut>
                             <needMenu>true</needMenu>
                             <appName>${project.name}</appName>
