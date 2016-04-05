@@ -7,8 +7,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{0D5B5F16-9992-49DC-AD65-D66FE249CE67}
 AppName=DPF Manager
-AppVersion=2.0
-AppVerName=DPF Manager 2.0
+AppVersion=2.1
+AppVerName=DPF Manager {#SetupSetting("AppVersion")}
 AppPublisher=DPF Manager
 AppComments=DPF Manager
 AppCopyright=Copyright (C) 2015-2016
@@ -19,7 +19,7 @@ UsePreviousAppDir=no
 ;DefaultDirName={localappdata}\DPF Manager
 DefaultDirName={pf}\DPF Manager
 DefaultGroupName=DPF Manager
-OutputBaseFilename=DPF Manager-2.0
+OutputBaseFilename=DPF Manager-{#SetupSetting("AppVersion")}
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
@@ -87,4 +87,4 @@ end;
 
 
 
-
+
