@@ -42,11 +42,15 @@ import com.easyinnova.tiff.model.types.IFD;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -370,7 +374,19 @@ public class ReportXml extends ReportGeneric {
       addErrorsWarnings(doc, results, errorsTotal, warningsTotal);
       implementationCheckerElement.appendChild(results);
     } else {
+      try {
+        // External results
+        Element implementationCheckerElement = doc.createElement("implementation_checker");
+        report.appendChild(implementationCheckerElement);
 
+        DocumentBuilderFactory dbFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc2 = dBuilder.parse(new ByteArrayInputStream(ir.getConformanceCheckerReport().getBytes()));
+        Node node = doc.importNode(doc2.getDocumentElement(), true);
+        implementationCheckerElement.appendChild(doc.importNode(node, true));
+      } catch (Exception ex) {
+
+      }
     }
 
     return report;
