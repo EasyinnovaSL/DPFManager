@@ -4,6 +4,7 @@ import dpfmanager.shell.core.adapter.DpfAbstractPerspective;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -74,5 +75,10 @@ public class DessignPerspective extends DpfAbstractPerspective {
   @Override
   public Context getContext() {
     return context;
+  }
+
+  @Override
+  public void onReloadCustom(){
+    getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.RELOAD));
   }
 }

@@ -78,6 +78,12 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
+    if (message instanceof UiMessage) {
+      UiMessage uiMessage = (UiMessage) message;
+      if (uiMessage.isReload()) {
+        addConfigFiles();
+      }
+    }
   }
 
   @Override
