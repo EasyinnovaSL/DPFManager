@@ -47,17 +47,24 @@ import java.util.Map;
 public class GuiWorkbench implements FXWorkbench {
 
   private static Stage thestage;
-
   private static Parameters parameters;
 
   static Map<String, String> testValues;
+
+  // Main sizes
+  public static int widthWindow = 970;
+  public static int heightWindow = 950;
+
+  public static int minWidth = 400;
+  public static int mainWidth = 970;
 
   @Override
   public void handleInitialLayout(Message<Event, Object> action, WorkbenchLayout<Node> layout, Stage stage) {
     parameters = GuiLauncher.getMyParameters();
     testValues = new HashMap<>();
     thestage = stage;
-    layout.setWorkbenchXYSize(970, 950);
+    thestage.setMinWidth(minWidth);
+    layout.setWorkbenchXYSize(widthWindow, heightWindow);
     if (parameters.getRaw().contains("-test")) {
       layout.setStyle(StageStyle.UNDECORATED);
     }
