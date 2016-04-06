@@ -1,11 +1,14 @@
 package dpfmanager.shell.application.app;
 
 import dpfmanager.shell.application.launcher.ui.GuiLauncher;
+import dpfmanager.shell.core.adapter.CustomErrorHandler;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import org.jacpfx.api.handler.ErrorDialogHandler;
 import org.jacpfx.rcp.workbench.FXWorkbench;
 
 /**
@@ -43,5 +46,10 @@ public class GuiApp extends GuiLauncher {
   @Override
   public String getXmlConfig() {
     return "DpfSpring.xml";
+  }
+
+  @Override
+  public ErrorDialogHandler<Node> getErrorHandler(){
+    return new CustomErrorHandler();
   }
 }

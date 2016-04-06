@@ -79,6 +79,13 @@ public class AlertsManager {
     return sw.toString();
   }
 
+  public static String getThrowableText(Throwable th){
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    th.printStackTrace(pw);
+    return sw.toString();
+  }
+
   private static Alert.AlertType parseType(AlertMessage.Type type){
     if (type.equals(AlertMessage.Type.ERROR)){
       return Alert.AlertType.ERROR;

@@ -1,6 +1,7 @@
 package dpfmanager.shell.modules.messages;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.adapter.CustomErrorHandler;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
@@ -8,6 +9,7 @@ import dpfmanager.shell.core.util.TextAreaAppender;
 import dpfmanager.shell.modules.messages.core.AlertsManager;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
+import dpfmanager.shell.modules.messages.messages.JacpExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -22,7 +24,6 @@ import org.jacpfx.api.annotations.component.Component;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.context.Context;
 
-import java.io.PrintStream;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -45,6 +46,8 @@ public class MessagesModule extends DpfModule {
       tractAlertMessage(dpfMessage.getTypedMessage(AlertMessage.class));
     } else if (dpfMessage.isTypeOf(ExceptionMessage.class)){
       tractExceptionMessage(dpfMessage.getTypedMessage(ExceptionMessage.class));
+    } else if (dpfMessage.isTypeOf(JacpExceptionMessage.class)){
+      tractGuiExceptionMessage(dpfMessage.getTypedMessage(JacpExceptionMessage.class));
     }
   }
 
@@ -52,20 +55,16 @@ public class MessagesModule extends DpfModule {
     if (lm.hasTextArea() && !TextAreaAppender.hasTextArea()){
       // Init text area handler
       TextAreaAppender.setTextArea(lm.getTextArea());
-      // HACK capture system.out
-//      System.setOut(new PrintStream(System.out) {
-//        public void println(String s) {
-//          LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), s);
-//        }
-//      });
+      // Init JacpFX Error handler
+      CustomErrorHandler.setContext(context);
     }
     else {
       // Log message
       String clazz = lm.getMyClass().toString();
       clazz = clazz.substring(clazz.lastIndexOf(".") + 1, clazz.length());
       if (lm.getLevel().equals(Level.DEBUG)) {
-        // use marker for custom pattern
-        LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), lm.getMessage());
+        // Log in console
+        systemOut(lm.getMessage());
       } else {
         // Default pattern
         LogManager.getLogger(clazz).log(lm.getLevel(), lm.getMessage());
@@ -99,11 +98,9 @@ public class MessagesModule extends DpfModule {
 
   private void tractExceptionMessage(ExceptionMessage em){
     // Show in console
-    String message = em.getException().getMessage();
-    String exceptionText = AlertsManager.getExceptionText(em.getException());
     LogManager.getLogger("").log(Level.ERROR, "An exception ocurred!");
-    LogManager.getLogger("").log(Level.ERROR, MarkerManager.getMarker("EXCEPTION"), message);
-    LogManager.getLogger("").log(Level.ERROR, MarkerManager.getMarker("EXCEPTION"), exceptionText);
+    systemErr(em.getException().getMessage());
+    systemErr(AlertsManager.getExceptionText(em.getException()));
 
     // Show alert
     Platform.runLater(new Runnable() {
@@ -113,6 +110,21 @@ public class MessagesModule extends DpfModule {
         alert.show();
       }
     });
+  }
+
+  private void tractGuiExceptionMessage(JacpExceptionMessage jm){
+    // Show in console
+    systemOut(jm.getHeader());
+    systemOut(jm.getThrowable().getMessage());
+    systemOut(AlertsManager.getThrowableText(jm.getThrowable()));
+  }
+
+  private void systemOut(String message){
+    LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), message);
+  }
+
+  private void systemErr(String message){
+    LogManager.getLogger("").log(Level.ERROR, MarkerManager.getMarker("EXCEPTION"), message);
   }
 
   @PostConstruct
