@@ -4,8 +4,10 @@ import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.external.ExternalConformanceChecker;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
@@ -13,6 +15,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.logging.log4j.Level;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
@@ -69,8 +72,8 @@ public class ProcessInput {
 
     // Process each input of the list which can be a file, folder, zip or url
     for (final String filename : files) {
-      System.out.println("");
-      System.out.println("Processing file " + filename);
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, ""));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Processing file " + filename));
 
       // Process the input and get a list of individual reports
       List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
@@ -158,9 +161,9 @@ public class ProcessInput {
       }
     }
     if (result != null) {
-      System.out.println("Conformance checker for file " + filename + ": " + result.toString());
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Conformance checker for file " + filename + ": " + result.toString()));
     } else {
-      System.out.println("Conformance checker for file " + filename + " not found");
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Conformance checker for file " + filename + " not found"));
     }
     return result;
   }
@@ -179,7 +182,7 @@ public class ProcessInput {
     if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
       // Compressed File
       try {
-        System.out.println(filename);
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, filename));
         ZipFile zipFile = new ZipFile(filename);
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
@@ -228,7 +231,7 @@ public class ProcessInput {
           System.err.println("The file in the URL " + filename + " is not an accepted format");
         }
       } catch (Exception ex) {
-        System.out.println("Error in URL " + filename);
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Error in URL " + filename));
       }
     } else {
       // File
@@ -307,25 +310,25 @@ public class ProcessInput {
    */
   private void sendFtpCamel(String summaryXml)
       throws NoSuchAlgorithmException {
-    System.out.println("Sending feedback");
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Sending feedback"));
     String ftp = "84.88.145.109";
     String user = "preformaapp";
     String password = "2.eX#lh>";
-    CamelContext context = new DefaultCamelContext();
+    CamelContext contextcc = new DefaultCamelContext();
 
     try {
-      context.addRoutes(new RouteBuilder() {
+      contextcc.addRoutes(new RouteBuilder() {
         public void configure() {
           from("direct:sendFtp").to("sftp://" + user + "@" + ftp + "/?password=" + password);
         }
       });
-      ProducerTemplate template = context.createProducerTemplate();
-      context.start();
+      ProducerTemplate template = contextcc.createProducerTemplate();
+      contextcc.start();
       template.sendBody("direct:sendFtp", summaryXml);
-      context.stop();
+      contextcc.stop();
     } catch (Exception e) {
       e.printStackTrace();
     }
-    System.out.println("Feedback sent");
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Feedback sent"));
   }
 }

@@ -160,7 +160,6 @@ public class Configuration {
         while ((zipFile = zip.getNextEntry()) != null) {
           String name = zipFile.getName();
           if (name.contains(filename)) {
-            System.out.println("Found in JAR");
             try {
               sc = zip;
             } catch (Exception ex) {

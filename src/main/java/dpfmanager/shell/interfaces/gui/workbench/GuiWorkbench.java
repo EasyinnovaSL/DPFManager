@@ -55,7 +55,7 @@ public class GuiWorkbench implements FXWorkbench {
   public static int widthWindow = 500;
   public static int heightWindow = 950;
 
-  public static int minWidth = 400;
+  public static int minWidth = 970;
   public static int mainWidth = 970;
 
   @Override

@@ -83,7 +83,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * The Class TiffConformanceChecker.
  */
-public class TiffConformanceChecker implements ConformanceChecker {
+public class TiffConformanceChecker extends ConformanceChecker {
   /**
    * Gets the conformance checker options.
    *
@@ -373,7 +373,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
     tiffValidation.writeXml(xml);
 
-    validation = new Validator();
+    validation = new Validator(logger);
     validation.validateBaseline(xml);
 
     if (new File(xml).exists()) {
@@ -396,7 +396,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
     tiffValidation.writeXml(xml);
 
-    validation = new Validator();
+    validation = new Validator(logger);
     validation.validateTiffEP(xml);
 
     if (new File(xml).exists()) {
@@ -419,7 +419,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
     tiffValidation.writeXml(xml);
 
-    validation = new Validator();
+    validation = new Validator(logger);
     if (profile == 0) validation.validateTiffIT(xml);
     else if (profile == 1) validation.validateTiffITP1(xml);
     else validation.validateTiffITP2(xml);
@@ -443,15 +443,15 @@ public class TiffConformanceChecker implements ConformanceChecker {
   public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config,
                                           int idReport) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
-      System.out.println("Reading Tiff file");
+      logger.println("Reading Tiff file");
       TiffReader tr = new TiffReader();
       int result = tr.readFile(pathToFile);
       switch (result) {
         case -1:
-          System.out.println("File '" + pathToFile + "' does not exist");
+          logger.println("File '" + pathToFile + "' does not exist");
           break;
         case -2:
-          System.out.println("IO Exception in file '" + pathToFile + "'");
+          logger.println("IO Exception in file '" + pathToFile + "'");
           break;
         case 0:
           boolean checkBL = config.getIsos().contains("Baseline");
@@ -464,7 +464,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
             checkPC = config.getRules().getRules().size() > 0;
           }
 
-          System.out.println("Validating Tiff");
+          logger.println("Validating Tiff");
           Validator baselineVal = null;
           if (checkBL) {
             baselineVal = getBaselineValidation(tr);
@@ -486,7 +486,7 @@ public class TiffConformanceChecker implements ConformanceChecker {
             it2Validation = getITValidation(2, tr);
           }
 
-          System.out.println("Creating report");
+          logger.println("Creating report");
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, pathToFile, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
@@ -500,29 +500,29 @@ public class TiffConformanceChecker implements ConformanceChecker {
           // Generate individual report
           String outputfile = ReportGenerator.getReportName(internalReportFolder, reportFilename, idReport);
           ReportGenerator.generateIndividualReport(outputfile, ir, config);
-          System.out.println("Internal report '" + outputfile + "' created");
+          logger.println("Internal report '" + outputfile + "' created");
 
           tr=null;
           System.gc();
           return ir;
         default:
-          System.out.println("Unknown result (" + result + ") in file '" + pathToFile + "'");
+          logger.println("Unknown result (" + result + ") in file '" + pathToFile + "'");
           break;
       }
     } catch (ReadTagsIOException e) {
-      System.out.println("Error loading Tiff library dependencies (tags)");
+      logger.println("Error loading Tiff library dependencies (tags)");
     } catch (ReadIccConfigIOException e) {
-      System.out.println("Error loading Tiff library dependencies (icc)");
+      logger.println("Error loading Tiff library dependencies (icc)");
     } catch (OutOfMemoryError error){
-      System.out.println("Out of memory");
+      logger.println("Out of memory");
     } catch (ParserConfigurationException e) {
-      System.out.println("Error in Tiff file (1)");
+      logger.println("Error in Tiff file (1)");
     } catch (IOException e) {
-      System.out.println("Error in Tiff file (2)");
+      logger.println("Error in Tiff file (2)");
     } catch (SAXException e) {
-      System.out.println("Error in Tiff file (3)");
+      logger.println("Error in Tiff file (3)");
     } catch (JAXBException e) {
-      System.out.println("Error in Tiff file (4)");
+      logger.println("Error in Tiff file (4)");
     }
     return null;
   }

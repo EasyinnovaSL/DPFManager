@@ -12,15 +12,23 @@ import java.util.ArrayList;
 /**
  * Created by Victor Muñoz on 10/02/2016.
  */
-public interface ConformanceChecker {
-  ArrayList<String> getConformanceCheckerExtensions();
+public abstract class ConformanceChecker {
 
-  ArrayList<String> getConformanceCheckerStandards();
+  protected static DpfLogger logger;
 
-  ArrayList<Field> getConformanceCheckerFields();
+  abstract public ArrayList<String> getConformanceCheckerExtensions();
 
-  boolean acceptsFile(String filename);
+  abstract public ArrayList<String> getConformanceCheckerStandards();
 
-  IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder,  Configuration config,
+  abstract public ArrayList<Field> getConformanceCheckerFields();
+
+  abstract public boolean acceptsFile(String filename);
+
+  abstract public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder,  Configuration config,
                                           int idReport) throws ReadTagsIOException, ReadIccConfigIOException;
+
+  public void setLogger(DpfLogger log){
+    logger = log;
+  }
+
 }

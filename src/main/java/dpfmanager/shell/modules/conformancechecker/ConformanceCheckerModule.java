@@ -15,10 +15,12 @@ import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.messages.ReportMessage;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextField;
 
+import org.apache.logging.log4j.Level;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.Component;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -50,7 +52,6 @@ public class ConformanceCheckerModule extends DpfModule {
         getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
       } else {
         // Everything OK!
-        getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
         startCheck(input);
       }
 
@@ -59,6 +60,10 @@ public class ConformanceCheckerModule extends DpfModule {
 
   private void startCheck(String filename){
     ArrayList<String> files = new ArrayList<>();
+
+    // Show loading
+    getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
+    getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
 
     // Create a background task, because otherwise the loading message is not shown
     Task<Integer> task = new Task<Integer>() {
@@ -82,6 +87,7 @@ public class ConformanceCheckerModule extends DpfModule {
           pi.setContext(context);
           ArrayList<String> formats = getModel().getConfig().getFormats();
 
+          getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "OMG"));
           String filefolder = pi.ProcessFiles(files, getModel().getConfig(), true);
           if (pi.isOutOfmemory()) {
             getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
@@ -118,6 +124,7 @@ public class ConformanceCheckerModule extends DpfModule {
 
           // Hide loading
           getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
+          getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
         } catch (Exception ex) {
           getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception occured", ex));
         } catch (OutOfMemoryError er) {

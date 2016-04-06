@@ -53,11 +53,11 @@ public class MessagesModule extends DpfModule {
       // Init text area handler
       TextAreaAppender.setTextArea(lm.getTextArea());
       // HACK capture system.out
-      System.setOut(new PrintStream(System.out) {
-        public void println(String s) {
-          LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), s);
-        }
-      });
+//      System.setOut(new PrintStream(System.out) {
+//        public void println(String s) {
+//          LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), s);
+//        }
+//      });
     }
     else {
       // Log message

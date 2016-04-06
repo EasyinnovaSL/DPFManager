@@ -87,7 +87,7 @@ public class ExternalConformanceChecker implements ConformanceChecker {
       PrintWriter pw = new PrintWriter(xmlFileStr);
       String line;
       while ((line = br.readLine()) != null) {
-        System.out.println(line);
+//        System.out.println(line);
         pw.write(line);
       }
       pw.close();

@@ -4,6 +4,7 @@ import dpfmanager.shell.core.adapter.DpfAbstractPerspective;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -38,15 +39,24 @@ public class DessignPerspective extends DpfAbstractPerspective {
   public Context context;
 
   private BorderPane borderPane;
+  private StackPane topPane;
 
   @Override
   public void handleMessage(DpfMessage dpfMessage, PerspectiveLayout layout) {
+    if (dpfMessage.isTypeOf(LoadingMessage.class)){
+      LoadingMessage lm = dpfMessage.getTypedMessage(LoadingMessage.class);
+      if (lm.isShow()){
+        topPane.setDisable(true);
+      } else {
+        topPane.setDisable(false);
+      }
+    }
   }
 
   @PostConstruct
   public void onStartPerspective(PerspectiveLayout perspectiveLayout, FXComponentLayout layout, ResourceBundle resourceBundle) {
     // Top Buttons component
-    StackPane topPane = new StackPane();
+    topPane = new StackPane();
 
     // Center Component
     StackPane centerPane = new StackPane();

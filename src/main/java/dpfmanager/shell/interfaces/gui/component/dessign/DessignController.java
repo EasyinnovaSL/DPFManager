@@ -14,6 +14,7 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import javafx.concurrent.Task;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -21,6 +22,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.util.ArrayList;
