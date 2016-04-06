@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * Created by easy on 31/03/2016.
  */
-public class ExternalConformanceChecker implements ConformanceChecker {
+public class ExternalConformanceChecker extends ConformanceChecker {
   ArrayList<String> standards;
   ArrayList<String> extensions;
   String exePath;

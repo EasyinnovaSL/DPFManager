@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public abstract class ConformanceChecker {
 
-  protected static DpfLogger logger;
+  public static DpfLogger Logger = initDefault();
 
   abstract public ArrayList<String> getConformanceCheckerExtensions();
 
@@ -27,8 +27,13 @@ public abstract class ConformanceChecker {
   abstract public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder,  Configuration config,
                                           int idReport) throws ReadTagsIOException, ReadIccConfigIOException;
 
-  public void setLogger(DpfLogger log){
-    logger = log;
+
+  public static DpfLogger initDefault(){
+    return new DpfLogger();
+  }
+
+  public static void setLogger(DpfLogger log){
+    Logger = log;
   }
 
 }

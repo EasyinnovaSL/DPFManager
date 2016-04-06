@@ -1,5 +1,6 @@
 package dpfmanager.conformancechecker.tiff.implementation_checker;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.DpfLogger;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffNode;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
@@ -37,11 +38,6 @@ import java.util.List;
 public class Validator {
   TiffValidationObject model;
   ValidationResult result;
-  private DpfLogger logger;
-
-  public Validator(DpfLogger dpfLogger){
-    logger = dpfLogger;
-  }
 
   public List<RuleResult> getErrors() {
     return result.getErrors();
@@ -156,7 +152,7 @@ public class Validator {
 
       // Get clausules
       Clausules clausules = new Clausules();
-      if (!clausules.parse(expression)) logger.println("Error on rule " + rule.toString());
+      if (!clausules.parse(expression)) ConformanceChecker.Logger.println("Error on rule " + rule.toString());
 
       // Analyze clausules
       for (String clausule : clausules.getClausules()) {

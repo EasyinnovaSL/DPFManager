@@ -1,5 +1,6 @@
-package dpfmanager.conformancechecker;
+package dpfmanager.shell.modules.conformancechecker.core;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.external.ExternalConformanceChecker;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;

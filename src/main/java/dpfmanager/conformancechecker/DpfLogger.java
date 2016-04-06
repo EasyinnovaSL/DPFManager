@@ -13,11 +13,17 @@ public class DpfLogger {
 
   private Context context;
 
+  public DpfLogger(){
+    context = null;
+  }
+
   public DpfLogger(Context c){
     context = c;
   }
 
   public void println(String line){
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, line));
+    if (context != null) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, line));
+    }
   }
 }

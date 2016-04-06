@@ -27,7 +27,7 @@ import com.easyinnova.tiff.profiles.BaselineProfile;
 import com.easyinnova.tiff.profiles.TiffEPProfile;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.ProcessInput;
+import dpfmanager.shell.modules.conformancechecker.core.ProcessInput;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
