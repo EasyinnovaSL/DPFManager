@@ -1,7 +1,7 @@
 package dpfmanager.commandline;
 
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
-import dpfmanager.shell.interfaces.console.commandline.CommandLineApp;
+import dpfmanager.shell.interfaces.console.CommandLineApp;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Application;

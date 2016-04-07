@@ -2,7 +2,7 @@ package dpfmanager.commandline;
 
 import static java.io.File.separator;
 
-import dpfmanager.shell.interfaces.console.commandline.CommandLineApp;
+import dpfmanager.shell.interfaces.console.CommandLineApp;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Application;

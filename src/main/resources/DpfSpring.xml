@@ -9,4 +9,6 @@
 
     <context:annotation-config />
 
+    <context:component-scan base-package="dpfmanager.shell.modules" />
+
 </beans>

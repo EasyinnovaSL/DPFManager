@@ -1,46 +1,19 @@
 package dpfmanager.shell.application.app;
 
-import dpfmanager.shell.application.launcher.noui.CommandLauncher;
-import dpfmanager.shell.interfaces.console.workbench.ConsoleWorkbench;
-import javafx.application.Application;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-
-import org.jacpfx.rcp.workbench.FXWorkbench;
+import dpfmanager.shell.interfaces.console.ConsoleLauncher;
+import dpfmanager.shell.application.launcher.noui.AppContext;
 
 /**
  * Created by Adrià Llorens on 01/03/2016.
  */
-public class CommandLineApp extends CommandLauncher {
+public class CommandLineApp {
 
   public static void main(String[] args) {
-    Application.launch(args);
-  }
+    AppContext.loadContext("DpfSpring.xml");
 
-  @Override
-  protected Class<? extends FXWorkbench> getWorkbenchClass() {
-    return ConsoleWorkbench.class;
-  }
-
-  @Override
-  protected String[] getBasePackages() {
-    return new String[]{
-        "dpfmanager.shell.modules",                    // Dpf Modules
-        "dpfmanager.shell.interfaces.console"          // Console Prespective
-    };
-  }
-
-  @Override
-  protected void postInit(Stage stage) {
-    Image img = new Image("/gui-logo-white.png");
-    if (img != null) {
-      stage.getIcons().add(img);
-    }
-  }
-
-  @Override
-  public String getXmlConfig() {
-    return "DpfSpring.xml";
+    ConsoleLauncher cl = new ConsoleLauncher();
+    cl.run(args);
   }
 
 }
+

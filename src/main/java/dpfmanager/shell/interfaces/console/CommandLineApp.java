@@ -17,7 +17,7 @@
  * @since 23/6/2015
  */
 
-package dpfmanager.shell.interfaces.console.commandline;
+package dpfmanager.shell.interfaces.console;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffObject;

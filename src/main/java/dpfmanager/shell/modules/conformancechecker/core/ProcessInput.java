@@ -7,6 +7,7 @@ import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
@@ -17,7 +18,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.logging.log4j.Level;
-import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,14 +37,14 @@ import java.util.zip.ZipFile;
 public class ProcessInput {
   private boolean outOfmemory = false;
   private int idReport;
-  private Context context;
+  private DpfContext context;
 
   /**
-   * Sets the label.
+   * Sets the logger.
    *
-   * @param context the JacpFX Context
+   * @param context the Dpf context
    */
-  public void setContext(Context context) {
+  public void setContext(DpfContext context) {
     this.context = context;
   }
 
@@ -80,9 +80,9 @@ public class ProcessInput {
       List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
       individuals.addAll(indReports);
 
-      if (context != null) {
-        context.send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.TEXT, "Processing..." + (files.indexOf(filename) + 1) + "/" + n));
-      }
+      context.sendGui(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.TEXT, "Processing... " + (files.indexOf(filename) + 1) + "/" + n));
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Processing... " + (files.indexOf(filename) + 1) + "/" + n));
+
       idReport++;
     }
 

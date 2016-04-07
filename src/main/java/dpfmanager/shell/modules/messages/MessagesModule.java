@@ -6,13 +6,16 @@ import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.util.TextAreaAppender;
+import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.messages.core.AlertsManager;
+import dpfmanager.shell.modules.messages.core.MessagesService;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.JacpExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 
@@ -23,6 +26,7 @@ import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.Component;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.context.Context;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -37,6 +41,9 @@ public class MessagesModule extends DpfModule {
 
   @Resource
   protected Context context;
+
+  @Autowired
+  private MessagesService service;
 
   @Override
   public void handleMessage(DpfMessage dpfMessage){
@@ -57,50 +64,14 @@ public class MessagesModule extends DpfModule {
       TextAreaAppender.setTextArea(lm.getTextArea());
       // Init JacpFX Error handler
       CustomErrorHandler.setContext(context);
+    } else {
+      service.logMessage(lm);
     }
-    else {
-      // Log message
-      String clazz = lm.getMyClass().toString();
-      clazz = clazz.substring(clazz.lastIndexOf(".") + 1, clazz.length());
-      if (lm.getLevel().equals(Level.DEBUG)) {
-        // Log in console
-        systemOut(lm.getMessage());
-      } else {
-        // Default pattern
-        LogManager.getLogger(clazz).log(lm.getLevel(), lm.getMessage());
-      }
-    }
-  }
-
-  private void tractAlertMessage(AlertMessage am){
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        Alert alert;
-        // Create alert
-        if (am.getType().equals(AlertMessage.Type.CONFIRMATION)){
-          alert = AlertsManager.createConfirmationAlert(am);
-        } else{
-          alert = AlertsManager.createSimpleAlert(am);
-        }
-
-        // Show alert
-        if (!am.getType().equals(AlertMessage.Type.CONFIRMATION)){
-          alert.show();
-        } else{
-          Optional<ButtonType> result = alert.showAndWait();
-          am.setResult(result.get().getButtonData().equals(ButtonData.YES));
-          context.send(am.getSourceId(), am);
-        }
-      }
-    });
   }
 
   private void tractExceptionMessage(ExceptionMessage em){
     // Show in console
-    LogManager.getLogger("").log(Level.ERROR, "An exception ocurred!");
-    systemErr(em.getException().getMessage());
-    systemErr(AlertsManager.getExceptionText(em.getException()));
+    service.exceptionMessage(em);
 
     // Show alert
     Platform.runLater(new Runnable() {
@@ -114,24 +85,37 @@ public class MessagesModule extends DpfModule {
 
   private void tractGuiExceptionMessage(JacpExceptionMessage jm){
     // Show in console
-    systemOut(jm.getHeader());
-    systemOut(jm.getThrowable().getMessage());
-    systemOut(AlertsManager.getThrowableText(jm.getThrowable()));
+    service.systemOut(jm.getHeader());
+    service.systemOut(jm.getThrowable().getMessage());
+    service.systemOut(AlertsManager.getThrowableText(jm.getThrowable()));
   }
 
-  private void systemOut(String message){
-    LogManager.getLogger("").log(Level.DEBUG, MarkerManager.getMarker("PLAIN"), message);
-  }
+  private void tractAlertMessage(AlertMessage am){
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        Alert alert;
+        // Create alert
+        if (am.getType().equals(AlertMessage.Type.CONFIRMATION)) {
+          alert = AlertsManager.createConfirmationAlert(am);
+        } else {
+          alert = AlertsManager.createSimpleAlert(am);
+        }
 
-  private void systemErr(String message){
-    LogManager.getLogger("").log(Level.ERROR, MarkerManager.getMarker("EXCEPTION"), message);
+        // Show alert
+        if (!am.getType().equals(AlertMessage.Type.CONFIRMATION)) {
+          alert.show();
+        } else {
+          Optional<ButtonType> result = alert.showAndWait();
+          am.setResult(result.get().getButtonData().equals(ButtonBar.ButtonData.YES));
+          context.send(am.getSourceId(), am);
+        }
+      }
+    });
   }
 
   @PostConstruct
   public void onPostConstructComponent(final ResourceBundle resourceBundle) {
-    if (System.getProperty("app.home") == null){
-      System.setProperty("app.home", DPFManagerProperties.getConfigDir());
-    }
   }
 
   @Override

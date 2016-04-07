@@ -17,7 +17,7 @@
  * @since 22/6/2015
  */
 
-package dpfmanager.shell.interfaces.console.commandline;
+package dpfmanager.shell.interfaces.console;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Field;
