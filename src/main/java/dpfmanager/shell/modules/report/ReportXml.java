@@ -385,7 +385,7 @@ public class ReportXml extends ReportGeneric {
         Node node = doc.importNode(doc2.getDocumentElement(), true);
         implementationCheckerElement.appendChild(doc.importNode(node, true));
       } catch (Exception ex) {
-
+        ex.toString();
       }
     }
 

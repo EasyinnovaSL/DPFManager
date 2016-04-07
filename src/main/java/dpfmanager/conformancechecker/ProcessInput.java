@@ -130,6 +130,7 @@ public class ProcessInput {
 
     String path = "package/resources/plugins/video/MediaConch.exe";
     if (!new File(path).exists()) path = "plugins/video/MediaConch.exe";
+    if (!new File(path).exists()) path = "../plugins/video/MediaConch.exe";
     if (new File(path).exists()) {
       ArrayList<String> params = new ArrayList<>();
       params.add("-mc");
@@ -144,6 +145,7 @@ public class ProcessInput {
 
     path = "package/resources/plugins/pdf/verapdf.bat";
     if (!new File(path).exists()) path = "plugins/pdf/verapdf.bat";
+    if (!new File(path).exists()) path = "../plugins/pdf/verapdf.bat";
     if (new File(path).exists()) {
       ArrayList<String> params = new ArrayList<>();
       params.add("--format");
