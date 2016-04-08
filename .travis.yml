@@ -12,17 +12,18 @@ addons:
 os:
   - linux
 
+install:
+  -
+
 matrix:
     include:
         - os: linux
           jdk: oraclejdk8
-          env: TOKEN=nogui
+          env: TOKEN=nogui CMD="mvn clean -Dtest=!gui/*Test.java install"
           sudo: required
-        - os: osx
+#        - os: osx
 
 before_install:
-  - if [ "${TOKEN}" != "nogui" ]; then echo "GUI"; fi
-  - if [ "${TOKEN}" == "nogui" ]; then echo "NOGUI"; fi
   - if [ "${TOKEN}" != "nogui" ]; then export DISPLAY=:99.0; fi
   - if [ "${TOKEN}" != "nogui" ]; then sh -e /etc/init.d/xvfb start; fi
 
