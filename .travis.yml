@@ -15,7 +15,9 @@ os:
 matrix:
     include:
         - os: linux
+          jdk: oraclejdk8
           env: TOKEN=gui
+          sudo: required
 
 before_install:
   - if [ "${TOKEN}" == "gui" ]; then echo "GUI"; fi
