@@ -19,9 +19,9 @@ matrix:
     include:
         - os: linux
           jdk: oraclejdk8
-          env: TOKEN=nogui CMD="mvn clean -Dtest=!gui/*Test.java install"
+          env: TOKEN=nogui
           sudo: required
-          script: mvn clean -Dtest=!gui/*Test.java install
+          script: mvn clean -Dtest=!gui/*Test.java,!RunTestOnly.java install
 #        - os: osx
 
 before_install:
