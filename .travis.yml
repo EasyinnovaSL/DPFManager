@@ -21,6 +21,7 @@ matrix:
           jdk: oraclejdk8
           env: TOKEN=nogui CMD="mvn clean -Dtest=!gui/*Test.java install"
           sudo: required
+          script: mvn clean -Dtest=!gui/*Test.java install
 #        - os: osx
 
 before_install:
