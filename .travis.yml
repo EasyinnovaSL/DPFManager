@@ -11,7 +11,6 @@ addons:
 # use operating systems.
 os:
   - linux
-  - osx
 
 matrix:
     include:
@@ -19,12 +18,13 @@ matrix:
           jdk: oraclejdk8
           env: TOKEN=nogui
           sudo: required
+        - os: osx
 
 before_install:
   - if [ "${TOKEN}" != "nogui" ]; then echo "GUI"; fi
   - if [ "${TOKEN}" == "nogui" ]; then echo "NOGUI"; fi
-  - if [ "${TOKEN}" != "nogui" ]; then "export DISPLAY=:99.0"; fi
-  - if [ "${TOKEN}" != "nogui" ]; then "sh -e /etc/init.d/xvfb start"; fi
+  - if [ "${TOKEN}" != "nogui" ]; then export DISPLAY=:99.0; fi
+  - if [ "${TOKEN}" != "nogui" ]; then sh -e /etc/init.d/xvfb start; fi
 
 #before_install:
 #  - "export DISPLAY=:99.0"
