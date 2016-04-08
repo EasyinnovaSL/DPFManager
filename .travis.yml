@@ -8,18 +8,18 @@ addons:
     packages:
       - oracle-java8-installer
 
+# use operating systems.
+os:
+  - linux
+
 matrix:
     include:
         - os: linux
           env: TOKEN=gui
-        - os: linux
-          env: TOKEN=nogui
 
 before_install:
-  - echo $TRAVIS_OS_NAME
-  - java -version
-  - if [ "${TOXENV}" == "gui" ]; then ls; fi
-  - if [ "${TOXENV}" == "nogui" ]; then ls -l; fi
+  - if [ "${TOKEN}" == "gui" ]; then echo "GUI"; fi
+  - if [ "${TOKEN}" != "gui" ]; then echo "NOGUI"; fi
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 
