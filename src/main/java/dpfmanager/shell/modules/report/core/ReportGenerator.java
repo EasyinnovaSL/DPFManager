@@ -39,6 +39,14 @@ import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.modules.report.util.ReportHtml;
+import dpfmanager.shell.modules.report.util.ReportJson;
+import dpfmanager.shell.modules.report.util.ReportPDF;
+import dpfmanager.shell.modules.report.util.ReportXml;
 
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -47,6 +55,7 @@ import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
 import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.logging.log4j.Level;
 
 import java.awt.Desktop;
 import java.io.BufferedOutputStream;
@@ -77,6 +86,32 @@ import java.util.zip.ZipInputStream;
  * The Class ReportGenerator.
  */
 public class ReportGenerator {
+
+  private DpfContext context;
+  private ReportXml reportXml;
+  private ReportJson reportJson;
+  private ReportPDF reportPdf;
+  private ReportHtml reportHtml;
+
+  public DpfContext getContext() {
+    return context;
+  }
+
+  public void setContext(DpfContext context) {
+    this.context = context;
+    reportXml.setContext(context);
+    reportJson.setContext(context);
+    reportPdf.setContext(context);
+    reportHtml.setContext(context);
+  }
+
+  public ReportGenerator(){
+    reportXml = new ReportXml();
+    reportJson = new ReportJson();
+    reportPdf = new ReportPDF();
+    reportHtml = new ReportHtml();
+  }
+
   /**
    * Create report path string.
    *
@@ -182,7 +217,7 @@ public class ReportGenerator {
    * @param pathStr the file path to read.
    * @return the content of the file in path
    */
-  public static String readFile(String pathStr) {
+  public String readFile(String pathStr) {
     String text = "";
     String name = pathStr.substring(pathStr.lastIndexOf("/") + 1, pathStr.length());
     Path path = Paths.get(pathStr);
@@ -225,9 +260,9 @@ public class ReportGenerator {
         }
       }
     } catch (FileNotFoundException e) {
-      System.err.println("Template for html not found in dir.");
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Template for html not found in dir."));
     } catch (IOException e) {
-      System.err.println("Error reading " + pathStr);
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error reading " + pathStr));
     }
 
     return text;
@@ -239,13 +274,13 @@ public class ReportGenerator {
    * @param outputfile the outPutFile
    * @param body       the body
    */
-  public static void writeToFile(String outputfile, String body) {
+  public void writeToFile(String outputfile, String body) {
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(outputfile));
       writer.write(body);
       writer.close();
     } catch (IOException e) {
-      System.out.println("IOException");
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", e));
     }
   }
 
@@ -254,7 +289,7 @@ public class ReportGenerator {
    *
    * @param file the file/folder
    */
-  public static void deleteFileOrFolder(File file) {
+  public void deleteFileOrFolder(File file) {
     File[] files = file.listFiles();
     if (files != null) {
       for (File f : files) {
@@ -275,7 +310,7 @@ public class ReportGenerator {
    * @param targetLocation the target path.
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  private static void copy(File sourceLocation, File targetLocation) throws IOException {
+  private void copy(File sourceLocation, File targetLocation) throws IOException {
     if (sourceLocation.isDirectory()) {
       copyDirectory(sourceLocation, targetLocation);
     } else {
@@ -290,11 +325,11 @@ public class ReportGenerator {
    * @param target the target path.
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  private static void copyDirectory(File source, File target) throws IOException {
+  private void copyDirectory(File source, File target) throws IOException {
     if (!target.exists()) {
       boolean result = target.mkdir();
       if (!result) {
-        System.err.println("Could not create the directory " + target.getPath());
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Could not create the directory " + target.getPath()));
         return;
       }
     }
@@ -309,7 +344,7 @@ public class ReportGenerator {
    * @param pathStr the path str
    * @return the string
    */
-  public static String readFilefromResources(String pathStr) {
+  public String readFilefromResources(String pathStr) {
     String text = "";
     Path path = Paths.get(pathStr);
     try {
@@ -343,9 +378,9 @@ public class ReportGenerator {
         }
       }
     } catch (FileNotFoundException e) {
-      System.err.println("Template for html not found in dir.");
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Template for html not found in dir."));
     } catch (IOException e) {
-      System.err.println("Error reading " + pathStr);
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error reading " + pathStr));
     }
 
     return text;
@@ -391,7 +426,7 @@ public class ReportGenerator {
    *
    * @param name the name
    */
-  private static void copyHtmlFolder(String name) {
+  private void copyHtmlFolder(String name) {
     // Get the target folder
     File nameFile = new File(name);
     String absolutePath = nameFile.getAbsolutePath();
@@ -494,31 +529,10 @@ public class ReportGenerator {
               zip.closeEntry();
             }*/
           } catch (IOException e) {
-            System.err.println("Exception!");
-            e.printStackTrace();
+            context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", e));
           }
         }
       }
-    }
-  }
-
-  /**
-   * Opens the default browser with the HTML file.
-   *
-   * @param htmlfile the file to show
-   */
-  private void showToUser(String htmlfile) {
-    if (Desktop.isDesktopSupported()) {
-      try {
-        String fullHtmlPath = new File(htmlfile).getAbsolutePath();
-        fullHtmlPath = fullHtmlPath.replaceAll("\\\\", "/");
-        Desktop.getDesktop().browse(new URI(fullHtmlPath));
-      } catch (Exception e) {
-        e.printStackTrace();
-        System.out.println("Error opening the bowser with the global report." + e.getMessage());
-      }
-    } else {
-      System.out.println("Desktop services not suported.");
     }
   }
 
@@ -528,7 +542,7 @@ public class ReportGenerator {
    * @param reportName the output file name
    * @param ir         the individual report
    */
-  public static void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError{
+  public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError{
     String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
@@ -539,7 +553,7 @@ public class ReportGenerator {
     Fixes fixes = config.getFixes();
     Rules rules = config.getRules();
     if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
-    output = ReportXml.parseIndividual(xmlFileStr, ir, rules);
+    output = reportXml.parseIndividual(xmlFileStr, ir, rules);
     ValidationResult pcValidation1 = getPcValidation(output);
     ir.setPCErrors(pcValidation1.getErrors());
     ir.setPCWarnings(pcValidation1.getWarnings());
@@ -548,16 +562,16 @@ public class ReportGenerator {
 
     if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
-      ReportHtml.parseIndividual(htmlFileStr, ir, htmlMode);
+      reportHtml.parseIndividual(htmlFileStr, ir, htmlMode, this);
     }
     if (config.getFormats().contains("JSON")) {
-      ReportJson.xmlToJson(output, jsonFileStr);
+      reportJson.xmlToJson(output, jsonFileStr, this);
     }
     if (config.getFormats().contains("PDF")) {
-      ReportPDF.parseIndividual(pdfFileStr, ir);
+      reportPdf.parseIndividual(pdfFileStr, ir);
     }
     if (!config.getFormats().contains("XML")) {
-      ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
+      deleteFileOrFolder(new File(xmlFileStr));
     }
 
     // Fixes -> New report
@@ -623,7 +637,7 @@ public class ReportGenerator {
 
         String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
         String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-        IndividualReport ir2 = new IndividualReport(name, nameFixedTif, to, baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
+        IndividualReport ir2 = new IndividualReport(name, nameFixedTif, nameFixedTif, to, baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
         int ind = ir.getReportPath().lastIndexOf(".tif");
         ir2.setReportPath(ir.getReportPath().substring(0, ind) + "_fixed.tif");
         ir2.checkPC = ir.checkPC;
@@ -645,31 +659,31 @@ public class ReportGenerator {
           if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
           Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
           ir2.setFilePath(pathFixed);
-          System.out.println("Fixed file " + pathFixed + " created");
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
         }
         ir2.setFilePath(pathFixed);
         ir2.setFileName(new File(nameOriginalTif).getName() +" Fixed");
 
         //Make reports
-        output = ReportXml.parseIndividual(xmlFileStr, ir2, rules);
+        output = reportXml.parseIndividual(xmlFileStr, ir2, rules);
         ValidationResult pcValidation2 = getPcValidation(output);
         ir2.setPcValidation(pcValidation2);
         ir2.setCompareReport(ir);
 
         if (config.getFormats().contains("HTML")) {
-          ReportHtml.parseIndividual(htmlFileStr, ir2, 2);
+          reportHtml.parseIndividual(htmlFileStr, ir2, 2, this);
         }
         if (config.getFormats().contains("JSON")) {
-          ReportJson.xmlToJson(output, jsonFileStr);
+          reportJson.xmlToJson(output, jsonFileStr, this);
         }
         if (config.getFormats().contains("PDF")) {
-          ReportPDF.parseIndividual(pdfFileStr, ir2);
+          reportPdf.parseIndividual(pdfFileStr, ir2);
         }
         if (!config.getFormats().contains("XML")) {
-          ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
+          deleteFileOrFolder(new File(xmlFileStr));
         }
       } catch (Exception ex) {
-        System.out.println("Error creating report of fixed image");
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error creating report of fixed image"));
       }
     }
   }
@@ -697,40 +711,31 @@ public class ReportGenerator {
    * Make full report.
    *
    * @param internalReportFolder the internal report folder
-   * @param individuals          the individual reports list
-   * @param silence              the silence
+   * @param gr                  the global report
    * @return the string
    */
-  public static String makeSummaryReport(String internalReportFolder,
-      ArrayList<IndividualReport> individuals, Configuration config, boolean silence) {
-    GlobalReport gr = new GlobalReport();
-    for (final IndividualReport individual : individuals) {
-      gr.addIndividual(individual);
-    }
-    gr.generate();
+  public String makeSummaryReport(String internalReportFolder,
+      GlobalReport gr, Configuration config) {
 
     String output = null;
     String xmlFileStr = internalReportFolder + "summary.xml";
     String jsonFileStr = internalReportFolder + "summary.json";
     String htmlFileStr = internalReportFolder + "report.html";
     String pdfFileStr = internalReportFolder + "report.pdf";
-    output = ReportXml.parseGlobal(xmlFileStr, gr);
+    output = reportXml.parseGlobal(xmlFileStr, gr);
 
     if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
-      ReportHtml.parseGlobal(htmlFileStr, gr);
-      if (!silence) {
-        //showToUser(htmlFileStr);
-      }
+      reportHtml.parseGlobal(htmlFileStr, gr, this);
     }
     if (config.getFormats().contains("JSON")) {
-      ReportJson.xmlToJson(output, jsonFileStr);
+      reportJson.xmlToJson(output, jsonFileStr, this);
     }
     if (config.getFormats().contains("PDF")) {
-      ReportPDF.parseGlobal(pdfFileStr, gr);
+      reportPdf.parseGlobal(pdfFileStr, gr);
     }
     if (!config.getFormats().contains("XML")) {
-      ReportGenerator.deleteFileOrFolder(new File(xmlFileStr));
+      deleteFileOrFolder(new File(xmlFileStr));
     }
 
     String outputFolder = config.getOutput();
@@ -741,15 +746,8 @@ public class ReportGenerator {
       String targetPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
       try {
         copy(new File(targetPath), outFolder);
-        if (!silence) {
-          File sumaryFile = new File(outFolder + "/" + htmlFile.getName());
-          if (sumaryFile.exists()) {
-            Desktop desktop = Desktop.getDesktop();
-            desktop.open(sumaryFile);
-          }
-        }
       } catch (IOException e) {
-        System.out.println("Cannot copy the report folder to the output path.");
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Cannot copy the report folder to the output path."));
       }
     }
 

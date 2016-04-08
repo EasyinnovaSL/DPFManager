@@ -1,6 +1,7 @@
 package dpfmanager.shell.modules.messages.core;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -19,7 +20,7 @@ import javax.annotation.PostConstruct;
  */
 @Service(BasicConfig.SERVICE_MESSAGES)
 @Scope("singleton")
-public class MessagesService {
+public class MessagesService extends DpfService {
 
   @PostConstruct
   public void init() {

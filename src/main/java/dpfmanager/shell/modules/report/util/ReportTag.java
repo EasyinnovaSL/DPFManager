@@ -1,4 +1,4 @@
-package dpfmanager.shell.modules.report.core;
+package dpfmanager.shell.modules.report.util;
 
 import com.easyinnova.tiff.model.TagValue;
 

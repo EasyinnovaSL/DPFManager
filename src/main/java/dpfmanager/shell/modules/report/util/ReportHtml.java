@@ -29,9 +29,14 @@
  * @since 23/6/2015
  */
 
-package dpfmanager.shell.modules.report.core;
+package dpfmanager.shell.modules.report.util;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportGeneric;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
@@ -45,6 +50,16 @@ import java.io.File;
  */
 public class ReportHtml extends ReportGeneric {
 
+  private DpfContext context;
+
+  public DpfContext getContext() {
+    return context;
+  }
+
+  public void setContext(DpfContext context) {
+    this.context = context;
+  }
+
   /**
    * Parse an individual report to HTML.
    *
@@ -52,7 +67,7 @@ public class ReportHtml extends ReportGeneric {
    * @param ir         the individual report.
    * @param mode       the mode (1, 2).
    */
-  public static void parseIndividual(String outputfile, IndividualReport ir, int mode) {
+  public void parseIndividual(String outputfile, IndividualReport ir, int mode, ReportGenerator generator) {
     //String templatePath = "./src/main/resources/templates/individual.html";
     String templatePath = "templates/individual.html";
     String name = outputfile.substring(outputfile.lastIndexOf("/") + 1, outputfile.length());
@@ -60,7 +75,7 @@ public class ReportHtml extends ReportGeneric {
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
     //String htmlBody = ReportGenerator.readFile(templatePath);
-    String htmlBody = ReportGenerator.readFilefromResources(templatePath);
+    String htmlBody = generator.readFilefromResources(templatePath);
 
     // Image
     String imgPath = "img/" + new File(ir.getReportPath()).getName() + ".jpg";
@@ -499,7 +514,7 @@ public class ReportHtml extends ReportGeneric {
 
     // Finish, write to html file
     htmlBody = htmlBody.replaceAll("\\.\\./html/", "");
-    ReportGenerator.writeToFile(outputfile, htmlBody);
+    generator.writeToFile(outputfile, htmlBody);
   }
 
   /**
@@ -508,7 +523,7 @@ public class ReportHtml extends ReportGeneric {
    * @param outputfile the output file.
    * @param gr         the global report.
    */
-  public static void parseGlobal(String outputfile, GlobalReport gr) {
+  public void parseGlobal(String outputfile, GlobalReport gr, ReportGenerator generator) {
     String templatePath = "templates/global.html";
     String imagePath = "templates/image.html";
     String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
@@ -521,7 +536,7 @@ public class ReportHtml extends ReportGeneric {
     for (IndividualReport ir : gr.getIndividualReports()) {
       if (!ir.containsData()) continue;
       String imageBody;
-      imageBody = ReportGenerator.readFilefromResources(imagePath);
+      imageBody = generator.readFilefromResources(imagePath);
       // Image
       String imgPath = "html/img/" + new File(ir.getReportPath()).getName() + ".jpg";
       boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
@@ -672,7 +687,7 @@ public class ReportHtml extends ReportGeneric {
 
     // Parse the sumary report numbers
     String htmlBody;
-    htmlBody = ReportGenerator.readFilefromResources(templatePath);
+    htmlBody = generator.readFilefromResources(templatePath);
     Double doub = 1.0 * gr.getReportsOk() / gr.getReportsCount() * 100.0;
     int globalPercent = doub.intValue();
     htmlBody = htmlBody.replace("##IMAGES_LIST##", imagesBody);
@@ -750,6 +765,6 @@ public class ReportHtml extends ReportGeneric {
     // END TO-DO
 
     htmlBody = htmlBody.replaceAll("\\.\\./", "");
-    ReportGenerator.writeToFile(outputfile, htmlBody);
+    generator.writeToFile(outputfile, htmlBody);
   }
 }

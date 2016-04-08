@@ -1,9 +1,16 @@
 package dpfmanager.shell.modules.report.core;
 
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.modules.report.util.ReportHtml;
+import dpfmanager.shell.modules.report.util.ReportTag;
+
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
+
+import org.apache.logging.log4j.Level;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -59,6 +66,7 @@ public class ReportGeneric {
       img = null;
       image.flush();
       image = null;
+      input.delete();
       System.gc();
     } catch (Exception e) {
       return false;
@@ -149,7 +157,6 @@ public class ReportGeneric {
               line = br.readLine();
             }
           } catch (Exception ex) {
-            System.err.println("Exception!");
             ex.printStackTrace();
           }
         } else {

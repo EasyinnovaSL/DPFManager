@@ -53,6 +53,9 @@ public class IndividualReport {
   /** The file path. */
   private String filepath;
 
+  /** The real file name. */
+  private String reportFilename;
+
   /** The file path. */
   private String reportpath;
 
@@ -186,7 +189,7 @@ public class IndividualReport {
    * @param epValidation       the EP validation
    * @param itValidation       the IT validation
    */
-  public IndividualReport(String name, String path, TiffDocument tiffModel,
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel,
                           Validator baselineValidation, Validator epValidation, Validator itValidation, Validator it1Validation, Validator it2Validation) {
     filename = name;
     filepath = path;
@@ -194,6 +197,7 @@ public class IndividualReport {
     listIsimg = new ArrayList<Boolean>();
     listHasSubIfd = new ArrayList<Boolean>();
     containsData = true;
+    reportFilename = rFilename;
     generate(tiffModel, baselineValidation, epValidation, itValidation, it1Validation, it2Validation);
   }
 
@@ -240,6 +244,15 @@ public class IndividualReport {
    */
   public void setFileName(String name) {
     filename = name;
+  }
+
+  /**
+   * Get report file name.
+   *
+   * @return reportFilename
+   */
+  public String getReportFileName() {
+    return reportFilename;
   }
 
   /**

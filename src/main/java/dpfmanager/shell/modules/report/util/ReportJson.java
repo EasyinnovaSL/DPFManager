@@ -29,7 +29,10 @@
  * @since 23/6/2015
  */
 
-package dpfmanager.shell.modules.report.core;
+package dpfmanager.shell.modules.report.util;
+
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -46,13 +49,23 @@ import java.io.File;
  */
 public class ReportJson {
 
+  private DpfContext context;
+
+  public DpfContext getContext() {
+    return context;
+  }
+
+  public void setContext(DpfContext context) {
+    this.context = context;
+  }
+
   /**
    * XML to JSON.
    *
    * @param xml          the XML
    * @param jsonFilename the json filename
    */
-  public static void xmlToJson(String xml, String jsonFilename) {
+  public void xmlToJson(String xml, String jsonFilename, ReportGenerator generator) {
     CamelContext context = new DefaultCamelContext();
     XmlJsonDataFormat xmlJsonFormat = new XmlJsonDataFormat();
     xmlJsonFormat.setEncoding("UTF-8");
@@ -73,9 +86,9 @@ public class ReportJson {
     }
 
     // Move the converted string to the correct file
-    String json = getJsonString(jsonFilename);
-    ReportGenerator.deleteFileOrFolder(new File(jsonFilename));
-    ReportGenerator.writeToFile(jsonFilename, json);
+    String json = getJsonString(jsonFilename, generator);
+    generator.deleteFileOrFolder(new File(jsonFilename));
+    generator.writeToFile(jsonFilename, json);
   }
 
   /**
@@ -84,7 +97,7 @@ public class ReportJson {
    * @param folderPath the folder path
    * @return the JSON string
    */
-  private static String getJsonString(String folderPath) {
+  private String getJsonString(String folderPath, ReportGenerator generator) {
     String path = null;
     // First get the JSON file path
     File folder = new File(folderPath);
@@ -104,7 +117,7 @@ public class ReportJson {
 
     // Get the file content
     if (path != null) {
-      return ReportGenerator.readFile(path);
+      return generator.readFile(path);
     }
     return "";
   }

@@ -237,7 +237,8 @@ public class CommandLineApp extends UserInterface {
         config.setOutput(outputFolder);
       }
       ProcessInput pi = new ProcessInput();
-      String path = pi.ProcessFiles(files, config, silence);
+      String internalReportFolder = ReportGenerator.createReportPath();
+      String path = pi.ProcessFiles(files, config, internalReportFolder);
       if (path != null) {
         System.out.println("Report generated successfully.");
       }

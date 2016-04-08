@@ -10,8 +10,11 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
+import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -62,47 +65,36 @@ public class ProcessInput {
    *
    * @param files   the files
    * @param config  the config
-   * @param silence do not open the report at the end
    * @return the path to the internal report folder
    */
-  public String ProcessFiles(ArrayList<String> files, Configuration config, boolean silence) {
+  public String ProcessFiles(ArrayList<String> files, Configuration config, String internalReportFolder ) {
     ArrayList<IndividualReport> individuals = new ArrayList<>();
-    String internalReportFolder = ReportGenerator.createReportPath();
     int n=files.size();
-    idReport=1;
 
     // Process each input of the list which can be a file, folder, zip or url
     for (final String filename : files) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, ""));
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Processing file " + filename));
 
+      context.sendGui(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.TEXT, "Processing... " + (files.indexOf(filename) + 1) + "/" + n));
+
       // Process the input and get a list of individual reports
       List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
       individuals.addAll(indReports);
 
-      context.sendGui(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.TEXT, "Processing... " + (files.indexOf(filename) + 1) + "/" + n));
-      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Processing... " + (files.indexOf(filename) + 1) + "/" + n));
-
-      idReport++;
+      // Create report
+      context.send(BasicConfig.MODULE_REPORT, new IndividualReportMessage(indReports, config));
     }
 
     // Generate global report
-    String summaryXml = null;
-    try {
-      summaryXml = ReportGenerator.makeSummaryReport(internalReportFolder, individuals, config, silence);
-    } catch (OutOfMemoryError e) {
-      System.err.println("Out of memory.");
-      outOfmemory = true;
+    GlobalReport gr = new GlobalReport();
+    for (final IndividualReport individual : individuals) {
+      gr.addIndividual(individual);
     }
+    gr.generate();
 
-    // Send report over FTP
-    try {
-      if(DPFManagerProperties.getFeedback() && summaryXml != null) {
-        sendFtpCamel(summaryXml);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    // Create global report
+    context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(gr, config));
 
     if (!new File(internalReportFolder).exists()) {
      internalReportFolder = null;
@@ -201,14 +193,11 @@ public class ProcessInput {
               outOfmemory = true;
               break;
             }
-            // Delete the temporary file
-            File file = new File(filename2);
-            file.delete();
           }
         }
         zipFile.close();
       } catch (Exception ex) {
-        System.err.println("Error reading zip file [" + ex.toString() + "]");
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error reading zip file [" + ex.toString() + "]"));
       }
     } else if (isUrl(filename)) {
       // URL
@@ -229,7 +218,7 @@ public class ProcessInput {
           File file = new File(filename2);
           file.delete();
         } else {
-          System.err.println("The file in the URL " + filename + " is not an accepted format");
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "The file in the URL " + filename + " is not an accepted format"));
         }
       } catch (Exception ex) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Error in URL " + filename));
@@ -246,10 +235,10 @@ public class ProcessInput {
             outOfmemory = true;
           }
         } catch (Exception ex) {
-          System.err.println("Error in File " + filename);
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
         }
       } else {
-        System.err.println("File " + filename + " is not an accepted format");
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "File " + filename + " is not an accepted format"));
       }
     }
     return indReports;
@@ -273,7 +262,7 @@ public class ProcessInput {
     while (new File(filename2).isFile()) {
       filename2 = "x" + filename2;
     }
-    filename2 = folder + "/" + filename2;
+    filename2 = folder + filename2;
 
     // Write the file
     File targetFile = new File(filename2);
@@ -303,33 +292,4 @@ public class ProcessInput {
     return ok;
   }
 
-  /**
-   * Sends the report to the preforma FTP.
-   *
-   * @param summaryXml the summary xml
-   * @throws NoSuchAlgorithmException An error occurred
-   */
-  private void sendFtpCamel(String summaryXml)
-      throws NoSuchAlgorithmException {
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Sending feedback"));
-    String ftp = "84.88.145.109";
-    String user = "preformaapp";
-    String password = "2.eX#lh>";
-    CamelContext contextcc = new DefaultCamelContext();
-
-    try {
-      contextcc.addRoutes(new RouteBuilder() {
-        public void configure() {
-          from("direct:sendFtp").to("sftp://" + user + "@" + ftp + "/?password=" + password);
-        }
-      });
-      ProducerTemplate template = contextcc.createProducerTemplate();
-      contextcc.start();
-      template.sendBody("direct:sendFtp", summaryXml);
-      contextcc.stop();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Feedback sent"));
-  }
 }

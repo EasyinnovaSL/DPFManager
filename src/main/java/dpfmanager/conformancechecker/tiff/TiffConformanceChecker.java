@@ -34,11 +34,13 @@ package dpfmanager.conformancechecker.tiff;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Field;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.modules.conformancechecker.core.ProcessInput;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
@@ -47,6 +49,7 @@ import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.reader.TiffReader;
 
+import org.apache.logging.log4j.Level;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.w3c.dom.Document;
@@ -325,40 +328,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return classes;
   }
 
-  /**
-   * Executes the tiff conformance checker and returns an XML string with the result.
-   * A feedback report is transparently sent to the DPF Manager development team (only for testing purposes).
-   *
-   * @param path the path to the TIFF file
-   */
-  public static String RunTiffConformanceCheckerAndSendReport(String path) {
-    String report_xml = null;
-    try {
-      ProcessInput pi = new ProcessInput();
-      ArrayList<String> files = new ArrayList<String>();
-      files.add(path);
-      Configuration config = new Configuration();
-      config = new Configuration(null, null, new ArrayList<>());
-      config.getFormats().add("XML");
-      config.getIsos().add("Baseline");
-      config.getIsos().add("Tiff/EP");
-      config.getIsos().add("Tiff/IT");
-      String reportFolder = pi.ProcessFiles(files, config, false);
-      String summary_report = reportFolder + "/summary.xml";
-      try {
-        if (new File(summary_report).exists()) {
-          byte[] encoded = Files.readAllBytes(Paths.get(summary_report));
-          report_xml = new String(encoded);
-        }
-      } catch (Exception ex) {
-        ex.printStackTrace();
-      }
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return report_xml;
-  }
-
   public static Validator getBaselineValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = null;
     String baseDir = ReportGenerator.getReportsFolder();
@@ -435,13 +404,11 @@ public class TiffConformanceChecker extends ConformanceChecker {
    *
    * @param pathToFile the path in local disk to the file
    * @param reportFilename the file name that will be displayed in the report
-   * @param internalReportFolder the internal report folder
    * @return the individual report
    * @throws ReadTagsIOException the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config,
-                                          int idReport) throws ReadTagsIOException, ReadIccConfigIOException {
+  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
       Logger.println("Reading Tiff file");
       TiffReader tr = new TiffReader();
@@ -486,21 +453,16 @@ public class TiffConformanceChecker extends ConformanceChecker {
             it2Validation = getITValidation(2, tr);
           }
 
-          Logger.println("Creating report");
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, pathToFile, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
+          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
           ir.checkBL = checkBL;
           ir.checkEP = checkEP;
           ir.checkIT0 = checkIT;
           ir.checkIT1 = checkIT1;
           ir.checkIT2 = checkIT2;
           ir.checkPC = checkPC;
-
-          // Generate individual report
-          String outputfile = ReportGenerator.getReportName(internalReportFolder, reportFilename, idReport);
-          ReportGenerator.generateIndividualReport(outputfile, ir, config);
-          Logger.println("Internal report '" + outputfile + "' created");
+          Logger.println("Internal report created");
 
           tr=null;
           System.gc();
@@ -541,6 +503,41 @@ public class TiffConformanceChecker extends ConformanceChecker {
       }
     }
     return isTiff;
+  }
+
+  /**
+   * Executes the tiff conformance checker and returns an XML string with the result.
+   * A feedback report is transparently sent to the DPF Manager development team (only for testing purposes).
+   *
+   * @param path the path to the TIFF file
+   */
+  public static String RunTiffConformanceCheckerAndSendReport(String path) {
+    String internalReportFolder = ReportGenerator.createReportPath();
+    String report_xml = null;
+    try {
+      ProcessInput pi = new ProcessInput();
+      ArrayList<String> files = new ArrayList<String>();
+      files.add(path);
+      Configuration config = new Configuration();
+      config = new Configuration(null, null, new ArrayList<>());
+      config.getFormats().add("XML");
+      config.getIsos().add("Baseline");
+      config.getIsos().add("Tiff/EP");
+      config.getIsos().add("Tiff/IT");
+      String reportFolder = pi.ProcessFiles(files, config, internalReportFolder);
+      String summary_report = reportFolder + "/summary.xml";
+      try {
+        if (new File(summary_report).exists()) {
+          byte[] encoded = Files.readAllBytes(Paths.get(summary_report));
+          report_xml = new String(encoded);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return report_xml;
   }
 
   @Override

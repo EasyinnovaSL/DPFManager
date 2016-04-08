@@ -29,15 +29,18 @@
  * @since 23/6/2015
  */
 
-package dpfmanager.shell.modules.report.core;
+package dpfmanager.shell.modules.report.util;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.ReportGeneric;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
-import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.types.IFD;
 
 import org.w3c.dom.Document;
@@ -65,6 +68,17 @@ import javax.xml.transform.stream.StreamResult;
  * The Class ReportXml.
  */
 public class ReportXml extends ReportGeneric {
+
+  private DpfContext context;
+
+  public DpfContext getContext() {
+    return context;
+  }
+
+  public void setContext(DpfContext context) {
+    this.context = context;
+  }
+
   /**
    * Creates the ifd node.
    *
@@ -74,7 +88,7 @@ public class ReportXml extends ReportGeneric {
    * @param index the index
    * @return the element
    */
-  private static Element createIfdNode(Document doc, IndividualReport ir, IFD ifd, int index) {
+  private Element createIfdNode(Document doc, IndividualReport ir, IFD ifd, int index) {
     Element ifdNode = doc.createElement("ifdNode");
     Element el, elchild, elchild2;
 
@@ -195,7 +209,7 @@ public class ReportXml extends ReportGeneric {
    * @param errors the errors
    * @param warnings the warnings
    */
-  private static void addErrorsWarnings(Document doc, Element results,
+  private void addErrorsWarnings(Document doc, Element results,
       List<RuleResult> errors, List<RuleResult> warnings) {
     // errors
     for (int i = 0; i < errors.size(); i++) {
@@ -241,7 +255,7 @@ public class ReportXml extends ReportGeneric {
    * @param ir the individual report.
    * @return the element
    */
-  private static Element buildReportIndividual(Document doc, IndividualReport ir) {
+  private Element buildReportIndividual(Document doc, IndividualReport ir) {
     Element report = doc.createElement("report");
 
     // file info
@@ -384,12 +398,12 @@ public class ReportXml extends ReportGeneric {
    * @param rules   the policy checker.
    * @return the XML string generated.
    */
-  public static String parseIndividual(String xmlfile, IndividualReport ir, Rules rules) {
+  public String parseIndividual(String xmlfile, IndividualReport ir, Rules rules) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
       Document doc = docBuilder.newDocument();
-      Element report = ReportXml.buildReportIndividual(doc, ir);
+      Element report = buildReportIndividual(doc, ir);
       doc.appendChild(report);
 
       // write the content into xml file
@@ -451,7 +465,7 @@ public class ReportXml extends ReportGeneric {
    * @param gr      the global report.
    * @return the XML string generated
    */
-  public static String parseGlobal(String xmlfile, GlobalReport gr) {
+  public String parseGlobal(String xmlfile, GlobalReport gr) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -464,7 +478,7 @@ public class ReportXml extends ReportGeneric {
 
       // Individual reports
       for (IndividualReport ir : gr.getIndividualReports()) {
-        individualreports.appendChild(ReportXml.buildReportIndividual(doc, ir));
+        individualreports.appendChild(buildReportIndividual(doc, ir));
       }
 
       // Statistics

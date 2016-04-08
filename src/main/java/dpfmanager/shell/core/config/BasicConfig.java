@@ -19,5 +19,6 @@ public class BasicConfig {
    */
   public static final String SERVICE_CONFORMANCE = "s001";
   public static final String SERVICE_MESSAGES = "s002";
+  public static final String SERVICE_REPORT = "s003";
 
 }

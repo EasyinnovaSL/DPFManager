@@ -8,7 +8,7 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.modules.report.core.ReportRow;
+import dpfmanager.shell.modules.report.util.ReportRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;

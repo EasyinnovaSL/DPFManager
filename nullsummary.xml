@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<globalreport>
+   <individualreports>
+      <report>
+         <file_info>
+            <name>Baseline with warnings.tif</name>
+            <fullpath>D:\test\Tiffs\Baseline with warnings.tif</fullpath>
+         </file_info>
+         <tiff_structure>
+            <ifdTree>
+               <ifdNode>
+                  <number>0</number>
+                  <isimg>yes</isimg>
+                  <imagetype check_ifd0="typ">Thumbnail</imagetype>
+                  <image_representation>strips[1]</image_representation>
+                  <photometric>2</photometric>
+                  <hasSubIfd>Main image</hasSubIfd>
+                  <hasExif>no</hasExif>
+                  <hasXMP>no</hasXMP>
+                  <hasIPTC>no</hasIPTC>
+                  <tags>
+                     <tag>
+                        <name>NewSubfileType</name>
+                        <id>254</id>
+                        <value>1</value>
+                     </tag>
+                     <tag>
+                        <name>ImageWidth</name>
+                        <id>256</id>
+                        <value>128</value>
+                     </tag>
+                     <tag>
+                        <name>ImageLength</name>
+                        <id>257</id>
+                        <value>85</value>
+                     </tag>
+                     <tag>
+                        <name>BitsPerSample</name>
+                        <id>258</id>
+                        <value>[8,8,8]</value>
+                     </tag>
+                     <tag>
+                        <name>Compression</name>
+                        <id>259</id>
+                        <value>1</value>
+                     </tag>
+                     <tag>
+                        <name>PhotometricInterpretation</name>
+                        <id>262</id>
+                        <value>2</value>
+                     </tag>
+                     <tag>
+                        <name>StripOffsets</name>
+                        <id>273</id>
+                        <value>8</value>
+                     </tag>
+                     <tag>
+                        <name>Orientation</name>
+                        <id>274</id>
+                        <value>1</value>
+                     </tag>
+                     <tag>
+                        <name>SamplesPerPixel</name>
+                        <id>277</id>
+                        <value>3</value>
+                     </tag>
+                     <tag>
+                        <name>RowsPerStrip</name>
+                        <id>278</id>
+                        <value>170</value>
+                     </tag>
+                     <tag>
+                        <name>StripBYTECount</name>
+                        <id>279</id>
+                        <value>32640</value>
+                     </tag>
+                     <tag>
+                        <name>PlanarConfiguration</name>
+                        <id>284</id>
+                        <value>1</value>
+                     </tag>
+                     <tag>
+                        <name>SubIFDs</name>
+                        <id>330</id>
+                        <value>SubIFD</value>
+                     </tag>
+                     <tag>
+                        <name>DateTimeOriginal</name>
+                        <id>36867</id>
+                        <value>1901:02:13 12:00:00</value>
+                     </tag>
+                     <tag>
+                        <name>TIFFEPStandardID</name>
+                        <id>37398</id>
+                        <value>[1,0,0,0]</value>
+                     </tag>
+                  </tags>
+               </ifdNode>
+            </ifdTree>
+         </tiff_structure>
+         <ImageWidth ImageWidth="128">128</ImageWidth>
+         <ImageHeight ImageHeight="85">85</ImageHeight>
+         <bitspersample>[8,8,8]</bitspersample>
+         <PixelDensity PixelDensity="0">0</PixelDensity>
+         <ByteOrder ByteOrder="BIG_ENDIAN">BIG_ENDIAN</ByteOrder>
+         <NewSubfileType NewSubfileType="1" id="254" type="0">1</NewSubfileType>
+         <ImageWidth ImageWidth="128" id="256" type="0">128</ImageWidth>
+         <ImageLength ImageLength="85" id="257" type="0">85</ImageLength>
+         <BitsPerSample BitsPerSample="[8,8,8]" id="258" type="0">[8,8,8]</BitsPerSample>
+         <Compression Compression="1" id="259" type="0">1</Compression>
+         <PhotometricInterpretation PhotometricInterpretation="2" id="262" type="0">2</PhotometricInterpretation>
+         <StripOffsets StripOffsets="8" id="273" type="0">8</StripOffsets>
+         <Orientation Orientation="1" id="274" type="0">1</Orientation>
+         <SamplesPerPixel SamplesPerPixel="3" id="277" type="0">3</SamplesPerPixel>
+         <RowsPerStrip RowsPerStrip="170" id="278" type="0">170</RowsPerStrip>
+         <StripBYTECount StripBYTECount="32640" id="279" type="0">32640</StripBYTECount>
+         <PlanarConfiguration PlanarConfiguration="1" id="284" type="0">1</PlanarConfiguration>
+         <SubIFDs SubIFDs="SubIFD" id="330" type="0">SubIFD</SubIFDs>
+         <DateTimeOriginal DateTimeOriginal="1901:02:13 12:00:00" id="36867" type="0">1901:02:13 12:00:00</DateTimeOriginal>
+         <TIFFEPStandardID TIFFEPStandardID="[1,0,0,0]" id="37398" type="0">[1,0,0,0]</TIFFEPStandardID>
+         <implementation_checker>
+            <results_baseline/>
+            <results_tiffep/>
+            <results_tiffit/>
+            <results_tiffit_p1/>
+            <results_tiffit_p2/>
+            <results/>
+         </implementation_checker>
+      </report>
+   </individualreports>
+   <stats>
+      <reports_count>1</reports_count>
+      <valid_files>1</valid_files>
+      <invalid_files>0</invalid_files>
+   </stats>
+</globalreport>

@@ -30,15 +30,22 @@
  */
 
 
-package dpfmanager.shell.modules.report.core;
+package dpfmanager.shell.modules.report.util;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.ReportGeneric;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 
+import org.apache.logging.log4j.Level;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
@@ -61,6 +68,17 @@ import javax.imageio.ImageIO;
  * The class Report PDF
  */
 public class ReportPDF extends ReportGeneric {
+
+  private DpfContext context;
+
+  public DpfContext getContext() {
+    return context;
+  }
+
+  public void setContext(DpfContext context) {
+    this.context = context;
+  }
+
   /**
    * The Init posy.
    */
@@ -71,11 +89,11 @@ public class ReportPDF extends ReportGeneric {
   PDPageContentStream contentStream;
 
   /**
-   * Instantiates a new Report pdf.
+   * Set content stream
    *
    * @param contentStream the content stream
    */
-  public ReportPDF(PDPageContentStream contentStream) {
+  public void setContentStream(PDPageContentStream contentStream) {
     this.contentStream = contentStream;
   }
 
@@ -89,28 +107,12 @@ public class ReportPDF extends ReportGeneric {
   }
 
   /**
-   * Show message.
-   *
-   * @param message the message
-   */
-  static void showMessage(String message) {
-    try {
-      //PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
-      //out.println(message);
-      //out.close();
-      System.out.println(message);
-    } catch (Exception ex) {
-
-    }
-  }
-
-  /**
    * Parse an individual report to PDF.
    *
    * @param outputfile the outputfile
    * @param ir         the individual report.
    */
-  public static void parseIndividual(String outputfile, IndividualReport ir) {
+  public void parseIndividual(String outputfile, IndividualReport ir) {
     try {
       int epErr = ir.getNEpErr(), epWar = ir.getNEpWar();
       int blErr = ir.getNBlErr(), blWar = ir.getNBlWar();
@@ -319,10 +321,10 @@ public class ReportPDF extends ReportGeneric {
       }
 
       // Conformance
+      setContentStream(contentStream);
       if (ir.checkBL) {
-        ReportPDF rpdf = new ReportPDF(contentStream);
-        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getBaselineErrors(), ir.getBaselineWarnings(), pos_x, pos_y, "Baseline");
-        contentStream = rpdf.getContentStream();
+        pos_y = writeErrorsWarnings(document, font, ir.getBaselineErrors(), ir.getBaselineWarnings(), pos_x, pos_y, "Baseline");
+        contentStream = getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -330,9 +332,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkEP) {
-        ReportPDF rpdf = new ReportPDF(contentStream);
-        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getEPErrors(), ir.getEPWarnings(), pos_x, pos_y, "Tiff/EP");
-        contentStream = rpdf.getContentStream();
+        pos_y = writeErrorsWarnings(document, font, ir.getEPErrors(), ir.getEPWarnings(), pos_x, pos_y, "Tiff/EP");
+        contentStream = getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -340,9 +341,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkIT0) {
-        ReportPDF rpdf = new ReportPDF(contentStream);
-        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(0), ir.getITWarnings(0), pos_x, pos_y, "Tiff/IT");
-        contentStream = rpdf.getContentStream();
+        pos_y = writeErrorsWarnings(document, font, ir.getITErrors(0), ir.getITWarnings(0), pos_x, pos_y, "Tiff/IT");
+        contentStream = getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -350,9 +350,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkIT1) {
-        ReportPDF rpdf = new ReportPDF(contentStream);
-        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(1), ir.getITWarnings(1), pos_x, pos_y, "Tiff/IT");
-        contentStream = rpdf.getContentStream();
+        pos_y = writeErrorsWarnings(document, font, ir.getITErrors(1), ir.getITWarnings(1), pos_x, pos_y, "Tiff/IT");
+        contentStream = getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -360,9 +359,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkIT2) {
-        ReportPDF rpdf = new ReportPDF(contentStream);
-        pos_y = rpdf.writeErrorsWarnings(document, font, ir.getITErrors(2), ir.getITWarnings(2), pos_x, pos_y, "Tiff/IT");
-        contentStream = rpdf.getContentStream();
+        pos_y = writeErrorsWarnings(document, font, ir.getITErrors(2), ir.getITWarnings(2), pos_x, pos_y, "Tiff/IT");
+        contentStream = getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -370,9 +368,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkPC) {
-        ReportPDF rpdf = new ReportPDF(contentStream);
-        pos_y = rpdf.writeErrorsWarnings2(document, font, ir.getPCErrors(), ir.getPCWarnings(), pos_x, pos_y, "Policy Checker");
-        contentStream = rpdf.getContentStream();
+        pos_y = writeErrorsWarnings2(document, font, ir.getPCErrors(), ir.getPCWarnings(), pos_x, pos_y, "Policy Checker");
+        contentStream = getContentStream();
       }
 
       contentStream.close();
@@ -382,7 +379,7 @@ public class ReportPDF extends ReportGeneric {
 
       ir.setPDFDocument(outputfile);
     } catch (Exception tfe) {
-      showMessage("Error:" + tfe.toString());
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error:" + tfe.toString()));
     }
   }
 
@@ -392,7 +389,7 @@ public class ReportPDF extends ReportGeneric {
    * @param pdffile the file name.
    * @param gr      the global report.
    */
-  public static void parseGlobal(String pdffile, GlobalReport gr) {
+  public void parseGlobal(String pdffile, GlobalReport gr) {
     try {
       PDDocument document = new PDDocument();
 
@@ -608,7 +605,7 @@ public class ReportPDF extends ReportGeneric {
         doc.close();
       }
     } catch (Exception tfe) {
-      showMessage("ERROR:" + tfe.toString());
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error:" + tfe.toString()));
       tfe.printStackTrace();
     }
   }
@@ -619,7 +616,7 @@ public class ReportPDF extends ReportGeneric {
    * @param pos_y the pos y
    * @return the boolean
    */
-  static boolean newPageNeeded(int pos_y) {
+  boolean newPageNeeded(int pos_y) {
     return pos_y < 100;
   }
 
@@ -742,7 +739,7 @@ public class ReportPDF extends ReportGeneric {
    * @return the pd page content stream
    * @throws Exception the exception
    */
-  static PDPageContentStream newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
+  PDPageContentStream newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
     contentStream.close();
     PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
     document.addPage( page );
@@ -760,7 +757,7 @@ public class ReportPDF extends ReportGeneric {
    * @param font_size     the font size
    * @throws Exception the exception
    */
-  static void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size) throws Exception {
+  void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size) throws Exception {
     writeText(contentStream, text, x, y, font, font_size, Color.black);
   }
 
@@ -776,7 +773,7 @@ public class ReportPDF extends ReportGeneric {
    * @param color         the color
    * @throws Exception the exception
    */
-  static void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size, Color color) throws Exception {
+  void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size, Color color) throws Exception {
     contentStream.beginText();
     contentStream.setFont( font, font_size );
     contentStream.setNonStrokingColor(color);

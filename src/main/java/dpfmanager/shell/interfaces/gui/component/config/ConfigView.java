@@ -1,5 +1,6 @@
 package dpfmanager.shell.interfaces.gui.component.config;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
@@ -13,6 +14,7 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard3Fragment;
 import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -22,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import org.apache.logging.log4j.Level;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -187,7 +190,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public void showSubConfig(int x) {
     if (x < 1 || x > 6) {
-      System.err.println("Requested show sub config out of bounds!");
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested show sub config out of bounds!"));
       return;
     }
 
@@ -201,7 +204,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public void setStepsBlue(int x) {
     if (x < 1 || x > 6) {
-      System.err.println("Requested step button out of bounds!");
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested step button out of bounds!"));
       return;
     }
 
@@ -262,7 +265,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public Button getStepButton(int x) {
     if (x < 1 || x > 6) {
-      System.err.println("Requested step button out of bounds!");
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested step button out of bounds!"));
       return null;
     }
     return stepsButtons.get(x - 1);
