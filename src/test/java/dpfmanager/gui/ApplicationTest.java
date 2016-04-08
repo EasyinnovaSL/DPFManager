@@ -64,7 +64,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   /**
    * The Max timeout.
    */
-  static int maxTimeout = 60;
+  static int maxTimeout = 120;
 
   /**
    * The Stage.
