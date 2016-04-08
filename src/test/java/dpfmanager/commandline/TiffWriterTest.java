@@ -91,7 +91,7 @@ public class TiffWriterTest extends TestCase {
 
     String path = getPath();
     String xmlFile = path + "/1-Bilevel1.tif.xml";
-    String xmlFile2 = path + "/1-Bilevel2.tif.xml";
+    String xmlFile2 = path + "/2-Bilevel2.tif.xml";
 
     assertXML(xmlFile, xmlFile2);
   }
@@ -106,7 +106,7 @@ public class TiffWriterTest extends TestCase {
     File fXmlFil2e = new File(xmlFile2);
     DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder2 = dbFactory.newDocumentBuilder();
-    Document doc2 = dBuilder.parse(fXmlFile);
+    Document doc2 = dBuilder.parse(fXmlFil2e);
     doc2.getDocumentElement().normalize();
 
 
