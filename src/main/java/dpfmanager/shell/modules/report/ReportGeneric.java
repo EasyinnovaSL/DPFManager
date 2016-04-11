@@ -106,32 +106,6 @@ public class ReportGeneric {
         fr.close();
       } else {
         // Look in JAR
-        /*CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
-        if (src != null) {
-          URL jar = src.getLocation();
-          ZipInputStream zip = new ZipInputStream(jar.openStream());
-          ZipEntry zipFile;
-          while ((zipFile = zip.getNextEntry()) != null) {
-            String name = zipFile.getName();
-            if (name.equals("htmltags.txt")) {
-              try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(zip));
-                String line = br.readLine();
-                while (line != null) {
-                  String[] fields = line.split("\t");
-                  if (fields.length == 1) {
-                    hs.add(fields[0]);
-                  }
-                  line = br.readLine();
-                }
-              } catch (Exception ex) {
-                throw new Exception("");
-              }
-            }
-          }
-        } else {
-          throw new Exception("");
-        }*/
         String resource = "htmltags.txt";
         Class cls = ReportHtml.class;
         ClassLoader cLoader = cls.getClassLoader();

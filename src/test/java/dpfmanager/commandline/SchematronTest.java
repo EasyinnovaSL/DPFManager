@@ -10,11 +10,13 @@ import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -143,7 +145,48 @@ public class SchematronTest extends TestCase {
     }
     assertEquals(xml != null, true);
     Schematron sch = new Schematron();
-    String result = sch.testXML(xml, "sch/rules2.sch");
+
+    String sch2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<schema xmlns=\"http://purl.oclc.org/dsdl/schematron\">\n" +
+        "<title>Check Report</title>\n" +
+        "  <pattern>\n" +
+        "   <rule context=\"globalreport\">\n" +
+        "\t<assert test=\"individualreports\">Individual reports is mandatory</assert>\n" +
+        "   </rule>\n" +
+        "   <rule context=\"individualreports\">\n" +
+        "\t<assert test=\"report\">At least one report is required</assert>\n" +
+        "   </rule>\n" +
+        "   <rule context=\"report\">\n" +
+        "\t<assert test=\"tiff_structure\">Tiff structure is mandatory</assert>\n" +
+        "   </rule>\n" +
+        "   <rule context=\"tiff_structure\">\n" +
+        "\t<assert test=\"ifdTree\">Ifd tree is mandatory</assert>\n" +
+        "   </rule>\n" +
+        "   <rule context=\"ifdTree\">\n" +
+        "    <assert test=\"count(ifdNode)!= 0\">The Tiff file must have at least one IFD</assert>\n" +
+        "   </rule>\n" +
+        "   <rule context=\"tags\">\n" +
+        "    <assert test=\"count(tag)!= 0\">IFDs must have at least one tag</assert>\n" +
+        "   </rule>\n" +
+        "  </pattern>\n" +
+        "  <pattern>\n" +
+        "   <rule context=\"report\">\n" +
+        "\t<assert test=\"Foo\">Image foo is mandatory</assert>\n" +
+        "   </rule>\n" +
+        "  </pattern>\n" +
+        "</schema>";
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String schfile = "temp/xx.sch";
+    int idx = 0;
+    while (new File(schfile).exists()) schfile = "temp/xx" + idx++ + ".sch";
+    PrintWriter bw = new PrintWriter(schfile);
+    bw.write(sch2);
+    bw.close();
+
+    String result = sch.testXML(xml, schfile);
 
     assertEquals(true, result.indexOf("fired-rule context=\"globalreport\"") != -1);
     assertEquals(true, result.indexOf("fired-rule context=\"individualreports\"") != -1);
@@ -153,6 +196,9 @@ public class SchematronTest extends TestCase {
     assertEquals(true, result.indexOf("fired-rule context=\"tags\"") != -1);
     assertEquals(true, result.indexOf("fired-rule context=\"report\"") != -1);
     assertEquals(true, result.indexOf("failed") != -1);
+
+    new File(schfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
   }
 
   public void testReport() throws Exception {
@@ -193,7 +239,7 @@ public class SchematronTest extends TestCase {
     byte[] encoded = Files.readAllBytes(Paths.get(xmlFile));
     String res = new String(encoded, Charset.defaultCharset());
 
-    assertEquals(true, res.indexOf("fired-rule") > -1);
+    assertEquals(true, res.indexOf("fired-rule") == -1);
   }
 
   /**

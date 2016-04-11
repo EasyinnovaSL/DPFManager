@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,7 +85,7 @@ public class Validator {
       for (IncludeObject inc : rules.getIncludes()) {
         jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
         jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(inc.getValue()));
+        ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
         if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
           rules.getRules().addAll(0, rulesIncluded.getRules());
         } else {
@@ -122,23 +121,23 @@ public class Validator {
   }
 
   public void validateBaseline(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "BaselineProfileChecker.xml");
+    validate(path, "implementationcheckers/BaselineProfileChecker.xml");
   }
 
   public void validateTiffEP(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "TiffEPProfileChecker.xml");
+    validate(path, "implementationcheckers/TiffEPProfileChecker.xml");
   }
 
   public void validateTiffIT(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "TiffITProfileChecker.xml");
+    validate(path, "implementationcheckers/TiffITProfileChecker.xml");
   }
 
   public void validateTiffITP1(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "TiffITP1ProfileChecker.xml");
+    validate(path, "implementationcheckers/TiffITP1ProfileChecker.xml");
   }
 
   public void validateTiffITP2(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "TiffITP2ProfileChecker.xml");
+    validate(path, "implementationcheckers/TiffITP2ProfileChecker.xml");
   }
 
   boolean checkRule(RuleObject rule, TiffNode node) {
