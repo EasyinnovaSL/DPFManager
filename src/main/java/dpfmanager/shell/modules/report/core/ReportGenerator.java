@@ -560,6 +560,14 @@ public class ReportGenerator {
     String pdfFileStr = reportName + ".pdf";
     int htmlMode = 0;
 
+    if (ir.getConformanceCheckerReport() != null) {
+      output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir);
+      if (config.getFormats().contains("JSON")) {
+        ReportJson.xmlToJson(output, jsonFileStr);
+      }
+      return;
+    }
+
     Fixes fixes = config.getFixes();
     Rules rules = config.getRules();
     if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;

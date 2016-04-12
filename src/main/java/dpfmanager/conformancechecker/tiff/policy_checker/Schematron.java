@@ -62,34 +62,6 @@ public class Schematron extends CamelTestSupport {
   }
 
   /**
-   * Run schematron string.
-   *
-   * @param xmlFilename the xml filename
-   * @param folder      the folder
-   * @return the string
-   */
-  public String RunSchematron(String xmlFilename, String folder) {
-    try {
-      context.addRoutes(new RouteBuilder() {
-        public void configure() {
-          from("direct:xml").to("schematron://sch/rules.sch").to("mock:result");
-          //.to("file:result.xml");
-        }
-      });
-      context.start();
-      template.sendBody("direct:xml", xmlFilename);
-      context.stop();
-
-      MockEndpoint mock = getMockEndpoint("mock:result");
-      String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
-      return result;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  /**
    * Test xml string.
    *
    * @param xmlFile the xml file
@@ -122,27 +94,25 @@ public class Schematron extends CamelTestSupport {
    * @throws Exception the exception
    */
   public String testXML(String xmlFile, Rules rules) throws Exception {
-    if (rules == null) {
-      return testXML(xmlFile, "sch/rules.sch");
-    } else {
-      InputStream sc = getInputStream("sch/rules.sch");
-      if (sc != null) {
-        Document doc = readXml(sc);
+    InputStream sc = getInputStream("sch/rules.sch");
+    if (sc != null) {
+      Document doc = readXml(sc);
 
-        NodeList nodes = doc.getElementsByTagName("rule");
-        while (nodes.getLength() > 0) {
-          Element el = (Element) nodes.item(0);
-          el.getParentNode().removeChild(el);
-        }
+      NodeList nodes = doc.getElementsByTagName("rule");
+      while (nodes.getLength() > 0) {
+        Element el = (Element) nodes.item(0);
+        el.getParentNode().removeChild(el);
+      }
 
-        Element pattern = (Element) doc.getElementsByTagName("pattern").item(0);
+      Element pattern = (Element) doc.getElementsByTagName("pattern").item(0);
+      if (rules != null) {
         for (Rule r : rules.getRules()) {
           Element newrule = doc.createElementNS(pattern.getNamespaceURI(), "rule");
           newrule.setAttribute("context", r.getTag());
 
           Element assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
           String sval = r.getValue();
-          if (r.getType().equals("string")) sval = "'" + sval  + "'";
+          if (r.getType().equals("string")) sval = "'" + sval + "'";
           assertion.setAttribute("test", "@" + r.getTag() + " " + convert(r.getOperator()) + " " + sval);
           assertion.setTextContent("Invalid " + r.getTag() + ": #PP2#value-of select=\"@" + r.getTag() + "\"/#GG#");
 
@@ -150,34 +120,35 @@ public class Schematron extends CamelTestSupport {
 
           pattern.appendChild(newrule);
         }
-
-        String tempname = DPFManagerProperties.getConfigDir() + "/rules2.sch";
-        int idx = 3;
-        while (new File(tempname).exists()) tempname = DPFManagerProperties.getConfigDir() + "/rules" + idx++ + ".sch";
-
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        DOMSource source = new DOMSource(doc);
-
-        File file = new File(tempname);
-        StreamResult result = new StreamResult(file);
-        transformer.transform(source, result);
-
-        byte[] encoded = Files.readAllBytes(Paths.get(tempname));
-        String s = new String(encoded, Charset.defaultCharset());
-        s = s.replace("#PP#", "&lt;").replace("#GG#", ">").replace("#PP2#", "<");
-        PrintWriter out = new PrintWriter(tempname);
-        out.print(s);
-        out.close();
-
-        String report = testXML(xmlFile, tempname);
-        file.delete();
-        return report;
-      } else {
-        return "";
       }
+
+      String tempname = DPFManagerProperties.getConfigDir() + "/rulestemp2.sch";
+      int idx = 3;
+      while (new File(tempname).exists())
+        tempname = DPFManagerProperties.getConfigDir() + "/rulestemp" + idx++ + ".sch";
+
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+      DOMSource source = new DOMSource(doc);
+
+      File file = new File(tempname);
+      StreamResult result = new StreamResult(file);
+      transformer.transform(source, result);
+
+      byte[] encoded = Files.readAllBytes(Paths.get(tempname));
+      String s = new String(encoded, Charset.defaultCharset());
+      s = s.replace("#PP#", "&lt;").replace("#GG#", ">").replace("#PP2#", "<");
+      PrintWriter out = new PrintWriter(tempname);
+      out.print(s);
+      out.close();
+
+      String report = testXML(xmlFile, tempname);
+      file.delete();
+      return report;
+    } else {
+      return "";
     }
   }
 

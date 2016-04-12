@@ -163,6 +163,8 @@ public class IndividualReport {
 
   private boolean containsData;
 
+  private String conformanceCheckerReport = null;
+
   /**
    * Constructor + generate.
    *
@@ -173,6 +175,14 @@ public class IndividualReport {
     filename = name;
     filepath = path;
     containsData = false;
+  }
+
+  public void setConformanceCheckerReport(String report) {
+    conformanceCheckerReport = report;
+  }
+
+  public String getConformanceCheckerReport() {
+    return conformanceCheckerReport;
   }
 
   public boolean containsData() {

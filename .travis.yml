@@ -12,9 +12,21 @@ addons:
 os:
   - linux
 
+install:
+  -
+
+matrix:
+    include:
+        - os: linux
+          jdk: oraclejdk8
+          env: TOKEN=nogui
+          sudo: required
+          script: mvn clean -Dtest=!gui/*Test.java,!RunTestOnly.java install
+#        - os: osx
+
 before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+  - if [ "${TOKEN}" != "nogui" ]; then export DISPLAY=:99.0; fi
+  - if [ "${TOKEN}" != "nogui" ]; then sh -e /etc/init.d/xvfb start; fi
 
 #before_install:
 #  - "export DISPLAY=:99.0"

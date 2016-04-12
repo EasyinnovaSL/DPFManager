@@ -56,6 +56,7 @@ public class FileCheckTest extends ApplicationTest {
     clickOnAndReloadTop("#butReports","#pane-reports");
     waitForTable("#tabReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
+    waitForTable("#tabReports");
     ReportRow row = table.getItems().get(0);
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_loaded), table.getItems().size());
     Assert.assertEquals("Report row N files", "3", row.getNfiles());
