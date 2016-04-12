@@ -500,7 +500,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
     String report_xml = null;
     try {
       // Get tmp output folder and config file
-      String config = System.getProperty("java.io.tmpdir") + "config.dpf";
+      String config = "config.dpf";
 
       // Create config file
       File configFile = new File(config);
