@@ -17,16 +17,18 @@ public class StatusMessage extends DpfMessage {
   private Type type;
   private String folder;
   private List<String> formats;
+  private boolean silence;
 
   public StatusMessage(Type t, String internal){
     type = t;
     folder = internal;
   }
 
-  public StatusMessage(Type t, List<String> f, String fileFolder){
+  public StatusMessage(Type t, List<String> f, String fileFolder, boolean s){
     type = t;
     folder = fileFolder;
     formats = f;
+    silence = s;
   }
 
   public boolean isInit(){
@@ -45,4 +47,7 @@ public class StatusMessage extends DpfMessage {
     return formats;
   }
 
+  public boolean isSilence() {
+    return silence;
+  }
 }

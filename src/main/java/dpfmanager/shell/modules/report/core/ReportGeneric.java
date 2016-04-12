@@ -1,7 +1,5 @@
 package dpfmanager.shell.modules.report.core;
 
-import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.shell.modules.report.util.ReportTag;
 
@@ -9,8 +7,6 @@ import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
-
-import org.apache.logging.log4j.Level;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -66,7 +62,6 @@ public class ReportGeneric {
       img = null;
       image.flush();
       image = null;
-      input.delete();
       System.gc();
     } catch (Exception e) {
       return false;
@@ -74,8 +69,7 @@ public class ReportGeneric {
     return true;
   }
 
-  static BufferedImage scale(BufferedImage src, int w, int h)
-  {
+  static BufferedImage scale(BufferedImage src, int w, int h) {
     BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
     int x, y;
     int ww = src.getWidth();
@@ -211,7 +205,7 @@ public class ReportGeneric {
   protected static String getDif(int n1, int n2) {
     String dif = "";
     if (n2 != n1) {
-      dif = " (" + (n2 > n1 ? "+" : "-") + Math.abs(n2-n1) + ")";
+      dif = " (" + (n2 > n1 ? "+" : "-") + Math.abs(n2 - n1) + ")";
     } else {
       dif = " (=)";
     }

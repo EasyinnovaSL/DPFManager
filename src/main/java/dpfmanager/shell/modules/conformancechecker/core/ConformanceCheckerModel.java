@@ -136,6 +136,10 @@ public class ConformanceCheckerModel extends DpfModel<DessignView, DessignContro
     }
   }
 
+  public void setConfig(Configuration c){
+    config = c;
+  }
+
   public Configuration getConfig() {
     return config;
   }

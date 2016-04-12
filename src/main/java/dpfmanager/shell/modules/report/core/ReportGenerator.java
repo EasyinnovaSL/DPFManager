@@ -121,6 +121,10 @@ public class ReportGenerator {
     return createReportPath(false);
   }
 
+  public static String getLastReportPath() {
+    return createReportPath(true);
+  }
+
   /**
    * Creates the report path.
    *
@@ -134,6 +138,9 @@ public class ReportGenerator {
 
     // date folder
     path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
+    if (subtract1 && !new File(path).exists()){
+      return path;
+    }
     validateDirectory(path);
 
     // index folder
@@ -143,7 +150,10 @@ public class ReportGenerator {
       index++;
       file = new File(path + "/" + index);
     }
-    if (subtract1) index--;
+    if (subtract1) {
+      index--;
+      return path + "/" + index + "/";
+    }
     path += "/" + index;
     validateDirectory(path);
 
@@ -542,7 +552,7 @@ public class ReportGenerator {
    * @param reportName the output file name
    * @param ir         the individual report
    */
-  public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError{
+  public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config, String internalReportFolder) throws OutOfMemoryError{
     String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
@@ -650,17 +660,17 @@ public class ReportGenerator {
         //Save fixed tiffs
         String pathFixed = "";
         String outputFolder = config.getOutput();
-        if (outputFolder == null) {
-          new File(nameFixedTif).delete();
-        } else {
-          File dir = new File(outputFolder + "/fixed/");
-          if (!dir.exists()) dir.mkdir();
-          pathFixed = outputFolder + "/fixed/" + new File(ir.getReportPath()).getName();
-          if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
-          Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
-          ir2.setFilePath(pathFixed);
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
+        if (outputFolder == null){
+          outputFolder =  internalReportFolder;
         }
+        File dir = new File(outputFolder + "/fixed/");
+        if (!dir.exists()) dir.mkdir();
+        pathFixed = outputFolder + "/fixed/" + new File(ir.getReportPath()).getName();
+        if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
+        Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
+        ir2.setFilePath(pathFixed);
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
+
         ir2.setFilePath(pathFixed);
         ir2.setFileName(new File(nameOriginalTif).getName() +" Fixed");
 
@@ -683,7 +693,7 @@ public class ReportGenerator {
           deleteFileOrFolder(new File(xmlFileStr));
         }
       } catch (Exception ex) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error creating report of fixed image"));
+        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Error creating report of fixed image", ex));
       }
     }
   }

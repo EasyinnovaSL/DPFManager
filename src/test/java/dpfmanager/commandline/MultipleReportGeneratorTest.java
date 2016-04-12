@@ -1,45 +1,23 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.interfaces.console.CommandLineApp;
+import static junit.framework.TestCase.assertEquals;
+
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import javafx.application.Application;
-
-import com.easyinnova.tiff.reader.TiffReader;
-
-import junit.framework.TestCase;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Easy on 20/07/2015.
  */
-public class MultipleReportGeneratorTest extends TestCase {
-  TiffReader tr;
-
-  /**
-   * Pre test.
-   */
-  @Before
-  public void PreTest() {
-    DPFManagerProperties.setFeedback(false);
-
-    boolean ok = true;
-    try {
-      tr = new TiffReader();
-    } catch (Exception e) {
-      ok = false;
-    }
-    assertEquals(ok, true);
-  }
-
+public class MultipleReportGeneratorTest extends CommandLineTest {
+  @Test
   public void testReportsXML() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -48,35 +26,14 @@ public class MultipleReportGeneratorTest extends TestCase {
     args[1] = "-reportformat";
     args[2] = "xml";
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
     File directori = new File(path);
     assertEquals(7, directori.list().length);
   }
 
+  @Test
   public void testReportsKoPdf() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -85,29 +42,7 @@ public class MultipleReportGeneratorTest extends TestCase {
     args[1] = "-reportformat";
     args[2] = "pdf";
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
     File directori = new File(path);
@@ -119,6 +54,7 @@ public class MultipleReportGeneratorTest extends TestCase {
     doc.close();
   }
 
+  @Test
   public void testReportsPDF() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -127,29 +63,7 @@ public class MultipleReportGeneratorTest extends TestCase {
     args[1] = "-reportformat";
     args[2] = "pdf";
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
     File directori = new File(path);

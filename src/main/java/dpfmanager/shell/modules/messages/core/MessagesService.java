@@ -3,6 +3,7 @@ package dpfmanager.shell.modules.messages.core;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -27,6 +28,10 @@ public class MessagesService extends DpfService {
     if (System.getProperty("app.home") == null){
       System.setProperty("app.home", DPFManagerProperties.getConfigDir());
     }
+  }
+
+  @Override
+  protected void handleContext(DpfContext context){
   }
 
   public void logMessage(LogMessage lm){

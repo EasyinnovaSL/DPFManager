@@ -1,27 +1,22 @@
 package dpfmanager.commandline;
 
 import static java.io.File.separator;
+import static junit.framework.TestCase.assertEquals;
 
-import dpfmanager.shell.interfaces.console.CommandLineApp;
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import javafx.application.Application;
 
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
-import junit.framework.TestCase;
-
-import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,25 +24,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  * Created by Easy on 20/07/2015.
  */
-public class TiffWriterTest extends TestCase {
-  TiffReader tr;
-
-  /**
-   * Pre test.
-   */
-  @Before
-  public void PreTest() {
-    DPFManagerProperties.setFeedback(false);
-
-    boolean ok = true;
-    try {
-      tr = new TiffReader();
-    } catch (Exception e) {
-      ok = false;
-    }
-    assertEquals(ok, true);
-  }
-
+public class TiffWriterTest extends CommandLineTest {
+  @Test
   public void testReports1() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -55,7 +33,7 @@ public class TiffWriterTest extends TestCase {
     args[0] = "src/test/resources/TestWriter";
     args[1] = "-s";
 
-    tr = new TiffReader();
+    TiffReader tr = new TiffReader();
     tr.readFile("src" + separator + "test" + separator + "resources" + separator + "TestWriter" + separator + "Bilevel1.tif");
     TiffInputStream ti = new TiffInputStream(new File("src" + separator + "test" + separator + "resources" + separator + "TestWriter" + separator + "Bilevel1.tif"));
     TiffDocument td = tr.getModel();
@@ -64,30 +42,7 @@ public class TiffWriterTest extends TestCase {
     tw.SetModel(td);
     tw.write("src" + separator + "test" + separator + "resources" + separator + "TestWriter" + separator + "Bilevel2.tif");
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
     String xmlFile = path + "/1-Bilevel1.tif.xml";
@@ -124,7 +79,6 @@ public class TiffWriterTest extends TestCase {
       node2 = node2.getNextSibling();
     }
   }
-
 
   public void getChilds(Node node, Node node2) {
     while (node.getNextSibling() != null && node2.getNextSibling() != null) {

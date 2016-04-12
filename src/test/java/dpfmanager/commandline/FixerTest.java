@@ -1,49 +1,23 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.interfaces.console.CommandLineApp;
-import dpfmanager.shell.core.DPFManagerProperties;
-import javafx.application.Application;
+import static junit.framework.TestCase.assertEquals;
 
-import com.easyinnova.tiff.reader.TiffReader;
-
-import junit.framework.TestCase;
+import dpfmanager.shell.core.app.MainConsoleApp;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by easy on 13/10/2015.
  */
-public class FixerTest extends TestCase {
-  TiffReader tr;
-
-  /**
-   * Pre test.
-   */
-  @Before
-  public void PreTest() {
-    DPFManagerProperties.setFeedback(false);
-
-    boolean ok = true;
-    try {
-      tr = new TiffReader();
-    } catch (Exception e) {
-      ok = false;
-    }
-    assertEquals(ok, true);
-  }
-
+public class FixerTest extends CommandLineTest {
+  @Test
   public void testAddRemoveTag() throws Exception {
-    DPFManagerProperties.setFeedback(false);
-
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
     }
@@ -74,29 +48,7 @@ public class FixerTest extends TestCase {
     args[4] = "-configuration";
     args[5] = configfile;
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -126,9 +78,8 @@ public class FixerTest extends TestCase {
     FileUtils.deleteDirectory(new File("temp"));
   }
 
+  @Test
   public void testAddExistingTag() throws Exception {
-    DPFManagerProperties.setFeedback(false);
-
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
     }
@@ -156,29 +107,7 @@ public class FixerTest extends TestCase {
     args[4] = "-configuration";
     args[5] = configfile;
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -206,9 +135,8 @@ public class FixerTest extends TestCase {
     FileUtils.deleteDirectory(new File("temp"));
   }
 
+  @Test
   public void testAutofixPrivateData() throws Exception {
-    DPFManagerProperties.setFeedback(false);
-
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
     }
@@ -236,29 +164,7 @@ public class FixerTest extends TestCase {
     args[4] = "-configuration";
     args[5] = configfile;
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -285,9 +191,8 @@ public class FixerTest extends TestCase {
     FileUtils.deleteDirectory(new File("temp"));
   }
 
+  @Test
   public void testReports() throws Exception {
-    DPFManagerProperties.setFeedback(false);
-
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
     }
@@ -318,29 +223,7 @@ public class FixerTest extends TestCase {
     args[4] = "-configuration";
     args[5] = configfile;
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -356,9 +239,10 @@ public class FixerTest extends TestCase {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_modif = new String(encoded);
       }
+      System.out.println("File: " + file);
     }
-    assertEquals(xml_orig != null, true);
-    assertEquals(xml_modif != null, true);
+    assertEquals(true, xml_orig != null);
+    assertEquals(true, xml_modif != null);
 
     directori = new File(path + "/html");
     assertEquals(directori.exists(), true);
@@ -385,4 +269,5 @@ public class FixerTest extends TestCase {
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }
+
 }

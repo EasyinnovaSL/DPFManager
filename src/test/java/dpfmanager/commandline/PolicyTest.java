@@ -1,46 +1,23 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.interfaces.console.CommandLineApp;
+import static junit.framework.TestCase.assertEquals;
+
 import dpfmanager.shell.core.DPFManagerProperties;
-import javafx.application.Application;
-
-import com.easyinnova.tiff.reader.TiffReader;
-
-import junit.framework.TestCase;
+import dpfmanager.shell.core.app.MainConsoleApp;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by easy on 13/10/2015.
  */
-public class PolicyTest extends TestCase {
-  TiffReader tr;
-
-  /**
-   * Pre test.
-   */
-  @Before
-  public void PreTest() {
-    DPFManagerProperties.setFeedback(false);
-
-    boolean ok = true;
-    try {
-      tr = new TiffReader();
-    } catch (Exception e) {
-      ok = false;
-    }
-    assertEquals(ok, true);
-  }
-
+public class PolicyTest extends CommandLineTest {
+  @Test
   public void testAddRemoveTag() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -75,29 +52,7 @@ public class PolicyTest extends TestCase {
     args[4] = "-configuration";
     args[5] = configfile;
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -119,6 +74,7 @@ public class PolicyTest extends TestCase {
     FileUtils.deleteDirectory(new File("temp"));
   }
 
+  @Test
   public void testEndianessOk() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -148,29 +104,7 @@ public class PolicyTest extends TestCase {
     args[4] = "-configuration";
     args[5] = configfile;
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -192,6 +126,7 @@ public class PolicyTest extends TestCase {
     FileUtils.deleteDirectory(new File("temp"));
   }
 
+  @Test
   public void testEndianessKo() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -221,29 +156,7 @@ public class PolicyTest extends TestCase {
     args[4] = "-configuration";
     args[5] = configfile;
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i = 0; i < args.length; i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);

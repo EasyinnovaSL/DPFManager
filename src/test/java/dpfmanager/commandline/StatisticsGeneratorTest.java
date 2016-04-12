@@ -1,28 +1,22 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.interfaces.console.CommandLineApp;
+import static junit.framework.TestCase.assertEquals;
+
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import javafx.application.Application;
 
 import com.google.gson.stream.JsonReader;
 
-import com.easyinnova.tiff.reader.TiffReader;
-
-import junit.framework.TestCase;
-
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
-import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,25 +24,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  * Created by Easy on 20/07/2015.
  */
-public class StatisticsGeneratorTest extends TestCase {
-  TiffReader tr;
-
-  /**
-   * Pre test.
-   */
-  @Before
-  public void PreTest() {
-    DPFManagerProperties.setFeedback(false);
-
-    boolean ok = true;
-    try {
-      tr = new TiffReader();
-    } catch (Exception e) {
-      ok = false;
-    }
-    assertEquals(ok, true);
-  }
-
+public class StatisticsGeneratorTest extends CommandLineTest {
+  @Test
   public void testStatistics() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -57,29 +34,8 @@ public class StatisticsGeneratorTest extends TestCase {
     args[1] = "-s";
     args[2] = "-reportformat";
     args[3] = "'html,json,xml'";
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
 
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
     String xmlFile = path + "/summary.xml";
@@ -91,36 +47,15 @@ public class StatisticsGeneratorTest extends TestCase {
     assertHTML(htmlFile, 1);
   }
 
+  @Test
   public void testStatistics2() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/";
     args[1] = "-s";
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
 
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    //MainApp.main(args);
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
     String xmlFile = path + "/summary.xml";

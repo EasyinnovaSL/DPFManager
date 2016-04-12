@@ -1,46 +1,32 @@
 /**
- * <h1>TiffConformanceChecker.java</h1> 
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at
- * <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>TiffConformanceChecker.java</h1> <p> This program is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
+ * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
+ * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
+ * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Víctor Muñoz Solà
  * @version 1.0
  * @since 23/7/2015
- *
  */
 
 package dpfmanager.conformancechecker.tiff;
 
-import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.ConformanceChecker;
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
-import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.modules.conformancechecker.core.ProcessInput;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
@@ -49,7 +35,7 @@ import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.reader.TiffReader;
 
-import org.apache.logging.log4j.Level;
+import org.apache.commons.io.FileUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.w3c.dom.Document;
@@ -62,10 +48,10 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
-import java.nio.ByteOrder;
-
 import java.io.StringWriter;
+import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -201,7 +187,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
     ArrayList<String> extensions = new ArrayList<String>();
     NodeList nodelist = doc.getElementsByTagName("extension");
-    for (int i=0;i<nodelist.getLength();i++) {
+    for (int i = 0; i < nodelist.getLength(); i++) {
       Node node = nodelist.item(i);
       extensions.add(node.getFirstChild().getNodeValue());
     }
@@ -214,7 +200,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
     ArrayList<String> standards = new ArrayList<String>();
     NodeList nodelist = doc.getElementsByTagName("standard");
-    for (int i=0;i<nodelist.getLength();i++) {
+    for (int i = 0; i < nodelist.getLength(); i++) {
       Node node = nodelist.item(i);
       standards.add(node.getFirstChild().getNodeValue());
     }
@@ -227,7 +213,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
     ArrayList<Field> fields = new ArrayList<Field>();
     NodeList nodelist = doc.getElementsByTagName("field");
-    for (int i=0;i<nodelist.getLength();i++) {
+    for (int i = 0; i < nodelist.getLength(); i++) {
       Node node = nodelist.item(i);
       NodeList childs = node.getChildNodes();
       Field field = new Field(childs);
@@ -239,10 +225,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
   private static Document convertStringToDocument(String xmlStr) {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder;
-    try
-    {
+    try {
       builder = factory.newDocumentBuilder();
-      Document doc = builder.parse( new InputSource( new StringReader( xmlStr ) ) );
+      Document doc = builder.parse(new InputSource(new StringReader(xmlStr)));
       return doc;
     } catch (Exception e) {
       e.printStackTrace();
@@ -263,7 +248,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
    * @param content                   the content of the element
    */
   static void addElement(Document doc, Element conformenceCheckerElement, String name,
-      String content) {
+                         String content) {
     Element element = doc.createElement(name);
     element.setTextContent(content);
     conformenceCheckerElement.appendChild(element);
@@ -427,7 +412,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           boolean checkIT1 = config.getIsos().contains("Tiff/IT-1");
           boolean checkIT2 = config.getIsos().contains("Tiff/IT-2");
           boolean checkPC = false;
-          if (config.getRules() != null){
+          if (config.getRules() != null) {
             checkPC = config.getRules().getRules().size() > 0;
           }
 
@@ -464,7 +449,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           ir.checkPC = checkPC;
           Logger.println("Internal report created");
 
-          tr=null;
+          tr = null;
           System.gc();
           return ir;
         default:
@@ -475,7 +460,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       Logger.println("Error loading Tiff library dependencies (tags)");
     } catch (ReadIccConfigIOException e) {
       Logger.println("Error loading Tiff library dependencies (icc)");
-    } catch (OutOfMemoryError error){
+    } catch (OutOfMemoryError error) {
       Logger.println("Out of memory");
     } catch (ParserConfigurationException e) {
       Logger.println("Error in Tiff file (1)");
@@ -509,34 +494,51 @@ public class TiffConformanceChecker extends ConformanceChecker {
    * Executes the tiff conformance checker and returns an XML string with the result.
    * A feedback report is transparently sent to the DPF Manager development team (only for testing purposes).
    *
-   * @param path the path to the TIFF file
+   * @param input the path to the TIFF file
    */
-  public static String RunTiffConformanceCheckerAndSendReport(String path) {
-    String internalReportFolder = ReportGenerator.createReportPath();
+  public static String RunTiffConformanceCheckerAndSendReport(String input) {
     String report_xml = null;
     try {
-      ProcessInput pi = new ProcessInput();
-      ArrayList<String> files = new ArrayList<String>();
-      files.add(path);
-      Configuration config = new Configuration();
-      config = new Configuration(null, null, new ArrayList<>());
-      config.getFormats().add("XML");
-      config.getIsos().add("Baseline");
-      config.getIsos().add("Tiff/EP");
-      config.getIsos().add("Tiff/IT");
-      String reportFolder = pi.ProcessFiles(files, config, internalReportFolder);
-      String summary_report = reportFolder + "/summary.xml";
-      try {
-        if (new File(summary_report).exists()) {
-          byte[] encoded = Files.readAllBytes(Paths.get(summary_report));
-          report_xml = new String(encoded);
-        }
-      } catch (Exception ex) {
-        ex.printStackTrace();
+      // Get tmp output folder and config file
+      String config = System.getProperty("java.io.tmpdir") + "config.dpf";
+
+      // Create config file
+      File configFile = new File(config);
+      if (configFile.exists()){
+        configFile.delete();
       }
-    } catch (Exception ex) {
-      ex.printStackTrace();
+      PrintWriter bw = new PrintWriter(configFile);
+      bw.write("ISO\tBaseline\n" +
+          "ISO\tTiff/EP\n" +
+          "ISO\tTiff/IT\n" +
+          "FORMAT\tXML\n");
+      bw.close();
+
+      // Console parameters
+      String[] args = new String[4];
+      args[0] = "-configuration";
+      args[1] = config;
+      args[2] = "-s";
+      args[3] = input;
+
+      // Run console app
+      MainConsoleApp.main(args);
+
+      // Get the xml summary report
+      String lastReport = ReportGenerator.getLastReportPath();
+      String summary_report = lastReport + "summary.xml";
+      if (new File(summary_report).exists()) {
+        byte[] encoded = Files.readAllBytes(Paths.get(summary_report));
+        report_xml = new String(encoded);
+      }
+
+      // Delete temp files
+      configFile.delete();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
     }
+
     return report_xml;
   }
 

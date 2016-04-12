@@ -39,7 +39,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     // Send to conformance checker module
     String input = getView().getInputText().getText();
     String path = getFileByPath(radio.getText()).getAbsolutePath();
-    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path));
+    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.GUI, input, path,1));
   }
 
   public void selectInputAction() {

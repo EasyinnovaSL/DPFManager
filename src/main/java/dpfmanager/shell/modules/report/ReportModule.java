@@ -9,6 +9,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -56,7 +57,7 @@ public class ReportModule extends DpfModule {
     if (status.isInit()){
       service.initNewReportFolder(status.getFolder());
     } else {
-      service.deleteTempFiles();
+      service.getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.DELETE));
       showReportsGui(status.getFolder(), status.getFormats());
     }
   }

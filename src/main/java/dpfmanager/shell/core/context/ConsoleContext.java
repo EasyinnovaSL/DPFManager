@@ -1,6 +1,6 @@
 package dpfmanager.shell.core.context;
 
-import dpfmanager.shell.application.launcher.noui.AppContext;
+import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.messages.DpfMessage;
 
@@ -13,8 +13,8 @@ public class ConsoleContext implements DpfContext {
 
   private ApplicationContext context;
 
-  public ConsoleContext(){
-    context = AppContext.getApplicationContext();
+  public ConsoleContext(ApplicationContext c){
+    context = c;
   }
 
   @Override

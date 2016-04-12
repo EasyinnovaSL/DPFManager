@@ -37,16 +37,22 @@ public class ConformanceCheckerModule extends DpfModule {
   @Override
   public void handleMessage(DpfMessage dpfMessage){
     if (dpfMessage.isTypeOf(ConformanceMessage.class)){
-      String path = dpfMessage.getTypedMessage(ConformanceMessage.class).getPath();
-      String input = dpfMessage.getTypedMessage(ConformanceMessage.class).getInput();
-      if (!service.readConfig(path)) {
-        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
-      } else {
-        // Show loading
-        getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
-        getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
+      ConformanceMessage cm = dpfMessage.getTypedMessage(ConformanceMessage.class);
+      if (cm.isGui()) {
+        String path = cm.getPath();
+        String input = cm.getInput();
+        if (!service.readConfig(path)) {
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
+        } else {
+          // Show loading
+          getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
+          getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
 
-        service.startCheck(input);
+          service.setParameters(null, cm.getRecursive(), null);
+          service.startCheck(input);
+        }
+      } else if (cm.isDelete()){
+        service.deleteTmpFiles();
       }
     }
   }

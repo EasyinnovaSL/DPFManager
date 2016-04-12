@@ -1,26 +1,26 @@
 package dpfmanager.commandline;
 
-import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.interfaces.console.CommandLineApp;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
-import javafx.application.Application;
+import static junit.framework.TestCase.assertEquals;
 
-import junit.framework.TestCase;
+import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.app.MainConsoleApp;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by easy on 30/03/2016.
  */
-public class IsosTest extends TestCase {
+public class IsosTest extends CommandLineTest {
+  @Test
   public void testAllIsos() {
     try {
       DPFManagerProperties.setFeedback(false);
@@ -43,32 +43,15 @@ public class IsosTest extends TestCase {
           "FORMAT\tHTML\n");
       bw.close();
 
-      ArrayList<String> listRaw = new ArrayList<String>();
-      listRaw.add("src/test/resources/Small/Bilevel.tif");
-      listRaw.add("-reportformat");
-      listRaw.add("html");
-      listRaw.add("-configuration");
-      listRaw.add(configfile);
 
-      Application.Parameters params = new Application.Parameters() {
-        @Override
-        public List<String> getRaw() {
-          return listRaw;
-        }
+      String[] args = new String[5];
+      args[0] = "src/test/resources/Small/Bilevel.tif";
+      args[1] = "-reportformat";
+      args[2] = "html";
+      args[3] = "-configuration";
+      args[4] = configfile;
 
-        @Override
-        public List<String> getUnnamed() {
-          return listRaw;
-        }
-
-        @Override
-        public Map<String, String> getNamed() {
-          return null;
-        }
-      };
-
-      CommandLineApp cl = new CommandLineApp(params);
-      cl.launch();
+      MainConsoleApp.main(args);
 
       String path = ReportGenerator.createReportPath(true);
       File directori = new File(path);
@@ -92,7 +75,7 @@ public class IsosTest extends TestCase {
       new File(configfile).delete();
       FileUtils.deleteDirectory(new File("temp"));
     } catch (Exception ex ){
-      assertEquals(7, 6);
+      assertEquals(true, false);
     }
   }
 }

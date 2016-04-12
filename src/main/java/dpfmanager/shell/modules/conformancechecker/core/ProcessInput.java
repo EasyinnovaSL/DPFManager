@@ -38,9 +38,15 @@ import java.util.zip.ZipFile;
  * Created by Victor Muñoz on 04/09/2015.
  */
 public class ProcessInput {
+
   private boolean outOfmemory = false;
-  private int idReport;
   private DpfContext context;
+  private int idReport;
+  private List<String> tempFiles;
+
+  public ProcessInput(){
+    tempFiles = new ArrayList<>();
+  }
 
   /**
    * Sets the logger.
@@ -186,6 +192,7 @@ public class ProcessInput {
             InputStream stream = zipFile.getInputStream(entry);
             // Extracts the file and creates a temporary file to store it and process it
             String filename2 = createTempFile(internalReportFolder, entry.getName(), stream);
+            tempFiles.add(filename2);
             ir = cc.processFile(filename2, entry.getName(), internalReportFolder, config, idReport);
             if (ir != null) {
               indReports.add(ir);
@@ -274,6 +281,12 @@ public class ProcessInput {
     }
     outStream.close();
     return filename2;
+  }
+
+  public List<String> getTempFiles() {
+    List<String> aux = new ArrayList<>(tempFiles);
+    tempFiles.clear();
+    return aux;
   }
 
   /**

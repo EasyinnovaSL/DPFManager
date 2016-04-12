@@ -4,6 +4,8 @@ import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -38,7 +40,13 @@ public class ReportService extends DpfService {
 
   @PostConstruct
   public void init() {
+    // No context yet
     generator = new ReportGenerator();
+    idReport = 1;
+  }
+
+  @Override
+  protected void handleContext(DpfContext context){
     generator.setContext(context);
   }
 
@@ -50,13 +58,14 @@ public class ReportService extends DpfService {
   // Main function
   public void tractGlobalMessage(GlobalReportMessage message){
     createGlobalReports(message.getGlobal(), message.getConfig());
+    config =  message.getConfig();
   }
 
   private void createIndividualReports(List<IndividualReport> individuals, Configuration config){
     for (IndividualReport ir : individuals) {
       // Generate report
       String outputfile = generator.getReportName(internalReportFolder, ir.getReportFileName(), idReport);
-      generator.generateIndividualReport(outputfile, ir, config);
+      generator.generateIndividualReport(outputfile, ir, config, internalReportFolder);
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Created report '" + outputfile + "'"));
       idReport++;
     }
@@ -84,11 +93,6 @@ public class ReportService extends DpfService {
 
   public void initNewReportFolder(String folder){
     internalReportFolder = folder;
-    idReport = 1;
-  }
-
-  public void deleteTempFiles(){
-
   }
 
   public String getInternalReportFolder() {

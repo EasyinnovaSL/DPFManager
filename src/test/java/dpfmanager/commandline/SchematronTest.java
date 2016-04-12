@@ -1,16 +1,13 @@
 package dpfmanager.commandline;
 
+import static junit.framework.TestCase.assertEquals;
+
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
-import dpfmanager.shell.interfaces.console.CommandLineApp;
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import javafx.application.Application;
 
-import com.easyinnova.tiff.reader.TiffReader;
-
-import junit.framework.TestCase;
-
-import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -18,32 +15,12 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by easy on 01/10/2015.
  */
-public class SchematronTest extends TestCase {
-  TiffReader tr;
-
-  /**
-   * Pre test.
-   */
-  @Before
-  public void PreTest() {
-    DPFManagerProperties.setFeedback(false);
-
-    boolean ok = true;
-    try {
-      tr = new TiffReader();
-    } catch (Exception e) {
-      ok = false;
-    }
-    assertEquals(ok, true);
-  }
-
+public class SchematronTest extends CommandLineTest {
+  @Test
   public void testSchematron1() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -51,29 +28,7 @@ public class SchematronTest extends TestCase {
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
 
@@ -100,6 +55,7 @@ public class SchematronTest extends TestCase {
     assertEquals(true, result.indexOf("failed") == -1);
   }
 
+  @Test
   public void testSchematron2() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
@@ -107,29 +63,7 @@ public class SchematronTest extends TestCase {
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
 
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
 
@@ -155,35 +89,15 @@ public class SchematronTest extends TestCase {
     assertEquals(true, result.indexOf("failed") != -1);
   }
 
+  @Test
   public void testReport() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
     String[] args = new String[2];
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
-    Application.Parameters params = new Application.Parameters() {
-      @Override
-      public List<String> getRaw() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
 
-      @Override
-      public List<String> getUnnamed() {
-        ArrayList<String> listRaw = new ArrayList<String>();
-        for (int i=0;i<args.length;i++) listRaw.add(args[i]);
-        return listRaw;
-      }
-
-      @Override
-      public Map<String, String> getNamed() {
-        return null;
-      }
-    };
-
-    CommandLineApp cl = new CommandLineApp(params);
-    cl.launch();
+    MainConsoleApp.main(args);
 
     String path = getPath();
     String xmlFile = path + "/1-Bilevel.tif.xml";

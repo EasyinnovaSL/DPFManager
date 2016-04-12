@@ -1,4 +1,4 @@
-package dpfmanager.shell.application.launcher.noui;
+package dpfmanager.shell.interfaces.console;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

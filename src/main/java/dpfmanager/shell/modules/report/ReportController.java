@@ -3,7 +3,9 @@ package dpfmanager.shell.modules.report;
 import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
+import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.core.MessagesService;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -15,6 +17,7 @@ import dpfmanager.shell.modules.report.messages.StatusMessage;
 
 import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import java.awt.*;
@@ -33,6 +36,9 @@ public class ReportController extends DpfSpringController {
   @Autowired
   private ReportService service;
 
+  @Autowired
+  private ApplicationContext appContext;
+
   @Override
   public void handleMessage(DpfMessage dpfMessage){
     if (dpfMessage.isTypeOf(StatusMessage.class)){
@@ -45,14 +51,12 @@ public class ReportController extends DpfSpringController {
   }
 
   private void tractStatusMessage(StatusMessage status){
-    boolean silence = true;//TODO read param
-
     if (status.isInit()){
       // Init new check
       service.initNewReportFolder(status.getFolder());
-    } else if (!silence) {
+    } else {
       // Finish check
-      if (!silence) {
+      if (!status.isSilence()) {
         String name = "report.html";
         String htmlPath = service.getInternalReportFolder() + name;
         String output = service.getConfig().getOutput();
@@ -64,6 +68,7 @@ public class ReportController extends DpfSpringController {
           showToUser(htmlPath);
         }
       }
+      service.getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.DELETE));
     }
   }
 
@@ -84,7 +89,8 @@ public class ReportController extends DpfSpringController {
 
   @PostConstruct
   public void init( ) {
-    service.setContext(new ConsoleContext());
+    DpfContext dpfContext = new ConsoleContext(appContext);
+    service.setContext(dpfContext);
   }
 
 }
