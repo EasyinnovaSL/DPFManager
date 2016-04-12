@@ -170,10 +170,12 @@ public class IndividualReport {
    *
    * @param name               the name
    * @param path               the path
+   * @param reportFilename               the path
    */
-  public IndividualReport(String name, String path) {
+  public IndividualReport(String name, String path, String reportFilename) {
     filename = name;
     filepath = path;
+    this.reportFilename = reportFilename;
     containsData = false;
   }
 

@@ -563,7 +563,7 @@ public class ReportGenerator {
     if (ir.getConformanceCheckerReport() != null) {
       output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir);
       if (config.getFormats().contains("JSON")) {
-        ReportJson.xmlToJson(output, jsonFileStr);
+        reportJson.xmlToJson(output, jsonFileStr, this);
       }
       return;
     }
