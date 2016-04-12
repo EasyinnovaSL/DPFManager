@@ -9,6 +9,13 @@ body{
 	background-color: #333333;
 }
 
+.preview-image {
+	max-width: 100%;
+	max-height: 200px;
+	width: auto;
+	height: auto;
+}
+
 img {
 	width: 100%;
 }

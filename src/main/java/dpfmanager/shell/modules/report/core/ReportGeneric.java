@@ -48,12 +48,22 @@ public class ReportGeneric {
       image = ImageIO.read(input);
 
       double factor = 1.0;
+
+      // Scale width
       int width = image.getWidth();
+      int height = image.getHeight();
       if (width > 500) {
         factor = 500.0 / width;
       }
-      int height = (int) (image.getHeight() * factor);
+      height = (int) (height * factor);
       width = (int) (width * factor);
+
+      // Scale height
+      if (height > 500) {
+        factor = 500.0 / height;
+        height = (int) (height * factor);
+        width = (int) (width * factor);
+      }
 
       BufferedImage img = scale(image, width, height);
 
