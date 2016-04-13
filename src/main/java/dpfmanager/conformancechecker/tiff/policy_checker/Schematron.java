@@ -62,17 +62,6 @@ public class Schematron extends CamelTestSupport {
   }
 
   /**
-   * Test xml string.
-   *
-   * @param xmlFile the xml file
-   * @return the string
-   * @throws Exception the exception
-   */
-  public String testXML(String xmlFile) throws Exception {
-    return testXML(xmlFile, "sch/rules.sch");
-  }
-
-  /**
    * Convert string.
    *
    * @param txt the txt

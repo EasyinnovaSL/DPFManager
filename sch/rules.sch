@@ -24,7 +24,6 @@
   <pattern>
    <rule context="report">
 	<assert test="ImageWidth">Image width is mandatory</assert>
-	<assert test="ImageHeight">Image height is mandatory</assert>
 	<assert test="PixelDensity">Pixel density is mandatory</assert>
    </rule>
    <rule context="pixeldensity">

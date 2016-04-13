@@ -2,5 +2,5 @@ ISO	Tiff/EP
 ISO	Tiff/IT-1
 FORMAT	HTML
 FORMAT	PDF
-RULE	ImageHeight,<,1000
+RULE	ImageHeight,<,1000,0
 FIX	Artist,Add Tag,EasyTest
