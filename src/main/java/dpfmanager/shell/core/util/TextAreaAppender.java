@@ -1,5 +1,6 @@
 package dpfmanager.shell.core.util;
 
+import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,16 +49,24 @@ public class TextAreaAppender extends AbstractAppender {
 
   @Override
   public void append(LogEvent event) {
-    if (textArea != null) {
-      String message = new String(this.getLayout().toByteArray(event));
-      int count = StringUtils.countMatches(textArea.getText(), "\n");
-      if (count < maxLines && maxLines != 0) {
-        textArea.appendText(message);
-      } else {
-        textArea.clear();
-        textArea.appendText(message);
+    Layout layout = this.getLayout();
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        if (textArea != null) {
+          String message = new String(layout.toByteArray(event));
+          int count = StringUtils.countMatches(textArea.getText(), "\n");
+          if (count < maxLines && maxLines != 0) {
+            textArea.appendText(message);
+          } else {
+            textArea.clear();
+            textArea.autosize();
+            textArea.appendText(message);
+          }
+        }
       }
-    }
+    });
+
   }
 
   // Add the target TextArea to be populated and updated by the logging information.

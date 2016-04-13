@@ -1,12 +1,10 @@
 package dpfmanager.shell.modules.messages;
 
-import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.CustomErrorHandler;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.util.TextAreaAppender;
-import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.messages.core.AlertsManager;
 import dpfmanager.shell.modules.messages.core.MessagesService;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
@@ -16,12 +14,8 @@ import dpfmanager.shell.modules.messages.messages.LogMessage;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.MarkerManager;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.Component;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;

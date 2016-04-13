@@ -119,20 +119,21 @@ public class ConsoleController {
         }
       }
 
-      System.out.print("Extensions: ");
+      printOut("Extensions: ");
       NodeList extensions = doc.getElementsByTagName("extension");
+      String extensionsStr = "";
       if (extensions != null && extensions.getLength() > 0) {
         for (int i = 0; i < extensions.getLength(); i++) {
           NodeList subList = extensions.item(i).getChildNodes();
           if (subList != null && subList.getLength() > 0) {
             if (i > 0) {
-              System.out.print(", ");
+              extensionsStr += ", ";
             }
-            System.out.print(subList.item(0).getNodeValue());
+            extensionsStr += subList.item(0).getNodeValue();
           }
         }
       }
-      printOut("");
+      printOut(extensionsStr);
 
       NodeList standards = doc.getElementsByTagName("standard");
       if (standards != null && standards.getLength() > 0) {
@@ -152,7 +153,7 @@ public class ConsoleController {
       }
 
     } catch (Exception e) {
-      System.err.println("Failed communication with conformance checker: " + e.getMessage());
+      printOut("Failed communication with conformance checker: " + e.getMessage());
     }
   }
 
