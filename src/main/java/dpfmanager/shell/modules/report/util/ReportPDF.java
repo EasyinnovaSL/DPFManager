@@ -119,8 +119,8 @@ public class ReportPDF extends ReportGeneric {
       int it0Err = ir.getNItErr(0), it0War = ir.getNItWar(0);
       int it1Err = ir.getNItErr(1), it2War = ir.getNItWar(1);
       int it2Err = ir.getNItErr(2), it1War = ir.getNItWar(2);
-      ValidationResult pcValidation = ir.getPcValidation();
-      int pcErr = pcValidation.getErrors().size(), pcWar = pcValidation.getWarnings().size();
+      List<RuleResult> pcValidation = ir.getPcValidation();
+      int pcErr = ir.getPCErrors().size(), pcWar = ir.getPCWarnings().size();
 
       PDDocument document = new PDDocument();
 
@@ -234,9 +234,9 @@ public class ReportPDF extends ReportGeneric {
       }
       pos_y -= 20;
       writeText(contentStream, "Policy checker", pos_x + image_width + 10, pos_y, font, font_size);
-      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getErrors().size(), pcErr) : "";
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCErrors().size(), pcErr) : "";
       writeText(contentStream, pcErr + dif, pos_x + image_width + 150, pos_y, font, font_size, pcErr > 0 ? Color.red : Color.black);
-      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getWarnings().size(), pcWar) : "";
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCWarnings().size(), pcWar) : "";
       writeText(contentStream, pcWar + dif, pos_x + image_width + 200, pos_y, font, font_size, pcWar > 0 ? Color.orange : Color.black);
 
       if (newPageNeeded(pos_y)) {
@@ -682,7 +682,7 @@ public class ReportPDF extends ReportGeneric {
     return pos_y;
   }
 
-  int writeErrorsWarnings2(PDDocument document, PDFont font, List<ValidationEvent> errors, List<ValidationEvent> warnings, int pos_x, int posy, String type) throws Exception{
+  int writeErrorsWarnings2(PDDocument document, PDFont font, List<RuleResult> errors, List<RuleResult> warnings, int pos_x, int posy, String type) throws Exception{
     int total = 0;
     int font_size = 10;
     int pos_y = posy;
@@ -697,7 +697,7 @@ public class ReportPDF extends ReportGeneric {
       writeText(contentStream, "Description", pos_x + 100, pos_y, font, font_size);
     }
     if (errors != null) {
-      for (ValidationEvent val : errors) {
+      for (RuleResult val : errors) {
         pos_y -= 20;
         if (newPageNeeded(pos_y)) {
           contentStream = newPage(contentStream, document);
@@ -710,7 +710,7 @@ public class ReportPDF extends ReportGeneric {
       }
     }
     if (warnings != null) {
-      for (ValidationEvent val : warnings) {
+      for (RuleResult val : warnings) {
         pos_y -= 20;
         if (newPageNeeded(pos_y)) {
           contentStream = newPage(contentStream, document);

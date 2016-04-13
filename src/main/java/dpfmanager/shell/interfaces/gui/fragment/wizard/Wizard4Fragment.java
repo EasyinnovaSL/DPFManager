@@ -74,8 +74,48 @@ public class Wizard4Fragment {
 
   public void saveFixes(Configuration config) {
     Fixes fixes = config.getFixes();
-    fixes.ReadFixes(fixesBox);
+    fixes.set(readFixesFromGui(fixesBox));
     fixes.ReadAutofixes(autoFixesBox);
+  }
+
+  public ArrayList<Fix> readFixesFromGui(VBox fixesBox) {
+    ArrayList<Fix> fixes = new ArrayList<Fix>();
+    boolean wrong_format = false;
+    for (Node n : fixesBox.getChildren()) {
+      HBox hbox = (HBox) n;
+      String action = null, tag = null, value = null;
+      int size = hbox.getChildren().size();
+      if (size > 4 || size < 3) {
+        wrong_format = true;
+      } else {
+        ComboBox comboBox = (ComboBox) hbox.getChildren().get(0);
+        if (comboBox.getValue() != null) {
+          action = comboBox.getValue().toString();
+        } else {
+          wrong_format = true;
+        }
+
+
+        ComboBox comboOp = (ComboBox) hbox.getChildren().get(1);
+        if (comboOp.getValue() != null) {
+          tag = comboOp.getValue().toString();
+        } else {
+          wrong_format = true;
+        }
+
+
+        if (size == 4) {
+          TextField textVal = (TextField) hbox.getChildren().get(2);
+          value = textVal.getText();
+        }
+      }
+
+      if (!wrong_format) {
+        Fix fix = new Fix(tag, action, value);
+        fixes.add(fix);
+      }
+    }
+    return fixes;
   }
 
   public void loadFixes(Configuration config) {

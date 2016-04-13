@@ -177,4 +177,159 @@ public class PolicyTest extends CommandLineTest {
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }
+
+  @Test
+  public void testWidthKo() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String path = "temp/output";
+    int idx = 1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String configfile = "temp/xx.cfg";
+    idx = 0;
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
+    bw.write("ISO\tBaseline\n" +
+        "FORMAT\tXML\n" +
+        "RULE\tImageWidth,>,10000,0\n");
+    bw.close();
+
+    String[] args = new String[6];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+    args[4] = "-configuration";
+    args[5] = configfile;
+
+    MainConsoleApp.main(args);
+
+    File directori = new File(path);
+    assertEquals(directori.exists(), true);
+
+    String xml_orig = null;
+    for (String file : directori.list()) {
+      if (file.equals("1-Bilevel.tif.xml")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
+        xml_orig = new String(encoded);
+      }
+    }
+    assertEquals(xml_orig != null, true);
+    assertEquals(xml_orig.contains("failed-assert"), true);
+    assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
+  }
+
+  @Test
+  public void testWidthOk() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String path = "temp/output";
+    int idx = 1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String configfile = "temp/xx.cfg";
+    idx = 0;
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
+    bw.write("ISO\tBaseline\n" +
+        "FORMAT\tXML\n" +
+        "RULE\tImageWidth,>,100\n");
+    bw.close();
+
+    String[] args = new String[6];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+    args[4] = "-configuration";
+    args[5] = configfile;
+
+    MainConsoleApp.main(args);
+
+    File directori = new File(path);
+    assertEquals(directori.exists(), true);
+
+    String xml_orig = null;
+    for (String file : directori.list()) {
+      if (file.equals("1-Bilevel.tif.xml")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
+        xml_orig = new String(encoded);
+      }
+    }
+    assertEquals(xml_orig != null, true);
+    assertEquals(xml_orig.contains("failed-assert"), false);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
+  }
+
+  @Test
+  public void testWidthWarning() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String path = "temp/output";
+    int idx = 1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String configfile = "temp/xx.cfg";
+    idx = 0;
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
+    bw.write("ISO\tBaseline\n" +
+        "FORMAT\tXML\n" +
+        "RULE\tImageWidth,<,10000,1\n");
+    bw.close();
+
+    String[] args = new String[6];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+    args[4] = "-configuration";
+    args[5] = configfile;
+
+    MainConsoleApp.main(args);
+
+    File directori = new File(path);
+    assertEquals(directori.exists(), true);
+
+    String xml_orig = null;
+    for (String file : directori.list()) {
+      if (file.equals("1-Bilevel.tif.xml")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
+        xml_orig = new String(encoded);
+      }
+    }
+    assertEquals(xml_orig != null, true);
+    assertEquals(xml_orig.contains("failed-assert"), false);
+    assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
+  }
 }

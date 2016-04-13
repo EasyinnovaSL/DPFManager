@@ -62,17 +62,6 @@ public class Schematron extends CamelTestSupport {
   }
 
   /**
-   * Test xml string.
-   *
-   * @param xmlFile the xml file
-   * @return the string
-   * @throws Exception the exception
-   */
-  public String testXML(String xmlFile) throws Exception {
-    return testXML(xmlFile, "sch/rules.sch");
-  }
-
-  /**
    * Convert string.
    *
    * @param txt the txt
@@ -110,7 +99,11 @@ public class Schematron extends CamelTestSupport {
           Element newrule = doc.createElementNS(pattern.getNamespaceURI(), "rule");
           newrule.setAttribute("context", r.getTag());
 
-          Element assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
+          Element assertion;
+          if (r.getWarning())
+            assertion = doc.createElementNS(newrule.getNamespaceURI(), "report");
+          else
+            assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
           String sval = r.getValue();
           if (r.getType().equals("string")) sval = "'" + sval + "'";
           assertion.setAttribute("test", "@" + r.getTag() + " " + convert(r.getOperator()) + " " + sval);

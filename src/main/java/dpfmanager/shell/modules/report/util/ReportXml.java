@@ -288,14 +288,7 @@ public class ReportXml extends ReportGeneric {
       report.appendChild(tiffStructureElement);
 
       // basic info
-      Element infoElement = doc.createElement("ImageWidth");
-      infoElement.setAttribute("ImageWidth", "" + ir.getWidth());
-      infoElement.setTextContent(ir.getWidth());
-      report.appendChild(infoElement);
-      infoElement = doc.createElement("ImageHeight");
-      infoElement.setAttribute("ImageHeight", "" + ir.getHeight());
-      infoElement.setTextContent(ir.getHeight());
-      report.appendChild(infoElement);
+      Element infoElement;
       infoElement = doc.createElement("bitspersample");
       infoElement.setTextContent(ir.getBitsPerSample());
       report.appendChild(infoElement);

@@ -25,6 +25,7 @@ import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.IndividualReport;
@@ -436,6 +437,10 @@ public class TiffConformanceChecker extends ConformanceChecker {
           }
           if (checkIT2) {
             it2Validation = getITValidation(2, tr);
+          }
+          if (checkPC) {
+            ArrayList<RuleResult> pcValidation = new ArrayList<>();
+
           }
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");

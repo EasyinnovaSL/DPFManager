@@ -92,6 +92,10 @@ public class GlobalReport {
    * The Has bl.
    */
   boolean hasBl;
+  /**
+   * The Has pc.
+   */
+  boolean hasPc;
 
   /**
    * Instantiates a new global report.
@@ -109,6 +113,7 @@ public class GlobalReport {
     hasIt1 = false;
     hasIt2 = false;
     hasBl = false;
+    hasPc = false;
   }
 
   /**
@@ -145,6 +150,15 @@ public class GlobalReport {
    */
   public boolean getHasIt2() {
     return hasIt2;
+  }
+
+  /**
+   * Gets has pc.
+   *
+   * @return the has pc
+   */
+  public boolean getHasPc() {
+    return hasPc;
   }
 
   /**
@@ -190,7 +204,10 @@ public class GlobalReport {
         if (ir.getBaselineErrors().size()==0) nreportsBlOk++;
         hasBl = true;
       }
-      if (ir.getPCErrors().size() == 0) nreportsPcOk++;
+      if (ir.hasPcValidation()) {
+        if (ir.getPCErrors().size() == 0) nreportsPcOk++;
+        hasPc = true;
+      }
     }
   }
 
@@ -226,6 +243,9 @@ public class GlobalReport {
       }
       if (ir.hasBlValidation()) {
         if (ir.getBaselineErrors().size() > 0) ok = false;
+      }
+      if (ir.hasPcValidation()) {
+        if (ir.getPCErrors().size() > 0) ok = false;
       }
       if (ok) n++;
     }
@@ -348,4 +368,15 @@ public class GlobalReport {
     return reports;
   }
 
+  public void computePcChecks() {
+    hasPc = false;
+    for (IndividualReport ir : getIndividualReports()) {
+      if (ir.hasPcValidation()) {
+        hasPc = true;
+        if (ir.getPCErrors().size() == 0) {
+          nreportsPcOk++;
+        }
+      }
+    }
+  }
 }

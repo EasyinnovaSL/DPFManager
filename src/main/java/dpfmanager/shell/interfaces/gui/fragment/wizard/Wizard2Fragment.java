@@ -14,7 +14,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -26,6 +28,7 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  * Created by Adrià Llorens on 08/03/2016.
@@ -58,7 +61,57 @@ public class Wizard2Fragment {
 
   public void saveRules(Configuration config) {
     Rules rules = config.getRules();
-    rules.Read(rulesBox);
+    rules.set(readFromGui(rulesBox));
+  }
+
+  public ArrayList<Rule> readFromGui(VBox rulesBox) {
+    ArrayList<Rule> rules = new ArrayList<Rule>();
+    boolean wrong_format = false;
+    for (Node n : rulesBox.getChildren()){
+      HBox hbox = (HBox) n;
+      String tag = null, operator = null, value = null;
+      boolean bwarning = false;
+      if (hbox.getChildren().size() != 5){
+        wrong_format = true;
+      } else {
+        CheckBox warning = (CheckBox) hbox.getChildren().get(0);
+        bwarning = warning.isSelected();
+
+        ComboBox comboBox = (ComboBox) hbox.getChildren().get(1);
+        if (comboBox.getValue() != null) {
+          tag = comboBox.getValue().toString();
+        }
+        else{
+          wrong_format = true;
+        }
+
+        ComboBox comboOp = (ComboBox) hbox.getChildren().get(2);
+        if (comboOp.getValue() != null) {
+          operator = comboOp.getValue().toString();
+        }
+        else{
+          wrong_format = true;
+        }
+
+        Node nodeVal = hbox.getChildren().get(3);
+        if (nodeVal instanceof ComboBox) {
+          ComboBox comboVal = (ComboBox) nodeVal;
+          value = comboVal.getValue().toString();
+        } else if (nodeVal instanceof TextField) {
+          TextField textVal = (TextField) nodeVal;
+          value = textVal.getText();
+          if (value.isEmpty() || Pattern.matches("[a-zA-Z ]+", value)) {
+            wrong_format = true;
+          }
+        }
+      }
+
+      if (!wrong_format) {
+        Rule rule = new Rule(tag, operator, value, bwarning);
+        rules.add(rule);
+      }
+    }
+    return rules;
   }
 
   public void loadRules(Configuration config) {
@@ -78,6 +131,11 @@ public class Wizard2Fragment {
     hbox.setAlignment(Pos.CENTER_LEFT);
     hbox.setId("ID" + getModel().getNextId());
     hbox.setSpacing(5);
+
+    // Checkboc
+    CheckBox warning = new CheckBox();
+    warning.setText("Warning");
+    warning.getStyleClass().add("checkreport");
 
     // Add combobox
     ComboBox comboBox = new ComboBox();
@@ -106,14 +164,14 @@ public class Wizard2Fragment {
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue ov, String t, String item) {
-        if (hbox.getChildren().size() == 2) {
+        if (hbox.getChildren().size() == 3) {
           addOperator(item, hbox, remove, null, null);
         }
       }
     });
 
     //Add to view
-    hbox.getChildren().addAll(comboBox, remove);
+    hbox.getChildren().addAll(warning, comboBox, remove);
     rulesBox.getChildren().add(hbox);
     rulesBox.setMargin(hbox, new Insets(0, 0, 15, 0));
 

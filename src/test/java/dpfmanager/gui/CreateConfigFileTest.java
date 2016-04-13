@@ -73,7 +73,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     // Create temp folder
     createTempFolder();
 
-    // 6 - Save the report
+    // 6 - Save the file
     GuiWorkbench.setTestParam("saveConfig", outputPath);
     clickOnScroll("#continueButton");
 
