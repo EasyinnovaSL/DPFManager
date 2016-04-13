@@ -47,7 +47,7 @@ public class MessagesService extends DpfService {
   }
 
   public void exceptionMessage(ExceptionMessage em) {
-    LogManager.getLogger("").log(Level.ERROR, "An exception ocurred!");
+    LogManager.getLogger("").log(Level.ERROR, em.getHeader());
     systemErr(em.getException().getMessage());
     systemErr(AlertsManager.getExceptionText(em.getException()));
   }
