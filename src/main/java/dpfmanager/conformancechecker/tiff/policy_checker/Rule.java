@@ -102,7 +102,7 @@ public class Rule {
    */
   public void ReadTxt(String txt) {
     if (txt.contains(",")) {
-      String[] fields = txt.split("'");
+      String[] fields = txt.split(",");
       tag = fields[0];
       operator = fields[1];
       value = fields[2];

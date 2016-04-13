@@ -110,7 +110,11 @@ public class Schematron extends CamelTestSupport {
           Element newrule = doc.createElementNS(pattern.getNamespaceURI(), "rule");
           newrule.setAttribute("context", r.getTag());
 
-          Element assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
+          Element assertion;
+          if (r.getWarning())
+            assertion = doc.createElementNS(newrule.getNamespaceURI(), "report");
+          else
+            assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
           String sval = r.getValue();
           if (r.getType().equals("string")) sval = "'" + sval + "'";
           assertion.setAttribute("test", "@" + r.getTag() + " " + convert(r.getOperator()) + " " + sval);

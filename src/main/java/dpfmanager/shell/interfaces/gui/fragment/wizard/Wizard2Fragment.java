@@ -164,7 +164,7 @@ public class Wizard2Fragment {
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue ov, String t, String item) {
-        if (hbox.getChildren().size() == 2) {
+        if (hbox.getChildren().size() == 3) {
           addOperator(item, hbox, remove, null, null);
         }
       }

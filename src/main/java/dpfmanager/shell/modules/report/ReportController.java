@@ -77,9 +77,8 @@ public class ReportController extends DpfSpringController {
       try {
         String fullHtmlPath = new File(htmlFile).getAbsolutePath();
         fullHtmlPath = fullHtmlPath.replaceAll("\\\\", "/");
-        Desktop.getDesktop().browse(new URI("file://" + fullHtmlPath.replaceAll(" ", "%20")));
+        Desktop.getDesktop().browse(new URI("file:///" + fullHtmlPath.replaceAll(" ", "%20")));
       } catch (Exception e) {
-        e.printStackTrace();
         service.getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Error opening the bowser with the global report.", e));
       }
     } else {

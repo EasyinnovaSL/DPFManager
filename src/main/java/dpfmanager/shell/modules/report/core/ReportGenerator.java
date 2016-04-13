@@ -33,6 +33,7 @@ package dpfmanager.shell.modules.report.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
@@ -50,6 +51,7 @@ import dpfmanager.shell.modules.report.util.ReportXml;
 
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.ValidationEvent;
 import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
@@ -79,6 +81,7 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -572,10 +575,7 @@ public class ReportGenerator {
     Rules rules = config.getRules();
     if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
     output = reportXml.parseIndividual(xmlFileStr, ir, rules);
-    ValidationResult pcValidation1 = getPcValidation(output);
-    ir.setPCErrors(pcValidation1.getErrors());
-    ir.setPCWarnings(pcValidation1.getWarnings());
-    ir.setPcValidation(pcValidation1);
+    ir.setPcValidation(getPcValidation(output));
     ir.setReportPath(reportName);
 
     if (config.getFormats().contains("HTML")) {
@@ -684,7 +684,7 @@ public class ReportGenerator {
 
         //Make reports
         output = reportXml.parseIndividual(xmlFileStr, ir2, rules);
-        ValidationResult pcValidation2 = getPcValidation(output);
+        ArrayList<RuleResult> pcValidation2 = getPcValidation(output);
         ir2.setPcValidation(pcValidation2);
         ir2.setCompareReport(ir);
 
@@ -712,15 +712,31 @@ public class ReportGenerator {
    * @param output the output
    * @return the pc validation
    */
-  static ValidationResult getPcValidation(String output) {
-    ValidationResult valid = new ValidationResult();
+  static ArrayList<RuleResult> getPcValidation(String output) {
+    ArrayList<RuleResult> valid = new ArrayList<>();
     int index = output.indexOf("<svrl:failed-assert");
     while (index > -1) {
       String text = output.substring(output.indexOf("text>", index));
       text = text.substring(text.indexOf(">") + 1);
       text = text.substring(0, text.indexOf("</"));
       index = output.indexOf("<svrl:failed-assert", index + 1);
-      valid.addErrorLoc(text, "Policy checker");
+      RuleResult val = new RuleResult();
+      val.setWarning(false);
+      val.setMessage(text);
+      val.setLocation("Policy checker");
+      valid.add(val);
+    }
+    index = output.indexOf("<svrl:successful-report");
+    while (index > -1) {
+      String text = output.substring(output.indexOf("text>", index));
+      text = text.substring(text.indexOf(">") + 1);
+      text = text.substring(0, text.indexOf("</"));
+      index = output.indexOf("<svrl:successful-report", index + 1);
+      RuleResult val = new RuleResult();
+      val.setWarning(true);
+      val.setMessage(text);
+      val.setLocation("Policy checker");
+      valid.add(val);
     }
     return valid;
   }

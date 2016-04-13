@@ -44,6 +44,8 @@ import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class ReportHtml.
@@ -93,8 +95,8 @@ public class ReportHtml extends ReportGeneric {
     int it0Err = ir.getNItErr(0), it0War = ir.getNItWar(0);
     int it1Err = ir.getNItErr(1), it1War = ir.getNItWar(1);
     int it2Err = ir.getNItErr(2), it2War = ir.getNItWar(2);
-    ValidationResult pcValidation = ir.getPcValidation();
-    int pcErr = pcValidation.getErrors().size(), pcWar = pcValidation.getWarnings().size();
+    List<RuleResult> pcValidation = ir.getPcValidation();
+    int pcErr = ir.getPCErrors().size(), pcWar = ir.getPCWarnings().size();
 
     // Global result
     if (blErr + epErr + it0Err + it1Err + it2Err + pcErr > 0) {
@@ -109,104 +111,6 @@ public class ReportHtml extends ReportGeneric {
       htmlBody = htmlBody.replaceAll("##ALL_OK##", "block");
       htmlBody = htmlBody.replaceAll("##ALL_WAR##", "none");
       htmlBody = htmlBody.replaceAll("##ALL_ERR##", "none");
-    }
-
-    if (blErr > 0) {
-      htmlBody = htmlBody.replaceAll("##BL_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##BL_ERR##", "block");
-      htmlBody = htmlBody.replaceAll("##BL_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##BL_ERR-WAR##", "");
-    } else if (blWar > 0) {
-      htmlBody = htmlBody.replaceAll("##BL_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##BL_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##BL_WAR##", "block");
-      htmlBody = htmlBody.replaceAll("##BL_ERR-WAR##", "");
-    } else {
-      htmlBody = htmlBody.replaceAll("##BL_OK##", "block");
-      htmlBody = htmlBody.replaceAll("##BL_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##BL_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##BL_ERR-WAR##", "display: none;");
-    }
-    if (epErr > 0) {
-      htmlBody = htmlBody.replaceAll("##EP_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##EP_ERR##", "block");
-      htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "");
-    } else if (epWar > 0) {
-      htmlBody = htmlBody.replaceAll("##EP_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##EP_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##EP_WAR##", "block");
-      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "");
-    } else {
-      htmlBody = htmlBody.replaceAll("##EP_OK##", "block");
-      htmlBody = htmlBody.replaceAll("##EP_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##EP_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##EP_ERR-WAR##", "display: none;");
-    }
-    if (it0Err > 0) {
-      htmlBody = htmlBody.replaceAll("##IT_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##IT_ERR##", "block");
-      htmlBody = htmlBody.replaceAll("##IT_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "");
-    } else if (it0War > 0) {
-      htmlBody = htmlBody.replaceAll("##IT_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##IT_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT_WAR##", "block");
-      htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "");
-    } else {
-      htmlBody = htmlBody.replaceAll("##IT_OK##", "block");
-      htmlBody = htmlBody.replaceAll("##IT_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT_ERR-WAR##", "display: none;");
-    }
-    if (it1Err > 0) {
-      htmlBody = htmlBody.replaceAll("##IT1_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##IT1_ERR##", "block");
-      htmlBody = htmlBody.replaceAll("##IT1_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT1_ERR-WAR##", "");
-    } else if (it1War > 0) {
-      htmlBody = htmlBody.replaceAll("##IT1_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##IT1_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT1_WAR##", "block");
-      htmlBody = htmlBody.replaceAll("##IT1_ERR-WAR##", "");
-    } else {
-      htmlBody = htmlBody.replaceAll("##IT1_OK##", "block");
-      htmlBody = htmlBody.replaceAll("##IT1_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT1_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT1_ERR-WAR##", "display: none;");
-    }
-    if (it2Err > 0) {
-      htmlBody = htmlBody.replaceAll("##IT2_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##IT2_ERR##", "block");
-      htmlBody = htmlBody.replaceAll("##IT2_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT2_ERR-WAR##", "");
-    } else if (it2War > 0) {
-      htmlBody = htmlBody.replaceAll("##IT2_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##IT2_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT2_WAR##", "block");
-      htmlBody = htmlBody.replaceAll("##IT2_ERR-WAR##", "");
-    } else {
-      htmlBody = htmlBody.replaceAll("##IT2_OK##", "block");
-      htmlBody = htmlBody.replaceAll("##IT2_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT2_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##IT2_ERR-WAR##", "display: none;");
-    }
-
-    if (pcErr > 0) {
-      htmlBody = htmlBody.replaceAll("##PC_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##PC_ERR##", "block");
-      htmlBody = htmlBody.replaceAll("##PC_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##PC_ERR-WAR##", "");
-    } else if (pcWar > 0) {
-      htmlBody = htmlBody.replaceAll("##PC_OK##", "none");
-      htmlBody = htmlBody.replaceAll("##PC_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##PC_WAR##", "block");
-      htmlBody = htmlBody.replaceAll("##PC_ERR-WAR##", "");
-    } else {
-      htmlBody = htmlBody.replaceAll("##PC_OK##", "block");
-      htmlBody = htmlBody.replaceAll("##PC_ERR##", "none");
-      htmlBody = htmlBody.replaceAll("##PC_WAR##", "none");
-      htmlBody = htmlBody.replaceAll("##PC_ERR-WAR##", "display: none;");
     }
 
     if (mode == 1) {
@@ -232,10 +136,10 @@ public class ReportHtml extends ReportGeneric {
       htmlBody = htmlBody.replaceAll("##F_PC_WAR_CLASS##", "info");
     }
 
-    dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getErrors().size(), pcValidation.getErrors().size()) : "";
-    htmlBody = htmlBody.replaceAll("##F_PC_ERR##", "" + pcValidation.getErrors().size() + dif);
-    dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPcValidation().getWarnings().size(), pcValidation.getWarnings().size()) : "";
-    htmlBody = htmlBody.replaceAll("##F_PC_WAR##", "" + pcValidation.getWarnings().size() + dif);
+    dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCErrors().size(), ir.getPCErrors().size()) : "";
+    htmlBody = htmlBody.replaceAll("##F_PC_ERR##", "" + ir.getPCErrors().size() + dif);
+    dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCWarnings().size(), ir.getPCWarnings().size()) : "";
+    htmlBody = htmlBody.replaceAll("##F_PC_WAR##", "" + ir.getPCWarnings().size() + dif);
 
     if (ir.hasBlValidation()) {
       htmlBody = htmlBody.replaceAll("##F_BL_ERR_CLASS##", ir.getBaselineErrors().size() > 0 ? "error" : "info");
@@ -292,6 +196,18 @@ public class ReportHtml extends ReportGeneric {
       htmlBody = htmlBody.replaceAll("##ROW_IT2##", "hide");
     }
 
+    if (ir.hasPcValidation()) {
+      htmlBody = htmlBody.replaceAll("##F_PC_ERR_CLASS##", ir.getPCErrors().size() > 0 ? "error" : "info");
+      htmlBody = htmlBody.replaceAll("##F_PC_WAR_CLASS##", ir.getPCWarnings().size() > 0 ? "warning" : "info");
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCErrors().size(), pcErr) : "";
+      htmlBody = htmlBody.replaceAll("##F_PC_ERR##", "" + ir.getPCErrors().size() + dif);
+      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCWarnings().size(), pcWar) : "";
+      htmlBody = htmlBody.replaceAll("##F_PC_WAR##", "" + ir.getPCWarnings().size() + dif);
+    } else {
+      htmlBody = htmlBody.replaceAll("##ROW_PC##", "hide");
+    }
+
+
     // Errors and warnings
 
     // EP
@@ -302,7 +218,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getEPErrors() != null) {
         for (RuleResult val : ir.getEPErrors()) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -311,7 +227,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getEPWarnings() != null) {
         for (RuleResult val : ir.getEPWarnings()) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -328,7 +244,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getBaselineErrors() != null) {
         for (RuleResult val : ir.getBaselineErrors()) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -337,7 +253,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getBaselineWarnings() != null) {
         for (RuleResult val : ir.getBaselineWarnings()) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -354,7 +270,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITErrors(0) != null) {
         for (RuleResult val : ir.getITErrors(0)) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -363,7 +279,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITWarnings(0) != null) {
         for (RuleResult val : ir.getITWarnings(0)) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -380,7 +296,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITErrors(1) != null) {
         for (RuleResult val : ir.getITErrors(1)) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -389,7 +305,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITWarnings(1) != null) {
         for (RuleResult val : ir.getITWarnings(1)) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -406,7 +322,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITErrors(2) != null) {
         for (RuleResult val : ir.getITErrors(2)) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -415,7 +331,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITWarnings(2) != null) {
         for (RuleResult val : ir.getITWarnings(2)) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##LOC##", val.getContext());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -429,13 +345,13 @@ public class ReportHtml extends ReportGeneric {
     // PC
     rows = "";
     if (ir.checkPC) {
-      for (ValidationEvent val : pcValidation.getErrors()) {
+      for (RuleResult val : ir.getPCErrors()) {
         row = "<tr><td class=\"bold error\">Error</td><td>##TEXT##</td></tr>";
         row = row.replace("##TEXT##", val.getDescription());
         rows += row;
       }
 
-      for (ValidationEvent val : pcValidation.getWarnings()) {
+      for (RuleResult val : ir.getPCWarnings()) {
         row = "<tr><td class=\"bold warning\">Warning</td><td>##TEXT##</td></tr>";
         row = row.replace("##TEXT##", val.getDescription());
         rows += row;
@@ -533,6 +449,7 @@ public class ReportHtml extends ReportGeneric {
 
     // Parse individual Reports
     int index = 0;
+    gr.computePcChecks();
     for (IndividualReport ir : gr.getIndividualReports()) {
       if (!ir.containsData()) continue;
       String imageBody;
@@ -731,6 +648,13 @@ public class ReportHtml extends ReportGeneric {
       htmlBody = htmlBody.replaceAll("##IT2_TYP##", gr.getReportsIt2() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = htmlBody.replaceAll("##ROW_IT2##", "hide");
+    }
+
+    if (gr.getHasPc()){
+      htmlBody = htmlBody.replaceAll("##PC_OK##", "" + gr.getReportsPc());
+      htmlBody = htmlBody.replaceAll("##PC_TYP##", gr.getReportsPc() == gr.getReportsCount() ? "success" : "error");
+    } else {
+      htmlBody = htmlBody.replaceAll("##ROW_PC##", "hide");
     }
 
     htmlBody = htmlBody.replaceAll("##PC_OK##", "" + gr.getReportsPc());

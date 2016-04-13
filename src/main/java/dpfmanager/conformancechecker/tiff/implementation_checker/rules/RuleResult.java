@@ -7,9 +7,30 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffNode;
  */
 public class RuleResult {
   String message;
+  String location = null;
   boolean ok;
   TiffNode node;
   RuleObject rule;
+  boolean warning = false;
+
+  public RuleResult() {
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  public void setWarning(boolean warning) {
+    this.warning = warning;
+  }
+
+  public boolean getWarning() {
+    return warning;
+  }
+
+  public void setLocation(String location) {
+    this.location = location;
+  }
 
   public RuleResult(boolean ok, TiffNode node, RuleObject rule, String message) {
     this.message = message;
@@ -39,8 +60,13 @@ public class RuleResult {
     return node;
   }
 
-  public String getLocation() {
+  public String getContext() {
     return node.getContext();
+  }
+
+  public String getLocation() {
+    if (location != null) return location;
+    else return getContext();
   }
 
   public String getDescription() {
