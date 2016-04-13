@@ -7,12 +7,13 @@ public class Rule {
   private String tag;
   private String operator;
   private String value;
+  private boolean warning;
 
   /**
    * Instantiates a new Rule.
    */
   public Rule() {
-
+    warning = false;
   }
 
   /**
@@ -61,6 +62,8 @@ public class Rule {
     return value;
   }
 
+  public boolean getWarning() { return warning; }
+
   /**
    * Instantiates a new Rule.
    *
@@ -68,10 +71,11 @@ public class Rule {
    * @param operator the operator
    * @param value    the value
    */
-  public Rule (String tag, String operator, String value) {
+  public Rule (String tag, String operator, String value, boolean warning) {
     this.tag = tag;
     this.operator = operator;
     this.value = value;
+    this.warning = warning;
   }
 
   /**
@@ -86,6 +90,8 @@ public class Rule {
     if (operator != null) txt += operator;
     txt += ",";
     if (value != null) txt += value;
+    txt += ",";
+    txt += warning ? "1" : "0";
     return txt;
   }
 
@@ -96,11 +102,12 @@ public class Rule {
    */
   public void ReadTxt(String txt) {
     if (txt.contains(",")) {
-      tag = txt.substring(0, txt.indexOf(","));
-      String v2 = txt.substring(txt.indexOf(",") + 1);
-      if (v2.contains(",")) {
-        operator = v2.substring(0, v2.indexOf(","));
-        value = v2.substring(v2.indexOf(",") + 1);
+      String[] fields = txt.split("'");
+      tag = fields[0];
+      operator = fields[1];
+      value = fields[2];
+      if (fields.length > 3) {
+        warning = fields[3].equals("1");
       }
     }
   }
