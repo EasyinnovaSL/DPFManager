@@ -49,23 +49,23 @@ public class TextAreaAppender extends AbstractAppender {
 
   @Override
   public void append(LogEvent event) {
-    Layout layout = this.getLayout();
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        if (textArea != null) {
-          String message = new String(layout.toByteArray(event));
-          int count = StringUtils.countMatches(textArea.getText(), "\n");
-          if (count < maxLines && maxLines != 0) {
-            textArea.appendText(message);
-          } else {
-            textArea.clear();
-            textArea.autosize();
-            textArea.appendText(message);
+    if (textArea != null) {
+      Layout layout = this.getLayout();
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+            String message = new String(layout.toByteArray(event));
+            int count = StringUtils.countMatches(textArea.getText(), "\n");
+            if (count < maxLines && maxLines != 0) {
+              textArea.appendText(message);
+            } else {
+              textArea.clear();
+              textArea.autosize();
+              textArea.appendText(message);
+            }
           }
-        }
-      }
-    });
+      });
+    }
 
   }
 
