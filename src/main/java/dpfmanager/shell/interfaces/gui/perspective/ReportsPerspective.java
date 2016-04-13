@@ -69,10 +69,6 @@ public class ReportsPerspective extends DpfAbstractPerspective {
     bottomBar = new StackPane();
     bottomBar.setAlignment(Pos.BOTTOM_CENTER);
 
-    // Bottom Bar
-    StackPane botPane = new StackPane();
-    botPane.setAlignment(Pos.BOTTOM_CENTER);
-
     // Attach to PERSPECTIVE
     mainSplit = constructSplitPane(constructScrollPane(centerPane), bottomPane);
     mainPane = constructMainPane(mainSplit, bottomBar);

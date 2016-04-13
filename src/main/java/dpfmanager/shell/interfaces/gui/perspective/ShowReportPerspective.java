@@ -4,6 +4,7 @@ import dpfmanager.shell.core.adapter.DpfAbstractPerspective;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.ReportsMessage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -40,6 +41,11 @@ public class ShowReportPerspective extends DpfAbstractPerspective {
 
   @Override
   public void handleMessage(DpfMessage dpfMessage, PerspectiveLayout layout) {
+  }
+
+  @Override
+  public void onShowCustom() {
+    System.out.println("Show Prespective");
   }
 
   @PostConstruct

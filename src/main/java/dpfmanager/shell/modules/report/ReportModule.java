@@ -82,18 +82,16 @@ public class ReportModule extends DpfModule {
     // Show reports
     if (!type.isEmpty()) {
       ArrayMessage am = new ArrayMessage();
+      am.add(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
+      am.add(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
       am.add(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
       am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
       am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
-      service.getContext().sendGui(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, am);
+      service.getContext().sendGui(GuiConfig.PERSPECTIVE_DESSIGN, am);
     } else {
       // No format
       service.getContext().sendGui(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, "No output format file was selected", formats.toString()));
     }
-
-    // Hide loading
-    service.getContext().sendGui(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
-    service.getContext().sendGui(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
   }
 
   @PostConstruct
