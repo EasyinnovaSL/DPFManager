@@ -50,6 +50,7 @@ public class DessignPerspective extends DpfAbstractPerspective {
       if (lm.isShow()){
         topPane.setDisable(true);
       } else {
+        System.out.println("Hide loading perspective");
         topPane.setDisable(false);
       }
     }

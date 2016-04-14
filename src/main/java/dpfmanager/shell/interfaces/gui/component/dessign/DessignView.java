@@ -101,6 +101,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
         showLoading();
       } else if (lm.isHide()){
         hideLoading();
+        System.out.println("Hide loading component");
       } else if (lm.isText()){
         lblLoading.setText(lm.getText());
       }
