@@ -296,6 +296,10 @@ public class ReportXml extends ReportGeneric {
       infoElement.setTextContent(ir.getPixelsDensity());
       infoElement.setAttribute("PixelDensity", "" + (int) Double.parseDouble(ir.getPixelsDensity()));
       report.appendChild(infoElement);
+      infoElement = doc.createElement("NumberImages");
+      infoElement.setTextContent(ir.getNumberImages());
+      infoElement.setAttribute("NumberImages", "" + (int) Double.parseDouble(ir.getNumberImages()));
+      report.appendChild(infoElement);
       infoElement = doc.createElement("ByteOrder");
       infoElement.setTextContent(ir.getEndianess());
       infoElement.setAttribute("ByteOrder", ir.getEndianess());

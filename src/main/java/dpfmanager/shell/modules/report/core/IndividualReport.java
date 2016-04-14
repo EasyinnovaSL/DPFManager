@@ -83,6 +83,9 @@ public class IndividualReport {
   /** The pixel density. */
   private String pixeldensity;
 
+  /** The pixel numberimages. */
+  private String numberimages;
+
   /** The Tiff photometric. */
   private String photo;
 
@@ -389,6 +392,7 @@ public class IndividualReport {
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
     endianess = tiffModel.getEndianess().toString();
     pixeldensity = "0";
+    numberimages = "0";
     if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
     {
       double pd = 0;
@@ -409,6 +413,7 @@ public class IndividualReport {
         pixeldensity = "";
       }
     }
+    numberimages = tiffModel.getImageIfds().size() + "";
     photo = tiffModel.getMetadataSingleString("PhotometricRepresentation");
 
     // errors & warnings
@@ -563,6 +568,15 @@ public class IndividualReport {
     if (profile == 0) return errorsIt0 != null;
     if (profile == 1) return errorsIt1 != null;
     return errorsIt2 != null;
+  }
+
+  /**
+   * Gets number images.
+   *
+   * @return the number of images
+   */
+  public String getNumberImages() {
+    return "" + numberimages;
   }
 
   /**

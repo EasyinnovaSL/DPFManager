@@ -44,12 +44,13 @@ public class IsosTest extends CommandLineTest {
       bw.close();
 
 
-      String[] args = new String[5];
+      String[] args = new String[6];
       args[0] = "src/test/resources/Small/Bilevel.tif";
       args[1] = "-reportformat";
       args[2] = "html";
       args[3] = "-configuration";
       args[4] = configfile;
+      args[5] = "-s";
 
       MainConsoleApp.main(args);
 

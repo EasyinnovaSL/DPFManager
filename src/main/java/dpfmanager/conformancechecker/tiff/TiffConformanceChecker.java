@@ -159,6 +159,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "type", "integer");
       addElement(doc, field, "description", "Pixel Density in pixels per centimeter");
       addElement(doc, field, "operators", ">,<,=");
+      // Number of images
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "NumberImages");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Number of images");
+      addElement(doc, field, "operators", ">,<,=");
       // Byteorder
       field = doc.createElement("field");
       fields.appendChild(field);
