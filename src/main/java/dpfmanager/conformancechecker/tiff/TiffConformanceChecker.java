@@ -313,34 +313,26 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return classes;
   }
 
-  public static Validator getBaselineValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+  public static String getValidationXmlString(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    String content = tiffValidation.writeString();
+    return tiffValidation.writeString();
+  }
 
+  public static Validator getBaselineValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = new Validator();
     validation.validateBaseline(content);
     return validation;
   }
 
-  public static Validator getEPValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    TiffDocument td = tr.getModel();
-    TiffImplementationChecker tic = new TiffImplementationChecker();
-    TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    String content = tiffValidation.writeString();
-
+  public static Validator getEPValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = new Validator();
     validation.validateTiffEP(content);
     return validation;
   }
 
-  public static Validator getITValidation(int profile, TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    TiffDocument td = tr.getModel();
-    TiffImplementationChecker tic = new TiffImplementationChecker();
-    TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    String content = tiffValidation.writeString();
-
+  public static Validator getITValidation(int profile, String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = new Validator();
     if (profile == 0) validation.validateTiffIT(content);
     else if (profile == 1) validation.validateTiffITP1(content);
@@ -359,7 +351,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
    */
   public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
-      Logger.println("Reading Tiff file");
+//      Logger.println("Reading Tiff file");
       TiffReader tr = new TiffReader();
       int result = tr.readFile(pathToFile);
       switch (result) {
@@ -381,25 +373,26 @@ public class TiffConformanceChecker extends ConformanceChecker {
           }
 
           Logger.println("Validating Tiff");
+          String content = getValidationXmlString(tr);
           Validator baselineVal = null;
           if (checkBL) {
-            baselineVal = getBaselineValidation(tr);
+            baselineVal = getBaselineValidation(content);
           }
           Validator epValidation = null;
           if (checkEP) {
-            epValidation = getEPValidation(tr);
+            epValidation = getEPValidation(content);
           }
           Validator it0Validation = null;
           Validator it1Validation = null;
           Validator it2Validation = null;
           if (checkIT) {
-            it0Validation = getITValidation(0, tr);
+            it0Validation = getITValidation(0, content);
           }
           if (checkIT1) {
-            it1Validation = getITValidation(1, tr);
+            it1Validation = getITValidation(1, content);
           }
           if (checkIT2) {
-            it2Validation = getITValidation(2, tr);
+            it2Validation = getITValidation(2, content);
           }
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
@@ -435,7 +428,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
     } catch (SAXException e) {
       Logger.println("Error in Tiff file (3)");
     } catch (JAXBException e) {
-      e.printStackTrace();
       Logger.println("Error in Tiff file (4)");
     }
     return null;

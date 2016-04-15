@@ -35,7 +35,7 @@ public class ThreadingModule extends DpfModule {
   public void handleMessage(DpfMessage dpfMessage){
     if (dpfMessage.isTypeOf(IndividualStatusMessage.class)){
       IndividualStatusMessage sm = dpfMessage.getTypedMessage(IndividualStatusMessage.class);
-      service.finishIndividual(sm.getIndividual());
+      service.finishIndividual(sm.getIndividual(), sm.getUuid());
     } else if (dpfMessage.isTypeOf(GlobalStatusMessage.class)){
       GlobalStatusMessage gm = dpfMessage.getTypedMessage(GlobalStatusMessage.class);
       service.handleGlobalStatus(gm);

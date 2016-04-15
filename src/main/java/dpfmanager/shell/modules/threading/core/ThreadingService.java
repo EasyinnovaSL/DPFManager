@@ -77,15 +77,20 @@ public class ThreadingService extends DpfService {
     }
   }
 
-  public void finishIndividual(IndividualReport ir) {
-    // Individual report finished
-    FileCheck fc = checks.get(ir.getUuid());
-    fc.addIndividual(ir);
+  public void finishIndividual(IndividualReport ir, Long uuid) {
+    FileCheck fc = checks.get(uuid);
+    if (ir != null){
+      // Individual report finished
+      fc.addIndividual(ir);
 
-    // Check if all finished
-    if (fc.allFinished()) {
-      // Tell reports module
-      context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(fc.getIndividuals(), fc.getConfig()));
+      // Check if all finished
+      if (fc.allFinished()) {
+        // Tell reports module
+        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(fc.getIndividuals(), fc.getConfig()));
+      }
+    } else{
+      // Individual with errors
+      fc.addError();
     }
   }
 

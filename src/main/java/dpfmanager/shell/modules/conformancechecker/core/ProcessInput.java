@@ -211,6 +211,7 @@ public class ProcessInput {
           }
         } catch (Exception ex) {
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+          ex.printStackTrace();
         }
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "File " + filename + " is not an accepted format"));

@@ -13,6 +13,7 @@ public class FileCheck {
 
   private long uuid;
   private int total;
+  private int errors;
   private Configuration config;
   private String internal;
   private List<IndividualReport> individuals;
@@ -23,6 +24,7 @@ public class FileCheck {
     config = c;
     internal = i;
     individuals = new ArrayList<>();
+    errors = 0;
   }
 
   public void addIndividual(IndividualReport ir){
@@ -42,7 +44,11 @@ public class FileCheck {
   }
 
   public boolean allFinished(){
-    return total == individuals.size();
+    return total == individuals.size() + errors;
+  }
+
+  public void addError(){
+    errors++;
   }
 
 }

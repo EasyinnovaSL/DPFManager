@@ -6,6 +6,7 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.conformancechecker.core.ProcessInput;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
+import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
 import java.util.List;
@@ -42,14 +43,18 @@ public class ConformanceRunnable extends DpfRunnable {
 
   @Override
   public void runTask() {
-    printOut("Processing file " + filename+" (thread)");
+//    printOut("Processing file " + filename+" (thread)");
 
     // Process the input and get a list of individual reports
     IndividualReport ir = pi.processFile(filename, internalReportFolder, config, id);
-    ir.setUuid(uuid);
-
-    // Tell report module to create it
-    context.send(BasicConfig.MODULE_REPORT, new IndividualReportMessage(ir, config));
+    if (ir != null) {
+      // Tell report module to create it
+      ir.setUuid(uuid);
+      context.send(BasicConfig.MODULE_REPORT, new IndividualReportMessage(ir, config));
+    } else{
+      // Tell multi threading that one report fail (no wait for it)
+      context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, uuid));
+    }
   }
 
 }

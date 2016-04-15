@@ -612,16 +612,17 @@ public class ReportGenerator {
         tr.readFile(nameFixedTif);
         TiffDocument to = tr.getModel();
 
+        String content = TiffConformanceChecker.getValidationXmlString(tr);
         Validator baselineVal = null;
-        if (ir.checkBL) baselineVal = TiffConformanceChecker.getBaselineValidation(tr);
+        if (ir.checkBL) baselineVal = TiffConformanceChecker.getBaselineValidation(content);
         Validator epValidation = null;
-        if (ir.checkEP) epValidation = TiffConformanceChecker.getEPValidation(tr);
+        if (ir.checkEP) epValidation = TiffConformanceChecker.getEPValidation(content);
         Validator it0Validation = null;
-        if (ir.checkIT0) it0Validation = TiffConformanceChecker.getITValidation(0, tr);
+        if (ir.checkIT0) it0Validation = TiffConformanceChecker.getITValidation(0, content);
         Validator it1Validation = null;
-        if (ir.checkIT1) it1Validation = TiffConformanceChecker.getITValidation(1, tr);
+        if (ir.checkIT1) it1Validation = TiffConformanceChecker.getITValidation(1, content);
         Validator it2Validation = null;
-        if (ir.checkIT2) it2Validation = TiffConformanceChecker.getITValidation(2, tr);
+        if (ir.checkIT2) it2Validation = TiffConformanceChecker.getITValidation(2, content);
 
         String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
         String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);

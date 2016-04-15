@@ -35,6 +35,7 @@ package dpfmanager.shell.modules.report.util;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
@@ -358,7 +359,7 @@ public class ReportPDF extends ReportGeneric {
 
       ir.setPDFDocument(outputfile);
     } catch (Exception tfe) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error:" + tfe.toString()));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", tfe));
     }
   }
 
@@ -584,8 +585,7 @@ public class ReportPDF extends ReportGeneric {
         doc.close();
       }
     } catch (Exception tfe) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error:" + tfe.toString()));
-      tfe.printStackTrace();
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", tfe));
     }
   }
 
