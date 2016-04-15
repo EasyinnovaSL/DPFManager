@@ -83,28 +83,6 @@ public class ReportPDF extends ReportGeneric {
    * The Init posy.
    */
   static int init_posy = 800;
-  /**
-   * The Content stream.
-   */
-  PDPageContentStream contentStream;
-
-  /**
-   * Set content stream
-   *
-   * @param contentStream the content stream
-   */
-  public void setContentStream(PDPageContentStream contentStream) {
-    this.contentStream = contentStream;
-  }
-
-  /**
-   * Gets content stream.
-   *
-   * @return the content stream
-   */
-  public PDPageContentStream getContentStream() {
-    return contentStream;
-  }
 
   /**
    * Parse an individual report to PDF.
@@ -122,7 +100,8 @@ public class ReportPDF extends ReportGeneric {
       ValidationResult pcValidation = ir.getPcValidation();
       int pcErr = pcValidation.getErrors().size(), pcWar = pcValidation.getWarnings().size();
 
-      PDDocument document = new PDDocument();
+      PDFParams pdfParams = new PDFParams();
+      PDDocument document = pdfParams.getDocument();
 
       PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
       document.addPage( page );
@@ -321,10 +300,10 @@ public class ReportPDF extends ReportGeneric {
       }
 
       // Conformance
-      setContentStream(contentStream);
+      pdfParams.setContentStream(contentStream);
       if (ir.checkBL) {
-        pos_y = writeErrorsWarnings(document, font, ir.getBaselineErrors(), ir.getBaselineWarnings(), pos_x, pos_y, "Baseline");
-        contentStream = getContentStream();
+        pos_y = writeErrorsWarnings(pdfParams, font, ir.getBaselineErrors(), ir.getBaselineWarnings(), pos_x, pos_y, "Baseline");
+        contentStream = pdfParams.getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -332,8 +311,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkEP) {
-        pos_y = writeErrorsWarnings(document, font, ir.getEPErrors(), ir.getEPWarnings(), pos_x, pos_y, "Tiff/EP");
-        contentStream = getContentStream();
+        pos_y = writeErrorsWarnings(pdfParams, font, ir.getEPErrors(), ir.getEPWarnings(), pos_x, pos_y, "Tiff/EP");
+        contentStream = pdfParams.getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -341,8 +320,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkIT0) {
-        pos_y = writeErrorsWarnings(document, font, ir.getITErrors(0), ir.getITWarnings(0), pos_x, pos_y, "Tiff/IT");
-        contentStream = getContentStream();
+        pos_y = writeErrorsWarnings(pdfParams, font, ir.getITErrors(0), ir.getITWarnings(0), pos_x, pos_y, "Tiff/IT");
+        contentStream = pdfParams.getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -350,8 +329,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkIT1) {
-        pos_y = writeErrorsWarnings(document, font, ir.getITErrors(1), ir.getITWarnings(1), pos_x, pos_y, "Tiff/IT");
-        contentStream = getContentStream();
+        pos_y = writeErrorsWarnings(pdfParams, font, ir.getITErrors(1), ir.getITWarnings(1), pos_x, pos_y, "Tiff/IT");
+        contentStream = pdfParams.getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -359,8 +338,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkIT2) {
-        pos_y = writeErrorsWarnings(document, font, ir.getITErrors(2), ir.getITWarnings(2), pos_x, pos_y, "Tiff/IT");
-        contentStream = getContentStream();
+        pos_y = writeErrorsWarnings(pdfParams, font, ir.getITErrors(2), ir.getITWarnings(2), pos_x, pos_y, "Tiff/IT");
+        contentStream = pdfParams.getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
@@ -368,8 +347,8 @@ public class ReportPDF extends ReportGeneric {
       }
 
       if (ir.checkPC) {
-        pos_y = writeErrorsWarnings2(document, font, ir.getPCErrors(), ir.getPCWarnings(), pos_x, pos_y, "Policy Checker");
-        contentStream = getContentStream();
+        pos_y = writeErrorsWarnings2(pdfParams, font, ir.getPCErrors(), ir.getPCWarnings(), pos_x, pos_y, "Policy Checker");
+        contentStream = pdfParams.getContentStream();
       }
 
       contentStream.close();
@@ -623,7 +602,7 @@ public class ReportPDF extends ReportGeneric {
   /**
    * Write errors warnings int.
    *
-   * @param document the document
+   * @param pdfParams the pdf params
    * @param font     the font
    * @param errors   the errors
    * @param warnings the warnings
@@ -633,11 +612,13 @@ public class ReportPDF extends ReportGeneric {
    * @return the int
    * @throws Exception the exception
    */
-  int writeErrorsWarnings(PDDocument document, PDFont font, List<RuleResult> errors, List<RuleResult> warnings, int pos_x, int posy, String type) throws Exception{
+  int writeErrorsWarnings(PDFParams pdfParams, PDFont font, List<RuleResult> errors, List<RuleResult> warnings, int pos_x, int posy, String type) throws Exception{
     int total = 0;
     int font_size = 10;
     int pos_y = posy;
     pos_y -= 20;
+    PDDocument document = pdfParams.getDocument();
+    PDPageContentStream contentStream = pdfParams.getContentStream();
     writeText(contentStream, type + " Conformance", pos_x, pos_y, font, font_size);
 
     font_size = 8;
@@ -679,14 +660,17 @@ public class ReportPDF extends ReportGeneric {
       contentStream.drawXObject( ximage, pos_x + 8, pos_y, 5, 5 );
       writeText(contentStream, "This file conforms to " + type, pos_x + 15, pos_y, font, font_size, Color.green);
     }
+    pdfParams.setContentStream(contentStream);
     return pos_y;
   }
 
-  int writeErrorsWarnings2(PDDocument document, PDFont font, List<ValidationEvent> errors, List<ValidationEvent> warnings, int pos_x, int posy, String type) throws Exception{
+  int writeErrorsWarnings2(PDFParams pdfParams, PDFont font, List<ValidationEvent> errors, List<ValidationEvent> warnings, int pos_x, int posy, String type) throws Exception{
     int total = 0;
     int font_size = 10;
     int pos_y = posy;
     pos_y -= 20;
+    PDDocument document = pdfParams.getDocument();
+    PDPageContentStream contentStream = pdfParams.getContentStream();
     writeText(contentStream, type + " Conformance", pos_x, pos_y, font, font_size);
 
     font_size = 8;
@@ -728,6 +712,7 @@ public class ReportPDF extends ReportGeneric {
       contentStream.drawXObject( ximage, pos_x + 8, pos_y, 5, 5 );
       writeText(contentStream, "This file conforms to " + type, pos_x + 15, pos_y, font, font_size, Color.green);
     }
+    pdfParams.setContentStream(contentStream);
     return pos_y;
   }
 

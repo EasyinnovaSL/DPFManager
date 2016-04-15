@@ -42,7 +42,6 @@ public class ConformanceRunnable extends DpfRunnable {
 
   @Override
   public void runTask() {
-    printOut("");
     printOut("Processing file " + filename+" (thread)");
 
     // Process the input and get a list of individual reports

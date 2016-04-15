@@ -25,9 +25,7 @@ public abstract class DpfRunnable implements Runnable {
 
   @Override
   public void run() {
-    printOut("Running " + name);
     runTask();
-    printOut("Finish " + name);
   }
 
   public void setContext(DpfContext c){
