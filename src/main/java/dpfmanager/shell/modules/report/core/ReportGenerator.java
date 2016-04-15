@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Víctor Muñoz Solà
  * @version 1.0
@@ -32,12 +20,12 @@
 package dpfmanager.shell.modules.report.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
-import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -57,7 +45,6 @@ import com.easyinnova.tiff.writer.TiffWriter;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.logging.log4j.Level;
 
-import java.awt.Desktop;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -71,13 +58,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -105,7 +90,7 @@ public class ReportGenerator {
     reportHtml.setContext(context);
   }
 
-  public ReportGenerator(){
+  public ReportGenerator() {
     reportXml = new ReportXml();
     reportJson = new ReportJson();
     reportPdf = new ReportPDF();
@@ -138,7 +123,7 @@ public class ReportGenerator {
 
     // date folder
     path += "/" + FastDateFormat.getInstance("yyyyMMdd").format(new Date());
-    if (subtract1 && !new File(path).exists()){
+    if (subtract1 && !new File(path).exists()) {
       return path;
     }
     validateDirectory(path);
@@ -175,7 +160,7 @@ public class ReportGenerator {
    * Check if the path exists and if it's a directory, otherwise create the directory with this name.
    * @param path the path
    */
-  private static void validateDirectory(String path){
+  private static void validateDirectory(String path) {
     File theDir = new File(path);
     if (theDir.exists() && !theDir.isDirectory()) {
       theDir.delete();
@@ -286,6 +271,8 @@ public class ReportGenerator {
    */
   public void writeToFile(String outputfile, String body) {
     try {
+      File output = new File(outputfile);
+      output.getParentFile().mkdirs();
       BufferedWriter writer = new BufferedWriter(new FileWriter(outputfile));
       writer.write(body);
       writer.close();
@@ -405,7 +392,7 @@ public class ReportGenerator {
    */
   private static void copyFile(File source, File target) throws IOException {
     try (InputStream in = new FileInputStream(source);
-        OutputStream out = new FileOutputStream(target)) {
+         OutputStream out = new FileOutputStream(target)) {
       byte[] buf = new byte[1024];
       int length;
       while ((length = in.read(buf)) > 0) {
@@ -443,104 +430,88 @@ public class ReportGenerator {
     String targetPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
     File target = new File(targetPath + File.separator + "html");
     if (!target.exists()) {
-      target.mkdir();
+      target.mkdirs();
+    }
 
-      // Copy the html folder to target
-      String pathStr = "./src/main/resources/html";
-      Path path = Paths.get(pathStr);
-      if (Files.exists(path)) {
-        // Look in current dir
-        File folder = new File(pathStr);
-        if (folder.exists() && folder.isDirectory()) {
-          try {
-            copyDirectory(folder, target);
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+    // Copy the html folder to target
+    String pathStr = "./src/main/resources/html";
+    Path path = Paths.get(pathStr);
+    if (Files.exists(path)) {
+      // Look in current dir
+      File folder = new File(pathStr);
+      if (folder.exists() && folder.isDirectory()) {
+        try {
+          copyDirectory(folder, target);
+        } catch (IOException e) {
+          e.printStackTrace();
         }
-      } else {
-        // Look in JAR
-        CodeSource src = ReportGenerator.class.getProtectionDomain().getCodeSource();
-        if (src != null) {
-          URL jar = src.getLocation();
-          ZipInputStream zip;
-          String jarFolder;
-          try {
-            Class cls = ReportGenerator.class;
-            ClassLoader cLoader = cls.getClassLoader();
-            String [] arrayFiles = new String[16];
-            File [] arrayFoulders = new File[4];
-            //files in js folder
-            arrayFiles[0] = "html/js/jquery-1.9.1.min.js";
-            arrayFiles[1] = "html/js/jquery.flot.pie.min.js";
-            arrayFiles[2] = "html/js/jquery.flot.min.js";
+      }
+    } else {
+      // Look in JAR
+      CodeSource src = ReportGenerator.class.getProtectionDomain().getCodeSource();
+      if (src != null) {
+        URL jar = src.getLocation();
+        ZipInputStream zip;
+        String jarFolder;
+        try {
+          Class cls = ReportGenerator.class;
+          ClassLoader cLoader = cls.getClassLoader();
+          String[] arrayFiles = new String[16];
+          File[] arrayFoulders = new File[4];
+          //files in js folder
+          arrayFiles[0] = "html/js/jquery-1.9.1.min.js";
+          arrayFiles[1] = "html/js/jquery.flot.pie.min.js";
+          arrayFiles[2] = "html/js/jquery.flot.min.js";
 
-            //files in img folder
-            arrayFiles[3] = "html/img/noise.jpg";
-            arrayFiles[4] = "html/img/logo.png";
-            arrayFiles[5] = "html/img/logo - copia.png";
+          //files in img folder
+          arrayFiles[3] = "html/img/noise.jpg";
+          arrayFiles[4] = "html/img/logo.png";
+          arrayFiles[5] = "html/img/logo - copia.png";
 
-            //files in fonts folder
-            arrayFiles[6] = "html/fonts/fontawesome-webfont.woff2";
-            arrayFiles[7] = "html/fonts/fontawesome-webfont.woff";
-            arrayFiles[8] = "html/fonts/fontawesome-webfont.ttf";
-            arrayFiles[9] = "html/fonts/fontawesome-webfont.svg";
-            arrayFiles[10] = "html/fonts/fontawesome-webfont.eot";
-            arrayFiles[11] = "html/fonts/FontAwesome.otf";
-            arrayFiles[12] = "html/fonts/Roboto-Bold.ttf";
+          //files in fonts folder
+          arrayFiles[6] = "html/fonts/fontawesome-webfont.woff2";
+          arrayFiles[7] = "html/fonts/fontawesome-webfont.woff";
+          arrayFiles[8] = "html/fonts/fontawesome-webfont.ttf";
+          arrayFiles[9] = "html/fonts/fontawesome-webfont.svg";
+          arrayFiles[10] = "html/fonts/fontawesome-webfont.eot";
+          arrayFiles[11] = "html/fonts/FontAwesome.otf";
+          arrayFiles[12] = "html/fonts/Roboto-Bold.ttf";
 
-            //files in css folder
-            arrayFiles[13] = "html/css/font-awesome.css";
-            arrayFiles[14] = "html/css/default.css";
-            arrayFiles[15] = "html/css/bootstrap.css";
+          //files in css folder
+          arrayFiles[13] = "html/css/font-awesome.css";
+          arrayFiles[14] = "html/css/default.css";
+          arrayFiles[15] = "html/css/bootstrap.css";
 
-            arrayFoulders[0] = new File(targetPath + File.separator + "html/js/");
-            arrayFoulders[1] = new File(targetPath + File.separator + "html/img/");
-            arrayFoulders[2]= new File(targetPath + File.separator + "html/fonts/");
-            arrayFoulders[3] = new File(targetPath + File.separator + "html/css/");
+          arrayFoulders[0] = new File(targetPath + File.separator + "html/js/");
+          arrayFoulders[1] = new File(targetPath + File.separator + "html/img/");
+          arrayFoulders[2] = new File(targetPath + File.separator + "html/fonts/");
+          arrayFoulders[3] = new File(targetPath + File.separator + "html/css/");
 
-            //if originals folders not exists
-            for (File item : arrayFoulders) {
-              if(!item.exists()) {
-                item.mkdirs();
-              }
+          //if originals folders not exists
+          for (File item : arrayFoulders) {
+            if (!item.exists()) {
+              item.mkdirs();
             }
-
-            //copy files
-            for(String filePath : arrayFiles){
-              InputStream in = cLoader.getResourceAsStream(filePath);
-              int readBytes;
-              byte[] buffer = new byte[4096];
-              jarFolder = targetPath + File.separator;
-              File prova = new File(jarFolder + filePath);
-              if(!prova.exists()) {
-                prova.createNewFile();
-              }
-              OutputStream resStreamOut = new FileOutputStream(prova, false);
-              while ((readBytes = in.read(buffer)) > 0) {
-                resStreamOut.write(buffer, 0, readBytes);
-              }
-            }
-
-           /* zip = new ZipInputStream(jar.openStream());
-            ZipEntry zipFile;
-            while ((zipFile = zip.getNextEntry()) != null) {
-              if (zipFile.getName().startsWith("html/")) {
-                String filePath = targetPath + File.separator + zipFile.getName();
-                if (!zipFile.isDirectory()) {
-                  // if the entry is a file, extracts it
-                  extractFile(zip, filePath);
-                } else {
-                  // if the entry is a directory, make the directory
-                  File dir = new File(filePath);
-                  dir.mkdir();
-                }
-              }
-              zip.closeEntry();
-            }*/
-          } catch (IOException e) {
-            context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", e));
           }
+
+          //copy files
+          for (String filePath : arrayFiles) {
+            InputStream in = cLoader.getResourceAsStream(filePath);
+            int readBytes;
+            byte[] buffer = new byte[4096];
+            jarFolder = targetPath + File.separator;
+            File prova = new File(jarFolder + filePath);
+            if (!prova.exists()) {
+              prova.createNewFile();
+            }
+            OutputStream resStreamOut = new FileOutputStream(prova, false);
+            while ((readBytes = in.read(buffer)) > 0) {
+              resStreamOut.write(buffer, 0, readBytes);
+            }
+          }
+
+        } catch (IOException e) {
+          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", e));
         }
       }
     }
@@ -552,7 +523,7 @@ public class ReportGenerator {
    * @param reportName the output file name
    * @param ir         the individual report
    */
-  public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config, String internalReportFolder) throws OutOfMemoryError{
+  public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config, String internalReportFolder) throws OutOfMemoryError {
     String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
@@ -579,7 +550,6 @@ public class ReportGenerator {
     ir.setReportPath(reportName);
 
     if (config.getFormats().contains("HTML")) {
-      copyHtmlFolder(htmlFileStr);
       reportHtml.parseIndividual(htmlFileStr, ir, htmlMode, this);
     }
     if (config.getFormats().contains("JSON")) {
@@ -625,7 +595,7 @@ public class ReportGenerator {
             }
           } else {
             String className = fix.getTag();
-            autofix autofix = (autofix)Class.forName(TiffConformanceChecker.getAutofixesClassPath() + "." + className).newInstance();
+            autofix autofix = (autofix) Class.forName(TiffConformanceChecker.getAutofixesClassPath() + "." + className).newInstance();
             autofix.run(td);
           }
         }
@@ -668,19 +638,20 @@ public class ReportGenerator {
         //Save fixed tiffs
         String pathFixed = "";
         String outputFolder = config.getOutput();
-        if (outputFolder == null){
-          outputFolder =  internalReportFolder;
+        if (outputFolder == null) {
+          outputFolder = internalReportFolder;
         }
         File dir = new File(outputFolder + "/fixed/");
         if (!dir.exists()) dir.mkdir();
         pathFixed = outputFolder + "/fixed/" + new File(ir.getReportPath()).getName();
-        if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
+        if (new File(Paths.get(pathFixed).toString()).exists())
+          new File(Paths.get(pathFixed).toString()).delete();
         Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
         ir2.setFilePath(pathFixed);
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
 
         ir2.setFilePath(pathFixed);
-        ir2.setFileName(new File(nameOriginalTif).getName() +" Fixed");
+        ir2.setFileName(new File(nameOriginalTif).getName() + " Fixed");
 
         //Make reports
         output = reportXml.parseIndividual(xmlFileStr, ir2, rules);
@@ -733,7 +704,7 @@ public class ReportGenerator {
    * @return the string
    */
   public String makeSummaryReport(String internalReportFolder,
-      GlobalReport gr, Configuration config) {
+                                  GlobalReport gr, Configuration config) {
 
     String output = null;
     String xmlFileStr = internalReportFolder + "summary.xml";

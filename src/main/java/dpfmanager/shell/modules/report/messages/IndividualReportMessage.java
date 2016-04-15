@@ -11,16 +11,16 @@ import java.util.List;
  */
 public class IndividualReportMessage extends DpfMessage {
 
-  private List<IndividualReport> individuals;
+  private IndividualReport individual;
   private Configuration config;
 
-  public IndividualReportMessage(List<IndividualReport> i, Configuration c){
-    individuals = i;
+  public IndividualReportMessage(IndividualReport i, Configuration c){
+    individual = i;
     config = c;
   }
 
-  public List<IndividualReport> getIndividuals() {
-    return individuals;
+  public IndividualReport getIndividual() {
+    return individual;
   }
 
   public Configuration getConfig() {

@@ -32,7 +32,8 @@ import java.util.ResourceBundle;
         GuiConfig.COMPONENT_BAR,
         BasicConfig.MODULE_MESSAGE,
         BasicConfig.MODULE_CONFORMANCE,
-        BasicConfig.MODULE_REPORT
+        BasicConfig.MODULE_REPORT,
+        BasicConfig.MODULE_THREADING
     }
 )
 public class DessignPerspective extends DpfAbstractPerspective {

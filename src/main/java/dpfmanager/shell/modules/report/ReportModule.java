@@ -12,13 +12,11 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.ReportService;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
 import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
-import dpfmanager.shell.modules.report.messages.StatusMessage;
+import dpfmanager.shell.modules.report.messages.FinishReportMessage;
 
-import org.apache.logging.log4j.Level;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.Component;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -43,26 +41,21 @@ public class ReportModule extends DpfModule {
   private ReportService service;
 
   @Override
-  public void handleMessage(DpfMessage dpfMessage){
-    if (dpfMessage.isTypeOf(StatusMessage.class)){
-      tractStatusMessage(dpfMessage.getTypedMessage(StatusMessage.class));
-    } else if (dpfMessage.isTypeOf(IndividualReportMessage.class)){
+  public void handleMessage(DpfMessage dpfMessage) {
+    if (dpfMessage.isTypeOf(FinishReportMessage.class)) {
+      tractStatusMessage(dpfMessage.getTypedMessage(FinishReportMessage.class));
+    } else if (dpfMessage.isTypeOf(IndividualReportMessage.class)) {
       service.tractIndividualMessage(dpfMessage.getTypedMessage(IndividualReportMessage.class));
-    } else if (dpfMessage.isTypeOf(GlobalReportMessage.class)){
+    } else if (dpfMessage.isTypeOf(GlobalReportMessage.class)) {
       service.tractGlobalMessage(dpfMessage.getTypedMessage(GlobalReportMessage.class));
     }
   }
 
-  private void tractStatusMessage(StatusMessage status){
-    if (status.isInit()){
-      service.initNewReportFolder(status.getFolder());
-    } else {
-      service.getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.DELETE));
-      showReportsGui(status.getFolder(), status.getFormats());
-    }
+  private void tractStatusMessage(FinishReportMessage status) {
+    showReportsGui(status.getInternalFolder(), status.getFormats());
   }
 
-  private void showReportsGui(String filefolder, List<String> formats){
+  private void showReportsGui(String filefolder, List<String> formats) {
     String type = "";
     String path = "";
     if (formats.contains("HTML")) {
@@ -102,7 +95,7 @@ public class ReportModule extends DpfModule {
   }
 
   @Override
-  public Context getContext(){
+  public Context getContext() {
     return context;
   }
 

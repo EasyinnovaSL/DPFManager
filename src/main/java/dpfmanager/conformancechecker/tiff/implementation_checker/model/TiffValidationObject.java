@@ -1,6 +1,7 @@
 package dpfmanager.conformancechecker.tiff.implementation_checker.model;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,9 +85,25 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
       jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
       jaxbMarshaller.marshal(this, file);
-      //jaxbMarshaller.marshal(tiffValidate, System.out);
     } catch (JAXBException e) {
       e.printStackTrace();
     }
+  }
+
+  public String writeString() {
+    try {
+      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
+      Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+      // output pretty printed
+      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+      StringWriter sw = new StringWriter();
+      jaxbMarshaller.marshal(this, sw);
+      return sw.toString();
+    } catch (JAXBException e) {
+      e.printStackTrace();
+    }
+    return "";
   }
 }

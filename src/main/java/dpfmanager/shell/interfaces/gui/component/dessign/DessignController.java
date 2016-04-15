@@ -7,7 +7,6 @@ import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
@@ -124,16 +123,17 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   }
 
   public void testAction() {
-    try {
-      String nullable = null;
-      if (true) {
-        nullable.substring(2);
-      }
-    }
-    catch(Exception ex){
-      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
-    }
-//    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.INFO, "Info message"));
+    System.out.println(System.currentTimeMillis());
+
+//    List<DpfRunnable> first = new ArrayList<>();
+//    first.add(new TestWaitRunnable());
+//    first.add(new TestWaitRunnable());
+//    first.add(new TestWaitRunnable());
+//
+//    List<DpfRunnable> second = new ArrayList<>();
+//    second.add(new TestRunnable("HOL-A"));
+//
+//    getContext().send(BasicConfig.MODULE_THREADING, new TwoPhasesMessage(first, second));
   }
 
   private File getFileByPath(String path) {

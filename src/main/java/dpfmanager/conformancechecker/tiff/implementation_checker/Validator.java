@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,12 +73,13 @@ public class Validator {
     return fis;
   }
 
-  void validate(String path, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  void validate(String content, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
 
     JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-    model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(new File(path));
+    StringReader reader = new StringReader(content);
+    model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
 
     jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
     jaxbUnmarshaller = jaxbContext.createUnmarshaller();

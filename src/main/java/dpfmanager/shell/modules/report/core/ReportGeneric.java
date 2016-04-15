@@ -67,7 +67,9 @@ public class ReportGeneric {
 
       BufferedImage img = scale(image, width, height);
 
-      ImageIO.write(img, "jpg", new File(outputfile));
+      File outputFile = new File(outputfile);
+      outputFile.getParentFile().mkdirs();
+      ImageIO.write(img, "jpg", outputFile);
       img.flush();
       img = null;
       image.flush();

@@ -314,73 +314,37 @@ public class TiffConformanceChecker extends ConformanceChecker {
   }
 
   public static Validator getBaselineValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = null;
-    String baseDir = ReportGenerator.getReportsFolder();
-    String xml = baseDir + "/file.xml";
-    int idx = 1;
-    while (new File(xml).exists()) {
-      xml = baseDir + "/file" + idx + ".xml";
-      idx++;
-    }
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(xml);
+    String content = tiffValidation.writeString();
 
-    validation = new Validator();
-    validation.validateBaseline(xml);
-
-    if (new File(xml).exists()) {
-      new File(xml).delete();
-    }
+    Validator validation = new Validator();
+    validation.validateBaseline(content);
     return validation;
   }
 
   public static Validator getEPValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = null;
-    String baseDir = ReportGenerator.getReportsFolder();
-    String xml = baseDir + "/file.xml";
-    int idx = 1;
-    while (new File(xml).exists()) {
-      xml = baseDir + "/file" + idx + ".xml";
-      idx++;
-    }
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(xml);
+    String content = tiffValidation.writeString();
 
-    validation = new Validator();
-    validation.validateTiffEP(xml);
-
-    if (new File(xml).exists()) {
-      new File(xml).delete();
-    }
+    Validator validation = new Validator();
+    validation.validateTiffEP(content);
     return validation;
   }
 
   public static Validator getITValidation(int profile, TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = null;
-    String baseDir = ReportGenerator.getReportsFolder();
-    String xml = baseDir + "/file.xml";
-    int idx = 1;
-    while (new File(xml).exists()) {
-      xml = baseDir + "/file" + idx + ".xml";
-      idx++;
-    }
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(xml);
+    String content = tiffValidation.writeString();
 
-    validation = new Validator();
-    if (profile == 0) validation.validateTiffIT(xml);
-    else if (profile == 1) validation.validateTiffITP1(xml);
-    else validation.validateTiffITP2(xml);
-
-    if (new File(xml).exists()) {
-      new File(xml).delete();
-    }
+    Validator validation = new Validator();
+    if (profile == 0) validation.validateTiffIT(content);
+    else if (profile == 1) validation.validateTiffITP1(content);
+    else validation.validateTiffITP2(content);
     return validation;
   }
 
@@ -441,6 +405,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
+          ir.setInternalReportFolder(internalReportFolder);
+          ir.setIdReport(id);
           ir.checkBL = checkBL;
           ir.checkEP = checkEP;
           ir.checkIT0 = checkIT;
@@ -469,6 +435,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
     } catch (SAXException e) {
       Logger.println("Error in Tiff file (3)");
     } catch (JAXBException e) {
+      e.printStackTrace();
       Logger.println("Error in Tiff file (4)");
     }
     return null;

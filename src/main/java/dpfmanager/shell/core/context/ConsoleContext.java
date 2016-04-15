@@ -36,4 +36,14 @@ public class ConsoleContext implements DpfContext {
   public void sendConsole(String target, Object message){
     send(target, message);
   }
+
+  @Override
+  public boolean isConsole() {
+    return true;
+  }
+
+  @Override
+  public boolean isGui() {
+    return false;
+  }
 }

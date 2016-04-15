@@ -66,48 +66,47 @@ public class ProcessInput {
     return outOfmemory;
   }
 
-  /**
-   * Process a list of files and generate individual ang global reports.
-   *
-   * @param files   the files
-   * @param config  the config
-   * @return the path to the internal report folder
-   */
-  public String ProcessFiles(ArrayList<String> files, Configuration config, String internalReportFolder ) {
-    ArrayList<IndividualReport> individuals = new ArrayList<>();
-    int n=files.size();
-
-    // Process each input of the list which can be a file, folder, zip or url
-    for (final String filename : files) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, ""));
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Processing file " + filename));
-
-      context.sendGui(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.TEXT, "Processing... " + (files.indexOf(filename) + 1) + "/" + n));
-
-      // Process the input and get a list of individual reports
-      List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
-      individuals.addAll(indReports);
-
-      // Create report
-      context.send(BasicConfig.MODULE_REPORT, new IndividualReportMessage(indReports, config));
-    }
-
-    // Generate global report
-    GlobalReport gr = new GlobalReport();
-    for (final IndividualReport individual : individuals) {
-      gr.addIndividual(individual);
-    }
-    gr.generate();
-
-    // Create global report
-    context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(gr, config));
-
-    if (!new File(internalReportFolder).exists()) {
-     internalReportFolder = null;
-    }
-
-    return internalReportFolder;
-  }
+//  /**
+//   * Process a list of files and generate individual ang global reports.
+//   *
+//   * @param files   the files
+//   * @param config  the config
+//   * @return the path to the internal report folder
+//   */
+//  public String ProcessFiles(ArrayList<String> files, Configuration config, String internalReportFolder ) {
+//    ArrayList<IndividualReport> individuals = new ArrayList<>();
+//    int n=files.size();
+//
+//    // Process each input of the list which can be a file, folder, zip or url
+//    for (final String filename : files) {
+//      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, ""));
+//      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Processing file " + filename));
+//      context.sendGui(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.TEXT, "Processing... " + (files.indexOf(filename) + 1) + "/" + n));
+//
+//      // Process the input and get a list of individual reports
+//      List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
+//      individuals.addAll(indReports);
+//
+//      // Create report
+//      context.send(BasicConfig.MODULE_REPORT, new IndividualReportMessage(indReports, config));
+//    }
+//
+//    // Generate global report
+//    GlobalReport gr = new GlobalReport();
+//    for (final IndividualReport individual : individuals) {
+//      gr.addIndividual(individual);
+//    }
+//    gr.generate();
+//
+//    // Create global report
+//    context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(gr, config));
+//
+//    if (!new File(internalReportFolder).exists()) {
+//     internalReportFolder = null;
+//    }
+//
+//    return internalReportFolder;
+//  }
 
   /**
    * Get the list of conformance checkers available to use.
@@ -177,38 +176,9 @@ public class ProcessInput {
    * @param config the report configuration
    * @return generated list of individual reports
    */
-  private List<IndividualReport> processFile(String filename, String internalReportFolder, Configuration config) {
-    List<IndividualReport> indReports = new ArrayList<>();
-    IndividualReport ir;
-    if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
-      // Compressed File
-      try {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, filename));
-        ZipFile zipFile = new ZipFile(filename);
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-          // Process each file contained in the compressed file
-          ZipEntry entry = entries.nextElement();
-          ConformanceChecker cc = getConformanceCheckerForFile(entry.getName());
-          if (cc != null) {
-            InputStream stream = zipFile.getInputStream(entry);
-            // Extracts the file and creates a temporary file to store it and process it
-            String filename2 = createTempFile(internalReportFolder, entry.getName(), stream);
-            tempFiles.add(filename2);
-            ir = cc.processFile(filename2, entry.getName(), internalReportFolder, config, idReport);
-            if (ir != null) {
-              indReports.add(ir);
-            } else{
-              outOfmemory = true;
-              break;
-            }
-          }
-        }
-        zipFile.close();
-      } catch (Exception ex) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error reading zip file [" + ex.toString() + "]"));
-      }
-    } else if (isUrl(filename)) {
+  public IndividualReport processFile(String filename, String internalReportFolder, Configuration config, int idReport) {
+    IndividualReport ir = null;
+    if (isUrl(filename)) {
       // URL
       try {
         ConformanceChecker cc = getConformanceCheckerForFile(filename);
@@ -219,8 +189,6 @@ public class ProcessInput {
           filename = java.net.URLDecoder.decode(filename, "UTF-8");
           ir = cc.processFile(filename2, filename, internalReportFolder, config, idReport);
           if (ir != null) {
-            indReports.add(ir);
-          } else{
             outOfmemory = true;
           }
           // Delete the temporary file
@@ -239,8 +207,6 @@ public class ProcessInput {
         try {
           ir = cc.processFile(filename, filename, internalReportFolder, config, idReport);
           if (ir != null) {
-            indReports.add(ir);
-          } else{
             outOfmemory = true;
           }
         } catch (Exception ex) {
@@ -250,7 +216,7 @@ public class ProcessInput {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "File " + filename + " is not an accepted format"));
       }
     }
-    return indReports;
+    return ir;
   }
 
   /**

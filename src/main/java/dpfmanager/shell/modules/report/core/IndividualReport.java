@@ -166,6 +166,15 @@ public class IndividualReport {
   private String conformanceCheckerReport = null;
 
   /**
+   * Extra check information
+   */
+  private String internalReportFodler;
+
+  private int idReport;
+
+  private long uuid;
+
+  /**
    * Constructor + generate.
    *
    * @param name               the name
@@ -177,6 +186,30 @@ public class IndividualReport {
     filepath = path;
     this.reportFilename = reportFilename;
     containsData = false;
+  }
+
+  public void setInternalReportFolder(String internal){
+    internalReportFodler = internal;
+  }
+
+  public String getInternalReportFodler() {
+    return internalReportFodler;
+  }
+
+  public int getIdReport() {
+    return idReport;
+  }
+
+  public void setIdReport(int idReport) {
+    this.idReport = idReport;
+  }
+
+  public long getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(long uuid) {
+    this.uuid = uuid;
   }
 
   public void setConformanceCheckerReport(String report) {
