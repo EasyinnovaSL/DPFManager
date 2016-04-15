@@ -35,8 +35,6 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationEvent;
-import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 
 import java.util.ArrayList;
@@ -80,8 +78,14 @@ public class IndividualReport {
   /** The Endianess. */
   private String endianess;
 
+  /** The compression. */
+  private String compression;
+
   /** The pixel density. */
   private String pixeldensity;
+
+  /** The pixel numberimages. */
+  private String numberimages;
 
   /** The Tiff photometric. */
   private String photo;
@@ -387,8 +391,10 @@ public class IndividualReport {
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
+    compression = tiffModel.getMetadataSingleString("Compression");
     endianess = tiffModel.getEndianess().toString();
     pixeldensity = "0";
+    numberimages = "0";
     if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
     {
       double pd = 0;
@@ -409,6 +415,7 @@ public class IndividualReport {
         pixeldensity = "";
       }
     }
+    numberimages = tiffModel.getImageIfds().size() + "";
     photo = tiffModel.getMetadataSingleString("PhotometricRepresentation");
 
     // errors & warnings
@@ -519,6 +526,15 @@ public class IndividualReport {
   }
 
   /**
+   * Gets compression.
+   *
+   * @return the compression
+   */
+  public String getCompression() {
+    return compression;
+  }
+
+  /**
    * Has pc validation boolean.
    *
    * @return the boolean
@@ -563,6 +579,15 @@ public class IndividualReport {
     if (profile == 0) return errorsIt0 != null;
     if (profile == 1) return errorsIt1 != null;
     return errorsIt2 != null;
+  }
+
+  /**
+   * Gets number images.
+   *
+   * @return the number of images
+   */
+  public String getNumberImages() {
+    return "" + numberimages;
   }
 
   /**

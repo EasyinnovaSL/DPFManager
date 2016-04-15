@@ -159,6 +159,29 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "type", "integer");
       addElement(doc, field, "description", "Pixel Density in pixels per centimeter");
       addElement(doc, field, "operators", ">,<,=");
+      // Number of images
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "NumberImages");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Number of images");
+      addElement(doc, field, "operators", ">,<,=");
+      // BitDepth
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "BitDepth");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Bit Depth");
+      addElement(doc, field, "operators", ">,<,=");
+      addElement(doc, field, "values", "1,2,4,8,16,32,64");
+      // Compression
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "Compression");
+      addElement(doc, field, "type", "string");
+      addElement(doc, field, "description", "Compression");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", compressionName(1) + "," + compressionName(2) + "," + compressionName(32773) + "," + compressionName(3) + "," + compressionName(4) + "," + compressionName(5) + "," + compressionName(6) + "," + compressionName(7) + "," + compressionName(8) + "," + compressionName(9) + "," + compressionName(10) + "");
       // Byteorder
       field = doc.createElement("field");
       fields.appendChild(field);
@@ -221,6 +244,23 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.add(field);
     }
     return fields;
+  }
+
+  public static String compressionName(int code) {
+    switch (code) {
+      case 1: return "None";
+      case 2: return "CCITT";
+      case 3: return "CCITT GR3";
+      case 4: return "CCITT GR4";
+      case 5: return "LZW";
+      case 6: return "OJPEG";
+      case 7: return "JPEG";
+      case 8: return "DEFLATE Adobe";
+      case 9: return "JBIG BW";
+      case 10: return "JBIG C";
+      case 32773: return "PackBits";
+    }
+    return "Unknown";
   }
 
   private static Document convertStringToDocument(String xmlStr) {
@@ -407,6 +447,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           Logger.println("IO Exception in file '" + pathToFile + "'");
           break;
         case 0:
+          Logger.println("Validating Tiff");
           boolean checkBL = config.getIsos().contains("Baseline");
           boolean checkEP = config.getIsos().contains("Tiff/EP");
           boolean checkIT = config.getIsos().contains("Tiff/IT");
@@ -417,7 +458,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
             checkPC = config.getRules().getRules().size() > 0;
           }
 
-          Logger.println("Validating Tiff");
           Validator baselineVal = null;
           if (checkBL) {
             baselineVal = getBaselineValidation(tr);
@@ -438,10 +478,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           if (checkIT2) {
             it2Validation = getITValidation(2, tr);
           }
-          if (checkPC) {
-            ArrayList<RuleResult> pcValidation = new ArrayList<>();
-
-          }
+          Logger.println("Creating report");
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);

@@ -51,8 +51,6 @@ import dpfmanager.shell.modules.report.util.ReportXml;
 
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationEvent;
-import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
