@@ -31,6 +31,7 @@
 
 package dpfmanager.shell.modules.report.util;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
@@ -304,10 +305,20 @@ public class ReportXml extends ReportGeneric {
       infoElement.setTextContent(ir.getEndianess());
       infoElement.setAttribute("ByteOrder", ir.getEndianess());
       report.appendChild(infoElement);
+      infoElement = doc.createElement("Compression");
+      String value = ir.getCompression().length() > 0 ? TiffConformanceChecker.compressionName(Integer.parseInt(ir.getCompression())) : "Unknown";
+      infoElement.setTextContent(value);
+      infoElement.setAttribute("Compression", value);
+      report.appendChild(infoElement);
+      infoElement = doc.createElement("BitDepth");
+      infoElement.setTextContent(ir.getBitsPerSample());
+      infoElement.setAttribute("BitDepth", ir.getBitsPerSample());
+      report.appendChild(infoElement);
 
       // tags
       for (ReportTag tag : getTags(ir)) {
         try {
+          if (tag.tv.getName().equals("Compression")) continue;
           infoElement = doc.createElement(tag.tv.getName());
           infoElement.setTextContent(tag.tv.toString());
           infoElement.setAttribute(tag.tv.getName(), tag.tv.toString());

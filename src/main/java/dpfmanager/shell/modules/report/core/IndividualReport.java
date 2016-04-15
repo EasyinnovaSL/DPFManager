@@ -35,8 +35,6 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationEvent;
-import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 
 import java.util.ArrayList;
@@ -79,6 +77,9 @@ public class IndividualReport {
 
   /** The Endianess. */
   private String endianess;
+
+  /** The compression. */
+  private String compression;
 
   /** The pixel density. */
   private String pixeldensity;
@@ -390,6 +391,7 @@ public class IndividualReport {
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
+    compression = tiffModel.getMetadataSingleString("Compression");
     endianess = tiffModel.getEndianess().toString();
     pixeldensity = "0";
     numberimages = "0";
@@ -521,6 +523,15 @@ public class IndividualReport {
    */
   public String getEndianess() {
     return endianess;
+  }
+
+  /**
+   * Gets compression.
+   *
+   * @return the compression
+   */
+  public String getCompression() {
+    return compression;
   }
 
   /**

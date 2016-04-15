@@ -183,6 +183,7 @@ public class GlobalReport {
    * Generate the full report information.
    */
   public void generate() {
+    nreportsPcOk = 0;
     for (IndividualReport ir : reports) {
       if (ir.hasEpValidation()) {
         if (ir.getEPErrors().size()==0) nreportsEpOk++;
@@ -370,6 +371,7 @@ public class GlobalReport {
 
   public void computePcChecks() {
     hasPc = false;
+    nreportsPcOk = 0;
     for (IndividualReport ir : getIndividualReports()) {
       if (ir.hasPcValidation()) {
         hasPc = true;

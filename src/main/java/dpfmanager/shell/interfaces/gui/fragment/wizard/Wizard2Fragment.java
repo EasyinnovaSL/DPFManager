@@ -22,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import org.controlsfx.control.CheckComboBox;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
@@ -94,15 +95,23 @@ public class Wizard2Fragment {
         }
 
         Node nodeVal = hbox.getChildren().get(3);
-        if (nodeVal instanceof ComboBox) {
-          ComboBox comboVal = (ComboBox) nodeVal;
-          value = comboVal.getValue().toString();
+        if (nodeVal instanceof CheckComboBox) {
+          CheckComboBox comboVal = (CheckComboBox) nodeVal;
+          value = "";
+          for (int idx = 0; idx < comboVal.getCheckModel().getCheckedIndices().size(); idx++) {
+            int selindex = (Integer)comboVal.getCheckModel().getCheckedIndices().get(idx);
+            if (value.length() > 0) value += ";";
+            value += comboVal.getCheckModel().getItem(selindex);
+          }
         } else if (nodeVal instanceof TextField) {
           TextField textVal = (TextField) nodeVal;
           value = textVal.getText();
           if (value.isEmpty() || Pattern.matches("[a-zA-Z ]+", value)) {
             wrong_format = true;
           }
+        } else if (nodeVal instanceof ComboBox) {
+          ComboBox comboVal = (ComboBox) nodeVal;
+          value = comboVal.getValue().toString();
         }
       }
 
@@ -164,7 +173,7 @@ public class Wizard2Fragment {
     comboBox.valueProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue ov, String t, String item) {
-        if (hbox.getChildren().size() == 3) {
+        if (hbox.getChildren().size() >= 3) {
           addOperator(item, hbox, remove, null, null);
         }
       }
@@ -184,8 +193,8 @@ public class Wizard2Fragment {
     ArrayList<String> operators = getModel().getOperators(item);
     ArrayList<String> values = getModel().getValues(item);
 
-    //Remove button X
-    hbox.getChildren().remove(remove);
+    // Remove
+    while (hbox.getChildren().size() > 2) hbox.getChildren().remove(2);
 
     // Add operator combo box
     if (operators != null) {
@@ -199,10 +208,20 @@ public class Wizard2Fragment {
         comboOp.setValue(operatorLoad);
       }
       hbox.getChildren().add(comboOp);
+
+      // Combo Box listener
+      comboOp.valueProperty().addListener(new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue ov, String t, String itemchanged) {
+          if (hbox.getChildren().size() >= 3) {
+            addOperator(item, hbox, remove, comboOp.getValue().toString(), null);
+          }
+        }
+      });
     }
 
     // Value combo box or text field
-    if (values == null) {
+    if (values == null || (operatorLoad != null && !operatorLoad.equals("="))) {
       TextField value = new NumberTextField();
       value.setId("textField");
       value.getStyleClass().add("txtRule");
@@ -211,13 +230,15 @@ public class Wizard2Fragment {
       }
       hbox.getChildren().add(value);
     } else {
-      ComboBox comboVal = new ComboBox();
+      CheckComboBox comboVal = new CheckComboBox();
       comboVal.getStyleClass().add("combo-box-white");
       for (String value : values) {
         comboVal.getItems().add(value);
       }
       if (valueLoad != null) {
-        comboVal.setValue(valueLoad);
+        for (String valueLoad1 : valueLoad.split(";")) {
+          comboVal.getCheckModel().check(comboVal.getCheckModel().getItemIndex(valueLoad1));
+        }
       }
       hbox.getChildren().add(comboVal);
     }
