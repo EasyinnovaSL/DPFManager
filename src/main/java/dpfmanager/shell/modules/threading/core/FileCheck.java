@@ -50,5 +50,4 @@ public class FileCheck {
   public void addError(){
     errors++;
   }
-
 }

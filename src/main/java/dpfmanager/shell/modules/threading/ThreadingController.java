@@ -4,7 +4,11 @@ import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.modules.threading.core.ThreadingService;
+import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
+import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
+import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -25,12 +29,25 @@ public class ThreadingController extends DpfSpringController {
   private ApplicationContext appContext;
 
   @Override
-  public void handleMessage(DpfMessage dpfMessage){
-
+  public void handleMessage(DpfMessage dpfMessage) {
+    if (dpfMessage.isTypeOf(IndividualStatusMessage.class)) {
+      IndividualStatusMessage sm = dpfMessage.getTypedMessage(IndividualStatusMessage.class);
+      service.finishIndividual(sm.getIndividual(), sm.getUuid());
+    } else if (dpfMessage.isTypeOf(GlobalStatusMessage.class)) {
+      GlobalStatusMessage gm = dpfMessage.getTypedMessage(GlobalStatusMessage.class);
+      service.handleGlobalStatus(gm, params.isSilence());
+      // Now close application
+      if (gm.isFinish()) {
+        AppContext.close();
+      }
+    } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
+      RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);
+      service.run(rm.getRunnable());
+    }
   }
 
   @PostConstruct
-  public void init( ) {
+  public void init() {
     service.setContext(new ConsoleContext(appContext));
   }
 

@@ -2,15 +2,13 @@ package dpfmanager.shell.interfaces.console;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.shell.application.launcher.noui.ApplicationParameters;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
-import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.modules.conformancechecker.core.ProcessInput;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import org.apache.logging.log4j.Level;
 import org.w3c.dom.Document;
@@ -33,26 +31,26 @@ public class ConsoleController {
    */
   private ConsoleContext context;
 
+  // Config related params
   private String outputFolder;
   private ArrayList<String> files;
   private boolean xml;
   private boolean json;
   private boolean html;
   private boolean pdf;
-  private boolean silence;
-  private int recursive;
   private Configuration config;
   private boolean explicitFormats;
   private boolean explicitOutput;
 
-  public ConsoleController(ConsoleContext context){
+  // Global params
+  private ApplicationParameters parameters;
+
+  public ConsoleController(ConsoleContext c) {
     setDefault();
-    this.context = context;
+    context = c;
   }
 
-  private void setDefault(){
-    // Silence
-    silence = false;
+  private void setDefault() {
     // Output formats
     xml = true;
     json = false;
@@ -64,14 +62,13 @@ public class ConsoleController {
     explicitOutput = false;
     // Configuration
     config = null;
-    // Recursive
-    recursive = 1;
   }
 
   /**
    * Main run function
    */
-  public void run(){
+  public void run() {
+    context.sendAllControllers(parameters);
     readConformanceChecker();
     if (config != null) {
       if (explicitFormats) {
@@ -85,7 +82,7 @@ public class ConsoleController {
         config.setOutput(outputFolder);
       }
     } else { //Create it
-      config = new Configuration(null,null,new ArrayList<>());
+      config = new Configuration(null, null, new ArrayList<>());
       if (xml) config.getFormats().add("XML");
       if (pdf) config.getFormats().add("PDF");
       if (html) config.getFormats().add("HTML");
@@ -96,7 +93,7 @@ public class ConsoleController {
       config.setOutput(outputFolder);
     }
 
-    context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.CONSOLE, files, config, recursive, silence));
+    context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.CONSOLE, files, config, parameters.getRecursive()));
   }
 
   /**
@@ -151,7 +148,7 @@ public class ConsoleController {
           printOut("Standard: " + stdName + " (" + desc + ")");
         }
       }
-
+      printOut("");
     } catch (Exception e) {
       printOut("Failed communication with conformance checker: " + e.getMessage());
     }
@@ -200,12 +197,8 @@ public class ConsoleController {
   /**
    * Setters
    */
-  public void setSilence(boolean silence) {
-    this.silence = silence;
-  }
-
-  public void setRecursive(int recursive) {
-    this.recursive = recursive;
+  public void setParameters(ApplicationParameters p) {
+    parameters = p;
   }
 
   public void setOutputFolder(String outputFolder) {
@@ -245,24 +238,17 @@ public class ConsoleController {
   }
 
   /**
-   * Getters
-   */
-  public int getRecursive() {
-    return recursive;
-  }
-
-  /**
    * Custom print lines
    */
-  private void printOut(String message){
+  private void printOut(String message) {
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message));
   }
 
-  private void printErr(String message){
+  private void printErr(String message) {
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, message));
   }
 
-  private void printException(Exception ex){
+  private void printException(Exception ex) {
     context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception has occurred!", ex));
   }
 }

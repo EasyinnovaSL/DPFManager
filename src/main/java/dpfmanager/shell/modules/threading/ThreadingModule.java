@@ -12,6 +12,7 @@ import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.Component;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
+import org.jacpfx.api.annotations.lifecycle.PreDestroy;
 import org.jacpfx.rcp.context.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,14 +33,14 @@ public class ThreadingModule extends DpfModule {
   private ThreadingService service;
 
   @Override
-  public void handleMessage(DpfMessage dpfMessage){
-    if (dpfMessage.isTypeOf(IndividualStatusMessage.class)){
+  public void handleMessage(DpfMessage dpfMessage) {
+    if (dpfMessage.isTypeOf(IndividualStatusMessage.class)) {
       IndividualStatusMessage sm = dpfMessage.getTypedMessage(IndividualStatusMessage.class);
       service.finishIndividual(sm.getIndividual(), sm.getUuid());
-    } else if (dpfMessage.isTypeOf(GlobalStatusMessage.class)){
+    } else if (dpfMessage.isTypeOf(GlobalStatusMessage.class)) {
       GlobalStatusMessage gm = dpfMessage.getTypedMessage(GlobalStatusMessage.class);
-      service.handleGlobalStatus(gm);
-    } else if (dpfMessage.isTypeOf(RunnableMessage.class)){
+      service.handleGlobalStatus(gm, false);
+    } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
       RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);
       service.run(rm.getRunnable());
     }
@@ -50,8 +51,13 @@ public class ThreadingModule extends DpfModule {
     service.setContext(new GuiContext(context));
   }
 
+  @PreDestroy
+  public void onPreDestroyComponent() {
+    service.finish();
+  }
+
   @Override
-  public Context getContext(){
+  public Context getContext() {
     return context;
   }
 

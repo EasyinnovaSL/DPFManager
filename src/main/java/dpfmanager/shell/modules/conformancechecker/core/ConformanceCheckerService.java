@@ -69,15 +69,12 @@ public class ConformanceCheckerService extends DpfService {
     silence = false;
   }
 
-  public void setParameters(Configuration config, Integer r, Boolean s) {
+  public void setParameters(Configuration config, Integer r) {
     if (config != null) {
       getModel().setConfig(config);
     }
     if (r != null) {
       recursive = r;
-    }
-    if (s != null) {
-      silence = s;
     }
   }
 
@@ -116,14 +113,7 @@ public class ConformanceCheckerService extends DpfService {
       context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, files.size(), getModel().getConfig(), internalReportFolder));
 
       // Now process files
-      String filefolder = ProcessFiles(files, getModel().getConfig(), internalReportFolder, uuid);
-//      if (pi.isOutOfmemory()) {
-//        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
-//      }
-//      tempFiles = pi.getTempFiles();
-
-      // When finish, show report
-//      context.send(BasicConfig.MODULE_REPORT, new StatusMessage(StatusMessage.Type.FINISH, getModel().getConfig().getFormats(), filefolder, silence));
+      ProcessFiles(files, getModel().getConfig(), internalReportFolder, uuid);
     } catch (Exception ex) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception occured", ex));
     } catch (OutOfMemoryError er) {

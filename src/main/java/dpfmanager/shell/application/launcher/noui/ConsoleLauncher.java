@@ -54,6 +54,7 @@ public class ConsoleLauncher {
     int idx = 0;
     boolean argsError = false;
     ArrayList<String> files = new ArrayList<>();
+    ApplicationParameters parameters = new ApplicationParameters();
     while (idx < params.size() && !argsError) {
       String arg = params.get(idx);
       if (arg.equals("-o")) {
@@ -83,11 +84,11 @@ public class ConsoleLauncher {
           argsError = true;
         }
       } else if (arg.equals("-s")) {
-        controller.setSilence(true);
+        parameters.setSilence(true);
       } else if (arg.equals("-r")) {
-        controller.setRecursive(Integer.MAX_VALUE);
+        parameters.setRecursive(Integer.MAX_VALUE);
       } else if (arg.startsWith("-r") && isNumeric(arg.substring(2))) {
-        controller.setRecursive(Integer.parseInt(arg.substring(2)));
+        parameters.setRecursive(Integer.parseInt(arg.substring(2)));
       } else if (arg.equals("-configuration")) {
         if (idx + 1 < params.size()) {
           String xmlConfig = params.get(++idx);
@@ -134,7 +135,7 @@ public class ConsoleLauncher {
         }
       } else if (arg.startsWith("-")) {
         // unknown option
-        printOut("Unknown option: "+arg);
+        printOut("Unknown option: " + arg);
         argsError = true;
       } else {
         // File or directory to process
@@ -155,6 +156,7 @@ public class ConsoleLauncher {
       controller.displayHelp();
     } else{
       // Everything OK!
+      controller.setParameters(parameters);
       controller.setFiles(files);
       controller.run();
     }
@@ -198,7 +200,8 @@ public class ConsoleLauncher {
   /**
    * Exit application
    */
-  private void exit(){
+  public void exit(){
+    AppContext.close();
     System.exit(0);
   }
 

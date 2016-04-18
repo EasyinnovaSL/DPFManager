@@ -29,8 +29,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -40,11 +43,19 @@ import javax.annotation.PostConstruct;
 public class ThreadingService extends DpfService {
 
   private Map<Long, FileCheck> checks;
+  private ExecutorService executor;
 
   @PostConstruct
   public void init() {
     // No context yet
     checks = new HashMap<>();
+    executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+  }
+
+  @PreDestroy
+  public void finish() {
+    // Finish executor
+    executor.shutdownNow();
   }
 
   @Override
@@ -53,33 +64,30 @@ public class ThreadingService extends DpfService {
 
   public void run(DpfRunnable runnable) {
     runnable.setContext(getContext());
-    Thread thread = new Thread(runnable);
-    thread.start();
+    executor.execute(runnable);
   }
 
-  public void handleGlobalStatus(GlobalStatusMessage gm) {
+  public void handleGlobalStatus(GlobalStatusMessage gm, boolean silence) {
     if (gm.isInit()) {
       // Init new file check
       FileCheck fc = new FileCheck(gm.getUuid(), gm.getSize(), gm.getConfig(), gm.getInternal());
       checks.put(gm.getUuid(), fc);
     } else {
       // Finisdh file check
-      String internal = checks.get(gm.getUuid()).getInternal();
-      List<String> formats = checks.get(gm.getUuid()).getConfig().getFormats();
-      String output = checks.get(gm.getUuid()).getConfig().getOutput();
-      removeZipFolder(internal);
-      checks.remove(gm.getUuid());
-      if (context.isGui()){
-        showGui(internal, formats);
-      } else {
-        showToUser(internal, output);
+      FileCheck fc = checks.get(gm.getUuid());
+      removeZipFolder(fc.getInternal());
+      if (context.isGui()) {
+        showGui(fc.getInternal(), fc.getConfig().getFormats());
+      } else if (!silence) {
+        showToUser(fc.getInternal(), fc.getConfig().getOutput());
       }
+      checks.remove(gm.getUuid());
     }
   }
 
   public void finishIndividual(IndividualReport ir, Long uuid) {
     FileCheck fc = checks.get(uuid);
-    if (ir != null){
+    if (ir != null) {
       // Individual report finished
       fc.addIndividual(ir);
 
@@ -88,27 +96,27 @@ public class ThreadingService extends DpfService {
         // Tell reports module
         context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(fc.getIndividuals(), fc.getConfig()));
       }
-    } else{
+    } else {
       // Individual with errors
       fc.addError();
     }
   }
 
-  public void removeZipFolder(String internal){
-    try{
-      File zipFolder = new File(internal+"zip");
-      if (zipFolder.exists() && zipFolder.isDirectory()){
+  public void removeZipFolder(String internal) {
+    try {
+      File zipFolder = new File(internal + "zip");
+      if (zipFolder.exists() && zipFolder.isDirectory()) {
         FileUtils.deleteDirectory(zipFolder);
       }
-    } catch (Exception e){
+    } catch (Exception e) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove zip", e));
     }
   }
 
-  private void showToUser(String internal, String output){
+  private void showToUser(String internal, String output) {
     String name = "report.html";
     String htmlPath = internal + name;
-    if (output != null){
+    if (output != null) {
       htmlPath = output + "/" + name;
     }
     File htmlFile = new File(htmlPath);

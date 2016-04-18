@@ -418,7 +418,10 @@ public class IndividualReport {
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
-    endianess = tiffModel.getEndianess().toString();
+    endianess = "none";
+    if (tiffModel.getEndianess() != null){
+      endianess = tiffModel.getEndianess().toString();
+    }
     pixeldensity = "0";
     if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
     {

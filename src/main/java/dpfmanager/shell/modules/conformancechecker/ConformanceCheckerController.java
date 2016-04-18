@@ -1,5 +1,7 @@
 package dpfmanager.shell.modules.conformancechecker;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
+import dpfmanager.conformancechecker.DpfLogger;
 import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
@@ -35,7 +37,7 @@ public class ConformanceCheckerController extends DpfSpringController {
       if (cm.isDelete()){
         service.deleteTmpFiles();
       } else if (!cm.isGui()) {
-        service.setParameters(cm.getConfig(),cm.getRecursive(), cm.isSilence());
+        service.setParameters(cm.getConfig(), params.getRecursive());
         service.startMultiCheck(cm.getFiles());
       }
     }
@@ -43,6 +45,8 @@ public class ConformanceCheckerController extends DpfSpringController {
 
   @PostConstruct
   public void init( ) {
-    service.setContext(new ConsoleContext(appContext));
+    ConsoleContext context = new ConsoleContext(appContext);
+    ConformanceChecker.setLogger(new DpfLogger(context));
+    service.setContext(context);
   }
 }

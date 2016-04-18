@@ -48,7 +48,7 @@ public class ConformanceCheckerModule extends DpfModule {
           getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
           getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
 
-          service.setParameters(null, cm.getRecursive(), null);
+          service.setParameters(null, cm.getRecursive());
           service.startCheck(input);
         }
       } else if (cm.isDelete()){
@@ -59,8 +59,9 @@ public class ConformanceCheckerModule extends DpfModule {
 
   @PostConstruct
   public void onPostConstructComponent(final ResourceBundle resourceBundle) {
-    ConformanceChecker.setLogger(new DpfLogger(context));
-    service.setContext(new GuiContext(context));
+    GuiContext guiContext = new GuiContext(context);
+    ConformanceChecker.setLogger(new DpfLogger(guiContext));
+    service.setContext(guiContext);
   }
 
   @Override

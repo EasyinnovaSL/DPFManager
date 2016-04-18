@@ -580,6 +580,7 @@ public class ReportGenerator {
         while (new File("out" + idx + ".tif").exists()) idx++;
         String nameFixedTif = "out" + idx + ".tif";
         tw.write(nameFixedTif);
+        ti.close();
 
         TiffReader tr = new TiffReader();
         tr.readFile(nameFixedTif);
@@ -607,6 +608,7 @@ public class ReportGenerator {
         while (new File("out" + idx + ".tif").exists()) idx++;
         nameFixedTif = "out" + idx + ".tif";
         tw.write(nameFixedTif);
+        ti.close();
 
         tr = new TiffReader();
         tr.readFile(nameFixedTif);
