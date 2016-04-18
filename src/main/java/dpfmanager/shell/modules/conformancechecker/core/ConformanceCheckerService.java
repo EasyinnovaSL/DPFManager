@@ -83,7 +83,7 @@ public class ConformanceCheckerService extends DpfService {
     for (String filename : files) {
       finalFiles += filename + ";";
     }
-    finalFiles.substring(0, finalFiles.length() - 1);
+    finalFiles = finalFiles.substring(0, finalFiles.length() - 1);
     startCheck(finalFiles);
   }
 

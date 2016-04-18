@@ -28,6 +28,9 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     String path = getPath();
     File directori = new File(path);
     assertEquals(7, directori.list().length);
@@ -43,6 +46,9 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     args[2] = "pdf";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
     File directori = new File(path);
@@ -64,6 +70,9 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     args[2] = "pdf";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
     File directori = new File(path);

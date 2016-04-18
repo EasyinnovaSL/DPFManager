@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.threading.core;
 
+import dpfmanager.shell.application.launcher.noui.ApplicationParameters;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;

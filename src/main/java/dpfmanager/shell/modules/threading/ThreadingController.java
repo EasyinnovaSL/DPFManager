@@ -1,5 +1,7 @@
 package dpfmanager.shell.modules.threading;
 
+import dpfmanager.shell.application.launcher.noui.ApplicationParameters;
+import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
@@ -39,6 +41,7 @@ public class ThreadingController extends DpfSpringController {
       // Now close application
       if (gm.isFinish()) {
         AppContext.close();
+        ConsoleLauncher.setFinished(true);
       }
     } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
       RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);

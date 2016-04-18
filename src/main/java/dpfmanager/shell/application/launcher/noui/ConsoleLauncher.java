@@ -21,6 +21,11 @@ import java.util.List;
 public class ConsoleLauncher {
 
   /**
+   * Static param for tests wait for finish
+   */
+  private static boolean finished;
+
+  /**
    * The args.
    */
   private List<String> params;
@@ -36,6 +41,7 @@ public class ConsoleLauncher {
   private ConsoleContext context;
 
   public ConsoleLauncher(String[] args) {
+    ConsoleLauncher.setFinished(false);
     // Load spring context
     AppContext.loadContext("DpfSpring.xml");
     //Load DpfContext
@@ -203,6 +209,16 @@ public class ConsoleLauncher {
   public void exit(){
     AppContext.close();
     System.exit(0);
+  }
+
+  /**
+   * Finish control for test
+   */
+  public static boolean isFinished() {
+    return finished;
+  }
+  public static void setFinished(boolean f) {
+    finished = f;
   }
 
 }

@@ -37,6 +37,9 @@ public class StatisticsGeneratorTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     String path = getPath();
     String xmlFile = path + "/summary.xml";
     String jsonFile = path + "/summary.json";
@@ -56,6 +59,9 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     args[1] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
     String xmlFile = path + "/summary.xml";

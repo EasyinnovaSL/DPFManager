@@ -37,6 +37,9 @@ public class SchematronTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     String path = getPath();
 
     File directori = new File(path);
@@ -71,6 +74,9 @@ public class SchematronTest extends CommandLineTest {
     args[1] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
 
@@ -149,6 +155,9 @@ public class SchematronTest extends CommandLineTest {
     args[1] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
     String xmlFile = path + "/1-Bilevel.tif.xml";
