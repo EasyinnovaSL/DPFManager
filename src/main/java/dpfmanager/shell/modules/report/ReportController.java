@@ -10,7 +10,6 @@ import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.ReportService;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
 import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
-import dpfmanager.shell.modules.report.messages.FinishReportMessage;
 
 import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,34 +35,15 @@ public class ReportController extends DpfSpringController {
   private ApplicationContext appContext;
 
   @Override
-  public void handleMessage(DpfMessage dpfMessage){
-    if (dpfMessage.isTypeOf(FinishReportMessage.class)){
-      tractStatusMessage(dpfMessage.getTypedMessage(FinishReportMessage.class));
-    } else if (dpfMessage.isTypeOf(IndividualReportMessage.class)){
+  public void handleMessage(DpfMessage dpfMessage) {
+    if (dpfMessage.isTypeOf(IndividualReportMessage.class)) {
       service.tractIndividualMessage(dpfMessage.getTypedMessage(IndividualReportMessage.class));
-    } else if (dpfMessage.isTypeOf(GlobalReportMessage.class)){
+    } else if (dpfMessage.isTypeOf(GlobalReportMessage.class)) {
       service.tractGlobalMessage(dpfMessage.getTypedMessage(GlobalReportMessage.class));
     }
   }
 
-  private void tractStatusMessage(FinishReportMessage status){
-      // Finish check
-//      if (!status.isSilence()) {
-//        String name = "report.html";
-//        String htmlPath = service.getInternalReportFolder() + name;
-//        String output = service.getConfig().getOutput();
-//        if (output != null){
-//          htmlPath = output + "/" + name;
-//        }
-//        File htmlFile = new File(htmlPath);
-//        if (htmlFile.exists()) {
-//          showToUser(htmlPath);
-//        }
-//      }
-//      service.getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.DELETE));
-  }
-
-  private void showToUser(String htmlFile){
+  private void showToUser(String htmlFile) {
     if (Desktop.isDesktopSupported()) {
       try {
         String fullHtmlPath = new File(htmlFile).getAbsolutePath();
@@ -79,7 +59,7 @@ public class ReportController extends DpfSpringController {
   }
 
   @PostConstruct
-  public void init( ) {
+  public void init() {
     DpfContext dpfContext = new ConsoleContext(appContext);
     service.setContext(dpfContext);
   }

@@ -34,9 +34,7 @@ public class ConformanceCheckerController extends DpfSpringController {
   public void handleMessage(DpfMessage message) {
     if (message.isTypeOf(ConformanceMessage.class)){
       ConformanceMessage cm = message.getTypedMessage(ConformanceMessage.class);
-      if (cm.isDelete()){
-        service.deleteTmpFiles();
-      } else if (!cm.isGui()) {
+      if (!cm.isGui()) {
         service.setParameters(cm.getConfig(), params.getRecursive());
         service.startMultiCheck(cm.getFiles());
       }

@@ -26,6 +26,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementat
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -35,7 +36,6 @@ import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.reader.TiffReader;
 
-import org.apache.commons.io.FileUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.w3c.dom.Document;
@@ -343,10 +343,10 @@ public class TiffConformanceChecker extends ConformanceChecker {
   /**
    * Process tiff file.
    *
-   * @param pathToFile the path in local disk to the file
+   * @param pathToFile     the path in local disk to the file
    * @param reportFilename the file name that will be displayed in the report
    * @return the individual report
-   * @throws ReadTagsIOException the read tags io exception
+   * @throws ReadTagsIOException      the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
   public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
@@ -450,8 +450,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
   }
 
   /**
-   * Executes the tiff conformance checker and returns an XML string with the result.
-   * A feedback report is transparently sent to the DPF Manager development team (only for testing purposes).
+   * Executes the tiff conformance checker and returns an XML string with the result. A feedback
+   * report is transparently sent to the DPF Manager development team (only for testing purposes).
    *
    * @param input the path to the TIFF file
    */
@@ -463,7 +463,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
       // Create config file
       File configFile = new File(config);
-      if (configFile.exists()){
+      if (configFile.exists()) {
         configFile.delete();
       }
       PrintWriter bw = new PrintWriter(configFile);
@@ -482,6 +482,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
       // Run console app
       MainConsoleApp.main(args);
+
+      // Wait for finish (timeout 60s)
+      int timeout = 0;
+      while (!ConsoleLauncher.isFinished() && timeout < 60) {
+        Thread.sleep(1000);
+        timeout++;
+      }
 
       // Get the xml summary report
       String lastReport = ReportGenerator.getLastReportPath();

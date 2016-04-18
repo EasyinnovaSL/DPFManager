@@ -51,8 +51,6 @@ public class ConformanceCheckerModule extends DpfModule {
           service.setParameters(null, cm.getRecursive());
           service.startCheck(input);
         }
-      } else if (cm.isDelete()){
-        service.deleteTmpFiles();
       }
     }
   }

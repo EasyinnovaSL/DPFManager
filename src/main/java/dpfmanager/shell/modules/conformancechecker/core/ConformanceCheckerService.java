@@ -40,7 +40,6 @@ import javax.annotation.PostConstruct;
 public class ConformanceCheckerService extends DpfService {
 
   private ConformanceCheckerModel model;
-  private List<String> tempFiles;
 
   private int recursive;
   private boolean silence;
@@ -48,7 +47,6 @@ public class ConformanceCheckerService extends DpfService {
   @PostConstruct
   private void init() {
     model = new ConformanceCheckerModel();
-    tempFiles = new ArrayList<>();
     setDefaultParameters();
   }
 
@@ -195,13 +193,6 @@ public class ConformanceCheckerService extends DpfService {
         addDirectoryToFiles(files, listOfFiles[j], recursive, currentlevel + 1);
       }
     }
-  }
-
-  public void deleteTmpFiles() {
-    for (String file : tempFiles) {
-      new File(file).delete();
-    }
-    tempFiles.clear();
   }
 
   private File getFileByPath(String path) {
