@@ -4,8 +4,7 @@ jdk: oraclejdk8
 
 addons:
   apt:
-    packages:
-      - oracle-java8-installer
+    packages: oracle-java8-installer
 
 # use operating systems.
 os: linux
