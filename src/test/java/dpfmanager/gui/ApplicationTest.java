@@ -480,22 +480,23 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
         // Wait for all tasks finish
         for (Node child : childs) {
           ProgressBar pb = (ProgressBar) child.lookup("#progress");
-          while(!finish && timeout < maxTimeout){
+          boolean childFinish = false;
+          while(!childFinish && timeout < maxTimeout){
             if (pb.getProgress() == 1.0){
-              finish = true;
+              childFinish = true;
             } else{
               timeout++;
               sleep(1000);
             }
           }
         }
+        finish = true;
       } else {
         timeout++;
         sleep(1000);
       }
     }
 
-    sleep(10000);
     Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 
