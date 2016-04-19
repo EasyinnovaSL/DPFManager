@@ -603,18 +603,9 @@ public class ReportGenerator {
       String nameOriginalTif = ir.getFilePath();
 
       try {
-        TiffInputStream ti = new TiffInputStream(new File(nameOriginalTif));
-        TiffWriter tw = new TiffWriter(ti);
-        tw.SetModel(td);
-        int idx = 0;
-        while (new File("out" + idx + ".tif").exists()) idx++;
-        String nameFixedTif = "out" + idx + ".tif";
-        tw.write(nameFixedTif);
-
         TiffReader tr = new TiffReader();
-        tr.readFile(nameFixedTif);
+        tr.readFile(nameOriginalTif);
         ir.setTiffModel(tr.getModel());
-        new File(nameFixedTif).delete();
 
         for (Fix fix : fixes.getFixes()) {
           if (fix.getOperator() != null) {
@@ -630,16 +621,20 @@ public class ReportGenerator {
           }
         }
 
-        ti = new TiffInputStream(new File(nameOriginalTif));
-        tw = new TiffWriter(ti);
+        String outputFolder = config.getOutput();
+        if (outputFolder == null) outputFolder = internalReportFolder;
+        File dir = new File(outputFolder + "/fixed/");
+        if (!dir.exists()) dir.mkdir();
+        String pathFixed = outputFolder + "/fixed/" + new File(ir.getReportPath()).getName();
+        if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
+
+        TiffInputStream ti = new TiffInputStream(new File(nameOriginalTif));
+        TiffWriter tw = new TiffWriter(ti);
         tw.SetModel(td);
-        idx = 0;
-        while (new File("out" + idx + ".tif").exists()) idx++;
-        nameFixedTif = "out" + idx + ".tif";
-        tw.write(nameFixedTif);
+        tw.write(pathFixed);
 
         tr = new TiffReader();
-        tr.readFile(nameFixedTif);
+        tr.readFile(pathFixed);
         TiffDocument to = tr.getModel();
 
         Validator baselineVal = null;
@@ -653,9 +648,9 @@ public class ReportGenerator {
         Validator it2Validation = null;
         if (ir.checkIT2) it2Validation = TiffConformanceChecker.getITValidation(2, tr);
 
-        String pathNorm = nameFixedTif.replaceAll("\\\\", "/");
+        String pathNorm = pathFixed.replaceAll("\\\\", "/");
         String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-        IndividualReport ir2 = new IndividualReport(name, nameFixedTif, nameFixedTif, to, baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
+        IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
         int ind = ir.getReportPath().lastIndexOf(".tif");
         ir2.setReportPath(ir.getReportPath().substring(0, ind) + "_fixed.tif");
         ir2.checkPC = ir.checkPC;
@@ -665,17 +660,6 @@ public class ReportGenerator {
         ir2.checkIT1 = ir.checkIT1;
         ir2.checkIT2 = ir.checkIT2;
 
-        //Save fixed tiffs
-        String pathFixed = "";
-        String outputFolder = config.getOutput();
-        if (outputFolder == null){
-          outputFolder =  internalReportFolder;
-        }
-        File dir = new File(outputFolder + "/fixed/");
-        if (!dir.exists()) dir.mkdir();
-        pathFixed = outputFolder + "/fixed/" + new File(ir.getReportPath()).getName();
-        if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
-        Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
         ir2.setFilePath(pathFixed);
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
 

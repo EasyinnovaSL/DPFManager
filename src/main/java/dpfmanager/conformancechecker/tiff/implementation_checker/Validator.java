@@ -75,6 +75,39 @@ public class Validator {
     return fis;
   }
 
+  ImplementationCheckerObject getRules(String rulesFile) throws JAXBException {
+    ImplementationCheckerObject rules = null;
+
+    if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
+      JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
+      Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+      rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
+
+      if (rules.getIncludes() != null) {
+        for (IncludeObject inc : rules.getIncludes()) {
+          JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObject.class);
+          Unmarshaller jaxbUnmarshallerInc = jaxbContextInc.createUnmarshaller();
+          ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
+
+          if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
+            rules.getRules().addAll(0, rulesIncluded.getRules());
+          } else {
+            for (RulesObject ro : rulesIncluded.getRules()) {
+              if (ro.getDescription().equals(inc.getSubsection())) {
+                rules.getRules().add(ro);
+              }
+            }
+          }
+        }
+      }
+
+      preLoadedValidatorsSingleton.put(rulesFile, rules);
+    } else {
+      rules = preLoadedValidatorsSingleton.get(rulesFile);
+    }
+    return rules;
+  }
+
   void validate(String path, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
 
@@ -82,29 +115,7 @@ public class Validator {
     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(new File(path));
 
-    if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
-      jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
-      jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-      preLoadedValidatorsSingleton.put(rulesFile, (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile)));
-    }
-    ImplementationCheckerObject rules = preLoadedValidatorsSingleton.get(rulesFile);
-
-    if (rules.getIncludes() != null) {
-      for (IncludeObject inc : rules.getIncludes()) {
-        jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
-        jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
-        if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
-          rules.getRules().addAll(0, rulesIncluded.getRules());
-        } else {
-          for (RulesObject ro : rulesIncluded.getRules()) {
-            if (ro.getDescription().equals(inc.getSubsection())) {
-              rules.getRules().add(ro);
-            }
-          }
-        }
-      }
-    }
+    ImplementationCheckerObject rules = getRules(rulesFile);
 
     boolean bbreak = false;
     for (RulesObject ruleSet : rules.getRules()) {

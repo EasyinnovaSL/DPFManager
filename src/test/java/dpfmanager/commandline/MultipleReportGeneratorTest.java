@@ -55,6 +55,27 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
   }
 
   @Test
+  public void testReportsZKoPdf() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String[] args = new String[3];
+    args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
+    args[1] = "-reportformat";
+    args[2] = "pdf";
+
+    MainConsoleApp.main(args);
+
+    String path = getPath();
+    File directori = new File(path);
+    assertEquals(2, directori.list().length);
+
+    PDDocument doc = PDDocument.load(path + "/report.pdf");
+    List<PDPage> l = doc.getDocumentCatalog().getAllPages();
+    assertEquals(2, l.size());
+    doc.close();
+  }
+
+  @Test
   public void testReportsPDF() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
