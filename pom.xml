@@ -347,12 +347,10 @@
 					<additionalClasspathElements>
 						<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
 					</additionalClasspathElements>
-					<excludes>
-						<exclude>dpfmanager.gui.FileCheckTest</exclude>
-						<exclude>dpfmanager.gui.ReportParserTest</exclude>
+					<!--<excludes>-->
 						<!--<exclude>dpfmanager.implementationchecker.*</exclude>-->
 						<!--<exclude>dpfmanager.commandline</exclude>-->
-					</excludes>
+					<!--</excludes>-->
 					<!--<includes>-->
 						<!--<include>dpfmanager.RunTestOnly</include>-->
 						<!--<include>dpfmanager.commandline.*</include>-->

@@ -6,22 +6,14 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
-import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
-import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -34,15 +26,10 @@ import javafx.scene.layout.VBox;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
-import org.jacpfx.api.message.Message;
-import org.jacpfx.rcp.component.FXComponent;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
-import org.jacpfx.rcp.components.errorDialog.DefaultErrorDialog;
 import org.jacpfx.rcp.context.Context;
-import org.jacpfx.rcp.handler.DefaultErrorDialogHandler;
 
 import java.io.File;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -89,27 +76,18 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
-    if (message != null && message.isTypeOf(AlertMessage.class)){
+    if (message != null && message.isTypeOf(AlertMessage.class)) {
       AlertMessage am = message.getTypedMessage(AlertMessage.class);
       RadioButton radio = getSelectedConfig();
-      if (radio != null && am.hasResult() && am.getResult()){
+      if (radio != null && am.hasResult() && am.getResult()) {
         getController().performDeleteConfigAction(radio.getText());
-      }
-    } else if (message != null && message.isTypeOf(LoadingMessage.class)){
-      LoadingMessage lm = message.getTypedMessage(LoadingMessage.class);
-      if (lm.isShow()){
-        showLoading();
-      } else if (lm.isHide()){
-        hideLoading();
-      } else if (lm.isText()){
-        lblLoading.setText(lm.getText());
       }
     }
     return null;
   }
 
   @Override
-  public Context getContext(){
+  public Context getContext() {
     return context;
   }
 
@@ -118,9 +96,6 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     // Set model and controller
     setModel(new DessignModel());
     setController(new DessignController());
-
-    // hide loading
-    hideLoading();
 
     // Add input types
     if (comboChoice.getItems().size() < 2) {
@@ -137,7 +112,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     addConfigFiles();
   }
 
-  private void addConfigFiles(){
+  private void addConfigFiles() {
     group = new ToggleGroup();
     vBoxConfig = new VBox();
     vBoxConfig.setId("vBoxConfig");
@@ -155,7 +130,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     configScroll.setContent(vBoxConfig);
   }
 
-  public void addConfigFile(String text){
+  public void addConfigFile(String text) {
     RadioButton radio = new RadioButton();
     radio.setId("radioConfig" + vBoxConfig.getChildren().size());
     radio.setText(text);
@@ -163,24 +138,16 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     vBoxConfig.getChildren().add(radio);
   }
 
-  public void deleteSelectedConfig(){
+  public void deleteSelectedConfig() {
     Toggle tog = group.getSelectedToggle();
     RadioButton rad = (RadioButton) tog;
     group.getToggles().remove(tog);
     vBoxConfig.getChildren().remove(rad);
   }
 
-  public void showLoading(){
-    loadingVbox.setVisible(true);
-    loadingVbox.setManaged(true);
-  }
-
-  public void hideLoading(){
-    loadingVbox.setVisible(false);
-    loadingVbox.setManaged(false);
-  }
-
-  /** FXML Events Handlers */
+  /**
+   * FXML Events Handlers
+   */
 
   @FXML
   protected void selectFileClicked(ActionEvent event) throws Exception {
@@ -194,7 +161,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @FXML
   protected void onChangeInputType(ActionEvent event) throws Exception {
-    if (comboChoice.getValue() == "File"){
+    if (comboChoice.getValue() == "File") {
       inputText.setText("Select a file");
     } else if (comboChoice.getValue() == "Folder") {
       inputText.setText("Select a folder");
@@ -247,7 +214,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   }
 
 
-  public RadioButton getSelectedConfig(){
+  public RadioButton getSelectedConfig() {
     return (RadioButton) group.getSelectedToggle();
   }
 

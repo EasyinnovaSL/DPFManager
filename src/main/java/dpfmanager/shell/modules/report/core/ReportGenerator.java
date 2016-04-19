@@ -651,7 +651,7 @@ public class ReportGenerator {
           new File(Paths.get(pathFixed).toString()).delete();
         Files.move(Paths.get(nameFixedTif), Paths.get(pathFixed));
         ir2.setFilePath(pathFixed);
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
+        context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
 
         ir2.setFilePath(pathFixed);
         ir2.setFileName(new File(nameOriginalTif).getName() + " Fixed");

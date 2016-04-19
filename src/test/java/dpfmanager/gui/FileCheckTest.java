@@ -49,8 +49,7 @@ public class FileCheckTest extends ApplicationTest {
     clickOnImportedConfig(inputConfigPath);
     writeText("#inputText", inputFilePath);
     clickOnAndReload("#checkFilesButton");
-    FxAssert.verifyThat("#loadingVbox", NodeMatchers.isVisible()); //Check loading screen
-    waitForCheckFiles();
+    waitForCheckFiles(1);
 
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");

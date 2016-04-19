@@ -4,7 +4,6 @@ import dpfmanager.shell.core.adapter.DpfAbstractPerspective;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -46,14 +45,7 @@ public class DessignPerspective extends DpfAbstractPerspective {
 
   @Override
   public void handleMessage(DpfMessage dpfMessage, PerspectiveLayout layout) {
-    if (dpfMessage.isTypeOf(LoadingMessage.class)){
-      LoadingMessage lm = dpfMessage.getTypedMessage(LoadingMessage.class);
-      if (lm.isShow()){
-        topPane.setDisable(true);
-      } else {
-        topPane.setDisable(false);
-      }
-    }
+
   }
 
   @PostConstruct
@@ -91,7 +83,7 @@ public class DessignPerspective extends DpfAbstractPerspective {
   }
 
   @Override
-  public void onReloadCustom(){
+  public void onReloadCustom() {
     getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.RELOAD));
   }
 }

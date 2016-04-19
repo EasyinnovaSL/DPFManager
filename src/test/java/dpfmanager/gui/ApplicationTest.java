@@ -2,9 +2,11 @@ package dpfmanager.gui;
 
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
@@ -331,7 +333,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     int minH = height + baseH -25;
     if (minH < y){
       // We are at limit, so make one scroll more
-      makeScroll(1,true);
+      makeScroll(1, true);
     }
 
     // Finally we can click the button
@@ -357,7 +359,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       int minH = height + baseH -5;
       // Check limits
       if (minH < y){
-        makeScroll(1,true);
+        makeScroll(1, true);
       }
       // Check under top bar
       if (y < 50 && !topItems) {
@@ -464,33 +466,32 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   /**
    * Wait for check files.
    */
-  protected void waitForCheckFiles() {
+  protected void waitForCheckFiles(int count) {
     sleep(1000);
     int timeout = 0;
 
-    // Wait processing pane
+    // Wait task appear
     boolean finish = false;
     while (!finish && timeout < maxTimeout) {
       reloadScene();
-      Node node = scene.lookup("#loadingVbox");
-      if (node != null) {
+      VBox vbox = (VBox) scene.lookup("#taskVBox");
+      if (vbox != null && vbox.getChildren().size() == count) {
+        ObservableList<Node> childs = vbox.getChildren();
+        // Wait for all tasks finish
+        for (Node child : childs) {
+          ProgressBar pb = (ProgressBar) child.lookup("#progress");
+          while(!finish && timeout < maxTimeout){
+            if (pb.getProgress() == 1.0){
+              finish = true;
+            } else{
+              timeout++;
+              sleep(1000);
+            }
+          }
+        }
+      } else {
         timeout++;
         sleep(1000);
-      } else {
-        finish = true;
-      }
-    }
-
-    // Wait load report
-    finish = false;
-    while (!finish && timeout < maxTimeout) {
-      reloadScene();
-      Node node = scene.lookup("#butDessign");
-      if (node == null) {
-        timeout++;
-        sleep(1000);
-      } else {
-        finish = true;
       }
     }
 

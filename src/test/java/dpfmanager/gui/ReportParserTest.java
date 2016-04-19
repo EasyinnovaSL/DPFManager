@@ -54,10 +54,10 @@ public class ReportParserTest extends ApplicationTest {
       clickOnImportedConfig(configFile);
       writeText("#inputText", inputFiles);
       clickOnAndReload("#checkFilesButton");
-      waitForCheckFiles();
-      System.out.println("Current config: " + configFile);
-      clickOnAndReloadTop("#butDessign","#pane-design");
     }
+
+    // Now wait for the 3 checks
+    waitForCheckFiles(3);
 
     // Go to reports and check them
     clickOnAndReloadTop("#butReports","#pane-reports");
