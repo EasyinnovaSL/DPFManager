@@ -2,17 +2,12 @@ package dpfmanager.shell.interfaces.gui.fragment;
 
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
-import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.threading.core.FileCheck;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.SplitPane;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import org.jacpfx.api.annotations.Resource;
@@ -44,7 +39,7 @@ public class TaskFragment {
   private int total;
   private FileCheck fileCheck;
 
-  public void init(FileCheck fc){
+  public void init(FileCheck fc) {
     progress.setProgress(0.0);
     input.setText("Input: " + fc.getInput());
     current = 0;
@@ -53,17 +48,17 @@ public class TaskFragment {
     bindWidth();
   }
 
-  public void updateProgressBar(){
+  public void updateProgressBar() {
     current++;
     progress.setProgress((current * 1.0) / (total * 1.0));
-    if (current == total && !progress.getStyleClass().contains("bar-done")){
+    if (current == total && !progress.getStyleClass().contains("bar-done")) {
       progress.getStyleClass().add("bar-done");
     }
   }
 
   @FXML
-  private void showReport(){
-    if (isFinished()){
+  private void showReport() {
+    if (isFinished()) {
       String filefolder = fileCheck.getInternal();
       List<String> formats = fileCheck.getConfig().getFormats();
 
@@ -91,11 +86,11 @@ public class TaskFragment {
     }
   }
 
-  private boolean isFinished(){
+  private boolean isFinished() {
     return (current == total);
   }
 
-  private void bindWidth(){
+  private void bindWidth() {
     progress.prefWidthProperty().bind(vbox.widthProperty());
   }
 }

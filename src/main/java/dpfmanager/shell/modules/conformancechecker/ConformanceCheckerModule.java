@@ -4,12 +4,10 @@ import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.DpfLogger;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
-import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 
 import org.jacpfx.api.annotations.Resource;
@@ -35,8 +33,8 @@ public class ConformanceCheckerModule extends DpfModule {
   private ConformanceCheckerService service;
 
   @Override
-  public void handleMessage(DpfMessage dpfMessage){
-    if (dpfMessage.isTypeOf(ConformanceMessage.class)){
+  public void handleMessage(DpfMessage dpfMessage) {
+    if (dpfMessage.isTypeOf(ConformanceMessage.class)) {
       ConformanceMessage cm = dpfMessage.getTypedMessage(ConformanceMessage.class);
       if (cm.isGui()) {
         String path = cm.getPath();
@@ -44,10 +42,6 @@ public class ConformanceCheckerModule extends DpfModule {
         if (!service.readConfig(path)) {
           getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
         } else {
-          // Show loading
-//          getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
-//          getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
-
           service.setParameters(null, cm.getRecursive());
           service.startCheck(input);
         }
@@ -63,7 +57,7 @@ public class ConformanceCheckerModule extends DpfModule {
   }
 
   @Override
-  public Context getContext(){
+  public Context getContext() {
     return context;
   }
 

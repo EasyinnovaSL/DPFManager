@@ -1,16 +1,10 @@
 package dpfmanager.shell.modules.threading.core;
 
-import dpfmanager.shell.application.launcher.noui.ApplicationParameters;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
-import dpfmanager.shell.core.messages.ShowMessage;
-import dpfmanager.shell.core.messages.UiMessage;
-import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
-import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
@@ -90,9 +84,9 @@ public class ThreadingService extends DpfService {
         showToUser(fc.getInternal(), fc.getConfig().getOutput());
       }
       checks.remove(gm.getUuid());
-    } else if (context.isGui() && gm.isReload()){
+    } else if (context.isGui() && gm.isReload()) {
       // Ask for reload
-      if (needReload){
+      if (needReload) {
         needReload = false;
         context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
       }
