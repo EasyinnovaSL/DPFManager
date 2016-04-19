@@ -12,8 +12,9 @@ addons:
 os:
   - linux
 
-install:
-  -
+#env:
+#	- TOKEN=nogui
+#	- TOKEN=gui
 
 matrix:
     include:
@@ -22,7 +23,12 @@ matrix:
           env: TOKEN=nogui
           sudo: required
           script: mvn clean -Dtest=!gui/*Test.java,!RunTestOnly.java install
-#        - os: osx
+    include:
+        - os: linux
+          jdk: oraclejdk8
+          env: TOKEN=gui
+          sudo: required
+          script: mvn clean -Dtest=!commandline/*Test.java,!implementationchecker/*Test.java install
 
 before_install:
   - if [ "${TOKEN}" != "nogui" ]; then export DISPLAY=:99.0; fi
