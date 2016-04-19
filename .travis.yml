@@ -6,21 +6,20 @@ addons:
   apt:
     packages: oracle-java8-installer
 
+# Operating system
+os: linux
+
 # sudo required
 sudo: required
 
-#env:
-#	- TOKEN=nogui
-#	- TOKEN=gui
-
 matrix:
   include:
-    - os: linux
-      env: TOKEN=nogui
+    - env: TOKEN=nogui
       script: mvn clean -Dtest=!gui/*Test.java,!RunTestOnly.java install
-    - os: linux
-      env: TOKEN=gui
+    - env: TOKEN=gui
       script: mvn clean -Dtest=!commandline/*Test.java,!implementationchecker/*Test.java install
+  exclude:
+    - jdk: oraclejdk8
 
 before_install:
   - if [ "${TOKEN}" != "nogui" ]; then export DISPLAY=:99.0; fi
