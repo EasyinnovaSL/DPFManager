@@ -495,6 +495,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       }
     }
 
+    sleep(10000);
     Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 
