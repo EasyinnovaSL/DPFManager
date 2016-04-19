@@ -64,6 +64,7 @@ public class FileCheckTest extends ApplicationTest {
     Assert.assertEquals("Report row N warnings", "0 warnings", row.getWarnings());
 
     //Check html && pdf exists
+    reloadScene();
     waitUntilExists("#tabReports #buthtml");
     FxAssert.verifyThat("#tabReports #buthtml", NodeMatchers.isNotNull());
     clickOnAndReload("#tabReports #buthtml", "#pane-show");
