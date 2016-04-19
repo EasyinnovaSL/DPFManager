@@ -492,7 +492,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           Logger.println("Internal report created");
 
           tr = null;
-          System.gc();
+          //System.gc();
           return ir;
         default:
           Logger.println("Unknown result (" + result + ") in file '" + pathToFile + "'");

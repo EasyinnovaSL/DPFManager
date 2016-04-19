@@ -578,7 +578,9 @@ public class ReportGenerator {
 
     if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Parsing individual"));
       reportHtml.parseIndividual(htmlFileStr, ir, htmlMode, this);
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Parsed"));
     }
     if (config.getFormats().contains("JSON")) {
       reportJson.xmlToJson(output, jsonFileStr, this);
@@ -748,6 +750,8 @@ public class ReportGenerator {
    */
   public String makeSummaryReport(String internalReportFolder,
       GlobalReport gr, Configuration config) {
+
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Generating summary report..."));
 
     String output = null;
     String xmlFileStr = internalReportFolder + "summary.xml";

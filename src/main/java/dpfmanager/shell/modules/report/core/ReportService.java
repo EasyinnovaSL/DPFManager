@@ -65,6 +65,7 @@ public class ReportService extends DpfService {
     for (IndividualReport ir : individuals) {
       // Generate report
       String outputfile = generator.getReportName(internalReportFolder, ir.getReportFileName(), idReport);
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Creating report '" + outputfile + "'"));
       generator.generateIndividualReport(outputfile, ir, config, internalReportFolder);
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Created report '" + outputfile + "'"));
       idReport++;

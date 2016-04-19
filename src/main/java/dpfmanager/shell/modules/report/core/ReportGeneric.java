@@ -8,6 +8,7 @@ import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +18,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,7 +32,36 @@ import javax.imageio.ImageIO;
  * Created by easy on 19/10/2015.
  */
 public class ReportGeneric {
+  public static BufferedImage loadImageCrazyFast( URL src ){
+    try{
+      Image im = Toolkit.getDefaultToolkit().createImage( src );
+      Method method = im.getClass().getMethod( "getBufferedImage" );
+      BufferedImage bim = null;
+      int counter = 0;
+      // load 30seconds maximum!
+      while( bim == null && counter < 3000 ){
+        im.getWidth( null );
+        bim = (BufferedImage) method.invoke( im );
+        try{ Thread.sleep( 10 ); }
+        catch( InterruptedException e ){ }
+        counter ++;
+      }
 
+      if( bim != null ){
+        return bim;
+      }
+    }
+    catch( Exception e ){
+      System.err.println( "Fast loading of " + src.toString() + " failed. You might want to correct this in loadImageCrazyFast( URL )" );
+      System.err.println( "Falling back to ImageIO, which is... slow!" );
+    }
+    try{
+      return ImageIO.read( src );
+    }
+    catch( IOException ioe ){
+      return null;
+    }
+  }
   /**
    * Tiff 2 jpg.
    *
@@ -42,10 +74,9 @@ public class ReportGeneric {
     if (outfile.exists()) {
       return true;
     }
-    BufferedImage image = null;
     try {
-      File input = new File(inputfile);
-      image = ImageIO.read(input);
+      BufferedImage image = ImageIO.read(new File(inputfile));
+      //BufferedImage image = loadImageCrazyFast(new File(inputfile).toURI().toURL());
 
       double factor = 1.0;
 
@@ -66,13 +97,13 @@ public class ReportGeneric {
       }
 
       BufferedImage img = scale(image, width, height);
-
       ImageIO.write(img, "jpg", new File(outputfile));
+
       img.flush();
       img = null;
       image.flush();
       image = null;
-      System.gc();
+      //System.gc();
     } catch (Exception e) {
       return false;
     }

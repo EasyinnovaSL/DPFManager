@@ -219,7 +219,7 @@ public class ReportXml extends ReportGeneric {
     // errors
     for (int i = 0; i < errors.size(); i++) {
       RuleResult value = errors.get(i);
-      Element error = doc.createElement("result");
+      Element error = doc.createElement("rule_result");
 
       // level
       Element level = doc.createElement("level");
@@ -227,9 +227,34 @@ public class ReportXml extends ReportGeneric {
       error.appendChild(level);
 
       // msg
-      Element msg = doc.createElement("msg");
+      Element msg = doc.createElement("message");
       msg.setTextContent(value.getDescription());
       error.appendChild(msg);
+
+      // context
+      msg = doc.createElement("context");
+      msg.setTextContent(value.getContext());
+      error.appendChild(msg);
+
+      // location
+      msg = doc.createElement("location");
+      msg.setTextContent(value.getLocation());
+      error.appendChild(msg);
+
+      // rule
+      if (value.getRule() != null) {
+        msg = doc.createElement("ruleId");
+        msg.setTextContent(value.getRule().getReference());
+        error.appendChild(msg);
+
+        msg = doc.createElement("ruleTest");
+        msg.setTextContent(value.getRule().getAssertionField().getTest());
+        error.appendChild(msg);
+
+        msg = doc.createElement("ruleValue");
+        msg.setTextContent(value.getRule().getAssertionField().getValue());
+        error.appendChild(msg);
+      }
 
       results.appendChild(error);
     }
@@ -237,7 +262,7 @@ public class ReportXml extends ReportGeneric {
     // warnings
     for (int i = 0; i < warnings.size(); i++) {
       RuleResult value = warnings.get(i);
-      Element warning = doc.createElement("result");
+      Element warning = doc.createElement("rule_result");
 
       // level
       Element level = doc.createElement("level");
@@ -245,9 +270,34 @@ public class ReportXml extends ReportGeneric {
       warning.appendChild(level);
 
       // msg
-      Element msg = doc.createElement("msg");
+      Element msg = doc.createElement("message");
       msg.setTextContent(value.getDescription());
       warning.appendChild(msg);
+
+      // context
+      msg = doc.createElement("context");
+      msg.setTextContent(value.getContext());
+      warning.appendChild(msg);
+
+      // location
+      msg = doc.createElement("location");
+      msg.setTextContent(value.getLocation());
+      warning.appendChild(msg);
+
+      // rule
+      if (value.getRule() != null) {
+        msg = doc.createElement("ruleId");
+        msg.setTextContent(value.getRule().getReference());
+        warning.appendChild(msg);
+
+        msg = doc.createElement("ruleTest");
+        msg.setTextContent(value.getRule().getAssertionField().getTest());
+        warning.appendChild(msg);
+
+        msg = doc.createElement("ruleValue");
+        msg.setTextContent(value.getRule().getAssertionField().getValue());
+        warning.appendChild(msg);
+      }
 
       results.appendChild(warning);
     }
@@ -331,56 +381,6 @@ public class ReportXml extends ReportGeneric {
       }
 
       // implementation checker
-      Element implementationCheckerElement = doc.createElement("implementation_checker");
-      report.appendChild(implementationCheckerElement);
-
-      // Baseline
-      Element results = doc.createElement("results_baseline");
-      List<RuleResult> errors = ir.getBaselineErrors();
-      List<RuleResult> warnings = ir.getBaselineWarnings();
-      if (errors != null && warnings != null) {
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
-      }
-
-      // TiffEP
-      results = doc.createElement("results_tiffep");
-      errors = ir.getEPErrors();
-      warnings = ir.getEPWarnings();
-      if (errors != null && warnings != null) {
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
-      }
-
-      // TiffIT
-      results = doc.createElement("results_tiffit");
-      errors = ir.getITErrors(0);
-      warnings = ir.getITWarnings(0);
-      if (errors != null && warnings != null) {
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
-      }
-
-      // TiffIT-1
-      results = doc.createElement("results_tiffit_p1");
-      errors = ir.getITErrors(1);
-      warnings = ir.getITWarnings(1);
-      if (errors != null && warnings != null) {
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
-      }
-
-      // TiffIT-2
-      results = doc.createElement("results_tiffit_p2");
-      errors = ir.getITErrors(2);
-      warnings = ir.getITWarnings(2);
-      if (errors != null && warnings != null) {
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
-      }
-
-      // Total
-      results = doc.createElement("results");
       List<RuleResult> errorsTotal = new ArrayList<RuleResult>();
       List<RuleResult> warningsTotal = new ArrayList<RuleResult>();
       if (ir.getBaselineErrors() != null) errorsTotal.addAll(ir.getBaselineErrors());
@@ -393,6 +393,76 @@ public class ReportXml extends ReportGeneric {
       if (ir.getITWarnings(0) != null) warningsTotal.addAll(ir.getITWarnings(0));
       if (ir.getITWarnings(1) != null) warningsTotal.addAll(ir.getITWarnings(1));
       if (ir.getITWarnings(2) != null) warningsTotal.addAll(ir.getITWarnings(2));
+
+      Element implementationCheckerElement = doc.createElement("implementation_checker");
+      implementationCheckerElement.setAttribute("version", "2.1");
+      implementationCheckerElement.setAttribute("ref", "DPF Manager");
+      implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
+      implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
+      report.appendChild(implementationCheckerElement);
+
+      // Baseline
+      List<RuleResult> errors = ir.getBaselineErrors();
+      List<RuleResult> warnings = ir.getBaselineWarnings();
+      if (errors != null && warnings != null) {
+        Element results = doc.createElement("implementation_check");
+        Element name = doc.createElement("name");
+        name.setTextContent("Baseline 6.0");
+        results.appendChild(name);
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // TiffEP
+      errors = ir.getEPErrors();
+      warnings = ir.getEPWarnings();
+      if (errors != null && warnings != null) {
+        Element results = doc.createElement("implementation_check");
+        Element name = doc.createElement("name");
+        name.setTextContent("Tiff/EP");
+        results.appendChild(name);
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // TiffIT
+      errors = ir.getITErrors(0);
+      warnings = ir.getITWarnings(0);
+      if (errors != null && warnings != null) {
+        Element results = doc.createElement("implementation_check");
+        Element name = doc.createElement("name");
+        name.setTextContent("Tiff-IT");
+        results.appendChild(name);
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // TiffIT-1
+      errors = ir.getITErrors(1);
+      warnings = ir.getITWarnings(1);
+      if (errors != null && warnings != null) {
+        Element results = doc.createElement("implementation_check");
+        Element name = doc.createElement("name");
+        name.setTextContent("Tiff-IT P1");
+        results.appendChild(name);
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // TiffIT-2
+      errors = ir.getITErrors(2);
+      warnings = ir.getITWarnings(2);
+      if (errors != null && warnings != null) {
+        Element results = doc.createElement("implementation_check");
+        Element name = doc.createElement("name");
+        name.setTextContent("Tiff-IT P2");
+        results.appendChild(name);
+        addErrorsWarnings(doc, results, errors, warnings);
+        implementationCheckerElement.appendChild(results);
+      }
+
+      // Total
+      Element results = doc.createElement("results");
       addErrorsWarnings(doc, results, errorsTotal, warningsTotal);
       implementationCheckerElement.appendChild(results);
     } else {

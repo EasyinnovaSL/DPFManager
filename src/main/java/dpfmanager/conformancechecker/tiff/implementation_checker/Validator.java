@@ -12,6 +12,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleEleme
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RulesObject;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import javax.xml.bind.JAXBContext;
@@ -29,6 +30,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,6 +39,7 @@ import java.util.List;
 public class Validator {
   TiffValidationObject model;
   ValidationResult result;
+  static HashMap<String, ImplementationCheckerObject> preLoadedValidatorsSingleton = new HashMap<>();
 
   public List<RuleResult> getErrors() {
     return result.getErrors();
@@ -79,9 +82,12 @@ public class Validator {
     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(new File(path));
 
-    jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
-    jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-    ImplementationCheckerObject rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
+    if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
+      jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
+      jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+      preLoadedValidatorsSingleton.put(rulesFile, (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile)));
+    }
+    ImplementationCheckerObject rules = preLoadedValidatorsSingleton.get(rulesFile);
 
     if (rules.getIncludes() != null) {
       for (IncludeObject inc : rules.getIncludes()) {
@@ -214,9 +220,11 @@ public class Validator {
     }
 
     if (ok) {
-      result.add(new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString()));
+      RuleResult rr = new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString());
+      result.add(rr);
     } else {
-      result.add(new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString()));
+      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+      result.add(rr);
     }
 
     return ok;
