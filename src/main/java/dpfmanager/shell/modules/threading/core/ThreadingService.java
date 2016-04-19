@@ -70,6 +70,7 @@ public class ThreadingService extends DpfService {
       // Init new file check
       FileCheck fc = new FileCheck(gm.getUuid(), gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
       checks.put(gm.getUuid(), fc);
+      context.sendGui(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Starting check: " + gm.getInput()));
       context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.INIT, fc));
     } else if (gm.isFinish()) {
       // Finisdh file check
