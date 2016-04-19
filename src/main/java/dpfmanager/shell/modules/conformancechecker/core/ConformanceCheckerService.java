@@ -87,6 +87,7 @@ public class ConformanceCheckerService extends DpfService {
 
   public void startCheck(String filename) {
     String internalReportFolder = ReportGenerator.createReportPath();
+    String inputStr = filename;
 
     try {
       ArrayList<String> files = new ArrayList<>();
@@ -108,7 +109,7 @@ public class ConformanceCheckerService extends DpfService {
 
       // Init
       long uuid = System.currentTimeMillis();
-      context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, files.size(), getModel().getConfig(), internalReportFolder));
+      context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, files.size(), getModel().getConfig(), internalReportFolder, inputStr));
 
       // Now process files
       ProcessFiles(files, getModel().getConfig(), internalReportFolder, uuid);

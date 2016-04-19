@@ -43,7 +43,7 @@ public class ConsoleLauncher {
   public ConsoleLauncher(String[] args) {
     ConsoleLauncher.setFinished(false);
     // Load spring context
-    AppContext.loadContext("DpfSpring.xml");
+    AppContext.loadContext("DpfSpringConsole.xml");
     //Load DpfContext
     context = new ConsoleContext(AppContext.getApplicationContext());
     // Program input

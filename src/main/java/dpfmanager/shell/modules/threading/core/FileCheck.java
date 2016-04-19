@@ -16,15 +16,21 @@ public class FileCheck {
   private int errors;
   private Configuration config;
   private String internal;
+  private String input;
   private List<IndividualReport> individuals;
 
-  public FileCheck(long u, int n, Configuration c, String i){
+  public FileCheck(){
+    uuid = 77;
+  }
+
+  public FileCheck(long u, int n, Configuration c, String i, String ri){
     uuid = u;
     total = n;
     config = c;
     internal = i;
     individuals = new ArrayList<>();
     errors = 0;
+    input = ri;
   }
 
   public void addIndividual(IndividualReport ir){
@@ -49,5 +55,21 @@ public class FileCheck {
 
   public void addError(){
     errors++;
+  }
+
+  public long getUuid() {
+    return uuid;
+  }
+
+  public String getInput() {
+    String ret = input;
+    if (ret.length() > 50) {
+      ret = ret.substring(0, 47) + "...";
+    }
+    return ret;
+  }
+
+  public int getTotal() {
+    return total;
   }
 }

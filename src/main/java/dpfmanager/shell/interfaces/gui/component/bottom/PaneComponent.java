@@ -5,7 +5,9 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.interfaces.gui.fragment.BottomFragment;
+import dpfmanager.shell.interfaces.gui.fragment.TaskFragment;
 import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
+import dpfmanager.shell.modules.threading.messages.CheckTaskMessage;
 import javafx.scene.Node;
 
 import org.jacpfx.api.annotations.Resource;
@@ -71,6 +73,17 @@ public class PaneComponent extends DpfSimpleView {
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
+    if (message != null && message.isTypeOf(CheckTaskMessage.class)){
+      CheckTaskMessage ctm = message.getTypedMessage(CheckTaskMessage.class);
+      if (ctm.isInit()) {
+        // Init new fragment
+        ManagedFragmentHandler<TaskFragment> taskFragment = context.getManagedFragmentHandler(TaskFragment.class);
+        fragment.getController().addTask(taskFragment, ctm.getFileCheck());
+      } else if (ctm.isUpdate()){
+        // Update existing one
+        fragment.getController().updateTask(ctm.getFileCheck().getUuid());
+      }
+    }
     return fragment.getFragmentNode();
   }
 

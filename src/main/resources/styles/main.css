@@ -488,37 +488,17 @@
 }
 
 /* Scroll Bars */
-
-/* table-view */
-.table-view .scroll-bar,
-.table-view .scroll-bar .track,
-.table-view .corner,
-.table-view .scroll-bar .decrement-button,
-.table-view .scroll-bar .decrement-button:hover,
-.table-view .scroll-bar .increment-arrow,
-.table-view .scroll-bar .decrement-arrow,
-/* text-area */
-.text-area .scroll-bar,
-.text-area .scroll-bar .track,
-.text-area .corner,
-.text-area .scroll-bar .decrement-button,
-.text-area .scroll-bar .decrement-button:hover,
-.text-area .scroll-bar .increment-arrow,
-.text-area .scroll-bar .decrement-arrow,
-/* combo-box-white */
-.combo-box-white .scroll-bar,
-.combo-box-white .scroll-bar .track,
-.combo-box-white .corner,
-.combo-box-white .scroll-bar .decrement-button, n,
-.combo-box-white .scroll-bar .decrement-button:hover,
-.combo-box-white .scroll-bar .increment-arrow,
-.combo-box-white .scroll-bar .decrement-arrow {
+.dpf-bar .scroll-bar,
+.dpf-bar .scroll-bar .track,
+.dpf-bar .corner,
+.dpf-bar .track-background,
+.dpf-bar .scroll-bar .decrement-button, n,
+.dpf-bar .scroll-bar .decrement-button:hover,
+.dpf-bar .scroll-bar .increment-arrow,
+.dpf-bar .scroll-bar .decrement-arrow {
     -fx-background-color: transparent;
 }
-
-.table-view .scroll-bar .thumb,
-.text-area .scroll-bar .thumb,
-.combo-box-white .scroll-bar .thumb {
+.dpf-bar .scroll-bar .thumb {
     -fx-background-color: #1cc2ff;
 }
 
@@ -593,4 +573,16 @@
 }
 .loading3 {
     -fx-background: rgba(255,255,255,0.4);
+}
+
+/* Task pane */
+.task-box:hover{
+    -fx-background-color: rgba(255,255,255,0.3);
+    -fx-cursor: hand;
+}
+.progress-bar{
+    -fx-cursor: hand;
+}
+.bar-done > .bar {
+    -fx-background-color: green;
 }

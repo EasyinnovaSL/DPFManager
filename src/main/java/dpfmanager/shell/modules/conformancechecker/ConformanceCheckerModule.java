@@ -45,8 +45,8 @@ public class ConformanceCheckerModule extends DpfModule {
           getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
         } else {
           // Show loading
-          getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
-          getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
+//          getContext().send(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
+//          getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.SHOW));
 
           service.setParameters(null, cm.getRecursive());
           service.startCheck(input);
@@ -58,7 +58,7 @@ public class ConformanceCheckerModule extends DpfModule {
   @PostConstruct
   public void onPostConstructComponent(final ResourceBundle resourceBundle) {
     GuiContext guiContext = new GuiContext(context);
-    ConformanceChecker.setLogger(new DpfLogger(guiContext));
+    ConformanceChecker.setLogger(new DpfLogger(guiContext, false));
     service.setContext(guiContext);
   }
 

@@ -12,17 +12,19 @@ import org.apache.logging.log4j.Level;
 public class DpfLogger {
 
   private DpfContext context;
+  private boolean print;
 
   public DpfLogger() {
     context = null;
   }
 
-  public DpfLogger(DpfContext c) {
+  public DpfLogger(DpfContext c, boolean p) {
     context = c;
+    print = p;
   }
 
   public void println(String line) {
-    if (context != null) {
+    if (context != null && print) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, line));
     }
   }

@@ -11,7 +11,8 @@ public class GlobalStatusMessage extends DpfMessage {
 
   public enum Type {
     INIT,
-    FINISH
+    FINISH,
+    RELOAD
   }
 
   private Type type;
@@ -19,14 +20,16 @@ public class GlobalStatusMessage extends DpfMessage {
   private int size;
   private Configuration config;
   private String internal;
+  private String input;
 
-  public GlobalStatusMessage(Type t, long u, int n, Configuration c, String i) {
+  public GlobalStatusMessage(Type t, long u, int n, Configuration c, String i, String ri) {
     // Init
     type = t;
     uuid = u;
     size = n;
     config = c;
     internal = i;
+    input = ri;
   }
 
   public GlobalStatusMessage(Type t, long u) {
@@ -35,12 +38,21 @@ public class GlobalStatusMessage extends DpfMessage {
     uuid = u;
   }
 
+  public GlobalStatusMessage(Type t) {
+    // Asking for reload
+    type = t;
+  }
+
   public boolean isInit() {
     return type.equals(Type.INIT);
   }
 
   public boolean isFinish() {
     return type.equals(Type.FINISH);
+  }
+
+  public boolean isReload() {
+    return type.equals(Type.RELOAD);
   }
 
   public long getUuid() {
@@ -57,5 +69,9 @@ public class GlobalStatusMessage extends DpfMessage {
 
   public String getInternal() {
     return internal;
+  }
+
+  public String getInput() {
+    return input;
   }
 }

@@ -9,6 +9,9 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.report.util.ReportRow;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -60,9 +63,14 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   private Button loadMore;
   @FXML
   private TableView<ReportRow> tabReports;
+  @FXML
+  private Label labelEmpty;
 
   private TableColumn<ReportRow, String> colScore;
   private TableColumn colFormats;
+
+  private int prefWidth = 840;
+  private int prefHeight = 470;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -71,10 +79,11 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
-    if (message instanceof ReportsMessage) {
-      ReportsMessage rMessage = (ReportsMessage) message;
+    if (message != null && message.isTypeOf(ReportsMessage.class)) {
+      ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
       if (rMessage.isReload()) {
         getModel().setReload(true);
+        readData();
       } else if (rMessage.isShow()){
         readData();
       }
@@ -83,9 +92,9 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
-    if (message instanceof ReportsMessage) {
-      ReportsMessage rMessage = (ReportsMessage) message;
-      if (rMessage.isShow()){
+    if (message != null && message.isTypeOf(ReportsMessage.class)) {
+      ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
+      if (rMessage.isShow() || rMessage.isReload()){
         addData();
       }
     }
@@ -154,11 +163,13 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     );
 
     tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
-    tabReports.setPrefHeight(470.0);
-    tabReports.setMinHeight(470.0);
     tabReports.setPrefWidth(840.0);
     tabReports.setCursor(Cursor.DEFAULT);
     tabReports.setEditable(false);
+    // Fixed size
+    tabReports.setFixedCellSize(28.0);
+    tabReports.setMaxHeight(470.0);
+    tabReports.setMinHeight(28.0);
 
     // Change column colors
     changeColumnTextColor(colDate, Color.LIGHTGRAY);
@@ -186,11 +197,20 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     // Add data
     ObservableList<ReportRow> data = getModel().getData();
     tabReports.setItems(data);
+    // Resize
+    tabReports.prefHeightProperty().bind(tabReports.fixedCellSizeProperty().multiply(Bindings.size(tabReports.getItems()).add(1)));
     addChartScore();
     addFormatIcons();
 
-    if (getModel().isAllReportsLoaded()) {
+    if (getModel().isEmpty()) {
       NodeUtil.hideNode(loadMore);
+      NodeUtil.showNode(labelEmpty);
+    } else if (getModel().isAllReportsLoaded()) {
+      NodeUtil.hideNode(labelEmpty);
+      NodeUtil.hideNode(loadMore);
+    } else {
+      NodeUtil.showNode(loadMore);
+      NodeUtil.hideNode(labelEmpty);
     }
   }
 

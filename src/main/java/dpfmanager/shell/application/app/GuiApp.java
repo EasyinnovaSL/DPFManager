@@ -45,7 +45,7 @@ public class GuiApp extends GuiLauncher {
 
   @Override
   public String getXmlConfig() {
-    return "DpfSpring.xml";
+    return "DpfSpringGui.xml";
   }
 
   @Override

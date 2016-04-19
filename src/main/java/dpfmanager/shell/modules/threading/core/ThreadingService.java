@@ -15,6 +15,7 @@ import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
+import dpfmanager.shell.modules.threading.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 import dpfmanager.shell.modules.threading.runnable.PhassesRunnable;
@@ -45,12 +46,14 @@ public class ThreadingService extends DpfService {
 
   private Map<Long, FileCheck> checks;
   private ExecutorService executor;
+  private boolean needReload;
 
   @PostConstruct
   public void init() {
     // No context yet
     checks = new HashMap<>();
     executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    needReload = false;
   }
 
   @PreDestroy
@@ -71,18 +74,28 @@ public class ThreadingService extends DpfService {
   public void handleGlobalStatus(GlobalStatusMessage gm, boolean silence) {
     if (gm.isInit()) {
       // Init new file check
-      FileCheck fc = new FileCheck(gm.getUuid(), gm.getSize(), gm.getConfig(), gm.getInternal());
+      FileCheck fc = new FileCheck(gm.getUuid(), gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
       checks.put(gm.getUuid(), fc);
-    } else {
+      context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.INIT, fc));
+    } else if (gm.isFinish()) {
       // Finisdh file check
       FileCheck fc = checks.get(gm.getUuid());
       removeZipFolder(fc.getInternal());
       if (context.isGui()) {
-        showGui(fc.getInternal(), fc.getConfig().getFormats());
+        // Notify task manager
+        needReload = true;
+        context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.UPDATE, fc));
       } else if (!silence) {
+        // No ui, show to user
         showToUser(fc.getInternal(), fc.getConfig().getOutput());
       }
       checks.remove(gm.getUuid());
+    } else if (context.isGui() && gm.isReload()){
+      // Ask for reload
+      if (needReload){
+        needReload = false;
+        context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
+      }
     }
   }
 
@@ -101,6 +114,7 @@ public class ThreadingService extends DpfService {
       // Individual with errors
       fc.addError();
     }
+    context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.UPDATE, fc));
   }
 
   public void removeZipFolder(String internal) {
@@ -131,43 +145,6 @@ public class ThreadingService extends DpfService {
       }
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Desktop services not suported."));
-    }
-  }
-
-  private void showGui(String filefolder, List<String> formats) {
-    String type = "";
-    String path = "";
-    if (formats.contains("HTML")) {
-      type = "html";
-      path = filefolder + "report.html";
-    } else if (formats.contains("XML")) {
-      type = "xml";
-      path = filefolder + "summary.xml";
-    } else if (formats.contains("JSON")) {
-      type = "json";
-      path = filefolder + "summary.json";
-    } else if (formats.contains("PDF")) {
-      type = "pdf";
-      path = filefolder + "report.pdf";
-    }
-
-    // Show reports
-    if (!type.isEmpty()) {
-      ArrayMessage am = new ArrayMessage();
-      am.add(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
-      am.add(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
-      am.add(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
-      am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-      am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
-      context.sendGui(GuiConfig.PERSPECTIVE_DESSIGN, am);
-    } else {
-      // No format
-      context.sendGui(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, "No output format file was selected", formats.toString()));
-      // Hide loading
-      ArrayMessage am = new ArrayMessage();
-      am.add(GuiConfig.PERSPECTIVE_DESSIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
-      am.add(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.HIDE));
-      context.sendGui(GuiConfig.PERSPECTIVE_DESSIGN, am);
     }
   }
 

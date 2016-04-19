@@ -79,8 +79,8 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
-    if (message instanceof UiMessage) {
-      UiMessage uiMessage = (UiMessage) message;
+    if (message != null && message.isTypeOf(UiMessage.class)) {
+      UiMessage uiMessage = message.getTypedMessage(UiMessage.class);
       if (uiMessage.isReload()) {
         addConfigFiles();
       }
@@ -232,7 +232,6 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   @FXML
   protected void editButtonClicked(ActionEvent event) throws Exception {
     getController().performEditConfigAction();
-//    getController().testAction();
   }
 
   @FXML

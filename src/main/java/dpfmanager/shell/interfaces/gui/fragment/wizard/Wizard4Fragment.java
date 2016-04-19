@@ -130,7 +130,7 @@ public class Wizard4Fragment {
     // Add combobox
     ComboBox comboBox = new ComboBox();
     comboBox.setId("comboBoxAction");
-    comboBox.getStyleClass().add("combo-box-white");
+    comboBox.getStyleClass().addAll("combo-box-white", "dpf-bar");
     for (String fix : getModel().getFixes()) {
       comboBox.getItems().add(fix);
     }
@@ -184,7 +184,7 @@ public class Wizard4Fragment {
     if (tags != null) {
       ComboBox comboOp = new ComboBox();
       comboOp.setId("comboBoxOp");
-      comboOp.getStyleClass().add("combo-box-white");
+      comboOp.getStyleClass().addAll("combo-box-white","dpf-bar");
       for (String tag : tags) {
         comboOp.getItems().add(tag);
       }

@@ -44,7 +44,7 @@ public class ConformanceCheckerController extends DpfSpringController {
   @PostConstruct
   public void init( ) {
     ConsoleContext context = new ConsoleContext(appContext);
-    ConformanceChecker.setLogger(new DpfLogger(context));
+    ConformanceChecker.setLogger(new DpfLogger(context, true));
     service.setContext(context);
   }
 }
