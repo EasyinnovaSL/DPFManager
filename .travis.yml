@@ -22,6 +22,8 @@ matrix:
       script: mvn clean -Dtest=!gui/*Test.java,!RunTestOnly.java install
     - env: TOKEN=gui
       script: mvn clean -Dtest=!commandline/*Test.java,!implementationchecker/*Test.java install
+  exclude:
+    - language: java
 
 before_install:
   - if [ "${TOKEN}" != "nogui" ]; then export DISPLAY=:99.0; fi
