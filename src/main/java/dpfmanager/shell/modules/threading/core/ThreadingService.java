@@ -46,7 +46,8 @@ public class ThreadingService extends DpfService {
   public void init() {
     // No context yet
     checks = new HashMap<>();
-    executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Set maximum threads to " + (Runtime.getRuntime().availableProcessors()-1)));
+    executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
     needReload = false;
   }
 

@@ -73,7 +73,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     // Create temp folder
     createTempFolder();
 
-    // 6 - Save the report
+    // 6 - Save the file
     GuiWorkbench.setTestParam("saveConfig", outputPath);
     clickOnScroll("#continueButton");
 
@@ -104,7 +104,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     //Check combobox items size
     ComboBox comboBoxTag = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxTag");
     ComboBox comboBoxOp = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxOp");
-    Assert.assertEquals("ComboBox Tag inside 'Add Rule' failed", 4, comboBoxTag.getItems().size());
+    Assert.assertEquals("ComboBox Tag inside 'Add Rule' failed", 7, comboBoxTag.getItems().size());
     Assert.assertEquals("ComboBox Operator inside 'Add Rule' failed", 3, comboBoxOp.getItems().size());
 
     uniqueId++;

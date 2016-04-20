@@ -43,7 +43,7 @@ public class IndividualReportsRunnable extends DpfRunnable {
     // Generate report
     String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
     generator.generateIndividualReport(outputfile, ir, config, ir.getInternalReportFodler());
-    context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Created report '" + outputfile + "'"));
+    context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Created individual report '" + outputfile + "'"));
 
     // Notify individual report finished
     context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir));

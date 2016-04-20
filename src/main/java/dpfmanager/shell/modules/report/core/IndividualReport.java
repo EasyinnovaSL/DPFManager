@@ -35,8 +35,6 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.ValidationEvent;
-import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.model.types.IFD;
 
 import java.util.ArrayList;
@@ -80,8 +78,14 @@ public class IndividualReport {
   /** The Endianess. */
   private String endianess;
 
+  /** The compression. */
+  private String compression;
+
   /** The pixel density. */
   private String pixeldensity;
+
+  /** The pixel numberimages. */
+  private String numberimages;
 
   /** The Tiff photometric. */
   private String photo;
@@ -117,10 +121,10 @@ public class IndividualReport {
   private List<RuleResult> warningsIt2;
 
   /** The Tiff PC errors list. */
-  private List<ValidationEvent> errorsPc;
+  private List<RuleResult> errorsPc;
 
   /** The Tiff PC warning list. */
-  private List<ValidationEvent> warningsPc;
+  private List<RuleResult> warningsPc;
 
   /** The Tiff Document object. */
   private TiffDocument tiffModel;
@@ -150,7 +154,7 @@ public class IndividualReport {
    */
   public boolean checkBL;
 
-  private ValidationResult pcValidation;
+  private ArrayList<RuleResult> pcValidation;
 
   /**
    * Check Policy.
@@ -239,8 +243,8 @@ public class IndividualReport {
     filename = name;
     filepath = path;
     ifdCount = 0;
-    listIsimg = new ArrayList<Boolean>();
-    listHasSubIfd = new ArrayList<Boolean>();
+    listIsimg = new ArrayList<>();
+    listHasSubIfd = new ArrayList<>();
     containsData = true;
     reportFilename = rFilename;
     generate(tiffModel, baselineValidation, epValidation, itValidation, it1Validation, it2Validation);
@@ -251,8 +255,9 @@ public class IndividualReport {
    *
    * @param pcValidation the pc validation
    */
-  public void setPcValidation(ValidationResult pcValidation) {
+  public void setPcValidation(ArrayList<RuleResult> pcValidation) {
     this.pcValidation = pcValidation;
+    processPcValidation();
   }
 
   /**
@@ -260,7 +265,7 @@ public class IndividualReport {
    *
    * @return the pc validation
    */
-  public ValidationResult getPcValidation() {
+  public List<RuleResult> getPcValidation() {
     return pcValidation;
   }
 
@@ -385,6 +390,7 @@ public class IndividualReport {
     if (ir.hasEpValidation()) rest -= ir.getEPErrors().size() * 12.5;
     if (ir.hasItValidation()) rest -= (ir.getITErrors(0).size() + ir.getITErrors(1).size() + ir.getITErrors(2).size()) * 12.5;
     if (ir.hasBlValidation()) rest -= ir.getBaselineErrors().size() * 12.5;
+    if (ir.hasPcValidation()) rest -= ir.getPCErrors().size() * 12.5;
     if (rest < 0.0) {
       rest = 0.0;
     }
@@ -418,11 +424,13 @@ public class IndividualReport {
     width = tiffModel.getMetadataSingleString("ImageWidth");
     height = tiffModel.getMetadataSingleString("ImageLength");
     bps = tiffModel.getMetadataSingleString("BitsPerSample");
+    compression = tiffModel.getMetadataSingleString("Compression");
     endianess = "none";
     if (tiffModel.getEndianess() != null){
       endianess = tiffModel.getEndianess().toString();
     }
     pixeldensity = "0";
+    numberimages = "0";
     if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
     {
       double pd = 0;
@@ -443,6 +451,7 @@ public class IndividualReport {
         pixeldensity = "";
       }
     }
+    numberimages = tiffModel.getImageIfds().size() + "";
     photo = tiffModel.getMetadataSingleString("PhotometricRepresentation");
 
     // errors & warnings
@@ -466,6 +475,16 @@ public class IndividualReport {
       errorsIt2 = it2Validation.getErrors();
       warningsIt2 = it2Validation.getWarnings();
     }
+    if (pcValidation != null) {
+      processPcValidation();
+    }
+  }
+
+  void processPcValidation() {
+    errorsPc = new ArrayList<>();
+    warningsPc = new ArrayList<>();
+    for (RuleResult rr : pcValidation) if (!rr.getWarning()) errorsPc.add(rr);
+    for (RuleResult rr : pcValidation) if (rr.getWarning()) warningsPc.add(rr);
   }
 
   /**
@@ -543,6 +562,24 @@ public class IndividualReport {
   }
 
   /**
+   * Gets compression.
+   *
+   * @return the compression
+   */
+  public String getCompression() {
+    return compression;
+  }
+
+  /**
+   * Has pc validation boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasPcValidation(){
+    return errorsPc != null;
+  }
+
+  /**
    * Has bl validation boolean.
    *
    * @return the boolean
@@ -578,6 +615,15 @@ public class IndividualReport {
     if (profile == 0) return errorsIt0 != null;
     if (profile == 1) return errorsIt1 != null;
     return errorsIt2 != null;
+  }
+
+  /**
+   * Gets number images.
+   *
+   * @return the number of images
+   */
+  public String getNumberImages() {
+    return "" + numberimages;
   }
 
   /**
@@ -670,8 +716,8 @@ public class IndividualReport {
    *
    * @return the errors
    */
-  public List<ValidationEvent> getPCErrors() {
-    if (errorsPc == null) return new ArrayList<ValidationEvent>();
+  public List<RuleResult> getPCErrors() {
+    if (errorsPc == null) return new ArrayList<RuleResult>();
     return errorsPc;
   }
 
@@ -680,8 +726,8 @@ public class IndividualReport {
    *
    * @return the warnings
    */
-  public List<ValidationEvent> getPCWarnings() {
-    if (warningsPc == null) return new ArrayList<ValidationEvent>();
+  public List<RuleResult> getPCWarnings() {
+    if (warningsPc == null) return new ArrayList<RuleResult>();
     return warningsPc;
   }
 
@@ -690,7 +736,7 @@ public class IndividualReport {
    *
    * @param errors the errors
    */
-  public void setPCErrors(List<ValidationEvent> errors) {
+  public void setPCErrors(List<RuleResult> errors) {
     errorsPc = errors;
   }
 
@@ -699,7 +745,7 @@ public class IndividualReport {
    *
    * @param warnings the warnings
    */
-  public void setPCWarnings(List<ValidationEvent> warnings) {
+  public void setPCWarnings(List<RuleResult> warnings) {
     warningsPc = warnings;
   }
 

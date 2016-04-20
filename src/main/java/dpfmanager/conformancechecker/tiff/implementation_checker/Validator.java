@@ -14,14 +14,8 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResul
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RulesObject;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.*;
+import org.xml.sax.SAXException;
 
-import org.xml.sax.*;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,14 +24,25 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by easy on 11/03/2016.
  */
 public class Validator {
-  TiffValidationObject model;
-  ValidationResult result;
+  /* The Dpf logger */
+  private DpfLogger Logger;
+
+  private TiffValidationObject model;
+  private ValidationResult result;
+
+  static HashMap<String, ImplementationCheckerObject> preLoadedValidatorsSingleton = new HashMap<>();
 
   public List<RuleResult> getErrors() {
     return result.getErrors();
@@ -47,13 +52,21 @@ public class Validator {
     return result.getWarnings();
   }
 
+  public Validator() {
+    Logger = null;
+  }
+
+  public Validator(DpfLogger log) {
+    Logger = log;
+  }
+
   /**
    * Read filefrom resources string.
    *
    * @param pathStr the path str
    * @return the string
    */
-  public static InputStream getFileFromResources(String pathStr) {
+  public InputStream getFileFromResources(String pathStr) {
     InputStream fis = null;
     Path path = Paths.get(pathStr);
     try {
@@ -67,10 +80,43 @@ public class Validator {
         fis = cLoader.getResourceAsStream(pathStr);
       }
     } catch (FileNotFoundException e) {
-      System.err.println("File " + pathStr + " not found in dir.");
+      printOut("File " + pathStr + " not found in dir.");
     }
 
     return fis;
+  }
+
+  ImplementationCheckerObject getRules(String rulesFile) throws JAXBException {
+    ImplementationCheckerObject rules = null;
+
+    if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
+      JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
+      Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+      rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
+
+      if (rules.getIncludes() != null) {
+        for (IncludeObject inc : rules.getIncludes()) {
+          JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObject.class);
+          Unmarshaller jaxbUnmarshallerInc = jaxbContextInc.createUnmarshaller();
+          ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
+
+          if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
+            rules.getRules().addAll(0, rulesIncluded.getRules());
+          } else {
+            for (RulesObject ro : rulesIncluded.getRules()) {
+              if (ro.getDescription().equals(inc.getSubsection())) {
+                rules.getRules().add(ro);
+              }
+            }
+          }
+        }
+      }
+
+      preLoadedValidatorsSingleton.put(rulesFile, rules);
+    } else {
+      rules = preLoadedValidatorsSingleton.get(rulesFile);
+    }
+    return rules;
   }
 
   void validate(String content, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
@@ -81,26 +127,7 @@ public class Validator {
     StringReader reader = new StringReader(content);
     model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
 
-    jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
-    jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-    ImplementationCheckerObject rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
-
-    if (rules.getIncludes() != null) {
-      for (IncludeObject inc : rules.getIncludes()) {
-        jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
-        jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
-        if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
-          rules.getRules().addAll(0, rulesIncluded.getRules());
-        } else {
-          for (RulesObject ro : rulesIncluded.getRules()) {
-            if (ro.getDescription().equals(inc.getSubsection())) {
-              rules.getRules().add(ro);
-            }
-          }
-        }
-      }
-    }
+    ImplementationCheckerObject rules = getRules(rulesFile);
 
     boolean bbreak = false;
     for (RulesObject ruleSet : rules.getRules()) {
@@ -153,7 +180,8 @@ public class Validator {
 
       // Get clausules
       Clausules clausules = new Clausules();
-      if (!clausules.parse(expression)) ConformanceChecker.Logger.println("Error on rule " + rule.toString());
+      if (!clausules.parse(expression))
+        ConformanceChecker.Logger.println("Error on rule " + rule.toString());
 
       // Analyze clausules
       for (String clausule : clausules.getClausules()) {
@@ -216,11 +244,19 @@ public class Validator {
     }
 
     if (ok) {
-      result.add(new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString()));
+      RuleResult rr = new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString());
+      result.add(rr);
     } else {
-      result.add(new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString()));
+      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+      result.add(rr);
     }
 
     return ok;
+  }
+
+  private void printOut(String line) {
+    if (Logger != null) {
+      Logger.println(line);
+    }
   }
 }

@@ -53,7 +53,7 @@ public class SchematronTest extends CommandLineTest {
     }
     assertEquals(xml != null, true);
     Schematron sch = new Schematron();
-    String result = sch.testXML(xml);
+    String result = sch.testXML(xml, "sch/rules.sch");
 
     assertEquals(true, result.indexOf("fired-rule context=\"globalreport\"") != -1);
     assertEquals(true, result.indexOf("fired-rule context=\"individualreports\"") != -1);

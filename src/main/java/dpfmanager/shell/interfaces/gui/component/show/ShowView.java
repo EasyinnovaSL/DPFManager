@@ -51,8 +51,8 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
-    if (message instanceof ShowMessage) {
-      ShowMessage sMessage = (ShowMessage) message;
+    if (message != null && message.isTypeOf(ShowMessage.class)) {
+      ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
       getController().showSingleReport(sMessage.getType(), sMessage.getPath());
     }
     return null;

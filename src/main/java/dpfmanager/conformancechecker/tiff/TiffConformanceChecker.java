@@ -25,6 +25,7 @@ import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.app.MainConsoleApp;
@@ -158,6 +159,29 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "type", "integer");
       addElement(doc, field, "description", "Pixel Density in pixels per centimeter");
       addElement(doc, field, "operators", ">,<,=");
+      // Number of images
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "NumberImages");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Number of images");
+      addElement(doc, field, "operators", ">,<,=");
+      // BitDepth
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "BitDepth");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Bit Depth");
+      addElement(doc, field, "operators", ">,<,=");
+      addElement(doc, field, "values", "1,2,4,8,16,32,64");
+      // Compression
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "Compression");
+      addElement(doc, field, "type", "string");
+      addElement(doc, field, "description", "Compression");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", compressionName(1) + "," + compressionName(2) + "," + compressionName(32773) + "," + compressionName(3) + "," + compressionName(4) + "," + compressionName(5) + "," + compressionName(6) + "," + compressionName(7) + "," + compressionName(8) + "," + compressionName(9) + "," + compressionName(10) + "");
       // Byteorder
       field = doc.createElement("field");
       fields.appendChild(field);
@@ -220,6 +244,23 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.add(field);
     }
     return fields;
+  }
+
+  public static String compressionName(int code) {
+    switch (code) {
+      case 1: return "None";
+      case 2: return "CCITT";
+      case 3: return "CCITT GR3";
+      case 4: return "CCITT GR4";
+      case 5: return "LZW";
+      case 6: return "OJPEG";
+      case 7: return "JPEG";
+      case 8: return "DEFLATE Adobe";
+      case 9: return "JBIG BW";
+      case 10: return "JBIG C";
+      case 32773: return "PackBits";
+    }
+    return "Unknown";
   }
 
   private static Document convertStringToDocument(String xmlStr) {
@@ -321,19 +362,19 @@ public class TiffConformanceChecker extends ConformanceChecker {
   }
 
   public static Validator getBaselineValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = new Validator();
+    Validator validation = new Validator(Logger);
     validation.validateBaseline(content);
     return validation;
   }
 
   public static Validator getEPValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = new Validator();
+    Validator validation = new Validator(Logger);
     validation.validateTiffEP(content);
     return validation;
   }
 
   public static Validator getITValidation(int profile, String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = new Validator();
+    Validator validation = new Validator(Logger);
     if (profile == 0) validation.validateTiffIT(content);
     else if (profile == 1) validation.validateTiffITP1(content);
     else validation.validateTiffITP2(content);
@@ -349,7 +390,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
    * @throws ReadTagsIOException      the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
+  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
 //      Logger.println("Reading Tiff file");
       TiffReader tr = new TiffReader();
@@ -362,6 +403,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           Logger.println("IO Exception in file '" + pathToFile + "'");
           break;
         case 0:
+          Logger.println("Validating Tiff");
           boolean checkBL = config.getIsos().contains("Baseline");
           boolean checkEP = config.getIsos().contains("Tiff/EP");
           boolean checkIT = config.getIsos().contains("Tiff/IT");
@@ -394,12 +436,11 @@ public class TiffConformanceChecker extends ConformanceChecker {
           if (checkIT2) {
             it2Validation = getITValidation(2, content);
           }
+          Logger.println("Creating report");
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
-          ir.setInternalReportFolder(internalReportFolder);
-          ir.setIdReport(id);
           ir.checkBL = checkBL;
           ir.checkEP = checkEP;
           ir.checkIT0 = checkIT;
@@ -409,7 +450,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           Logger.println("Internal report created");
 
           tr = null;
-          System.gc();
+          //System.gc();
           return ir;
         default:
           Logger.println("Unknown result (" + result + ") in file '" + pathToFile + "'");

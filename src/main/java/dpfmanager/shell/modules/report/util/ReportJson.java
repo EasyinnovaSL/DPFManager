@@ -31,8 +31,8 @@
 
 package dpfmanager.shell.modules.report.util;
 
-import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportGeneric;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -47,17 +47,7 @@ import java.io.File;
  *
  * @author Adrià Llorens
  */
-public class ReportJson {
-
-  private DpfContext context;
-
-  public DpfContext getContext() {
-    return context;
-  }
-
-  public void setContext(DpfContext context) {
-    this.context = context;
-  }
+public class ReportJson extends ReportGeneric {
 
   /**
    * XML to JSON.

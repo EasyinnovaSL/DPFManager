@@ -62,17 +62,6 @@ public class Schematron extends CamelTestSupport {
   }
 
   /**
-   * Test xml string.
-   *
-   * @param xmlFile the xml file
-   * @return the string
-   * @throws Exception the exception
-   */
-  public String testXML(String xmlFile) throws Exception {
-    return testXML(xmlFile, "sch/rules.sch");
-  }
-
-  /**
    * Convert string.
    *
    * @param txt the txt
@@ -110,10 +99,23 @@ public class Schematron extends CamelTestSupport {
           Element newrule = doc.createElementNS(pattern.getNamespaceURI(), "rule");
           newrule.setAttribute("context", r.getTag());
 
-          Element assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
+          Element assertion;
+          if (r.getWarning())
+            assertion = doc.createElementNS(newrule.getNamespaceURI(), "report");
+          else
+            assertion = doc.createElementNS(newrule.getNamespaceURI(), "assert");
           String sval = r.getValue();
           if (r.getType().equals("string")) sval = "'" + sval + "'";
-          assertion.setAttribute("test", "@" + r.getTag() + " " + convert(r.getOperator()) + " " + sval);
+          String stest = "";
+          if (sval.contains(";")) {
+            for (String spart : sval.substring(1, sval.length() - 1).split(";")) {
+              if (stest.length() > 0) stest += " or ";
+              stest += "@" + r.getTag() + " " + convert(r.getOperator()) + " '" + spart + "'";
+            }
+          } else {
+            stest = "@" + r.getTag() + " " + convert(r.getOperator()) + " " + sval;
+          }
+          assertion.setAttribute("test", stest);
           assertion.setTextContent("Invalid " + r.getTag() + ": #PP2#value-of select=\"@" + r.getTag() + "\"/#GG#");
 
           newrule.appendChild(assertion);

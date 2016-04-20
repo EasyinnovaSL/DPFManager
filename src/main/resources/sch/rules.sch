@@ -24,7 +24,6 @@
   <pattern name="image-dimensions-check">
    <rule context="report">
 	<assert test="width">Image width is mandatory</assert>
-	<assert test="height">Image height is mandatory</assert>
    </rule>
   </pattern>
 </schema>

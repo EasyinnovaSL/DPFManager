@@ -48,8 +48,6 @@ public class ReportParserTest extends ApplicationTest {
     for (String configFile : list) {
       GuiWorkbench.setTestParam("import", configFile);
       waitUntilExists("#importButton");
-      waitUntilExists("#importButton");
-      waitUntilExists("#importButton");
       clickOnScroll("#importButton");
       clickOnImportedConfig(configFile);
       writeText("#inputText", inputFiles);

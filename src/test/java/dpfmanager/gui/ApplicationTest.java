@@ -1,5 +1,6 @@
 package dpfmanager.gui;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -15,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.junit.After;
@@ -42,6 +44,9 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 //      System.setProperty("testfx.headless", "true");
     }
   }
+
+  boolean feedback;
+  String lastReport;
 
   /**
    * The constant width.
@@ -117,7 +122,12 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     // Initial, set log level to severe (remove JacpFX logs)
     Logger rootLog = Logger.getLogger("");
     rootLog.setLevel(Level.SEVERE);
-
+    // Save feedback
+    feedback = DPFManagerProperties.getFeedback();
+    DPFManagerProperties.setFeedback(false);
+    // Last report
+    lastReport = ReportGenerator.getLastReportPath();
+    // Setup application
     FxToolkit.setupApplication(this);
   }
 
@@ -130,6 +140,57 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   public final void internalAfter() throws Exception {
     FxToolkit.cleanupStages();
     FxToolkit.cleanupApplication(this);
+
+    // Set feedback
+    DPFManagerProperties.setFeedback(feedback);
+    // Delete all reports
+    deleteReports();
+  }
+
+  private void deleteReports() {
+    try {
+      if (endsWithDate(lastReport)) {
+        // No reports before
+        FileUtils.deleteDirectory(new File(lastReport));
+      } else {
+        // Delete new reports
+        int index = getIndex(lastReport);
+        String folder = getReportFolder(lastReport);
+        index++;
+        File file = new File(folder + index);
+        while (file.exists()) {
+          FileUtils.deleteDirectory(file);
+          index++;
+          file = new File(folder + index);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private boolean endsWithDate(String path) {
+    String last8 = path.substring(path.length() - 8);
+    try {
+      Integer.parseInt(last8);
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
+    }
+  }
+
+  private int getIndex(String path) {
+    path = path.substring(0, path.length() - 1);
+    int last = path.lastIndexOf("/");
+    String aux = path.substring(last + 1);
+    return Integer.parseInt(aux);
+  }
+
+  private String getReportFolder(String path) {
+    path = path.substring(0, path.length() - 1);
+    int last = path.lastIndexOf("/");
+    String aux = path.substring(0, last + 1);
+    return aux;
   }
 
   @Override
