@@ -350,11 +350,10 @@
 					<!--<excludes>-->
 						<!--<exclude>dpfmanager.gui.*</exclude>-->
 						<!--<exclude>dpfmanager.implementationchecker.*</exclude>-->
-						<!--<exclude>dpfmanager.commandline</exclude>-->
+						<!--<exclude>dpfmanager.commandline.*</exclude>-->
 					<!--</excludes>-->
 					<!--<includes>-->
 						<!--<include>dpfmanager.RunTestOnly</include>-->
-						<!--<include>dpfmanager.commandline.*</include>-->
 					<!--</includes>-->
 				</configuration>
 			</plugin>

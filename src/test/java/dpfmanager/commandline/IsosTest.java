@@ -9,8 +9,6 @@ import dpfmanager.shell.modules.report.core.ReportGenerator;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -43,7 +41,6 @@ public class IsosTest extends CommandLineTest {
           "FORMAT\tHTML\n");
       bw.close();
 
-
       String[] args = new String[6];
       args[0] = "src/test/resources/Small/Bilevel.tif";
       args[1] = "-reportformat";
@@ -53,6 +50,9 @@ public class IsosTest extends CommandLineTest {
       args[5] = "-s";
 
       MainConsoleApp.main(args);
+
+      // Wait for finish
+      waitForFinishMultiThred(30);
 
       String path = ReportGenerator.createReportPath(true);
       File directori = new File(path);
@@ -73,9 +73,8 @@ public class IsosTest extends CommandLineTest {
       assertEquals(1, elem.size());
       assertEquals(true, elem.html().contains(">0<"));
 
-      new File(configfile).delete();
       FileUtils.deleteDirectory(new File("temp"));
-    } catch (Exception ex ){
+    } catch (Exception ex) {
       assertEquals(true, false);
     }
   }

@@ -14,29 +14,35 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResul
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RulesObject;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.*;
+import org.xml.sax.SAXException;
 
-import org.xml.sax.*;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by easy on 11/03/2016.
  */
 public class Validator {
-  TiffValidationObject model;
-  ValidationResult result;
+  /* The Dpf logger */
+  private DpfLogger Logger;
+
+  private TiffValidationObject model;
+  private ValidationResult result;
+
+  static HashMap<String, ImplementationCheckerObject> preLoadedValidatorsSingleton = new HashMap<>();
 
   public List<RuleResult> getErrors() {
     return result.getErrors();
@@ -46,13 +52,21 @@ public class Validator {
     return result.getWarnings();
   }
 
+  public Validator() {
+    Logger = null;
+  }
+
+  public Validator(DpfLogger log) {
+    Logger = log;
+  }
+
   /**
    * Read filefrom resources string.
    *
    * @param pathStr the path str
    * @return the string
    */
-  public static InputStream getFileFromResources(String pathStr) {
+  public InputStream getFileFromResources(String pathStr) {
     InputStream fis = null;
     Path path = Paths.get(pathStr);
     try {
@@ -66,39 +80,54 @@ public class Validator {
         fis = cLoader.getResourceAsStream(pathStr);
       }
     } catch (FileNotFoundException e) {
-      System.err.println("File " + pathStr + " not found in dir.");
+      printOut("File " + pathStr + " not found in dir.");
     }
 
     return fis;
   }
 
-  void validate(String path, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    result = new ValidationResult();
+  synchronized ImplementationCheckerObject getRules(String rulesFile) throws JAXBException {
+    ImplementationCheckerObject rules = null;
 
-    JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
-    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-    model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(new File(path));
+    if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
+      JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
+      Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+      rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
 
-    jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
-    jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-    ImplementationCheckerObject rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
+      if (rules.getIncludes() != null) {
+        for (IncludeObject inc : rules.getIncludes()) {
+          JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObject.class);
+          Unmarshaller jaxbUnmarshallerInc = jaxbContextInc.createUnmarshaller();
+          ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
 
-    if (rules.getIncludes() != null) {
-      for (IncludeObject inc : rules.getIncludes()) {
-        jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
-        jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
-        if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
-          rules.getRules().addAll(0, rulesIncluded.getRules());
-        } else {
-          for (RulesObject ro : rulesIncluded.getRules()) {
-            if (ro.getDescription().equals(inc.getSubsection())) {
-              rules.getRules().add(ro);
+          if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
+            rules.getRules().addAll(0, rulesIncluded.getRules());
+          } else {
+            for (RulesObject ro : rulesIncluded.getRules()) {
+              if (ro.getDescription().equals(inc.getSubsection())) {
+                rules.getRules().add(ro);
+              }
             }
           }
         }
       }
+
+      preLoadedValidatorsSingleton.put(rulesFile, rules);
+    } else {
+      rules = preLoadedValidatorsSingleton.get(rulesFile);
     }
+    return rules;
+  }
+
+  void validate(String content, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    result = new ValidationResult();
+
+    JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
+    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+    StringReader reader = new StringReader(content);
+    model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
+
+    ImplementationCheckerObject rules = getRules(rulesFile);
 
     boolean bbreak = false;
     for (RulesObject ruleSet : rules.getRules()) {
@@ -151,7 +180,8 @@ public class Validator {
 
       // Get clausules
       Clausules clausules = new Clausules();
-      if (!clausules.parse(expression)) ConformanceChecker.Logger.println("Error on rule " + rule.toString());
+      if (!clausules.parse(expression))
+        ConformanceChecker.Logger.println("Error on rule " + rule.toString());
 
       // Analyze clausules
       for (String clausule : clausules.getClausules()) {
@@ -162,44 +192,65 @@ public class Validator {
           String checkop = clausule.substring(clausule.indexOf(")") + 1).trim();
 
           RuleElement field = new RuleElement(countField, node, model);
-          List<TiffNode> childs = field.getChildren();
-          int n = childs.size();
-          if (checkop.startsWith("==")) {
-            String field2 = checkop.substring("==".length()).trim();
-            ok = n == Integer.parseInt(field2);
-          } else if (checkop.startsWith("!=")) {
-            String field2 = checkop.substring("!=".length()).trim();
-            ok = n != Integer.parseInt(field2);
-          } else if (checkop.startsWith(">")) {
-            String field2 = checkop.substring(">".length()).trim();
-            ok = n > Integer.parseInt(field2);
-          } else if (checkop.startsWith("<")) {
-            String field2 = checkop.substring("<".length()).trim();
-            ok = n < Integer.parseInt(field2);
+          if (!field.valid) ok = false;
+          else {
+            List<TiffNode> childs = field.getChildren();
+            int n = childs.size();
+            if (checkop.startsWith("==")) {
+              String field2 = checkop.substring("==".length()).trim();
+              ok = n == Integer.parseInt(field2);
+            } else if (checkop.startsWith("!=")) {
+              String field2 = checkop.substring("!=".length()).trim();
+              ok = n != Integer.parseInt(field2);
+            } else if (checkop.startsWith(">")) {
+              String field2 = checkop.substring(">".length()).trim();
+              ok = n > Integer.parseInt(field2);
+            } else if (checkop.startsWith("<")) {
+              String field2 = checkop.substring("<".length()).trim();
+              ok = n < Integer.parseInt(field2);
+            }
           }
         } else if (clausule.contains("==") || clausule.contains(">") || clausule.contains("<") || clausule.contains("!=")) {
           // Check field values
           String operation = clausule.contains("==") ? "==" : (clausule.contains(">") ? ">" : clausule.contains("!=") ? "!=" : "<");
           RuleElement op1 = new RuleElement(clausule.substring(0, clausule.indexOf(operation)), node, model);
-          String value = op1.getValue();
-          if (value == null) return ok;
-          RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
-          String value2 = op2.getValue();
-          if (operation.equals("==")) ok = value.equals(value2);
-          else if (operation.equals("!=")) ok = Float.parseFloat(value) != Float.parseFloat(value2);
-          else if (operation.equals(">")) ok = Float.parseFloat(value) > Float.parseFloat(value2);
-          else ok = Float.parseFloat(value) < Float.parseFloat(value2);
-          if (!ok)
-            ok = false;
+          if (!op1.valid) ok = false;
+          else {
+            String value = op1.getValue();
+            if (value == null) return ok;
+            RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
+            if (!op2.valid) ok = false;
+            else {
+              String value2 = op2.getValue();
+              if (value.contains("/"))
+                value = Float.parseFloat(value.split("/")[0]) / Float.parseFloat(value.split("/")[1]) + "";
+              if (value2.contains("/"))
+                value2 = Float.parseFloat(value2.split("/")[0]) / Float.parseFloat(value2.split("/")[1]) + "";
+              if (operation.equals("==")) ok = value.equals(value2);
+              else if (operation.equals("!="))
+                ok = Float.parseFloat(value) != Float.parseFloat(value2);
+              else if (operation.equals(">"))
+                ok = Float.parseFloat(value) > Float.parseFloat(value2);
+              else ok = Float.parseFloat(value) < Float.parseFloat(value2);
+            }
+          }
         } else {
           if (clausule.startsWith("!")) {
             // Check field does not exist
             RuleElement elem = new RuleElement(clausule.substring(1), node, model);
-            ok = elem.getChildren().size() == 0;
+            if (!elem.valid) ok = false;
+            else {
+              ok = elem.getChildren().size() == 0;
+            }
           } else {
             // Check field exists
             RuleElement elem = new RuleElement(clausule, node, model);
-            ok = elem.getChildren().size() > 0;
+            if (!elem.valid) ok = false;
+            else {
+              List<TiffNode> childs = elem.getChildren();
+              if (childs == null) ok = false;
+              else ok = childs.size() > 0;
+            }
           }
         }
 
@@ -210,15 +261,24 @@ public class Validator {
           break;
       }
     } catch (Exception ex) {
+      ex.printStackTrace();
       ok = false;
     }
 
     if (ok) {
-      result.add(new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString()));
+      RuleResult rr = new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString());
+      result.add(rr);
     } else {
-      result.add(new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString()));
+      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+      result.add(rr);
     }
 
     return ok;
+  }
+
+  private void printOut(String line) {
+    if (Logger != null) {
+      Logger.println(line);
+    }
   }
 }

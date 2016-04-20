@@ -42,4 +42,5 @@ public class GuiConfig {
     public static final String FRAGMENT_WIZARD_5 = "f007";
     public static final String FRAGMENT_WIZARD_6 = "f008";
     public static final String FRAGMENT_BAR = "f009";
+    public static final String FRAGMENT_TASK = "f010";
 }

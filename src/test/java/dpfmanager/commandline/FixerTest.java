@@ -50,6 +50,9 @@ public class FixerTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(60);
+
     File directori = new File(path);
     assertEquals(directori.exists(), true);
 
@@ -109,6 +112,9 @@ public class FixerTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(60);
+
     File directori = new File(path);
     assertEquals(directori.exists(), true);
 
@@ -165,6 +171,9 @@ public class FixerTest extends CommandLineTest {
     args[5] = configfile;
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(60);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);
@@ -224,6 +233,9 @@ public class FixerTest extends CommandLineTest {
     args[5] = configfile;
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(60);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);

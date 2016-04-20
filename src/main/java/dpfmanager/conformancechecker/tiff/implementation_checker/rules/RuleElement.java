@@ -12,8 +12,10 @@ public class RuleElement {
   Filter filter;
   TiffNode node;
   TiffNode model;
+  public boolean valid;
 
   public RuleElement(String field, TiffNode nodeBase, TiffNode model) {
+    valid = true;
     this.node = nodeBase;
     this.model = model;
     filter = null;
@@ -25,7 +27,13 @@ public class RuleElement {
         if (indexDot > -1 && (indexCla == -1 || indexDot < indexCla)) {
           String parent = fieldName.substring(0, indexDot);
           if (parent.length() > 0) {
-            node = node.getChild(parent);
+            if (node != null)
+              node = node.getChild(parent);
+            else
+            {
+              valid = false;
+              break;
+            }
           }
           fieldName = fieldName.substring(indexDot + 1);
         } else {
@@ -37,7 +45,13 @@ public class RuleElement {
           if (remaining.length() == 0) {
             fieldName = currentfield;
           } else {
-            node = node.getChild(currentfield, this.filter);
+            if (node != null)
+              node = node.getChild(currentfield, this.filter);
+            else
+            {
+              valid = false;
+              break;
+            }
             this.filter = null;
             fieldName = remaining;
           }
@@ -71,6 +85,7 @@ public class RuleElement {
   }
 
   public List<TiffNode> getChildren() {
+    if (node == null) return null;
     return node.getChildren(getName(), filter);
   }
 

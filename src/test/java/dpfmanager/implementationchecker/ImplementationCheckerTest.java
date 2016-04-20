@@ -1,10 +1,11 @@
 package dpfmanager.implementationchecker;
 
+import static java.io.File.separator;
+
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import static java.io.File.separator;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationResult;
@@ -20,43 +21,36 @@ import java.util.List;
  */
 public class ImplementationCheckerTest extends TestCase {
   public void testImplemantationCheckOk() throws Exception {
-    String filename = "file.xml";
 
     TiffReader tr = new TiffReader();
     tr.readFile("src/test/resources/Small/Bilevel.tif");
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(filename);
+    String content = tiffValidation.writeString();
 
     Validator v = new Validator();
-    v.validateBaseline(filename);
+    v.validateBaseline(content);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getBaselineValidation();
     assertEquals(validation.getErrors().size(), results.size());
-
-    new File(filename).delete();
   }
 
   public void testImplemantationCheckKo() throws Exception {
-    String filename = "file.xml";
-
     TiffReader tr = new TiffReader();
     tr.readFile("src/test/resources/Block/Bad alignment Classic E.tif");
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(filename);
+    String content = tiffValidation.writeString();
 
     Validator v = new Validator();
-    v.validateBaseline(filename);
+    v.validateBaseline(content);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getBaselineValidation();
     assertEquals(validation.getErrors().size(), results.size());
-
-    new File(filename).delete();
   }
 
   void assertNumberOfErrors(String filename, int errors) {
@@ -71,22 +65,19 @@ public class ImplementationCheckerTest extends TestCase {
         assertEquals(true, tr.getBaselineValidation().getErrors().size() > 0);
       }
 
-      String xml = "file.xml";
       TiffDocument td = tr.getModel();
       TiffImplementationChecker tic = new TiffImplementationChecker();
       TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-      tiffValidation.writeXml(xml);
+      String content = tiffValidation.writeString();
 
       Validator v = new Validator();
-      v.validateBaseline(xml);
+      v.validateBaseline(content);
 
       if (errors > -1) {
         assertEquals(v.getErrors().size(), tr.getBaselineValidation().getErrors().size());
       } else {
         assertEquals(true, v.getErrors().size() > 0);
       }
-
-      new File(xml).delete();
     } catch (Exception ex) {
       assertEquals(0, 1);
     }

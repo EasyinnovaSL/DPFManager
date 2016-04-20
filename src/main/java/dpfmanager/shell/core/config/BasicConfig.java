@@ -13,6 +13,7 @@ public class BasicConfig {
   public static final String MODULE_MESSAGE = "m001";
   public static final String MODULE_REPORT = "m002";
   public static final String MODULE_CONFORMANCE = "m003";
+  public static final String MODULE_THREADING = "m004";
 
   /**
    * Services Components
@@ -20,5 +21,6 @@ public class BasicConfig {
   public static final String SERVICE_CONFORMANCE = "s001";
   public static final String SERVICE_MESSAGES = "s002";
   public static final String SERVICE_REPORT = "s003";
+  public static final String SERVICE_THREADING = "s004";
 
 }

@@ -1,6 +1,7 @@
 package dpfmanager.shell.interfaces.console;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -17,4 +18,9 @@ public class AppContext {
   public static ApplicationContext getApplicationContext() {
     return ctx;
   }
+
+  public static void close() {
+    ((ConfigurableApplicationContext)ctx).close();
+  }
+
 }

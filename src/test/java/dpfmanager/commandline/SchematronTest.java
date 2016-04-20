@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 /**
  * Created by easy on 01/10/2015.
@@ -37,6 +38,9 @@ public class SchematronTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     String path = getPath();
 
     File directori = new File(path);
@@ -50,7 +54,8 @@ public class SchematronTest extends CommandLineTest {
     }
     assertEquals(xml != null, true);
     Schematron sch = new Schematron();
-    String result = sch.testXML(xml, "sch/rules.sch");
+    String content = new Scanner(new File("sch/rules.sch")).useDelimiter("\\Z").next();
+    String result = sch.testXML(xml, content);
 
     assertEquals(true, result.indexOf("fired-rule context=\"globalreport\"") != -1);
     assertEquals(true, result.indexOf("fired-rule context=\"individualreports\"") != -1);
@@ -71,6 +76,9 @@ public class SchematronTest extends CommandLineTest {
     args[1] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
 
@@ -114,18 +122,8 @@ public class SchematronTest extends CommandLineTest {
         "   </rule>\n" +
         "  </pattern>\n" +
         "</schema>";
-    if (!new File("temp").exists()) {
-      new File("temp").mkdir();
-    }
 
-    String schfile = "temp/xx.sch";
-    int idx = 0;
-    while (new File(schfile).exists()) schfile = "temp/xx" + idx++ + ".sch";
-    PrintWriter bw = new PrintWriter(schfile);
-    bw.write(sch2);
-    bw.close();
-
-    String result = sch.testXML(xml, schfile);
+    String result = sch.testXML(xml, sch2);
 
     assertEquals(true, result.indexOf("fired-rule context=\"globalreport\"") != -1);
     assertEquals(true, result.indexOf("fired-rule context=\"individualreports\"") != -1);
@@ -135,9 +133,6 @@ public class SchematronTest extends CommandLineTest {
     assertEquals(true, result.indexOf("fired-rule context=\"tags\"") != -1);
     assertEquals(true, result.indexOf("fired-rule context=\"report\"") != -1);
     assertEquals(true, result.indexOf("failed") != -1);
-
-    new File(schfile).delete();
-    FileUtils.deleteDirectory(new File("temp"));
   }
 
   @Test
@@ -149,6 +144,9 @@ public class SchematronTest extends CommandLineTest {
     args[1] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
     String xmlFile = path + "/1-Bilevel.tif.xml";

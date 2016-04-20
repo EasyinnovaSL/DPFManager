@@ -5,12 +5,13 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
-import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
-import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.threading.core.FileCheck;
+import dpfmanager.shell.modules.threading.messages.CheckTaskMessage;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
@@ -39,7 +40,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     // Send to conformance checker module
     String input = getView().getInputText().getText();
     String path = getFileByPath(radio.getText()).getAbsolutePath();
-    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.GUI, input, path,1));
+    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.GUI, input, path, 1));
   }
 
   public void selectInputAction() {
@@ -124,16 +125,13 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   }
 
   public void testAction() {
-    try {
-      String nullable = null;
-      if (true) {
-        nullable.substring(2);
-      }
-    }
-    catch(Exception ex){
-      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
-    }
-//    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.INFO, "Info message"));
+    FileCheck fc = new FileCheck();
+    getContext().send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.INIT, fc));
+  }
+
+  public void testAction2() {
+    FileCheck fc = new FileCheck();
+    getContext().send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.FINISH, fc));
   }
 
   private File getFileByPath(String path) {

@@ -1,5 +1,8 @@
 package dpfmanager.shell.modules.report.core;
 
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.shell.modules.report.util.ReportTag;
 
@@ -8,6 +11,9 @@ import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 
+import org.apache.logging.log4j.Level;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +23,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,6 +38,46 @@ import javax.imageio.ImageIO;
  */
 public class ReportGeneric {
 
+  protected DpfContext context;
+
+  public DpfContext getContext() {
+    return context;
+  }
+
+  public void setContext(DpfContext context) {
+    this.context = context;
+  }
+
+  public BufferedImage loadImageCrazyFast( URL src ){
+    try{
+      Image im = Toolkit.getDefaultToolkit().createImage( src );
+      Method method = im.getClass().getMethod( "getBufferedImage" );
+      BufferedImage bim = null;
+      int counter = 0;
+      // load 30seconds maximum!
+      while( bim == null && counter < 3000 ){
+        im.getWidth( null );
+        bim = (BufferedImage) method.invoke( im );
+        try{ Thread.sleep( 10 ); }
+        catch( InterruptedException e ){ }
+        counter ++;
+      }
+
+      if( bim != null ){
+        return bim;
+      }
+    }
+    catch( Exception e ){
+      printOut("Fast loading of " + src.toString() + " failed. You might want to correct this in loadImageCrazyFast( URL )");
+      printOut("Falling back to ImageIO, which is... slow!");
+    }
+    try{
+      return ImageIO.read( src );
+    }
+    catch( IOException ioe ){
+      return null;
+    }
+  }
   /**
    * Tiff 2 jpg.
    *
@@ -37,15 +85,14 @@ public class ReportGeneric {
    * @param outputfile the outputfile
    * @return true, if successful
    */
-  protected static boolean tiff2Jpg(String inputfile, String outputfile) {
+  protected boolean tiff2Jpg(String inputfile, String outputfile) {
     File outfile = new File(outputfile);
     if (outfile.exists()) {
       return true;
     }
-    BufferedImage image = null;
     try {
-      File input = new File(inputfile);
-      image = ImageIO.read(input);
+      BufferedImage image = ImageIO.read(new File(inputfile));
+      //BufferedImage image = loadImageCrazyFast(new File(inputfile).toURI().toURL());
 
       double factor = 1.0;
 
@@ -67,19 +114,21 @@ public class ReportGeneric {
 
       BufferedImage img = scale(image, width, height);
 
-      ImageIO.write(img, "jpg", new File(outputfile));
+      File outputFile = new File(outputfile);
+      outputFile.getParentFile().mkdirs();
+      ImageIO.write(img, "jpg", outputFile);
       img.flush();
       img = null;
       image.flush();
       image = null;
-      System.gc();
+      //System.gc();
     } catch (Exception e) {
       return false;
     }
     return true;
   }
 
-  static BufferedImage scale(BufferedImage src, int w, int h) {
+  BufferedImage scale(BufferedImage src, int w, int h) {
     BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
     int x, y;
     int ww = src.getWidth();
@@ -98,7 +147,7 @@ public class ReportGeneric {
    *
    * @return hashset of tags
    */
-  protected static HashSet<String> readShowableTags() {
+  protected HashSet<String> readShowableTags() {
     HashSet<String> hs = new HashSet<String>();
     try {
       Path path = Paths.get("./src/main/resources/");
@@ -152,7 +201,7 @@ public class ReportGeneric {
    * @param tv The tag value
    * @return true, if successful
    */
-  protected static boolean showTag(TagValue tv) {
+  protected boolean showTag(TagValue tv) {
     HashSet<String> showableTags = readShowableTags();
     /*showableTags.add("ImageWidth");
     showableTags.add("ImageLength");
@@ -186,7 +235,7 @@ public class ReportGeneric {
    * @param n2 the n 2
    * @return the dif
    */
-  protected static String getDif(int n1, int n2) {
+  protected String getDif(int n1, int n2) {
     String dif = "";
     if (n2 != n1) {
       dif = " (" + (n2 > n1 ? "+" : "-") + Math.abs(n2 - n1) + ")";
@@ -202,7 +251,7 @@ public class ReportGeneric {
    * @param ir the ir
    * @return the tags
    */
-  protected static ArrayList<ReportTag> getTags(IndividualReport ir) {
+  protected ArrayList<ReportTag> getTags(IndividualReport ir) {
     ArrayList<ReportTag> list = new ArrayList<ReportTag>();
     TiffDocument td = ir.getTiffModel();
     IFD ifd = td.getFirstIFD();
@@ -250,7 +299,7 @@ public class ReportGeneric {
    * @param pathStr the path str
    * @return the string
    */
-  public static InputStream getFileStreamFromResources(String pathStr) {
+  public InputStream getFileStreamFromResources(String pathStr) {
     InputStream fis = null;
     Path path = Paths.get(pathStr);
     try {
@@ -264,11 +313,13 @@ public class ReportGeneric {
         fis = cLoader.getResourceAsStream(pathStr);
       }
     } catch (FileNotFoundException e) {
-      System.err.println("File " + pathStr + " not found in dir.");
-    } catch (IOException e) {
-      System.err.println("Error reading " + pathStr);
+      printOut("File " + pathStr + " not found in dir.");
     }
 
     return fis;
+  }
+
+  public void printOut(String content){
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.DEBUG, content));
   }
 }

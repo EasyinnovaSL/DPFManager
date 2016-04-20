@@ -27,6 +27,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -36,7 +37,6 @@ import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.reader.TiffReader;
 
-import org.apache.commons.io.FileUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.w3c.dom.Document;
@@ -200,6 +200,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
       output = writer.getBuffer().toString().replaceAll("\n|\r", "");
     } catch (Exception ex) {
+      ex.printStackTrace();
       output = null;
     }
     return output;
@@ -354,89 +355,45 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return classes;
   }
 
-  public static Validator getBaselineValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = null;
-    String baseDir = ReportGenerator.getReportsFolder();
-    String xml = baseDir + "/file.xml";
-    int idx = 1;
-    while (new File(xml).exists()) {
-      xml = baseDir + "/file" + idx + ".xml";
-      idx++;
-    }
+  public static String getValidationXmlString(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(xml);
+    return tiffValidation.writeString();
+  }
 
-    validation = new Validator();
-    validation.validateBaseline(xml);
-
-    if (new File(xml).exists()) {
-      new File(xml).delete();
-    }
+  public static Validator getBaselineValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    Validator validation = new Validator(Logger);
+    validation.validateBaseline(content);
     return validation;
   }
 
-  public static Validator getEPValidation(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = null;
-    String baseDir = ReportGenerator.getReportsFolder();
-    String xml = baseDir + "/file.xml";
-    int idx = 1;
-    while (new File(xml).exists()) {
-      xml = baseDir + "/file" + idx + ".xml";
-      idx++;
-    }
-    TiffDocument td = tr.getModel();
-    TiffImplementationChecker tic = new TiffImplementationChecker();
-    TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(xml);
-
-    validation = new Validator();
-    validation.validateTiffEP(xml);
-
-    if (new File(xml).exists()) {
-      new File(xml).delete();
-    }
+  public static Validator getEPValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    Validator validation = new Validator(Logger);
+    validation.validateTiffEP(content);
     return validation;
   }
 
-  public static Validator getITValidation(int profile, TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = null;
-    String baseDir = ReportGenerator.getReportsFolder();
-    String xml = baseDir + "/file.xml";
-    int idx = 1;
-    while (new File(xml).exists()) {
-      xml = baseDir + "/file" + idx + ".xml";
-      idx++;
-    }
-    TiffDocument td = tr.getModel();
-    TiffImplementationChecker tic = new TiffImplementationChecker();
-    TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(xml);
-
-    validation = new Validator();
-    if (profile == 0) validation.validateTiffIT(xml);
-    else if (profile == 1) validation.validateTiffITP1(xml);
-    else validation.validateTiffITP2(xml);
-
-    if (new File(xml).exists()) {
-      new File(xml).delete();
-    }
+  public static Validator getITValidation(int profile, String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    Validator validation = new Validator(Logger);
+    if (profile == 0) validation.validateTiffIT(content);
+    else if (profile == 1) validation.validateTiffITP1(content);
+    else validation.validateTiffITP2(content);
     return validation;
   }
 
   /**
    * Process tiff file.
    *
-   * @param pathToFile the path in local disk to the file
+   * @param pathToFile     the path in local disk to the file
    * @param reportFilename the file name that will be displayed in the report
    * @return the individual report
-   * @throws ReadTagsIOException the read tags io exception
+   * @throws ReadTagsIOException      the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
+  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
-      Logger.println("Reading Tiff file");
+//      Logger.println("Reading Tiff file");
       TiffReader tr = new TiffReader();
       int result = tr.readFile(pathToFile);
       switch (result) {
@@ -458,25 +415,27 @@ public class TiffConformanceChecker extends ConformanceChecker {
             checkPC = config.getRules().getRules().size() > 0;
           }
 
+          Logger.println("Validating Tiff");
+          String content = getValidationXmlString(tr);
           Validator baselineVal = null;
           if (checkBL) {
-            baselineVal = getBaselineValidation(tr);
+            baselineVal = getBaselineValidation(content);
           }
           Validator epValidation = null;
           if (checkEP) {
-            epValidation = getEPValidation(tr);
+            epValidation = getEPValidation(content);
           }
           Validator it0Validation = null;
           Validator it1Validation = null;
           Validator it2Validation = null;
           if (checkIT) {
-            it0Validation = getITValidation(0, tr);
+            it0Validation = getITValidation(0, content);
           }
           if (checkIT1) {
-            it1Validation = getITValidation(1, tr);
+            it1Validation = getITValidation(1, content);
           }
           if (checkIT2) {
-            it2Validation = getITValidation(2, tr);
+            it2Validation = getITValidation(2, content);
           }
           Logger.println("Creating report");
 
@@ -492,7 +451,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           Logger.println("Internal report created");
 
           tr = null;
-          System.gc();
+          //System.gc();
           return ir;
         default:
           Logger.println("Unknown result (" + result + ") in file '" + pathToFile + "'");
@@ -533,8 +492,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
   }
 
   /**
-   * Executes the tiff conformance checker and returns an XML string with the result.
-   * A feedback report is transparently sent to the DPF Manager development team (only for testing purposes).
+   * Executes the tiff conformance checker and returns an XML string with the result. A feedback
+   * report is transparently sent to the DPF Manager development team (only for testing purposes).
    *
    * @param input the path to the TIFF file
    */
@@ -546,7 +505,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
       // Create config file
       File configFile = new File(config);
-      if (configFile.exists()){
+      if (configFile.exists()) {
         configFile.delete();
       }
       PrintWriter bw = new PrintWriter(configFile);
@@ -565,6 +524,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
       // Run console app
       MainConsoleApp.main(args);
+
+      // Wait for finish (timeout 60s)
+      int timeout = 0;
+      while (!ConsoleLauncher.isFinished() && timeout < 60) {
+        Thread.sleep(1000);
+        timeout++;
+      }
 
       // Get the xml summary report
       String lastReport = ReportGenerator.getLastReportPath();

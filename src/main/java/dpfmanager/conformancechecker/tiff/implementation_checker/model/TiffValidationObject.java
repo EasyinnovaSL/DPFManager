@@ -1,7 +1,9 @@
 package dpfmanager.conformancechecker.tiff.implementation_checker.model;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -17,6 +19,7 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
   TiffHeader header;
   TiffIfds lifds;
   long size;
+  HashMap<String, List<TiffNode>> hashObjects = null;
 
   public void setSize(long size) {
     this.size = size;
@@ -53,6 +56,10 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
   }
 
   public List<TiffNode> getObjectsFromContext(String context, boolean subchilds) {
+    String key = context;
+    if (subchilds) key += "1"; else key += "0";
+    if (hashObjects != null && hashObjects.containsKey(key)) return hashObjects.get(key);
+
     List<TiffNode> objects = new ArrayList<>();
     objects.add(this);
     objects.addAll(getChildren(subchilds));
@@ -67,6 +74,10 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
         }
       }
     }
+
+    if (hashObjects == null) hashObjects = new HashMap<>();
+    hashObjects.put(key, objectsFromContext);
+
     return objectsFromContext;
   }
 
@@ -84,9 +95,25 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
       jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
       jaxbMarshaller.marshal(this, file);
-      //jaxbMarshaller.marshal(tiffValidate, System.out);
     } catch (JAXBException e) {
       e.printStackTrace();
     }
+  }
+
+  public String writeString() {
+    try {
+      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
+      Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+      // output pretty printed
+      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+      StringWriter sw = new StringWriter();
+      jaxbMarshaller.marshal(this, sw);
+      return sw.toString();
+    } catch (JAXBException e) {
+      e.printStackTrace();
+    }
+    return "";
   }
 }

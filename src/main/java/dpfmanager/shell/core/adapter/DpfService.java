@@ -16,8 +16,10 @@ public abstract class DpfService {
   }
 
   public void setContext(DpfContext c){
-    context = c;
-    handleContext(context);
+    if (context == null) {
+      context = c;
+      handleContext(context);
+    }
   }
 
 }

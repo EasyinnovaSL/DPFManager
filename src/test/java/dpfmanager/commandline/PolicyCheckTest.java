@@ -52,6 +52,9 @@ public class PolicyCheckTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     File directori = new File(path + "/html");
     assertEquals(directori.exists(), true);
 
@@ -137,6 +140,9 @@ public class PolicyCheckTest extends CommandLineTest {
     args[5] = configfile;
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     File directori = new File(path + "/html");
     assertEquals(directori.exists(), true);
@@ -224,6 +230,9 @@ public class PolicyCheckTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     File directori = new File(path + "/html");
     assertEquals(directori.exists(), true);
 
@@ -309,6 +318,9 @@ public class PolicyCheckTest extends CommandLineTest {
     args[5] = configfile;
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     File directori = new File(path + "/html");
     assertEquals(directori.exists(), true);

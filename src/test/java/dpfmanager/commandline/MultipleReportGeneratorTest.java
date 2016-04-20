@@ -21,12 +21,16 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
   public void testReportsXML() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[3];
+    String[] args = new String[4];
     args[0] = "src/test/resources/Small/";
     args[1] = "-reportformat";
     args[2] = "xml";
+    args[3] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
     File directori = new File(path);
@@ -37,12 +41,41 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
   public void testReportsKoPdf() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[3];
+    String[] args = new String[4];
     args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
     args[1] = "-reportformat";
     args[2] = "pdf";
+    args[3] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    String path = getPath();
+    File directori = new File(path);
+    assertEquals(2, directori.list().length);
+
+    PDDocument doc = PDDocument.load(path + "/report.pdf");
+    List<PDPage> l = doc.getDocumentCatalog().getAllPages();
+    assertEquals(2, l.size());
+    doc.close();
+  }
+
+  @Test
+  public void testReportsZKoPdf() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String[] args = new String[4];
+    args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
+    args[1] = "-reportformat";
+    args[2] = "pdf";
+    args[3] = "-s";
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
     File directori = new File(path);
@@ -58,12 +91,16 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
   public void testReportsPDF() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[3];
+    String[] args = new String[4];
     args[0] = "src/test/resources/Small/";
     args[1] = "-reportformat";
     args[2] = "pdf";
+    args[3] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
     File directori = new File(path);

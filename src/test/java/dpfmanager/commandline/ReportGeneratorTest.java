@@ -37,6 +37,9 @@ public class ReportGeneratorTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     File directori = new File(path + "/html");
     assertEquals(directori.exists(), true);
 
@@ -67,6 +70,9 @@ public class ReportGeneratorTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     String path = getPath();
 
     File directori = new File(path);
@@ -84,6 +90,9 @@ public class ReportGeneratorTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     String path = getPath();
 
     File directori = new File(path);
@@ -100,6 +109,9 @@ public class ReportGeneratorTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     String path = getPath();
 
     File directori = new File(path);
@@ -115,6 +127,9 @@ public class ReportGeneratorTest extends CommandLineTest {
     args[1] = "-s";
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
 
@@ -133,6 +148,9 @@ public class ReportGeneratorTest extends CommandLineTest {
       args[1] = "-s";
 
       MainConsoleApp.main(args);
+
+      // Wait for finish
+      waitForFinishMultiThred(30);
 
       String path = getPath();
 
@@ -163,6 +181,9 @@ public class ReportGeneratorTest extends CommandLineTest {
     args[3] = formats;
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     String path = getPath();
 

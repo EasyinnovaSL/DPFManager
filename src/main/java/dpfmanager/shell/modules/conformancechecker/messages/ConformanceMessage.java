@@ -16,14 +16,9 @@ public class ConformanceMessage extends DpfMessage {
   private List<String> files;
   private Configuration config;
   private int recursive;
-  private boolean silence;
 
   public enum Type {
-    GUI, CONSOLE, DELETE
-  }
-
-  public ConformanceMessage(Type t){
-    type = t;
+    GUI, CONSOLE
   }
 
   public ConformanceMessage(Type t, String i, String p, int r){
@@ -33,16 +28,11 @@ public class ConformanceMessage extends DpfMessage {
     recursive = r;
   }
 
-  public ConformanceMessage(Type t, List<String> f, Configuration c, int r, boolean s){
+  public ConformanceMessage(Type t, List<String> f, Configuration c, int r){
     type = t;
     files = f;
     config = c;
     recursive = r;
-    silence = s;
-  }
-
-  public boolean isDelete(){
-    return type.equals(Type.DELETE);
   }
 
   public boolean isGui(){
@@ -68,9 +58,4 @@ public class ConformanceMessage extends DpfMessage {
   public int getRecursive() {
     return recursive;
   }
-
-  public boolean isSilence() {
-    return silence;
-  }
-
 }

@@ -20,8 +20,6 @@ import junit.framework.TestCase;
  */
 public class TiffEPCheckerTest extends TestCase {
   public void testValidTest() throws Exception {
-    String filename = "file.xml";
-
     TiffReader tr = new TiffReader();
     int result = tr.readFile("src" + separator + "test" + separator + "resources" + separator
         + "TIFF_EP Samples" + separator + "IMG_0887_EP.tif");
@@ -30,17 +28,15 @@ public class TiffEPCheckerTest extends TestCase {
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(filename);
+    String content = tiffValidation.writeString();
 
     Validator v = new Validator();
-    v.validateTiffEP(filename);
+    v.validateTiffEP(content);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getTiffEPValidation();
     assertEquals(0, results.size());
     assertEquals(validation.getErrors().size(), results.size());
-
-    new File(filename).delete();
   }
 
   void assertNumberOfErrors(String filename, int errors) {
@@ -55,22 +51,19 @@ public class TiffEPCheckerTest extends TestCase {
         assertEquals(true, tr.getTiffEPValidation().getErrors().size() > 0);
       }
 
-      String xml = "file.xml";
       TiffDocument td = tr.getModel();
       TiffImplementationChecker tic = new TiffImplementationChecker();
       TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-      tiffValidation.writeXml(xml);
+      String content =  tiffValidation.writeString();
 
       Validator v = new Validator();
-      v.validateTiffEP(xml);
+      v.validateTiffEP(content);
 
       if (errors > -1) {
         assertEquals(v.getErrors().size(), tr.getTiffEPValidation().getErrors().size());
       } else {
         assertEquals(true, v.getErrors().size() > 0);
       }
-
-      new File(xml).delete();
     } catch (Exception ex) {
       assertEquals(0, 1);
     }

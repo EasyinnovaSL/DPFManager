@@ -4,22 +4,11 @@ import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.external.ExternalConformanceChecker;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.modules.conformancechecker.messages.LoadingMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
-import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
-import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
-import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -27,12 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * Created by Victor Muñoz on 04/09/2015.
@@ -41,10 +26,9 @@ public class ProcessInput {
 
   private boolean outOfmemory = false;
   private DpfContext context;
-  private int idReport;
   private List<String> tempFiles;
 
-  public ProcessInput(){
+  public ProcessInput() {
     tempFiles = new ArrayList<>();
   }
 
@@ -55,58 +39,6 @@ public class ProcessInput {
    */
   public void setContext(DpfContext context) {
     this.context = context;
-  }
-
-  /**
-   * An out of memory occurred.
-   *
-   * @return the boolean
-   */
-  public boolean isOutOfmemory() {
-    return outOfmemory;
-  }
-
-  /**
-   * Process a list of files and generate individual ang global reports.
-   *
-   * @param files   the files
-   * @param config  the config
-   * @return the path to the internal report folder
-   */
-  public String ProcessFiles(ArrayList<String> files, Configuration config, String internalReportFolder ) {
-    ArrayList<IndividualReport> individuals = new ArrayList<>();
-    int n=files.size();
-
-    // Process each input of the list which can be a file, folder, zip or url
-    for (final String filename : files) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, ""));
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Processing file " + filename));
-
-      context.sendGui(GuiConfig.COMPONENT_DESIGN, new LoadingMessage(LoadingMessage.Type.TEXT, "Processing... " + (files.indexOf(filename) + 1) + "/" + n));
-
-      // Process the input and get a list of individual reports
-      List<IndividualReport> indReports = processFile(filename, internalReportFolder, config);
-      individuals.addAll(indReports);
-
-      // Create report
-      context.send(BasicConfig.MODULE_REPORT, new IndividualReportMessage(indReports, config));
-    }
-
-    // Generate global report
-    GlobalReport gr = new GlobalReport();
-    for (final IndividualReport individual : individuals) {
-      gr.addIndividual(individual);
-    }
-    gr.generate();
-
-    // Create global report
-    context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(gr, config));
-
-    if (!new File(internalReportFolder).exists()) {
-     internalReportFolder = null;
-    }
-
-    return internalReportFolder;
   }
 
   /**
@@ -162,9 +94,9 @@ public class ProcessInput {
       }
     }
     if (result != null) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Conformance checker for file " + filename + ": " + result.toString()));
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Conformance checker for file " + filename + ": " + result.toString()));
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Conformance checker for file " + filename + " not found"));
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Conformance checker for file " + filename + " not found"));
     }
     return result;
   }
@@ -172,43 +104,14 @@ public class ProcessInput {
   /**
    * Process an input.
    *
-   * @param filename the source path
+   * @param filename             the source path
    * @param internalReportFolder the internal report folder
-   * @param config the report configuration
+   * @param config               the report configuration
    * @return generated list of individual reports
    */
-  private List<IndividualReport> processFile(String filename, String internalReportFolder, Configuration config) {
-    List<IndividualReport> indReports = new ArrayList<>();
-    IndividualReport ir;
-    if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
-      // Compressed File
-      try {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, filename));
-        ZipFile zipFile = new ZipFile(filename);
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-          // Process each file contained in the compressed file
-          ZipEntry entry = entries.nextElement();
-          ConformanceChecker cc = getConformanceCheckerForFile(entry.getName());
-          if (cc != null) {
-            InputStream stream = zipFile.getInputStream(entry);
-            // Extracts the file and creates a temporary file to store it and process it
-            String filename2 = createTempFile(internalReportFolder, entry.getName(), stream);
-            tempFiles.add(filename2);
-            ir = cc.processFile(filename2, entry.getName(), internalReportFolder, config, idReport);
-            if (ir != null) {
-              indReports.add(ir);
-            } else{
-              outOfmemory = true;
-              break;
-            }
-          }
-        }
-        zipFile.close();
-      } catch (Exception ex) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error reading zip file [" + ex.toString() + "]"));
-      }
-    } else if (isUrl(filename)) {
+  public IndividualReport processFile(String filename, String internalReportFolder, Configuration config) {
+    IndividualReport ir = null;
+    if (isUrl(filename)) {
       // URL
       try {
         ConformanceChecker cc = getConformanceCheckerForFile(filename);
@@ -217,10 +120,8 @@ public class ProcessInput {
           InputStream input = new java.net.URL(filename).openStream();
           String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
           filename = java.net.URLDecoder.decode(filename, "UTF-8");
-          ir = cc.processFile(filename2, filename, internalReportFolder, config, idReport);
+          ir = cc.processFile(filename2, filename, internalReportFolder, config);
           if (ir != null) {
-            indReports.add(ir);
-          } else{
             outOfmemory = true;
           }
           // Delete the temporary file
@@ -237,27 +138,26 @@ public class ProcessInput {
       ConformanceChecker cc = getConformanceCheckerForFile(filename);
       if (cc != null) {
         try {
-          ir = cc.processFile(filename, filename, internalReportFolder, config, idReport);
+          ir = cc.processFile(filename, filename, internalReportFolder, config);
           if (ir != null) {
-            indReports.add(ir);
-          } else{
             outOfmemory = true;
           }
         } catch (Exception ex) {
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+          ex.printStackTrace();
         }
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "File " + filename + " is not an accepted format"));
       }
     }
-    return indReports;
+    return ir;
   }
 
   /**
    * Creates a temporary file to store the input stream.
    *
    * @param folder the folder to store the created temporary file
-   * @param name the name of the temporary file
+   * @param name   the name of the temporary file
    * @param stream the input stream
    * @return the path to the created temporary file
    * @throws IOException Signals that an I/O exception has occurred.

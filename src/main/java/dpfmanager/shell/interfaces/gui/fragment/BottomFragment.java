@@ -2,18 +2,31 @@ package dpfmanager.shell.interfaces.gui.fragment;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.modules.threading.core.FileCheck;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
+import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adrià Llorens on 03/03/2016.
@@ -35,6 +48,8 @@ public class BottomFragment {
   private AnchorPane consoleAnchor;
   @FXML
   private AnchorPane taskAnchor;
+  @FXML
+  private VBox taskVBox;
 
   @FXML
   private TextArea consoleArea;
@@ -43,6 +58,9 @@ public class BottomFragment {
   private double pos;
   private boolean firsttime = true;
 
+  // The task fragments
+  Map<Long, ManagedFragmentHandler<TaskFragment>> taskFragments;
+
   // Main functions
 
   public void init() {
@@ -50,6 +68,7 @@ public class BottomFragment {
       setDefault();
       addDividerListener();
       sendConsoleHandler();
+      taskFragments = new HashMap<>();
       firsttime = false;
     }
   }
@@ -125,6 +144,20 @@ public class BottomFragment {
     if (consoleAnchor.isVisible()){
       hideDivider(1.0);
     }
+  }
+
+  /**
+   * Tasks functions
+   */
+  public void addTask(ManagedFragmentHandler<TaskFragment> taskFragment, FileCheck fc){
+    taskFragment.getController().init(fc);
+    taskFragments.put(fc.getUuid(), taskFragment);
+    taskVBox.getChildren().add(taskFragment.getFragmentNode());
+  }
+
+  public void updateTask(long uuid){
+    ManagedFragmentHandler<TaskFragment> taskFragment = taskFragments.get(uuid);
+    taskFragment.getController().updateProgressBar();
   }
 
   /**

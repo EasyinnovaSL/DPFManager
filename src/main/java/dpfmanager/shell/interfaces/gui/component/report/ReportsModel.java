@@ -16,6 +16,7 @@ import java.util.Collections;
  */
 public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
 
+  private boolean empty = true;
   private boolean all_reports_loaded = false;
   public static int reports_loaded = 50;
   private ObservableList<ReportRow> data;
@@ -103,6 +104,9 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
               if (i == directories.length - 1 && j == directories2.length - 1) {
                 all_reports_loaded = true;
               }
+              empty = false;
+            } else {
+              index++;
             }
           }
 
@@ -115,6 +119,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
 
   public void setReload(boolean r){
     reload = r;
+    all_reports_loaded = false;
   }
 
   public void clearData() {
@@ -127,6 +132,10 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
 
   public boolean isAllReportsLoaded() {
     return all_reports_loaded;
+  }
+
+  public boolean isEmpty(){
+    return empty;
   }
 
 }

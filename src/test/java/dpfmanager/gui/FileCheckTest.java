@@ -49,8 +49,7 @@ public class FileCheckTest extends ApplicationTest {
     clickOnImportedConfig(inputConfigPath);
     writeText("#inputText", inputFilePath);
     clickOnAndReload("#checkFilesButton");
-    FxAssert.verifyThat("#loadingVbox", NodeMatchers.isVisible()); //Check loading screen
-    waitForCheckFiles();
+    waitForCheckFiles(1);
 
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");
@@ -65,7 +64,8 @@ public class FileCheckTest extends ApplicationTest {
     Assert.assertEquals("Report row N warnings", "0 warnings", row.getWarnings());
 
     //Check html && pdf exists
-    waitUntilExists("#buthtml");
+    reloadScene();
+    waitUntilExists("#tabReports #buthtml");
     FxAssert.verifyThat("#tabReports #buthtml", NodeMatchers.isNotNull());
     clickOnAndReload("#tabReports #buthtml", "#pane-show");
     waitUntilExists("#webView");

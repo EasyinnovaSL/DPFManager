@@ -45,7 +45,6 @@ public class ShowReportPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
-    System.out.println("Show Prespective");
   }
 
   @PostConstruct

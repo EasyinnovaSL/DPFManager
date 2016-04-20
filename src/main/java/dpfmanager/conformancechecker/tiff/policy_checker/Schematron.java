@@ -15,6 +15,7 @@ import org.apache.camel.component.schematron.processor.SchematronProcessorFactor
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.tools.ant.filters.StringInputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -25,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -124,30 +126,18 @@ public class Schematron extends CamelTestSupport {
         }
       }
 
-      String tempname = DPFManagerProperties.getConfigDir() + "/rulestemp2.sch";
-      int idx = 3;
-      while (new File(tempname).exists())
-        tempname = DPFManagerProperties.getConfigDir() + "/rulestemp" + idx++ + ".sch";
-
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       DOMSource source = new DOMSource(doc);
 
-      File file = new File(tempname);
-      StreamResult result = new StreamResult(file);
-      transformer.transform(source, result);
-
-      byte[] encoded = Files.readAllBytes(Paths.get(tempname));
-      String s = new String(encoded, Charset.defaultCharset());
+      StringWriter writer = new StringWriter();
+      transformer.transform(source, new StreamResult(writer));
+      String s = writer.toString();
       s = s.replace("#PP#", "&lt;").replace("#GG#", ">").replace("#PP2#", "<");
-      PrintWriter out = new PrintWriter(tempname);
-      out.print(s);
-      out.close();
 
-      String report = testXML(xmlFile, tempname);
-      file.delete();
+      String report = testXML(xmlFile, s);
       return report;
     } else {
       return "";
@@ -226,17 +216,17 @@ public class Schematron extends CamelTestSupport {
    * Test xml string.
    *
    * @param xmlFileOriginal the xml file
-   * @param schema  the schema
+   * @param content  the content
    * @return the string
    * @throws Exception the exception
    */
-  public String testXML(String xmlFileOriginal, String schema) throws Exception {
+  public String testXML(String xmlFileOriginal, String content) throws Exception {
     String result;
     try {
       String xmlFile = xmlFileOriginal;
       if (!xmlFileOriginal.contains("<?xml version"))
         xmlFile = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + xmlFile;
-      InputStream sc = getInputStream(schema);
+      InputStream sc = new StringInputStream(content);
       TransformerFactory factory = new TransformerFactoryImpl();
       factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR));
       Templates rules = TemplatesFactory.newInstance().newTemplates(sc);
@@ -244,6 +234,7 @@ public class Schematron extends CamelTestSupport {
       result = proc.validate(xmlFile);
       result = result.substring(0, result.indexOf("<!--")) + result.substring(result.indexOf("-->")+3);
     } catch (Exception ex) {
+      ex.printStackTrace();
       result = "";
     }
     return result;

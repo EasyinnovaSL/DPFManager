@@ -44,6 +44,9 @@ public class TiffWriterTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     String path = getPath();
     String xmlFile = path + "/1-Bilevel1.tif.xml";
     String xmlFile2 = path + "/2-Bilevel2.tif.xml";

@@ -5,6 +5,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -30,7 +31,8 @@ import java.util.ResourceBundle;
         GuiConfig.COMPONENT_REPORTS,
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
-        BasicConfig.MODULE_MESSAGE
+        BasicConfig.MODULE_MESSAGE,
+        BasicConfig.MODULE_THREADING
     }
 )
 public class ReportsPerspective extends DpfAbstractPerspective {
@@ -50,6 +52,7 @@ public class ReportsPerspective extends DpfAbstractPerspective {
   @Override
   public void onShowCustom() {
     context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.SHOW));
+    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.RELOAD));
   }
 
   @PostConstruct

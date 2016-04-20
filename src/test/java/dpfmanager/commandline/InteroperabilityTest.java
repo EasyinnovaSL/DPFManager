@@ -66,6 +66,9 @@ public class InteroperabilityTest extends CommandLineTest {
 
     MainConsoleApp.main(args);
 
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
     File directori = new File(path);
     assertEquals(directori.exists(), true);
 
@@ -117,6 +120,9 @@ public class InteroperabilityTest extends CommandLineTest {
     args[5] = configfile;
 
     MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
 
     File directori = new File(path);
     assertEquals(directori.exists(), true);

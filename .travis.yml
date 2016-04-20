@@ -1,33 +1,25 @@
 language: java
 
-jdk:
-  - oraclejdk8
+jdk: oraclejdk8
 
 addons:
   apt:
-    packages:
-      - oracle-java8-installer
+    packages: oracle-java8-installer
 
-# use operating systems.
-os:
-  - linux
-
-install:
-  -
+os: linux
+sudo: required
 
 matrix:
-    include:
-        - os: linux
-          jdk: oraclejdk8
-          env: TOKEN=nogui
-          sudo: required
-          script: mvn clean -Dtest=!gui/*Test.java,!RunTestOnly.java install
-#        - os: osx
+  include:
+    # Custom builds
+    - env: TOKEN=nogui
+      script: mvn test -B -Dtest=commandline/*Test.java,implementationchecker/*Test.java
+    - env: TOKEN=gui
+      script: mvn test -B -Dtest=gui/*Test.java
+  exclude:
+    # Exclude default build
+    - jdk: oraclejdk8
 
 before_install:
   - if [ "${TOKEN}" != "nogui" ]; then export DISPLAY=:99.0; fi
   - if [ "${TOKEN}" != "nogui" ]; then sh -e /etc/init.d/xvfb start; fi
-
-#before_install:
-#  - "export DISPLAY=:99.0"
-#  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"

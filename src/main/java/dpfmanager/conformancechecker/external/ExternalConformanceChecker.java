@@ -4,7 +4,6 @@ import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.shell.modules.report.core.IndividualReport;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -13,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -64,15 +62,14 @@ public class ExternalConformanceChecker extends ConformanceChecker {
   /**
    * Process tiff file.
    *
-   * @param pathToFile the path in local disk to the file
-   * @param reportFilename the file name that will be displayed in the report
+   * @param pathToFile           the path in local disk to the file
+   * @param reportFilename       the file name that will be displayed in the report
    * @param internalReportFolder the internal report folder
    * @return the individual report
-   * @throws ReadTagsIOException the read tags io exception
+   * @throws ReadTagsIOException      the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config,
-                                      int idReport) throws ReadTagsIOException, ReadIccConfigIOException {
+  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
       ArrayList<String> params = new ArrayList();
       params.add(exePath);

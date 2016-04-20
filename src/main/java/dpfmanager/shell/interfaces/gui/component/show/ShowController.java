@@ -29,7 +29,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
   }
 
   public void showSingleReport(String type, String path) {
-    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Showing report..."));
+//    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Showing report..."));
     switch (type) {
       case "html":
         getView().showWebView(path);

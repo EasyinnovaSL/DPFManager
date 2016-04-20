@@ -21,8 +21,6 @@ import java.util.List;
  */
 public class TiffITCheckerTest extends TestCase {
   void testValid(String filename, int profile) throws Exception {
-    String outfilename = "file.xml";
-
     TiffReader tr = new TiffReader();
     int result = tr.readFile(filename);
     assertEquals(0, result);
@@ -31,27 +29,23 @@ public class TiffITCheckerTest extends TestCase {
     TiffImplementationChecker tic = new TiffImplementationChecker();
     tic.setITFields(true);
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(outfilename);
+    String content = tiffValidation.writeString();
 
     Validator v = new Validator();
     if (profile == 0)
-      v.validateTiffIT(outfilename);
+      v.validateTiffIT(content);
     else if (profile == 1)
-      v.validateTiffITP1(outfilename);
+      v.validateTiffITP1(content);
     else
-      v.validateTiffITP2(outfilename);
+      v.validateTiffITP2(content);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getTiffITValidation(profile);
     assertEquals(0, results.size());
     assertEquals(validation.getErrors().size(), results.size());
-
-    new File(outfilename).delete();
   }
 
   void testInvalid(String filename, int profile, int errors) throws Exception {
-    String outfilename = "file.xml";
-
     TiffReader tr = new TiffReader();
     int result = tr.readFile(filename);
     assertEquals(0, result);
@@ -60,23 +54,21 @@ public class TiffITCheckerTest extends TestCase {
     TiffImplementationChecker tic = new TiffImplementationChecker();
     tic.setITFields(true);
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    tiffValidation.writeXml(outfilename);
+    String content = tiffValidation.writeString();
 
     Validator v = new Validator();
     if (profile == 0)
-      v.validateTiffIT(outfilename);
+      v.validateTiffIT(content);
     else if (profile == 1)
-      v.validateTiffITP1(outfilename);
+      v.validateTiffITP1(content);
     else
-      v.validateTiffITP2(outfilename);
+      v.validateTiffITP2(content);
     List<RuleResult> results = v.getErrors();
 
     if (errors > 0)
       assertEquals(errors, results.size());
     else
       assertEquals(true, results.size() > 0);
-
-    new File(outfilename).delete();
   }
 
   public void testValidTestP0Valid() throws Exception {

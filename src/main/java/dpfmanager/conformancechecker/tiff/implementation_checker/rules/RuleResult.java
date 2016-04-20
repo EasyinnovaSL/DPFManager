@@ -72,4 +72,8 @@ public class RuleResult {
   public String getDescription() {
     return message;
   }
+
+  public RuleObject getRule() {
+    return rule;
+  }
 }
