@@ -41,13 +41,18 @@ public class ThreadingService extends DpfService {
   private Map<Long, FileCheck> checks;
   private ExecutorService executor;
   private boolean needReload;
+  private int cores;
 
   @PostConstruct
   public void init() {
     // No context yet
     checks = new HashMap<>();
-    executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
     needReload = false;
+    cores = Runtime.getRuntime().availableProcessors()-1;
+    if (cores < 1){
+      cores = 1;
+    }
+    executor = Executors.newFixedThreadPool(cores);
   }
 
   @PreDestroy
@@ -58,7 +63,7 @@ public class ThreadingService extends DpfService {
 
   @Override
   protected void handleContext(DpfContext context) {
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Set maximum threads to " + (Runtime.getRuntime().availableProcessors()-1)));
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Set maximum threads to " + cores));
   }
 
   public void run(DpfRunnable runnable) {
