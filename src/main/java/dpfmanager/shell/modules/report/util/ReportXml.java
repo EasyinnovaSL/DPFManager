@@ -359,14 +359,16 @@ public class ReportXml extends ReportGeneric {
       for (ReportTag tag : getTags(ir)) {
         try {
           if (tag.tv.getName().equals("Compression")) continue;
-          infoElement = doc.createElement(tag.tv.getName());
+          String tagname = tag.tv.getName();
+          if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
+          infoElement = doc.createElement(tagname);
           infoElement.setTextContent(tag.tv.toString());
-          infoElement.setAttribute(tag.tv.getName(), tag.tv.toString());
+          infoElement.setAttribute(tagname, tag.tv.toString());
           infoElement.setAttribute("id", tag.tv.getId() + "");
           infoElement.setAttribute("type", tag.dif + "");
           report.appendChild(infoElement);
         } catch (Exception ex) {
-          ex.toString();
+          ex.printStackTrace();
         }
       }
 
@@ -467,7 +469,7 @@ public class ReportXml extends ReportGeneric {
         Node node = doc.importNode(doc2.getDocumentElement(), true);
         implementationCheckerElement.appendChild(doc.importNode(node, true));
       } catch (Exception ex) {
-        ex.toString();
+        ex.printStackTrace();
       }
     }
 

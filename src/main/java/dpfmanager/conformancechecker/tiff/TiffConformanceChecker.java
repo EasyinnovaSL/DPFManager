@@ -200,6 +200,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
       output = writer.getBuffer().toString().replaceAll("\n|\r", "");
     } catch (Exception ex) {
+      ex.printStackTrace();
       output = null;
     }
     return output;

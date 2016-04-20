@@ -86,7 +86,7 @@ public class Validator {
     return fis;
   }
 
-  ImplementationCheckerObject getRules(String rulesFile) throws JAXBException {
+  synchronized ImplementationCheckerObject getRules(String rulesFile) throws JAXBException {
     ImplementationCheckerObject rules = null;
 
     if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
@@ -192,44 +192,65 @@ public class Validator {
           String checkop = clausule.substring(clausule.indexOf(")") + 1).trim();
 
           RuleElement field = new RuleElement(countField, node, model);
-          List<TiffNode> childs = field.getChildren();
-          int n = childs.size();
-          if (checkop.startsWith("==")) {
-            String field2 = checkop.substring("==".length()).trim();
-            ok = n == Integer.parseInt(field2);
-          } else if (checkop.startsWith("!=")) {
-            String field2 = checkop.substring("!=".length()).trim();
-            ok = n != Integer.parseInt(field2);
-          } else if (checkop.startsWith(">")) {
-            String field2 = checkop.substring(">".length()).trim();
-            ok = n > Integer.parseInt(field2);
-          } else if (checkop.startsWith("<")) {
-            String field2 = checkop.substring("<".length()).trim();
-            ok = n < Integer.parseInt(field2);
+          if (!field.valid) ok = false;
+          else {
+            List<TiffNode> childs = field.getChildren();
+            int n = childs.size();
+            if (checkop.startsWith("==")) {
+              String field2 = checkop.substring("==".length()).trim();
+              ok = n == Integer.parseInt(field2);
+            } else if (checkop.startsWith("!=")) {
+              String field2 = checkop.substring("!=".length()).trim();
+              ok = n != Integer.parseInt(field2);
+            } else if (checkop.startsWith(">")) {
+              String field2 = checkop.substring(">".length()).trim();
+              ok = n > Integer.parseInt(field2);
+            } else if (checkop.startsWith("<")) {
+              String field2 = checkop.substring("<".length()).trim();
+              ok = n < Integer.parseInt(field2);
+            }
           }
         } else if (clausule.contains("==") || clausule.contains(">") || clausule.contains("<") || clausule.contains("!=")) {
           // Check field values
           String operation = clausule.contains("==") ? "==" : (clausule.contains(">") ? ">" : clausule.contains("!=") ? "!=" : "<");
           RuleElement op1 = new RuleElement(clausule.substring(0, clausule.indexOf(operation)), node, model);
-          String value = op1.getValue();
-          if (value == null) return ok;
-          RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
-          String value2 = op2.getValue();
-          if (operation.equals("==")) ok = value.equals(value2);
-          else if (operation.equals("!=")) ok = Float.parseFloat(value) != Float.parseFloat(value2);
-          else if (operation.equals(">")) ok = Float.parseFloat(value) > Float.parseFloat(value2);
-          else ok = Float.parseFloat(value) < Float.parseFloat(value2);
-          if (!ok)
-            ok = false;
+          if (!op1.valid) ok = false;
+          else {
+            String value = op1.getValue();
+            if (value == null) return ok;
+            RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
+            if (!op2.valid) ok = false;
+            else {
+              String value2 = op2.getValue();
+              if (value.contains("/"))
+                value = Float.parseFloat(value.split("/")[0]) / Float.parseFloat(value.split("/")[1]) + "";
+              if (value2.contains("/"))
+                value2 = Float.parseFloat(value2.split("/")[0]) / Float.parseFloat(value2.split("/")[1]) + "";
+              if (operation.equals("==")) ok = value.equals(value2);
+              else if (operation.equals("!="))
+                ok = Float.parseFloat(value) != Float.parseFloat(value2);
+              else if (operation.equals(">"))
+                ok = Float.parseFloat(value) > Float.parseFloat(value2);
+              else ok = Float.parseFloat(value) < Float.parseFloat(value2);
+            }
+          }
         } else {
           if (clausule.startsWith("!")) {
             // Check field does not exist
             RuleElement elem = new RuleElement(clausule.substring(1), node, model);
-            ok = elem.getChildren().size() == 0;
+            if (!elem.valid) ok = false;
+            else {
+              ok = elem.getChildren().size() == 0;
+            }
           } else {
             // Check field exists
             RuleElement elem = new RuleElement(clausule, node, model);
-            ok = elem.getChildren().size() > 0;
+            if (!elem.valid) ok = false;
+            else {
+              List<TiffNode> childs = elem.getChildren();
+              if (childs == null) ok = false;
+              else ok = childs.size() > 0;
+            }
           }
         }
 
@@ -240,6 +261,7 @@ public class Validator {
           break;
       }
     } catch (Exception ex) {
+      ex.printStackTrace();
       ok = false;
     }
 
