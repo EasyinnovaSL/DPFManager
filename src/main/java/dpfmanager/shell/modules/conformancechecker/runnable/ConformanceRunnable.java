@@ -47,9 +47,9 @@ public class ConformanceRunnable extends DpfRunnable {
 
     // Process the input and get a list of individual reports
     IndividualReport ir = pi.processFile(filename, internalReportFolder, config);
-    ir.setIdReport(id);
-    ir.setInternalReportFolder(internalReportFolder);
     if (ir != null) {
+      ir.setIdReport(id);
+      ir.setInternalReportFolder(internalReportFolder);
       // Tell report module to create it
       ir.setUuid(uuid);
       context.send(BasicConfig.MODULE_REPORT, new IndividualReportMessage(ir, config));
