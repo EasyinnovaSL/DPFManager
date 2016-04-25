@@ -114,4 +114,13 @@ public class DPFManagerProperties {
     }
     return System.getProperty("user.home") + "/DPF Manager";
   }
+
+  public static String getDataDir() {
+    String dataDir = getConfigDir() + "/data";
+    File dataFile = new File(dataDir);
+    if (!dataFile.exists()){
+      dataFile.mkdirs();
+    }
+    return dataDir;
+  }
 }

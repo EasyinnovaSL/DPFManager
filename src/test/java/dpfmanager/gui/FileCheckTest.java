@@ -49,6 +49,7 @@ public class FileCheckTest extends ApplicationTest {
     clickOnImportedConfig(inputConfigPath);
     writeText("#inputText", inputFilePath);
     clickOnAndReload("#checkFilesButton");
+    clickOnAndReloadBot("#taskButInConsole");
     waitForCheckFiles(1);
 
     //Check table view

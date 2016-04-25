@@ -14,6 +14,8 @@ public class BasicConfig {
   public static final String MODULE_REPORT = "m002";
   public static final String MODULE_CONFORMANCE = "m003";
   public static final String MODULE_THREADING = "m004";
+  public static final String MODULE_DATABASE = "m005";
+  public static final String MODULE_TIMER = "m006";
 
   /**
    * Services Components
@@ -22,5 +24,7 @@ public class BasicConfig {
   public static final String SERVICE_MESSAGES = "s002";
   public static final String SERVICE_REPORT = "s003";
   public static final String SERVICE_THREADING = "s004";
+  public static final String SERVICE_DATABASE = "s005";
+  public static final String SERVICE_TIMER = "s006";
 
 }

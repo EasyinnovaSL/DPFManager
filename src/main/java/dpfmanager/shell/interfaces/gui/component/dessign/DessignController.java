@@ -11,7 +11,7 @@ import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.threading.core.FileCheck;
-import dpfmanager.shell.modules.threading.messages.CheckTaskMessage;
+import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
@@ -125,13 +125,9 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   }
 
   public void testAction() {
-    FileCheck fc = new FileCheck();
-    getContext().send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.INIT, fc));
   }
 
   public void testAction2() {
-    FileCheck fc = new FileCheck();
-    getContext().send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.FINISH, fc));
   }
 
   private File getFileByPath(String path) {

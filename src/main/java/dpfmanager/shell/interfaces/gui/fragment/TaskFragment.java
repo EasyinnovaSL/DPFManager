@@ -4,6 +4,7 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.threading.core.FileCheck;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -15,6 +16,7 @@ import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -35,59 +37,64 @@ public class TaskFragment {
   @FXML
   private VBox vbox;
 
-  private int current;
-  private int total;
-  private FileCheck fileCheck;
+  private Jobs job;
 
-  public void init(FileCheck fc) {
-    progress.setProgress(0.0);
-    input.setText("Input: " + fc.getInput());
-    current = 0;
-    total = fc.getTotal() + 1;
-    fileCheck = fc;
+  public void init(Jobs job) {
+    if (job.getState() == 2 && !progress.getStyleClass().contains("bar-done")){
+      progress.getStyleClass().add("bar-done");
+    }
+    progress.setProgress(job.getProgress());
+    input.setText("Input: " + job.getInput());
     bindWidth();
   }
 
-  public void updateProgressBar() {
-    current++;
-    progress.setProgress((current * 1.0) / (total * 1.0));
-    if (current == total && !progress.getStyleClass().contains("bar-done")) {
+  public void updateJob(Jobs updatedJob) {
+    job = updatedJob;
+    if (job.getState() == 2 && !progress.getStyleClass().contains("bar-done")){
       progress.getStyleClass().add("bar-done");
     }
+    progress.setProgress(job.getProgress());
   }
 
   @FXML
   private void showReport() {
     if (isFinished()) {
-      String filefolder = fileCheck.getInternal();
-      List<String> formats = fileCheck.getConfig().getFormats();
+      String filefolder = job.getOutput();
+
+      String htmlPath = filefolder + "report.html";
+      String xmlPath = filefolder + "summary.xml";
+      String jsonPath = filefolder + "summary.json";
+      String pdfPath = filefolder + "report.pdf";
 
       String type = "";
       String path = "";
-      if (formats.contains("HTML")) {
+      if (exists(htmlPath)) {
         type = "html";
-        path = filefolder + "report.html";
-      } else if (formats.contains("XML")) {
+        path = htmlPath;
+      } else if (exists(xmlPath)) {
         type = "xml";
-        path = filefolder + "summary.xml";
-      } else if (formats.contains("JSON")) {
+        path = xmlPath;
+      } else if (exists(jsonPath)) {
         type = "json";
-        path = filefolder + "summary.json";
-      } else if (formats.contains("PDF")) {
+        path = jsonPath;
+      } else if (exists(pdfPath)) {
         type = "pdf";
-        path = filefolder + "report.pdf";
+        path = pdfPath;
       }
 
       ArrayMessage am = new ArrayMessage();
-//      am.add(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
       am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
       am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
       context.send(GuiConfig.PERSPECTIVE_SHOW, am);
     }
   }
 
+  private boolean exists(String path){
+    return new File(path).exists();
+  }
+
   private boolean isFinished() {
-    return (current == total);
+    return (job.getProcessedFiles() == job.getTotalFiles());
   }
 
   private void bindWidth() {

@@ -1,13 +1,18 @@
 package dpfmanager.shell.interfaces.gui.component.bottom;
 
 import dpfmanager.shell.core.adapter.DpfSimpleView;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.interfaces.gui.fragment.BottomFragment;
 import dpfmanager.shell.interfaces.gui.fragment.TaskFragment;
 import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
-import dpfmanager.shell.modules.threading.messages.CheckTaskMessage;
+import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
+import dpfmanager.shell.modules.database.messages.DatabaseMessage;
+import dpfmanager.shell.modules.database.tables.Jobs;
+import dpfmanager.shell.modules.timer.messages.TimerMessage;
+import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
 import javafx.scene.Node;
 
 import org.jacpfx.api.annotations.Resource;
@@ -58,7 +63,34 @@ public class PaneComponent extends DpfSimpleView {
           hideInPrespective();
         }
       }
+
+      // Notify timer
+      if (fragment.getController().isTasksVisible()){
+        context.send(BasicConfig.MODULE_TIMER, new TimerMessage(TimerMessage.Type.PLAY, JobsStatusTask.class));
+      } else {
+        context.send(BasicConfig.MODULE_TIMER, new TimerMessage(TimerMessage.Type.STOP, JobsStatusTask.class));
+      }
     }
+  }
+
+  @Override
+  public Node handleMessageOnFX(DpfMessage message) {
+    if (message != null && message.isTypeOf(CheckTaskMessage.class)){
+      CheckTaskMessage ctm = message.getTypedMessage(CheckTaskMessage.class);
+      for (Jobs job : ctm.getJobs()){
+        if (!fragment.getController().containsJob(job.getId())){
+          // Init new fragment
+          ManagedFragmentHandler<TaskFragment> taskFragment = context.getManagedFragmentHandler(TaskFragment.class);
+          fragment.getController().addTask(taskFragment, job);
+        } else {
+          // Update existing one
+          fragment.getController().updateTask(job);
+        }
+      }
+      // Notify finish task
+      context.send(BasicConfig.MODULE_TIMER, new TimerMessage(TimerMessage.Type.FINISH, JobsStatusTask.class));
+    }
+    return fragment.getFragmentNode();
   }
 
   private void showInPrespective(){
@@ -69,22 +101,6 @@ public class PaneComponent extends DpfSimpleView {
   private void hideInPrespective(){
     String current = context.getManagedFragmentHandler(TopFragment.class).getController().getCurrentId();
     context.send(current,new WidgetMessage(WidgetMessage.Action.HIDE));
-  }
-
-  @Override
-  public Node handleMessageOnFX(DpfMessage message) {
-    if (message != null && message.isTypeOf(CheckTaskMessage.class)){
-      CheckTaskMessage ctm = message.getTypedMessage(CheckTaskMessage.class);
-      if (ctm.isInit()) {
-        // Init new fragment
-        ManagedFragmentHandler<TaskFragment> taskFragment = context.getManagedFragmentHandler(TaskFragment.class);
-        fragment.getController().addTask(taskFragment, ctm.getFileCheck());
-      } else if (ctm.isUpdate()){
-        // Update existing one
-        fragment.getController().updateTask(ctm.getFileCheck().getUuid());
-      }
-    }
-    return fragment.getFragmentNode();
   }
 
   @PostConstruct

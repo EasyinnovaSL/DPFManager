@@ -50,7 +50,7 @@ public class FileCheck {
   }
 
   public boolean allFinished(){
-    return total == individuals.size() + errors;
+    return total == getFinished();
   }
 
   public void addError(){
@@ -59,6 +59,10 @@ public class FileCheck {
 
   public long getUuid() {
     return uuid;
+  }
+
+  public int getFinished() {
+    return individuals.size() + errors;
   }
 
   public String getInput() {
