@@ -70,6 +70,11 @@
 			<organizationUrl>http://www.easyinnova.com</organizationUrl>
 		</developer>
 	</developers>
+	<scm>
+		<connection>scm:git:git@github.com:easyinnova/DPFManager.git</connection>
+		<developerConnection>scm:git:git@github.com:easyinnova/DPFManager.git</developerConnection>
+		<url>git@github.com:easyinnova/DPFManager.git</url>
+	</scm>
 	<contributors>
 		
 	</contributors>
@@ -358,6 +363,45 @@
 				</configuration>
 			</plugin>
 
+			<!--Maven repository -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -378,14 +422,13 @@
 					<plugin>
 						<groupId>com.zenjava</groupId>
 						<artifactId>javafx-maven-plugin</artifactId>
-						<version>8.1.5</version>
+						<version>8.4.0</version>
 						<configuration>
 							<mainClass>${gui.class}</mainClass>
 							<verbose>true</verbose>
 							<jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
 							<jfxMainAppJarName>${project.name}-jfx.jar</jfxMainAppJarName>
 							<vendor>${project.name}</vendor>
-							<bundleType>ALL</bundleType>
 							<bundler>ALL</bundler>
 							<needShortcut>true</needShortcut>
 							<needMenu>true</needMenu>
@@ -565,7 +608,6 @@
                             <deployDir>${project.basedir}</deployDir>
                             <vendor>${project.build.finalName}</vendor>
                             <nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
-                            <bundleType>ALL</bundleType>
                             <bundler>ALL</bundler>
                             <nativeReleaseVersion>${project.version}</nativeReleaseVersion>
                             <needShortcut>true</needShortcut>
@@ -612,8 +654,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>2.3</version>
-
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>

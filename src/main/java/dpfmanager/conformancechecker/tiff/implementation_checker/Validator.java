@@ -255,9 +255,9 @@ public class Validator {
         }
 
         // Lazy evaluation
-        if (clausules.getOperator() != null && clausules.getOperator().equals("||") && ok)
+        if (clausules.getOperator() != Clausules.Operator.NULL && clausules.getOperator() == Clausules.Operator.OR && ok)
           break;
-        if (clausules.getOperator() == null || clausules.getOperator().equals("&&") && !ok)
+        if (clausules.getOperator() == Clausules.Operator.NULL || clausules.getOperator() == Clausules.Operator.AND && !ok)
           break;
       }
     } catch (Exception ex) {

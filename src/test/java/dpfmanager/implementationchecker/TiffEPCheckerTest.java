@@ -28,7 +28,7 @@ public class TiffEPCheckerTest extends TestCase {
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    String content = tiffValidation.writeString();
+    String content = tiffValidation.getXml();
 
     Validator v = new Validator();
     v.validateTiffEP(content);
@@ -54,7 +54,7 @@ public class TiffEPCheckerTest extends TestCase {
       TiffDocument td = tr.getModel();
       TiffImplementationChecker tic = new TiffImplementationChecker();
       TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-      String content =  tiffValidation.writeString();
+      String content =  tiffValidation.getXml();
 
       Validator v = new Validator();
       v.validateTiffEP(content);

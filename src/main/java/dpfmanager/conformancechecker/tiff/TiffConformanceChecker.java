@@ -359,7 +359,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    return tiffValidation.writeString();
+    return tiffValidation.getXml();
   }
 
   public static Validator getBaselineValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {

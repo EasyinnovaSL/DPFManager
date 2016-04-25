@@ -29,7 +29,7 @@ public class TiffITCheckerTest extends TestCase {
     TiffImplementationChecker tic = new TiffImplementationChecker();
     tic.setITFields(true);
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    String content = tiffValidation.writeString();
+    String content = tiffValidation.getXml();
 
     Validator v = new Validator();
     if (profile == 0)
@@ -54,7 +54,7 @@ public class TiffITCheckerTest extends TestCase {
     TiffImplementationChecker tic = new TiffImplementationChecker();
     tic.setITFields(true);
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
-    String content = tiffValidation.writeString();
+    String content = tiffValidation.getXml();
 
     Validator v = new Validator();
     if (profile == 0)

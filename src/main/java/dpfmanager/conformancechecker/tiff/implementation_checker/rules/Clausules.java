@@ -7,8 +7,9 @@ import java.util.List;
  * Created by easy on 14/03/2016.
  */
 public class Clausules {
+  public enum Operator { AND, OR, NULL };
   List<String> clausules;
-  String operator;
+  Operator operator = Operator.NULL;
 
   public Clausules() {
 
@@ -17,10 +18,11 @@ public class Clausules {
   public Clausules(List<String> clausules, String operator)
   {
     this.clausules = clausules;
-    this.operator = operator;
+    if (operator.equals("||")) this.operator = Operator.OR;
+    else if (operator.equals("&&")) this.operator = Operator.AND;
   }
 
-  public String getOperator() {
+  public Operator getOperator() {
     return operator;
   }
 
@@ -37,9 +39,17 @@ public class Clausules {
       expr = expr.substring(expr.indexOf("}") + 1).trim();
       if (expr.length() == 0) break;
       String op = expr.substring(0, 2);
-      if (operator == null) operator = op;
-      else if (!op.equals(operator)) {
-        return false;
+      if (operator == null) {
+        if (op.equals("&&")) operator = Operator.AND;
+        else if (op.equals("||")) operator = Operator.OR;
+      }
+      else {
+        Operator sop = Operator.NULL;
+        if (op.equals("&&")) sop = Operator.AND;
+        else if (op.equals("||")) sop = Operator.OR;
+        if (sop != operator) {
+          return false;
+        }
       }
       expr = expr.substring(2).trim();
     }

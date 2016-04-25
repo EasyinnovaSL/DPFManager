@@ -100,7 +100,7 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
     }
   }
 
-  public String writeString() {
+  public String getXml() {
     try {
       JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
       Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
