@@ -13,9 +13,9 @@ matrix:
   include:
     # Custom builds
     - env: TOKEN=nogui
-      script: mvn test -B -Dtest=commandline/*Test.java,implementationchecker/*Test.java
+      script: mvn test -B -Dtest=commandline/*Test.java,implementationchecker/*Test.java -Dgpg.skip
     - env: TOKEN=gui
-      script: mvn test -B -Dtest=gui/*Test.java
+      script: mvn test -B -Dtest=gui/*Test.java -Dgpg.skip
   exclude:
     # Exclude default build
     - jdk: oraclejdk8
