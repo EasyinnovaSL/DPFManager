@@ -274,6 +274,13 @@
 		</dependency>
 		<!--End JacpFX-->
 
+		<!--Sqlite-->
+		<dependency>
+			<groupId>org.tmatesoft.sqljet</groupId>
+			<artifactId>sqljet</artifactId>
+			<version>1.1.10</version>
+		</dependency>
+
 	</dependencies>
 
 	<!--Common Build Plugins-->
@@ -556,7 +563,7 @@
                     <plugin>
                         <groupId>com.zenjava</groupId>
                         <artifactId>javafx-maven-plugin</artifactId>
-                        <version>8.4.0</version>
+                        <version>8.1.5</version>
                         <configuration>
                             <mainClass>${main.class}</mainClass>
                             <verbose>true</verbose>

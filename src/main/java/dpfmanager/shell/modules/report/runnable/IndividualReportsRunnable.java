@@ -4,6 +4,7 @@ import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.conformancechecker.core.ProcessInput;
+import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -44,7 +45,6 @@ public class IndividualReportsRunnable extends DpfRunnable {
     String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
     generator.generateIndividualReport(outputfile, ir, config, ir.getInternalReportFodler());
     context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Created individual report '" + outputfile + "'"));
-
     // Notify individual report finished
     context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir));
   }

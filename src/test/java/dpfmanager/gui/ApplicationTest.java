@@ -144,7 +144,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     // Set feedback
     DPFManagerProperties.setFeedback(feedback);
     // Delete all reports
-    deleteReports();
+//    deleteReports();
   }
 
   private void deleteReports() {

@@ -5,11 +5,11 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
-import dpfmanager.shell.modules.threading.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 import dpfmanager.shell.modules.threading.runnable.PhassesRunnable;
@@ -76,20 +76,22 @@ public class ThreadingService extends DpfService {
       // Init new file check
       FileCheck fc = new FileCheck(gm.getUuid(), gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
       checks.put(gm.getUuid(), fc);
-      context.sendGui(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Starting check: " + gm.getInput()));
-      context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.INIT, fc));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Starting check: " + gm.getInput()));
+      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.NEW, fc.getUuid(), fc.getTotal(), fc.getInput(), fc.getInternal()));
+//      context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.INIT, fc));
     } else if (gm.isFinish()) {
-      // Finisdh file check
+      // Finish file check
       FileCheck fc = checks.get(gm.getUuid());
       removeZipFolder(fc.getInternal());
       if (context.isGui()) {
         // Notify task manager
         needReload = true;
-        context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.UPDATE, fc));
+//        context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.UPDATE, fc));
       } else if (!silence) {
         // No ui, show to user
         showToUser(fc.getInternal(), fc.getConfig().getOutput());
       }
+      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.FINISH, gm.getUuid()));
       checks.remove(gm.getUuid());
     } else if (context.isGui() && gm.isReload()) {
       // Ask for reload
@@ -115,7 +117,8 @@ public class ThreadingService extends DpfService {
       // Individual with errors
       fc.addError();
     }
-    context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.UPDATE, fc));
+    context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.UPDATE, uuid));
+//    context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.UPDATE, fc.getFinished()));
   }
 
   public void removeZipFolder(String internal) {

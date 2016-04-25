@@ -13,5 +13,7 @@
     <context:component-scan base-package="dpfmanager.shell.modules.report.core" />
     <context:component-scan base-package="dpfmanager.shell.modules.threading.core" />
     <context:component-scan base-package="dpfmanager.shell.modules.messages.core" />
+    <context:component-scan base-package="dpfmanager.shell.modules.database.core" />
+    <context:component-scan base-package="dpfmanager.shell.modules.timer.core" />
 
 </beans>

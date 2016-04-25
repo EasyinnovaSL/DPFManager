@@ -2,6 +2,7 @@ package dpfmanager.shell.interfaces.gui.fragment;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.core.util.NodeUtil;
@@ -149,15 +150,19 @@ public class BottomFragment {
   /**
    * Tasks functions
    */
-  public void addTask(ManagedFragmentHandler<TaskFragment> taskFragment, FileCheck fc){
-    taskFragment.getController().init(fc);
-    taskFragments.put(fc.getUuid(), taskFragment);
+  public void addTask(ManagedFragmentHandler<TaskFragment> taskFragment, Jobs job){
+    taskFragment.getController().init(job);
+    taskFragments.put(job.getId(), taskFragment);
     taskVBox.getChildren().add(taskFragment.getFragmentNode());
   }
 
-  public void updateTask(long uuid){
-    ManagedFragmentHandler<TaskFragment> taskFragment = taskFragments.get(uuid);
-    taskFragment.getController().updateProgressBar();
+  public void updateTask(Jobs job){
+    ManagedFragmentHandler<TaskFragment> taskFragment = taskFragments.get(job.getId());
+    taskFragment.getController().updateJob(job);
+  }
+
+  public boolean containsJob(long uuid){
+    return taskFragments.containsKey(uuid);
   }
 
   /**
