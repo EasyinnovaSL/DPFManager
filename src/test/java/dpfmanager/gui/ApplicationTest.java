@@ -226,6 +226,15 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   /**
+   * Click on and reload bot.
+   *
+   * @param id the id
+   */
+  public void clickOnAndReloadBot(String id){
+    clickOnAndReloadBot(id, 250);
+  }
+
+  /**
    * Click on and reload.
    *
    * @param id     the id
@@ -271,7 +280,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 //Main click function + wait for node + reload (top pane)
   public void clickOnAndReloadTop(String id, String search){
     // Click first
-    clickOnScroll(id, true, true);
+    clickOnScroll(id, true, true, false);
 
     // Reload until node search is visible
     reloadScene();
@@ -328,7 +337,20 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
    */
 //Main click function + wait + reload (top pane)
   public void clickOnAndReloadTop(String id, int milis){
-    clickOnScroll(id, true, true);
+    clickOnScroll(id, true, true, false);
+    sleep(milis);
+    reloadScene();
+  }
+
+  /**
+   * Click on and reload bot.
+   *
+   * @param id    the id
+   * @param milis the milis
+   */
+//Main click function + wait + reload (bot pane)
+  public void clickOnAndReloadBot(String id, int milis){
+    clickOnScroll(id, true, false, true);
     sleep(milis);
     reloadScene();
   }
@@ -341,7 +363,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
    * @throws FxRobotException the fx robot exception
    */
   public ApplicationTest clickOnScroll(String id) throws FxRobotException {
-    return clickOnScroll(id,true, false);
+    return clickOnScroll(id,true, false, false);
   }
 
   /**
@@ -353,7 +375,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
    * @throws FxRobotException the fx robot exception
    */
   public ApplicationTest clickOnScroll(String id, boolean restart) throws FxRobotException {
-    return clickOnScroll(id,restart, false);
+    return clickOnScroll(id,restart, false, false);
   }
 
   /**
@@ -365,7 +387,14 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
    * @return the application test
    * @throws FxRobotException the fx robot exception
    */
-  public ApplicationTest clickOnScroll(String id, boolean restart, boolean topItems ) throws FxRobotException {
+  public ApplicationTest clickOnScroll(String id, boolean restart, boolean topItems, boolean botItems ) throws FxRobotException {
+    // Top buttons or bot buttons dont need scroll never
+    if (topItems || botItems){
+      clickOnCustom(id);
+      scene = stage.getScene();
+      return this;
+    }
+
     // First go to the button and decide if we need scroll or not
     if (!moveToCustom(id)){
       // We need scroll
@@ -387,7 +416,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     int y = getMousePositionY();
     if (y < baseH+50 && !topItems) {
       restartScroll();
-      return clickOnScroll(id, false, topItems);
+      return clickOnScroll(id, false, topItems, botItems);
     }
 
     // Now we can move to the button, lets check if it is at bounds of scene
