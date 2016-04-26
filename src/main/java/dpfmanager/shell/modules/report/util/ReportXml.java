@@ -354,6 +354,16 @@ public class ReportXml extends ReportGeneric {
       infoElement.setTextContent(ir.getBitsPerSample());
       infoElement.setAttribute("BitDepth", ir.getBitsPerSample());
       report.appendChild(infoElement);
+      value = ir.getPhotometric() != null && ir.getPhotometric().length() > 0 ? TiffConformanceChecker.photometricName(Integer.parseInt(ir.getPhotometric())) : "Unknown";
+      infoElement = doc.createElement("Photometric");
+      infoElement.setTextContent(value);
+      infoElement.setAttribute("Photometric", value);
+      report.appendChild(infoElement);
+      value = ir.getPlanar() != null && ir.getPlanar().length() > 0 ? TiffConformanceChecker.planarName(Integer.parseInt(ir.getPlanar())) : "Unknown";
+      infoElement = doc.createElement("Planar");
+      infoElement.setTextContent(value);
+      infoElement.setAttribute("Planar", value);
+      report.appendChild(infoElement);
 
       // tags
       for (ReportTag tag : getTags(ir)) {

@@ -35,6 +35,7 @@ import dpfmanager.shell.modules.report.core.ReportGenerator;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.reader.TiffReader;
 
 import org.reflections.Reflections;
@@ -182,6 +183,22 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "description", "Compression");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", compressionName(1) + "," + compressionName(2) + "," + compressionName(32773) + "," + compressionName(3) + "," + compressionName(4) + "," + compressionName(5) + "," + compressionName(6) + "," + compressionName(7) + "," + compressionName(8) + "," + compressionName(9) + "," + compressionName(10) + "");
+      // Photometric
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "Photometric");
+      addElement(doc, field, "type", "string");
+      addElement(doc, field, "description", "Photometric Interpretation");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", photometricName(1) + "," + photometricName(2) + "," + photometricName(3) + "," + photometricName(4) + "," + photometricName(5) + "," + photometricName(6) + "," + photometricName(10) + "");
+      // Planar
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "Planar");
+      addElement(doc, field, "type", "string");
+      addElement(doc, field, "description", "Planar Configuration");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", planarName(1) + "," + planarName(2));
       // Byteorder
       field = doc.createElement("field");
       fields.appendChild(field);
@@ -260,6 +277,30 @@ public class TiffConformanceChecker extends ConformanceChecker {
       case 9: return "JBIG BW";
       case 10: return "JBIG C";
       case 32773: return "PackBits";
+    }
+    return "Unknown";
+  }
+
+  public static String photometricName(int code) {
+    switch (code) {
+      case 0:
+      case 1: return "Bilevel";
+      case 2: return "RGB";
+      case 3: return "Palette";
+      case 4: return "Transparency Mask";
+      case 5: return "CMYK";
+      case 6: return "YCbCr";
+      case 8:
+      case 9:
+      case 10: return "CIELAB";
+    }
+    return "Unknown";
+  }
+
+  public static String planarName(int code) {
+    switch (code) {
+      case 1: return "Chunky";
+      case 2: return "Planar";
     }
     return "Unknown";
   }

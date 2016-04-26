@@ -26,6 +26,7 @@ public class GuiApp extends GuiLauncher {
     if (img != null) {
       stage.getIcons().add(img);
     }
+    stage.setTitle("DPF Manager");
   }
 
   @Override

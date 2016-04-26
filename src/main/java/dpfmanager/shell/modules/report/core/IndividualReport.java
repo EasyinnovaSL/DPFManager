@@ -90,6 +90,9 @@ public class IndividualReport {
   /** The Tiff photometric. */
   private String photo;
 
+  /** The Tiff planar. */
+  private String planar;
+
   /** The baseline errors list. */
   private List<RuleResult> errorsBl;
 
@@ -452,7 +455,12 @@ public class IndividualReport {
       }
     }
     numberimages = tiffModel.getImageIfds().size() + "";
-    photo = tiffModel.getMetadataSingleString("PhotometricRepresentation");
+    if (tiffModel.getMetadata().contains("PhotometricInterpretation")) {
+      photo = tiffModel.getMetadataSingleString("PhotometricInterpretation");
+    }
+    if (tiffModel.getMetadata().contains("PlanarConfiguration")) {
+      planar = tiffModel.getMetadataSingleString("PlanarConfiguration");
+    }
 
     // errors & warnings
     if (validation != null) {
@@ -532,6 +540,15 @@ public class IndividualReport {
    */
   public String getHeight() {
     return height;
+  }
+
+  /**
+   * Get Planar.
+   *
+   * @return the Planar
+   */
+  public String getPlanar() {
+    return planar;
   }
 
   /**
