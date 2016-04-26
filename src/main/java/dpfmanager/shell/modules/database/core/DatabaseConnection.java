@@ -137,6 +137,7 @@ public class DatabaseConnection {
         if (!cursor.eof()) {
           Map<String, Object> updates = new HashMap<>();
           updates.put(Jobs.STATE, job.getState());
+          updates.put(Jobs.PROCESSED_FILES, job.getTotalFiles());
           updates.put(Jobs.FINISH, job.getFinish());
           cursor.updateByFieldNames(updates);
           cursor.close();
