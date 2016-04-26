@@ -17,125 +17,125 @@ import java.nio.file.Paths;
  * Created by Easy on 20/07/2015.
  */
 public class ReportGeneratorTest extends CommandLineTest {
-//  @Test
-//  public void testHTMLTags() throws Exception {
-//    DPFManagerProperties.setFeedback(false);
-//
-//    if (!new File("temp").exists()) {
-//      new File("temp").mkdir();
-//    }
-//
-//    String path = "temp/output";
-//    int idx = 1;
-//    while (new File(path).exists()) path = "temp/output" + idx++;
-//
-//    String[] args = new String[4];
-//    args[0] = "src/test/resources/Small/Bilevel.tif";
-//    args[1] = "-s";
-//    args[2] = "-o";
-//    args[3] = path;
-//
-//    MainConsoleApp.main(args);
-//
-//    // Wait for finish
-//    waitForFinishMultiThred(30);
-//
-//    File directori = new File(path + "/html");
-//    assertEquals(directori.exists(), true);
-//
-//    String html = null;
-//    for (String file : directori.list()) {
-//      if (file.equals("1-Bilevel.tif.html")) {
-//        byte[] encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
-//        html = new String(encoded);
-//      }
-//    }
-//    assertEquals(html != null, true);
-//    assertEquals(html.contains("<td>256</td><td>ImageWidth</td><td>999</td>"), true);
-//    assertEquals(html.contains("<td>257</td><td>ImageLength</td><td>662</td>"), true);
-//    assertEquals(html.contains("<td>305</td><td>Software</td><td>Adobe Photoshop CS6 (Macintosh)</td>"), true);
-//
-//    FileUtils.deleteDirectory(new File(path));
-//
-//    FileUtils.deleteDirectory(new File("temp"));
-//  }
-//
-//  @Test
-//  public void testReportsFile() throws Exception {
-//    DPFManagerProperties.setFeedback(false);
-//
-//    String[] args = new String[2];
-//    args[0] = "src/test/resources/Small/Bilevel.tif";
-//    args[1] = "-s";
-//
-//    MainConsoleApp.main(args);
-//
-//    // Wait for finish
-//    waitForFinishMultiThred(30);
-//
-//    String path = getPath();
-//
-//    File directori = new File(path);
-//    assertEquals(4, directori.list().length);
-//  }
-//
-//  @Test
-//  public void testReportsSubfoldersWithEqualFilenames() throws Exception {
-//    DPFManagerProperties.setFeedback(false);
-//
-//    String[] args = new String[3];
-//    args[0] = "-r";
-//    args[1] = "src/test/resources/S2";
-//    args[2] = "-s";
-//
-//    MainConsoleApp.main(args);
-//
-//    // Wait for finish
-//    waitForFinishMultiThred(30);
-//
-//    String path = getPath();
-//
-//    File directori = new File(path);
-//    assertEquals(7, directori.list().length);
-//  }
-//
-//  @Test
-//  public void testReportsFolder() throws Exception {
-//    DPFManagerProperties.setFeedback(false);
-//
-//    String[] args = new String[2];
-//    args[0] = "src/test/resources/Small";
-//    args[1] = "-s";
-//
-//    MainConsoleApp.main(args);
-//
-//    // Wait for finish
-//    waitForFinishMultiThred(30);
-//
-//    String path = getPath();
-//
-//    File directori = new File(path);
-//    assertEquals(9, directori.list().length);
-//  }
-//
-//  @Test
-//  public void testReportsZip() throws Exception {
-//    DPFManagerProperties.setFeedback(false);
-//
-//    String[] args = new String[2];
-//    args[0] = "src/test/resources/Small.zip";
-//    args[1] = "-s";
-//
-//    MainConsoleApp.main(args);
-//
-//    // Wait for finish
-//    waitForFinishMultiThred(30);
-//
-//    String path = getPath();
-//
-//    File directori = new File(path);
-//    assertEquals(7, directori.list().length);
-//  }
+  @Test
+  public void testHTMLTags() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String path = "temp/output";
+    int idx = 1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String[] args = new String[4];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    File directori = new File(path + "/html");
+    assertEquals(directori.exists(), true);
+
+    String html = null;
+    for (String file : directori.list()) {
+      if (file.equals("1-Bilevel.tif.html")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
+        html = new String(encoded);
+      }
+    }
+    assertEquals(html != null, true);
+    assertEquals(html.contains("<td>256</td><td>ImageWidth</td><td>999</td>"), true);
+    assertEquals(html.contains("<td>257</td><td>ImageLength</td><td>662</td>"), true);
+    assertEquals(html.contains("<td>305</td><td>Software</td><td>Adobe Photoshop CS6 (Macintosh)</td>"), true);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    FileUtils.deleteDirectory(new File("temp"));
+  }
+
+  @Test
+  public void testReportsFile() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String[] args = new String[2];
+    args[0] = "src/test/resources/Small/Bilevel.tif";
+    args[1] = "-s";
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(4, directori.list().length);
+  }
+
+  @Test
+  public void testReportsSubfoldersWithEqualFilenames() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String[] args = new String[3];
+    args[0] = "-r";
+    args[1] = "src/test/resources/S2";
+    args[2] = "-s";
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(7, directori.list().length);
+  }
+
+  @Test
+  public void testReportsFolder() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String[] args = new String[2];
+    args[0] = "src/test/resources/Small";
+    args[1] = "-s";
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(9, directori.list().length);
+  }
+
+  @Test
+  public void testReportsZip() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String[] args = new String[2];
+    args[0] = "src/test/resources/Small.zip";
+    args[1] = "-s";
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    String path = getPath();
+
+    File directori = new File(path);
+    assertEquals(7, directori.list().length);
+  }
 
   @Test
   public void testReportsURL() throws Exception {
@@ -167,16 +167,46 @@ public class ReportGeneratorTest extends CommandLineTest {
     }
   }
 
-//  @Test
-//  public void testReportsFormat() throws Exception {
-//    assertReportsFormat("html");
-//    assertReportsFormat("xml");
-//    assertReportsFormat("json");
-//    assertReportsFormat("xml,html");
-//    assertReportsFormat("xml,json");
-//    assertReportsFormat("json,html");
-//    assertReportsFormat("xml,json,html");
-//  }
+  @Test
+  public void testReportsURLZip() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String dirWeb = "http://dpfmanager.org/test/Bilevel.zip";
+    try {
+      String[] args = new String[2];
+      args[0] = dirWeb;
+      args[1] = "-s";
+
+      MainConsoleApp.main(args);
+
+      // Wait for finish
+      waitForFinishMultiThred(30);
+
+      String path = getPath();
+
+      File directori = new File(path);
+      assertEquals(4, directori.list().length);
+
+      // Check tiff to jpg
+      String jpgPath = path+"html/img/1-Bilevel.tif.jpg";
+      File jpgFile = new File(jpgPath);
+      assertEquals(true, jpgFile.exists());
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      assertEquals(1, 0);
+    }
+  }
+
+  @Test
+  public void testReportsFormat() throws Exception {
+    assertReportsFormat("html");
+    assertReportsFormat("xml");
+    assertReportsFormat("json");
+    assertReportsFormat("xml,html");
+    assertReportsFormat("xml,json");
+    assertReportsFormat("json,html");
+    assertReportsFormat("xml,json,html");
+  }
 
   private void assertReportsFormat(String formats) throws Exception {
     String[] args = new String[4];

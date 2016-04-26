@@ -116,7 +116,6 @@ public class ThreadingService extends DpfService {
       // Individual with errors
       fc.addError();
     }
-    System.out.println("Finished "+ir.getIdReport()+"  of  "+fc.getFinished());
     context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.UPDATE, uuid));
   }
 
