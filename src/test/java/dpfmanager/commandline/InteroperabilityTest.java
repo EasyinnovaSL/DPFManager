@@ -4,12 +4,18 @@ import static junit.framework.TestCase.assertEquals;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
+import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import com.easyinnova.tiff.model.IfdTags;
+import com.easyinnova.tiff.model.ReadIccConfigIOException;
+import com.easyinnova.tiff.model.ReadTagsIOException;
+import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.Assert;
@@ -21,17 +27,67 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+
 /**
  * Created by easy on 08/02/2016.
  */
 public class InteroperabilityTest extends CommandLineTest {
+  @Test
+  public void testDpfManager() {
+    try {
+      // Get the Tiff file model
+      TiffReader tr = new TiffReader();
+      tr.readFile("src/test/resources/Small/Bilevel.tif");
+      TiffDocument td = tr.getModel();
+
+      // Get the first image (a Tiff file could contain more than one image)
+      IFD ifd = td.getFirstIFD();
+
+      // Get the tags of the image
+      IfdTags tags = ifd.getTags();
+
+      // Get a concrete tag (either by the tag id or the tag name)
+      TagValue tv = tags.get("ImageWidth");
+
+      // Get the tag value (parse the string to the desired type)
+      String value = tv.toString();
+      int width = Integer.parseInt(value);
+      assertEquals(999, width);
+
+      // Get the report object
+      TiffImplementationChecker tic = new TiffImplementationChecker();
+      TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
+
+      Validator v = new Validator();
+      v.validateBaseline(tiffValidation);
+      int numberOfErrors = v.getErrors().size();
+      assertEquals(0, numberOfErrors);
+    } catch (ReadTagsIOException e) {
+      assertEquals(1, 0);
+    } catch (ReadIccConfigIOException e) {
+      assertEquals(1, 0);
+    } catch (ParserConfigurationException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (SAXException e) {
+      e.printStackTrace();
+    } catch (JAXBException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Test
   public void testFunctionCall() throws Exception {
     String path = "src/test/resources/Small/Bilevel.tif";

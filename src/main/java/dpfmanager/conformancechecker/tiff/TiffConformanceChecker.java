@@ -404,7 +404,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           Logger.println("IO Exception in file '" + pathToFile + "'");
           break;
         case 0:
-          Logger.println("Validating Tiff");
+          //Logger.println("Validating Tiff");
           boolean checkBL = config.getIsos().contains("Baseline");
           boolean checkEP = config.getIsos().contains("Tiff/EP");
           boolean checkIT = config.getIsos().contains("Tiff/IT");
@@ -415,7 +415,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             checkPC = config.getRules().getRules().size() > 0;
           }
 
-          Logger.println("Validating Tiff");
+          //Logger.println("Validating Tiff");
           String content = getValidationXmlString(tr);
           Validator baselineVal = null;
           if (checkBL) {
@@ -437,7 +437,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           if (checkIT2) {
             it2Validation = getITValidation(2, content);
           }
-          Logger.println("Creating report");
+          //Logger.println("Creating report");
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
@@ -448,7 +448,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           ir.checkIT1 = checkIT1;
           ir.checkIT2 = checkIT2;
           ir.checkPC = checkPC;
-          Logger.println("Internal report created");
+          //Logger.println("Internal report created");
 
           tr = null;
           //System.gc();

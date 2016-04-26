@@ -119,13 +119,8 @@ public class Validator {
     return rules;
   }
 
-  void validate(String content, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  void validate(TiffValidationObject model, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
-
-    JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
-    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-    StringReader reader = new StringReader(content);
-    model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
 
     ImplementationCheckerObject rules = getRules(rulesFile);
 
@@ -149,6 +144,40 @@ public class Validator {
         break;
       }
     }
+  }
+
+  void validate(String content, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
+    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+    StringReader reader = new StringReader(content);
+    model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
+
+    validate(model, rulesFile);
+  }
+
+  public void validateBaseline(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    this.model = model;
+    validate(model, "implementationcheckers/BaselineProfileChecker.xml");
+  }
+
+  public void validateTiffEP(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    this.model = model;
+    validate(model, "implementationcheckers/TiffEPProfileChecker.xml");
+  }
+
+  public void validateTiffIT(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    this.model = model;
+    validate(model, "implementationcheckers/TiffITProfileChecker.xml");
+  }
+
+  public void validateTiffITP1(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    this.model = model;
+    validate(model, "implementationcheckers/TiffITP1ProfileChecker.xml");
+  }
+
+  public void validateTiffITP2(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    this.model = model;
+    validate(model, "implementationcheckers/TiffITP2ProfileChecker.xml");
   }
 
   public void validateBaseline(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
