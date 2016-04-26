@@ -94,7 +94,7 @@ public class TaskFragment {
   }
 
   private boolean isFinished() {
-    return (job.getProcessedFiles() == job.getTotalFiles());
+    return (job.getState() == 2);
   }
 
   private void bindWidth() {
