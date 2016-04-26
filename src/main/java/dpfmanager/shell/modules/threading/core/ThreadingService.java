@@ -143,7 +143,7 @@ public class ThreadingService extends DpfService {
       try {
         String fullHtmlPath = htmlFile.getAbsolutePath();
         fullHtmlPath = fullHtmlPath.replaceAll("\\\\", "/");
-        Desktop.getDesktop().browse(new URI(fullHtmlPath));
+        Desktop.getDesktop().browse(new URI("file:///" + fullHtmlPath.replaceAll(" ", "%20")));
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Error opening the bowser with the global report.", e));
       }
