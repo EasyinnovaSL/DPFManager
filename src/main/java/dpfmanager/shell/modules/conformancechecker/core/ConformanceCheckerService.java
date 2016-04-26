@@ -1,6 +1,5 @@
 package dpfmanager.shell.modules.conformancechecker.core;
 
-import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
@@ -12,7 +11,6 @@ import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
-import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
 import org.apache.logging.log4j.Level;
@@ -86,38 +84,87 @@ public class ConformanceCheckerService extends DpfService {
   }
 
   public void startCheck(String filename) {
-    String internalReportFolder = ReportGenerator.createReportPath();
-    String inputStr = filename;
+    startCheck(filename, filename, null);
+  }
+
+  public void startCheck(String filename, String inputStr, String internalReportFolder) {
+    if (internalReportFolder == null) {
+      internalReportFolder = ReportGenerator.createReportPath();
+    }
+    int filetype = getType(filename);
+    ArrayList<String> files = new ArrayList<>();
+
+    switch (filetype) {
+      case -1:
+        // ERROR
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in input path " + filename));
+        break;
+      case 0:
+        // Folder
+        addDirectoryToFiles(files, new File(filename), recursive, 1);
+        break;
+      case 1:
+        // Zip
+        List<String> zipFiles = getFilesInZip(filename, internalReportFolder);
+        files.addAll(zipFiles);
+        break;
+      case 2:
+        // URL
+        try {
+          // Download the file and store it in a temporary file
+          InputStream input = new java.net.URL(filename).openStream();
+          String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
+          files.add(filename2);
+          startCheck(filename2, inputStr, internalReportFolder);
+          return;
+        } catch (Exception ex) {
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Error in URL " + filename));
+        }
+        break;
+      case 3:
+        // List of files
+        for (String sfile : filename.split(";")) {
+          files.add(sfile);
+        }
+        break;
+      case 4:
+        // Simple file
+        files.add(filename);
+        break;
+    }
 
     try {
-      ArrayList<String> files = new ArrayList<>();
-      if (new File(filename).isDirectory()) {
-        // Process directory
-        addDirectoryToFiles(files, new File(filename), recursive, 1);
-      } else {
-        if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
-          // Process zip
-          List<String> zipFiles = getFilesInZip(filename, internalReportFolder);
-          files.addAll(zipFiles);
-        } else {
-          // Process list of files
-          for (String sfile : filename.split(";")) {
-            files.add(sfile);
-          }
-        }
-      }
-
       // Init
       long uuid = System.currentTimeMillis();
       context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, files.size(), getModel().getConfig(), internalReportFolder, inputStr));
 
       // Now process files
       ProcessFiles(files, getModel().getConfig(), internalReportFolder, uuid);
-    } catch (Exception ex) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception occured", ex));
     } catch (OutOfMemoryError er) {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
     }
+  }
+
+  private int getType(String filename) {
+    if (filename.startsWith("http")) {
+      // URL
+      return 2;
+    } else if (new File(filename).isDirectory()) {
+      // Folder
+      return 0;
+    } else if (new File(filename).isFile()) {
+      if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
+        // ZIP
+        return 1;
+      } else if (filename.contains(";")) {
+        // List of files
+        return 3;
+      } else {
+        // Simple file
+        return 4;
+      }
+    }
+    return -1;
   }
 
   /**
@@ -149,7 +196,7 @@ public class ConformanceCheckerService extends DpfService {
     try {
       // Create zip folder
       File zipFolder = new File(internal + "zip/");
-      if (!zipFolder.exists()){
+      if (!zipFolder.exists()) {
         zipFolder.mkdirs();
       }
 
@@ -161,7 +208,7 @@ public class ConformanceCheckerService extends DpfService {
         ZipEntry entry = entries.nextElement();
         String name = entry.getName();
         File targetFile = new File(internal + "zip/" + name);
-        if (name.endsWith("/")){
+        if (name.endsWith("/")) {
           // Directory
           targetFile.mkdirs();
         } else {
@@ -196,13 +243,32 @@ public class ConformanceCheckerService extends DpfService {
     }
   }
 
-  private File getFileByPath(String path) {
-    File file = new File(path);
-    if (!file.exists()) {
-      String configDir = DPFManagerProperties.getConfigDir();
-      file = new File(configDir + "/" + path);
+  /**
+   * Creates a temporary file to store the input stream.
+   *
+   * @param internal the folder to store the created temporary file
+   * @param name     the name of the temporary file
+   * @param stream   the input stream
+   * @return the path to the created temporary file
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  private String createTempFile(String internal, String name, InputStream stream) throws IOException {
+    // Create the path to the temporary folder
+    String filename = internal + "download/" + name;
+    File targetFile = new File(filename);
+    if (!targetFile.exists()) {
+      targetFile.getParentFile().mkdirs();
     }
-    return file;
+
+    // Write the file
+    OutputStream outStream = new FileOutputStream(targetFile);
+    byte[] buffer = new byte[8 * 1024];
+    int bytesRead;
+    while ((bytesRead = stream.read(buffer)) != -1) {
+      outStream.write(buffer, 0, bytesRead);
+    }
+    outStream.close();
+    return filename;
   }
 
   private ConformanceCheckerModel getModel() {

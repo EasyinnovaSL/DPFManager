@@ -10,6 +10,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 public abstract class DpfSpringController {
 
   protected ApplicationParameters params;
+  private boolean locked = false;
 
   public void handleDpfMessage(DpfMessage message) {
     if (message.isTypeOf(ParametersMessage.class)) {
@@ -20,5 +21,18 @@ public abstract class DpfSpringController {
   }
 
   public abstract void handleMessage(DpfMessage message);
+
+  public boolean lock(){
+    if (locked) {
+      return false;
+    } else {
+      locked = true;
+      return true;
+    }
+  }
+
+  public void unlock(){
+    locked = false;
+  }
 
 }

@@ -85,7 +85,7 @@ public class DatabaseConnection {
     return -1;
   }
 
-  public void insertNewJob(Jobs job) {
+  synchronized public void insertNewJob(Jobs job) {
     try {
       // Try to begin transaction
       if (beginTransaction(SqlJetTransactionMode.WRITE)) {
@@ -103,7 +103,7 @@ public class DatabaseConnection {
     }
   }
 
-  public void updateJob(Jobs job) {
+  synchronized public void updateJob(Jobs job) {
     try {
       // Try to begin transaction
       if (beginTransaction(SqlJetTransactionMode.WRITE)) {
@@ -128,7 +128,7 @@ public class DatabaseConnection {
     }
   }
 
-  public void finishJob(Jobs job) {
+  synchronized public void finishJob(Jobs job) {
     try {
       // Try to begin transaction
       if (beginTransaction(SqlJetTransactionMode.WRITE)) {

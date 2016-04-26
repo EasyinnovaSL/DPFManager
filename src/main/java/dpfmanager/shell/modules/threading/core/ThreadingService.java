@@ -63,7 +63,7 @@ public class ThreadingService extends DpfService {
 
   @Override
   protected void handleContext(DpfContext context) {
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Set maximum threads to " + cores));
+//    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Set maximum threads to " + cores));
   }
 
   public void run(DpfRunnable runnable) {
@@ -78,15 +78,14 @@ public class ThreadingService extends DpfService {
       checks.put(gm.getUuid(), fc);
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Starting check: " + gm.getInput()));
       context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.NEW, fc.getUuid(), fc.getTotal(), fc.getInput(), fc.getInternal()));
-//      context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.INIT, fc));
     } else if (gm.isFinish()) {
       // Finish file check
       FileCheck fc = checks.get(gm.getUuid());
       removeZipFolder(fc.getInternal());
+      removeDownloadFolder(fc.getInternal());
       if (context.isGui()) {
         // Notify task manager
         needReload = true;
-//        context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.UPDATE, fc));
       } else if (!silence) {
         // No ui, show to user
         showToUser(fc.getInternal(), fc.getConfig().getOutput());
@@ -102,7 +101,7 @@ public class ThreadingService extends DpfService {
     }
   }
 
-  public void finishIndividual(IndividualReport ir, Long uuid) {
+  synchronized public void finishIndividual(IndividualReport ir, Long uuid) {
     FileCheck fc = checks.get(uuid);
     if (ir != null) {
       // Individual report finished
@@ -117,13 +116,24 @@ public class ThreadingService extends DpfService {
       // Individual with errors
       fc.addError();
     }
+    System.out.println("Finished "+ir.getIdReport()+"  of  "+fc.getFinished());
     context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.UPDATE, uuid));
-//    context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Type.UPDATE, fc.getFinished()));
   }
 
   public void removeZipFolder(String internal) {
     try {
       File zipFolder = new File(internal + "zip");
+      if (zipFolder.exists() && zipFolder.isDirectory()) {
+        FileUtils.deleteDirectory(zipFolder);
+      }
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove zip", e));
+    }
+  }
+
+  public void removeDownloadFolder(String internal) {
+    try {
+      File zipFolder = new File(internal + "download");
       if (zipFolder.exists() && zipFolder.isDirectory()) {
         FileUtils.deleteDirectory(zipFolder);
       }
