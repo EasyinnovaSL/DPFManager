@@ -51,7 +51,6 @@ public class ReportsPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
-    context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.SHOW));
     context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.RELOAD));
   }
 

@@ -321,7 +321,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     reloadScene();
     Node node = scene.lookup(id);
     int count = 0;
-    while ((node == null || ((TableView)node).getItems().size() == 0) && count < maxTimeout *4){
+    while ((node == null || !node.isVisible()) && count < maxTimeout *4){
       sleep(250);
       count++;
       reloadScene();
