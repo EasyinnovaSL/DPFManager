@@ -25,13 +25,13 @@
                     <children>
                         <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <content>
-                                <VBox fx:id="taskVBox" alignment="TOP_CENTER" styleClass="background-main">
+                                <VBox fx:id="taskVBox" alignment="TOP_CENTER" styleClass="background-tasks">
 
                                 </VBox>
                             </content>
                      <styleClass>
                         <String fx:value="dpf-bar" />
-                        <String fx:value="background-main" />
+                        <String fx:value="background-tasks" />
                      </styleClass>
                         </ScrollPane>
                     </children>

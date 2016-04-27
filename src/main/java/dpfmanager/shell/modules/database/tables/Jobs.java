@@ -74,7 +74,7 @@ public class Jobs {
     totalFiles = (int) cursor.getInteger(TOTAL_FILES);
     processedFiles = (int) cursor.getInteger(PROCESSED_FILES);
     init = cursor.getInteger(INIT);
-    finish = null;//cursor.getInteger(FINISH);
+    finish = cursor.getInteger(FINISH);
     input = cursor.getString(INPUT);
     origin = cursor.getString(ORIGIN);
     pid = (int) cursor.getInteger(PID);
