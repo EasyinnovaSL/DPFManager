@@ -92,4 +92,8 @@ public class GuiWorkbench implements FXWorkbench {
   public static boolean getFirstTime(){
     return !parameters.getRaw().contains("-test") && DPFManagerProperties.getFirstTime();
   }
+
+  public static boolean isTestMode() {
+    return parameters.getRaw().contains("-test");
+  }
 }

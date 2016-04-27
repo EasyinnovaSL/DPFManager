@@ -9,6 +9,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -170,7 +171,9 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       inputText.setText("Select a folder");
       NodeUtil.showNode(recursiveCheck);
     }
-    getController().selectInputAction();
+    if (!GuiWorkbench.isTestMode()) {
+      getController().selectInputAction();
+    }
   }
 
   @FXML
