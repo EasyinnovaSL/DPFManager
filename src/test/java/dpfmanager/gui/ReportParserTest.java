@@ -56,6 +56,7 @@ public class ReportParserTest extends ApplicationTest {
 
     // Now wait for the 3 checks
     waitForCheckFiles(3);
+    clickOnAndReloadBot("#taskButInConsole");
 
     // Go to reports and check them
     clickOnAndReloadTop("#butReports","#pane-reports");
