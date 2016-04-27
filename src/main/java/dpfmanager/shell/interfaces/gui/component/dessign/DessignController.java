@@ -41,9 +41,10 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     // Send to conformance checker module
     String input = getView().getInputText().getText();
     String path = getFileByPath(radio.getText()).getAbsolutePath();
+    int recursive = getView().getRecursive();
     ArrayMessage am = new ArrayMessage();
     am.add(GuiConfig.COMPONENT_BAR, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.TASKS));
-    am.add(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.GUI, input, path, 1));
+    am.add(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.GUI, input, path, recursive));
     getContext().send(GuiConfig.COMPONENT_BAR, am);
   }
 
