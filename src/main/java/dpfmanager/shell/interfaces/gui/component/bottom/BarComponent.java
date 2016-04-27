@@ -1,12 +1,15 @@
 package dpfmanager.shell.interfaces.gui.component.bottom;
 
 import dpfmanager.shell.core.adapter.DpfSimpleView;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.SwitchMessage;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.interfaces.gui.fragment.BarFragment;
 import dpfmanager.shell.interfaces.gui.fragment.BottomFragment;
+import dpfmanager.shell.modules.timer.messages.TimerMessage;
+import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
 import javafx.event.Event;
 import javafx.scene.Node;
 
@@ -37,6 +40,12 @@ public class BarComponent extends DpfSimpleView {
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
+    if (message.isTypeOf(WidgetMessage.class)){
+      WidgetMessage wm = message.getTypedMessage(WidgetMessage.class);
+      if (wm.isTasks() && wm.isShow() && !fragment.getController().isTasksvisible()){
+        fragment.getController().showHideTasksInConsole();
+      }
+    }
   }
 
   @Override

@@ -108,6 +108,13 @@ public class BarFragment {
 //    hideDivider();
   }
 
+  public void showHideTasksInConsole() {
+    try {
+      showHideTasksInConsole(null);
+    } catch (Exception e) {
+    }
+  }
+
   @FXML
   protected void showHideTasksInConsole(ActionEvent event) throws Exception {
     if (taskButInConsole.getStyleClass().contains("active")) {
@@ -193,6 +200,10 @@ public class BarFragment {
 
   public boolean isVisible() {
     return consoleVisible || tasksVisible;
+  }
+
+  public boolean isTasksvisible() {
+    return tasksVisible;
   }
 
 }
