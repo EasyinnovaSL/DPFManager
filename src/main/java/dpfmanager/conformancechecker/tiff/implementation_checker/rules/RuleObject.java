@@ -62,7 +62,7 @@ public class RuleObject {
   @Override
   public String toString() {
     String s = "";
-    s += context + ": " + assertion.toString();
+    s += assertion.toString();
     return s;
   }
 }

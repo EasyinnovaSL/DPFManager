@@ -213,7 +213,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getEPErrors() != null) {
         for (RuleResult val : ir.getEPErrors()) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -222,7 +222,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getEPWarnings() != null) {
         for (RuleResult val : ir.getEPWarnings()) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -239,7 +239,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getBaselineErrors() != null) {
         for (RuleResult val : ir.getBaselineErrors()) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -248,7 +248,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getBaselineWarnings() != null) {
         for (RuleResult val : ir.getBaselineWarnings()) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -265,7 +265,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITErrors(0) != null) {
         for (RuleResult val : ir.getITErrors(0)) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -274,7 +274,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITWarnings(0) != null) {
         for (RuleResult val : ir.getITWarnings(0)) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -291,7 +291,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITErrors(1) != null) {
         for (RuleResult val : ir.getITErrors(1)) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -300,7 +300,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITWarnings(1) != null) {
         for (RuleResult val : ir.getITWarnings(1)) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -317,7 +317,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITErrors(2) != null) {
         for (RuleResult val : ir.getITErrors(2)) {
           row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -326,7 +326,7 @@ public class ReportHtml extends ReportGeneric {
       if (ir.getITWarnings(2) != null) {
         for (RuleResult val : ir.getITWarnings(2)) {
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
-          row = row.replace("##LOC##", val.getContext());
+          row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
