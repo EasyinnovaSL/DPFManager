@@ -43,17 +43,23 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
 
   public void saveConfig() {
     File file;
-    String value = GuiWorkbench.getTestParams("saveConfig");
-    if (value != null) {
-      //Save in specified output
-      file = new File(value);
+    String path = getModel().getPath();
+    if (path != null){
+      // When editing, save directly in same file
+      file = new File(path);
     } else {
-      //Open save dialog
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setInitialDirectory(new File(DPFManagerProperties.getConfigDir()));
-      fileChooser.setInitialFileName("config.dpf");
-      fileChooser.setTitle("Save Config");
-      file = fileChooser.showSaveDialog(GuiWorkbench.getMyStage());
+      String value = GuiWorkbench.getTestParams("saveConfig");
+      if (value != null) {
+        //Save in specified output (TEST)
+        file = new File(value);
+      } else {
+        //Open save dialog
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(DPFManagerProperties.getConfigDir()));
+        fileChooser.setInitialFileName("config.dpf");
+        fileChooser.setTitle("Save Config");
+        file = fileChooser.showSaveDialog(GuiWorkbench.getMyStage());
+      }
     }
 
     if (file != null) {

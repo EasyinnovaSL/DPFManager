@@ -75,8 +75,8 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
-    if (message instanceof ConfigMessage) {
-      ConfigMessage cMessage = (ConfigMessage) message;
+    if (message != null && message.isTypeOf(ConfigMessage.class)) {
+      ConfigMessage cMessage = message.getTypedMessage(ConfigMessage.class);
       if (cMessage.isNew()) {
         getModel().initNewConfig();
       } else if (cMessage.isEdit()) {
@@ -87,7 +87,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
-    if (message instanceof ConfigMessage) {
+    if (message != null && message.isTypeOf(ConfigMessage.class)) {
       getController().clearAllSteps();
       gotoConfig(1);
     }

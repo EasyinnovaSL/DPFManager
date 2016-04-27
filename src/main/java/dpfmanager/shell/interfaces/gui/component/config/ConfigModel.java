@@ -16,6 +16,7 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
   private Configuration config;
   private boolean editingConfig;
   private int step;
+  private String path;
 
   //User Interface
   private int uniqueId;
@@ -37,16 +38,19 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
     editingConfig = false;
     config = new Configuration();
     config.initDefault();
+    path = null;
   }
 
   public void initEditConfig(String path){
     // Trigger when "Edit" button clicked
     step = 0;
     try {
+      this.path = path;
       editingConfig = true;
       config = new Configuration();
       config.ReadFile(path);
     } catch (Exception e) {
+      this.path = null;
       editingConfig = false;
       config = new Configuration();
       config.initDefault();
@@ -115,5 +119,9 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
       }
     }
     return new ArrayList<>();
+  }
+
+  public String getPath() {
+    return path;
   }
 }
