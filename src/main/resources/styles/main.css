@@ -576,13 +576,32 @@
 }
 
 /* Task pane */
-.task-box:hover{
-    -fx-background-color: rgba(255,255,255,0.3);
-    -fx-cursor: hand;
+.dpf-progress-bar > .bar {
+    -fx-background-insets: 3;
+    -fx-padding: 9px;
 }
-.progress-bar{
-    -fx-cursor: hand;
+
+.dpf-progress-bar > .track {
+    -fx-background-color: #333333;
+    -fx-background-insets: 3;
+    -fx-padding: 9px;
 }
-.bar-done > .bar {
-    -fx-background-color: green;
+.dpf-progress-bar.green-bar > .bar { -fx-accent: #04c500;  }
+.dpf-progress-bar.blue-bar > .bar { -fx-accent: #31C2F3; }
+
+.background-tasks{
+    -fx-background-color: #F2F2F2;
+}
+
+.separator-task {
+    -fx-background-color: #333333;
+}
+
+.label-task{
+    -fx-text-fill: #333333;
+    -fx-font-size: 13;
+    -fx-label-padding: 0;
+    -fx-padding: 0;
+    -fx-font-weight: bold;
+    /*-fx-font-family: 'Roboto-Bold';*/
 }

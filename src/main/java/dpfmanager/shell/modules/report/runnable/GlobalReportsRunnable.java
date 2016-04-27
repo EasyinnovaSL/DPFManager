@@ -54,11 +54,13 @@ public class GlobalReportsRunnable extends DpfRunnable {
     GlobalReport global = new GlobalReport();
     for (IndividualReport individual : individuals) {
       global.addIndividual(individual);
-      if (internalReportFolder == null){
-        internalReportFolder = individual.getInternalReportFodler();
-      }
-      if (uuid == null){
-        uuid = individual.getUuid();
+      if (individual != null){
+        if (internalReportFolder == null){
+          internalReportFolder = individual.getInternalReportFodler();
+        }
+        if (uuid == null){
+          uuid = individual.getUuid();
+        }
       }
     }
     global.generate();

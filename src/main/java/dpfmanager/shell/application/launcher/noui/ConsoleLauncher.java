@@ -177,17 +177,6 @@ public class ConsoleLauncher {
     return true;
   }
 
-  private void addDirectoryToFiles(ArrayList<String> files, File directory, int recursive, int currentlevel) {
-    File[] listOfFiles = directory.listFiles();
-    for (int j = 0; j < listOfFiles.length; j++) {
-      if (listOfFiles[j].isFile()) {
-        files.add(listOfFiles[j].getPath());
-      } else if (listOfFiles[j].isDirectory() && currentlevel < recursive) {
-        addDirectoryToFiles(files, listOfFiles[j], recursive, currentlevel + 1);
-      }
-    }
-  }
-
   /**
    * Custom print lines
    */

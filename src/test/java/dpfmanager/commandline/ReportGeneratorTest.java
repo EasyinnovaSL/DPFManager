@@ -156,6 +156,41 @@ public class ReportGeneratorTest extends CommandLineTest {
 
       File directori = new File(path);
       assertEquals(4, directori.list().length);
+
+      // Check tiff to jpg
+      String jpgPath = path+"html/img/1-Bilevel.tif.jpg";
+      File jpgFile = new File(jpgPath);
+      assertEquals(true, jpgFile.exists());
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      assertEquals(1, 0);
+    }
+  }
+
+  @Test
+  public void testReportsURLZip() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String dirWeb = "http://dpfmanager.org/test/Bilevel.zip";
+    try {
+      String[] args = new String[2];
+      args[0] = dirWeb;
+      args[1] = "-s";
+
+      MainConsoleApp.main(args);
+
+      // Wait for finish
+      waitForFinishMultiThred(30);
+
+      String path = getPath();
+
+      File directori = new File(path);
+      assertEquals(4, directori.list().length);
+
+      // Check tiff to jpg
+      String jpgPath = path+"html/img/1-Bilevel.tif.jpg";
+      File jpgFile = new File(jpgPath);
+      assertEquals(true, jpgFile.exists());
     } catch (Exception ex) {
       ex.printStackTrace();
       assertEquals(1, 0);

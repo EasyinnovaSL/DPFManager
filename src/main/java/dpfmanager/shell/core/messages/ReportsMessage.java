@@ -6,7 +6,7 @@ package dpfmanager.shell.core.messages;
 public class ReportsMessage extends DpfMessage {
   public enum Type {
     RELOAD,
-    SHOW
+    READ
   }
 
   private Type type;
@@ -23,8 +23,8 @@ public class ReportsMessage extends DpfMessage {
     return type.equals(Type.RELOAD);
   }
 
-  public boolean isShow() {
-    return type.equals(Type.SHOW);
+  public boolean isRead() {
+    return type.equals(Type.READ);
   }
 
 }

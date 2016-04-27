@@ -53,10 +53,10 @@ public class ReportParserTest extends ApplicationTest {
       writeText("#inputText", inputFiles);
       clickOnAndReload("#checkFilesButton");
     }
-    clickOnAndReloadBot("#taskButInConsole");
 
     // Now wait for the 3 checks
     waitForCheckFiles(3);
+    clickOnAndReloadBot("#taskButInConsole");
 
     // Go to reports and check them
     clickOnAndReloadTop("#butReports","#pane-reports");

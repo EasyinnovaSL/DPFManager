@@ -49,14 +49,15 @@ public class FileCheckTest extends ApplicationTest {
     clickOnImportedConfig(inputConfigPath);
     writeText("#inputText", inputFilePath);
     clickOnAndReload("#checkFilesButton");
-    clickOnAndReloadBot("#taskButInConsole");
+
+    //Wait for the checks
     waitForCheckFiles(1);
+    clickOnAndReloadBot("#taskButInConsole");
 
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");
     waitForTable("#tabReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    waitForTable("#tabReports");
     ReportRow row = table.getItems().get(0);
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_loaded), table.getItems().size());
     Assert.assertEquals("Report row N files", "3", row.getNfiles());

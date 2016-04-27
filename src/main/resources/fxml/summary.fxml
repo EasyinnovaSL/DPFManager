@@ -42,6 +42,11 @@
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                 </columnResizePolicy>
             </TableView>
+         <ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">
+            <VBox.margin>
+               <Insets top="20.0" />
+            </VBox.margin>
+         </ProgressIndicator>
             <Label fx:id="labelEmpty" styleClass="label-info" text="No reports found.">
             <VBox.margin>
                <Insets top="15.0" />

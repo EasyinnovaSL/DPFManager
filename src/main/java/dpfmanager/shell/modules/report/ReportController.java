@@ -43,20 +43,6 @@ public class ReportController extends DpfSpringController {
     }
   }
 
-  private void showToUser(String htmlFile) {
-    if (Desktop.isDesktopSupported()) {
-      try {
-        String fullHtmlPath = new File(htmlFile).getAbsolutePath();
-        fullHtmlPath = fullHtmlPath.replaceAll("\\\\", "/");
-        Desktop.getDesktop().browse(new URI("file:///" + fullHtmlPath.replaceAll(" ", "%20")));
-      } catch (Exception e) {
-        service.getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Error opening the bowser with the global report.", e));
-      }
-    } else {
-      service.getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Desktop services not suported."));
-    }
-  }
-
   @PostConstruct
   public void init() {
     DpfContext dpfContext = new ConsoleContext(appContext);

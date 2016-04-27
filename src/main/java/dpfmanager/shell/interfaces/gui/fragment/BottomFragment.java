@@ -7,6 +7,8 @@ import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.threading.core.FileCheck;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -25,6 +27,7 @@ import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,12 +156,20 @@ public class BottomFragment {
   public void addTask(ManagedFragmentHandler<TaskFragment> taskFragment, Jobs job){
     taskFragment.getController().init(job);
     taskFragments.put(job.getId(), taskFragment);
-    taskVBox.getChildren().add(taskFragment.getFragmentNode());
+
+    // Reverse order
+    ObservableList<Node> children = FXCollections.observableArrayList(taskVBox.getChildren());
+    Collections.reverse(children);
+    children.add(taskFragment.getFragmentNode());
+    Collections.reverse(children);
+    taskVBox.getChildren().setAll(children);
   }
 
   public void updateTask(Jobs job){
     ManagedFragmentHandler<TaskFragment> taskFragment = taskFragments.get(job.getId());
-    taskFragment.getController().updateJob(job);
+    if (!taskFragment.getController().isFinished()){
+      taskFragment.getController().updateJob(job);
+    }
   }
 
   public boolean containsJob(long uuid){

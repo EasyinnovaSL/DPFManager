@@ -6,6 +6,7 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
@@ -40,7 +41,10 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     // Send to conformance checker module
     String input = getView().getInputText().getText();
     String path = getFileByPath(radio.getText()).getAbsolutePath();
-    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.GUI, input, path, 1));
+    ArrayMessage am = new ArrayMessage();
+    am.add(GuiConfig.COMPONENT_BAR, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.TASKS));
+    am.add(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.GUI, input, path, 1));
+    getContext().send(GuiConfig.COMPONENT_BAR, am);
   }
 
   public void selectInputAction() {

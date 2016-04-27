@@ -321,7 +321,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     reloadScene();
     Node node = scene.lookup(id);
     int count = 0;
-    while ((node == null || ((TableView)node).getItems().size() == 0) && count < maxTimeout *4){
+    while ((node == null || !node.isVisible()) && count < maxTimeout *4){
       sleep(250);
       count++;
       reloadScene();
@@ -643,19 +643,33 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertNotEquals("Import config file failed!", "#", idToClick);
 
     // Move inside configuration pane
-    moveTo("#vBoxConfig");
+    moveTo("#configScroll");
 
-    // Check button in limit
-    moveTo(idToClick);
+    // Check need scroll
+    if (!moveToCustom(idToClick)){
+      // We need scroll
+      boolean ret = false;
+      int maxScroll = 150;
+      while (!ret && scroll < maxScroll) {
+        makeScroll(10,false);
+        ret = moveToCustom(idToClick);
+      }
+      if (scroll == maxScroll){
+        throw new FxRobotException("Node "+idToClick+" not found! Scroll timeout!");
+      }
+    }
+
+    // Check if button is in at limits
     int limitY = (int) (scrollPane.localToScreen(scrollPane.getBoundsInLocal()).getMinY() + scrollPane.getHeight());
     int currentY = getMousePositionY();
     if (currentY > limitY-2){
       // Move inside configuration pane and scroll down
-      moveTo("#vBoxConfig");
+      moveTo("#configScroll");
       makeScroll(1, false);
     }
 
-    // Now click and scroll
-    clickOnScroll(idToClick,false);
+    // Finally we can click the button
+    clickOnCustom(idToClick);
+    scene = stage.getScene();
   }
 }
