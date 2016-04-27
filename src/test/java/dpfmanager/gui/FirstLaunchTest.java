@@ -31,8 +31,8 @@ public class FirstLaunchTest extends ApplicationTest {
   public final static void beforeClass() {
     // Backup the config file
     File reportFolder = new File(ReportGenerator.getReportsFolder());
-    File configFileOld = new File(reportFolder.getParent()+"/dpfmanager.properties");
-    File configFileNew = new File(reportFolder.getParent()+"/dpfmanager.properties-bak");
+    File configFileOld = new File(reportFolder.getParent()+"/data/dpfmanager.properties");
+    File configFileNew = new File(reportFolder.getParent()+"/data/dpfmanager.properties-bak");
     if (configFileOld.exists()){
       configFileOld.renameTo(configFileNew);
     }
@@ -42,8 +42,8 @@ public class FirstLaunchTest extends ApplicationTest {
   public final static void afterClass() {
     // Restore config file
     File reportFolder = new File(ReportGenerator.getReportsFolder());
-    File configFileOld = new File(reportFolder.getParent()+"/dpfmanager.properties");
-    File configFileNew = new File(reportFolder.getParent()+"/dpfmanager.properties-bak");
+    File configFileOld = new File(reportFolder.getParent()+"/data/dpfmanager.properties");
+    File configFileNew = new File(reportFolder.getParent()+"/data/dpfmanager.properties-bak");
     if (configFileOld.exists()){
       configFileOld.delete();
     }
@@ -60,7 +60,7 @@ public class FirstLaunchTest extends ApplicationTest {
 
     //Check config file now exists
     File reportFolder = new File(ReportGenerator.getReportsFolder());
-    File configFile = new File(reportFolder.getParent()+"/dpfmanager.properties");
+    File configFile = new File(reportFolder.getParent()+"/data/dpfmanager.properties");
     Assert.assertTrue("Config file (dpfmanager.properties) does't exist", configFile.exists());
   }
 

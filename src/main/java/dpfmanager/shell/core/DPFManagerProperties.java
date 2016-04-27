@@ -2,6 +2,8 @@ package dpfmanager.shell.core;
 
 import dpfmanager.shell.core.app.MainGuiApp;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -77,10 +79,19 @@ public class DPFManagerProperties {
     Properties properties = null;
     try {
       File configFile = new File(getConfigDir()+"/dpfmanager.properties");
-      if (!configFile.exists()) {
-        configFile.createNewFile();
+      File configFileNew = new File(getConfigDir()+"/data/dpfmanager.properties");
+      if (!configFileNew.exists()){
+        // No new file
+        if (!configFile.exists()) {
+          // No old file, create it
+          configFileNew.createNewFile();
+        } else {
+          // Move old to new
+          FileUtils.moveFile(configFile, configFileNew);
+        }
       }
-      InputStream is = new FileInputStream(configFile);
+
+      InputStream is = new FileInputStream(configFileNew);
       properties = new Properties();
       properties.load(is);
       is.close();
@@ -93,7 +104,7 @@ public class DPFManagerProperties {
 
   public static void setPropertiesConfig(Properties properties){
     try {
-      File configFile = new File(getConfigDir()+"/dpfmanager.properties");
+      File configFile = new File(getConfigDir()+"/data/dpfmanager.properties");
       if (configFile.exists()) {
         OutputStream os = new FileOutputStream(configFile);
         properties.store(os, null);
