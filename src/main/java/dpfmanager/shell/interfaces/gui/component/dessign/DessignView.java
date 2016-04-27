@@ -8,14 +8,15 @@ import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
+import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -54,7 +55,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   @FXML
   private TextField inputText;
   @FXML
-  private Label lblLoading;
+  private CheckBox recursiveCheck;
 
   private VBox vBoxConfig;
   private ToggleGroup group;
@@ -107,6 +108,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       comboChoice.getItems().add("Folder");
       comboChoice.setValue("File");
     }
+    NodeUtil.hideNode(recursiveCheck);
 
     // Add Config files
     addConfigFiles();
@@ -163,8 +165,10 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   protected void onChangeInputType(ActionEvent event) throws Exception {
     if (comboChoice.getValue() == "File") {
       inputText.setText("Select a file");
+      NodeUtil.hideNode(recursiveCheck);
     } else if (comboChoice.getValue() == "Folder") {
       inputText.setText("Select a folder");
+      NodeUtil.showNode(recursiveCheck);
     }
     getController().selectInputAction();
   }
@@ -226,8 +230,11 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     return inputText;
   }
 
-  public Label getLblLoading() {
-    return lblLoading;
+  public int getRecursive(){
+    if (recursiveCheck.isSelected()){
+      return 100;
+    }
+    return 1;
   }
 
 }
