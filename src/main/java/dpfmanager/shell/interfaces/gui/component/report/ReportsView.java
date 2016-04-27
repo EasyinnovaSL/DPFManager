@@ -25,6 +25,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -65,6 +66,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   private TableView<ReportRow> tabReports;
   @FXML
   private Label labelEmpty;
+  @FXML
+  private ProgressIndicator indicator;
 
   private TableColumn<ReportRow, String> colScore;
   private TableColumn colFormats;
@@ -81,10 +84,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public void handleMessageOnWorker(DpfMessage message) {
     if (message != null && message.isTypeOf(ReportsMessage.class)) {
       ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
-      if (rMessage.isReload()) {
+      if (rMessage.isRead()) {
         getModel().setReload(true);
-        readData();
-      } else if (rMessage.isShow()){
         readData();
       }
     }
@@ -94,8 +95,12 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public Node handleMessageOnFX(DpfMessage message) {
     if (message != null && message.isTypeOf(ReportsMessage.class)) {
       ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
-      if (rMessage.isShow() || rMessage.isReload()){
+      if (rMessage.isReload()){
+        showLoading();
+        context.send(new ReportsMessage(ReportsMessage.Type.READ));
+      } else if (rMessage.isRead()){
         addData();
+        hideLoading();
       }
     }
     return null;
@@ -197,21 +202,11 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     // Add data
     ObservableList<ReportRow> data = getModel().getData();
     tabReports.setItems(data);
+
     // Resize
     tabReports.prefHeightProperty().bind(tabReports.fixedCellSizeProperty().multiply(Bindings.size(tabReports.getItems()).add(1)));
     addChartScore();
     addFormatIcons();
-
-    if (getModel().isEmpty()) {
-      NodeUtil.hideNode(loadMore);
-      NodeUtil.showNode(labelEmpty);
-    } else if (getModel().isAllReportsLoaded()) {
-      NodeUtil.hideNode(labelEmpty);
-      NodeUtil.hideNode(loadMore);
-    } else {
-      NodeUtil.showNode(loadMore);
-      NodeUtil.hideNode(labelEmpty);
-    }
   }
 
   private void changeColumnTextColor(TableColumn column, Color color) {
@@ -328,6 +323,30 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         return cell;
       }
     });
+  }
+
+  private void showLoading(){
+    indicator.setProgress(-1.0);
+    NodeUtil.showNode(indicator);
+    NodeUtil.hideNode(tabReports);
+    NodeUtil.hideNode(labelEmpty);
+    NodeUtil.hideNode(loadMore);
+  }
+
+  private void hideLoading(){
+    NodeUtil.hideNode(indicator);
+    NodeUtil.showNode(tabReports);
+
+    if (getModel().isEmpty()) {
+      NodeUtil.hideNode(loadMore);
+      NodeUtil.showNode(labelEmpty);
+    } else if (getModel().isAllReportsLoaded()) {
+      NodeUtil.hideNode(labelEmpty);
+      NodeUtil.hideNode(loadMore);
+    } else {
+      NodeUtil.showNode(loadMore);
+      NodeUtil.hideNode(labelEmpty);
+    }
   }
 
   @FXML

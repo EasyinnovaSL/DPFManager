@@ -47,7 +47,7 @@ public class ThreadingService extends DpfService {
   public void init() {
     // No context yet
     checks = new HashMap<>();
-    needReload = false;
+    needReload = true;
     cores = Runtime.getRuntime().availableProcessors()-1;
     if (cores < 1){
       cores = 1;
