@@ -80,6 +80,13 @@ public class DPFManagerProperties {
     try {
       File configFile = new File(getConfigDir()+"/dpfmanager.properties");
       File configFileNew = new File(getConfigDir()+"/data/dpfmanager.properties");
+
+      // Data folder
+      if (!configFileNew.getParentFile().exists()){
+        configFileNew.getParentFile().mkdirs();
+      }
+
+      // Config file
       if (!configFileNew.exists()){
         // No new file
         if (!configFile.exists()) {
