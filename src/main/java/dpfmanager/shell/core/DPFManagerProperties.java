@@ -79,13 +79,7 @@ public class DPFManagerProperties {
     Properties properties = null;
     try {
       File configFile = new File(getConfigDir()+"/dpfmanager.properties");
-      File configFileNew = new File(getConfigDir()+"/data/dpfmanager.properties");
-
-      // Data folder
-      if (!configFileNew.getParentFile().exists()){
-        configFileNew.getParentFile().mkdirs();
-      }
-
+      File configFileNew = new File(getDataDir()+"/dpfmanager.properties");
       // Config file
       if (!configFileNew.exists()){
         // No new file
@@ -111,7 +105,7 @@ public class DPFManagerProperties {
 
   public static void setPropertiesConfig(Properties properties){
     try {
-      File configFile = new File(getConfigDir()+"/data/dpfmanager.properties");
+      File configFile = new File(getDataDir()+"/dpfmanager.properties");
       if (configFile.exists()) {
         OutputStream os = new FileOutputStream(configFile);
         properties.store(os, null);
