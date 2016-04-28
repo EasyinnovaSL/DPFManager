@@ -1,6 +1,7 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -23,7 +24,8 @@ import java.io.FileReader;
  */
 public class CreateConfigFileTest extends ApplicationTest {
 
-  private String outputPath = "temp/config.dpf";
+  private String outputName = "config-test";
+  private String outputPath = DPFManagerProperties.getConfigDir() + "/" + outputName;
   private String expectedPath = "src/test/resources/ConfigFiles/config.dpf";
 
   Stage stage = null;
@@ -74,8 +76,11 @@ public class CreateConfigFileTest extends ApplicationTest {
     createTempFolder();
 
     // 6 - Save the file
-    GuiWorkbench.setTestParam("saveConfig", outputPath);
+    writeText("#saveNameInput", outputName);
     clickOnScroll("#continueButton");
+
+    // Check config exists in GUI
+    
 
     // Print generated file
 //    System.out.println("\nOutput file:");
