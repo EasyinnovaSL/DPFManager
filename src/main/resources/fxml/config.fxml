@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -8,6 +13,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+
 <AnchorPane id="pane-config" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox id="dessignVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -19,7 +25,7 @@
             </ImageView>
             <Label styleClass="mainTitle" text="NEW CONFIGURATION" />
             <HBox alignment="TOP_CENTER" maxHeight="20.0" minHeight="20.0" prefHeight="20.0">
-                <Button fx:id="step1" onAction="#gotoConfig1" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step1" mnemonicParsing="false" onAction="#gotoConfig1" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="15.0" />
                     </HBox.margin>
@@ -27,27 +33,27 @@
                 <ImageView fx:id="configArrow" focusTraversable="true" preserveRatio="true" translateY="24.0">
                     <image><Image url="@../images/tab-buttons/config-arow.png" /></image>
                 </ImageView>
-                <Button fx:id="step2" onAction="#gotoConfig2" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step2" mnemonicParsing="false" onAction="#gotoConfig2" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="35.0" />
                     </HBox.margin>
                 </Button>
-                <Button fx:id="step3" onAction="#gotoConfig3" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step3" mnemonicParsing="false" onAction="#gotoConfig3" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="35.0" />
                     </HBox.margin>
                 </Button>
-                <Button fx:id="step4" onAction="#gotoConfig4" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step4" mnemonicParsing="false" onAction="#gotoConfig4" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="35.0" />
                     </HBox.margin>
                 </Button>
-                <Button fx:id="step5" onAction="#gotoConfig5" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step5" mnemonicParsing="false" onAction="#gotoConfig5" styleClass="config-but">
                     <HBox.margin>
                         <Insets right="35.0" />
                     </HBox.margin>
                 </Button>
-                <Button fx:id="step6" onAction="#gotoConfig6" mnemonicParsing="false" styleClass="config-but">
+                <Button fx:id="step6" mnemonicParsing="false" onAction="#gotoConfig6" styleClass="config-but">
                 </Button>
                 <VBox.margin>
                     <Insets bottom="12.0" top="10.0" />
@@ -78,7 +84,7 @@
                 </VBox.margin>
             </ImageView>
 
-            <VBox fx:id="wizard"></VBox>
+            <VBox fx:id="wizard" />
             <!--<fx:include fx:id="included1" source="config/subconfig1.fxml" />-->
             <!--<fx:include fx:id="included2" source="config/subconfig2.fxml" />-->
             <!--<fx:include fx:id="included3" source="config/subconfig3.fxml" />-->
@@ -89,10 +95,27 @@
             <ImageView focusTraversable="true" preserveRatio="true">
                 <image> <Image url="@../images/lineBottom.png" /></image>
                 <VBox.margin>
-                    <Insets bottom="20.0" left="65.0" right="65.0" top="30" />
+                    <Insets bottom="10.0" left="65.0" right="65.0" top="30.0" />
                 </VBox.margin>
             </ImageView>
-            <Button fx:id="continueButton" onAction="#doContinue" mnemonicParsing="false" styleClass="main-button" text="Continue">
+         <HBox fx:id="hboxSave" alignment="CENTER">
+            <children>
+               <Label styleClass="label-info" text="Config name:">
+                  <HBox.margin>
+                     <Insets right="5.0" />
+                  </HBox.margin>
+               </Label>
+               <TextField fx:id="saveNameInput" maxWidth="200.0">
+                  <HBox.margin>
+                     <Insets />
+                  </HBox.margin>
+               </TextField>
+            </children>
+            <VBox.margin>
+               <Insets bottom="10.0" />
+            </VBox.margin>
+         </HBox>
+            <Button fx:id="continueButton" mnemonicParsing="false" onAction="#doContinue" styleClass="main-button" text="Continue">
                 <VBox.margin>
                     <Insets bottom="30.0" />
                 </VBox.margin>

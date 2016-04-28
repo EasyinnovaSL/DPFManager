@@ -174,7 +174,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     // Fixed size
     tabReports.setFixedCellSize(28.0);
     tabReports.setMaxHeight(470.0);
-    tabReports.setMinHeight(28.0);
+//    tabReports.setMinHeight(100.0);
 
     // Change column colors
     changeColumnTextColor(colDate, Color.LIGHTGRAY);
@@ -204,9 +204,25 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     tabReports.setItems(data);
 
     // Resize
-    tabReports.prefHeightProperty().bind(tabReports.fixedCellSizeProperty().multiply(Bindings.size(tabReports.getItems()).add(1)));
+    resizeTable();
+    Bindings.size(tabReports.getItems()).addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        resizeTable();
+      }
+    });
+
     addChartScore();
     addFormatIcons();
+  }
+
+  private void resizeTable(){
+    double height = tabReports.getFixedCellSize() * tabReports.getItems().size() + tabReports.getFixedCellSize();
+    if (height > 470) {
+      height = 470.0;
+    }
+    tabReports.setMinHeight(height);
+    tabReports.setPrefHeight(height);
   }
 
   private void changeColumnTextColor(TableColumn column, Color color) {

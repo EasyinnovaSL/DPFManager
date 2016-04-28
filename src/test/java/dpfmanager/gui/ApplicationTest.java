@@ -132,6 +132,10 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     FxToolkit.setupApplication(this);
   }
 
+  public void customPreTest(){
+
+  }
+
   /**
    * Internal after.
    *
@@ -145,7 +149,13 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     // Set feedback
     DPFManagerProperties.setFeedback(feedback);
     // Delete all reports
-//    deleteReports();
+    deleteReports();
+    // Custom post test
+    customPostTest();
+  }
+
+  public void customPostTest(){
+
   }
 
   private void deleteReports() {
@@ -672,5 +682,16 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     // Finally we can click the button
     clickOnCustom(idToClick);
     scene = stage.getScene();
+  }
+
+  public File getBackupFile(String path){
+    path = path + ".bak";
+    File file = new File(path);
+    int count = 1;
+    while (file.exists()){
+      file = new File(path+count);
+      count++;
+    }
+    return file;
   }
 }

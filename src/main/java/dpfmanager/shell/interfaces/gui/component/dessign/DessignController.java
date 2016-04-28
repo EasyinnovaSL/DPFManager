@@ -16,15 +16,20 @@ import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.threading.core.FileCheck;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Adrià Llorens on 07/03/2016.
@@ -57,7 +62,6 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     String txtFile = null;
     ComboBox c = getView().getComboChoice();
     String configDir = DPFManagerProperties.getDefaultDirFile();
-    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.DEBUG, "Config dir: " + configDir));
     if (c.getValue() == "File") {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open File");
@@ -122,7 +126,39 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
 
     if (file != null) {
       DPFManagerProperties.setDefaultDirConfig(file.getParent());
-      getView().addConfigFile(file.getAbsolutePath());
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+      alert.setTitle("Copy configuration");
+      alert.setHeaderText("Do you want to copy the config file into config folder?");
+      alert.setContentText("Caution: This may override an existing config file.");
+      ButtonType buttonTypeYes = new ButtonType("Yes");
+      ButtonType buttonTypeNo = new ButtonType("No");
+      alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
+
+      Optional<ButtonType> result = alert.showAndWait();
+      if (result.get() == buttonTypeYes){
+        // Copy the file
+        boolean needAdd = true;
+        boolean error = false;
+        File configFile = new File(DPFManagerProperties.getConfigDir() + "/" + file.getName());
+        if (configFile.exists()) {
+          configFile.delete();
+          needAdd = false;
+        }
+        try {
+          FileUtils.copyFile(file, configFile);
+        } catch (IOException e) {
+          error = true;
+        }
+        if (error) {
+          // Add source file
+          getView().addConfigFile(file.getAbsolutePath());
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, "Error copying config file."));
+        } else if (needAdd){
+          getView().addConfigFile(configFile.getName());
+        }
+      } else {
+        getView().addConfigFile(file.getAbsolutePath());
+      }
     }
   }
 

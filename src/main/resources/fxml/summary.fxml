@@ -53,7 +53,7 @@
             </VBox.margin></Label>
             <Button fx:id="loadMore" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" prefWidth="125.0" styleClass="secondary-button" text="Load more..." textFill="WHITE">
                 <VBox.margin>
-                    <Insets bottom="40.0" top="30.0" />
+                    <Insets bottom="40.0" top="10.0" />
                 </VBox.margin>
             </Button>
         </VBox>
