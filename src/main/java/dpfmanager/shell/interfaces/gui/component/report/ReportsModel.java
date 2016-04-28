@@ -18,7 +18,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
 
   private boolean empty = true;
   private boolean all_reports_loaded = false;
-  public static int reports_loaded = 50;
+  public static int reports_loaded = 10;
   private ObservableList<ReportRow> data;
   private boolean reload;
 
@@ -42,6 +42,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
     }
     int count = reports_loaded;
 
+    ObservableList<ReportRow> rows = FXCollections.observableArrayList(new ArrayList<>());
     String baseDir = ReportGenerator.getReportsFolder();
     File reportsDir = new File(baseDir);
     if (reportsDir.exists()) {
@@ -96,7 +97,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
                     rr.addFormat(format, report.getPath());
                   }
                 }
-                data.add(rr);
+                rows.add(rr);
                 index++;
               }
 
@@ -115,6 +116,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
         }
       }
     }
+    data.addAll(rows);
   }
 
   public void setReload(boolean r){
