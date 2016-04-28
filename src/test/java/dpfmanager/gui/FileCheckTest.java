@@ -58,7 +58,6 @@ public class FileCheckTest extends ApplicationTest {
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");
     waitForTable("#tabReports");
-    sleep(300000);
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     ReportRow row = table.getItems().get(0);
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_loaded), table.getItems().size());
