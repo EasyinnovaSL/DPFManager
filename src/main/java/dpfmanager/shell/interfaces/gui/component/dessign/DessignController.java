@@ -56,7 +56,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   public void selectInputAction() {
     String txtFile = null;
     ComboBox c = getView().getComboChoice();
-    String configDir = DPFManagerProperties.getDefaultDir();
+    String configDir = DPFManagerProperties.getDefaultDirFile();
     getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.DEBUG, "Config dir: " + configDir));
     if (c.getValue() == "File") {
       FileChooser fileChooser = new FileChooser();
@@ -72,7 +72,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
         txtFile = sfiles;
         if (new File(sfiles).exists() && new File(sfiles).getParent() != null && new File(new File(sfiles).getParent()).exists() && new File(new File(sfiles).getParent()).isDirectory()) {
           String path = new File(sfiles).getParent();
-          DPFManagerProperties.setDefaultDir(path);
+          DPFManagerProperties.setDefaultDirFile(path);
         }
       }
     } else {
@@ -82,7 +82,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       File directory = folderChooser.showDialog(GuiWorkbench.getMyStage());
       if (directory != null) {
         txtFile = directory.getPath();
-        DPFManagerProperties.setDefaultDir(directory.getPath());
+        DPFManagerProperties.setDefaultDirFile(directory.getPath());
       }
     }
     if (txtFile != null) {
@@ -111,7 +111,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       file = new File(value);
     } else {
       //Ask for file
-      String configDir = DPFManagerProperties.getDefaultDir();
+      String configDir = DPFManagerProperties.getDefaultDirConfig();
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open Config");
       fileChooser.setInitialDirectory(new File(configDir));
@@ -121,7 +121,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     }
 
     if (file != null) {
-      DPFManagerProperties.setDefaultDir(file.getParent());
+      DPFManagerProperties.setDefaultDirConfig(file.getParent());
       getView().addConfigFile(file.getAbsolutePath());
     }
   }

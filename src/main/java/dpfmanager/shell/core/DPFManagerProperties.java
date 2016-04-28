@@ -52,16 +52,28 @@ public class DPFManagerProperties {
     setPropertiesValue("firstTime", strVal);
   }
 
-  public static String getDefaultDir() {
-    String dir = getPropertiesValue("browse_dir", getConfigDir());
+  public static String getDefaultDirFile() {
+    String dir = getPropertiesValue("browse_dir_file", getConfigDir());
     if (!new File(dir).exists()) {
       return getConfigDir();
     }
     return dir;
   }
 
-  public static void setDefaultDir(String path) {
-    setPropertiesValue("browse_dir", path);
+  public static void setDefaultDirFile(String path) {
+    setPropertiesValue("browse_dir_file", path);
+  }
+
+  public static String getDefaultDirConfig() {
+    String dir = getPropertiesValue("browse_dir_config", getConfigDir());
+    if (!new File(dir).exists()) {
+      return getConfigDir();
+    }
+    return dir;
+  }
+
+  public static void setDefaultDirConfig(String path) {
+    setPropertiesValue("browse_dir_config", path);
   }
 
   public static String getPropertiesValue(String key, String def) {
