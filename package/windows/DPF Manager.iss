@@ -62,14 +62,14 @@ Procedure customUninstall();
 var
   mRes : integer;
 begin
-  // Ask fro delete DPF Manager folder
+  // Ask for delete DPF Manager folder
   mRes := MsgBox('Do you want to remove also the reports and configuration files?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2)
   // Line breaks with with ' #13#13 '
   if mRes = IDYES then begin
      // Delete config files
      DeleteFile('{%HOMEPATH}\DPF Manager\*.dpf');
-     //DeleteFile('{%HOMEPATH}\DPF Manager\dpfmanager.properties');
-     DeleteFile('{%HOMEPATH}\DPF Manager\dpfmanager.properties');
+     // Delete data folder
+     DelTree('{%HOMEPATH}\DPF Manager\data', True, True, True);
      // Delete reports directory recursively
      DelTree('{%HOMEPATH}\DPF Manager\reports', True, True, True);
      // Delete DPF Manager user folder only if empty
@@ -87,4 +87,4 @@ end;
 
 
 
-
+
