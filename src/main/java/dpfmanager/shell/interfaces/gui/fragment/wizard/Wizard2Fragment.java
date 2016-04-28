@@ -53,7 +53,7 @@ public class Wizard2Fragment {
 
   @FXML
   protected void addRule() {
-    addRule(null, null, null);
+    addRule(null, null, null, false);
   }
 
   public void clear() {
@@ -130,11 +130,11 @@ public class Wizard2Fragment {
       String value = r.getValue();
       String tag = r.getTag();
       String operator = r.getOperator();
-      addRule(tag, operator, value);
+      addRule(tag, operator, value, r.getWarning());
     }
   }
 
-  private void addRule(String tag, String operator, String value) {
+  private void addRule(String tag, String operator, String value, boolean bwarning) {
     // HBox container
     HBox hbox = new HBox();
     hbox.setAlignment(Pos.CENTER_LEFT);
@@ -145,6 +145,7 @@ public class Wizard2Fragment {
     CheckBox warning = new CheckBox();
     warning.setText("Warning");
     warning.getStyleClass().add("checkreport");
+    warning.setSelected(bwarning);
 
     // Add combobox
     ComboBox comboBox = new ComboBox();
