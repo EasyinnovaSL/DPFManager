@@ -53,7 +53,11 @@ public class DPFManagerProperties {
   }
 
   public static String getDefaultDir() {
-    return getPropertiesValue("browse_dir", getConfigDir());
+    String dir = getPropertiesValue("browse_dir", getConfigDir());
+    if (!new File(dir).exists()) {
+      return getConfigDir();
+    }
+    return dir;
   }
 
   public static void setDefaultDir(String path) {

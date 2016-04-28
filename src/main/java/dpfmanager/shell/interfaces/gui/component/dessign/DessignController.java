@@ -1,5 +1,7 @@
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
+import dpfmanager.conformancechecker.DpfLogger;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
@@ -11,12 +13,15 @@ import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.threading.core.FileCheck;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.util.List;
@@ -52,6 +57,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     String txtFile = null;
     ComboBox c = getView().getComboChoice();
     String configDir = DPFManagerProperties.getDefaultDir();
+    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.DEBUG, "Config dir: " + configDir));
     if (c.getValue() == "File") {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Open File");
