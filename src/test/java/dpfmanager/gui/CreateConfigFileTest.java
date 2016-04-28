@@ -6,6 +6,8 @@ import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import com.google.common.base.Predicate;
@@ -25,16 +27,43 @@ import java.io.FileReader;
 public class CreateConfigFileTest extends ApplicationTest {
 
   private String outputName = "config-test";
-  private String outputPath = DPFManagerProperties.getConfigDir() + "/" + outputName;
+  private String outputPath = DPFManagerProperties.getConfigDir() + "/" + outputName + ".dpf";
   private String expectedPath = "src/test/resources/ConfigFiles/config.dpf";
+
+  private File targetFile;
+  private File targetFileBak;
 
   Stage stage = null;
   private int uniqueId = 0;
 
   @Override
   public void init() throws Exception {
+    customPreTest();
     stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
+  }
+
+  @Override
+  public void customPreTest() {
+    // Backup Copy.dpf
+    targetFile = new File(outputPath);
+    targetFileBak = getBackupFile(outputPath);
+    if (targetFile.exists()){
+      targetFile.renameTo(targetFileBak);
+      targetFile.delete();
+    }
+  }
+
+  @Override
+  public void customPostTest() {
+    // Delete imported config
+    if (targetFile.exists()){
+      targetFile.delete();
+    }
+    // Restore backup
+    if (targetFileBak.exists()) {
+      targetFileBak.renameTo(targetFile);
+    }
   }
 
   @Test
@@ -72,15 +101,20 @@ public class CreateConfigFileTest extends ApplicationTest {
     // Skip step 5
     clickOnAndReload("#continueButton");
 
-    // Create temp folder
-    createTempFolder();
-
     // 6 - Save the file
     writeText("#saveNameInput", outputName);
     clickOnScroll("#continueButton");
 
     // Check config exists in GUI
-    
+    VBox vbox = (VBox) scene.lookup("#vBoxConfig");
+    int found = 0;
+    for (Node node : vbox.getChildren()) {
+      RadioButton rb = (RadioButton) node;
+      if (rb.getText().equals(targetFile.getName())){
+        found++;
+      }
+    }
+    Assert.assertEquals(1, found);
 
     // Print generated file
 //    System.out.println("\nOutput file:");
@@ -92,9 +126,6 @@ public class CreateConfigFileTest extends ApplicationTest {
     String expected = FileUtils.readFileToString(new File(expectedPath), "utf-8").replace("\r", "");
     String output = FileUtils.readFileToString(new File(outputPath), "utf-8").replace("\r", "");
     Assert.assertEquals("Config files differ!", expected, output);
-
-    // Delete temp folder
-    FileUtils.deleteDirectory(new File("temp"));
   }
 
   private void addRule(String tag, String op, String text) {

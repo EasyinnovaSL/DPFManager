@@ -48,7 +48,7 @@ public class RecursiveTest extends ApplicationTest {
     // Check without recursive
     clickOnAndReload("#checkFilesButton");
     clickOnAndReloadBot("#taskButInConsole");
-    
+
     // Check with recursive
     clickOnAndReload("#comboChoice");
     clickOnAndReload("Folder");
@@ -64,10 +64,9 @@ public class RecursiveTest extends ApplicationTest {
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitForTable("#tabReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    ReportRow row0 = table.getItems().get(0);
-    ReportRow row1 = table.getItems().get(1);
-    Assert.assertEquals("Report row N files", "4", row0.getNfiles());
-    Assert.assertEquals("Report row N files", "2", row1.getNfiles());
+    int n1 = Integer.parseInt(table.getItems().get(0).getNfiles());
+    int n2 = Integer.parseInt(table.getItems().get(1).getNfiles());
+    Assert.assertEquals("Reports count doesn't match ("+n1+", "+n2+")", true, (n1 == 2 || n2 == 2) && (n1 == 4 || n2 == 4));
   }
 }
 
