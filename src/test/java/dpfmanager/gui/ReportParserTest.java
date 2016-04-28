@@ -49,6 +49,7 @@ public class ReportParserTest extends ApplicationTest {
       GuiWorkbench.setTestParam("import", configFile);
       waitUntilExists("#importButton");
       clickOnScroll("#importButton");
+      clickOnScroll("No");
       clickOnImportedConfig(configFile);
       writeText("#inputText", inputFiles);
       clickOnAndReload("#checkFilesButton");

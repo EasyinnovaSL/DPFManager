@@ -46,6 +46,7 @@ public class FileCheckTest extends ApplicationTest {
     //import config file and check files
     GuiWorkbench.setTestParam("import", inputConfigPath);
     clickOnScroll("#importButton");
+    clickOnScroll("No");
     clickOnImportedConfig(inputConfigPath);
     writeText("#inputText", inputFilePath);
     clickOnAndReload("#checkFilesButton");
