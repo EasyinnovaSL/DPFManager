@@ -12,6 +12,12 @@ public class TiffSingleNode extends TiffNode {
     this.value = value;
   }
 
+  public TiffSingleNode(String context, String value, int nifd) {
+    this.context = context;
+    this.value = value;
+    this.setLocation("IFD" + nifd);
+  }
+
   public String getContext() {
     return context;
   }

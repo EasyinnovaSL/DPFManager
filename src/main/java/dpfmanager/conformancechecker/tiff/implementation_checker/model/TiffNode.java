@@ -9,6 +9,8 @@ import java.util.List;
  * Created by easy on 11/03/2016.
  */
 public class TiffNode implements TiffNodeInterface {
+  private String location;
+
   public List<TiffNode> getChildren(boolean subchilds) {
     // To override
     return new ArrayList<>();
@@ -20,6 +22,14 @@ public class TiffNode implements TiffNodeInterface {
 
   public String getValue() {
     return null;
+  }
+
+  public String getLocation() {
+    return location;
+  }
+
+  public void setLocation(String location) {
+    this.location = location;
   }
 
   public TiffNode getChild(String nodeName) {

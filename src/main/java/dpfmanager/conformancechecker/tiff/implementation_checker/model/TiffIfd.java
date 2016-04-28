@@ -200,28 +200,32 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
   public List<TiffNode> getChildren(boolean subchilds) {
     List<TiffNode> childs = new ArrayList<TiffNode>();
     childs.add(new TiffSingleNode("n", n + ""));
-    childs.add(new TiffSingleNode("tagOrdering", tagOrdering + ""));
-    childs.add(new TiffSingleNode("duplicateTags", duplicateTags + ""));
-    childs.add(new TiffSingleNode("strips", strips + ""));
-    childs.add(new TiffSingleNode("tiles", tiles + ""));
-    childs.add(new TiffSingleNode("correctExtraSamples", correctExtraSamples + ""));
-    childs.add(new TiffSingleNode("onlyNecessaryExtraSamples", onlyNecessaryExtraSamples + ""));
-    childs.add(new TiffSingleNode("validBitsPerSample", validBitsPerSample + ""));
-    childs.add(new TiffSingleNode("equalBitsPerSampleValues", equalBitsPerSampleValues + ""));
-    childs.add(new TiffSingleNode("correctTiles", correctTiles + ""));
-    childs.add(new TiffSingleNode("correctStrips", correctStrips + ""));
-    childs.add(new TiffSingleNode("correctCompression", correctCompression + ""));
-    childs.add(new TiffSingleNode("correctPhotometricCasuistic", correctPhotometricCasuistic + ""));
-    childs.add(new TiffSingleNode("correctYcbcr", correctYcbcr + ""));
-    childs.add(new TiffSingleNode("type", type));
-    childs.add(new TiffSingleNode("class", sclass));
-    childs.add(new TiffSingleNode("offset", offset + ""));
-    childs.add(new TiffSingleNode("filetype", filetype + ""));
-    childs.add(new TiffSingleNode("imgtype", imgtype + ""));
+    childs.add(new TiffSingleNode("tagOrdering", tagOrdering + "", n));
+    childs.add(new TiffSingleNode("duplicateTags", duplicateTags + "", n));
+    childs.add(new TiffSingleNode("strips", strips + "", n));
+    childs.add(new TiffSingleNode("tiles", tiles + "", n));
+    childs.add(new TiffSingleNode("correctExtraSamples", correctExtraSamples + "", n));
+    childs.add(new TiffSingleNode("onlyNecessaryExtraSamples", onlyNecessaryExtraSamples + "", n));
+    childs.add(new TiffSingleNode("validBitsPerSample", validBitsPerSample + "", n));
+    childs.add(new TiffSingleNode("equalBitsPerSampleValues", equalBitsPerSampleValues + "", n));
+    childs.add(new TiffSingleNode("correctTiles", correctTiles + "", n));
+    childs.add(new TiffSingleNode("correctStrips", correctStrips + "", n));
+    childs.add(new TiffSingleNode("correctCompression", correctCompression + "", n));
+    childs.add(new TiffSingleNode("correctPhotometricCasuistic", correctPhotometricCasuistic + "", n));
+    childs.add(new TiffSingleNode("correctYcbcr", correctYcbcr + "", n));
+    childs.add(new TiffSingleNode("type", type, n));
+    childs.add(new TiffSingleNode("class", sclass, n));
+    childs.add(new TiffSingleNode("offset", offset + "", n));
+    childs.add(new TiffSingleNode("filetype", filetype + "", n));
+    childs.add(new TiffSingleNode("imgtype", imgtype + "", n));
+    tags.setLocation("IFD" + n);
     childs.add(tags);
     if (subchilds) {
       List<TiffNode> subobjects = tags.getChildren(subchilds);
-      childs.addAll(subobjects);
+      for (TiffNode node : subobjects) {
+        node.setLocation("IFD" + n);
+        childs.add(node);
+      }
     }
     return childs;
   }

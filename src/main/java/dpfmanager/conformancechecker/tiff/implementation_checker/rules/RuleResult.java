@@ -66,7 +66,8 @@ public class RuleResult {
 
   public String getLocation() {
     if (location != null) return location;
-    else return getContext();
+    if (getNode().getLocation() != null) return getNode().getLocation();
+    return getContext();
   }
 
   public String getDescription() {
