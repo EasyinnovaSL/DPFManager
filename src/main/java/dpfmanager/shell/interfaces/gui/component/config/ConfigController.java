@@ -1,20 +1,19 @@
 package dpfmanager.shell.interfaces.gui.component.config;
 
-import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard1Fragment;
-import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard6Fragment;
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
+import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard1Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard2Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard3Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard4Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard5Fragment;
+import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard6Fragment;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
-import javafx.stage.FileChooser;
 
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 
@@ -39,26 +38,35 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     fragment4.getController().clear();
     fragment5.getController().clear();
     fragment6.getController().clear();
+    getView().clear();
   }
 
   public void saveConfig() {
-    File file;
+    File file = null;
     String path = getModel().getPath();
-    if (path != null){
+    if (path != null) {
       // When editing, save directly in same file
       file = new File(path);
     } else {
       String value = GuiWorkbench.getTestParams("saveConfig");
       if (value != null) {
-        //Save in specified output (TEST)
+        // Save in specified output (TEST)
         file = new File(value);
       } else {
-        //Open save dialog
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(DPFManagerProperties.getConfigDir()));
-        fileChooser.setInitialFileName("config.dpf");
-        fileChooser.setTitle("Save Config");
-        file = fileChooser.showSaveDialog(GuiWorkbench.getMyStage());
+        // Get save name
+        String name = getView().getSaveFilename();
+        name = checkInput(name);
+        if (name == null) {
+          // Alert incorrect name format
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please, enter only the filename, not a path."));
+        } else {
+          file = new File(DPFManagerProperties.getConfigDir() + "/" + name);
+          if (file.exists()) {
+            // Alert name exists
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "There is already a file with this name."));
+            file = null;
+          }
+        }
       }
     }
 
@@ -69,6 +77,18 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
       } catch (Exception ex) {
         getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
       }
+    }
+  }
+
+  private String checkInput(String name) {
+    if (name.contains("/") || name.contains("\\") ||
+        name.lastIndexOf(".") != name.indexOf(".") ||    // More than 2 '.'
+        (name.contains(".") && !name.endsWith(".dpf"))) {  // Has some '.' but no .dpf
+      return null;
+    } else if (!name.endsWith(".dpf")) {
+      return name + ".dpf";
+    } else {
+      return name;
     }
   }
 
@@ -111,7 +131,9 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     }
   }
 
-  /** Setters */
+  /**
+   * Setters
+   */
 
   public void setFragment1(ManagedFragmentHandler<Wizard1Fragment> fragment1) {
     this.fragment1 = fragment1;

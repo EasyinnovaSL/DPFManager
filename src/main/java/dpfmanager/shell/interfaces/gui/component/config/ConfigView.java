@@ -20,8 +20,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import org.apache.logging.log4j.Level;
@@ -52,7 +54,11 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   private Context context;
 
   @FXML
+  private HBox hboxSave;
+  @FXML
   private Button continueButton;
+  @FXML
+  private TextField saveNameInput;
   @FXML
   private ImageView configArrow;
   @FXML
@@ -103,6 +109,10 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     stepsButtons = Arrays.asList(step1, step2, step3, step4, step5 ,step6);
 
     initAllFragments();
+  }
+
+  public void clear(){
+    saveNameInput.clear();
   }
 
   private void initAllFragments() {
@@ -182,7 +192,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
       setStepsBlue(x);
       setConfigArrowTranslate(x);
       changeStepTitle(x);
-      setContinueButtonTest(x);
+      setContinueButton(x);
     } else {
       getController().saveConfig();
     }
@@ -253,10 +263,12 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     stepImage.setImage(img);
   }
 
-  public void setContinueButtonTest(int x){
+  public void setContinueButton(int x){
     if (x == 6) {
+      NodeUtil.showNode(hboxSave);
       continueButton.setText("Save configuration");
     } else {
+      NodeUtil.hideNode(hboxSave);
       continueButton.setText("Continue");
     }
   }
@@ -269,6 +281,10 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
       return null;
     }
     return stepsButtons.get(x - 1);
+  }
+
+  public String getSaveFilename(){
+    return saveNameInput.getText();
   }
 
   @Override
