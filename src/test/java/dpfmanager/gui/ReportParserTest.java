@@ -60,7 +60,7 @@ public class ReportParserTest extends ApplicationTest {
     clickOnAndReloadBot("#taskButInConsole");
 
     // Go to reports and check them
-    clickOnAndReloadTop("#butReports","#pane-reports");
+    clickOnAndReloadTop("#butReports", "#pane-reports");
     waitForTable("#tabReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_loaded), table.getItems().size());

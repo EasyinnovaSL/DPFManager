@@ -42,6 +42,7 @@ public class RecursiveTest extends ApplicationTest {
     //import config file
     GuiWorkbench.setTestParam("import", inputConfigPath);
     clickOnScroll("#importButton");
+    clickOnScroll("No");
     clickOnImportedConfig(inputConfigPath);
     writeText("#inputText", inputFilePath);
 
