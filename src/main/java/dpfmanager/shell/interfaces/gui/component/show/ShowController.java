@@ -18,6 +18,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Created by Adrià Llorens on 17/03/2016.
@@ -58,18 +60,8 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
   private String getContent(String path) {
     String content = "";
     try {
-      BufferedReader input = new BufferedReader(new FileReader(path));
-      try {
-        String line;
-        while ((line = input.readLine()) != null) {
-          if (!content.equals("")) {
-            content += "\n";
-          }
-          content += line;
-        }
-      } finally {
-        input.close();
-      }
+      byte[] encoded = Files.readAllBytes(Paths.get(path));
+      return new String(encoded);
     } catch (IOException ex) {
       ex.printStackTrace();
     }
