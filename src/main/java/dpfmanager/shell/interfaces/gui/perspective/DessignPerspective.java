@@ -88,4 +88,9 @@ public class DessignPerspective extends DpfAbstractPerspective {
   public void onReloadCustom() {
     getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.RELOAD));
   }
+
+  @Override
+  public void onShowCustom() {
+    getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.RELOAD));
+  }
 }

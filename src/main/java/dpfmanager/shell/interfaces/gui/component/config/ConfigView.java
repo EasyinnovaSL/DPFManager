@@ -73,6 +73,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   private List<Node> includedNodes;
   private List<Button> stepsButtons;
+  private boolean isEdit;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -84,8 +85,10 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     if (message != null && message.isTypeOf(ConfigMessage.class)) {
       ConfigMessage cMessage = message.getTypedMessage(ConfigMessage.class);
       if (cMessage.isNew()) {
+        isEdit = false;
         getModel().initNewConfig();
       } else if (cMessage.isEdit()) {
+        isEdit = true;
         getModel().initEditConfig(cMessage.getPath());
       }
     }
@@ -265,7 +268,11 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public void setContinueButton(int x){
     if (x == 6) {
-      NodeUtil.showNode(hboxSave);
+      if (isEdit) {
+        NodeUtil.hideNode(hboxSave);
+      } else {
+        NodeUtil.showNode(hboxSave);
+      }
       continueButton.setText("Save configuration");
     } else {
       NodeUtil.hideNode(hboxSave);

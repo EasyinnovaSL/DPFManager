@@ -55,16 +55,21 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
       } else {
         // Get save name
         String name = getView().getSaveFilename();
-        name = checkInput(name);
-        if (name == null) {
-          // Alert incorrect name format
-          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please, enter only the filename, not a path."));
+        if (name.isEmpty()) {
+          // Empty input
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please, enter the filename."));
         } else {
-          file = new File(DPFManagerProperties.getConfigDir() + "/" + name);
-          if (file.exists()) {
-            // Alert name exists
-            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "There is already a file with this name."));
-            file = null;
+          name = checkInput(name);
+          if (name == null) {
+            // Alert incorrect name format
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please, enter only the filename, not a path."));
+          } else {
+            file = new File(DPFManagerProperties.getConfigDir() + "/" + name);
+            if (file.exists()) {
+              // Alert name exists
+              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "There is already a file with this name."));
+              file = null;
+            }
           }
         }
       }
@@ -73,7 +78,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     if (file != null) {
       try {
         getModel().saveConfig(file.getAbsolutePath());
-        getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.RELOAD));
+        getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
       } catch (Exception ex) {
         getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
       }
