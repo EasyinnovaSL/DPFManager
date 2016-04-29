@@ -222,7 +222,17 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
 
   public RadioButton getSelectedConfig() {
-    return (RadioButton) group.getSelectedToggle();
+    RadioButton radio = (RadioButton) group.getSelectedToggle();
+    if (radio == null){
+      // Search for it
+      for (Node child : vBoxConfig.getChildren()){
+        RadioButton button = (RadioButton) child;
+        if (button.isSelected()){
+          return button;
+        }
+      }
+    }
+    return radio;
   }
 
   public ComboBox getComboChoice() {
