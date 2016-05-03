@@ -32,13 +32,7 @@
 package dpfmanager.shell.modules.report.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
-import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
-import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -48,11 +42,6 @@ import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.shell.modules.report.util.ReportJson;
 import dpfmanager.shell.modules.report.util.ReportPDF;
 import dpfmanager.shell.modules.report.util.ReportXml;
-
-import com.easyinnova.tiff.io.TiffInputStream;
-import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.reader.TiffReader;
-import com.easyinnova.tiff.writer.TiffWriter;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.logging.log4j.Level;
@@ -464,14 +453,13 @@ public class ReportGenerator {
       // Look in JAR
       CodeSource src = ReportGenerator.class.getProtectionDomain().getCodeSource();
       if (src != null) {
-        URL jar = src.getLocation();
-        ZipInputStream zip;
         String jarFolder;
         try {
           Class cls = ReportGenerator.class;
           ClassLoader cLoader = cls.getClassLoader();
           String[] arrayFiles = new String[16];
           File[] arrayFoulders = new File[4];
+
           //files in js folder
           arrayFiles[0] = "html/js/jquery-1.9.1.min.js";
           arrayFiles[1] = "html/js/jquery.flot.pie.min.js";
@@ -537,34 +525,25 @@ public class ReportGenerator {
    * @param reportName the output file name
    * @param ir         the individual report
    */
-  public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config, String internalReportFolder) throws OutOfMemoryError {
+  public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError {
     String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
     String htmlFileStr = reportName + ".html";
     String pdfFileStr = reportName + ".pdf";
-    int htmlMode = 0;
-
-    if (ir.getConformanceCheckerReport() != null) {
-      output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir);
-      if (config.getFormats().contains("JSON")) {
-        reportJson.xmlToJson(output, jsonFileStr, this);
-      }
-      return;
-    }
-
-    Fixes fixes = config.getFixes();
-    Rules rules = config.getRules();
-    if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
-    output = reportXml.parseIndividual(xmlFileStr, ir, rules);
-    ir.setPcValidation(getPcValidation(output));
     ir.setReportPath(reportName);
 
-    if (config.getFormats().contains("HTML")) {
-      reportHtml.parseIndividual(htmlFileStr, ir, htmlMode, this);
-    }
+    output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir);
+
     if (config.getFormats().contains("JSON")) {
       reportJson.xmlToJson(output, jsonFileStr, this);
+    }
+    if (!ir.containsData()) return;
+
+    int htmlMode = 0;
+    if (ir.getCompareReport() != null) htmlMode = 1;
+    if (config.getFormats().contains("HTML")) {
+      reportHtml.parseIndividual(htmlFileStr, ir, htmlMode, this);
     }
     if (config.getFormats().contains("PDF")) {
       reportPdf.parseIndividual(pdfFileStr, ir);
@@ -574,92 +553,20 @@ public class ReportGenerator {
     }
 
     // Fixes -> New report
-    if (fixes != null && fixes.getFixes().size() > 0) {
+    IndividualReport ir2 = ir.getCompareReport();
+    if (ir2 != null) {
       xmlFileStr = reportName + "_fixed" + ".xml";
       jsonFileStr = reportName + "_fixed" + ".json";
       htmlFileStr = reportName + "_fixed" + ".html";
       pdfFileStr = reportName + "_fixed" + ".pdf";
 
-      TiffDocument td = ir.getTiffModel();
-      String nameOriginalTif = ir.getFilePath();
-
       try {
-        TiffReader tr = new TiffReader();
-        tr.readFile(nameOriginalTif);
-        ir.setTiffModel(tr.getModel());
-        
-        for (Fix fix : fixes.getFixes()) {
-          if (fix.getOperator() != null) {
-            if (fix.getOperator().equals("Add Tag")) {
-              td.addTag(fix.getTag(), fix.getValue());
-            } else if (fix.getOperator().equals("Remove Tag")) {
-              td.removeTag(fix.getTag());
-            }
-          } else {
-            String className = fix.getTag();
-            autofix autofix = (autofix) Class.forName(TiffConformanceChecker.getAutofixesClassPath() + "." + className).newInstance();
-            autofix.run(td);
-          }
-        }
-
-        String outputFolder = config.getOutput();
-        if (outputFolder == null) outputFolder = internalReportFolder;
-        File dir = new File(outputFolder + "/fixed/");
-        if (!dir.exists()) dir.mkdir();
-        String pathFixed = outputFolder + "/fixed/" + new File(ir.getReportPath()).getName();
-        if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
-
-        TiffInputStream ti = new TiffInputStream(new File(nameOriginalTif));
-        TiffWriter tw = new TiffWriter(ti);
-        tw.SetModel(td);
-        tw.write(pathFixed);
-        ti.close();
-
-        tr = new TiffReader();
-        tr.readFile(pathFixed);
-        TiffDocument to = tr.getModel();
-
-        String content = TiffConformanceChecker.getValidationXmlString(tr);
-        Validator baselineVal = null;
-        if (ir.checkBL) baselineVal = TiffConformanceChecker.getBaselineValidation(content);
-        Validator epValidation = null;
-        if (ir.checkEP) epValidation = TiffConformanceChecker.getEPValidation(content);
-        Validator it0Validation = null;
-        if (ir.checkIT0) it0Validation = TiffConformanceChecker.getITValidation(0, content);
-        Validator it1Validation = null;
-        if (ir.checkIT1) it1Validation = TiffConformanceChecker.getITValidation(1, content);
-        Validator it2Validation = null;
-        if (ir.checkIT2) it2Validation = TiffConformanceChecker.getITValidation(2, content);
-
-        String pathNorm = pathFixed.replaceAll("\\\\", "/");
-        String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-        IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
-        int ind = ir.getReportPath().lastIndexOf(".tif");
-        ir2.setReportPath(ir.getReportPath().substring(0, ind) + "_fixed.tif");
-        ir2.checkPC = ir.checkPC;
-        ir2.checkBL = ir.checkBL;
-        ir2.checkEP = ir.checkEP;
-        ir2.checkIT0 = ir.checkIT0;
-        ir2.checkIT1 = ir.checkIT1;
-        ir2.checkIT2 = ir.checkIT2;
-
-        ir2.setFilePath(pathFixed);
-        context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
-
-        ir2.setFilePath(pathFixed);
-        ir2.setFileName(new File(nameOriginalTif).getName() + " Fixed");
-
-        //Make reports
-        output = reportXml.parseIndividual(xmlFileStr, ir2, rules);
-        ArrayList<RuleResult> pcValidation2 = getPcValidation(output);
-        ir2.setPcValidation(pcValidation2);
-        ir2.setCompareReport(ir);
-
-        if (config.getFormats().contains("HTML")) {
-          reportHtml.parseIndividual(htmlFileStr, ir2, 2, this);
-        }
+        output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir2);
         if (config.getFormats().contains("JSON")) {
           reportJson.xmlToJson(output, jsonFileStr, this);
+        }
+        if (config.getFormats().contains("HTML")) {
+          reportHtml.parseIndividual(htmlFileStr, ir2, 2, this);
         }
         if (config.getFormats().contains("PDF")) {
           reportPdf.parseIndividual(pdfFileStr, ir2);
@@ -671,41 +578,6 @@ public class ReportGenerator {
         context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Error creating report of fixed image", ex));
       }
     }
-  }
-
-  /**
-   * Gets pc validation.
-   *
-   * @param output the output
-   * @return the pc validation
-   */
-  static ArrayList<RuleResult> getPcValidation(String output) {
-    ArrayList<RuleResult> valid = new ArrayList<>();
-    int index = output.indexOf("<svrl:failed-assert");
-    while (index > -1) {
-      String text = output.substring(output.indexOf("text>", index));
-      text = text.substring(text.indexOf(">") + 1);
-      text = text.substring(0, text.indexOf("</"));
-      index = output.indexOf("<svrl:failed-assert", index + 1);
-      RuleResult val = new RuleResult();
-      val.setWarning(false);
-      val.setMessage(text);
-      val.setLocation("Policy checker");
-      valid.add(val);
-    }
-    index = output.indexOf("<svrl:successful-report");
-    while (index > -1) {
-      String text = output.substring(output.indexOf("text>", index));
-      text = text.substring(text.indexOf(">") + 1);
-      text = text.substring(0, text.indexOf("</"));
-      index = output.indexOf("<svrl:successful-report", index + 1);
-      RuleResult val = new RuleResult();
-      val.setWarning(true);
-      val.setMessage(text);
-      val.setLocation("Policy checker");
-      valid.add(val);
-    }
-    return valid;
   }
 
   /**
@@ -725,12 +597,12 @@ public class ReportGenerator {
     String pdfFileStr = internalReportFolder + "report.pdf";
     output = reportXml.parseGlobal(xmlFileStr, gr);
 
+    if (config.getFormats().contains("JSON")) {
+      reportJson.xmlToJson(output, jsonFileStr, this);
+    }
     if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
       reportHtml.parseGlobal(htmlFileStr, gr, this);
-    }
-    if (config.getFormats().contains("JSON")) {
-      reportJson.xmlToJson(output, jsonFileStr, this);
     }
     if (config.getFormats().contains("PDF")) {
       reportPdf.parseGlobal(pdfFileStr, gr);
