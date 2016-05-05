@@ -77,11 +77,10 @@ public class ReportXml extends ReportGeneric {
    * Parse an individual report to XML format.
    *
    * @param xmlfile the file name.
-   * @param ir      the individual report.
+   * @param output      the individual report.
    * @return the XML string generated.
    */
-  public static String writeProcomputedIndividual(String xmlfile, IndividualReport ir) {
-    String output = ir.getConformanceCheckerReport();
+  public static String writeProcomputedIndividual(String xmlfile, String output) {
     try {
       PrintWriter out = new PrintWriter(xmlfile);
       out.print(output);

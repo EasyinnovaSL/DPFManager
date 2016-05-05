@@ -533,17 +533,19 @@ public class ReportGenerator {
     String pdfFileStr = reportName + ".pdf";
     ir.setReportPath(reportName);
 
-    output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir);
+    output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());
 
     if (config.getFormats().contains("JSON")) {
       reportJson.xmlToJson(output, jsonFileStr, this);
     }
     if (!ir.containsData()) return;
 
-    int htmlMode = 0;
-    if (ir.getCompareReport() != null) htmlMode = 1;
     if (config.getFormats().contains("HTML")) {
-      reportHtml.parseIndividual(htmlFileStr, ir, htmlMode, this);
+      String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
+      String outputfile = htmlFileStr.replace(name, "html/" + name);
+      File outputFile = new File(outputfile);
+      outputFile.getParentFile().mkdirs();
+      ReportXml.writeProcomputedIndividual(outputfile, ir.getConformanceCheckerReportHtml());
     }
     if (config.getFormats().contains("PDF")) {
       reportPdf.parseIndividual(pdfFileStr, ir);
@@ -561,12 +563,14 @@ public class ReportGenerator {
       pdfFileStr = reportName + "_fixed" + ".pdf";
 
       try {
-        output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir2);
+        output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir2.getConformanceCheckerReport());
         if (config.getFormats().contains("JSON")) {
           reportJson.xmlToJson(output, jsonFileStr, this);
         }
         if (config.getFormats().contains("HTML")) {
-          reportHtml.parseIndividual(htmlFileStr, ir2, 2, this);
+          String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
+          String outputfile = htmlFileStr.replace(name, "html/" + name);
+          ReportXml.writeProcomputedIndividual(outputfile, ir2.getConformanceCheckerReportHtml());
         }
         if (config.getFormats().contains("PDF")) {
           reportPdf.parseIndividual(pdfFileStr, ir2);

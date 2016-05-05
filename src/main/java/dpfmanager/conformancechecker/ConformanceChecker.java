@@ -24,7 +24,7 @@ public abstract class ConformanceChecker {
 
   abstract public boolean acceptsFile(String filename);
 
-  abstract public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config) throws ReadTagsIOException, ReadIccConfigIOException;
+  abstract public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException;
 
 
   public static DpfLogger initDefault() {

@@ -172,6 +172,8 @@ public class IndividualReport {
 
   private String conformanceCheckerReport = null;
 
+  private String conformanceCheckerReportHtml = null;
+
   /**
    * Extra check information
    */
@@ -223,8 +225,16 @@ public class IndividualReport {
     conformanceCheckerReport = report;
   }
 
+  public void setConformanceCheckerReportHtml(String report) {
+    conformanceCheckerReportHtml = report;
+  }
+
   public String getConformanceCheckerReport() {
     return conformanceCheckerReport;
+  }
+
+  public String getConformanceCheckerReportHtml() {
+    return conformanceCheckerReportHtml;
   }
 
   public boolean containsData() {
@@ -496,35 +506,6 @@ public class IndividualReport {
   }
 
   /**
-   * Get ifd count.
-   *
-   * @return the numbr of ifd's
-   */
-  public int getIfdCount() {
-    return ifdCount;
-  }
-
-  /**
-   * Get isimg at index.
-   *
-   * @param index the index
-   * @return the isimg list
-   */
-  public Boolean getIsimgAt(int index) {
-    return listIsimg.get(index);
-  }
-
-  /**
-   * Get hasSubIfd at index.
-   *
-   * @param index the index
-   * @return the list of hasSubIfd
-   */
-  public Boolean getHasSubIfdAt(int index) {
-    return listHasSubIfd.get(index);
-  }
-
-  /**
    * Get width.
    *
    * @return the width
@@ -746,24 +727,6 @@ public class IndividualReport {
   public List<RuleResult> getPCWarnings() {
     if (warningsPc == null) return new ArrayList<RuleResult>();
     return warningsPc;
-  }
-
-  /**
-   * Sets pc errors.
-   *
-   * @param errors the errors
-   */
-  public void setPCErrors(List<RuleResult> errors) {
-    errorsPc = errors;
-  }
-
-  /**
-   * Sets pc warnings.
-   *
-   * @param warnings the warnings
-   */
-  public void setPCWarnings(List<RuleResult> warnings) {
-    warningsPc = warnings;
   }
 
   /**

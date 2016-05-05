@@ -48,36 +48,6 @@ public class ReportGeneric {
     this.context = context;
   }
 
-  public BufferedImage loadImageCrazyFast( URL src ){
-    try{
-      Image im = Toolkit.getDefaultToolkit().createImage( src );
-      Method method = im.getClass().getMethod( "getBufferedImage" );
-      BufferedImage bim = null;
-      int counter = 0;
-      // load 30seconds maximum!
-      while( bim == null && counter < 3000 ){
-        im.getWidth( null );
-        bim = (BufferedImage) method.invoke( im );
-        try{ Thread.sleep( 10 ); }
-        catch( InterruptedException e ){ }
-        counter ++;
-      }
-
-      if( bim != null ){
-        return bim;
-      }
-    }
-    catch( Exception e ){
-      printOut("Fast loading of " + src.toString() + " failed. You might want to correct this in loadImageCrazyFast( URL )");
-      printOut("Falling back to ImageIO, which is... slow!");
-    }
-    try{
-      return ImageIO.read( src );
-    }
-    catch( IOException ioe ){
-      return null;
-    }
-  }
   /**
    * Tiff 2 jpg.
    *

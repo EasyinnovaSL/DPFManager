@@ -109,7 +109,7 @@ public class ProcessInput {
    * @param config               the report configuration
    * @return generated list of individual reports
    */
-  public IndividualReport processFile(String filename, String internalReportFolder, Configuration config) {
+  public IndividualReport processFile(String filename, String internalReportFolder, Configuration config, int id) {
     IndividualReport ir = null;
     if (isUrl(filename)) {
       // URL
@@ -120,7 +120,7 @@ public class ProcessInput {
           InputStream input = new java.net.URL(filename).openStream();
           String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
           filename = java.net.URLDecoder.decode(filename, "UTF-8");
-          ir = cc.processFile(filename2, filename, internalReportFolder, config);
+          ir = cc.processFile(filename2, filename, internalReportFolder, config, id);
           if (ir != null) {
             outOfmemory = true;
           }
@@ -138,7 +138,7 @@ public class ProcessInput {
       ConformanceChecker cc = getConformanceCheckerForFile(filename);
       if (cc != null) {
         try {
-          ir = cc.processFile(filename, filename, internalReportFolder, config);
+          ir = cc.processFile(filename, filename, internalReportFolder, config, id);
           if (ir != null) {
             outOfmemory = true;
           }
