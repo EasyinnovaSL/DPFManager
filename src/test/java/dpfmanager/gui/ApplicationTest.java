@@ -30,6 +30,8 @@ import org.testfx.toolkit.ApplicationFixture;
 
 import java.awt.*;
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -627,11 +629,24 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
     for (File date : dates){
       if (date.isDirectory()){
-        File[] ids = date.listFiles();
-        nReports = nReports + ids.length;
+        for (File id : date.listFiles()){
+          if (containsSummary(id.listFiles())){
+            nReports++;
+          }
+        }
       }
     }
     return nReports;
+  }
+
+  private boolean containsSummary(File[] files){
+    List<String> summarys = Arrays.asList("report.html","report.pdf","summary.json","summary.xml");
+    for (File file : files){
+      if (summarys.contains(file.getName())){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
