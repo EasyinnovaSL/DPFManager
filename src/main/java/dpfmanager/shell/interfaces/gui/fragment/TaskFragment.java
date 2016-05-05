@@ -131,6 +131,7 @@ public class TaskFragment {
       } else {
         NodeUtil.hideNode(taskImage);
       }
+      progress.setProgress(job.getProgress());
       progress.getStyleClass().remove("blue-bar");
       progress.getStyleClass().add("green-bar");
       done = true;
