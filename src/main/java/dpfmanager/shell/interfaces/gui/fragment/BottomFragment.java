@@ -2,11 +2,13 @@ package dpfmanager.shell.interfaces.gui.fragment;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.threading.core.FileCheck;
+import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -153,8 +155,8 @@ public class BottomFragment {
   /**
    * Tasks functions
    */
-  public void addTask(ManagedFragmentHandler<TaskFragment> taskFragment, Jobs job){
-    taskFragment.getController().init(job);
+  public void addTask(ManagedFragmentHandler<TaskFragment> taskFragment, Jobs job, int pid){
+    taskFragment.getController().init(job, pid);
     taskFragments.put(job.getId(), taskFragment);
 
     // Reverse order
@@ -170,6 +172,22 @@ public class BottomFragment {
     if (!taskFragment.getController().isFinished()){
       taskFragment.getController().updateJob(job);
     }
+  }
+
+  public void finishActions(CheckTaskMessage ctm){
+    ManagedFragmentHandler<TaskFragment> taskFragment = taskFragments.get(ctm.getUuid());
+    if (ctm.isPause()){
+      taskFragment.getController().finishPause();
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.PAUSE, ctm.getUuid(), false));
+    } else if (ctm.isCancel()){
+      removeTask(ctm.getUuid());
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, ctm.getUuid(), false));
+    }
+  }
+
+  private void removeTask(Long uuid){
+    taskVBox.getChildren().remove(taskFragments.get(uuid).getFragmentNode());
+    taskFragments.remove(uuid);
   }
 
   public boolean containsJob(long uuid){

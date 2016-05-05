@@ -12,25 +12,49 @@ import java.util.List;
 public class CheckTaskMessage extends DpfMessage {
 
   private List<Jobs> jobs;
-  private Type type;
+  private int pid;
 
-  public enum Type{
-    INIT, UPDATE, FINISH
+  private Target target;
+  private Long uuid;
+
+  public enum Target{
+    PAUSE, CANCEL
   }
 
-  public CheckTaskMessage(List<Jobs> lj){
+  public CheckTaskMessage(List<Jobs> lj, int p){
+    // Jobs list
     jobs = lj;
+    pid = p;
   }
 
-  public boolean isInit() {
-    return type.equals(Type.INIT);
+  public CheckTaskMessage(Target tg, Long u){
+    // Finish actions
+    target = tg;
+    pid = -1;
+    uuid = u;
   }
 
-  public boolean isUpdate() {
-    return type.equals(Type.UPDATE);
+  public boolean isFinishActions() {
+    return pid == -1;
+  }
+
+  public boolean isCancel() {
+    return target.equals(Target.CANCEL);
+  }
+
+  public boolean isPause() {
+    return target.equals(Target.PAUSE);
   }
 
   public List<Jobs> getJobs() {
     return jobs;
+  }
+
+  public int getPid() {
+    return pid;
+  }
+
+  public Long getUuid() {
+    return uuid;
   }
 }

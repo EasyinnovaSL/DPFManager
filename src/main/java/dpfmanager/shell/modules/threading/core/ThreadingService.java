@@ -11,8 +11,9 @@ import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
+import dpfmanager.shell.modules.threading.messages.RunnableMessage;
+import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
-import dpfmanager.shell.modules.threading.runnable.PhassesRunnable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
@@ -23,10 +24,9 @@ import java.awt.*;
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -38,46 +38,103 @@ import javax.annotation.PreDestroy;
 @Scope("singleton")
 public class ThreadingService extends DpfService {
 
-  private Map<Long, FileCheck> checks;
-  private ExecutorService executor;
-  private boolean needReload;
+  /**
+   * The maximum number of simultaneous checks
+   */
+  private final int max_checks = 3;
+
+  /**
+   * The main executor service
+   */
+  private DpfExecutor myExecutor;
+
+  /**
+   * The number of threads
+   */
   private int cores;
+
+  private Map<Long, FileCheck> checks;
+  private Queue<FileCheck> pendingChecks;
+
+  private boolean needReload;
 
   @PostConstruct
   public void init() {
     // No context yet
     checks = new HashMap<>();
+    pendingChecks = new PriorityQueue<>();
     needReload = true;
-    cores = Runtime.getRuntime().availableProcessors()-1;
-    if (cores < 1){
+    cores = Runtime.getRuntime().availableProcessors() - 1;
+    if (cores < 1) {
       cores = 1;
     }
-    executor = Executors.newFixedThreadPool(cores);
+    myExecutor = new DpfExecutor(cores);
   }
 
   @PreDestroy
   public void finish() {
     // Finish executor
-    executor.shutdownNow();
+    myExecutor.shutdownNow();
   }
 
   @Override
   protected void handleContext(DpfContext context) {
+    myExecutor.handleContext(context);
 //    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Set maximum threads to " + cores));
   }
 
-  public void run(DpfRunnable runnable) {
+  public void run(DpfRunnable runnable, Long uuid) {
     runnable.setContext(getContext());
-    executor.execute(runnable);
+    runnable.setUuid(uuid);
+    myExecutor.myExecute(runnable);
+  }
+
+  public void processThreadMessage(ThreadsMessage tm) {
+    if (tm.isPause()) {
+      myExecutor.pause(tm.getUuid());
+    } else if (tm.isResume()) {
+      myExecutor.resume(tm.getUuid());
+    } else if (tm.isCancel() && tm.isRequest()) {
+      myExecutor.cancel(tm.getUuid());
+    } else if (tm.isCancel() && !tm.isRequest()){
+      cancelFinish(tm.getUuid());
+    }
+  }
+
+  public void cancelFinish(Long uuid) {
+    // Update db
+    getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.CANCEL, uuid));
+
+    // Remove folder
+    removeInternalFolder(checks.get(uuid).getInternal());
+
+    // Remove from checks pool
+    checks.remove(uuid);
   }
 
   public void handleGlobalStatus(GlobalStatusMessage gm, boolean silence) {
-    if (gm.isInit()) {
-      // Init new file check
-      FileCheck fc = new FileCheck(gm.getUuid(), gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
-      checks.put(gm.getUuid(), fc);
+    if (gm.isNew()) {
+      // New file check
+      Long uuid = System.currentTimeMillis();
+      FileCheck fc = new FileCheck(uuid);
+      boolean pending = false;
+      if (runningChecks() >= max_checks) {
+        // Add pending check
+        fc.setInitialTask(gm.getRunnable());
+        pendingChecks.add(fc);
+        pending = true;
+      } else {
+        //Start now
+        checks.put(uuid, fc);
+        context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, gm.getRunnable()));
+      }
+      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.NEW, uuid, gm.getInput(), pending));
+    } else if (gm.isInit()) {
+      // Init file check
+      FileCheck fc = checks.get(gm.getUuid());
+      fc.init(gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Starting check: " + gm.getInput()));
-      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.NEW, fc.getUuid(), fc.getTotal(), fc.getInput(), fc.getInternal()));
+      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.INIT, fc.getUuid(), fc.getTotal(), fc.getInternal()));
     } else if (gm.isFinish()) {
       // Finish file check
       FileCheck fc = checks.get(gm.getUuid());
@@ -92,6 +149,8 @@ public class ThreadingService extends DpfService {
       }
       context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.FINISH, gm.getUuid()));
       checks.remove(gm.getUuid());
+      // Start pending checks
+      startPendingChecks();
     } else if (context.isGui() && gm.isReload()) {
       // Ask for reload
       if (needReload) {
@@ -103,22 +162,39 @@ public class ThreadingService extends DpfService {
 
   synchronized public void finishIndividual(IndividualReport ir, Long uuid) {
     FileCheck fc = checks.get(uuid);
-    if (ir != null) {
-      // Individual report finished
-      fc.addIndividual(ir);
+    if (fc != null) {
+      if (ir != null) {
+        // Individual report finished
+        fc.addIndividual(ir);
 
-      // Check if all finished
-      if (fc.allFinished()) {
-        // Tell reports module
-        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(fc.getIndividuals(), fc.getConfig()));
+        // Check if all finished
+        if (fc.allFinished()) {
+          // Tell reports module
+          context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig()));
+        }
+      } else {
+        // Individual with errors
+        fc.addError();
       }
-    } else {
-      // Individual with errors
-      fc.addError();
+      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.UPDATE, uuid));
     }
-    context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.UPDATE, uuid));
   }
 
+  private void startPendingChecks() {
+    if (!pendingChecks.isEmpty()) {
+      FileCheck fc = pendingChecks.poll();
+      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.RESUME, fc.getUuid()));
+      context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(fc.getUuid(), fc.getInitialTask()));
+    }
+  }
+
+  private int runningChecks() {
+    return checks.size();
+  }
+
+  /**
+   * Remove functions
+   */
   public void removeZipFolder(String internal) {
     try {
       File zipFolder = new File(internal + "zip");
@@ -141,6 +217,20 @@ public class ThreadingService extends DpfService {
     }
   }
 
+  public void removeInternalFolder(String internal) {
+    try {
+      File folder = new File(internal);
+      if (folder.exists() && folder.isDirectory()) {
+        FileUtils.deleteDirectory(folder);
+      }
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove internal folder", e));
+    }
+  }
+
+  /**
+   * Show report
+   */
   private void showToUser(String internal, String output) {
     String name = "report.html";
     String htmlPath = internal + name;
@@ -159,11 +249,6 @@ public class ThreadingService extends DpfService {
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Desktop services not suported."));
     }
-  }
-
-  public void runPhasses(List<DpfRunnable> firsts, List<DpfRunnable> seconds) {
-    PhassesRunnable pr = new PhassesRunnable(firsts, seconds);
-    run(pr);
   }
 
 }

@@ -15,8 +15,8 @@ public abstract class DpfTask {
   // Main run method
   public void run(){
     if (!stop) {
-      sleep(interval);
       perform();
+      sleep(interval);
     }
   }
 

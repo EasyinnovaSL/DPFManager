@@ -3,6 +3,7 @@ package dpfmanager.shell.modules.threading.messages;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
 /**
  * Created by Adrià Llorens on 08/04/2016.
@@ -10,6 +11,7 @@ import dpfmanager.shell.modules.report.core.IndividualReport;
 public class GlobalStatusMessage extends DpfMessage {
 
   public enum Type {
+    NEW,
     INIT,
     FINISH,
     RELOAD
@@ -21,6 +23,14 @@ public class GlobalStatusMessage extends DpfMessage {
   private Configuration config;
   private String internal;
   private String input;
+  private DpfRunnable run;
+
+  public GlobalStatusMessage(Type t, DpfRunnable r, String i) {
+    // New
+    type = t;
+    run = r;
+    input = i;
+  }
 
   public GlobalStatusMessage(Type t, long u, int n, Configuration c, String i, String ri) {
     // Init
@@ -41,6 +51,10 @@ public class GlobalStatusMessage extends DpfMessage {
   public GlobalStatusMessage(Type t) {
     // Asking for reload
     type = t;
+  }
+
+  public boolean isNew() {
+    return type.equals(Type.NEW);
   }
 
   public boolean isInit() {
@@ -74,4 +88,9 @@ public class GlobalStatusMessage extends DpfMessage {
   public String getInput() {
     return input;
   }
+
+  public DpfRunnable getRunnable() {
+    return run;
+  }
+
 }

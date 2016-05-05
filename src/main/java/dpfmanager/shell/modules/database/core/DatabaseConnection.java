@@ -90,7 +90,7 @@ public class DatabaseConnection {
       // Try to begin transaction
       if (beginTransaction(SqlJetTransactionMode.WRITE)) {
         // From this point, DB file is locked
-        DB.getTable(Jobs.TABLE).insert(job.getId(), 1, job.getTotalFiles(), 0, job.getInit(), null, job.getInput(), job.getOrigin(), job.getPid(), job.getOutput());
+        DB.getTable(Jobs.TABLE).insert(job.getId(), job.getState(), job.getTotalFiles(), 0, job.getInit(), null, job.getInput(), job.getOrigin(), job.getPid(), job.getOutput());
         lastUpdate = System.currentTimeMillis();
 
         // Finish transaction and unlock
@@ -111,7 +111,12 @@ public class DatabaseConnection {
         ISqlJetCursor cursor = DB.getTable(Jobs.TABLE).lookup(Jobs.INDEX_ID, job.getId());
         if (!cursor.eof()) {
           Map<String, Object> updates = new HashMap<>();
+          updates.put(Jobs.OUTPUT, job.getOutput());
+          updates.put(Jobs.TOTAL_FILES, job.getTotalFiles());
           updates.put(Jobs.PROCESSED_FILES, job.getProcessedFiles());
+          updates.put(Jobs.STATE, job.getState());
+          updates.put(Jobs.INIT, job.getInit());
+          updates.put(Jobs.FINISH, job.getFinish());
           cursor.updateByFieldNames(updates);
           cursor.close();
           lastUpdate = System.currentTimeMillis();
@@ -128,33 +133,6 @@ public class DatabaseConnection {
     }
   }
 
-  synchronized public void finishJob(Jobs job) {
-    try {
-      // Try to begin transaction
-      if (beginTransaction(SqlJetTransactionMode.WRITE)) {
-        // From this point, DB file is locked
-        ISqlJetCursor cursor = DB.getTable(Jobs.TABLE).lookup(Jobs.INDEX_ID, job.getId());
-        if (!cursor.eof()) {
-          Map<String, Object> updates = new HashMap<>();
-          updates.put(Jobs.STATE, job.getState());
-          updates.put(Jobs.PROCESSED_FILES, job.getTotalFiles());
-          updates.put(Jobs.FINISH, job.getFinish());
-          cursor.updateByFieldNames(updates);
-          cursor.close();
-          lastUpdate = System.currentTimeMillis();
-        } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot find job (" + job.getId() + ")"));
-        }
-        // Finish transaction and unlock
-        DB.commit();
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Timeout database."));
-      }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error updating finished job."));
-    }
-  }
-
   public List<Jobs> getJobs() {
     List<Jobs> jobs = new ArrayList<>();
     try {
@@ -166,7 +144,7 @@ public class DatabaseConnection {
         while (next) {
           Jobs job = new Jobs();
           job.parseCursor(cursor);
-          if (job.getFinish() == null || job.getInit() > initTime || job.getFinish() > initTime ) {
+          if (job.getFinish() == 0 || job.getInit() == 0 || job.getInit() > initTime || job.getFinish() > initTime ) {
             jobs.add(job);
           }
           next = cursor.next();
@@ -182,6 +160,28 @@ public class DatabaseConnection {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
     }
     return jobs;
+  }
+
+  synchronized public void deleteJob(Long uuid){
+    try {
+      // Try to begin transaction
+      if (beginTransaction(SqlJetTransactionMode.WRITE)) {
+        // From this point, DB file is locked
+        ISqlJetCursor cursor = DB.getTable(Jobs.TABLE).lookup(Jobs.INDEX_ID, uuid);
+        if (!cursor.eof()) {
+          cursor.delete();
+          cursor.close();
+        } else {
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot find job (" + uuid + ")"));
+        }
+        // Finish transaction and unlock
+        DB.commit();
+      } else {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Timeout database."));
+      }
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error updating job."));
+    }
   }
 
   public Long getLastUpdate() {

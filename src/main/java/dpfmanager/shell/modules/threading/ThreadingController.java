@@ -11,6 +11,7 @@ import dpfmanager.shell.modules.threading.core.ThreadingService;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
+import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -45,7 +46,10 @@ public class ThreadingController extends DpfSpringController {
       }
     } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
       RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);
-      service.run(rm.getRunnable());
+      service.run(rm.getRunnable(), rm.getUuid());
+    } else if (dpfMessage.isTypeOf(ThreadsMessage.class)){
+      ThreadsMessage tm = dpfMessage.getTypedMessage(ThreadsMessage.class);
+      service.processThreadMessage(tm);
     }
   }
 

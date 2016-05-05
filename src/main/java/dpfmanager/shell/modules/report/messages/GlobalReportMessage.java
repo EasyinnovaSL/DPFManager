@@ -12,10 +12,12 @@ import java.util.List;
  */
 public class GlobalReportMessage extends DpfMessage {
 
+  private Long uuid;
   private List<IndividualReport> individuals;
   private Configuration config;
 
-  public GlobalReportMessage(List<IndividualReport> i, Configuration c){
+  public GlobalReportMessage(Long u, List<IndividualReport> i, Configuration c){
+    uuid = u;
     individuals = i;
     config = c;
   }
@@ -28,4 +30,7 @@ public class GlobalReportMessage extends DpfMessage {
     return config;
   }
 
+  public Long getUuid() {
+    return uuid;
+  }
 }

@@ -19,13 +19,17 @@ public class DatabaseCache {
     jobs = new HashMap<>();
   }
 
-  public void insertNewJob(Long uuid, int total, String input, String origin, int pid, String output) {
+  public void insertNewJob(Long uuid, int state, int total, String input, String origin, int pid, String output ) {
     Jobs job = new Jobs();
     job.setId(uuid);
-    job.setState(1);
+    job.setState(state);
     job.setTotalFiles(total);
     job.setProcessedFiles(0);
-    job.setInit(System.currentTimeMillis());
+    if (state == 0){
+      job.setInit(null);
+    } else {
+      job.setInit(System.currentTimeMillis());
+    }
     job.setFinish(null);
     job.setInput(input);
     job.setOrigin(origin);
@@ -34,9 +38,27 @@ public class DatabaseCache {
     jobs.put(uuid, job);
   }
 
+  public void initJob(long uuid, int total, String output ) {
+    Jobs job = jobs.get(uuid);
+    job.setTotalFiles(total);
+    job.setOutput(output);
+  }
+
   public void updateJob(Long uuid) {
     Jobs job = jobs.get(uuid);
-    job.setProcessedFiles(job.getProcessedFiles() + 1);
+    if (job != null) {
+      job.setProcessedFiles(job.getProcessedFiles() + 1);
+    }
+  }
+
+  public void resumeJob(Long uuid) {
+    Jobs job = jobs.get(uuid);
+    job.setInit(System.currentTimeMillis());
+    job.setState(1);
+  }
+
+  public void cancelJob(Long uuid) {
+    jobs.remove(uuid);
   }
 
   public void finishJob(Long uuid) {

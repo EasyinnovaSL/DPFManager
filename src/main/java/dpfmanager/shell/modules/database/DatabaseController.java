@@ -27,17 +27,8 @@ public class DatabaseController extends DpfSpringController {
 
   @Override
   public void handleMessage(DpfMessage dpfMessage) {
-    if (dpfMessage.isTypeOf(DatabaseMessage.class)) {
-      DatabaseMessage dm = dpfMessage.getTypedMessage(DatabaseMessage.class);
-      if (dm.isNew()) {
-        service.createJob(dm);
-      } else if (dm.isUpdate()) {
-        service.updateJob(dm);
-      } else if (dm.isFinish()) {
-        service.finishJob(dm);
-      } else if (dm.isGet()) {
-        service.getJobs(dm);
-      }
+    if (dpfMessage.isTypeOf(DatabaseMessage.class)){
+      service.handleDatabaseMessage(dpfMessage.getTypedMessage(DatabaseMessage.class));
     }
   }
 

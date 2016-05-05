@@ -8,13 +8,19 @@ import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
  */
 public class RunnableMessage extends DpfMessage {
 
+  private Long uuid;
   private DpfRunnable runnable;
 
-  public RunnableMessage(DpfRunnable r) {
+  public RunnableMessage(Long u, DpfRunnable r) {
+    uuid = u;
     runnable = r;
   }
 
   public DpfRunnable getRunnable() {
     return runnable;
+  }
+
+  public Long getUuid() {
+    return uuid;
   }
 }

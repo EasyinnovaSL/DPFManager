@@ -8,7 +8,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 public class DatabaseMessage extends DpfMessage {
 
   public enum Type {
-    NEW, UPDATE, FINISH, GET
+    NEW, INIT, UPDATE, FINISH, GET, RESUME, CANCEL
   }
 
   private Type type;
@@ -16,18 +16,26 @@ public class DatabaseMessage extends DpfMessage {
   private int total;
   private String input;
   private String output;
+  private boolean pending;
 
-  public DatabaseMessage(Type type, Long uuid, int total, String input, String output) {
+  public DatabaseMessage(Type type, Long uuid, String input, boolean pending) {
     // New
     this.type = type;
     this.uuid = uuid;
-    this.total = total;
     this.input = input;
+    this.pending = pending;
+  }
+
+  public DatabaseMessage(Type type, Long uuid, int total, String output ) {
+    // Init
+    this.type = type;
+    this.uuid = uuid;
+    this.total = total;
     this.output = output;
   }
 
   public DatabaseMessage(Type type, Long uuid) {
-    // Update && Finish
+    // Update && Finish && Resume && Cancel
     this.type = type;
     this.uuid = uuid;
   }
@@ -35,6 +43,10 @@ public class DatabaseMessage extends DpfMessage {
   public DatabaseMessage(Type type) {
     // Get
     this.type = type;
+  }
+
+  public boolean isInit(){
+    return type.equals(Type.INIT);
   }
 
   public boolean isNew(){
@@ -53,6 +65,14 @@ public class DatabaseMessage extends DpfMessage {
     return type.equals(Type.GET);
   }
 
+  public boolean isResume(){
+    return type.equals(Type.RESUME);
+  }
+
+  public boolean isCancel(){
+    return type.equals(Type.CANCEL);
+  }
+
   public Long getUuid() {
     return uuid;
   }
@@ -67,5 +87,9 @@ public class DatabaseMessage extends DpfMessage {
 
   public String getOutput() {
     return output;
+  }
+
+  public boolean getPending() {
+    return pending;
   }
 }
