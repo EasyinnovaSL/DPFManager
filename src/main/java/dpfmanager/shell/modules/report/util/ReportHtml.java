@@ -31,20 +31,14 @@
 
 package dpfmanager.shell.modules.report.util;
 
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
 
-import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.types.IFD;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The Class ReportHtml.

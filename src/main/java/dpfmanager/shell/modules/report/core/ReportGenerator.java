@@ -45,6 +45,7 @@ import dpfmanager.shell.modules.report.util.ReportXml;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.logging.log4j.Level;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -59,6 +60,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -520,23 +522,39 @@ public class ReportGenerator {
   }
 
   /**
+   * Parse an individual report to XML format.
+   *
+   * @param filename the file name.
+   * @param content      the individual report.
+   * @return the content string.
+   */
+  public static void writeProcomputedIndividual(String filename, String content) {
+    try {
+      PrintWriter out = new PrintWriter(filename);
+      out.print(content);
+      out.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
    * Make individual report.
    *
    * @param reportName the output file name
    * @param ir         the individual report
    */
   public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError {
-    String output;
     String xmlFileStr = reportName + ".xml";
     String jsonFileStr = reportName + ".json";
     String htmlFileStr = reportName + ".html";
     String pdfFileStr = reportName + ".pdf";
     ir.setReportPath(reportName);
 
-    output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());
+    writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());
 
     if (config.getFormats().contains("JSON")) {
-      reportJson.xmlToJson(output, jsonFileStr, this);
+      reportJson.xmlToJson(ir.getConformanceCheckerReport(), jsonFileStr, this);
     }
     if (!ir.containsData()) return;
 
@@ -545,10 +563,16 @@ public class ReportGenerator {
       String outputfile = htmlFileStr.replace(name, "html/" + name);
       File outputFile = new File(outputfile);
       outputFile.getParentFile().mkdirs();
-      ReportXml.writeProcomputedIndividual(outputfile, ir.getConformanceCheckerReportHtml());
+      writeProcomputedIndividual(outputfile, ir.getConformanceCheckerReportHtml());
     }
     if (config.getFormats().contains("PDF")) {
-      reportPdf.parseIndividual(pdfFileStr, ir);
+      try {
+        ir.getPDF().save(pdfFileStr);
+      } catch (IOException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
+      } catch (COSVisitorException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
+      }
     }
     if (!config.getFormats().contains("XML")) {
       deleteFileOrFolder(new File(xmlFileStr));
@@ -563,17 +587,23 @@ public class ReportGenerator {
       pdfFileStr = reportName + "_fixed" + ".pdf";
 
       try {
-        output = ReportXml.writeProcomputedIndividual(xmlFileStr, ir2.getConformanceCheckerReport());
+        writeProcomputedIndividual(xmlFileStr, ir2.getConformanceCheckerReport());
         if (config.getFormats().contains("JSON")) {
-          reportJson.xmlToJson(output, jsonFileStr, this);
+          reportJson.xmlToJson(ir2.getConformanceCheckerReport(), jsonFileStr, this);
         }
         if (config.getFormats().contains("HTML")) {
           String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
           String outputfile = htmlFileStr.replace(name, "html/" + name);
-          ReportXml.writeProcomputedIndividual(outputfile, ir2.getConformanceCheckerReportHtml());
+          writeProcomputedIndividual(outputfile, ir2.getConformanceCheckerReportHtml());
         }
         if (config.getFormats().contains("PDF")) {
-          reportPdf.parseIndividual(pdfFileStr, ir2);
+          try {
+            ir2.getPDF().save(pdfFileStr);
+          } catch (IOException e) {
+            context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
+          } catch (COSVisitorException e) {
+            context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
+          }
         }
         if (!config.getFormats().contains("XML")) {
           deleteFileOrFolder(new File(xmlFileStr));

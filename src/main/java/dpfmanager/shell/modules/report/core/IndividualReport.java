@@ -37,6 +37,8 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResul
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,9 +58,6 @@ public class IndividualReport {
 
   /** The file path. */
   private String reportpath;
-
-  /** The ifdNode count. */
-  private int ifdCount;
 
   /** The isimg list. */
   private List<Boolean> listIsimg;
@@ -168,6 +167,8 @@ public class IndividualReport {
 
   private String document;
 
+  private PDDocument pdf;
+
   private boolean containsData;
 
   private String conformanceCheckerReport = null;
@@ -255,7 +256,6 @@ public class IndividualReport {
                           Validator baselineValidation, Validator epValidation, Validator itValidation, Validator it1Validation, Validator it2Validation) {
     filename = name;
     filepath = path;
-    ifdCount = 0;
     listIsimg = new ArrayList<>();
     listHasSubIfd = new ArrayList<>();
     containsData = true;
@@ -354,6 +354,14 @@ public class IndividualReport {
     this.document = document;
   }
 
+  public void setPDF(PDDocument doc) {
+    this.pdf = doc;
+  }
+
+  public PDDocument getPDF() {
+    return pdf;
+  }
+
   /**
    * Gets pdf document.
    *
@@ -389,7 +397,6 @@ public class IndividualReport {
   private void saveIfdNode(IFD ifd) {
     listIsimg.add(ifd.isImage());
     listHasSubIfd.add(ifd.getsubIFD() != null);
-    ifdCount++;
   }
 
   /**

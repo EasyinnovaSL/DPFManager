@@ -32,6 +32,7 @@ import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
+import dpfmanager.conformancechecker.tiff.reporting.PdfReport;
 import dpfmanager.conformancechecker.tiff.reporting.XmlReport;
 import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.app.MainConsoleApp;
@@ -513,11 +514,18 @@ public class TiffConformanceChecker extends ConformanceChecker {
           ir.setPcValidation(getPcValidation(output));
 
           Fixes fixes = config.getFixes();
-          int htmlMode = 0;
-          if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
-          HtmlReport htmlReport = new HtmlReport();
-          output = htmlReport.parseIndividual(ir, htmlMode, id);
-          ir.setConformanceCheckerReportHtml(output);
+          if (config.getFormats().contains("HTML")) {
+            int htmlMode = 0;
+            if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
+            HtmlReport htmlReport = new HtmlReport();
+            output = htmlReport.parseIndividual(ir, htmlMode, id);
+            ir.setConformanceCheckerReportHtml(output);
+          }
+
+          if (config.getFormats().contains("PDF")) {
+            PdfReport pdfReport = new PdfReport();
+            pdfReport.parseIndividual(ir);
+          }
 
           if (fixes != null && fixes.getFixes().size() > 0) {
             TiffDocument td = ir.getTiffModel();
@@ -593,8 +601,16 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ir.setCompareReport(ir2);
             ir2.setCompareReport(ir);
 
-            output = htmlReport.parseIndividual(ir2, 2, id);
-            ir2.setConformanceCheckerReportHtml(output);
+            if (config.getFormats().contains("HTML")) {
+              HtmlReport htmlReport = new HtmlReport();
+              output = htmlReport.parseIndividual(ir2, 2, id);
+              ir2.setConformanceCheckerReportHtml(output);
+            }
+
+            if (config.getFormats().contains("PDF")) {
+              PdfReport pdfReport = new PdfReport();
+              pdfReport.parseIndividual(ir2);
+            }
           }
 
           return ir;

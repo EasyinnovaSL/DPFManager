@@ -31,33 +31,17 @@
 
 package dpfmanager.shell.modules.report.util;
 
-import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
-import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
-import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
 
-import com.easyinnova.tiff.model.IfdTags;
-import com.easyinnova.tiff.model.TagValue;
-import com.easyinnova.tiff.model.types.IFD;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -73,24 +57,6 @@ import javax.xml.transform.stream.StreamResult;
  * The Class ReportXml.
  */
 public class ReportXml extends ReportGeneric {
-  /**
-   * Parse an individual report to XML format.
-   *
-   * @param xmlfile the file name.
-   * @param output      the individual report.
-   * @return the XML string generated.
-   */
-  public static String writeProcomputedIndividual(String xmlfile, String output) {
-    try {
-      PrintWriter out = new PrintWriter(xmlfile);
-      out.print(output);
-      out.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return output;
-  }
-
   /**
    * Parse a global report to XML format.
    *
