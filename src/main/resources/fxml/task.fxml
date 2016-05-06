@@ -15,7 +15,7 @@
 <AnchorPane fx:id="task" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <HBox fx:id="mainHbox" alignment="CENTER" styleClass="task-box" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
         <children>
-            <VBox alignment="CENTER_LEFT">
+            <VBox fx:id="mainVbox" alignment="CENTER_LEFT">
                 <children>
                    <Label fx:id="originLabel" styleClass="label-task" text="Origin">
                       <VBox.margin>

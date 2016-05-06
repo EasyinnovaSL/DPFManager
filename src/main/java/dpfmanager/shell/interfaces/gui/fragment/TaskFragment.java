@@ -19,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import org.apache.logging.log4j.Level;
 import org.jacpfx.api.annotations.Resource;
@@ -60,33 +61,42 @@ public class TaskFragment {
   @FXML
   private HBox mainHbox;
   @FXML
+  private VBox mainVbox;
+  @FXML
   private ProgressIndicator loadingPause;
   @FXML
   private ProgressIndicator loadingCancel;
 
   private Jobs job;
+  private Jobs lastJob;
+
   private int myPid;
   private String type;
   private String path;
   private boolean isPause;
 
-  private boolean done;
-  private boolean pending;
+  private final double opacity = 0.7;
 
   public void init(Jobs newJob, int pid) {
     job = newJob;
     myPid = pid;
-    done = false;
     if (job.getState() == 2) {
       // Done job
       showDoneJob();
     } else if (job.getState() == 1) {
       // Running job
       showRunningJob();
-    } else {
+    } else if (job.getState() == 0){
       // Pending job
       showPendingJob();
+    } else if (job.getState() == 4){
+      // Paused job
+      showPausedJob();
     }
+    NodeUtil.hideNode(loadingCancel);
+    NodeUtil.hideNode(loadingPause);
+
+    // Hide actions if not my job
     if (job.getPid() != myPid){
       NodeUtil.hideNode(cancelImage);
       NodeUtil.hideNode(resumePauseImage);
@@ -103,56 +113,77 @@ public class TaskFragment {
   }
 
   public void updateJob(Jobs updatedJob) {
+    lastJob = job;
     job = updatedJob;
-    if (job.getState() == 2) {
-      // Done
+    if (lastJob.getState() != 2 && job.getState() == 2) {
+      // From other to done
       showDoneJob();
-    } else if (job.getState() == 1) {
-      // Running
+    } else if (lastJob.getState() == 0 && job.getState() != 0) {
+      // From pending to other
+      NodeUtil.showNode(cancelImage);
+      NodeUtil.showNode(resumePauseImage);
+    }
+
+    // Paused opacity
+    if (lastJob.getState() != 4 && job.getState() == 4){
+      // From other to paused
+      timeLabel.setText("Paused");
+      mainVbox.setOpacity(opacity);
+      progress.setProgress(job.getProgress());
+    } else if (lastJob.getState() == 4 && job.getState() != 4){
+      // From paused to other
+      mainVbox.setOpacity(1.0);
+    }
+
+    // Default running job
+    if (job.getState() == 1) {
       timeLabel.setText(getReadableData(System.currentTimeMillis() - job.getInit()));
       progress.setProgress(job.getProgress());
-      if (pending){
-        hideLoadingCancel();
-        hideLoadingPause();
-        pending = false;
-      }
+    }
+
+    // Hide actions if not my job
+    if (job.getPid() != myPid){
+      NodeUtil.hideNode(cancelImage);
+      NodeUtil.hideNode(resumePauseImage);
     }
   }
 
   private void showDoneJob(){
-    if (!done) {
-      getReportsInfo();
-      NodeUtil.hideNode(resumePauseImage);
-      NodeUtil.hideNode(cancelImage);
-      if (!type.isEmpty()) {
-        taskImage.setImage(new Image("images/format_" + type + ".png"));
-        timeLabel.setText(getReadableData(job.getFinish() - job.getInit()));
-        NodeUtil.showNode(taskImage);
-      } else {
-        NodeUtil.hideNode(taskImage);
-      }
-      progress.setProgress(job.getProgress());
-      progress.getStyleClass().remove("blue-bar");
-      progress.getStyleClass().add("green-bar");
-      done = true;
+    getReportsInfo();
+    NodeUtil.hideNode(resumePauseImage);
+    NodeUtil.hideNode(cancelImage);
+    if (!type.isEmpty()) {
+      taskImage.setImage(new Image("images/format_" + type + ".png"));
+      timeLabel.setText(getReadableData(job.getFinish() - job.getInit()));
+      NodeUtil.showNode(taskImage);
+    } else {
+      NodeUtil.hideNode(taskImage);
     }
+    progress.setProgress(job.getProgress());
+    progress.getStyleClass().remove("blue-bar");
+    progress.getStyleClass().add("green-bar");
   }
 
   private void showRunningJob(){
-    hideLoadingPause();
-    hideLoadingCancel();
+    NodeUtil.showNode(cancelImage);
+    NodeUtil.showNode(resumePauseImage);
     NodeUtil.hideNode(taskImage);
     timeLabel.setText("0:00");
   }
 
   private void showPendingJob(){
-    pending = true;
     timeLabel.setText("Pending");
-    NodeUtil.hideNode(loadingCancel);
-    NodeUtil.hideNode(loadingPause);
     NodeUtil.hideNode(cancelImage);
     NodeUtil.hideNode(resumePauseImage);
     NodeUtil.hideNode(taskImage);
+  }
+
+  private void showPausedJob(){
+    hideLoadingPause();
+    hideLoadingCancel();
+    NodeUtil.hideNode(taskImage);
+    mainVbox.setOpacity(opacity);
+    timeLabel.setText("Paused");
   }
 
   private String getReadableOrigin(String origin){
@@ -215,10 +246,12 @@ public class TaskFragment {
     if (isPause) {
       // Pause check
       showLoadingPause();
+      mainVbox.setOpacity(opacity);
       resumePauseImage.setImage(new Image("images/resume.png"));
       context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.PAUSE, job.getId(), true));
     } else {
       // Resume check
+      mainVbox.setOpacity(1.0);
       resumePauseImage.setImage(new Image("images/pause.png"));
       context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.RESUME, job.getId(), true));
     }
@@ -236,7 +269,7 @@ public class TaskFragment {
   }
 
   public void finishPause(){
-    if (!loadingCancel.isVisible()){
+    if (!loadingCancel.isVisible()) {
       hideLoadingPause();
     } else {
       NodeUtil.hideNode(loadingPause);
@@ -247,17 +280,17 @@ public class TaskFragment {
   /**
    * Show / Hide loadings
    */
-  private void showLoadingPause(){
+  private void showLoadingPause() {
     NodeUtil.showNode(loadingPause);
     NodeUtil.hideNode(resumePauseImage);
   }
 
-  private void hideLoadingPause(){
+  private void hideLoadingPause() {
     NodeUtil.hideNode(loadingPause);
     NodeUtil.showNode(resumePauseImage);
   }
 
-  private void showLoadingCancel(){
+  private void showLoadingCancel() {
     NodeUtil.showNode(loadingCancel);
     NodeUtil.hideNode(cancelImage);
   }
@@ -265,10 +298,6 @@ public class TaskFragment {
   private void hideLoadingCancel(){
     NodeUtil.hideNode(loadingCancel);
     NodeUtil.showNode(cancelImage);
-  }
-
-  public boolean isFinished(){
-    return job != null && job.getState() == 2;
   }
 
   private boolean exists(String path) {

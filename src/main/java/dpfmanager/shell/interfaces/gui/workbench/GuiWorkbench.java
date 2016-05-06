@@ -17,6 +17,7 @@ package dpfmanager.shell.interfaces.gui.workbench;
 
 import dpfmanager.shell.application.launcher.ui.GuiLauncher;
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import javafx.application.Application.Parameters;
@@ -51,20 +52,13 @@ public class GuiWorkbench implements FXWorkbench {
 
   static Map<String, String> testValues;
 
-  // Main sizes
-  public static int widthWindow = 970;
-  public static int heightWindow = 950;
-
-  public static int minWidth = 400;
-  public static int mainWidth = 970;
-
   @Override
   public void handleInitialLayout(Message<Event, Object> action, WorkbenchLayout<Node> layout, Stage stage) {
     parameters = GuiLauncher.getMyParameters();
     testValues = new HashMap<>();
     thestage = stage;
-    thestage.setMinWidth(minWidth);
-    layout.setWorkbenchXYSize(widthWindow, heightWindow);
+    thestage.setMinWidth(DpFManagerConstants.MIN_WIDTH);
+    layout.setWorkbenchXYSize(DpFManagerConstants.WIDTH, DpFManagerConstants.HEIGHT);
     if (parameters.getRaw().contains("-test")) {
       layout.setStyle(StageStyle.UNDECORATED);
     }

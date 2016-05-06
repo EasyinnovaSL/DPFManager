@@ -152,6 +152,11 @@ public class DpfExecutor extends ThreadPoolExecutor {
     // Save into pending tasks
     pending.put(uuid, pauses);
 
+    // Check if no tasks were running
+    if (!runningThreads.containsKey(uuid) || runningThreads.get(uuid) == 0){
+      context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.PAUSE, uuid));
+    }
+
     // Unblock execution
     releaseSemaphore();
   }

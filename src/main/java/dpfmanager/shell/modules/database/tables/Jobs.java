@@ -26,28 +26,37 @@ public class Jobs {
   public static String ORIGIN = "origin";
   public static String PID = "pid";
   public static String OUTPUT = "output";
+  public static String TIME = "time";
+  public static String LAST_UPDATE = "lastUpdate";
 
   // Indexs
   public static String INDEX_ID = "index_id";
   public static String INDEX_PID = "index_pid";
 
   // Create SQL query
-  public static String createSql = "CREATE TABLE IF NOT EXISTS "+TABLE+" (" +
-      "    "+ID+" INTEGER NOT NULL PRIMARY KEY," +
-      "    "+STATE+" INTEGER," +
-      "    "+TOTAL_FILES+" INTEGER," +
-      "    "+PROCESSED_FILES+" INTEGER," +
-      "    "+INIT+" DATE," +
-      "    "+FINISH+" DATE," +
-      "    "+INPUT+" VARCHAR(255)," +
-      "    "+ORIGIN+" VARCHAR(3)," +
-      "    "+PID+" INTEGER NOT NULL," +
-      "    "+OUTPUT+" VARCHAR(255)" +
+  public static String createSql = "CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
+      "    " + ID + " INTEGER NOT NULL PRIMARY KEY," +
+      "    " + STATE + " INTEGER," +
+      "    " + TOTAL_FILES + " INTEGER," +
+      "    " + PROCESSED_FILES + " INTEGER," +
+      "    " + INIT + " DATE," +
+      "    " + FINISH + " DATE," +
+      "    " + INPUT + " VARCHAR(255)," +
+      "    " + ORIGIN + " VARCHAR(3)," +
+      "    " + PID + " INTEGER NOT NULL," +
+      "    " + OUTPUT + " VARCHAR(255)," +
+      "    " + TIME + " DATE," +
+      "    " + LAST_UPDATE + " DATE" +
       ");";
 
   // Index SQl querys
-  public static String indexIdSql = "CREATE INDEX IF NOT EXISTS "+INDEX_ID+" ON "+TABLE+"("+ID+");";
-  public static String indexPidSql = "CREATE INDEX IF NOT EXISTS "+INDEX_PID+" ON "+TABLE+"("+PID+");";
+  public static String indexIdSql = "CREATE INDEX IF NOT EXISTS " + INDEX_ID + " ON " + TABLE + "(" + ID + ");";
+  public static String indexPidSql = "CREATE INDEX IF NOT EXISTS " + INDEX_PID + " ON " + TABLE + "(" + PID + ");";
+
+  // Delete SQL query
+  public static String deleteSql = "DROP TABLE IF EXISTS " + TABLE + ";";
+  public static String delIndexIdSql = "DROP INDEX IF EXISTS " + INDEX_ID + ";";
+  public static String delIndexPidSql = "DROP INDEX IF EXISTS " + INDEX_PID + ";";
 
 
   /**
@@ -64,21 +73,49 @@ public class Jobs {
   private String origin;
   private Integer pid;
   private String output;
+  private Long time;
+  private Long lastUpdate;
 
-  public Jobs(){
+  public Jobs() {
   }
 
-  public void parseCursor(ISqlJetCursor cursor) throws SqlJetException {
-    id = cursor.getInteger(ID);
-    state = (int) cursor.getInteger(STATE);
-    totalFiles = (int) cursor.getInteger(TOTAL_FILES);
-    processedFiles = (int) cursor.getInteger(PROCESSED_FILES);
-    init = cursor.getInteger(INIT);
-    finish = cursor.getInteger(FINISH);
-    input = cursor.getString(INPUT);
-    origin = cursor.getString(ORIGIN);
-    pid = (int) cursor.getInteger(PID);
-    output = cursor.getString(OUTPUT);
+  public void parseCursor(ISqlJetCursor cursor) {
+    id = parseLong(cursor, ID);
+    state = parseInteger(cursor, STATE);
+    totalFiles = parseInteger(cursor, TOTAL_FILES);
+    processedFiles = parseInteger(cursor, PROCESSED_FILES);
+    init = parseLong(cursor, INIT);
+    finish = parseLong(cursor, FINISH);
+    input = parseString(cursor, INPUT);
+    origin = parseString(cursor, ORIGIN);
+    pid = parseInteger(cursor, PID);
+    output = parseString(cursor, OUTPUT);
+    time = parseLong(cursor, TIME);
+    lastUpdate = parseLong(cursor, LAST_UPDATE);
+  }
+
+  private String parseString(ISqlJetCursor cursor, String name) {
+    try {
+      return cursor.getString(name);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  private Long parseLong(ISqlJetCursor cursor, String name) {
+    try {
+      return cursor.getInteger(name);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  private Integer parseInteger(ISqlJetCursor cursor, String name) {
+    try {
+      return (int) cursor.getInteger(name);
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   /**
@@ -101,13 +138,13 @@ public class Jobs {
     return processedFiles;
   }
 
-  public double getProgress(){
-    if (state == 0){
+  public double getProgress() {
+    if (state == 0) {
       return -1.0;
-    } else if (state == 2){
+    } else if (state == 2) {
       return 1.0;
     } else {
-      return (processedFiles * 1.0) / (totalFiles+1.0);
+      return (processedFiles * 1.0) / (totalFiles + 1.0);
     }
   }
 
@@ -133,6 +170,14 @@ public class Jobs {
 
   public String getOutput() {
     return output;
+  }
+
+  public Long getTime() {
+    return time;
+  }
+
+  public Long getLastUpdate() {
+    return lastUpdate;
   }
 
   /**
@@ -177,5 +222,13 @@ public class Jobs {
 
   public void setOutput(String output) {
     this.output = output;
+  }
+
+  public void setTime(Long time) {
+    this.time = time;
+  }
+
+  public void setLastUpdate(Long lastUpdate) {
+    this.lastUpdate = lastUpdate;
   }
 }

@@ -169,7 +169,9 @@ public class BottomFragment {
 
   public void updateTask(Jobs job){
     ManagedFragmentHandler<TaskFragment> taskFragment = taskFragments.get(job.getId());
-    if (!taskFragment.getController().isFinished()){
+    if (job.getState() == 3){
+      removeTask(job.getId());
+    } else {
       taskFragment.getController().updateJob(job);
     }
   }
@@ -186,8 +188,10 @@ public class BottomFragment {
   }
 
   private void removeTask(Long uuid){
-    taskVBox.getChildren().remove(taskFragments.get(uuid).getFragmentNode());
-    taskFragments.remove(uuid);
+    if (taskFragments.containsKey(uuid)) {
+      taskVBox.getChildren().remove(taskFragments.get(uuid).getFragmentNode());
+      taskFragments.remove(uuid);
+    }
   }
 
   public boolean containsJob(long uuid){

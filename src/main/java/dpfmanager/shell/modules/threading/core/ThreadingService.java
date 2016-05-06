@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.threading.core;
 
+import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
@@ -14,6 +15,8 @@ import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
+import dpfmanager.shell.modules.timer.messages.TimerMessage;
+import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
@@ -37,11 +40,6 @@ import javax.annotation.PreDestroy;
 @Service(BasicConfig.SERVICE_THREADING)
 @Scope("singleton")
 public class ThreadingService extends DpfService {
-
-  /**
-   * The maximum number of simultaneous checks
-   */
-  private final int max_checks = 3;
 
   /**
    * The main executor service
@@ -90,14 +88,17 @@ public class ThreadingService extends DpfService {
   }
 
   public void processThreadMessage(ThreadsMessage tm) {
-    if (tm.isPause()) {
+    if (tm.isPause() && tm.isRequest()) {
       myExecutor.pause(tm.getUuid());
     } else if (tm.isResume()) {
+      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.RESUME, tm.getUuid()));
       myExecutor.resume(tm.getUuid());
     } else if (tm.isCancel() && tm.isRequest()) {
       myExecutor.cancel(tm.getUuid());
     } else if (tm.isCancel() && !tm.isRequest()){
       cancelFinish(tm.getUuid());
+    } else if (tm.isPause() && !tm.isRequest()){
+      pauseFinish(tm.getUuid());
     }
   }
 
@@ -112,13 +113,20 @@ public class ThreadingService extends DpfService {
     checks.remove(uuid);
   }
 
+  public void pauseFinish(Long uuid) {
+    // Update db
+    getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.PAUSE, uuid));
+    // Refresh tasks
+    context.send(BasicConfig.MODULE_TIMER, new TimerMessage(TimerMessage.Type.RUN, JobsStatusTask.class));
+  }
+
   public void handleGlobalStatus(GlobalStatusMessage gm, boolean silence) {
     if (gm.isNew()) {
       // New file check
       Long uuid = System.currentTimeMillis();
       FileCheck fc = new FileCheck(uuid);
       boolean pending = false;
-      if (runningChecks() >= max_checks) {
+      if (runningChecks() >= DpFManagerConstants.MAX_CHECKS) {
         // Add pending check
         fc.setInitialTask(gm.getRunnable());
         pendingChecks.add(fc);
@@ -183,7 +191,7 @@ public class ThreadingService extends DpfService {
   private void startPendingChecks() {
     if (!pendingChecks.isEmpty()) {
       FileCheck fc = pendingChecks.poll();
-      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.RESUME, fc.getUuid()));
+      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.START, fc.getUuid()));
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(fc.getUuid(), fc.getInitialTask()));
     }
   }

@@ -88,7 +88,7 @@ public class PaneComponent extends DpfSimpleView {
 
   private void handleJobs(CheckTaskMessage ctm){
     for (Jobs job : ctm.getJobs()){
-      if (!fragment.getController().containsJob(job.getId())){
+      if (!fragment.getController().containsJob(job.getId()) && job.getState() != 3){
         // Init new fragment
         ManagedFragmentHandler<TaskFragment> taskFragment = context.getManagedFragmentHandler(TaskFragment.class);
         fragment.getController().addTask(taskFragment, job, ctm.getPid());

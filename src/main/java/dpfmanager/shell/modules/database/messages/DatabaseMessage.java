@@ -8,7 +8,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 public class DatabaseMessage extends DpfMessage {
 
   public enum Type {
-    NEW, INIT, UPDATE, FINISH, GET, RESUME, CANCEL
+    NEW, INIT, UPDATE, FINISH, GET, RESUME, CANCEL, PAUSE, START
   }
 
   private Type type;
@@ -35,7 +35,7 @@ public class DatabaseMessage extends DpfMessage {
   }
 
   public DatabaseMessage(Type type, Long uuid) {
-    // Update && Finish && Resume && Cancel
+    // Update && Finish && Resume && Cancel && Pause && Start
     this.type = type;
     this.uuid = uuid;
   }
@@ -71,6 +71,14 @@ public class DatabaseMessage extends DpfMessage {
 
   public boolean isCancel(){
     return type.equals(Type.CANCEL);
+  }
+
+  public boolean isPause(){
+    return type.equals(Type.PAUSE);
+  }
+
+  public boolean isStart(){
+    return type.equals(Type.START);
   }
 
   public Long getUuid() {

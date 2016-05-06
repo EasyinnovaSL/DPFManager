@@ -11,6 +11,8 @@ import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.timer.messages.TimerMessage;
+import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
