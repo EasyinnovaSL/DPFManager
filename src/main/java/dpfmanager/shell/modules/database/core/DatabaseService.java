@@ -5,6 +5,7 @@ import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
@@ -39,7 +40,9 @@ public class DatabaseService extends DpfService {
     connection = new DatabaseConnection(context);
     connection.init();
     pid = connection.getProgramPid();
-    cleanDatabase();
+    if (!GuiWorkbench.isTestMode()) {
+      cleanDatabase();
+    }
   }
 
   private void cleanDatabase(){

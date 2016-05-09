@@ -113,4 +113,8 @@ public class GuiWorkbench implements FXWorkbench {
     return parameters.getRaw().contains("-test");
   }
 
+  public static Parameters getAppParams() {
+    return parameters;
+  }
+
 }

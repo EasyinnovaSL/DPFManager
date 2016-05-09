@@ -603,6 +603,28 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 
+  /**
+   * Wait for cancel check
+   */
+  public void waitForCancelChecks(){
+    sleep(1000);
+    int timeout = 0;
+
+    // Wait task appear
+    boolean finish = false;
+    while (!finish && timeout < maxTimeout) {
+      reloadScene();
+      VBox vbox = (VBox) scene.lookup("#taskVBox");
+      if (vbox != null && vbox.getChildren().size() > 0) {
+        timeout++;
+        sleep(1000);
+      }
+      finish = vbox.getChildren().size() == 0;
+    }
+
+    Assert.assertNotEquals("Wait for cancel checks reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
+  }
+
   private int getMousePositionY(){
     Point point = MouseInfo.getPointerInfo().getLocation();
     return (int) point.getY();

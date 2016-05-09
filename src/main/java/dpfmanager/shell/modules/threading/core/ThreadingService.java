@@ -66,11 +66,6 @@ public class ThreadingService extends DpfService {
     checks = new HashMap<>();
     pendingChecks = new PriorityQueue<>();
     needReload = true;
-    cores = Runtime.getRuntime().availableProcessors() - 1;
-    if (cores < 1) {
-      cores = 1;
-    }
-    myExecutor = new DpfExecutor(cores);
   }
 
   @PreDestroy
@@ -81,8 +76,25 @@ public class ThreadingService extends DpfService {
 
   @Override
   protected void handleContext(DpfContext context) {
+    cores = Runtime.getRuntime().availableProcessors() - 1;
+    if (cores < 1) {
+      cores = 1;
+    }
+
+    // Check for the -t option
+    for (String param : GuiWorkbench.getAppParams().getRaw()){
+      if (param.startsWith("-t") && param.length() == 3){
+        String number = param.substring(2);
+        int threads = Integer.valueOf(number);
+        if (threads < cores){
+          cores = threads;
+        }
+        break;
+      }
+    }
+
+    myExecutor = new DpfExecutor(cores);
     myExecutor.handleContext(context);
-//    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Set maximum threads to " + cores));
   }
 
   public void run(DpfRunnable runnable, Long uuid) {
