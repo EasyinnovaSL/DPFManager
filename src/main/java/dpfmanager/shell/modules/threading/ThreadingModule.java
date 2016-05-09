@@ -4,6 +4,7 @@ import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import dpfmanager.shell.modules.threading.core.ThreadingService;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
@@ -47,6 +48,8 @@ public class ThreadingModule extends DpfModule {
     } else if (dpfMessage.isTypeOf(ThreadsMessage.class)){
       ThreadsMessage tm = dpfMessage.getTypedMessage(ThreadsMessage.class);
       service.processThreadMessage(tm);
+    } else if (dpfMessage.isTypeOf(CloseMessage.class)){
+      service.closeRequested();
     }
   }
 

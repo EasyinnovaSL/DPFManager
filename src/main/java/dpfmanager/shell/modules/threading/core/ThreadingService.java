@@ -6,7 +6,10 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.interfaces.gui.workbench.DpfCloseEvent;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.database.messages.DatabaseMessage;
+import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
@@ -17,6 +20,7 @@ import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 import dpfmanager.shell.modules.timer.messages.TimerMessage;
 import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
+import javafx.stage.WindowEvent;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
@@ -100,6 +104,10 @@ public class ThreadingService extends DpfService {
     } else if (tm.isPause() && !tm.isRequest()){
       pauseFinish(tm.getUuid());
     }
+  }
+
+  public void closeRequested(){
+    context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(!checks.isEmpty()));
   }
 
   public void cancelFinish(Long uuid) {

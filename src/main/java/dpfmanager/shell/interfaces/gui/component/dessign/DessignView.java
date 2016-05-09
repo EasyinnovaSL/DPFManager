@@ -9,8 +9,10 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.workbench.DpfCloseEvent;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -25,6 +27,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import javafx.stage.WindowEvent;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
@@ -209,7 +212,8 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @FXML
   protected void editButtonClicked(ActionEvent event) throws Exception {
-    getController().performEditConfigAction();
+//    getController().performEditConfigAction();
+    context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(false));
   }
 
   @FXML

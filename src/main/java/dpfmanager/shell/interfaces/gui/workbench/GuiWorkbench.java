@@ -20,16 +20,21 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import javafx.application.Application.Parameters;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
+import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.workbench.Workbench;
 import org.jacpfx.api.componentLayout.WorkbenchLayout;
 import org.jacpfx.api.message.Message;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
+import org.jacpfx.rcp.context.Context;
 import org.jacpfx.rcp.workbench.FXWorkbench;
 
 import java.util.HashMap;
@@ -52,6 +57,9 @@ public class GuiWorkbench implements FXWorkbench {
 
   static Map<String, String> testValues;
 
+  @Resource
+  private Context context;
+
   @Override
   public void handleInitialLayout(Message<Event, Object> action, WorkbenchLayout<Node> layout, Stage stage) {
     parameters = GuiLauncher.getMyParameters();
@@ -61,17 +69,31 @@ public class GuiWorkbench implements FXWorkbench {
     layout.setWorkbenchXYSize(DpFManagerConstants.WIDTH, DpFManagerConstants.HEIGHT);
     if (parameters.getRaw().contains("-test")) {
       layout.setStyle(StageStyle.UNDECORATED);
-    }
-    else{
+    } else {
       layout.setStyle(StageStyle.DECORATED);
     }
+
+    EventHandler<WindowEvent> closeHandler = thestage.getOnCloseRequest();
+
+    thestage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+      @Override
+      public void handle(WindowEvent event) {
+        if (!(event instanceof DpfCloseEvent)) {
+          context.send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_THREADING, new CloseMessage(true));
+          event.consume();
+        } else {
+          closeHandler.handle(event);
+        }
+      }
+    });
+
   }
 
   @Override
   public void postHandle(final FXComponentLayout layout) {
   }
 
-  public static Stage getMyStage(){
+  public static Stage getMyStage() {
     return thestage;
   }
 
@@ -83,11 +105,12 @@ public class GuiWorkbench implements FXWorkbench {
     return testValues.get(key);
   }
 
-  public static boolean getFirstTime(){
+  public static boolean getFirstTime() {
     return !parameters.getRaw().contains("-test") && DPFManagerProperties.getFirstTime();
   }
 
   public static boolean isTestMode() {
     return parameters.getRaw().contains("-test");
   }
+
 }

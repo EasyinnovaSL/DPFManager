@@ -32,6 +32,17 @@ public class AlertsManager {
     return alert;
   }
 
+  public static Alert createAskAlert(){
+    Alert alert = new Alert(Alert.AlertType.WARNING);
+    alert.setTitle("Close requested");
+    alert.setHeaderText("There are running file checks");
+    alert.setContentText("Are you sure you want to close and cancel them?");
+    ButtonType buttonNo = new ButtonType(NO, ButtonData.NO);
+    ButtonType buttonYes = new ButtonType(YES, ButtonData.YES);
+    alert.getButtonTypes().setAll(buttonNo, buttonYes);
+    return alert;
+  }
+
   public static Alert createConfirmationAlert(AlertMessage am){
     Alert alert = new Alert(parseType(am.getType()));
     alert.setTitle(am.getTitle());
