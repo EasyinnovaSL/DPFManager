@@ -81,15 +81,17 @@ public class ThreadingService extends DpfService {
       cores = 1;
     }
 
-    // Check for the -t option
-    for (String param : GuiWorkbench.getAppParams().getRaw()){
-      if (param.startsWith("-t") && param.length() == 3){
-        String number = param.substring(2);
-        int threads = Integer.valueOf(number);
-        if (threads < cores){
-          cores = threads;
+    // Check for the -t option for tests
+    if (GuiWorkbench.getAppParams() != null) {
+      for (String param : GuiWorkbench.getAppParams().getRaw()) {
+        if (param.startsWith("-t") && param.length() == 3) {
+          String number = param.substring(2);
+          int threads = Integer.valueOf(number);
+          if (threads < cores) {
+            cores = threads;
+          }
+          break;
         }
-        break;
       }
     }
 

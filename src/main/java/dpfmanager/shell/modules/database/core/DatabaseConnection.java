@@ -35,6 +35,7 @@ public class DatabaseConnection {
   public DatabaseConnection(DpfContext c) {
     context = c;
     initTime = System.currentTimeMillis();
+    lastUpdate = 0L;
   }
 
   /**

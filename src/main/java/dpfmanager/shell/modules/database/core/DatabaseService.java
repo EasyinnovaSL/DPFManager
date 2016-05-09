@@ -40,9 +40,7 @@ public class DatabaseService extends DpfService {
     connection = new DatabaseConnection(context);
     connection.init();
     pid = connection.getProgramPid();
-    if (!GuiWorkbench.isTestMode()) {
-      cleanDatabase();
-    }
+    cleanDatabase();
   }
 
   private void cleanDatabase(){

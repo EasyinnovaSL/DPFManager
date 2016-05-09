@@ -75,7 +75,7 @@ public class DpfExecutor extends ThreadPoolExecutor {
 
 
   @Override
-  protected void afterExecute(Runnable r, Throwable t) {
+  synchronized protected void afterExecute(Runnable r, Throwable t) {
     // Block execution
     acquireSemaphore();
     DpfRunnable run = (DpfRunnable) r;
@@ -179,15 +179,11 @@ public class DpfExecutor extends ThreadPoolExecutor {
   /**
    * Semaphore functions
    */
-  private void acquireSemaphore(){
-    try {
-      semaphore.acquire();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+  synchronized private void acquireSemaphore(){
+    semaphore.acquireUninterruptibly();
   }
 
-  private void releaseSemaphore(){
+  synchronized private void releaseSemaphore(){
     semaphore.release();
   }
 
