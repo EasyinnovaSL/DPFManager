@@ -9,9 +9,12 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.workbench.DpfCloseEvent;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -24,6 +27,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import javafx.stage.WindowEvent;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
@@ -60,6 +64,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   private VBox vBoxConfig;
   private ToggleGroup group;
+  private RadioButton selectedButton;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -68,12 +73,6 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
-    if (message != null && message.isTypeOf(UiMessage.class)) {
-      UiMessage uiMessage = message.getTypedMessage(UiMessage.class);
-      if (uiMessage.isReload()) {
-        addConfigFiles();
-      }
-    }
   }
 
   @Override
@@ -83,6 +82,11 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       RadioButton radio = getSelectedConfig();
       if (radio != null && am.hasResult() && am.getResult()) {
         getController().performDeleteConfigAction(radio.getText());
+      }
+    } else if (message != null && message.isTypeOf(UiMessage.class)) {
+      UiMessage uiMessage = message.getTypedMessage(UiMessage.class);
+      if (uiMessage.isReload()) {
+        addConfigFiles();
       }
     }
     return null;
@@ -110,12 +114,10 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       comboChoice.setValue("File");
     }
     NodeUtil.hideNode(recursiveCheck);
-
-    // Add Config files
-    addConfigFiles();
   }
 
   private void addConfigFiles() {
+    selectedButton = null;
     group = new ToggleGroup();
     vBoxConfig = new VBox();
     vBoxConfig.setId("vBoxConfig");
@@ -138,13 +140,18 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     radio.setId("radioConfig" + vBoxConfig.getChildren().size());
     radio.setText(text);
     radio.setToggleGroup(group);
+    radio.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        selectedButton = radio;
+      }
+    });
     vBoxConfig.getChildren().add(radio);
   }
 
   public void deleteSelectedConfig() {
-    Toggle tog = group.getSelectedToggle();
-    RadioButton rad = (RadioButton) tog;
-    group.getToggles().remove(tog);
+    RadioButton rad = getSelectedConfig();
+    group.getToggles().remove(rad);
     vBoxConfig.getChildren().remove(rad);
   }
 
@@ -224,13 +231,8 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   public RadioButton getSelectedConfig() {
     RadioButton radio = (RadioButton) group.getSelectedToggle();
     if (radio == null){
-      // Search for it
-      for (Node child : vBoxConfig.getChildren()){
-        RadioButton button = (RadioButton) child;
-        if (button.isSelected()){
-          return button;
-        }
-      }
+      System.out.println("Radio null");
+      return selectedButton;
     }
     return radio;
   }
@@ -243,8 +245,8 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     return inputText;
   }
 
-  public int getRecursive(){
-    if (recursiveCheck.isSelected()){
+  public int getRecursive() {
+    if (recursiveCheck.isSelected()) {
       return 100;
     }
     return 1;

@@ -77,20 +77,28 @@ public class PaneComponent extends DpfSimpleView {
   public Node handleMessageOnFX(DpfMessage message) {
     if (message != null && message.isTypeOf(CheckTaskMessage.class)){
       CheckTaskMessage ctm = message.getTypedMessage(CheckTaskMessage.class);
-      for (Jobs job : ctm.getJobs()){
-        if (!fragment.getController().containsJob(job.getId())){
-          // Init new fragment
-          ManagedFragmentHandler<TaskFragment> taskFragment = context.getManagedFragmentHandler(TaskFragment.class);
-          fragment.getController().addTask(taskFragment, job);
-        } else {
-          // Update existing one
-          fragment.getController().updateTask(job);
-        }
+      if (!ctm.isFinishActions()){
+        handleJobs(ctm);
+      } else {
+        fragment.getController().finishActions(ctm);
       }
-      // Notify finish task
-      context.send(BasicConfig.MODULE_TIMER, new TimerMessage(TimerMessage.Type.FINISH, JobsStatusTask.class));
     }
     return fragment.getFragmentNode();
+  }
+
+  private void handleJobs(CheckTaskMessage ctm){
+    for (Jobs job : ctm.getJobs()){
+      if (!fragment.getController().containsJob(job.getId()) && job.getState() != 3){
+        // Init new fragment
+        ManagedFragmentHandler<TaskFragment> taskFragment = context.getManagedFragmentHandler(TaskFragment.class);
+        fragment.getController().addTask(taskFragment, job, ctm.getPid());
+      } else {
+        // Update existing one
+        fragment.getController().updateTask(job);
+      }
+    }
+    // Notify finish task
+    context.send(BasicConfig.MODULE_TIMER, new TimerMessage(TimerMessage.Type.FINISH, JobsStatusTask.class));
   }
 
   private void showInPrespective(){

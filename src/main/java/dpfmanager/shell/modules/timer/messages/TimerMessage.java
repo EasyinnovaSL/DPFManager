@@ -8,14 +8,14 @@ import dpfmanager.shell.core.messages.DpfMessage;
 public class TimerMessage extends DpfMessage {
 
   public enum Type {
-    PLAY, STOP, FINISH
+    PLAY, STOP, FINISH, RUN
   }
 
   private Type type;
   private Class clazz;
 
   public TimerMessage(Type type, Class clazz) {
-    // Play & Stop & Finish
+    // Play & Stop & Finish & Run
     this.type = type;
     this.clazz = clazz;
   }
@@ -30,6 +30,10 @@ public class TimerMessage extends DpfMessage {
 
   public boolean isFinish(){
     return type.equals(Type.FINISH);
+  }
+
+  public boolean isRun(){
+    return type.equals(Type.RUN);
   }
 
   public Class getClazz() {

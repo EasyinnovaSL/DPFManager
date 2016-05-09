@@ -42,6 +42,16 @@ public class DPFManagerProperties {
     setPropertiesValue("feedback", strVal);
   }
 
+  public static int getDatabaseVersion() {
+    String strVal = getPropertiesValue("database", "0");
+    return Integer.parseInt(strVal);
+  }
+
+  public static void setDatabaseVersion(int value) {
+    String strVal = String.valueOf(value);
+    setPropertiesValue("database", strVal);
+  }
+
   public static boolean getFirstTime() {
     String strVal = getPropertiesValue("firstTime", "true");
     return Boolean.valueOf(strVal);

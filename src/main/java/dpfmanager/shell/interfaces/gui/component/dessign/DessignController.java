@@ -1,7 +1,5 @@
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
-import dpfmanager.conformancechecker.ConformanceChecker;
-import dpfmanager.conformancechecker.DpfLogger;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
@@ -13,9 +11,8 @@ import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
-import dpfmanager.shell.modules.threading.core.FileCheck;
-import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
+import dpfmanager.shell.modules.timer.messages.TimerMessage;
+import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -24,7 +21,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +33,7 @@ import java.util.Optional;
 public class DessignController extends DpfController<DessignModel, DessignView> {
 
   public void mainCheckFiles() {
-    if (getView().getInputText().getText().equals("Select a file")) {
+    if (getView().getInputText().getText().equals("Select a file") || getView().getInputText().getText().equals("Select a folder")) {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a file"));
       return;
     }
@@ -136,7 +132,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
 
       Optional<ButtonType> result = alert.showAndWait();
-      if (result.get() == buttonTypeYes){
+      if (result.get() == buttonTypeYes) {
         // Copy the file
         boolean needAdd = true;
         boolean error = false;
@@ -154,7 +150,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           // Add source file
           getView().addConfigFile(file.getAbsolutePath());
           getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, "Error copying config file."));
-        } else if (needAdd){
+        } else if (needAdd) {
           getView().addConfigFile(configFile.getName());
         }
       } else {

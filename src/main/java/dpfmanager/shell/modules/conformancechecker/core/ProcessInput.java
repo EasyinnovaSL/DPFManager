@@ -9,6 +9,9 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
+import com.easyinnova.tiff.model.ReadIccConfigIOException;
+import com.easyinnova.tiff.model.ReadTagsIOException;
+
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -142,9 +145,10 @@ public class ProcessInput {
           if (ir != null) {
             outOfmemory = true;
           }
-        } catch (Exception ex) {
+        } catch (ReadTagsIOException e) {
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
-          ex.printStackTrace();
+        } catch (ReadIccConfigIOException e) {
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
         }
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "File " + filename + " is not an accepted format"));

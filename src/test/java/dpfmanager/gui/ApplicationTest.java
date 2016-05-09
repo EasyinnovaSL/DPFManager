@@ -30,6 +30,8 @@ import org.testfx.toolkit.ApplicationFixture;
 
 import java.awt.*;
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -601,6 +603,28 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertNotEquals("Check files reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 
+  /**
+   * Wait for cancel check
+   */
+  public void waitForCancelChecks(){
+    sleep(1000);
+    int timeout = 0;
+
+    // Wait task appear
+    boolean finish = false;
+    while (!finish && timeout < maxTimeout) {
+      reloadScene();
+      VBox vbox = (VBox) scene.lookup("#taskVBox");
+      if (vbox != null && vbox.getChildren().size() > 0) {
+        timeout++;
+        sleep(1000);
+      }
+      finish = vbox.getChildren().size() == 0;
+    }
+
+    Assert.assertNotEquals("Wait for cancel checks reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
+  }
+
   private int getMousePositionY(){
     Point point = MouseInfo.getPointerInfo().getLocation();
     return (int) point.getY();
@@ -627,11 +651,24 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
     for (File date : dates){
       if (date.isDirectory()){
-        File[] ids = date.listFiles();
-        nReports = nReports + ids.length;
+        for (File id : date.listFiles()){
+          if (containsSummary(id.listFiles())){
+            nReports++;
+          }
+        }
       }
     }
     return nReports;
+  }
+
+  private boolean containsSummary(File[] files){
+    List<String> summarys = Arrays.asList("report.html","report.pdf","summary.json","summary.xml");
+    for (File file : files){
+      if (summarys.contains(file.getName())){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
