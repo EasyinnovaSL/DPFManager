@@ -212,8 +212,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @FXML
   protected void editButtonClicked(ActionEvent event) throws Exception {
-//    getController().performEditConfigAction();
-    context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(false));
+    getController().performEditConfigAction();
   }
 
   @FXML
