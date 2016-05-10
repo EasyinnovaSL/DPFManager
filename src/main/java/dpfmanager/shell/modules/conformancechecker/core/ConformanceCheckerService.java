@@ -91,11 +91,9 @@ public class ConformanceCheckerService extends DpfService {
 
   synchronized public void tractProcessInputMessage(ProcessInputMessage pim){
     if (pim.isWait()){
-      System.out.println("Process input message: Wait");
       ProcessInputParameters pip = new ProcessInputParameters(pim.getInternalReportFolder(), pim.getInputStr(), pim.getConfig(), pim.getToWait(), pim.getFiles());
       filesToCheck.put(pim.getUuid(), pip);
     } else if (pim.isFile()){
-      System.out.println("Process input message: File");
       if (filesToCheck.containsKey(pim.getUuid())){
         filesToCheck.get(pim.getUuid()).add(pim.getFiles());
       }
@@ -105,7 +103,6 @@ public class ConformanceCheckerService extends DpfService {
     Integer left = filesToCheck.get(pim.getUuid()).getToWait();
     if (left == 0){
       // Start check
-      System.out.println("Start check");
       startCheck(pim.getUuid(),filesToCheck.get(pim.getUuid()));
     }
   }
@@ -128,7 +125,6 @@ public class ConformanceCheckerService extends DpfService {
     // Process each input of the list
     int idReport = 1;
     for (final String filename : files) {
-      System.out.println("File: "+ filename);
       ConformanceRunnable run = new ConformanceRunnable();
       run.setParameters(filename, idReport, internalReportFolder, config, uuid);
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));

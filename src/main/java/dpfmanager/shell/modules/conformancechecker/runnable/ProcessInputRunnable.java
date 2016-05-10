@@ -52,12 +52,10 @@ public class ProcessInputRunnable extends DpfRunnable {
     parseInput(filename);
 
     // Start waiting the zips and urls runnables
-    System.out.println("Waiting for " + toWait + " get inputs.");
     context.send(BasicConfig.MODULE_CONFORMANCE, new ProcessInputMessage(ProcessInputMessage.Type.WAIT, getUuid(), files, config, internalReportFolder, inputStr, toWait));
 
     // Send runnables
     for (DpfRunnable run : runnables) {
-      System.out.println("Send get input runnable");
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(getUuid(), run));
     }
   }
