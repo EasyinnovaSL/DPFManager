@@ -8,6 +8,7 @@ import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
+import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 
 import org.jacpfx.api.annotations.Resource;
@@ -43,9 +44,11 @@ public class ConformanceCheckerModule extends DpfModule {
           getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
         } else {
           service.setParameters(null, cm.getRecursive());
-          service.startCheck(input);
+          service.initProcessInputRun(input);
         }
       }
+    } else if (dpfMessage.isTypeOf(ProcessInputMessage.class)){
+      service.tractProcessInputMessage(dpfMessage.getTypedMessage(ProcessInputMessage.class));
     }
   }
 

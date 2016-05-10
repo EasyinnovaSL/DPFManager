@@ -231,7 +231,6 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   public RadioButton getSelectedConfig() {
     RadioButton radio = (RadioButton) group.getSelectedToggle();
     if (radio == null){
-      System.out.println("Radio null");
       return selectedButton;
     }
     return radio;

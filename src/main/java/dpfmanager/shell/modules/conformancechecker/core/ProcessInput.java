@@ -114,101 +114,23 @@ public class ProcessInput {
    */
   public IndividualReport processFile(String filename, String internalReportFolder, Configuration config) {
     IndividualReport ir = null;
-    if (isUrl(filename)) {
-      // URL
+    // File
+    ConformanceChecker cc = getConformanceCheckerForFile(filename);
+    if (cc != null) {
       try {
-        ConformanceChecker cc = getConformanceCheckerForFile(filename);
-        if (cc != null) {
-          // Download the file and store it in a temporary file
-          InputStream input = new java.net.URL(filename).openStream();
-          String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
-          filename = java.net.URLDecoder.decode(filename, "UTF-8");
-          ir = cc.processFile(filename2, filename, internalReportFolder, config);
-          if (ir != null) {
-            outOfmemory = true;
-          }
-          // Delete the temporary file
-          File file = new File(filename2);
-          file.delete();
-        } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "The file in the URL " + filename + " is not an accepted format"));
+        ir = cc.processFile(filename, filename, internalReportFolder, config);
+        if (ir != null) {
+          outOfmemory = true;
         }
-      } catch (Exception ex) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Error in URL " + filename));
+      } catch (ReadTagsIOException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+      } catch (ReadIccConfigIOException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
       }
     } else {
-      // File
-      ConformanceChecker cc = getConformanceCheckerForFile(filename);
-      if (cc != null) {
-        try {
-          ir = cc.processFile(filename, filename, internalReportFolder, config);
-          if (ir != null) {
-            outOfmemory = true;
-          }
-        } catch (ReadTagsIOException e) {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
-        } catch (ReadIccConfigIOException e) {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
-        }
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "File " + filename + " is not an accepted format"));
-      }
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "File " + filename + " is not an accepted format"));
     }
     return ir;
-  }
-
-  /**
-   * Creates a temporary file to store the input stream.
-   *
-   * @param folder the folder to store the created temporary file
-   * @param name   the name of the temporary file
-   * @param stream the input stream
-   * @return the path to the created temporary file
-   * @throws IOException Signals that an I/O exception has occurred.
-   */
-  private String createTempFile(String folder, String name, InputStream stream) throws IOException {
-    // Create the path to the temporary file
-    String filename2 = "x" + name;
-    if (filename2.contains("/")) {
-      filename2 = filename2.substring(filename2.lastIndexOf("/") + 1);
-    }
-    while (new File(filename2).isFile()) {
-      filename2 = "x" + filename2;
-    }
-    filename2 = folder + filename2;
-
-    // Write the file
-    File targetFile = new File(filename2);
-    OutputStream outStream = new FileOutputStream(targetFile);
-    byte[] buffer = new byte[8 * 1024];
-    int bytesRead;
-    while ((bytesRead = stream.read(buffer)) != -1) {
-      outStream.write(buffer, 0, bytesRead);
-    }
-    outStream.close();
-    return filename2;
-  }
-
-  public List<String> getTempFiles() {
-    List<String> aux = new ArrayList<>(tempFiles);
-    tempFiles.clear();
-    return aux;
-  }
-
-  /**
-   * Checks if the filename is an URL.
-   *
-   * @param filename the filename
-   * @return true, if it is a url
-   */
-  private boolean isUrl(String filename) {
-    boolean ok = true;
-    try {
-      new java.net.URL(filename);
-    } catch (Exception ex) {
-      ok = false;
-    }
-    return ok;
   }
 
 }
