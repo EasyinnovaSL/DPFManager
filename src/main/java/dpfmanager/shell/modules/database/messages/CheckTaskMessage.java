@@ -39,11 +39,11 @@ public class CheckTaskMessage extends DpfMessage {
   }
 
   public boolean isCancel() {
-    return target.equals(Target.CANCEL);
+    return target != null && target.equals(Target.CANCEL);
   }
 
   public boolean isPause() {
-    return target.equals(Target.PAUSE);
+    return target != null && target.equals(Target.PAUSE);
   }
 
   public List<Jobs> getJobs() {

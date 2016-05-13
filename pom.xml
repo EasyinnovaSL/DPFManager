@@ -6,7 +6,7 @@
 	<groupId>com.easyinnova</groupId>
 	<artifactId>dpf_manager</artifactId>
 	<packaging>jar</packaging>
-	<version>2.1.1</version>
+	<version>2.1.2</version>
 
     <!--Properties-->
     <properties>
@@ -281,9 +281,9 @@
 
 		<!--Sqlite-->
 		<dependency>
-			<groupId>org.tmatesoft.sqljet</groupId>
-			<artifactId>sqljet</artifactId>
-			<version>1.1.10</version>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.8.11.2</version>
 		</dependency>
 
 	</dependencies>

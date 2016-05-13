@@ -1,7 +1,7 @@
 package dpfmanager.shell.modules.database.tables;
 
-import org.tmatesoft.sqljet.core.SqlJetException;
-import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Created by Adrià Llorens on 21/04/2016.
@@ -58,6 +58,9 @@ public class Jobs {
   public static String delIndexIdSql = "DROP INDEX IF EXISTS " + INDEX_ID + ";";
   public static String delIndexPidSql = "DROP INDEX IF EXISTS " + INDEX_PID + ";";
 
+  // Insert SQL query
+  public static String insertJobSql = "INSERT INTO jobs(" + ID + "," + STATE + "," + TOTAL_FILES + "," + PROCESSED_FILES + "," + INIT + "," + FINISH + "," + INPUT + "," + ORIGIN + "," + PID + "," + OUTPUT + "," + TIME + "," + LAST_UPDATE + ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?);";
+
 
   /**
    * Object properties
@@ -79,43 +82,19 @@ public class Jobs {
   public Jobs() {
   }
 
-  public void parseCursor(ISqlJetCursor cursor) {
-    id = parseLong(cursor, ID);
-    state = parseInteger(cursor, STATE);
-    totalFiles = parseInteger(cursor, TOTAL_FILES);
-    processedFiles = parseInteger(cursor, PROCESSED_FILES);
-    init = parseLong(cursor, INIT);
-    finish = parseLong(cursor, FINISH);
-    input = parseString(cursor, INPUT);
-    origin = parseString(cursor, ORIGIN);
-    pid = parseInteger(cursor, PID);
-    output = parseString(cursor, OUTPUT);
-    time = parseLong(cursor, TIME);
-    lastUpdate = parseLong(cursor, LAST_UPDATE);
-  }
-
-  private String parseString(ISqlJetCursor cursor, String name) {
-    try {
-      return cursor.getString(name);
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
-  private Long parseLong(ISqlJetCursor cursor, String name) {
-    try {
-      return cursor.getInteger(name);
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
-  private Integer parseInteger(ISqlJetCursor cursor, String name) {
-    try {
-      return (int) cursor.getInteger(name);
-    } catch (Exception e) {
-      return null;
-    }
+  public void parseResultSet(ResultSet rs) throws SQLException {
+    id = rs.getLong(ID);
+    state = rs.getInt(STATE);
+    totalFiles = rs.getInt(TOTAL_FILES);
+    processedFiles = rs.getInt(PROCESSED_FILES);
+    init = rs.getLong(INIT);
+    finish = rs.getLong(FINISH);
+    input = rs.getString(INPUT);
+    origin = rs.getString(ORIGIN);
+    pid = rs.getInt(PID);
+    output = rs.getString(OUTPUT);
+    time = rs.getLong(TIME);
+    lastUpdate = rs.getLong(LAST_UPDATE);
   }
 
   /**
