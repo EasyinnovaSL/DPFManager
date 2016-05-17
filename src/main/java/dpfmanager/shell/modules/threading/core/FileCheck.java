@@ -2,15 +2,18 @@ package dpfmanager.shell.modules.threading.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * Created by Adrià Llorens on 14/04/2016.
  */
 public class FileCheck {
 
+  /** Check information */
   private long uuid;
   private int total;
   private int errors;
@@ -19,17 +22,23 @@ public class FileCheck {
   private String input;
   private List<IndividualReport> individuals;
 
-  public FileCheck(){
-    uuid = 77;
+  /** Runnable tasks of this check */
+  private List<DpfRunnable> runnables;
+
+  /** Initial task */
+  private DpfRunnable initialTask;
+
+  public FileCheck(long u){
+    uuid = u;
+    individuals = new ArrayList<>();
+    runnables = new ArrayList<>();
+    errors = 0;
   }
 
-  public FileCheck(long u, int n, Configuration c, String i, String ri){
-    uuid = u;
+  public void init(int n, Configuration c, String i, String ri){
     total = n;
     config = c;
     internal = i;
-    individuals = new ArrayList<>();
-    errors = 0;
     input = ri;
   }
 
@@ -71,6 +80,14 @@ public class FileCheck {
       ret = ret.substring(0, 47) + "...";
     }
     return ret;
+  }
+
+  public void setInitialTask(DpfRunnable initialTask) {
+    this.initialTask = initialTask;
+  }
+
+  public DpfRunnable getInitialTask() {
+    return initialTask;
   }
 
   public int getTotal() {

@@ -1,22 +1,26 @@
 package dpfmanager.shell.modules.database.core;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
 import org.apache.logging.log4j.Level;
-import org.tmatesoft.sqljet.core.SqlJetException;
-import org.tmatesoft.sqljet.core.SqlJetTransactionMode;
-import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
-import org.tmatesoft.sqljet.core.table.SqlJetDb;
+import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteOpenMode;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,7 +28,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class DatabaseConnection {
 
-  private SqlJetDb DB;
+  private Connection globalConnection;
+  private SQLiteConfig dbConfig;
+  private String dbUrl;
+
   private DpfContext context;
   private Long lastUpdate;
   private Long initTime;
@@ -32,6 +39,7 @@ public class DatabaseConnection {
   public DatabaseConnection(DpfContext c) {
     context = c;
     initTime = System.currentTimeMillis();
+    lastUpdate = 0L;
   }
 
   /**
@@ -40,11 +48,32 @@ public class DatabaseConnection {
   public void init() {
     String filename = getDatabaseFile();
     try {
-      DB = SqlJetDb.open(new File(filename), true);
+      Class.forName("org.sqlite.JDBC");
+      dbUrl = "jdbc:sqlite:" + filename;
+      dbConfig = new SQLiteConfig();
+      dbConfig.setBusyTimeout("30000");
+      dbConfig.setOpenMode(SQLiteOpenMode.READWRITE);
+      dbConfig.setLockingMode(SQLiteConfig.LockingMode.NORMAL);
+      globalConnection = connect();
       createFirstTable();
+      insertTestJob();
     } catch (Exception e) {
+      e.printStackTrace();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot connect to database (" + filename + ")."));
     }
+  }
+
+  /**
+   * Connect function
+   */
+  public Connection connect() {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(dbUrl, dbConfig.toProperties());
+    } catch (SQLException e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot connect to database."));
+    }
+    return connection;
   }
 
   /**
@@ -52,136 +81,215 @@ public class DatabaseConnection {
    */
   public void close() {
     try {
-      DB.close();
-    } catch (SqlJetException e) {
+      globalConnection.close();
+    } catch (SQLException e) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot close the database."));
     }
   }
 
   /**
+   * Decisions functions
+   */
+  public boolean deleteJob(Jobs job) {
+    // Jobs older than 2 days (DpFManagerConstants.JOB_LIFE_HOURS)
+    Long current = System.currentTimeMillis();
+    if (checkDate(job.getInit())) {
+      return true;
+    }
+    if (checkDate(job.getFinish())) {
+      return true;
+    }
+
+    // No updates last 30min
+    Long minutes = TimeUnit.MINUTES.convert(current - job.getLastUpdate(), TimeUnit.MILLISECONDS);
+    if (job.getState() == 1 && minutes > DpFManagerConstants.JOB_LAST_UPDATE_MINUTES) {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean checkDate(Long time) {
+    if (time != null && time < initTime) {
+      Long diff = initTime - time;
+      Long hours = TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS);
+      return hours > DpFManagerConstants.JOB_LIFE_HOURS;
+    }
+    return false;
+  }
+
+  public boolean showJob(Jobs job) {
+    // Jobs initiated after this app
+    if (job.getInit() != null && job.getInit() > initTime) {
+      return true;
+    }
+    // Jobs running when the app open
+    if (job.getInit() != null && job.getFinish() == null) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Public functions
    */
-  public int getProgramPid() {
-    try {
-      // Try to begin transaction
-      if (beginTransaction(SqlJetTransactionMode.WRITE)) {
-        // From this point, DB file is locked
-        ISqlJetCursor cursor = DB.getTable(Jobs.TABLE).order(Jobs.INDEX_PID).reverse();
-        int maxPid = 1;
-        if (!cursor.eof()) {
-          Long pid = cursor.getInteger(Jobs.PID);
-          maxPid = pid.intValue() + 1;
-        }
-        cursor.close();
-        // Finish transaction and unlock
-        DB.commit();
-        return maxPid;
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Timeout database."));
+  public void cleanJobs() {
+    for (Jobs job : getAllJobs()) {
+      if (deleteJob(job)) {
+        deleteJob(job.getId());
       }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error obtaining program pid."));
-    }
-    return -1;
-  }
-
-  synchronized public void insertNewJob(Jobs job) {
-    try {
-      // Try to begin transaction
-      if (beginTransaction(SqlJetTransactionMode.WRITE)) {
-        // From this point, DB file is locked
-        DB.getTable(Jobs.TABLE).insert(job.getId(), 1, job.getTotalFiles(), 0, job.getInit(), null, job.getInput(), job.getOrigin(), job.getPid(), job.getOutput());
-        lastUpdate = System.currentTimeMillis();
-
-        // Finish transaction and unlock
-        DB.commit();
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Timeout database."));
-      }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error creating new job."));
     }
   }
 
-  synchronized public void updateJob(Jobs job) {
-    try {
-      // Try to begin transaction
-      if (beginTransaction(SqlJetTransactionMode.WRITE)) {
-        // From this point, DB file is locked
-        ISqlJetCursor cursor = DB.getTable(Jobs.TABLE).lookup(Jobs.INDEX_ID, job.getId());
-        if (!cursor.eof()) {
-          Map<String, Object> updates = new HashMap<>();
-          updates.put(Jobs.PROCESSED_FILES, job.getProcessedFiles());
-          cursor.updateByFieldNames(updates);
-          cursor.close();
-          lastUpdate = System.currentTimeMillis();
-        } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot find job (" + job.getId() + ")"));
-        }
-        // Finish transaction and unlock
-        DB.commit();
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Timeout database."));
-      }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error updating job."));
-    }
-  }
-
-  synchronized public void finishJob(Jobs job) {
-    try {
-      // Try to begin transaction
-      if (beginTransaction(SqlJetTransactionMode.WRITE)) {
-        // From this point, DB file is locked
-        ISqlJetCursor cursor = DB.getTable(Jobs.TABLE).lookup(Jobs.INDEX_ID, job.getId());
-        if (!cursor.eof()) {
-          Map<String, Object> updates = new HashMap<>();
-          updates.put(Jobs.STATE, job.getState());
-          updates.put(Jobs.PROCESSED_FILES, job.getTotalFiles());
-          updates.put(Jobs.FINISH, job.getFinish());
-          cursor.updateByFieldNames(updates);
-          cursor.close();
-          lastUpdate = System.currentTimeMillis();
-        } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot find job (" + job.getId() + ")"));
-        }
-        // Finish transaction and unlock
-        DB.commit();
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Timeout database."));
-      }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error updating finished job."));
-    }
+  public void updateJob(Jobs job) {
+    Collection<Jobs> col = new ArrayList<>();
+    col.add(job);
+    updateJobs(col);
   }
 
   public List<Jobs> getJobs() {
     List<Jobs> jobs = new ArrayList<>();
-    try {
-      // Try to begin transaction
-      if (beginTransaction(SqlJetTransactionMode.READ_ONLY)) {
-        // From this point, DB file is locked
-        ISqlJetCursor cursor = DB.getTable(Jobs.TABLE).order(Jobs.INDEX_ID);
-        boolean next = !cursor.eof();
-        while (next) {
-          Jobs job = new Jobs();
-          job.parseCursor(cursor);
-          if (job.getFinish() == null || job.getInit() > initTime || job.getFinish() > initTime ) {
-            jobs.add(job);
-          }
-          next = cursor.next();
-        }
-        cursor.close();
-
-        // Finish transaction and unlock
-        DB.commit();
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Timeout database."));
+    for (Jobs job : getAllJobs()) {
+      if (showJob(job)) {
+        jobs.add(job);
       }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
     }
     return jobs;
+  }
+
+  /**
+   * Access DB functions
+   */
+  synchronized public int getProgramPid() {
+    Integer maxPid = -1;
+    if (blockConnection()) {
+      try {
+        Statement stmt = globalConnection.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT " + Jobs.PID + " FROM " + Jobs.TABLE + " ORDER BY " + Jobs.PID + " DESC");
+        maxPid = 1;
+        if (rs.next()) {
+          Long pid = rs.getLong(1);
+          maxPid = pid.intValue() + 1;
+        }
+        stmt.close();
+      } catch (Exception e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error obtaining program pid."));
+      } finally {
+        releaseConnection();
+      }
+    } else {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+    }
+    return maxPid;
+  }
+
+  synchronized public void insertNewJob(Jobs job) {
+    if (blockConnection()) {
+      try {
+        PreparedStatement pstmt = globalConnection.prepareStatement(Jobs.insertJobSql);
+        pstmt.setLong(1, job.getId());
+        pstmt.setInt(2, job.getState());
+        pstmt.setInt(3, job.getTotalFiles());
+        pstmt.setInt(4, job.getProcessedFiles());
+        if (job.getInit() != null) {
+          pstmt.setLong(5, job.getInit());
+        } else {
+          pstmt.setNull(5, 0);
+        }
+        if (job.getFinish() != null) {
+          pstmt.setLong(6, job.getFinish());
+        } else {
+          pstmt.setNull(6, 0);
+        }
+        pstmt.setString(7, job.getInput());
+        pstmt.setString(8, job.getOrigin());
+        pstmt.setLong(9, job.getPid());
+        pstmt.setString(10, job.getOutput());
+        if (job.getTime() != null) {
+          pstmt.setLong(11, job.getTime());
+        } else {
+          pstmt.setNull(11, 0);
+        }
+        pstmt.setLong(12, job.getLastUpdate());
+        pstmt.executeUpdate();
+        pstmt.close();
+      } catch (Exception e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error creating new job."));
+      } finally {
+        releaseConnection();
+      }
+    } else {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+    }
+  }
+
+  synchronized public void updateJobs(Collection<Jobs> jobs) {
+    if (blockConnection()) {
+      try {
+        globalConnection.setAutoCommit(false);
+        for (Jobs job : jobs) {
+          String updateSql = "UPDATE " + Jobs.TABLE + " SET " +
+              Jobs.STATE + " = " + job.getState() + ", " +
+              Jobs.TOTAL_FILES + " = " + job.getTotalFiles() + ", " +
+              Jobs.PROCESSED_FILES + " = " + job.getProcessedFiles() + ", " +
+              Jobs.INIT + " = " + job.getInit() + ", " +
+              Jobs.FINISH + " = " + job.getFinish() + ", " +
+              Jobs.OUTPUT + " = '" + job.getOutput() + "', " +
+              Jobs.TIME + " = " + job.getTime() + "" +
+              " WHERE " + Jobs.ID + " = " + job.getId();
+          Statement stmt = globalConnection.createStatement();
+          stmt.execute(updateSql);
+          stmt.close();
+        }
+        globalConnection.commit();
+        globalConnection.setAutoCommit(true);
+      } catch (Exception e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error updating job."));
+      } finally {
+        releaseConnection();
+      }
+    } else {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+    }
+  }
+
+  synchronized public List<Jobs> getAllJobs() {
+    List<Jobs> jobs = new ArrayList<>();
+    if (blockConnection()) {
+      try {
+        Statement stmt = globalConnection.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE);
+        while (rs.next()) {
+          Jobs job = new Jobs();
+          job.parseResultSet(rs);
+          jobs.add(job);
+        }
+        stmt.close();
+      } catch (Exception e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
+      } finally {
+        releaseConnection();
+      }
+    } else {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+    }
+    return jobs;
+  }
+
+  synchronized public void deleteJob(Long uuid) {
+    if (blockConnection()) {
+      try {
+        String deleteSql = "DELETE FROM " + Jobs.TABLE + " WHERE " + Jobs.ID + " = " + uuid;
+        Statement stmt = globalConnection.createStatement();
+        stmt.execute(deleteSql);
+        stmt.close();
+      } catch (Exception e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error deleting job."));
+      } finally {
+        releaseConnection();
+      }
+    } else {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+    }
   }
 
   public Long getLastUpdate() {
@@ -189,46 +297,87 @@ public class DatabaseConnection {
   }
 
   /**
-   * Private DB functions
+   * Locks functions
    */
-  private void createFirstTable() throws Exception {
-    if (beginTransaction(SqlJetTransactionMode.WRITE)) {
-      DB.createTable(Jobs.createSql);
-      DB.createIndex(Jobs.indexIdSql);
-      DB.createIndex(Jobs.indexPidSql);
-      DB.commit();
-    }
-  }
-
-  private boolean beginTransaction(SqlJetTransactionMode mode, int maxTimeout) {
+  private boolean blockConnection() {
     try {
-      int timeout = 0;
-      while (!tryBeginTransaction(mode) && timeout < maxTimeout) {
-        TimeUnit.MILLISECONDS.sleep(500);
-        System.out.println("Waiting... " + timeout);
-        timeout++;
+      File lockFile = new File(getDatabaseLockFile());
+      int timeout = 0, maxTimeout = 30 * 4;
+      if (!lockFile.exists()) {
+        lockFile.createNewFile();
+        return true;
+      } else {
+        while (lockFile.exists() && timeout < maxTimeout) {
+          Thread.sleep(250);
+          timeout++;
+        }
+        if (timeout != maxTimeout) {
+          lockFile.createNewFile();
+          return true;
+        } else {
+          return false;
+        }
       }
-      return timeout != maxTimeout * 2;
     } catch (Exception e) {
       return false;
     }
   }
 
-  private boolean beginTransaction(SqlJetTransactionMode mode) {
-    return beginTransaction(mode, 30);
+  private void releaseConnection() {
+    File lockFile = new File(getDatabaseLockFile());
+    if (lockFile.exists()) {
+      lockFile.delete();
+    }
   }
 
-  private boolean tryBeginTransaction(SqlJetTransactionMode mode) {
-    try {
-      DB.beginTransaction(mode);
-      return true;
-    } catch (SqlJetException e) {
-      return false;
+
+  /**
+   * Private DB functions
+   */
+  synchronized private void createFirstTable() throws Exception {
+    Statement stmt = globalConnection.createStatement();
+
+    // Check need delete table
+    if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
+      stmt.execute(Jobs.delIndexIdSql);
+      stmt.execute(Jobs.delIndexPidSql);
+      stmt.execute(Jobs.deleteSql);
+      DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
     }
+
+    // Create table
+    stmt.execute(Jobs.createSql);
+    stmt.execute(Jobs.indexIdSql);
+    stmt.execute(Jobs.indexPidSql);
+
+    // Close statement
+    stmt.close();
+  }
+
+  private void insertTestJob() {
+    Jobs job = new Jobs();
+    job.setId(System.currentTimeMillis());
+    job.setState(1);
+    job.setTotalFiles(50);
+    job.setProcessedFiles(25);
+    job.setInit(System.currentTimeMillis());
+    job.setFinish(null);
+    job.setInput("input");
+    job.setOrigin("origin");
+    job.setPid(5);
+    job.setOutput("output");
+    job.setTime(null);
+    job.setLastUpdate(System.currentTimeMillis());
+
+    insertNewJob(job);
   }
 
   private String getDatabaseFile() {
     return DPFManagerProperties.getDataDir() + "/dpfmanager.db";
+  }
+
+  private String getDatabaseLockFile() {
+    return DPFManagerProperties.getDataDir() + "/database.lock";
   }
 
 }

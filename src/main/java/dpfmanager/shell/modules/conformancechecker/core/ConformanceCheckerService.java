@@ -1,32 +1,23 @@
 package dpfmanager.shell.modules.conformancechecker.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
+import dpfmanager.shell.modules.conformancechecker.runnable.ProcessInputRunnable;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
-import org.apache.logging.log4j.Level;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -42,9 +33,13 @@ public class ConformanceCheckerService extends DpfService {
   private int recursive;
   private boolean silence;
 
+  /** The list of checks waiting for process input*/
+  private Map<Long,ProcessInputParameters> filesToCheck;
+
   @PostConstruct
   private void init() {
     model = new ConformanceCheckerModel();
+    filesToCheck = new HashMap<>();
     setDefaultParameters();
   }
 
@@ -74,113 +69,65 @@ public class ConformanceCheckerService extends DpfService {
     }
   }
 
-  public void startMultiCheck(List<String> files) {
+  /** First check files method (from command line) */
+  public void initMultiProcessInputRun(List<String> files) {
     String finalFiles = "";
     for (String filename : files) {
       finalFiles += filename + ";";
     }
     finalFiles = finalFiles.substring(0, finalFiles.length() - 1);
-    startCheck(finalFiles);
+    initProcessInputRun(finalFiles);
   }
 
-  public void startCheck(String filename) {
-    startCheck(filename, filename, null);
+  /** First check files method (from gui) */
+  public void initProcessInputRun(String filename) {
+    initProcessInputRun(filename, filename, null);
   }
 
-  public void startCheck(String filename, String inputStr, String internalReportFolder) {
-    if (internalReportFolder == null) {
-      internalReportFolder = ReportGenerator.createReportPath();
-    }
-    int filetype = getType(filename);
-    ArrayList<String> files = new ArrayList<>();
-
-    switch (filetype) {
-      case -1:
-        // ERROR
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in input path " + filename));
-        break;
-      case 0:
-        // Folder
-        addDirectoryToFiles(files, new File(filename), recursive, 1);
-        break;
-      case 1:
-        // Zip
-        List<String> zipFiles = getFilesInZip(filename, internalReportFolder);
-        files.addAll(zipFiles);
-        break;
-      case 2:
-        // URL
-        try {
-          // Download the file and store it in a temporary file
-          InputStream input = new java.net.URL(filename).openStream();
-          String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
-          files.add(filename2);
-          startCheck(filename2, inputStr, internalReportFolder);
-          return;
-        } catch (Exception ex) {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Error in URL " + filename));
-        }
-        break;
-      case 3:
-        // List of files
-        for (String sfile : filename.split(";")) {
-          files.add(sfile);
-        }
-        break;
-      case 4:
-        // Simple file
-        files.add(filename);
-        break;
-    }
-
-    try {
-      // Init
-      long uuid = System.currentTimeMillis();
-      context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, files.size(), getModel().getConfig(), internalReportFolder, inputStr));
-
-      // Now process files
-      ProcessFiles(files, getModel().getConfig(), internalReportFolder, uuid);
-    } catch (OutOfMemoryError er) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
-    }
+  public void initProcessInputRun(String filename, String inputStr, String internalReportFolder) {
+    ProcessInputRunnable pr = new ProcessInputRunnable(filename, inputStr, internalReportFolder, recursive, getModel().getConfig());
+    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.NEW, pr, inputStr));
   }
 
-  private int getType(String filename) {
-    if (filename.startsWith("http")) {
-      // URL
-      return 2;
-    } else if (new File(filename).isDirectory()) {
-      // Folder
-      return 0;
-    } else if (new File(filename).isFile()) {
-      if (filename.toLowerCase().endsWith(".zip") || filename.toLowerCase().endsWith(".rar")) {
-        // ZIP
-        return 1;
-      } else if (filename.contains(";")) {
-        // List of files
-        return 3;
-      } else {
-        // Simple file
-        return 4;
+  synchronized public void tractProcessInputMessage(ProcessInputMessage pim){
+    if (pim.isWait()){
+      ProcessInputParameters pip = new ProcessInputParameters(pim.getInternalReportFolder(), pim.getInputStr(), pim.getConfig(), pim.getToWait(), pim.getFiles());
+      filesToCheck.put(pim.getUuid(), pip);
+    } else if (pim.isFile()){
+      if (filesToCheck.containsKey(pim.getUuid())){
+        filesToCheck.get(pim.getUuid()).add(pim.getFiles());
       }
     }
-    return -1;
+
+    // Check if waiting is finish
+    Integer left = filesToCheck.get(pim.getUuid()).getToWait();
+    if (left == 0){
+      // Start check
+      startCheck(pim.getUuid(),filesToCheck.get(pim.getUuid()));
+    }
+  }
+
+  public void startCheck(Long uuid, ProcessInputParameters pip) {
+    // Init
+    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, pip.getFiles().size(), pip.getConfig(), pip.getInternalReportFolder(), pip.getInputStr()));
+
+    // Now process files
+    ProcessFiles(uuid, pip.getFiles(), pip.getConfig(), pip.getInternalReportFolder());
   }
 
   /**
-   * Process a list of files and generate individual ang global reports.
+   * Process a list of files and create the runnables.
    *
-   * @param files  the files
    * @param config the config
    * @return the path to the internal report folder
    */
-  private String ProcessFiles(ArrayList<String> files, Configuration config, String internalReportFolder, long uuid) {
+  private String ProcessFiles(Long uuid, List<String> files, Configuration config, String internalReportFolder) {
     // Process each input of the list
     int idReport = 1;
     for (final String filename : files) {
       ConformanceRunnable run = new ConformanceRunnable();
       run.setParameters(filename, idReport, internalReportFolder, config, uuid);
-      context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(run));
+      context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
       idReport++;
     }
 
@@ -189,86 +136,6 @@ public class ConformanceCheckerService extends DpfService {
     }
 
     return internalReportFolder;
-  }
-
-  private List<String> getFilesInZip(String filename, String internal) {
-    List<String> files = new ArrayList<>();
-    try {
-      // Create zip folder
-      File zipFolder = new File(internal + "zip/");
-      if (!zipFolder.exists()) {
-        zipFolder.mkdirs();
-      }
-
-      // Extract it
-      ZipFile zipFile = new ZipFile(filename);
-      Enumeration<? extends ZipEntry> entries = zipFile.entries();
-      while (entries.hasMoreElements()) {
-        // Process each file contained in the compressed file
-        ZipEntry entry = entries.nextElement();
-        String name = entry.getName();
-        File targetFile = new File(internal + "zip/" + name);
-        if (name.endsWith("/")) {
-          // Directory
-          targetFile.mkdirs();
-        } else {
-          // File
-          OutputStream outStream = new FileOutputStream(targetFile);
-          InputStream inStream = zipFile.getInputStream(entry);
-          byte[] buffer = new byte[8 * 1024];
-          int bytesRead;
-          while ((bytesRead = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, bytesRead);
-          }
-          outStream.close();
-          inStream.close();
-          files.add(targetFile.getAbsolutePath());
-        }
-      }
-      zipFile.close();
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception during unzip", e));
-    }
-    return files;
-  }
-
-  private void addDirectoryToFiles(ArrayList<String> files, File directory, int recursive, int currentlevel) {
-    File[] listOfFiles = directory.listFiles();
-    for (int j = 0; j < listOfFiles.length; j++) {
-      if (listOfFiles[j].isFile()) {
-        files.add(listOfFiles[j].getPath());
-      } else if (listOfFiles[j].isDirectory() && currentlevel < recursive) {
-        addDirectoryToFiles(files, listOfFiles[j], recursive, currentlevel + 1);
-      }
-    }
-  }
-
-  /**
-   * Creates a temporary file to store the input stream.
-   *
-   * @param internal the folder to store the created temporary file
-   * @param name     the name of the temporary file
-   * @param stream   the input stream
-   * @return the path to the created temporary file
-   * @throws IOException Signals that an I/O exception has occurred.
-   */
-  private String createTempFile(String internal, String name, InputStream stream) throws IOException {
-    // Create the path to the temporary folder
-    String filename = internal + "download/" + name;
-    File targetFile = new File(filename);
-    if (!targetFile.exists()) {
-      targetFile.getParentFile().mkdirs();
-    }
-
-    // Write the file
-    OutputStream outStream = new FileOutputStream(targetFile);
-    byte[] buffer = new byte[8 * 1024];
-    int bytesRead;
-    while ((bytesRead = stream.read(buffer)) != -1) {
-      outStream.write(buffer, 0, bytesRead);
-    }
-    outStream.close();
-    return filename;
   }
 
   private ConformanceCheckerModel getModel() {

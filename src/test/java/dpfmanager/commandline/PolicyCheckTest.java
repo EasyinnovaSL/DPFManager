@@ -5,8 +5,6 @@ import static junit.framework.TestCase.assertEquals;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 
-import junit.framework.Assert;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 

@@ -9,6 +9,9 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
+import com.easyinnova.tiff.model.ReadIccConfigIOException;
+import com.easyinnova.tiff.model.ReadTagsIOException;
+
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -16,6 +19,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,8 +135,16 @@ public class ProcessInput {
         } else {
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "The file in the URL " + filename + " is not an accepted format"));
         }
-      } catch (Exception ex) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Error in URL " + filename));
+      } catch (ReadTagsIOException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+      } catch (ReadIccConfigIOException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+      } catch (MalformedURLException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+      } catch (UnsupportedEncodingException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+      } catch (IOException e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
       }
     } else {
       // File

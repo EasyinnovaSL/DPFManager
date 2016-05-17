@@ -18,7 +18,6 @@ import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.reader.TiffReader;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;

@@ -4,9 +4,12 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.interfaces.gui.workbench.DpfCloseEvent;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
+import javafx.stage.WindowEvent;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

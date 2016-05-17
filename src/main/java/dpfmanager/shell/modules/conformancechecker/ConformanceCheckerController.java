@@ -8,6 +8,7 @@ import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
+import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -33,8 +34,10 @@ public class ConformanceCheckerController extends DpfSpringController {
       ConformanceMessage cm = message.getTypedMessage(ConformanceMessage.class);
       if (!cm.isGui()) {
         service.setParameters(cm.getConfig(), params.getRecursive());
-        service.startMultiCheck(cm.getFiles());
+        service.initMultiProcessInputRun(cm.getFiles());
       }
+    } else if (message.isTypeOf(ProcessInputMessage.class)){
+      service.tractProcessInputMessage(message.getTypedMessage(ProcessInputMessage.class));
     }
   }
 

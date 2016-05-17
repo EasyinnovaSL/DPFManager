@@ -42,6 +42,8 @@ public class TimerModule extends DpfModule {
         service.stopTask(tm.getClazz());
       } else if (tm.isFinish()){
         service.runTask(tm.getClazz());
+      } else if (tm.isRun()){
+        service.runTask(tm.getClazz());
       }
     }
   }

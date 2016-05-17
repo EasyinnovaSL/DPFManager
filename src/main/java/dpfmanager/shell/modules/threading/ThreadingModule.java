@@ -4,10 +4,12 @@ import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import dpfmanager.shell.modules.threading.core.ThreadingService;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
+import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.Component;
@@ -42,7 +44,12 @@ public class ThreadingModule extends DpfModule {
       service.handleGlobalStatus(gm, false);
     } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
       RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);
-      service.run(rm.getRunnable());
+      service.run(rm.getRunnable(), rm.getUuid());
+    } else if (dpfMessage.isTypeOf(ThreadsMessage.class)){
+      ThreadsMessage tm = dpfMessage.getTypedMessage(ThreadsMessage.class);
+      service.processThreadMessage(tm);
+    } else if (dpfMessage.isTypeOf(CloseMessage.class)){
+      service.closeRequested();
     }
   }
 

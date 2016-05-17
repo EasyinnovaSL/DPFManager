@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Adrià Llorens Martinez
  * @version 1.0
@@ -31,6 +19,8 @@
 
 package dpfmanager.shell.modules.report.util;
 
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
 
@@ -61,6 +51,7 @@ public class ReportJson extends ReportGeneric {
     xmlJsonFormat.setEncoding("UTF-8");
 
     // Convert to JSON
+    boolean error = false;
     try {
       context.addRoutes(new RouteBuilder() {
         public void configure() {
@@ -72,13 +63,16 @@ public class ReportJson extends ReportGeneric {
       template.sendBody("direct:marshal", xml);
       context.stop();
     } catch (Exception e) {
-      e.printStackTrace();
+      error = true;
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
     }
 
     // Move the converted string to the correct file
-    String json = getJsonString(jsonFilename, generator);
-    generator.deleteFileOrFolder(new File(jsonFilename));
-    generator.writeToFile(jsonFilename, json);
+    if (!error) {
+      String json = getJsonString(jsonFilename, generator);
+      generator.deleteFileOrFolder(new File(jsonFilename));
+      generator.writeToFile(jsonFilename, json);
+    }
   }
 
   /**

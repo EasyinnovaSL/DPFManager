@@ -2,6 +2,7 @@ package dpfmanager.shell.core.adapter;
 
 import static javafx.scene.layout.Priority.ALWAYS;
 
+import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
@@ -125,13 +126,13 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
     scrollPane.getStyleClass().add("background-main");
     scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    scrollPane.setMaxWidth(GuiWorkbench.mainWidth);
+    scrollPane.setMaxWidth(DpFManagerConstants.WIDTH);
 
     // Center content
     scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (scrollPane.getWidth() < GuiWorkbench.mainWidth) {
+        if (scrollPane.getWidth() < DpFManagerConstants.WIDTH) {
           scrollPane.setHvalue(0.5);
         }
       }
@@ -139,7 +140,7 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
     scrollPane.hvalueProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (scrollPane.getWidth() < GuiWorkbench.mainWidth) {
+        if (scrollPane.getWidth() < DpFManagerConstants.WIDTH) {
           scrollPane.setHvalue(0.5);
         }
       }
