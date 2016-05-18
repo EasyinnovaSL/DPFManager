@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the (c) statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * (c) 2015 Easy Innova, SL
- * </p>
+ * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * (c) statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> (c)
+ * 2015 Easy Innova, SL </p>
  *
  * @author Victor Munoz Sola
  * @version 1.0
@@ -76,7 +64,7 @@ public class ReportPDF extends ReportGeneric {
       PDDocument document = new PDDocument();
 
       PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
-      document.addPage( page );
+      document.addPage(page);
 
       PDFont font = PDType1Font.HELVETICA_BOLD;
       PDPageContentStream contentStream = new PDPageContentStream(document, page);
@@ -87,7 +75,7 @@ public class ReportPDF extends ReportGeneric {
       // Logo
       PDXObjectImage ximage = new PDJpeg(document, getFileStreamFromResources("images/logo.jpg"));
       float scale = 3;
-      contentStream.drawXObject( ximage, pos_x, pos_y, 645/scale, 300/scale );
+      contentStream.drawXObject(ximage, pos_x, pos_y, 645 / scale, 300 / scale);
 
       // Report Title
       pos_y -= 30;
@@ -103,31 +91,31 @@ public class ReportPDF extends ReportGeneric {
       Color col = gr.getReportsPc() == gr.getReportsCount() ? Color.green : Color.red;
       writeText(contentStream, gr.getReportsPc() + "", pos_x, pos_y, font, font_size, col);
       writeText(contentStream, "conforms to Policy checker", pos_x + 30, pos_y, font, font_size, col);
-      if (gr.getHasBl()){
+      if (gr.getHasBl()) {
         pos_y -= 15;
         col = gr.getReportsBl() == gr.getReportsCount() ? Color.green : Color.red;
         writeText(contentStream, gr.getReportsBl() + "", pos_x, pos_y, font, font_size, col);
         writeText(contentStream, "conforms to Baseline Profile", pos_x + 30, pos_y, font, font_size, col);
       }
-      if (gr.getHasEp()){
+      if (gr.getHasEp()) {
         pos_y -= 15;
         col = gr.getReportsEp() == gr.getReportsCount() ? Color.green : Color.red;
         writeText(contentStream, gr.getReportsEp() + "", pos_x, pos_y, font, font_size, col);
         writeText(contentStream, "conforms to Tiff/EP Profile", pos_x + 30, pos_y, font, font_size, col);
       }
-      if (gr.getHasIt0()){
+      if (gr.getHasIt0()) {
         pos_y -= 15;
         col = gr.getReportsIt0() == gr.getReportsCount() ? Color.green : Color.red;
         writeText(contentStream, gr.getReportsIt0() + "", pos_x, pos_y, font, font_size, col);
         writeText(contentStream, "conforms to Tiff/IT Profile", pos_x + 30, pos_y, font, font_size, col);
       }
-      if (gr.getHasIt1()){
+      if (gr.getHasIt1()) {
         pos_y -= 15;
         col = gr.getReportsIt1() == gr.getReportsCount() ? Color.green : Color.red;
         writeText(contentStream, gr.getReportsIt2() + "", pos_x, pos_y, font, font_size, col);
         writeText(contentStream, "conforms to Tiff/IT P1 Profile", pos_x + 30, pos_y, font, font_size, col);
       }
-      if (gr.getHasIt2()){
+      if (gr.getHasIt2()) {
         pos_y -= 15;
         col = gr.getReportsIt2() == gr.getReportsCount() ? Color.green : Color.red;
         writeText(contentStream, gr.getReportsIt2() + "", pos_x, pos_y, font, font_size, col);
@@ -139,14 +127,14 @@ public class ReportPDF extends ReportGeneric {
       if (pos_y > 565) pos_y = 565;
       pos_x += 200;
       int graph_size = 40;
-      BufferedImage image = new BufferedImage(graph_size*10, graph_size*10, BufferedImage.TYPE_INT_ARGB);
+      BufferedImage image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2d = image.createGraphics();
-      Double doub = (double)gr.getReportsOk() / gr.getReportsCount();
+      Double doub = (double) gr.getReportsOk() / gr.getReportsCount();
       double extent = 360d * doub;
       g2d.setColor(Color.green);
-      g2d.fill(new Arc2D.Double(0, 0, graph_size*10, graph_size*10, 90, 360, Arc2D.PIE));
+      g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
       g2d.setColor(Color.red);
-      g2d.fill(new Arc2D.Double(0, 0, graph_size*10, graph_size*10, 90, 360 - extent, Arc2D.PIE));
+      g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
       ximage = new PDJpeg(document, image);
       contentStream.drawXObject(ximage, pos_x, pos_y, graph_size, graph_size);
       pos_y += graph_size - 10;
@@ -155,7 +143,7 @@ public class ReportPDF extends ReportGeneric {
       pos_y -= 10;
       writeText(contentStream, gr.getReportsKo() + " failed", pos_x + 50, pos_y, font, font_size, Color.red);
       pos_y -= 10;
-      writeText(contentStream, "Global score " + (doub*100) + "%", pos_x + 50, pos_y, font, font_size, Color.black);
+      writeText(contentStream, "Global score " + (doub * 100) + "%", pos_x + 50, pos_y, font, font_size, Color.black);
 
       // Individual Tiff images list
       pos_x = 100;
@@ -178,7 +166,7 @@ public class ReportPDF extends ReportGeneric {
         // Draw image
         String imgPath = pdffile + "img.jpg";
         int ids = 0;
-        while (new File(imgPath).exists()) imgPath = pdffile + "img" + ids++ +".jpg";
+        while (new File(imgPath).exists()) imgPath = pdffile + "img" + ids++ + ".jpg";
         boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
         BufferedImage bimg;
         if (!check) {
@@ -187,8 +175,8 @@ public class ReportPDF extends ReportGeneric {
           bimg = ImageIO.read(new File(imgPath));
         }
         image_width = image_height * bimg.getWidth() / bimg.getHeight();
-        ximage = new PDJpeg(document, bimg );
-        contentStream.drawXObject( ximage, pos_x, pos_y, image_width, image_height );
+        ximage = new PDJpeg(document, bimg);
+        contentStream.drawXObject(ximage, pos_x, pos_y, image_width, image_height);
         if (check) new File(imgPath).delete();
 
         // Values
@@ -198,7 +186,7 @@ public class ReportPDF extends ReportGeneric {
         font_size = 6;
         pos_y -= 10;
         writeText(contentStream, "Conformance Checker", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-        contentStream.drawLine(pos_x + image_width + 10,pos_y-5,image_width + 150,pos_y-5);
+        contentStream.drawLine(pos_x + image_width + 10, pos_y - 5, image_width + 150, pos_y - 5);
         pos_y -= 2;
 
         if (ir.hasBlValidation()) {
@@ -244,14 +232,14 @@ public class ReportPDF extends ReportGeneric {
         pos_y -= 10;
         pos_y -= 10;
         graph_size = 25;
-        image = new BufferedImage(graph_size*10, graph_size*10, BufferedImage.TYPE_INT_ARGB);
+        image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
         g2d = image.createGraphics();
-        doub = (double)ir.calculatePercent();
+        doub = (double) ir.calculatePercent();
         extent = 360d * doub / 100.0;
         g2d.setColor(Color.gray);
-        g2d.fill(new Arc2D.Double(0, 0, graph_size*10, graph_size*10, 90, 360, Arc2D.PIE));
+        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
         g2d.setColor(Color.red);
-        g2d.fill(new Arc2D.Double(0, 0, graph_size*10, graph_size*10, 90, 360 - extent, Arc2D.PIE));
+        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
         ximage = new PDJpeg(document, image);
         contentStream.drawXObject(ximage, pos_x + image_width + 180, pos_y - graph_size, graph_size, graph_size);
         pos_y += graph_size - 10;
@@ -316,7 +304,7 @@ public class ReportPDF extends ReportGeneric {
   PDPageContentStream newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
     contentStream.close();
     PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
-    document.addPage( page );
+    document.addPage(page);
     return new PDPageContentStream(document, page);
   }
 
@@ -349,10 +337,10 @@ public class ReportPDF extends ReportGeneric {
    */
   void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size, Color color) throws Exception {
     contentStream.beginText();
-    contentStream.setFont( font, font_size );
+    contentStream.setFont(font, font_size);
     contentStream.setNonStrokingColor(color);
-    contentStream.moveTextPositionByAmount( x, y );
-    contentStream.drawString( text );
+    contentStream.moveTextPositionByAmount(x, y);
+    contentStream.drawString(text);
     contentStream.endText();
   }
 }
