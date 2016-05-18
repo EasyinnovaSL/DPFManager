@@ -72,7 +72,6 @@ public class DpfExecutor extends ThreadPoolExecutor {
       runningThreads.put(run.getUuid(), runningThreads.get(run.getUuid())+1);
     }
 
-    System.out.println("Before "+run.getUuid()+": "+runningThreads.get(run.getUuid()));
     // Unblock execution
     System.out.println("releasing Semaphore before");
     releaseSemaphore();
@@ -94,8 +93,6 @@ public class DpfExecutor extends ThreadPoolExecutor {
     if (runningThreads.containsKey(uuid)){
       runningThreads.put(uuid, runningThreads.get(uuid) - 1);
     }
-
-    System.out.println("After "+run.getUuid()+": "+runningThreads.get(uuid));
 
     // Check if the last waiting for pause
     if (pending.containsKey(uuid) && runningThreads.get(uuid) == 0){

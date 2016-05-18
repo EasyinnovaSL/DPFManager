@@ -85,6 +85,10 @@ public class DatabaseCache {
     job.setProcessedFiles(job.getTotalFiles());
   }
 
+  public boolean containsJob(Long uuid){
+    return jobs.containsKey(uuid);
+  }
+
   public void clear(Long uuid) {
     jobs.remove(uuid);
   }
