@@ -3,7 +3,7 @@ package dpfmanager.conformancechecker.tiff.reporting;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.util.ReportHtml;
-import dpfmanager.shell.modules.report.util.ReportTag;
+import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;

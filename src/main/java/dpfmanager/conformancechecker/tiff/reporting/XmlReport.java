@@ -2,11 +2,12 @@ package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.ReportHtml;
-import dpfmanager.shell.modules.report.util.ReportTag;
+import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
@@ -408,7 +409,7 @@ public class XmlReport {
    * @param ir the individual report.
    * @return the element
    */
-  private Element buildReportIndividual(Document doc, IndividualReport ir) {
+  private Element buildReportIndividual(Document doc, IndividualReport ir, Rules rules) {
     Element report = doc.createElement("report");
 
     // file info
@@ -472,6 +473,16 @@ public class XmlReport {
       infoElement.setTextContent(value);
       infoElement.setAttribute("Planar", value);
       report.appendChild(infoElement);
+
+      for (Rule rule : rules.getRules()) {
+        if (rule.getTag().equals("BlankPage")) {
+          value = "1";
+          infoElement = doc.createElement("BlankPage");
+          infoElement.setTextContent(value);
+          infoElement.setAttribute("BlankPage", value);
+          report.appendChild(infoElement);
+        }
+      }
 
       // tags
       for (ReportTag tag : getTags(ir)) {
@@ -606,7 +617,7 @@ public class XmlReport {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
       Document doc = docBuilder.newDocument();
-      Element report = buildReportIndividual(doc, ir);
+      Element report = buildReportIndividual(doc, ir, rules);
       doc.appendChild(report);
 
       // write the content into xml file
@@ -614,7 +625,6 @@ public class XmlReport {
       Transformer transformer = transformerFactory.newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-      DOMSource source = new DOMSource(doc);
 
       // To String
       transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");

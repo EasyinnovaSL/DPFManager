@@ -5,7 +5,6 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.PDFParams;
-import dpfmanager.shell.modules.report.util.ReportTag;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
