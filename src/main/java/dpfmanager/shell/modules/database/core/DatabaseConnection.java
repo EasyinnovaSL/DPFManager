@@ -212,6 +212,7 @@ public class DatabaseConnection {
         pstmt.setLong(12, job.getLastUpdate());
         pstmt.executeUpdate();
         pstmt.close();
+        lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error creating new job."));
       } finally {
@@ -242,6 +243,7 @@ public class DatabaseConnection {
         }
         globalConnection.commit();
         globalConnection.setAutoCommit(true);
+        lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error updating job."));
       } finally {
@@ -254,23 +256,17 @@ public class DatabaseConnection {
 
   synchronized public List<Jobs> getAllJobs() {
     List<Jobs> jobs = new ArrayList<>();
-    if (blockConnection()) {
-      try {
-        Statement stmt = globalConnection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE);
-        while (rs.next()) {
-          Jobs job = new Jobs();
-          job.parseResultSet(rs);
-          jobs.add(job);
-        }
-        stmt.close();
-      } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
-      } finally {
-        releaseConnection();
+    try {
+      Statement stmt = globalConnection.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE);
+      while (rs.next()) {
+        Jobs job = new Jobs();
+        job.parseResultSet(rs);
+        jobs.add(job);
       }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      stmt.close();
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
     }
     return jobs;
   }
@@ -282,6 +278,7 @@ public class DatabaseConnection {
         Statement stmt = globalConnection.createStatement();
         stmt.execute(deleteSql);
         stmt.close();
+        lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error deleting job."));
       } finally {
