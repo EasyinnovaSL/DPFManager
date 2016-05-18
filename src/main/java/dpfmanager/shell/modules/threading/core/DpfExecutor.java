@@ -58,7 +58,7 @@ public class DpfExecutor extends ThreadPoolExecutor {
   }
 
   @Override
-  synchronized protected void beforeExecute(Thread t, Runnable r) {
+  protected void beforeExecute(Thread t, Runnable r) {
     // Block execution
     acquireSemaphore();
 
@@ -70,14 +70,13 @@ public class DpfExecutor extends ThreadPoolExecutor {
       runningThreads.put(run.getUuid(), runningThreads.get(run.getUuid())+1);
     }
 
-    System.out.println("Before "+run.getUuid()+": "+runningThreads.get(run.getUuid()));
     // Unblock execution
     releaseSemaphore();
   }
 
 
   @Override
-  synchronized protected void afterExecute(Runnable r, Throwable t) {
+  protected void afterExecute(Runnable r, Throwable t) {
     // Block execution
     acquireSemaphore();
 
@@ -88,8 +87,6 @@ public class DpfExecutor extends ThreadPoolExecutor {
     if (runningThreads.containsKey(uuid)){
       runningThreads.put(uuid, runningThreads.get(uuid) - 1);
     }
-
-    System.out.println("After "+run.getUuid()+": "+runningThreads.get(uuid));
 
     // Check if the last waiting for pause
     if (pending.containsKey(uuid) && runningThreads.get(uuid) == 0){
@@ -184,11 +181,11 @@ public class DpfExecutor extends ThreadPoolExecutor {
   /**
    * Semaphore functions
    */
-  synchronized private void acquireSemaphore(){
+  private void acquireSemaphore(){
     semaphore.acquireUninterruptibly();
   }
 
-  synchronized private void releaseSemaphore(){
+  private void releaseSemaphore(){
     semaphore.release();
   }
 

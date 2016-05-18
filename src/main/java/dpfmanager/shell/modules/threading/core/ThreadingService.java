@@ -31,6 +31,7 @@ import java.awt.*;
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -64,7 +65,7 @@ public class ThreadingService extends DpfService {
   public void init() {
     // No context yet
     checks = new HashMap<>();
-    pendingChecks = new PriorityQueue<>();
+    pendingChecks = new LinkedList<>();
     needReload = true;
   }
 
@@ -158,7 +159,6 @@ public class ThreadingService extends DpfService {
         pending = true;
       } else {
         //Start now
-        System.out.println("Start check");
         checks.put(uuid, fc);
         context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, gm.getRunnable()));
       }
