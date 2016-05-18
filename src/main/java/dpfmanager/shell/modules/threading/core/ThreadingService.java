@@ -129,7 +129,10 @@ public class ThreadingService extends DpfService {
     getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.CANCEL, uuid));
 
     // Remove folder
-    removeInternalFolder(checks.get(uuid).getInternal());
+    String internal = checks.get(uuid).getInternal();
+    if (internal != null){
+      removeInternalFolder(internal);
+    }
 
     // Remove from checks pool
     checks.remove(uuid);
@@ -155,6 +158,7 @@ public class ThreadingService extends DpfService {
         pending = true;
       } else {
         //Start now
+        System.out.println("Start check");
         checks.put(uuid, fc);
         context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, gm.getRunnable()));
       }

@@ -32,11 +32,7 @@ public class DpfExecutor extends ThreadPoolExecutor {
   /** Running threads of each check */
   private Map<Long,Integer> runningThreads;
 
-  /** Paused checks */
-  private List<Long> paused;
-
   /** Semaphore */
-  private boolean canExecute;
   private Semaphore semaphore;
 
   public DpfExecutor(int corePoolSize) {
@@ -44,7 +40,6 @@ public class DpfExecutor extends ThreadPoolExecutor {
     pending = new HashMap<>();
     runningThreads = new HashMap<>();
     cancelled = new ArrayList<>();
-    canExecute = true;
     semaphore = new Semaphore(1);
   }
 
@@ -63,7 +58,10 @@ public class DpfExecutor extends ThreadPoolExecutor {
   }
 
   @Override
-  protected void beforeExecute(Thread t, Runnable r) {
+  synchronized protected void beforeExecute(Thread t, Runnable r) {
+    // Block execution
+    acquireSemaphore();
+
     // Increment threads count
     DpfRunnable run = (DpfRunnable) r;
     if (!runningThreads.containsKey(run.getUuid())){
@@ -71,6 +69,10 @@ public class DpfExecutor extends ThreadPoolExecutor {
     } else {
       runningThreads.put(run.getUuid(), runningThreads.get(run.getUuid())+1);
     }
+
+    System.out.println("Before "+run.getUuid()+": "+runningThreads.get(run.getUuid()));
+    // Unblock execution
+    releaseSemaphore();
   }
 
 
@@ -78,13 +80,16 @@ public class DpfExecutor extends ThreadPoolExecutor {
   synchronized protected void afterExecute(Runnable r, Throwable t) {
     // Block execution
     acquireSemaphore();
+
     DpfRunnable run = (DpfRunnable) r;
     Long uuid = run.getUuid();
 
     // Decrement threads count
     if (runningThreads.containsKey(uuid)){
-      runningThreads.put(run.getUuid(), runningThreads.get(uuid) - 1);
+      runningThreads.put(uuid, runningThreads.get(uuid) - 1);
     }
+
+    System.out.println("After "+run.getUuid()+": "+runningThreads.get(uuid));
 
     // Check if the last waiting for pause
     if (pending.containsKey(uuid) && runningThreads.get(uuid) == 0){
@@ -92,10 +97,8 @@ public class DpfExecutor extends ThreadPoolExecutor {
     }
 
     // Check if the last waiting for cancel
-    if (cancelled.contains(uuid)) {
-      if (cancelled.contains(uuid) && runningThreads.get(uuid) == 0) {
-        context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.CANCEL, uuid));
-      }
+    if (cancelled.contains(uuid) && runningThreads.get(uuid) == 0) {
+      context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.CANCEL, uuid));
     }
 
     // Unblock execution
@@ -121,9 +124,11 @@ public class DpfExecutor extends ThreadPoolExecutor {
       getQueue().remove(run);
     }
 
-    // Check if the tasks were paused
+    // Check if the tasks were paused or running
     if (pending.containsKey(uuid)){
       pending.remove(uuid);
+      context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.CANCEL, uuid));
+    } else if (!runningThreads.containsKey(uuid) || runningThreads.get(uuid) == 0){
       context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.CANCEL, uuid));
     }
 
