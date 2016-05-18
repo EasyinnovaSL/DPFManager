@@ -31,6 +31,7 @@ import java.awt.*;
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -64,7 +65,7 @@ public class ThreadingService extends DpfService {
   public void init() {
     // No context yet
     checks = new HashMap<>();
-    pendingChecks = new PriorityQueue<>();
+    pendingChecks = new LinkedList<>();
     needReload = true;
   }
 
@@ -129,7 +130,10 @@ public class ThreadingService extends DpfService {
     getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.CANCEL, uuid));
 
     // Remove folder
-    removeInternalFolder(checks.get(uuid).getInternal());
+    String internal = checks.get(uuid).getInternal();
+    if (internal != null){
+      removeInternalFolder(internal);
+    }
 
     // Remove from checks pool
     checks.remove(uuid);

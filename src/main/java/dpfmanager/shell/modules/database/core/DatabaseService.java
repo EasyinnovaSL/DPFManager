@@ -5,7 +5,6 @@ import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
@@ -43,7 +42,7 @@ public class DatabaseService extends DpfService {
     cleanDatabase();
   }
 
-  private void cleanDatabase(){
+  private void cleanDatabase() {
     connection.cleanJobs();
   }
 
@@ -113,14 +112,18 @@ public class DatabaseService extends DpfService {
   }
 
   public void cancelJob(DatabaseMessage dm) {
-    cache.cancelJob(dm.getUuid());
-    forceSyncDatabase();
-    cache.clear(dm.getUuid());
+    if (cache.containsJob(dm.getUuid())) {
+      cache.cancelJob(dm.getUuid());
+      forceSyncDatabase();
+      cache.clear(dm.getUuid());
+    }
   }
 
   public void pauseJob(DatabaseMessage dm) {
-    cache.pauseJob(dm.getUuid());
-    forceSyncDatabase();
+    if (cache.containsJob(dm.getUuid())) {
+      cache.pauseJob(dm.getUuid());
+      forceSyncDatabase();
+    }
   }
 
   public void getJobs() {
