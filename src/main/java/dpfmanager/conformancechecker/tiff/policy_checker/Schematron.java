@@ -89,12 +89,14 @@ public class Schematron extends CamelTestSupport {
     if (sc != null) {
       Document doc = readXml(sc);
 
+      // Reset
       NodeList nodes = doc.getElementsByTagName("rule");
       while (nodes.getLength() > 0) {
         Element el = (Element) nodes.item(0);
         el.getParentNode().removeChild(el);
       }
 
+      // Insert rules
       Element pattern = (Element) doc.getElementsByTagName("pattern").item(0);
       if (rules != null) {
         for (Rule r : rules.getRules()) {

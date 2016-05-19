@@ -198,12 +198,6 @@ public class ProcessInput {
     return filename2;
   }
 
-  public List<String> getTempFiles() {
-    List<String> aux = new ArrayList<>(tempFiles);
-    tempFiles.clear();
-    return aux;
-  }
-
   /**
    * Checks if the filename is an URL.
    *

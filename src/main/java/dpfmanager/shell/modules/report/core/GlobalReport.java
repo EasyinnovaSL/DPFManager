@@ -263,50 +263,6 @@ public class GlobalReport {
   }
 
   /**
-   * Has bl boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasBl() {
-    return hasBl;
-  }
-
-  /**
-   * Has ep boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasEp() {
-    return hasEp;
-  }
-
-  /**
-   * Has it boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasIt0() {
-    return hasIt0;
-  }
-
-  /**
-   * Has it boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasIt1() {
-    return hasIt1;
-  }
-  /**
-   * Has it boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasIt2() {
-    return hasIt2;
-  }
-
-  /**
    * Get the count of correct reports.
    *
    * @return nReportsOnlyBl reports bl

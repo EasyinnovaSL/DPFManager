@@ -59,39 +59,6 @@ public class IndividualReport {
   /** The file path. */
   private String reportpath;
 
-  /** The isimg list. */
-  private List<Boolean> listIsimg;
-
-  /** The hasSubIfd list. */
-  private List<Boolean> listHasSubIfd;
-
-  /** The Tiff width. */
-  private String width;
-
-  /** The Tiff height. */
-  private String height;
-
-  /** The Tiff bits per sample. */
-  private String bps;
-
-  /** The Endianess. */
-  private String endianess;
-
-  /** The compression. */
-  private String compression;
-
-  /** The pixel density. */
-  private String pixeldensity;
-
-  /** The pixel numberimages. */
-  private String numberimages;
-
-  /** The Tiff photometric. */
-  private String photo;
-
-  /** The Tiff planar. */
-  private String planar;
-
   /** The baseline errors list. */
   private List<RuleResult> errorsBl;
 
@@ -256,8 +223,6 @@ public class IndividualReport {
                           Validator baselineValidation, Validator epValidation, Validator itValidation, Validator it1Validation, Validator it2Validation) {
     filename = name;
     filepath = path;
-    listIsimg = new ArrayList<>();
-    listHasSubIfd = new ArrayList<>();
     containsData = true;
     reportFilename = rFilename;
     generate(tiffModel, baselineValidation, epValidation, itValidation, it1Validation, it2Validation);
@@ -390,16 +355,6 @@ public class IndividualReport {
   }
 
   /**
-   * Saves the ifd node.
-   *
-   * @param ifd the ifd
-   */
-  private void saveIfdNode(IFD ifd) {
-    listIsimg.add(ifd.isImage());
-    listHasSubIfd.add(ifd.getsubIFD() != null);
-  }
-
-  /**
    * Calculate percent.
    *
    * @return the int
@@ -430,54 +385,6 @@ public class IndividualReport {
   public void generate(TiffDocument tiffModel, Validator validation,
                        Validator epValidation, Validator it0Validation, Validator it1Validation, Validator it2Validation) {
     this.tiffModel = tiffModel;
-    // tiff structure
-    IFD ifd = tiffModel.getFirstIFD();
-    if (ifd != null) {
-      saveIfdNode(ifd);
-      while (ifd.hasNextIFD()) {
-        ifd = ifd.getNextIFD();
-        saveIfdNode(ifd);
-      }
-    }
-
-    // basic info
-    width = tiffModel.getMetadataSingleString("ImageWidth");
-    height = tiffModel.getMetadataSingleString("ImageLength");
-    bps = tiffModel.getMetadataSingleString("BitsPerSample");
-    compression = tiffModel.getMetadataSingleString("Compression");
-    endianess = "none";
-    if (tiffModel.getEndianess() != null){
-      endianess = tiffModel.getEndianess().toString();
-    }
-    pixeldensity = "0";
-    numberimages = "0";
-    if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
-    {
-      double pd = 0;
-      try {
-        double ru = Double.parseDouble(tiffModel.getMetadata().get("ResolutionUnit").toString());
-        String xres = tiffModel.getMetadata().get("XResolution").toString();
-        double num = Double.parseDouble(xres.substring(0, xres.indexOf("/")));
-        double den = Double.parseDouble(xres.substring(xres.indexOf("/") + 1));
-        double xr = num / den;
-        double ppi;
-        if (ru == 2) {
-          ppi = xr;
-        } else {
-          ppi = xr / 0.3937;
-        }
-        pixeldensity = ppi+"";
-      } catch (Exception ex) {
-        pixeldensity = "";
-      }
-    }
-    numberimages = tiffModel.getImageIfds().size() + "";
-    if (tiffModel.getMetadata().contains("PhotometricInterpretation")) {
-      photo = tiffModel.getMetadataSingleString("PhotometricInterpretation");
-    }
-    if (tiffModel.getMetadata().contains("PlanarConfiguration")) {
-      planar = tiffModel.getMetadataSingleString("PlanarConfiguration");
-    }
 
     // errors & warnings
     if (validation != null) {
@@ -510,69 +417,6 @@ public class IndividualReport {
     warningsPc = new ArrayList<>();
     for (RuleResult rr : pcValidation) if (!rr.getWarning()) errorsPc.add(rr);
     for (RuleResult rr : pcValidation) if (rr.getWarning()) warningsPc.add(rr);
-  }
-
-  /**
-   * Get width.
-   *
-   * @return the width
-   */
-  public String getWidth() {
-    return width;
-  }
-
-  /**
-   * Get height.
-   *
-   * @return the height
-   */
-  public String getHeight() {
-    return height;
-  }
-
-  /**
-   * Get Planar.
-   *
-   * @return the Planar
-   */
-  public String getPlanar() {
-    return planar;
-  }
-
-  /**
-   * Get Photometric.
-   *
-   * @return the Photometric
-   */
-  public String getPhotometric() {
-    return photo;
-  }
-
-  /**
-   * Get bits per sample.
-   *
-   * @return the height
-   */
-  public String getBitsPerSample() {
-    return bps;
-  }
-
-  /**
-   * Gets endianess.
-   *
-   * @return the endianess
-   */
-  public String getEndianess() {
-    return endianess;
-  }
-
-  /**
-   * Gets compression.
-   *
-   * @return the compression
-   */
-  public String getCompression() {
-    return compression;
   }
 
   /**
@@ -620,24 +464,6 @@ public class IndividualReport {
     if (profile == 0) return errorsIt0 != null;
     if (profile == 1) return errorsIt1 != null;
     return errorsIt2 != null;
-  }
-
-  /**
-   * Gets number images.
-   *
-   * @return the number of images
-   */
-  public String getNumberImages() {
-    return "" + numberimages;
-  }
-
-  /**
-   * Gets pixels density.
-   *
-   * @return the pixels density
-   */
-  public String getPixelsDensity() {
-    return "" + pixeldensity;
   }
 
   /**

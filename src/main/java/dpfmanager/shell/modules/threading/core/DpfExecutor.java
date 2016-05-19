@@ -60,9 +60,7 @@ public class DpfExecutor extends ThreadPoolExecutor {
   @Override
   protected void beforeExecute(Thread t, Runnable r) {
     // Block execution
-    System.out.println("acquiring Semaphore before");
     acquireSemaphore();
-    System.out.println("acquired Semaphore before");
 
     // Increment threads count
     DpfRunnable run = (DpfRunnable) r;
@@ -73,18 +71,14 @@ public class DpfExecutor extends ThreadPoolExecutor {
     }
 
     // Unblock execution
-    System.out.println("releasing Semaphore before");
     releaseSemaphore();
-    System.out.println("released Semaphore before");
   }
 
 
   @Override
   protected void afterExecute(Runnable r, Throwable t) {
     // Block execution
-    System.out.println("acquiring Semaphore after");
     acquireSemaphore();
-    System.out.println("acquired Semaphore after");
 
     DpfRunnable run = (DpfRunnable) r;
     Long uuid = run.getUuid();
@@ -105,16 +99,12 @@ public class DpfExecutor extends ThreadPoolExecutor {
     }
 
     // Unblock execution
-    System.out.println("releasing Semaphore after");
     releaseSemaphore();
-    System.out.println("released Semaphore after");
   }
 
   public void cancel(Long uuid) {
     // Block execution
-    System.out.println("acquiring Semaphore cancel");
     acquireSemaphore();
-    System.out.println("acquired Semaphore cancel");
     cancelled.add(uuid);
 
     // Get tasks to remove
@@ -140,16 +130,12 @@ public class DpfExecutor extends ThreadPoolExecutor {
     }
 
     // Unblock execution
-    System.out.println("releasing Semaphore cancel");
     releaseSemaphore();
-    System.out.println("released Semaphore cancel");
   }
 
   public void pause(Long uuid) {
     // Block execution
-    System.out.println("acquiring Semaphore pause");
     acquireSemaphore();
-    System.out.println("acquired Semaphore pause");
 
     // Get tasks to pause
     List<Runnable> pauses = new ArrayList<>();
@@ -174,9 +160,7 @@ public class DpfExecutor extends ThreadPoolExecutor {
     }
 
     // Unblock execution
-    System.out.println("releasing Semaphore pause");
     releaseSemaphore();
-    System.out.println("released Semaphore pause");
   }
 
   public void resume(Long uuid) {

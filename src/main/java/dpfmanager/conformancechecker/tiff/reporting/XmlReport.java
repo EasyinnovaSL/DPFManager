@@ -12,6 +12,7 @@ import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 
 import org.w3c.dom.Document;
@@ -439,50 +440,119 @@ public class XmlReport {
 
       // basic info
       Element infoElement;
-      infoElement = doc.createElement("bitspersample");
-      infoElement.setTextContent(ir.getBitsPerSample());
-      report.appendChild(infoElement);
-      infoElement = doc.createElement("PixelDensity");
-      infoElement.setTextContent(ir.getPixelsDensity());
-      infoElement.setAttribute("PixelDensity", "" + (int) Double.parseDouble(ir.getPixelsDensity()));
-      report.appendChild(infoElement);
-      infoElement = doc.createElement("NumberImages");
-      infoElement.setTextContent(ir.getNumberImages());
-      infoElement.setAttribute("NumberImages", "" + (int) Double.parseDouble(ir.getNumberImages()));
-      report.appendChild(infoElement);
       infoElement = doc.createElement("ByteOrder");
-      infoElement.setTextContent(ir.getEndianess());
-      infoElement.setAttribute("ByteOrder", ir.getEndianess());
-      report.appendChild(infoElement);
-      infoElement = doc.createElement("Compression");
-      String value = ir.getCompression().length() > 0 ? TiffConformanceChecker.compressionName(Integer.parseInt(ir.getCompression())) : "Unknown";
-      infoElement.setTextContent(value);
-      infoElement.setAttribute("Compression", value);
-      report.appendChild(infoElement);
-      infoElement = doc.createElement("BitDepth");
-      infoElement.setTextContent(ir.getBitsPerSample());
-      infoElement.setAttribute("BitDepth", ir.getBitsPerSample());
-      report.appendChild(infoElement);
-      value = ir.getPhotometric() != null && ir.getPhotometric().length() > 0 ? TiffConformanceChecker.photometricName(Integer.parseInt(ir.getPhotometric())) : "Unknown";
-      infoElement = doc.createElement("Photometric");
-      infoElement.setTextContent(value);
-      infoElement.setAttribute("Photometric", value);
-      report.appendChild(infoElement);
-      value = ir.getPlanar() != null && ir.getPlanar().length() > 0 ? TiffConformanceChecker.planarName(Integer.parseInt(ir.getPlanar())) : "Unknown";
-      infoElement = doc.createElement("Planar");
-      infoElement.setTextContent(value);
-      infoElement.setAttribute("Planar", value);
+      String endianess = "none";
+      if (ir.getTiffModel().getEndianess() != null){
+        endianess = ir.getTiffModel().getEndianess().toString();
+      }
+      infoElement.setTextContent(endianess);
+      infoElement.setAttribute("ByteOrder", endianess);
       report.appendChild(infoElement);
 
-      for (Rule rule : rules.getRules()) {
-        if (rule.getTag().equals("BlankPage")) {
-          value = "1";
+      infoElement = doc.createElement("NumberImages");
+      String numberimages = ir.getTiffModel().getImageIfds().size() + "";
+      infoElement.setTextContent(numberimages);
+      infoElement.setAttribute("NumberImages", "" + (int) Double.parseDouble(numberimages));
+      report.appendChild(infoElement);
+
+      boolean checkBlankPages = false;
+      if (rules != null) {
+        for (Rule rule : rules.getRules()) {
+          if (rule.getTag().equals("BlankPage")) {
+            checkBlankPages = true;
+            break;
+          }
+        }
+      }
+
+      ifd = ir.getTiffModel().getFirstIFD();
+      int numBlankPages = 0;
+      while (ifd != null) {
+        // For each image
+        String bps = ifd.getMetadata().get("BitsPerSample").toString();
+        infoElement = doc.createElement("bitspersample");
+        infoElement.setTextContent(bps);
+        report.appendChild(infoElement);
+
+        infoElement = doc.createElement("BitDepth");
+        infoElement.setTextContent(bps);
+        infoElement.setAttribute("BitDepth", bps);
+        report.appendChild(infoElement);
+
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Compression"))) {
+          infoElement = doc.createElement("Compression");
+          int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
+          String value = comp > 0 ? TiffConformanceChecker.compressionName(comp) : "Unknown";
+          infoElement.setTextContent(value);
+          infoElement.setAttribute("Compression", value);
+          report.appendChild(infoElement);
+        }
+
+        String value = "Unknown";
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("PhotometricInterpretation"))) {
+          int photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
+          value = TiffConformanceChecker.photometricName(photo);
+        }
+        infoElement = doc.createElement("Photometric");
+        infoElement.setTextContent(value);
+        infoElement.setAttribute("Photometric", value);
+        report.appendChild(infoElement);
+
+        value = "Unknown";
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("PlanarConfiguration"))) {
+          int planar = Integer.parseInt(ifd.getMetadata().get("PlanarConfiguration").toString());
+          value = TiffConformanceChecker.planarName(planar);
+        }
+        infoElement = doc.createElement("Planar");
+        infoElement.setTextContent(value);
+        infoElement.setAttribute("Planar", value);
+        report.appendChild(infoElement);
+
+        String pixeldensity = "0";
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("ResolutionUnit")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("XResolution")))
+        {
+          try {
+            double ru = Double.parseDouble(ifd.getMetadata().get("ResolutionUnit").toString());
+            String xres = ifd.getMetadata().get("XResolution").toString();
+            double num = Double.parseDouble(xres.substring(0, xres.indexOf("/")));
+            double den = Double.parseDouble(xres.substring(xres.indexOf("/") + 1));
+            double xr = num / den;
+            double ppi;
+            if (ru == 2) {
+              ppi = xr;
+            } else {
+              ppi = xr / 0.3937;
+            }
+            pixeldensity = ppi+"";
+          } catch (Exception ex) {
+            pixeldensity = "";
+          }
+        }
+        infoElement = doc.createElement("PixelDensity");
+        infoElement.setTextContent(pixeldensity);
+        infoElement.setAttribute("PixelDensity", "" + (int) Double.parseDouble(pixeldensity));
+        report.appendChild(infoElement);
+
+        if (checkBlankPages) {
+          boolean isBlank = false;
+          value = "0";
+          if (isBlank) {
+            value = "1";
+            numBlankPages++;
+          }
           infoElement = doc.createElement("BlankPage");
           infoElement.setTextContent(value);
           infoElement.setAttribute("BlankPage", value);
           report.appendChild(infoElement);
         }
+
+        ifd = ifd.getNextIFD();
       }
+
+      infoElement = doc.createElement("NumberBlankImages");
+      infoElement.setTextContent(numBlankPages + "");
+      infoElement.setAttribute("NumberBlankImages", "" + numBlankPages);
+      report.appendChild(infoElement);
 
       // tags
       for (ReportTag tag : getTags(ir)) {
