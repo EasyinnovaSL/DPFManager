@@ -120,7 +120,7 @@ public class TaskFragment {
       showDoneJob();
     } else if (lastJob.getState() == 0 && job.getState() != 0) {
       // From pending to other
-      NodeUtil.showNode(cancelImage);
+      mainVbox.setOpacity(1.0);
       NodeUtil.showNode(resumePauseImage);
     }
 
@@ -173,7 +173,8 @@ public class TaskFragment {
 
   private void showPendingJob(){
     timeLabel.setText("Pending");
-    NodeUtil.hideNode(cancelImage);
+    mainVbox.setOpacity(opacity);
+    NodeUtil.showNode(cancelImage);
     NodeUtil.hideNode(resumePauseImage);
     NodeUtil.hideNode(taskImage);
   }
