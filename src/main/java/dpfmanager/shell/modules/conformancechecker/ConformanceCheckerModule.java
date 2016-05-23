@@ -37,13 +37,13 @@ public class ConformanceCheckerModule extends DpfModule {
   public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(ConformanceMessage.class)) {
       ConformanceMessage cm = dpfMessage.getTypedMessage(ConformanceMessage.class);
-      if (cm.isGui()) {
+      if (cm.hasPaths()) {
         String path = cm.getPath();
         String input = cm.getInput();
         if (!service.readConfig(path)) {
           getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
         } else {
-          service.setParameters(null, cm.getRecursive());
+          service.setParameters(null, cm.getRecursive(), null);
           service.initProcessInputRun(input);
         }
       }

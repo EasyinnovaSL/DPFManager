@@ -7,6 +7,7 @@ import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.modules.server.core.ServerService;
+import dpfmanager.shell.modules.server.messages.PostMessage;
 import dpfmanager.shell.modules.server.messages.ServerMessage;
 import dpfmanager.shell.modules.threading.core.ThreadingService;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
@@ -36,6 +37,11 @@ public class ServerController extends DpfSpringController {
   public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(ServerMessage.class)){
       service.startServer();
+    } else if (dpfMessage.isTypeOf(PostMessage.class)){
+      PostMessage pm = dpfMessage.getTypedMessage(PostMessage.class);
+      if (pm.isPost()){
+        service.tractPostRequest(pm);
+      }
     }
   }
 

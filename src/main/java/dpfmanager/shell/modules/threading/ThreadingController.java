@@ -14,6 +14,7 @@ import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
@@ -31,6 +32,9 @@ public class ThreadingController extends DpfSpringController {
   @Autowired
   private ApplicationContext appContext;
 
+  @Value("#{springProperties['mode']}")
+  private String mode;
+
   @Override
   public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(IndividualStatusMessage.class)) {
@@ -38,9 +42,13 @@ public class ThreadingController extends DpfSpringController {
       service.finishIndividual(sm.getIndividual(), sm.getUuid());
     } else if (dpfMessage.isTypeOf(GlobalStatusMessage.class)) {
       GlobalStatusMessage gm = dpfMessage.getTypedMessage(GlobalStatusMessage.class);
-      service.handleGlobalStatus(gm, params.isSilence());
-      // Now close application
-      if (gm.isFinish()) {
+      boolean silence = true;
+      if (params != null){
+        silence = params.isSilence();
+      }
+      service.handleGlobalStatus(gm, silence);
+      // Now close application only if it is not server mode
+      if (gm.isFinish() && mode.equals("CMD")) {
         AppContext.close();
         ConsoleLauncher.setFinished(true);
       }

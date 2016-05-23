@@ -93,7 +93,7 @@ public class ConsoleController {
       config.setOutput(outputFolder);
     }
 
-    context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.CONSOLE, files, config, parameters.getRecursive()));
+    context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(files, config, parameters.getRecursive()));
   }
 
   /**

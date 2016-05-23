@@ -32,6 +32,7 @@ public class ConformanceCheckerService extends DpfService {
 
   private int recursive;
   private boolean silence;
+  private Long uuid;
 
   /** The list of checks waiting for process input*/
   private Map<Long,ProcessInputParameters> filesToCheck;
@@ -60,12 +61,17 @@ public class ConformanceCheckerService extends DpfService {
     silence = false;
   }
 
-  public void setParameters(Configuration config, Integer r) {
+  public void setParameters(Configuration config, Integer r, Long u) {
     if (config != null) {
       getModel().setConfig(config);
     }
     if (r != null) {
       recursive = r;
+    }
+    if (u != null){
+      uuid = u;
+    } else {
+      uuid = System.currentTimeMillis();
     }
   }
 
@@ -86,7 +92,7 @@ public class ConformanceCheckerService extends DpfService {
 
   public void initProcessInputRun(String filename, String inputStr, String internalReportFolder) {
     ProcessInputRunnable pr = new ProcessInputRunnable(filename, inputStr, internalReportFolder, recursive, getModel().getConfig());
-    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.NEW, pr, inputStr));
+    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.NEW, uuid, pr, inputStr));
   }
 
   synchronized public void tractProcessInputMessage(ProcessInputMessage pim){

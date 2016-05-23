@@ -161,4 +161,13 @@ public class DPFManagerProperties {
     }
     return dataDir;
   }
+
+  public static String getServerDir() {
+    String dataDir = getConfigDir() + "/server";
+    File dataFile = new File(dataDir);
+    if (!dataFile.exists()){
+      dataFile.mkdirs();
+    }
+    return dataDir;
+  }
 }

@@ -50,7 +50,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     int recursive = getView().getRecursive();
     ArrayMessage am = new ArrayMessage();
     am.add(GuiConfig.COMPONENT_BAR, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.TASKS));
-    am.add(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.GUI, input, path, recursive));
+    am.add(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path, recursive));
     getContext().send(GuiConfig.COMPONENT_BAR, am);
   }
 

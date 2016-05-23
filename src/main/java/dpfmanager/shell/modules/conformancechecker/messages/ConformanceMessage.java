@@ -10,40 +10,49 @@ import java.util.List;
  */
 public class ConformanceMessage extends DpfMessage {
 
-  private Type type;
+  private Long uuid;
   private String input;
   private String path;
   private List<String> files;
   private Configuration config;
   private int recursive;
 
-  public enum Type {
-    GUI, CONSOLE
-  }
-
-  public ConformanceMessage(Type t, String i, String p, int r){
-    type = t;
+  public ConformanceMessage(String i, String p, int r) {
+    // With paths, Gui
     input = i;
     path = p;
     recursive = r;
   }
 
-  public ConformanceMessage(Type t, List<String> f, Configuration c, int r){
-    type = t;
+  public ConformanceMessage(Long u, String i, String p) {
+    // With paths, Server
+    input = i;
+    path = p;
+    uuid = u;
+  }
+
+  public ConformanceMessage(List<String> f, Configuration c, int r) {
+    // Console
     files = f;
     config = c;
     recursive = r;
+    input = null;
+    path = null;
   }
 
-  public boolean isGui(){
-    return type.equals(Type.GUI);
+  public boolean hasPaths() {
+    return input != null && path != null;
   }
 
-  public String getPath(){
+  public Long getUuid() {
+    return uuid;
+  }
+
+  public String getPath() {
     return path;
   }
 
-  public String getInput(){
+  public String getInput() {
     return input;
   }
 

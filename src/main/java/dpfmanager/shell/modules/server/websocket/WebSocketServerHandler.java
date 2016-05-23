@@ -31,8 +31,9 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
@@ -52,6 +53,15 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
   private WebSocketServerHandshaker handshaker;
 
+  private HttpPostRequestDecoder decoder;
+
+  @Override
+  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    if (decoder != null) {
+      decoder.cleanFiles();
+    }
+  }
+
   @Override
   public void channelRead0(ChannelHandlerContext ctx, Object msg) {
     if (msg instanceof FullHttpRequest) {
@@ -60,6 +70,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
       handleWebSocketFrame(ctx, (WebSocketFrame) msg);
     } else if (msg instanceof HttpContent) {
       System.out.println("Content");
+      handleContentMsg((HttpContent) msg);
     }
   }
 
@@ -99,7 +110,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
       System.out.println(content.toString(CharsetUtil.UTF_8));
     }
 
-    for (String name : req.headers().names()){
+    for (String name : req.headers().names()) {
       System.out.println(name + ": " + req.headers().get(name));
     }
   }
@@ -126,6 +137,31 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
       ctx.write(frame.retain());
       return;
     }
+  }
+
+  private void handleContentMsg(HttpContent chunk) {
+//     New chunk is received
+//    decoder = new HttpPostRequestDecoder(factory, request);
+//    try {
+//      decoder.offer(chunk);
+//    } catch (HttpPostRequestDecoder.ErrorDataDecoderException e1) {
+//      e1.printStackTrace();
+//      responseContent.append(e1.getMessage());
+//      writeResponse(ctx.channel());
+//      ctx.channel().close();
+//      return;
+//    }
+//    responseContent.append('o');
+//    // example of reading chunk by chunk (minimize memory usage due to
+//    // Factory)
+//    readHttpDataChunkByChunk();
+//    // example of reading only if at the end
+//    if (chunk instanceof LastHttpContent) {
+//      writeResponse(ctx.channel());
+//      readingChunks = false;
+//
+//      reset();
+//    }
   }
 
   private static void sendHttpResponse(
