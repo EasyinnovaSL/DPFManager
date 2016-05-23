@@ -201,16 +201,18 @@
 	<!-- 	Java Script -->
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script type="text/javascript">
+	var ifdSelected = 0;
 	function showIfd(nameid){
+		ifdSelected= nameid;
 		$(".liifdlist").removeClass("bold");
-		$("#liifd"+nameid).addClass("bold");
+		$("#liifd"+ifdSelected).addClass("bold");
 		$(".ifd").removeClass("hide");
 		$(".ifd").hide();
-		$(".ifd"+nameid).show();
+		$(".ifd"+ifdSelected).show();
 		expertChanged();
 	}
 	function expertChanged(){
-		if ($('#checkSelected').is(":checked")) $(".expert").show();
+		if ($('#checkSelected').is(":checked")) $(".ifd"+ifdSelected+".expert").show();
 		else $(".expert").hide();
 	}
     </script>
