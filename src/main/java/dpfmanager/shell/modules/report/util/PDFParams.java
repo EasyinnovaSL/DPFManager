@@ -1,7 +1,12 @@
 package dpfmanager.shell.modules.report.util;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+
+import java.awt.image.ImagingOpException;
+import java.io.IOException;
 
 /**
  * Created by Adrià Llorens on 15/04/2016.
@@ -17,8 +22,20 @@ public class PDFParams {
    */
   private PDDocument document;
 
+  /**
+   * Actual Y position
+   */
+  public Integer y;
+
   public PDFParams(){
+
+  }
+
+  public void init(PDRectangle pageType) throws IOException{
     document = new PDDocument();
+    PDPage page = new PDPage(pageType);
+    document.addPage(page);
+    contentStream = new PDPageContentStream(document, page);
   }
 
   /**
