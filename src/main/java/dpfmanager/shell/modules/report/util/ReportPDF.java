@@ -285,6 +285,7 @@ public class ReportPDF extends ReportGeneric {
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
+        pdfParams.setContentStream(contentStream);
         pos_y = init_posy;
       }
 
@@ -294,6 +295,7 @@ public class ReportPDF extends ReportGeneric {
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
+        pdfParams.setContentStream(contentStream);
         pos_y = init_posy;
       }
 
@@ -303,20 +305,22 @@ public class ReportPDF extends ReportGeneric {
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
+        pdfParams.setContentStream(contentStream);
         pos_y = init_posy;
       }
 
       if (ir.checkIT1) {
-        pos_y = writeErrorsWarnings(pdfParams, font, ir.getITErrors(1), ir.getITWarnings(1), pos_x, pos_y, "Tiff/IT");
+        pos_y = writeErrorsWarnings(pdfParams, font, ir.getITErrors(1), ir.getITWarnings(1), pos_x, pos_y, "Tiff/IT-1");
         contentStream = pdfParams.getContentStream();
       }
       if (newPageNeeded(pos_y)) {
         contentStream = newPage(contentStream, document);
+        pdfParams.setContentStream(contentStream);
         pos_y = init_posy;
       }
 
       if (ir.checkIT2) {
-        pos_y = writeErrorsWarnings(pdfParams, font, ir.getITErrors(2), ir.getITWarnings(2), pos_x, pos_y, "Tiff/IT");
+        pos_y = writeErrorsWarnings(pdfParams, font, ir.getITErrors(2), ir.getITWarnings(2), pos_x, pos_y, "Tiff/IT-2");
         contentStream = pdfParams.getContentStream();
       }
       if (newPageNeeded(pos_y)) {
@@ -580,12 +584,12 @@ public class ReportPDF extends ReportGeneric {
    * Write errors warnings int.
    *
    * @param pdfParams the pdf params
-   * @param font     the font
-   * @param errors   the errors
-   * @param warnings the warnings
-   * @param pos_x    the pos x
-   * @param posy     the posy
-   * @param type     the type
+   * @param font      the font
+   * @param errors    the errors
+   * @param warnings  the warnings
+   * @param pos_x     the pos x
+   * @param posy      the posy
+   * @param type      the type
    * @return the int
    * @throws Exception the exception
    */
@@ -596,6 +600,13 @@ public class ReportPDF extends ReportGeneric {
     pos_y -= 20;
     PDDocument document = pdfParams.getDocument();
     PDPageContentStream contentStream = pdfParams.getContentStream();
+    if (type.equals("Tiff/IT")){
+      System.out.println();
+    }
+//    if (newPageNeeded(pos_y) || type.equals("Tiff/IT")) {
+//      contentStream = newPage(contentStream, document);
+//      pos_y = init_posy;
+//    }
     writeText(contentStream, type + " Conformance", pos_x, pos_y, font, font_size);
 
     font_size = 8;
@@ -736,11 +747,16 @@ public class ReportPDF extends ReportGeneric {
    * @throws Exception the exception
    */
   void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size, Color color) throws Exception {
-    contentStream.beginText();
-    contentStream.setFont(font, font_size);
-    contentStream.setNonStrokingColor(color);
-    contentStream.moveTextPositionByAmount(x, y);
-    contentStream.drawString(text);
-    contentStream.endText();
+    try {
+      contentStream.beginText();
+      contentStream.setFont(font, font_size);
+      contentStream.setNonStrokingColor(color);
+      contentStream.moveTextPositionByAmount(x, y);
+      contentStream.drawString(text);
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      contentStream.endText();
+    }
   }
 }

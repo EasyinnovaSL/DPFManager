@@ -11,12 +11,14 @@ public class ExceptionMessage extends DpfMessage {
   private String header;
   private String content;
   private Exception exception;
+  private OutOfMemoryError outOfMemoryError;
 
   public ExceptionMessage(String h, Exception e){
     title = "Exception";
     header = h;
     content = e.getMessage();
     exception = e;
+    outOfMemoryError = null;
   }
 
   public ExceptionMessage(String t, String h, Exception e){
@@ -24,6 +26,15 @@ public class ExceptionMessage extends DpfMessage {
     header = h;
     content = e.getMessage();
     exception = e;
+    outOfMemoryError = null;
+  }
+
+  public ExceptionMessage(String c, OutOfMemoryError e){
+    // out of memory
+    title = "Out of memory";
+    header = "Out of memory error!";
+    content = c;
+    outOfMemoryError = e;
   }
 
   public String getTitle(){
@@ -40,5 +51,9 @@ public class ExceptionMessage extends DpfMessage {
 
   public Exception getException(){
     return exception;
+  }
+
+  public boolean isOutOfMemory(){
+    return outOfMemoryError != null;
   }
 }
