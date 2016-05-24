@@ -420,6 +420,9 @@ public class ReportPDF extends ReportGeneric {
         // Values
         image_width = initialx;
         pdfParams.y = initialy;
+        if (maxHeight == 65){
+          pdfParams.y -= 10;
+        }
         pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size, Color.gray);
         font_size = 6;
         pdfParams.y -= 10;
@@ -489,7 +492,7 @@ public class ReportPDF extends ReportGeneric {
         pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
         if (pdfParams.y < maxy) maxy = pdfParams.y;
 
-        pdfParams.y = maxy - 20;
+        pdfParams.y = maxy - 10;
       }
 
       // Full individual reports
