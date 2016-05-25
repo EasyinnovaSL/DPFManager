@@ -1,9 +1,9 @@
 package dpfmanager.shell.application.launcher.noui;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
+import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.interfaces.console.ConsoleController;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -40,10 +41,17 @@ public class ConsoleLauncher {
    */
   private ConsoleContext context;
 
+  /**
+   * The parsed args
+   */
+  private Map<String, String> parameters;
+
   public ConsoleLauncher(String[] args) {
     ConsoleLauncher.setFinished(false);
     // Load spring context
     AppContext.loadContext("DpfSpringConsole.xml");
+    parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
+    parameters.put("mode", "CMD");
     //Load DpfContext
     context = new ConsoleContext(AppContext.getApplicationContext());
     // Program input
@@ -60,7 +68,6 @@ public class ConsoleLauncher {
     int idx = 0;
     boolean argsError = false;
     ArrayList<String> files = new ArrayList<>();
-    ApplicationParameters parameters = new ApplicationParameters();
     while (idx < params.size() && !argsError) {
       String arg = params.get(idx);
       if (arg.equals("-o")) {
@@ -82,7 +89,7 @@ public class ConsoleLauncher {
           if (outputFolder != null) {
             controller.setOutputFolder(outputFolder);
             controller.setExplicitOutput(true);
-          } else{
+          } else {
             argsError = true;
           }
         } else {
@@ -90,11 +97,12 @@ public class ConsoleLauncher {
           argsError = true;
         }
       } else if (arg.equals("-s")) {
-        parameters.setSilence(true);
+        parameters.put("-s", "true");
       } else if (arg.equals("-r")) {
-        parameters.setRecursive(Integer.MAX_VALUE);
+        Integer max = Integer.MAX_VALUE;
+        parameters.put("-r", max.toString());
       } else if (arg.startsWith("-r") && isNumeric(arg.substring(2))) {
-        parameters.setRecursive(Integer.parseInt(arg.substring(2)));
+        parameters.put("-r", arg.substring(2));
       } else if (arg.equals("-configuration")) {
         if (idx + 1 < params.size()) {
           String xmlConfig = params.get(++idx);
@@ -104,7 +112,7 @@ public class ConsoleLauncher {
             if (config.getFormats().size() == 0) {
               printOut("No report format was specified in the config file.");
               argsError = true;
-            } else{
+            } else {
               controller.setConfig(config);
             }
           } catch (Exception ex) {
@@ -132,7 +140,7 @@ public class ConsoleLauncher {
           if (result.length() > 0) {
             printOut("Incorrect report formats.");
             argsError = true;
-          } else{
+          } else {
             controller.setExplicitFormats(true);
           }
         } else {
@@ -146,7 +154,7 @@ public class ConsoleLauncher {
       } else {
         // File or directory to process
         String arg_mod = arg;
-        if (!new File(arg_mod).isAbsolute() && !new File(arg_mod).exists() && new File("../" + arg_mod).exists()){
+        if (!new File(arg_mod).isAbsolute() && !new File(arg_mod).exists() && new File("../" + arg_mod).exists()) {
           arg_mod = "../" + arg;
         }
         files.add(arg_mod);
@@ -158,11 +166,10 @@ public class ConsoleLauncher {
       printOut("No files specified.");
       argsError = true;
     }
-    if (argsError || params.size() == 0){
+    if (argsError || params.size() == 0) {
       controller.displayHelp();
-    } else{
+    } else {
       // Everything OK!
-      controller.setParameters(parameters);
       controller.setFiles(files);
       controller.run();
     }
@@ -180,22 +187,22 @@ public class ConsoleLauncher {
   /**
    * Custom print lines
    */
-  private void printOut(String message){
+  private void printOut(String message) {
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message));
   }
 
-  private void printErr(String message){
+  private void printErr(String message) {
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, message));
   }
 
-  private void printException(Exception ex){
+  private void printException(Exception ex) {
     context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception has occurred!", ex));
   }
 
   /**
    * Exit application
    */
-  public void exit(){
+  public void exit() {
     AppContext.close();
     System.exit(0);
   }
@@ -206,6 +213,7 @@ public class ConsoleLauncher {
   public static boolean isFinished() {
     return finished;
   }
+
   public static void setFinished(boolean f) {
     finished = f;
   }

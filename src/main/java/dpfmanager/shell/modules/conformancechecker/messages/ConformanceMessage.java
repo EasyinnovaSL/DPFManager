@@ -31,11 +31,10 @@ public class ConformanceMessage extends DpfMessage {
     uuid = u;
   }
 
-  public ConformanceMessage(List<String> f, Configuration c, int r) {
+  public ConformanceMessage(List<String> f, Configuration c) {
     // Console
     files = f;
     config = c;
-    recursive = r;
     input = null;
     path = null;
   }

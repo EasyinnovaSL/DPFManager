@@ -13,15 +13,18 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package dpfmanager.shell.modules.server.upload;
+package dpfmanager.shell.modules.server.post;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.server.messages.PostMessage;
+import dpfmanager.shell.modules.server.messages.StatusMessage;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -36,7 +39,6 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -55,27 +57,33 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 import io.netty.util.CharsetUtil;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.tools.zip.ZipEntry;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
+import java.util.zip.ZipOutputStream;
 
-public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObject> {
+public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
 
-  private static final HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
+  private final HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
 
   private DpfContext context;
 
   private HttpRequest request;
-  private boolean readingChunks;
   private HttpData partialContent;
   private final StringBuilder responseContent = new StringBuilder();
   private HttpPostRequestDecoder decoder;
 
   // Request params
   private Long uuid;
-  private String json;
+  private Long id;
   private String filepath;
   private String configpath;
   private File destFolder;
@@ -89,7 +97,7 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
     DiskAttribute.baseDirectory = null;
   }
 
-  public HttpUploadServerHandler(DpfContext context) {
+  public HttpPostHandler(DpfContext context) {
     this.context = context;
   }
 
@@ -102,32 +110,24 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
 
   @Override
   public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
-    boolean get = false;
     if (msg instanceof HttpRequest) {
       HttpRequest request = this.request = (HttpRequest) msg;
-      if (request.method().equals(HttpMethod.POST)) {
-        URI uri = new URI(request.uri());
-        if (uri.getPath().startsWith("/dpfmanager")) {
-          // Start new post request
+      URI uri = new URI(request.uri());
+      if (uri.getPath().startsWith("/dpfmanager")) {
+        if (request.method().equals(HttpMethod.POST)) {
+          // Start new POST request
           init();
+          decoder = new HttpPostRequestDecoder(factory, request);
         } else {
-          // wrong uri
-          responseContent.append("Wrong request uri!");
-          writeResponse(ctx.channel());
+          sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
           return;
         }
-        decoder = new HttpPostRequestDecoder(factory, request);
-        readingChunks = HttpUtil.isTransferEncodingChunked(request);
-      } else if (request.method().equals(HttpMethod.GET)) {
-        get = true;
+      } else {
+        // Wrong URI
+        responseContent.append("Wrong request uri!");
+        writeResponse(ctx.channel());
+        return;
       }
-    }
-
-    // GET request
-    if (get) {
-      System.out.println("\nGet requested!");
-      responseContent.append("Get not suported!");
-      writeResponse(ctx.channel());
     }
 
     // POST request
@@ -141,6 +141,7 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
           if (chunk instanceof LastHttpContent) {
             tractReadPost(ctx);
             reset();
+            return;
           }
         } catch (ErrorDataDecoderException e1) {
           e1.printStackTrace();
@@ -153,21 +154,46 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
 
   private void init() {
     // Init new request
-    json = null;
     uuid = System.currentTimeMillis();
+    id = null;
     filepath = null;
     configpath = null;
   }
 
   private void reset() {
     // End of request, destroy decoder
-    readingChunks = false;
     decoder.destroy();
     decoder = null;
     request = null;
   }
 
   private void tractReadPost(ChannelHandlerContext ctx) {
+    if (id != null) {
+      askForJob(ctx);
+    } else {
+      newFileCheck(ctx);
+    }
+  }
+
+  /**
+   * Main methods
+   */
+  private void askForJob(ChannelHandlerContext ctx) {
+    StatusMessage sm = (StatusMessage) context.sendAndWaitResponse(BasicConfig.MODULE_DATABASE, new PostMessage(PostMessage.Type.ASK, id));
+    responseContent.append("{ \"status\": \"");
+    if (sm.isRunning()) {
+      responseContent.append("Running\"");
+    } else {
+      // Zip folder
+      String path = zipFolder(sm.getFolder());
+      String link = parsePathToLink(path);
+      responseContent.append("Finished\" , \"path\": \"" + link + "\"");
+    }
+    responseContent.append("}");
+    writeResponse(ctx.channel());
+  }
+
+  private void newFileCheck(ChannelHandlerContext ctx) {
     if (configpath == null) {
       // Error miss config file
       responseContent.append("{ \"error\": \"Missing config file (name = config)\"}");
@@ -181,7 +207,53 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
       responseContent.append("{ \"id\": " + uuid + "}");
       writeResponse(ctx.channel());
       // now start the check
-      context.send(BasicConfig.MODULE_SERVER, new PostMessage(PostMessage.Type.POST, uuid, json, filepath, configpath));
+      context.send(BasicConfig.MODULE_SERVER, new PostMessage(PostMessage.Type.POST, uuid, filepath, configpath));
+    }
+  }
+
+  /**
+   * Zip functoins
+   */
+  public String parsePathToLink(String path) {
+    String[] splited = path.split("/");
+    String last = splited[splited.length - 1];
+    String last2 = splited[splited.length - 2];
+    return "/" + last2 + "/" + last;
+  }
+
+  public String zipFolder(String folder) {
+    // Zip path
+    String outputFile = folder + ".zip";
+    if (folder.endsWith("/")) {
+      outputFile = folder.substring(0, folder.length() - 1) + ".zip";
+    }
+    // Check if exists
+    if (new File(outputFile).exists()) {
+      return outputFile;
+    }
+    // Make the zip
+    try {
+      ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(outputFile));
+      compressDirectoryToZipfile(folder, folder, zipFile);
+      IOUtils.closeQuietly(zipFile);
+      return outputFile;
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  private void compressDirectoryToZipfile(String rootDir, String sourceDir, ZipOutputStream out) throws IOException, FileNotFoundException {
+    for (File file : new File(sourceDir).listFiles()) {
+      if (file.isDirectory()) {
+        compressDirectoryToZipfile(rootDir, sourceDir + file.getName() + File.separator, out);
+      } else {
+        ZipEntry entry = new ZipEntry(sourceDir.replace(rootDir, "") + file.getName());
+        out.putNextEntry(entry);
+
+        FileInputStream in = new FileInputStream(sourceDir + file.getName());
+        IOUtils.copy(in, out);
+        IOUtils.closeQuietly(in);
+      }
     }
   }
 
@@ -194,7 +266,6 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
         InterfaceHttpData data = decoder.next();
         if (data != null) {
           if (partialContent == data) {
-            System.out.println(" 100% (FinalSize: " + partialContent.length() + ")");
             partialContent = null;
           }
           try {
@@ -203,7 +274,6 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
             } else if (data.getHttpDataType() == HttpDataType.FileUpload) {
               parseFileUploadData((FileUpload) data);
             } else {
-              System.out.println("nse on soc");
             }
           } catch (Exception e) {
             e.printStackTrace();
@@ -220,8 +290,8 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
 
   private void parseAttributeData(Attribute attribute) throws IOException {
     String name = attribute.getName();
-    if (name.equals("json")) {
-      json = attribute.getValue();
+    if (name.equals("id")) {
+      id = Long.parseLong(attribute.getValue());
     }
   }
 
@@ -256,6 +326,10 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
     return folder;
   }
 
+  /**
+   * Util functions
+   */
+
   private void writeResponse(Channel channel) {
     // Convert the response content to a ChannelBuffer.
     ByteBuf buf = copiedBuffer(responseContent.toString(), CharsetUtil.UTF_8);
@@ -267,13 +341,10 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
         && !request.headers().contains(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE, true);
 
     // Build the response object.
-    FullHttpResponse response = new DefaultFullHttpResponse(
-        HttpVersion.HTTP_1_1, HttpResponseStatus.OK, buf);
+    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, buf);
     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
 
     if (!close) {
-      // There's no need to add 'Content-Length' header
-      // if this is the last response.
       response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, buf.readableBytes());
     }
 
@@ -296,6 +367,12 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
     if (close) {
       future.addListener(ChannelFutureListener.CLOSE);
     }
+  }
+
+  private void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
+    FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status, Unpooled.copiedBuffer("Failure: " + status + "\r\n", CharsetUtil.UTF_8));
+    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
+    ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
   }
 
   @Override

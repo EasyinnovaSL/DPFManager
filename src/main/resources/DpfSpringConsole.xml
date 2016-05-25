@@ -8,13 +8,12 @@
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <context:annotation-config />
+    <context:annotation-config/>
 
-    <context:component-scan base-package="dpfmanager.shell.modules" />
+    <context:component-scan base-package="dpfmanager.shell.modules"/>
 
-    <context:property-placeholder properties-ref="springProperties"/>
-    <util:properties id="springProperties">
-        <prop key="mode">CMD</prop>
-    </util:properties>
+    <util:map id="parameters" key-type="java.lang.String" value-type="java.lang.String"
+              map-class="java.util.HashMap">
+    </util:map>
 
 </beans>

@@ -146,6 +146,21 @@ public class DatabaseConnection {
     updateJobs(col);
   }
 
+  public Jobs getJob(Long id) {
+    Jobs job = new Jobs();
+    try {
+      Statement stmt = globalConnection.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE+" WHERE "+Jobs.ID+" = "+ id);
+      while (rs.next()) {
+        job.parseResultSet(rs);
+      }
+      stmt.close();
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
+    }
+    return job;
+  }
+
   public List<Jobs> getJobs() {
     List<Jobs> jobs = new ArrayList<>();
     for (Jobs job : getAllJobs()) {

@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -29,13 +32,20 @@ public class ConformanceCheckerController extends DpfSpringController {
   @Autowired
   private ApplicationContext appContext;
 
+  @Resource(name = "parameters")
+  private Map<String, String> parameters;
+
   @Override
   public void handleMessage(DpfMessage message) {
     if (message.isTypeOf(ConformanceMessage.class)) {
       ConformanceMessage cm = message.getTypedMessage(ConformanceMessage.class);
       if (!cm.hasPaths()) {
         // From console
-        service.setParameters(cm.getConfig(), params.getRecursive(), null);
+        Integer recursive = null;
+        if (parameters.containsKey("-r")){
+          recursive = Integer.parseInt(parameters.get("-r"));
+        }
+        service.setParameters(cm.getConfig(), recursive, null);
         service.initMultiProcessInputRun(cm.getFiles());
       } else {
         // From server
@@ -51,6 +61,11 @@ public class ConformanceCheckerController extends DpfSpringController {
     } else if (message.isTypeOf(ProcessInputMessage.class)){
       service.tractProcessInputMessage(message.getTypedMessage(ProcessInputMessage.class));
     }
+  }
+
+  @Override
+  public Object handleMessageWithResponse(DpfMessage message) {
+    return null;
   }
 
   @PostConstruct

@@ -33,6 +33,11 @@ public class GuiContext implements DpfContext {
   }
 
   @Override
+  public Object sendAndWaitResponse(String target, Object message) {
+    return null;
+  }
+
+  @Override
   public boolean isConsole() {
     return false;
   }

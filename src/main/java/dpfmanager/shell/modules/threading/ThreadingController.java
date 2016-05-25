@@ -1,6 +1,5 @@
 package dpfmanager.shell.modules.threading;
 
-import dpfmanager.shell.application.launcher.noui.ApplicationParameters;
 import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.config.BasicConfig;
@@ -14,11 +13,13 @@ import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -32,8 +33,8 @@ public class ThreadingController extends DpfSpringController {
   @Autowired
   private ApplicationContext appContext;
 
-  @Value("#{springProperties['mode']}")
-  private String mode;
+  @Resource(name = "parameters")
+  private Map<String, String> parameters;
 
   @Override
   public void handleMessage(DpfMessage dpfMessage) {
@@ -42,23 +43,25 @@ public class ThreadingController extends DpfSpringController {
       service.finishIndividual(sm.getIndividual(), sm.getUuid());
     } else if (dpfMessage.isTypeOf(GlobalStatusMessage.class)) {
       GlobalStatusMessage gm = dpfMessage.getTypedMessage(GlobalStatusMessage.class);
-      boolean silence = true;
-      if (params != null){
-        silence = params.isSilence();
-      }
+      boolean silence = parameters.containsKey("-s") || parameters.get("mode").equals("SERVER");
       service.handleGlobalStatus(gm, silence);
       // Now close application only if it is not server mode
-      if (gm.isFinish() && mode.equals("CMD")) {
+      if (gm.isFinish() && parameters.get("mode").equals("CMD")) {
         AppContext.close();
         ConsoleLauncher.setFinished(true);
       }
     } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
       RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);
       service.run(rm.getRunnable(), rm.getUuid());
-    } else if (dpfMessage.isTypeOf(ThreadsMessage.class)){
+    } else if (dpfMessage.isTypeOf(ThreadsMessage.class)) {
       ThreadsMessage tm = dpfMessage.getTypedMessage(ThreadsMessage.class);
       service.processThreadMessage(tm);
     }
+  }
+
+  @Override
+  public Object handleMessageWithResponse(DpfMessage message) {
+    return null;
   }
 
   @PostConstruct

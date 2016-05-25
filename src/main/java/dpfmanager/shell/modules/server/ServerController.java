@@ -19,7 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -43,6 +47,11 @@ public class ServerController extends DpfSpringController {
         service.tractPostRequest(pm);
       }
     }
+  }
+
+  @Override
+  public Object handleMessageWithResponse(DpfMessage dpfMessage) {
+    return null;
   }
 
   @PostConstruct

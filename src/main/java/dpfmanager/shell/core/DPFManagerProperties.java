@@ -153,6 +153,15 @@ public class DPFManagerProperties {
     return System.getProperty("user.home") + "/DPF Manager";
   }
 
+  public static String getReportsDir() {
+    String dir = getConfigDir() + "/reports";
+    File file = new File(dir);
+    if (!file.exists()){
+      file.mkdirs();
+    }
+    return dir;
+  }
+
   public static String getDataDir() {
     String dataDir = getConfigDir() + "/data";
     File dataFile = new File(dataDir);

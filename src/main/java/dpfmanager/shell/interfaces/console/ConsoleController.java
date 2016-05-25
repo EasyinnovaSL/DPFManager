@@ -2,7 +2,6 @@ package dpfmanager.shell.interfaces.console;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.shell.application.launcher.noui.ApplicationParameters;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
@@ -42,9 +41,6 @@ public class ConsoleController {
   private boolean explicitFormats;
   private boolean explicitOutput;
 
-  // Global params
-  private ApplicationParameters parameters;
-
   public ConsoleController(ConsoleContext c) {
     setDefault();
     context = c;
@@ -68,7 +64,6 @@ public class ConsoleController {
    * Main run function
    */
   public void run() {
-    context.sendAllControllers(parameters);
     readConformanceChecker();
     if (config != null) {
       if (explicitFormats) {
@@ -93,7 +88,7 @@ public class ConsoleController {
       config.setOutput(outputFolder);
     }
 
-    context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(files, config, parameters.getRecursive()));
+    context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(files, config));
   }
 
   /**
@@ -197,10 +192,6 @@ public class ConsoleController {
   /**
    * Setters
    */
-  public void setParameters(ApplicationParameters p) {
-    parameters = p;
-  }
-
   public void setOutputFolder(String outputFolder) {
     this.outputFolder = outputFolder;
   }

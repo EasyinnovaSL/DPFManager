@@ -16,6 +16,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -32,21 +35,72 @@ public class ServerLauncher {
    */
   private ConsoleContext context;
 
+  /**
+   * The parsed args
+   */
+  private Map<String, String> parameters;
+
+  /**
+   * The args.
+   */
+  private List<String> params;
+
   public ServerLauncher(String[] args) {
     // Load spring context
     AppContext.loadContext("DpfSpringServer.xml");
+    parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
+    parameters.put("mode", "SERVER");
     //Load DpfContext
     context = new ConsoleContext(AppContext.getApplicationContext());
     // The main controller
     controller = new ServerController(context);
+    // Parameters
+    params = new ArrayList(Arrays.asList(args));
   }
 
   /**
    * Start.
    */
   public void start() {
+    // Read the params
+    int idx = 0;
+    boolean argsError = false;
+    while (idx < params.size() && !argsError) {
+      String arg = params.get(idx);
+      if (arg.equals("-p")) {
+        idx++;
+        if (idx < params.size()) {
+          String port = params.get(idx);
+          if (isNumeric(port)){
+            parameters.put("-p",port);
+          } else {
+            argsError = true;
+          }
+        } else {
+          argsError = true;
+        }
+      }
+      idx++;
+    }
+
     // Start the server
-    context.send(BasicConfig.MODULE_SERVER, new ServerMessage(ServerMessage.Type.START));
+    if (!argsError) {
+      context.send(BasicConfig.MODULE_SERVER, new ServerMessage(ServerMessage.Type.START));
+    } else {
+      printOut("Parameters error");
+    }
+  }
+
+  /**
+   * Read params functions
+   */
+  private boolean isNumeric(String str) {
+    try {
+      Integer.parseInt(str);
+    } catch (NumberFormatException nfe) {
+      return false;
+    }
+    return true;
   }
 
   /**

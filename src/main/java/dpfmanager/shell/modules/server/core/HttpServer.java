@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package dpfmanager.shell.modules.server.upload;
+package dpfmanager.shell.modules.server.core;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -35,13 +35,13 @@ import org.apache.logging.log4j.Level;
  * A HTTP server showing how to use the HTTP multipart package for file uploads and decoding post
  * data.
  */
-public final class HttpUploadServer {
+public final class HttpServer {
 
   private boolean SSL = false;
   private int PORT;
   private DpfContext context;
 
-  public HttpUploadServer(int port, DpfContext context) {
+  public HttpServer(int port, DpfContext context) {
     this.PORT = port;
     this.context = context;
   }
@@ -63,7 +63,7 @@ public final class HttpUploadServer {
       b.group(bossGroup, workerGroup);
       b.channel(NioServerSocketChannel.class);
       b.handler(new LoggingHandler(LogLevel.INFO));
-      b.childHandler(new HttpUploadServerInitializer(sslCtx, context));
+      b.childHandler(new HttpServerInitializer(sslCtx, context));
 
       Channel ch = b.bind(PORT).sync().channel();
 
@@ -76,7 +76,7 @@ public final class HttpUploadServer {
     }
   }
 
-  public String getServerUri(){
+  public String getServerUri() {
     return (SSL ? "https" : "http") + "://127.0.0.1:" + PORT + "/dpfmanager";
   }
 }

@@ -8,6 +8,7 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
+import dpfmanager.shell.modules.server.messages.StatusMessage;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -124,6 +125,15 @@ public class DatabaseService extends DpfService {
       cache.pauseJob(dm.getUuid());
       forceSyncDatabase();
     }
+  }
+
+  public StatusMessage getJobStatus(Long id) {
+    Jobs job = connection.getJob(id);
+    StatusMessage.Status status = StatusMessage.Status.RUNNING;
+    if (job.getState() == 2){
+      status = StatusMessage.Status.FINISHED;
+    }
+    return new StatusMessage(status, job.getOutput());
   }
 
   public void getJobs() {

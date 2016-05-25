@@ -8,33 +8,43 @@ import dpfmanager.shell.core.messages.DpfMessage;
 public class PostMessage extends DpfMessage {
 
   public enum Type {
-    POST, GET
+    POST, ASK
   }
 
   private Type type;
   private Long uuid;
-  private String json;
+  private Long id;
   private String filepath;
   private String configpath;
 
-  public PostMessage(Type t, Long u, String j, String fp, String cp) {
+  public PostMessage(Type t, Long u, String fp, String cp) {
+    // Post
     type = t;
     uuid = u;
-    json = j;
     filepath = fp;
     configpath = cp;
+  }
+
+  public PostMessage(Type t, Long i) {
+    // Ask
+    type = t;
+    id = i;
   }
 
   public boolean isPost() {
     return type.equals(Type.POST);
   }
 
+  public boolean isAsk() {
+    return type.equals(Type.ASK);
+  }
+
   public Long getUuid() {
     return uuid;
   }
 
-  public String getJson() {
-    return json;
+  public Long getId() {
+    return id;
   }
 
   public String getFilepath() {

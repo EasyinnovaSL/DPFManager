@@ -31,4 +31,9 @@ public class MessagesController extends DpfSpringController {
     }
   }
 
+  @Override
+  public Object handleMessageWithResponse(DpfMessage message) {
+    return null;
+  }
+
 }

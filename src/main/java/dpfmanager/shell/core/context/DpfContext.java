@@ -9,6 +9,7 @@ public interface DpfContext {
   void send(String target, Object message);
   void sendGui(String target, Object message);
   void sendConsole(String target, Object message);
+  Object sendAndWaitResponse(String target, Object message);
   boolean isConsole();
   boolean isGui();
 }
