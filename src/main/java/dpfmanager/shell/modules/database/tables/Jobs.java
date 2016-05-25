@@ -119,7 +119,7 @@ public class Jobs {
 
   public double getProgress() {
     if (state == 0) {
-      return -1.0;
+      return 0.0;
     } else if (state == 2) {
       return 1.0;
     } else {

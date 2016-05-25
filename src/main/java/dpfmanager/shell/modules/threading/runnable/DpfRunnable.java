@@ -4,8 +4,11 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 
 import org.apache.logging.log4j.Level;
+
+import javax.xml.bind.SchemaOutputResolver;
 
 /**
  * Created by Adrià Llorens on 13/04/2016.
@@ -43,9 +46,15 @@ public abstract class DpfRunnable implements Runnable {
    */
   @Override
   public void run() {
-    init = true;
-    runTask();
-    finish = true;
+    try {
+      init = true;
+      runTask();
+      finish = true;
+    } catch (OutOfMemoryError err){
+      // Cancel the check and informs out of memory
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, getUuid(), true));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("The check is cancelled.", err));
+    }
   }
 
   /**

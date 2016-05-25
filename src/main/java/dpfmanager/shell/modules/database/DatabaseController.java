@@ -27,7 +27,7 @@ public class DatabaseController extends DpfSpringController {
   private ApplicationContext appContext;
 
   @Override
-  public void handleMessage(DpfMessage dpfMessage) {
+  synchronized public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(DatabaseMessage.class)){
       service.handleDatabaseMessage(dpfMessage.getTypedMessage(DatabaseMessage.class));
     }

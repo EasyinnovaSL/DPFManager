@@ -8,6 +8,7 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -86,7 +87,7 @@ public class ThreadingService extends DpfService {
         if (param.startsWith("-t") && param.length() == 3) {
           String number = param.substring(2);
           int threads = Integer.valueOf(number);
-          if (threads < cores) {
+          if (threads < cores && threads > 1) {
             cores = threads;
           }
           break;
@@ -111,8 +112,8 @@ public class ThreadingService extends DpfService {
       context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.RESUME, tm.getUuid()));
       myExecutor.resume(tm.getUuid());
     } else if (tm.isCancel() && tm.isRequest()) {
-      myExecutor.cancel(tm.getUuid());
-    } else if (tm.isCancel() && !tm.isRequest()) {
+      cancelRequest(tm.getUuid());
+    } else if (tm.isCancel() && !tm.isRequest()){
       cancelFinish(tm.getUuid());
     } else if (tm.isPause() && !tm.isRequest()) {
       pauseFinish(tm.getUuid());
@@ -123,18 +124,39 @@ public class ThreadingService extends DpfService {
     context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(!checks.isEmpty()));
   }
 
+  private void cancelRequest(Long uuid){
+    // Check if is pending
+    FileCheck pending = null;
+    for (FileCheck check : pendingChecks){
+      if (uuid.equals(check.getUuid())){
+        pending = check;
+        break;
+      }
+    }
+    if (pending != null){
+      // Cancel pending
+      pendingChecks.remove(pending);
+      context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.CANCEL, uuid));
+    } else {
+      // Cancel threads
+      myExecutor.cancel(uuid);
+    }
+  }
+
   public void cancelFinish(Long uuid) {
     // Update db
     getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.CANCEL, uuid));
 
-    // Remove folder
-    String internal = checks.get(uuid).getInternal();
-    if (internal != null) {
-      removeInternalFolder(internal);
-    }
+    if (checks.get(uuid) != null) {
+      // Remove folder
+      String internal = checks.get(uuid).getInternal();
+      if (internal != null) {
+        removeInternalFolder(internal);
+      }
 
-    // Remove from checks pool
-    checks.remove(uuid);
+      // Remove from checks pool
+      checks.remove(uuid);
+    }
   }
 
   public void pauseFinish(Long uuid) {
@@ -193,7 +215,7 @@ public class ThreadingService extends DpfService {
     }
   }
 
-  synchronized public void finishIndividual(IndividualReport ir, Long uuid) {
+  public void finishIndividual(IndividualReport ir, Long uuid) {
     FileCheck fc = checks.get(uuid);
     if (fc != null) {
       if (ir != null) {
@@ -216,6 +238,7 @@ public class ThreadingService extends DpfService {
   private void startPendingChecks() {
     if (!pendingChecks.isEmpty()) {
       FileCheck fc = pendingChecks.poll();
+      checks.put(fc.getUuid(), fc);
       context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.START, fc.getUuid()));
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(fc.getUuid(), fc.getInitialTask()));
     }

@@ -37,7 +37,7 @@ public class ThreadingController extends DpfSpringController {
   private Map<String, String> parameters;
 
   @Override
-  public void handleMessage(DpfMessage dpfMessage) {
+  synchronized public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(IndividualStatusMessage.class)) {
       IndividualStatusMessage sm = dpfMessage.getTypedMessage(IndividualStatusMessage.class);
       service.finishIndividual(sm.getIndividual(), sm.getUuid());

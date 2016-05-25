@@ -51,8 +51,12 @@ public class MessagesService extends DpfService {
 
   public void exceptionMessage(ExceptionMessage em) {
     LogManager.getLogger("").log(Level.ERROR, em.getHeader());
-    systemErr(em.getException().getMessage());
-    systemErr(AlertsManager.getExceptionText(em.getException()));
+    if (!em.isOutOfMemory()) {
+      systemErr(em.getException().getMessage());
+      systemErr(AlertsManager.getExceptionText(em.getException()));
+    } else {
+
+    }
   }
 
   public void alertMessage(AlertMessage am){
