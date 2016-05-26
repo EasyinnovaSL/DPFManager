@@ -89,6 +89,7 @@ public class ConsoleLauncher {
           if (outputFolder != null) {
             controller.setOutputFolder(outputFolder);
             controller.setExplicitOutput(true);
+            parameters.put("-o",outputFolder);
           } else {
             argsError = true;
           }
@@ -98,6 +99,8 @@ public class ConsoleLauncher {
         }
       } else if (arg.equals("-s")) {
         parameters.put("-s", "true");
+      } else if (arg.equals("-w")) {
+        parameters.put("-w", "true");
       } else if (arg.equals("-r")) {
         Integer max = Integer.MAX_VALUE;
         parameters.put("-r", max.toString());
@@ -147,6 +150,25 @@ public class ConsoleLauncher {
           printOut("You must specify the formats after '-reportformat' option.");
           argsError = true;
         }
+      } else if (arg.equals("-job")) {
+        if (idx + 1 < params.size()) {
+          String jobId = params.get(++idx);
+          parameters.put("-job",jobId);
+        } else {
+          printOut("You must specify the job id '-job' option.");
+          argsError = true;
+        }
+      } else if (arg.equals("-url")) {
+        if (idx + 1 < params.size()) {
+          String url = params.get(++idx);
+          if (!url.startsWith("http://")){
+            url = "http://" + url;
+          }
+          parameters.put("-url",url);
+        } else {
+          printOut("You must specify the url after '-url' option.");
+          argsError = true;
+        }
       } else if (arg.startsWith("-")) {
         // unknown option
         printOut("Unknown option: " + arg);
@@ -162,7 +184,13 @@ public class ConsoleLauncher {
       idx++;
     }
 
-    if (files.size() == 0) {
+    // Job needs url
+    if (parameters.containsKey("-job") && !parameters.containsKey("-url")){
+      printOut("You need to specify the url.");
+      argsError = true;
+    }
+
+    if (files.size() == 0 && !parameters.containsKey("-job")) {
       printOut("No files specified.");
       argsError = true;
     }
@@ -170,6 +198,7 @@ public class ConsoleLauncher {
       controller.displayHelp();
     } else {
       // Everything OK!
+      controller.setParameters(parameters);
       controller.setFiles(files);
       controller.run();
     }

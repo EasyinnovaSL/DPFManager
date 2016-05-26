@@ -17,6 +17,7 @@ public class BasicConfig {
   public static final String MODULE_DATABASE = "m005";
   public static final String MODULE_TIMER = "m006";
   public static final String MODULE_SERVER = "m007";
+  public static final String MODULE_CLIENT= "m008";
 
   /**
    * Services Components
@@ -28,5 +29,6 @@ public class BasicConfig {
   public static final String SERVICE_DATABASE = "s005";
   public static final String SERVICE_TIMER = "s006";
   public static final String SERVICE_SERVER = "s007";
+  public static final String SERVICE_CLIENT = "s008";
 
 }

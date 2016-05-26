@@ -57,6 +57,8 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 import io.netty.util.CharsetUtil;
 
+import com.google.gson.Gson;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.zip.ZipEntry;
 
@@ -67,6 +69,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
@@ -180,33 +184,42 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
    */
   private void askForJob(ChannelHandlerContext ctx) {
     StatusMessage sm = (StatusMessage) context.sendAndWaitResponse(BasicConfig.MODULE_DATABASE, new PostMessage(PostMessage.Type.ASK, id));
-    responseContent.append("{ \"status\": \"");
+    Map<String, String> map = new HashMap<>();
+    map.put("type", "ASK");
+    map.put("id", id.toString());
     if (sm.isRunning()) {
-      responseContent.append("Running\"");
-    } else {
+      map.put("status", "Running");
+      map.put("processed", sm.getProcessed().toString());
+      map.put("total", sm.getTotal().toString());
+    } else if (sm.isFinished()) {
       // Zip folder
       String path = zipFolder(sm.getFolder());
       String link = parsePathToLink(path);
-      responseContent.append("Finished\" , \"path\": \"" + link + "\"");
+      map.put("status", "Finished");
+      map.put("path", link);
+    } else {
+      map.put("status", "NotFound");
     }
-    responseContent.append("}");
+    responseContent.append(new Gson().toJson(map));
     writeResponse(ctx.channel());
   }
 
   private void newFileCheck(ChannelHandlerContext ctx) {
+    Map<String, String> map = new HashMap<>();
+    map.put("type", "CHECK");
+    map.put("id", uuid.toString());
     if (configpath == null) {
       // Error miss config file
-      responseContent.append("{ \"error\": \"Missing config file (name = config)\"}");
-      writeResponse(ctx.channel());
+      map.put("error", "Missing config file (name = config)");
     } else if (filepath == null) {
       // Error miss file to check
-      responseContent.append("{ \"error\": \"Missing file to check\"}");
-      writeResponse(ctx.channel());
-    } else {
-      // OK
-      responseContent.append("{ \"id\": " + uuid + "}");
-      writeResponse(ctx.channel());
-      // now start the check
+      map.put("error", "Missing file to check");
+    }
+    responseContent.append(new Gson().toJson(map));
+    writeResponse(ctx.channel());
+
+    // OK start the check
+    if (!map.containsKey("error")) {
       context.send(BasicConfig.MODULE_SERVER, new PostMessage(PostMessage.Type.POST, uuid, filepath, configpath));
     }
   }

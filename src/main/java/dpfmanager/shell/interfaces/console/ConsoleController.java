@@ -5,6 +5,7 @@ import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
+import dpfmanager.shell.modules.client.messages.RequestMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -16,6 +17,7 @@ import org.xml.sax.InputSource;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,6 +31,11 @@ public class ConsoleController {
    * The Dpf Context
    */
   private ConsoleContext context;
+
+  /**
+   * The parsed args
+   */
+  private Map<String, String> parameters;
 
   // Config related params
   private String outputFolder;
@@ -64,7 +71,22 @@ public class ConsoleController {
    * Main run function
    */
   public void run() {
-    readConformanceChecker();
+    if (!parameters.containsKey("-url")) {
+      // Normal mode
+      readConformanceChecker();
+      parseConfig();
+      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(files, config));
+    } else if (parameters.containsKey("-job")) {
+      // Ask for job
+      context.send(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.ASK, parameters.get("-job")));
+    } else {
+      // Remote check
+      parseConfig();
+      context.send(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.CHECK, files, config));
+    }
+  }
+
+  private void parseConfig() {
     if (config != null) {
       if (explicitFormats) {
         config.getFormats().clear();
@@ -87,8 +109,6 @@ public class ConsoleController {
       config.getIsos().add("Tiff/IT");
       config.setOutput(outputFolder);
     }
-
-    context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(files, config));
   }
 
   /**
@@ -226,6 +246,10 @@ public class ConsoleController {
 
   public void setExplicitOutput(boolean explicitOutput) {
     this.explicitOutput = explicitOutput;
+  }
+
+  public void setParameters(Map<String, String> parameters) {
+    this.parameters = parameters;
   }
 
   /**

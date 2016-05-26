@@ -28,6 +28,21 @@ public class ConsoleContext implements DpfContext {
   }
 
   @Override
+  public void sendAfter(String target, Object message, Integer seconds) {
+    if (context != null){
+      try {
+        Thread.sleep(seconds * 1000);
+      } catch (InterruptedException e){
+      }
+      DpfSpringController controller = (DpfSpringController) context.getBean(target);
+      controller.handleDpfMessage((DpfMessage) message);
+    } else{
+      System.out.println("ERROR!");
+      System.out.println("Application context is null.");
+    }
+  }
+
+  @Override
   public void sendGui(String target, Object message){
   }
 

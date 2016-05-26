@@ -12,4 +12,5 @@ public interface DpfContext {
   Object sendAndWaitResponse(String target, Object message);
   boolean isConsole();
   boolean isGui();
+  void sendAfter(String target, Object message, Integer seconds);
 }

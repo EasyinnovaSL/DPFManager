@@ -80,6 +80,7 @@ public class Jobs {
   private Long lastUpdate;
 
   public Jobs() {
+    state = -1;
   }
 
   public void parseResultSet(ResultSet rs) throws SQLException {

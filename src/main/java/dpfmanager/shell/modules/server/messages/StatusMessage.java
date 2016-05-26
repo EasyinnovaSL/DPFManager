@@ -8,15 +8,19 @@ import dpfmanager.shell.core.messages.DpfMessage;
 public class StatusMessage extends DpfMessage {
 
   public enum Status {
-    RUNNING, FINISHED
+    RUNNING, FINISHED, NOTFOUND
   }
 
   private Status status;
   private String folder;
+  private Integer processed;
+  private Integer total;
 
-  public StatusMessage(Status s, String f) {
+  public StatusMessage(Status s, String f, Integer p, Integer t) {
     status = s;
     folder = f;
+    processed = p;
+    total = t;
   }
 
   public boolean isRunning() {
@@ -29,5 +33,13 @@ public class StatusMessage extends DpfMessage {
 
   public String getFolder() {
     return folder;
+  }
+
+  public Integer getProcessed() {
+    return processed;
+  }
+
+  public Integer getTotal() {
+    return total;
   }
 }
