@@ -25,11 +25,9 @@ import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.util.CharsetUtil;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * Handler that just dumps the contents of the response from the server
@@ -38,14 +36,14 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 
   private DpfContext context;
   private String message;
-  private File config;
+  private List<File> deletes;
   private boolean plain;
   private File file;
   private PrintWriter writer;
 
-  public HttpClientHandler(DpfContext context, File config) {
+  public HttpClientHandler(DpfContext context, List<File> deletes) {
     this.context = context;
-    this.config = config;
+    this.deletes = deletes;
     message = "";
   }
 
@@ -57,8 +55,8 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
       message = message + content;
       if (msg instanceof LastHttpContent) {
         // End response content
-        if (config != null && config.exists() && config.isFile()) {
-          config.delete();
+        for (File delete : deletes) {
+          delete.delete();
         }
         context.send(BasicConfig.MODULE_CLIENT, new ResponseMessage(message));
       }

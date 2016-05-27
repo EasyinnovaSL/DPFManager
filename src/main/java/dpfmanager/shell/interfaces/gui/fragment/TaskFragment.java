@@ -192,7 +192,7 @@ public class TaskFragment {
       return "command line";
     } else if (origin.equals("GUI")){
       return "graphical interface";
-    } else if (origin.equals("SER")){
+    } else if (origin.equals("SERVER")){
       return "server";
     } else {
       return "unknown";

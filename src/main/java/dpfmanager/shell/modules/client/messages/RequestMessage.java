@@ -16,6 +16,7 @@ public class RequestMessage extends DpfMessage {
 
   private Type type;
   private List<String> files;
+  private List<String> tmpFiles;
   private Configuration config;
   private String str;
 
@@ -25,10 +26,11 @@ public class RequestMessage extends DpfMessage {
     str = i;
   }
 
-  public RequestMessage(Type t, List<String> f, Configuration c) {
+  public RequestMessage(Type t, List<String> f, List<String> tmp, Configuration c) {
     // CHECK
     type = t;
     files = f;
+    tmpFiles = tmp;
     config = c;
   }
 
@@ -42,6 +44,10 @@ public class RequestMessage extends DpfMessage {
 
   public List<String> getFiles() {
     return files;
+  }
+
+  public List<String> getTmpFiles() {
+    return tmpFiles;
   }
 
   public Configuration getConfig() {

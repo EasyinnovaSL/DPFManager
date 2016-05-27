@@ -56,7 +56,6 @@ public class DatabaseConnection {
       dbConfig.setLockingMode(SQLiteConfig.LockingMode.NORMAL);
       globalConnection = connect();
       createFirstTable();
-      insertTestJob();
     } catch (Exception e) {
       e.printStackTrace();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot connect to database (" + filename + ")."));
@@ -109,7 +108,7 @@ public class DatabaseConnection {
   }
 
   private boolean checkDate(Long time) {
-    if (time != null && time < initTime) {
+    if (time != null && time != 0 && time < initTime) {
       Long diff = initTime - time;
       Long hours = TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS);
       return hours > DpFManagerConstants.JOB_LIFE_HOURS;
@@ -139,6 +138,7 @@ public class DatabaseConnection {
   public void cleanJobs() {
     for (Jobs job : getAllJobs()) {
       if (deleteJob(job)) {
+        System.out.println("L'elimino :P");
         deleteJob(job.getId());
       }
     }

@@ -58,7 +58,7 @@ public class ClientService extends DpfService {
     if (rm.isAsk()) {
       askForJob(rm.getString());
     } else if (rm.isCheck()) {
-      newCheckRequest(rm.getFiles(), rm.getConfig());
+      newCheckRequest(rm.getFiles(), rm.getTmpFiles(), rm.getConfig());
     }
   }
 
@@ -75,7 +75,7 @@ public class ClientService extends DpfService {
     send(client);
   }
 
-  private void newCheckRequest(List<String> files, Configuration config) {
+  private void newCheckRequest(List<String> files, List<String> tmpFiles, Configuration config) {
     HttpClient client = new HttpClient(context, parameters.get("-url"));
     if (client.isError()) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in url: " + parameters.get("-url")));
@@ -87,6 +87,12 @@ public class ClientService extends DpfService {
       File file = new File(path);
       if (file.exists() && file.isFile()) {
         client.addFile(file);
+      }
+    }
+    for (String path : tmpFiles) {
+      File file = new File(path);
+      if (file.exists() && file.isFile()) {
+        client.addTmpFile(file);
       }
     }
 
@@ -112,9 +118,6 @@ public class ClientService extends DpfService {
    * Request responses
    */
   public void parseResponse(ResponseMessage rm) {
-//    System.out.println("");
-//    System.out.println(rm.getMessage());
-//    System.out.println("");
     Gson gson = new Gson();
     Map<String, String> map = gson.fromJson(rm.getMessage(), Map.class);
     if (map.get("type").equalsIgnoreCase("ASK")) {

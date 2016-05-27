@@ -194,7 +194,7 @@ public class ThreadingService extends DpfService {
       FileCheck fc = checks.get(gm.getUuid());
       removeZipFolder(fc.getInternal());
       removeDownloadFolder(fc.getInternal());
-//      removeServerFolder(fc.getUuid());
+      removeServerFolder(fc.getUuid());
       if (context.isGui()) {
         // Notify task manager
         needReload = true;

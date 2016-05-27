@@ -24,17 +24,18 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.io.File;
+import java.util.List;
 
 public class HttpClientIntializer extends ChannelInitializer<SocketChannel> {
 
   private DpfContext context;
   private SslContext sslCtx;
-  private File config;
+  private List<File> deletes;
 
-  public HttpClientIntializer(DpfContext context, SslContext sslCtx, File config) {
+  public HttpClientIntializer(DpfContext context, SslContext sslCtx, List<File> deletes) {
     this.sslCtx = sslCtx;
     this.context = context;
-    this.config = config;
+    this.deletes = deletes;
   }
 
   @Override
@@ -46,6 +47,6 @@ public class HttpClientIntializer extends ChannelInitializer<SocketChannel> {
 
     pipeline.addLast(new HttpClientCodec());
     pipeline.addLast(new ChunkedWriteHandler());
-    pipeline.addLast(new HttpClientHandler(context, config));
+    pipeline.addLast(new HttpClientHandler(context, deletes));
   }
 }

@@ -14,9 +14,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 20/04/2016.
@@ -28,6 +30,9 @@ public class DatabaseService extends DpfService {
   private Integer pid;
   private DatabaseConnection connection;
   private DatabaseCache cache;
+
+  @Resource(name = "parameters")
+  private Map<String, String> parameters;
 
   @PostConstruct
   public void init() {
@@ -71,9 +76,9 @@ public class DatabaseService extends DpfService {
 
   public void createJob(DatabaseMessage dm) {
     // Get origin
-    String origin = "CMD";
-    if (context.isGui()) {
-      origin = "GUI";
+    String origin = "GUI";
+    if (!context.isGui()) {
+      origin = parameters.get("mode");
     }
     int state = 1;
     if (dm.getPending()) {

@@ -42,6 +42,7 @@ public final class HttpClient {
   private boolean error;
 
   private List<File> files;
+  private List<File> tmpFiles;
   private File config = null;
   private String id = null;
   private String path = null;
@@ -49,6 +50,7 @@ public final class HttpClient {
   public HttpClient(DpfContext context, String url) {
     this.context = context;
     files = new ArrayList<>();
+    tmpFiles = new ArrayList<>();
     try {
       uri = new URI(url);
       String scheme = uri.getScheme() == null ? "http" : uri.getScheme();
@@ -97,43 +99,29 @@ public final class HttpClient {
     files.add(file);
   }
 
+  public void addTmpFile(File file) {
+    tmpFiles.add(file);
+  }
+
   public void addConfig(File file) {
     config = file;
   }
 
   public void send() throws Exception {
     try {
+      List<File> deletes = new ArrayList<>();
+      deletes.addAll(tmpFiles);
+      if (config != null){
+        deletes.add(config);
+      }
       Bootstrap b = new Bootstrap();
-      b.group(group).channel(NioSocketChannel.class).handler(new HttpClientIntializer(context, sslCtx, config));
+      b.group(group).channel(NioSocketChannel.class).handler(new HttpClientIntializer(context, sslCtx, deletes));
       formpostmultipart(b, host, port, uri, factory);
     } finally {
       group.shutdownGracefully();
       factory.cleanAllHttpData();
     }
   }
-
-  /**
-   * GET
-   */
-//  private void formget(Bootstrap bootstrap, String host, int port, URI uriSimple) throws Exception {
-//    // Start the connection attempt.
-//    Channel channel = bootstrap.connect(host, port).sync().channel();
-//
-//    // add Form attribute
-//    String newUrl = uriSimple.toString() + path;
-//    System.out.println(newUrl);
-//    URI uriGet = new URI(newUrl);
-//    HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uriGet.toASCIIString());
-//    HttpHeaders headers = request.headers();
-//    headers.set(HttpHeaderNames.HOST, host);
-//    headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
-//
-//    // send request
-//    channel.writeAndFlush(request);
-//
-//    // Wait for the server to close the connection.
-//    channel.closeFuture().sync();
-//  }
 
   /**
    * Multipart POST
@@ -159,6 +147,11 @@ public final class HttpClient {
       bodyRequestEncoder.addBodyFileUpload("file" + i, file, "image/tiff", false);
       i++;
     }
+    for (File file : tmpFiles) {
+      bodyRequestEncoder.addBodyFileUpload("file" + i, file, "image/tiff", false);
+      i++;
+    }
+
     // Add configuration
     if (config != null) {
       bodyRequestEncoder.addBodyFileUpload("config", config, "application/octet-stream", false);
