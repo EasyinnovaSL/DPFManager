@@ -10,6 +10,7 @@ import dpfmanager.shell.interfaces.gui.component.config.ConfigModel;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 
 import org.jacpfx.api.annotations.Resource;
@@ -37,6 +38,8 @@ public class AboutView extends DpfSimpleView {
 
   @FXML
   private Label lblVersion;
+  @FXML
+  private CheckBox chkFeedback;
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
@@ -51,6 +54,12 @@ public class AboutView extends DpfSimpleView {
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
     String txt = lblVersion.getText() + DPFManagerProperties.getVersion();
     lblVersion.setText(txt);
+    chkFeedback.setSelected(DPFManagerProperties.getFeedback());
+  }
+
+  @FXML
+  protected void changeFeedback(){
+    DPFManagerProperties.setFeedback(chkFeedback.isSelected());
   }
 
   @Override

@@ -32,14 +32,19 @@
 package dpfmanager.shell.modules.report.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The Class GlobalReport.
  */
 public class GlobalReport {
 
-  /** The list of all individual reports. */
+  /**
+   * The list of all individual reports.
+   */
   private List<IndividualReport> reports;
 
   /**
@@ -101,7 +106,7 @@ public class GlobalReport {
    * Instantiates a new global report.
    */
   public GlobalReport() {
-    reports = new ArrayList<IndividualReport>();
+    reports = new ArrayList<>();
     nreportsEpOk = 0;
     nreportsIt0Ok = 0;
     nreportsIt1Ok = 0;
@@ -184,25 +189,26 @@ public class GlobalReport {
    */
   public void generate() {
     nreportsPcOk = 0;
+    Collections.sort(reports);
     for (IndividualReport ir : reports) {
       if (ir.hasEpValidation()) {
-        if (ir.getEPErrors().size()==0) nreportsEpOk++;
+        if (ir.getEPErrors().size() == 0) nreportsEpOk++;
         hasEp = true;
       }
       if (ir.hasItValidation(0)) {
-        if (ir.getITErrors(0).size()==0) nreportsIt0Ok++;
+        if (ir.getITErrors(0).size() == 0) nreportsIt0Ok++;
         hasIt0 = true;
       }
       if (ir.hasItValidation(1)) {
-        if (ir.getITErrors(1).size()==0) nreportsIt1Ok++;
+        if (ir.getITErrors(1).size() == 0) nreportsIt1Ok++;
         hasIt1 = true;
       }
       if (ir.hasItValidation(2)) {
-        if (ir.getITErrors(2).size()==0) nreportsIt2Ok++;
+        if (ir.getITErrors(2).size() == 0) nreportsIt2Ok++;
         hasIt2 = true;
       }
       if (ir.hasBlValidation()) {
-        if (ir.getBaselineErrors().size()==0) nreportsBlOk++;
+        if (ir.getBaselineErrors().size() == 0) nreportsBlOk++;
         hasBl = true;
       }
       if (ir.hasPcValidation()) {
@@ -227,7 +233,7 @@ public class GlobalReport {
    * @return nreportsok reports ok
    */
   public int getReportsOk() {
-    int n=0;
+    int n = 0;
     for (IndividualReport ir : reports) {
       boolean ok = true;
       if (ir.hasEpValidation()) {
@@ -260,6 +266,50 @@ public class GlobalReport {
    */
   public int getReportsKo() {
     return getReportsCount() - getReportsOk();
+  }
+
+  /**
+   * Has bl boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasBl() {
+    return hasBl;
+  }
+
+  /**
+   * Has ep boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasEp() {
+    return hasEp;
+  }
+
+  /**
+   * Has it boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasIt0() {
+    return hasIt0;
+  }
+
+  /**
+   * Has it boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasIt1() {
+    return hasIt1;
+  }
+  /**
+   * Has it boolean.
+   *
+   * @return the boolean
+   */
+  public boolean hasIt2() {
+    return hasIt2;
   }
 
   /**

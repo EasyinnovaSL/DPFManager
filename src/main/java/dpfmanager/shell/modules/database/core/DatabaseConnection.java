@@ -126,6 +126,10 @@ public class DatabaseConnection {
     if (job.getInit() != null && job.getFinish() == null) {
       return true;
     }
+    // Pending jobs
+    if (job.getState() == 0) {
+      return true;
+    }
     return false;
   }
 

@@ -11,8 +11,6 @@ import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.timer.messages.TimerMessage;
-import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -66,13 +64,15 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       List<File> files = fileChooser.showOpenMultipleDialog(GuiWorkbench.getMyStage());
       if (files != null) {
         String sfiles = "";
+        File last = null;
         for (File file : files) {
           if (sfiles.length() > 0) sfiles += ";";
           sfiles += file.getPath();
+          last = file;
         }
         txtFile = sfiles;
-        if (new File(sfiles).exists() && new File(sfiles).getParent() != null && new File(new File(sfiles).getParent()).exists() && new File(new File(sfiles).getParent()).isDirectory()) {
-          String path = new File(sfiles).getParent();
+        if (last.exists() && last.getParent() != null && last.getParentFile().exists() && last.getParentFile().isDirectory()) {
+          String path = last.getParent();
           DPFManagerProperties.setDefaultDirFile(path);
         }
       }
@@ -148,13 +148,13 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
         }
         if (error) {
           // Add source file
-          getView().addConfigFile(file.getAbsolutePath());
+          getView().addConfigFile(file.getAbsolutePath(), false);
           getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, "Error copying config file."));
         } else if (needAdd) {
-          getView().addConfigFile(configFile.getName());
+          getView().addConfigFile(configFile.getName(), false);
         }
       } else {
-        getView().addConfigFile(file.getAbsolutePath());
+        getView().addConfigFile(file.getAbsolutePath(), false);
       }
     }
   }

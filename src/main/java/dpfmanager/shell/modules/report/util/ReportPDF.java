@@ -61,70 +61,66 @@ public class ReportPDF extends ReportGeneric {
    */
   public void parseGlobal(String pdffile, GlobalReport gr) {
     try {
-      PDDocument document = new PDDocument();
-
-      PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
-      document.addPage(page);
+      PDFParams pdfParams = new PDFParams();
+      pdfParams.init(PDPage.PAGE_SIZE_A4);
 
       PDFont font = PDType1Font.HELVETICA_BOLD;
-      PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
       int pos_x = 200;
-      int pos_y = 700;
+      pdfParams.y = 700;
       int font_size = 18;
       // Logo
-      PDXObjectImage ximage = new PDJpeg(document, getFileStreamFromResources("images/logo.jpg"));
+      PDXObjectImage ximage = new PDJpeg(pdfParams.getDocument(), getFileStreamFromResources("images/logo.jpg"));
       float scale = 3;
-      contentStream.drawXObject(ximage, pos_x, pos_y, 645 / scale, 300 / scale);
+      pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
 
       // Report Title
-      pos_y -= 30;
-      writeText(contentStream, "MULTIPLE REPORT", pos_x, pos_y, font, font_size);
-      pos_y -= 30;
+      pdfParams.y -= 30;
+      pdfParams = writeText(pdfParams, "MULTIPLE REPORT", pos_x, font, font_size);
+      pdfParams.y -= 30;
       font_size = 15;
-      writeText(contentStream, "Processed files: " + gr.getIndividualReports().size(), pos_x, pos_y, font, font_size, Color.cyan);
+      pdfParams = writeText(pdfParams, "Processed files: " + gr.getIndividualReports().size(), pos_x, font, font_size, Color.cyan);
 
       // Summary table
       pos_x = 100;
-      pos_y -= 30;
+      pdfParams.y -= 30;
       font_size = 8;
       Color col = gr.getReportsPc() == gr.getReportsCount() ? Color.green : Color.red;
-      writeText(contentStream, gr.getReportsPc() + "", pos_x, pos_y, font, font_size, col);
-      writeText(contentStream, "conforms to Policy checker", pos_x + 30, pos_y, font, font_size, col);
+      pdfParams = writeText(pdfParams, gr.getReportsPc() + "", pos_x, font, font_size, col);
+      pdfParams = writeText(pdfParams, "conforms to Policy checker", pos_x + 30, font, font_size, col);
       if (gr.getHasBl()) {
-        pos_y -= 15;
+        pdfParams.y -= 15;
         col = gr.getReportsBl() == gr.getReportsCount() ? Color.green : Color.red;
-        writeText(contentStream, gr.getReportsBl() + "", pos_x, pos_y, font, font_size, col);
-        writeText(contentStream, "conforms to Baseline Profile", pos_x + 30, pos_y, font, font_size, col);
+        pdfParams = writeText(pdfParams, gr.getReportsBl() + "", pos_x, font, font_size, col);
+        pdfParams = writeText(pdfParams, "conforms to Baseline Profile", pos_x + 30, font, font_size, col);
       }
       if (gr.getHasEp()) {
-        pos_y -= 15;
+        pdfParams.y -= 15;
         col = gr.getReportsEp() == gr.getReportsCount() ? Color.green : Color.red;
-        writeText(contentStream, gr.getReportsEp() + "", pos_x, pos_y, font, font_size, col);
-        writeText(contentStream, "conforms to Tiff/EP Profile", pos_x + 30, pos_y, font, font_size, col);
+        pdfParams = writeText(pdfParams, gr.getReportsEp() + "", pos_x, font, font_size, col);
+        pdfParams = writeText(pdfParams, "conforms to Tiff/EP Profile", pos_x + 30, font, font_size, col);
       }
       if (gr.getHasIt0()) {
-        pos_y -= 15;
+        pdfParams.y -= 15;
         col = gr.getReportsIt0() == gr.getReportsCount() ? Color.green : Color.red;
-        writeText(contentStream, gr.getReportsIt0() + "", pos_x, pos_y, font, font_size, col);
-        writeText(contentStream, "conforms to Tiff/IT Profile", pos_x + 30, pos_y, font, font_size, col);
+        pdfParams = writeText(pdfParams, gr.getReportsIt0() + "", pos_x, font, font_size, col);
+        pdfParams = writeText(pdfParams, "conforms to Tiff/IT Profile", pos_x + 30, font, font_size, col);
       }
       if (gr.getHasIt1()) {
-        pos_y -= 15;
+        pdfParams.y -= 15;
         col = gr.getReportsIt1() == gr.getReportsCount() ? Color.green : Color.red;
-        writeText(contentStream, gr.getReportsIt2() + "", pos_x, pos_y, font, font_size, col);
-        writeText(contentStream, "conforms to Tiff/IT P1 Profile", pos_x + 30, pos_y, font, font_size, col);
+        pdfParams = writeText(pdfParams, gr.getReportsIt2() + "", pos_x, font, font_size, col);
+        pdfParams = writeText(pdfParams, "conforms to Tiff/IT P1 Profile", pos_x + 30, font, font_size, col);
       }
       if (gr.getHasIt2()) {
-        pos_y -= 15;
+        pdfParams.y -= 15;
         col = gr.getReportsIt2() == gr.getReportsCount() ? Color.green : Color.red;
-        writeText(contentStream, gr.getReportsIt2() + "", pos_x, pos_y, font, font_size, col);
-        writeText(contentStream, "conforms to Tiff/IT P2 Profile", pos_x + 30, pos_y, font, font_size, col);
+        pdfParams = writeText(pdfParams, gr.getReportsIt2() + "", pos_x, font, font_size, col);
+        pdfParams = writeText(pdfParams, "conforms to Tiff/IT P2 Profile", pos_x + 30, font, font_size, col);
       }
 
       // Pie chart
-      pos_y += 10;
-      if (pos_y > 565) pos_y = 565;
+      pdfParams.y += 10;
+      if (pdfParams.y > 565) pdfParams.y = 565;
       pos_x += 200;
       int graph_size = 40;
       BufferedImage image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
@@ -135,33 +131,22 @@ public class ReportPDF extends ReportGeneric {
       g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
       g2d.setColor(Color.red);
       g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
-      ximage = new PDJpeg(document, image);
-      contentStream.drawXObject(ximage, pos_x, pos_y, graph_size, graph_size);
-      pos_y += graph_size - 10;
+      ximage = new PDJpeg(pdfParams.getDocument(), image);
+      pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, graph_size, graph_size);
+      pdfParams.y += graph_size - 10;
       font_size = 7;
-      writeText(contentStream, gr.getReportsOk() + " passed", pos_x + 50, pos_y, font, font_size, Color.green);
-      pos_y -= 10;
-      writeText(contentStream, gr.getReportsKo() + " failed", pos_x + 50, pos_y, font, font_size, Color.red);
-      pos_y -= 10;
-      writeText(contentStream, "Global score " + (doub * 100) + "%", pos_x + 50, pos_y, font, font_size, Color.black);
+      pdfParams = writeText(pdfParams, gr.getReportsOk() + " passed", pos_x + 50, font, font_size, Color.green);
+      pdfParams.y -= 10;
+      pdfParams = writeText(pdfParams, gr.getReportsKo() + " failed", pos_x + 50, font, font_size, Color.red);
+      pdfParams.y -= 10;
+      pdfParams = writeText(pdfParams, "Global score " + (doub * 100) + "%", pos_x + 50, font, font_size, Color.black);
 
       // Individual Tiff images list
       pos_x = 100;
-      pos_y -= 50;
+      pdfParams.y -= 50;
       for (IndividualReport ir : gr.getIndividualReports()) {
-
-        if (newPageNeeded(pos_y)) {
-          contentStream = newPage(contentStream, document);
-          pos_y = init_posy;
-        }
-
         int image_height = 65;
         int image_width = 100;
-        pos_y -= 10;
-
-        int initialy = pos_y;
-        pos_y -= image_height;
-        int maxy = pos_y;
 
         // Draw image
         String imgPath = pdffile + "img.jpg";
@@ -175,62 +160,83 @@ public class ReportPDF extends ReportGeneric {
           bimg = ImageIO.read(new File(imgPath));
         }
         image_width = image_height * bimg.getWidth() / bimg.getHeight();
-        ximage = new PDJpeg(document, bimg);
-        contentStream.drawXObject(ximage, pos_x, pos_y, image_width, image_height);
+        if (image_width > 100) {
+          image_width = 100;
+          image_height = image_width * bimg.getHeight() / bimg.getWidth();
+        }
+
+        // Check if we need new page before draw image
+        int maxHeight = getMaxHeight(ir, image_height);
+        if (newPageNeeded(pdfParams.y - maxHeight)) {
+          pdfParams.setContentStream(newPage(pdfParams.getContentStream(), pdfParams.getDocument()));
+          pdfParams.y = init_posy;
+        }
+
+        int initialy = pdfParams.y;
+        int initialx = 100;
+
+        pdfParams.y -= maxHeight;
+        int maxy = pdfParams.y;
+
+        ximage = new PDJpeg(pdfParams.getDocument(), bimg);
+        pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
         if (check) new File(imgPath).delete();
 
         // Values
-        pos_y = initialy;
-        pos_y -= 10;
-        writeText(contentStream, ir.getFileName(), pos_x + image_width + 10, pos_y, font, font_size, Color.gray);
+        image_width = initialx;
+        pdfParams.y = initialy;
+        if (maxHeight == 65){
+          pdfParams.y -= 10;
+        }
+        pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size, Color.gray);
         font_size = 6;
-        pos_y -= 10;
-        writeText(contentStream, "Conformance Checker", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-        contentStream.drawLine(pos_x + image_width + 10, pos_y - 5, image_width + 150, pos_y - 5);
-        pos_y -= 2;
+        pdfParams.y -= 10;
+        pdfParams = writeText(pdfParams, "Conformance Checker", pos_x + image_width + 10, font, font_size, Color.black);
+        pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, image_width + 150, pdfParams.y - 5);
+        pdfParams.y -= 2;
 
         if (ir.hasBlValidation()) {
-          pos_y -= 10;
-          writeText(contentStream, "Baseline", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-          writeText(contentStream, ir.getBaselineErrors().size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getBaselineErrors().size() > 0 ? Color.red : Color.black);
-          writeText(contentStream, ir.getBaselineWarnings().size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getBaselineWarnings().size() > 0 ? Color.red : Color.black);
+          pdfParams.y -= 10;
+          pdfParams = writeText(pdfParams, "Baseline", pos_x + image_width + 10, font, font_size, Color.black);
+          pdfParams = writeText(pdfParams, ir.getBaselineErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getBaselineErrors().size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getBaselineWarnings().size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getBaselineWarnings().size() > 0 ? Color.red : Color.black);
         }
         if (ir.hasEpValidation()) {
-          pos_y -= 10;
-          writeText(contentStream, "Tiff/EP", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-          writeText(contentStream, ir.getEPErrors().size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getEPErrors().size() > 0 ? Color.red : Color.black);
-          writeText(contentStream, ir.getEPWarnings().size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getEPWarnings().size() > 0 ? Color.red : Color.black);
+          pdfParams.y -= 10;
+          pdfParams = writeText(pdfParams, "Tiff/EP", pos_x + image_width + 10, font, font_size, Color.black);
+          pdfParams = writeText(pdfParams, ir.getEPErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getEPErrors().size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getEPWarnings().size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getEPWarnings().size() > 0 ? Color.red : Color.black);
         }
         if (ir.hasItValidation(0)) {
-          pos_y -= 10;
-          writeText(contentStream, "Tiff/IT", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-          writeText(contentStream, ir.getITErrors(0).size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getITErrors(0).size() > 0 ? Color.red : Color.black);
-          writeText(contentStream, ir.getITWarnings(0).size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getITWarnings(0).size() > 0 ? Color.red : Color.black);
+          pdfParams.y -= 10;
+          pdfParams = writeText(pdfParams, "Tiff/IT", pos_x + image_width + 10, font, font_size, Color.black);
+          pdfParams = writeText(pdfParams, ir.getITErrors(0).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(0).size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getITWarnings(0).size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getITWarnings(0).size() > 0 ? Color.red : Color.black);
         }
         if (ir.hasItValidation(1)) {
-          pos_y -= 10;
-          writeText(contentStream, "Tiff/IT-1", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-          writeText(contentStream, ir.getITErrors(1).size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getITErrors(1).size() > 0 ? Color.red : Color.black);
-          writeText(contentStream, ir.getITWarnings(1).size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getITWarnings(1).size() > 0 ? Color.red : Color.black);
+          pdfParams.y -= 10;
+          pdfParams = writeText(pdfParams, "Tiff/IT-1", pos_x + image_width + 10, font, font_size, Color.black);
+          pdfParams = writeText(pdfParams, ir.getITErrors(1).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(1).size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getITWarnings(1).size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getITWarnings(1).size() > 0 ? Color.red : Color.black);
         }
         if (ir.hasItValidation(2)) {
-          pos_y -= 10;
-          writeText(contentStream, "Tiff/IT-2", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-          writeText(contentStream, ir.getITErrors(2).size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getITErrors(2).size() > 0 ? Color.red : Color.black);
-          writeText(contentStream, ir.getITWarnings(2).size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getITWarnings(2).size() > 0 ? Color.red : Color.black);
+          pdfParams.y -= 10;
+          pdfParams = writeText(pdfParams, "Tiff/IT-2", pos_x + image_width + 10, font, font_size, Color.black);
+          pdfParams = writeText(pdfParams, ir.getITErrors(2).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(2).size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getITWarnings(2).size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getITWarnings(2).size() > 0 ? Color.red : Color.black);
         }
         if (ir.checkPC) {
-          pos_y -= 10;
-          writeText(contentStream, "Policy checker", pos_x + image_width + 10, pos_y, font, font_size, Color.black);
-          writeText(contentStream, ir.getPCErrors().size() + " errors", pos_x + image_width + 70, pos_y, font, font_size, ir.getPCErrors().size() > 0 ? Color.red : Color.black);
-          writeText(contentStream, ir.getPCWarnings().size() + " warnings", pos_x + image_width + 120, pos_y, font, font_size, ir.getPCWarnings().size() > 0 ? Color.red : Color.black);
+          pdfParams.y -= 10;
+          pdfParams = writeText(pdfParams, "Policy checker", pos_x + image_width + 10, font, font_size, Color.black);
+          pdfParams = writeText(pdfParams, ir.getPCErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getPCErrors().size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getPCWarnings().size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getPCWarnings().size() > 0 ? Color.red : Color.black);
         }
-        if (pos_y < maxy) maxy = pos_y;
+        if (pdfParams.y < maxy) maxy = pdfParams.y;
 
         // Chart
-        pos_y = initialy;
-        pos_y -= 10;
-        pos_y -= 10;
+        pdfParams.y = initialy;
+        pdfParams.y -= 10;
+        pdfParams.y -= 10;
         graph_size = 25;
         image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
         g2d = image.createGraphics();
@@ -240,18 +246,18 @@ public class ReportPDF extends ReportGeneric {
         g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
         g2d.setColor(Color.red);
         g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
-        ximage = new PDJpeg(document, image);
-        contentStream.drawXObject(ximage, pos_x + image_width + 180, pos_y - graph_size, graph_size, graph_size);
-        pos_y += graph_size - 10;
+        ximage = new PDJpeg(pdfParams.getDocument(), image);
+        pdfParams.getContentStream().drawXObject(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
+        pdfParams.y += graph_size - 10;
         if (doub < 100) {
-          pos_y -= 10;
-          writeText(contentStream, "Failed", pos_x + image_width + 180 + graph_size + 10, pos_y - graph_size / 2, font, font_size, Color.red);
+          pdfParams.y = pdfParams.y - 10 - graph_size / 2;
+          pdfParams = writeText(pdfParams, "Failed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.red);
         }
-        pos_y -= 10;
-        writeText(contentStream, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, pos_y - graph_size / 2, font, font_size, Color.gray);
-        if (pos_y < maxy) maxy = pos_y;
+        pdfParams.y = pdfParams.y - 10 - graph_size / 2;
+        pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
+        if (pdfParams.y < maxy) maxy = pdfParams.y;
 
-        pos_y = maxy;
+        pdfParams.y = maxy - 10;
       }
 
       // Full individual reports
@@ -265,15 +271,15 @@ public class ReportPDF extends ReportGeneric {
           doc = PDDocument.load(ir.getPDFDocument());
         List<PDPage> l = doc.getDocumentCatalog().getAllPages();
         for (PDPage pag : l) {
-          document.addPage(pag);
+          pdfParams.getDocument().addPage(pag);
         }
         toClose.add(doc);
       }
 
-      contentStream.close();
+      pdfParams.getContentStream().close();
 
-      document.save(pdffile);
-      document.close();
+      pdfParams.getDocument().save(pdffile);
+      pdfParams.getDocument().close();
 
       for (PDDocument doc : toClose) {
         doc.close();
@@ -281,6 +287,32 @@ public class ReportPDF extends ReportGeneric {
     } catch (Exception tfe) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", tfe));
     }
+  }
+
+  private int getMaxHeight(IndividualReport ir, int image_height) {
+    int height = 15;
+    if (ir.hasBlValidation()) {
+      height += 10;
+    }
+    if (ir.hasEpValidation()) {
+      height += 10;
+    }
+    if (ir.hasItValidation(0)) {
+      height += 10;
+    }
+    if (ir.hasItValidation(1)) {
+      height += 10;
+    }
+    if (ir.hasItValidation(2)) {
+      height += 10;
+    }
+    if (ir.checkPC) {
+      height += 10;
+    }
+    if (image_height > height) {
+      height = image_height;
+    }
+    return height;
   }
 
   /**
@@ -311,36 +343,47 @@ public class ReportPDF extends ReportGeneric {
   /**
    * Write text.
    *
-   * @param contentStream the content stream
-   * @param text          the text
-   * @param x             the x
-   * @param y             the y
-   * @param font          the font
-   * @param font_size     the font size
+   * @param pdfParams the content stream and document
+   * @param text      the text
+   * @param x         the x
+   * @param font      the font
+   * @param font_size the font size
    * @throws Exception the exception
    */
-  void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size) throws Exception {
-    writeText(contentStream, text, x, y, font, font_size, Color.black);
+  private PDFParams writeText(PDFParams pdfParams, String text, int x, PDFont font, int font_size) throws Exception {
+    return writeText(pdfParams, text, x, font, font_size, Color.black);
   }
 
   /**
    * Write text.
    *
-   * @param contentStream the content stream
-   * @param text          the text
-   * @param x             the x
-   * @param y             the y
-   * @param font          the font
-   * @param font_size     the font size
-   * @param color         the color
+   * @param pdfParams the content stream and document
+   * @param text      the text
+   * @param x         the x
+   * @param font      the font
+   * @param font_size the font size
+   * @param color     the color
    * @throws Exception the exception
    */
-  void writeText(PDPageContentStream contentStream, String text, int x, int y, PDFont font, int font_size, Color color) throws Exception {
-    contentStream.beginText();
-    contentStream.setFont(font, font_size);
-    contentStream.setNonStrokingColor(color);
-    contentStream.moveTextPositionByAmount(x, y);
-    contentStream.drawString(text);
-    contentStream.endText();
+  private PDFParams writeText(PDFParams pdfParams, String text, int x, PDFont font, int font_size, Color color) throws Exception {
+    PDPageContentStream contentStream = pdfParams.getContentStream();
+    try {
+      if (newPageNeeded(pdfParams.y)) {
+        contentStream = newPage(contentStream, pdfParams.getDocument());
+        pdfParams.y = init_posy;
+      }
+
+      contentStream.beginText();
+      contentStream.setFont(font, font_size);
+      contentStream.setNonStrokingColor(color);
+      contentStream.moveTextPositionByAmount(x, pdfParams.y);
+      contentStream.drawString(text);
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      contentStream.endText();
+      pdfParams.setContentStream(contentStream);
+      return pdfParams;
+    }
   }
 }
