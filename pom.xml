@@ -366,15 +366,6 @@
 					<additionalClasspathElements>
 						<additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
 					</additionalClasspathElements>
-					<excludes>
-						<exclude>dpfmanager.gui.*</exclude>
-						<exclude>dpfmanager.server.*</exclude>
-						<exclude>dpfmanager.implementationchecker.*</exclude>
-						<exclude>dpfmanager.commandline.*</exclude>
-					</excludes>
-					<includes>
-						<include>dpfmanager.RunTestOnly</include>
-					</includes>
 				</configuration>
 			</plugin>
 
