@@ -19,6 +19,8 @@
 
 package dpfmanager.shell.modules.report.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -31,7 +33,7 @@ public class GlobalReport {
   /**
    * The list of all individual reports.
    */
-  private Set<IndividualReport> reports;
+  private List<IndividualReport> reports;
 
   /**
    * Number of EP ok
@@ -92,7 +94,7 @@ public class GlobalReport {
    * Instantiates a new global report.
    */
   public GlobalReport() {
-    reports = new TreeSet<>();
+    reports = new ArrayList<>();
     nreportsEpOk = 0;
     nreportsIt0Ok = 0;
     nreportsIt1Ok = 0;
@@ -175,6 +177,7 @@ public class GlobalReport {
    */
   public void generate() {
     nreportsPcOk = 0;
+    Collections.sort(reports);
     for (IndividualReport ir : reports) {
       if (ir.hasEpValidation()) {
         if (ir.getEPErrors().size() == 0) nreportsEpOk++;
@@ -357,7 +360,7 @@ public class GlobalReport {
    *
    * @return the individual reports
    */
-  public Set<IndividualReport> getIndividualReports() {
+  public List<IndividualReport> getIndividualReports() {
     return reports;
   }
 
