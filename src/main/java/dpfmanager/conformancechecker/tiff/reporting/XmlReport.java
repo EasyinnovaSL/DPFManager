@@ -595,7 +595,7 @@ public class XmlReport {
                   if (isBlank) nblanks++;
                 }
               }
-              boolean isBlank = (double)nblanks / ww*hh > percent_blank_pixels;
+              boolean isBlank = (double)nblanks / (ww*hh) > percent_blank_pixels;
               value = "0";
               if (isBlank) {
                 value = "1";
