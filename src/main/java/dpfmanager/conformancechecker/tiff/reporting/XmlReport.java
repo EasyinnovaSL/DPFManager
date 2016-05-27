@@ -16,7 +16,6 @@ import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
-import com.sun.media.jai.codec.ImageCodec;
 
 import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Document;
