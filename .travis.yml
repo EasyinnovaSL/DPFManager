@@ -12,14 +12,16 @@ sudo: required
 matrix:
   include:
     # Custom builds
-    - env: TOKEN=nogui
-      script: mvn test -B -Dtest=commandline/*Test.java,implementationchecker/*Test.java
-    - env: TOKEN=gui
-      script: mvn test -B -Dtest=gui/*Test.java
+#    - env: TOKEN=cmd
+#      script: mvn test -B -Dtest=commandline/*Test.java,implementationchecker/*Test.java
+#    - env: TOKEN=gui
+#      script: mvn test -B -Dtest=gui/*Test.java
+    - env: TOKEN=server
+      script: mvn test -B -Dtest=server/*Test.java
   exclude:
     # Exclude default build
     - jdk: oraclejdk8
 
 before_install:
-  - if [ "${TOKEN}" != "nogui" ]; then export DISPLAY=:99.0; fi
-  - if [ "${TOKEN}" != "nogui" ]; then sh -e /etc/init.d/xvfb start; fi
+  - if [ "${TOKEN}" == "gui" ]; then export DISPLAY=:99.0; fi
+  - if [ "${TOKEN}" == "gui" ]; then sh -e /etc/init.d/xvfb start; fi
