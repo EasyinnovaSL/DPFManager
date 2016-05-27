@@ -1,6 +1,7 @@
 package dpfmanager.shell.modules.client.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -145,6 +146,7 @@ public class ClientService extends DpfService {
       context.sendAfter(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.ASK, map.get("id")), 1);
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message));
+      DPFManagerProperties.setFinished(true);
     }
   }
 
@@ -158,6 +160,7 @@ public class ClientService extends DpfService {
         context.sendAfter(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.ASK, map.get("id")), 1);
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Started job with id: " + map.get("id")));
+        DPFManagerProperties.setFinished(true);
       }
     }
   }

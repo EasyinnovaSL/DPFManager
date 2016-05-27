@@ -17,6 +17,8 @@ import java.util.Properties;
  */
 public class DPFManagerProperties {
 
+  private static boolean finished = false;
+
   public static String getVersion(){
     String filename = "version.properties";
     InputStream input = MainGuiApp.class.getClassLoader().getResourceAsStream(filename);
@@ -178,5 +180,16 @@ public class DPFManagerProperties {
       dataFile.mkdirs();
     }
     return dataDir;
+  }
+
+  /**
+   * Finish control for test
+   */
+  public static boolean isFinished() {
+    return finished;
+  }
+
+  public static void setFinished(boolean f) {
+    finished = f;
   }
 }

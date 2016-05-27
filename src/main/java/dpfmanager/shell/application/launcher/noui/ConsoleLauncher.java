@@ -1,6 +1,7 @@
 package dpfmanager.shell.application.launcher.noui;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.interfaces.console.AppContext;
@@ -47,7 +48,7 @@ public class ConsoleLauncher {
   private Map<String, String> parameters;
 
   public ConsoleLauncher(String[] args) {
-    ConsoleLauncher.setFinished(false);
+    DPFManagerProperties.setFinished(false);
     // Load spring context
     AppContext.loadContext("DpfSpringConsole.xml");
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
@@ -234,17 +235,6 @@ public class ConsoleLauncher {
   public void exit() {
     AppContext.close();
     System.exit(0);
-  }
-
-  /**
-   * Finish control for test
-   */
-  public static boolean isFinished() {
-    return finished;
-  }
-
-  public static void setFinished(boolean f) {
-    finished = f;
   }
 
 }

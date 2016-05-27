@@ -38,7 +38,7 @@ public class CommandLineTest {
 
   public void waitForFinishMultiThred(int maxTimeout) throws InterruptedException {
     int timeout = 0;
-    while (!ConsoleLauncher.isFinished() && timeout < maxTimeout) {
+    while (!DPFManagerProperties.isFinished() && timeout < maxTimeout) {
       Thread.sleep(1000);
       timeout++;
     }

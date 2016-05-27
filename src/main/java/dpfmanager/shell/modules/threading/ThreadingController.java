@@ -1,6 +1,7 @@
 package dpfmanager.shell.modules.threading;
 
 import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
@@ -48,7 +49,7 @@ public class ThreadingController extends DpfSpringController {
       // Now close application only if it is not server mode
       if (gm.isFinish() && parameters.get("mode").equals("CMD")) {
         AppContext.close();
-        ConsoleLauncher.setFinished(true);
+        DPFManagerProperties.setFinished(true);
       }
     } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
       RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);

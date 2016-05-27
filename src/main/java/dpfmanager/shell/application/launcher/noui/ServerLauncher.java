@@ -1,6 +1,7 @@
 package dpfmanager.shell.application.launcher.noui;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.interfaces.console.AppContext;
@@ -46,6 +47,7 @@ public class ServerLauncher {
   private List<String> params;
 
   public ServerLauncher(String[] args) {
+    DPFManagerProperties.setFinished(false);
     // Load spring context
     AppContext.loadContext("DpfSpringServer.xml");
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
