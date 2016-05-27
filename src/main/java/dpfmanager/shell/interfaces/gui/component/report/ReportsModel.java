@@ -18,7 +18,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
 
   private boolean empty = true;
   private boolean all_reports_loaded = false;
-  public static int reports_loaded = 10;
+  public static int reports_loaded = 25;
   private ObservableList<ReportRow> data;
   private boolean reload;
 

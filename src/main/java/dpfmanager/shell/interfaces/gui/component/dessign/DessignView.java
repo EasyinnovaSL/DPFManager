@@ -117,6 +117,10 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   }
 
   private void addConfigFiles() {
+    String previous = null;
+    if (selectedButton != null) {
+      previous = selectedButton.getText();
+    }
     selectedButton = null;
     group = new ToggleGroup();
     vBoxConfig = new VBox();
@@ -127,7 +131,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
-          addConfigFile(fileEntry.getName());
+          addConfigFile(fileEntry.getName(), fileEntry.getName().equalsIgnoreCase(previous));
         }
       }
     }
@@ -135,11 +139,12 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     configScroll.setContent(vBoxConfig);
   }
 
-  public void addConfigFile(String text) {
+  public void addConfigFile(String text, boolean selected) {
     RadioButton radio = new RadioButton();
     radio.setId("radioConfig" + vBoxConfig.getChildren().size());
     radio.setText(text);
     radio.setToggleGroup(group);
+    radio.setSelected(selected);
     radio.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
