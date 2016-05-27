@@ -43,7 +43,7 @@ import java.util.List;
 /**
  * The Class IndividualReport.
  */
-public class IndividualReport {
+public class IndividualReport implements Comparable {
 
   /** The file name. */
   private String filename;
@@ -836,5 +836,17 @@ public class IndividualReport {
    */
   public int getNItWar(int profile) {
     return getITWarnings(profile) == null ? 0 : getITWarnings(profile).size();
+  }
+
+  @Override
+  public int compareTo(Object o) {
+    if (o instanceof IndividualReport){
+      IndividualReport other = (IndividualReport) o;
+      Integer thisPercent = calculatePercent();
+      Integer otherPercent = other.calculatePercent();
+      return otherPercent.compareTo(thisPercent);
+    } else {
+      return -1;
+    }
   }
 }
