@@ -500,7 +500,7 @@ public class XmlReport {
         Iterator<ImageReader> iterator = ImageIO.getImageReaders(iis);
         reader = iterator.next();
         reader.setInput(iis);
-      } catch (IOException e) {
+      } catch (Exception e) {
         reader = null;
       }
       int imageIndex = 0;
