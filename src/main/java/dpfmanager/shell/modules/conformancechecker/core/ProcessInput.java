@@ -29,12 +29,10 @@ import java.util.List;
  */
 public class ProcessInput {
 
-  private boolean outOfmemory = false;
   private DpfContext context;
-  private List<String> tempFiles;
 
   public ProcessInput() {
-    tempFiles = new ArrayList<>();
+
   }
 
   /**
@@ -126,9 +124,6 @@ public class ProcessInput {
           String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
           filename = java.net.URLDecoder.decode(filename, "UTF-8");
           ir = cc.processFile(filename2, filename, internalReportFolder, config, id);
-          if (ir != null) {
-            outOfmemory = true;
-          }
           // Delete the temporary file
           File file = new File(filename2);
           file.delete();
@@ -152,9 +147,6 @@ public class ProcessInput {
       if (cc != null) {
         try {
           ir = cc.processFile(filename, filename, internalReportFolder, config, id);
-          if (ir != null) {
-            outOfmemory = true;
-          }
         } catch (Exception ex) {
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
           ex.printStackTrace();

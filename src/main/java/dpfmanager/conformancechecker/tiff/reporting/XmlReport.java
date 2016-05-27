@@ -10,15 +10,24 @@ import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
 import com.easyinnova.tiff.model.IfdTags;
+import com.easyinnova.tiff.model.ImageStrips;
+import com.easyinnova.tiff.model.Strip;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
+import com.sun.media.jai.codec.ImageCodec;
 
+import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import sun.awt.image.ImageDecoder;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,13 +38,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.media.jai.NullOpImage;
+import javax.media.jai.OpImage;
+import javax.media.jai.PlanarImage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -403,6 +421,18 @@ public class XmlReport {
     }
   }
 
+  private ImageReader getTiffImageReader() {
+    Iterator<ImageReader> imageReaders = ImageIO.getImageReadersByFormatName("TIFF");
+    if (!imageReaders.hasNext()) {
+      throw new UnsupportedOperationException("No TIFF Reader found!");
+    }
+    return imageReaders.next();
+  }
+
+  private ImageInputStream openImageInputStream(String filename) throws IOException {
+    return ImageIO.createImageInputStream(filename);
+  }
+
   /**
    * Parse an individual report to XML format.
    *
@@ -467,6 +497,17 @@ public class XmlReport {
 
       ifd = ir.getTiffModel().getFirstIFD();
       int numBlankPages = 0;
+      ImageReader reader = null;
+      try {
+        File fi = new File(ir.getFilePath());
+        ImageInputStream iis = javax.imageio.ImageIO.createImageInputStream(fi);
+        Iterator<ImageReader> iterator = ImageIO.getImageReaders(iis);
+        reader = iterator.next();
+        reader.setInput(iis);
+      } catch (IOException e) {
+        reader = null;
+      }
+      int imageIndex = 0;
       while (ifd != null) {
         // For each image
         String bps = ifd.getMetadata().get("BitsPerSample").toString();
@@ -533,17 +574,41 @@ public class XmlReport {
         infoElement.setAttribute("PixelDensity", "" + (int) Double.parseDouble(pixeldensity));
         report.appendChild(infoElement);
 
+        double percent_blank_pixels = 0.95;
+        double tolerance = 0.95;
         if (checkBlankPages) {
-          boolean isBlank = false;
-          value = "0";
-          if (isBlank) {
-            value = "1";
-            numBlankPages++;
+          try {
+            if (reader != null) {
+              BufferedImage bufferedImage = reader.read(imageIndex);
+              int x, y;
+              int ww = bufferedImage.getWidth();
+              int hh = bufferedImage.getHeight();
+              int nblanks = 0;
+              for (x = 0; x < ww; x++) {
+                for (y = 0; y < hh; y++) {
+                  boolean isBlank = true;
+                  int col = bufferedImage.getRGB(x, y);
+                  Color color = new Color(col);
+                  if (color.getRed() < 255 * tolerance) isBlank = false;
+                  if (color.getGreen() < 255 * tolerance) isBlank = false;
+                  if (color.getBlue() < 255 * tolerance) isBlank = false;
+                  if (isBlank) nblanks++;
+                }
+              }
+              boolean isBlank = (double)nblanks / ww*hh > percent_blank_pixels;
+              value = "0";
+              if (isBlank) {
+                value = "1";
+                numBlankPages++;
+              }
+              infoElement = doc.createElement("BlankPage");
+              infoElement.setTextContent(value);
+              infoElement.setAttribute("BlankPage", value);
+              report.appendChild(infoElement);
+            }
+          } catch (Exception e) {
+            e.printStackTrace();
           }
-          infoElement = doc.createElement("BlankPage");
-          infoElement.setTextContent(value);
-          infoElement.setAttribute("BlankPage", value);
-          report.appendChild(infoElement);
         }
 
         ifd = ifd.getNextIFD();

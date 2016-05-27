@@ -188,6 +188,21 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "description", "Bit Depth");
       addElement(doc, field, "operators", ">,<,=");
       addElement(doc, field, "values", "1,2,4,8,16,32,64");
+      // BlankPage
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "BlankPage");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Blank Page");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", "0,1");
+      // NumberBlankPage
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "NumberBlankImages");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Number of Blank Pages");
+      addElement(doc, field, "operators", ">,<,=");
       // Compression
       field = doc.createElement("field");
       fields.appendChild(field);

@@ -1,6 +1,6 @@
 Summary: DPF Manager
 Name: dpf-manager
-Version: 2.1
+Version: 2.1.2
 Release: 1
 License: Unknown
 Vendor: DPF Manager
