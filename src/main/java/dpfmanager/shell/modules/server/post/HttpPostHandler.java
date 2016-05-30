@@ -116,20 +116,12 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
   public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
     if (msg instanceof HttpRequest) {
       HttpRequest request = this.request = (HttpRequest) msg;
-      URI uri = new URI(request.uri());
-      if (uri.getPath().startsWith("/dpfmanager")) {
-        if (request.method().equals(HttpMethod.POST)) {
-          // Start new POST request
-          init();
-          decoder = new HttpPostRequestDecoder(factory, request);
-        } else {
-          sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
-          return;
-        }
+      if (request.method().equals(HttpMethod.POST)) {
+        // Start new POST request
+        init();
+        decoder = new HttpPostRequestDecoder(factory, request);
       } else {
-        // Wrong URI
-        responseContent.append("Wrong request uri!");
-        writeResponse(ctx.channel());
+        sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
         return;
       }
     }
