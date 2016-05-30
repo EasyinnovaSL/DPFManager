@@ -39,7 +39,7 @@ public class InteractiveRemoteTest extends ServerTest {
     String[] argsCheck = new String[3];
     argsCheck[0] = "-url";
     argsCheck[1] = "127.0.0.1:9000";
-    argsCheck[2] = "D:/Bilevel.tif";
+    argsCheck[2] = "src/test/resources/Small/Bilevel.tif";
     String job = getOutputJob(argsCheck,"");
 
     while (job != null) {
