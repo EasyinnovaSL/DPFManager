@@ -26,19 +26,32 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementat
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
+import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
+import dpfmanager.conformancechecker.tiff.reporting.PdfReport;
+import dpfmanager.conformancechecker.tiff.reporting.XmlReport;
 import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.reader.TiffReader;
+import com.easyinnova.tiff.writer.TiffWriter;
 
+import org.apache.logging.log4j.Level;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.w3c.dom.Document;
@@ -176,6 +189,21 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "description", "Bit Depth");
       addElement(doc, field, "operators", ">,<,=");
       addElement(doc, field, "values", "1,2,4,8,16,32,64");
+      // BlankPage
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "BlankPage");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Blank Page");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", "0,1");
+      // NumberBlankPage
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "NumberBlankImages");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Number of Blank Pages");
+      addElement(doc, field, "operators", ">,<,=");
       // Compression
       field = doc.createElement("field");
       fields.appendChild(field);
@@ -433,7 +461,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
    * @throws ReadTagsIOException      the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config) throws ReadTagsIOException, ReadIccConfigIOException {
+  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
 //      Logger.println("Reading Tiff file");
       TiffReader tr = new TiffReader();
@@ -494,6 +522,113 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
           tr = null;
           //System.gc();
+
+          Rules rules = config.getRules();
+          XmlReport xmlReport = new XmlReport();
+          String output = xmlReport.parseIndividual(ir, config.getRules());
+          ir.setConformanceCheckerReport(output);
+          ir.setPcValidation(getPcValidation(output));
+
+          Fixes fixes = config.getFixes();
+          if (config.getFormats().contains("HTML")) {
+            int htmlMode = 0;
+            if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
+            HtmlReport htmlReport = new HtmlReport();
+            output = htmlReport.parseIndividual(ir, htmlMode, id);
+            ir.setConformanceCheckerReportHtml(output);
+          }
+
+          if (config.getFormats().contains("PDF")) {
+            PdfReport pdfReport = new PdfReport();
+            pdfReport.parseIndividual(ir);
+          }
+
+          if (fixes != null && fixes.getFixes().size() > 0) {
+            TiffDocument td = ir.getTiffModel();
+            String nameOriginalTif = ir.getFilePath();
+
+            tr = new TiffReader();
+            tr.readFile(nameOriginalTif);
+            ir.setTiffModel(tr.getModel());
+
+            for (Fix fix : fixes.getFixes()) {
+              if (fix.getOperator() != null) {
+                if (fix.getOperator().equals("Add Tag")) {
+                  td.addTag(fix.getTag(), fix.getValue());
+                } else if (fix.getOperator().equals("Remove Tag")) {
+                  td.removeTag(fix.getTag());
+                }
+              } else {
+                String className = fix.getTag();
+                autofix autofix = (autofix) Class.forName(TiffConformanceChecker.getAutofixesClassPath() + "." + className).newInstance();
+                autofix.run(td);
+              }
+            }
+
+            String outputFolder = config.getOutput();
+            if (outputFolder == null) outputFolder = internalReportFolder;
+            File dir = new File(outputFolder + "/fixed/");
+            if (!dir.exists()) dir.mkdir();
+            String pathFixed = outputFolder + "/fixed/" + new File(reportFilename).getName();
+            if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
+
+            TiffInputStream ti = new TiffInputStream(new File(nameOriginalTif));
+            TiffWriter tw = new TiffWriter(ti);
+            tw.SetModel(td);
+            tw.write(pathFixed);
+            ti.close();
+
+            tr = new TiffReader();
+            tr.readFile(pathFixed);
+            TiffDocument to = tr.getModel();
+
+            String contentfixed = TiffConformanceChecker.getValidationXmlString(tr);
+            Validator baselineValfixed = null;
+            if (ir.checkBL) baselineValfixed = TiffConformanceChecker.getBaselineValidation(contentfixed);
+            Validator epValidationfixed = null;
+            if (ir.checkEP) epValidationfixed = TiffConformanceChecker.getEPValidation(contentfixed);
+            Validator it0Validationfixed = null;
+            if (ir.checkIT0) it0Validationfixed = TiffConformanceChecker.getITValidation(0, contentfixed);
+            Validator it1Validationfixed = null;
+            if (ir.checkIT1) it1Validationfixed = TiffConformanceChecker.getITValidation(1, contentfixed);
+            Validator it2Validationfixed = null;
+            if (ir.checkIT2) it2Validationfixed = TiffConformanceChecker.getITValidation(2, contentfixed);
+
+            pathNorm = pathFixed.replaceAll("\\\\", "/");
+            name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
+            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, baselineValfixed, epValidationfixed, it0Validationfixed, it1Validationfixed, it2Validationfixed);
+            int ind = reportFilename.lastIndexOf(".tif");
+            ir2.setReportPath(reportFilename.substring(0, ind) + "_fixed.tif");
+            ir2.checkPC = ir.checkPC;
+            ir2.checkBL = ir.checkBL;
+            ir2.checkEP = ir.checkEP;
+            ir2.checkIT0 = ir.checkIT0;
+            ir2.checkIT1 = ir.checkIT1;
+            ir2.checkIT2 = ir.checkIT2;
+
+            ir2.setFilePath(pathFixed);
+            //context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
+            ir2.setFileName(new File(nameOriginalTif).getName() + " Fixed");
+
+            //Make report
+            output = xmlReport.parseIndividual(ir2, rules);
+            ir2.setConformanceCheckerReport(output);
+            ir2.setPcValidation(getPcValidation(output));
+            ir.setCompareReport(ir2);
+            ir2.setCompareReport(ir);
+
+            if (config.getFormats().contains("HTML")) {
+              HtmlReport htmlReport = new HtmlReport();
+              output = htmlReport.parseIndividual(ir2, 2, id);
+              ir2.setConformanceCheckerReportHtml(output);
+            }
+
+            if (config.getFormats().contains("PDF")) {
+              PdfReport pdfReport = new PdfReport();
+              pdfReport.parseIndividual(ir2);
+            }
+          }
+
           return ir;
         default:
           Logger.println("Unknown result (" + result + ") in file '" + pathToFile + "'");
@@ -513,8 +648,52 @@ public class TiffConformanceChecker extends ConformanceChecker {
       Logger.println("Error in Tiff file (3)");
     } catch (JAXBException e) {
       Logger.println("Error in Tiff file (4)");
+    } catch (ClassNotFoundException e) {
+      Logger.println("Error in Fix");
+      e.printStackTrace();
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
     return null;
+  }
+
+  /**
+   * Gets pc validation.
+   *
+   * @param output the output
+   * @return the pc validation
+   */
+  static ArrayList<RuleResult> getPcValidation(String output) {
+    ArrayList<RuleResult> valid = new ArrayList<>();
+    int index = output.indexOf("<svrl:failed-assert");
+    while (index > -1) {
+      String text = output.substring(output.indexOf("text>", index));
+      text = text.substring(text.indexOf(">") + 1);
+      text = text.substring(0, text.indexOf("</"));
+      index = output.indexOf("<svrl:failed-assert", index + 1);
+      RuleResult val = new RuleResult();
+      val.setWarning(false);
+      val.setMessage(text);
+      val.setLocation("Policy checker");
+      valid.add(val);
+    }
+    index = output.indexOf("<svrl:successful-report");
+    while (index > -1) {
+      String text = output.substring(output.indexOf("text>", index));
+      text = text.substring(text.indexOf(">") + 1);
+      text = text.substring(0, text.indexOf("</"));
+      index = output.indexOf("<svrl:successful-report", index + 1);
+      RuleResult val = new RuleResult();
+      val.setWarning(true);
+      val.setMessage(text);
+      val.setLocation("Policy checker");
+      valid.add(val);
+    }
+    return valid;
   }
 
   /**

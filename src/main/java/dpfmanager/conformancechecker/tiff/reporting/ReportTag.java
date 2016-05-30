@@ -1,9 +1,9 @@
-package dpfmanager.shell.modules.report.util;
+package dpfmanager.conformancechecker.tiff.reporting;
 
 import com.easyinnova.tiff.model.TagValue;
 
 /**
- * Created by easy on 19/10/2015.
+ * Created by easy on 17/05/2016.
  */
 public class ReportTag {
   /**

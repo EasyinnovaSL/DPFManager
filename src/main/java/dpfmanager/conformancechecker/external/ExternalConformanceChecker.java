@@ -69,7 +69,7 @@ public class ExternalConformanceChecker extends ConformanceChecker {
    * @throws ReadTagsIOException      the read tags io exception
    * @throws ReadIccConfigIOException the read icc config io exception
    */
-  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config) throws ReadTagsIOException, ReadIccConfigIOException {
+  public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
       ArrayList<String> params = new ArrayList();
       params.add(exePath);

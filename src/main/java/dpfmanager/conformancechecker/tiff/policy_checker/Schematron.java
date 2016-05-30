@@ -89,12 +89,14 @@ public class Schematron extends CamelTestSupport {
     if (sc != null) {
       Document doc = readXml(sc);
 
+      // Reset
       NodeList nodes = doc.getElementsByTagName("rule");
       while (nodes.getLength() > 0) {
         Element el = (Element) nodes.item(0);
         el.getParentNode().removeChild(el);
       }
 
+      // Insert rules
       Element pattern = (Element) doc.getElementsByTagName("pattern").item(0);
       if (rules != null) {
         for (Rule r : rules.getRules()) {
@@ -181,35 +183,6 @@ public class Schematron extends CamelTestSupport {
       sc = cLoader.getResourceAsStream(schema);
     }
     return sc;
-
-    /*InputStream sc = null;
-    if (Files.exists(Paths.get(schema))) {
-      // Look in local dir
-      System.out.println("Schematron rules found in local dir");
-      sc = new FileInputStream(schema);
-    } else {
-      // Look in JAR
-      CodeSource src = Schematron.class.getProtectionDomain().getCodeSource();
-      if (src != null) {
-        URL jar = src.getLocation();
-        System.out.println("Reading JAR " + jar.toString());
-        ZipInputStream zip = new ZipInputStream(jar.openStream());
-        ZipEntry zipFile;
-        while ((zipFile = zip.getNextEntry()) != null) {
-          String name = zipFile.getName();
-          if (name.equals(schema.substring(schema.indexOf("/")))) {
-            try {
-              sc = zip;
-            } catch (Exception ex) {
-              throw new Exception("");
-            }
-          }
-        }
-      } else {
-        throw new Exception("");
-      }
-    }
-    return sc;*/
   }
 
   /**

@@ -123,7 +123,7 @@
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:4.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:4.2.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.tmatesoft.sqljet:sqljet:1.1.10" level="project" />
-    <orderEntry type="library" name="Maven: org.antlr:antlr-runtime:3.4" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.8.11.2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.0.CR7" level="project" />
   </component>
 </module>

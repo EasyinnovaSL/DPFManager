@@ -45,7 +45,7 @@ public class ConformanceRunnable extends DpfRunnable {
   public void runTask() {
     // Process the input and get a list of individual reports
     IndividualReport ir;
-    ir = pi.processFile(filename, internalReportFolder, config);
+    ir = pi.processFile(filename, internalReportFolder, config, id);
     if (ir != null) {
       ir.setIdReport(id);
       ir.setInternalReportFolder(internalReportFolder);

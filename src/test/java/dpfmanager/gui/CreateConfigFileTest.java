@@ -140,7 +140,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     //Check combobox items size
     ComboBox comboBoxTag = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxTag");
     ComboBox comboBoxOp = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxOp");
-    Assert.assertEquals("ComboBox Tag inside 'Add Rule' failed", 9, comboBoxTag.getItems().size());
+    Assert.assertEquals("ComboBox Tag inside 'Add Rule' failed", 11, comboBoxTag.getItems().size());
     Assert.assertEquals("ComboBox Operator inside 'Add Rule' failed", 3, comboBoxOp.getItems().size());
 
     uniqueId++;

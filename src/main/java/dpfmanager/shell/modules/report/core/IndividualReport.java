@@ -37,6 +37,8 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResul
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,42 +58,6 @@ public class IndividualReport implements Comparable {
 
   /** The file path. */
   private String reportpath;
-
-  /** The ifdNode count. */
-  private int ifdCount;
-
-  /** The isimg list. */
-  private List<Boolean> listIsimg;
-
-  /** The hasSubIfd list. */
-  private List<Boolean> listHasSubIfd;
-
-  /** The Tiff width. */
-  private String width;
-
-  /** The Tiff height. */
-  private String height;
-
-  /** The Tiff bits per sample. */
-  private String bps;
-
-  /** The Endianess. */
-  private String endianess;
-
-  /** The compression. */
-  private String compression;
-
-  /** The pixel density. */
-  private String pixeldensity;
-
-  /** The pixel numberimages. */
-  private String numberimages;
-
-  /** The Tiff photometric. */
-  private String photo;
-
-  /** The Tiff planar. */
-  private String planar;
 
   /** The baseline errors list. */
   private List<RuleResult> errorsBl;
@@ -168,9 +134,13 @@ public class IndividualReport implements Comparable {
 
   private String document;
 
+  private PDDocument pdf;
+
   private boolean containsData;
 
   private String conformanceCheckerReport = null;
+
+  private String conformanceCheckerReportHtml = null;
 
   /**
    * Extra check information
@@ -223,8 +193,16 @@ public class IndividualReport implements Comparable {
     conformanceCheckerReport = report;
   }
 
+  public void setConformanceCheckerReportHtml(String report) {
+    conformanceCheckerReportHtml = report;
+  }
+
   public String getConformanceCheckerReport() {
     return conformanceCheckerReport;
+  }
+
+  public String getConformanceCheckerReportHtml() {
+    return conformanceCheckerReportHtml;
   }
 
   public boolean containsData() {
@@ -245,9 +223,6 @@ public class IndividualReport implements Comparable {
                           Validator baselineValidation, Validator epValidation, Validator itValidation, Validator it1Validation, Validator it2Validation) {
     filename = name;
     filepath = path;
-    ifdCount = 0;
-    listIsimg = new ArrayList<>();
-    listHasSubIfd = new ArrayList<>();
     containsData = true;
     reportFilename = rFilename;
     generate(tiffModel, baselineValidation, epValidation, itValidation, it1Validation, it2Validation);
@@ -344,6 +319,14 @@ public class IndividualReport implements Comparable {
     this.document = document;
   }
 
+  public void setPDF(PDDocument doc) {
+    this.pdf = doc;
+  }
+
+  public PDDocument getPDF() {
+    return pdf;
+  }
+
   /**
    * Gets pdf document.
    *
@@ -369,17 +352,6 @@ public class IndividualReport implements Comparable {
    */
   public void setFilePath(String path) {
     filepath = path;
-  }
-
-  /**
-   * Saves the ifd node.
-   *
-   * @param ifd the ifd
-   */
-  private void saveIfdNode(IFD ifd) {
-    listIsimg.add(ifd.isImage());
-    listHasSubIfd.add(ifd.getsubIFD() != null);
-    ifdCount++;
   }
 
   /**
@@ -413,54 +385,6 @@ public class IndividualReport implements Comparable {
   public void generate(TiffDocument tiffModel, Validator validation,
                        Validator epValidation, Validator it0Validation, Validator it1Validation, Validator it2Validation) {
     this.tiffModel = tiffModel;
-    // tiff structure
-    IFD ifd = tiffModel.getFirstIFD();
-    if (ifd != null) {
-      saveIfdNode(ifd);
-      while (ifd.hasNextIFD()) {
-        ifd = ifd.getNextIFD();
-        saveIfdNode(ifd);
-      }
-    }
-
-    // basic info
-    width = tiffModel.getMetadataSingleString("ImageWidth");
-    height = tiffModel.getMetadataSingleString("ImageLength");
-    bps = tiffModel.getMetadataSingleString("BitsPerSample");
-    compression = tiffModel.getMetadataSingleString("Compression");
-    endianess = "none";
-    if (tiffModel.getEndianess() != null){
-      endianess = tiffModel.getEndianess().toString();
-    }
-    pixeldensity = "0";
-    numberimages = "0";
-    if (tiffModel.getMetadata().contains("ResolutionUnit") && tiffModel.getMetadata().contains("XResolution"))
-    {
-      double pd = 0;
-      try {
-        double ru = Double.parseDouble(tiffModel.getMetadata().get("ResolutionUnit").toString());
-        String xres = tiffModel.getMetadata().get("XResolution").toString();
-        double num = Double.parseDouble(xres.substring(0, xres.indexOf("/")));
-        double den = Double.parseDouble(xres.substring(xres.indexOf("/") + 1));
-        double xr = num / den;
-        double ppi;
-        if (ru == 2) {
-          ppi = xr;
-        } else {
-          ppi = xr / 0.3937;
-        }
-        pixeldensity = ppi+"";
-      } catch (Exception ex) {
-        pixeldensity = "";
-      }
-    }
-    numberimages = tiffModel.getImageIfds().size() + "";
-    if (tiffModel.getMetadata().contains("PhotometricInterpretation")) {
-      photo = tiffModel.getMetadataSingleString("PhotometricInterpretation");
-    }
-    if (tiffModel.getMetadata().contains("PlanarConfiguration")) {
-      planar = tiffModel.getMetadataSingleString("PlanarConfiguration");
-    }
 
     // errors & warnings
     if (validation != null) {
@@ -493,98 +417,6 @@ public class IndividualReport implements Comparable {
     warningsPc = new ArrayList<>();
     for (RuleResult rr : pcValidation) if (!rr.getWarning()) errorsPc.add(rr);
     for (RuleResult rr : pcValidation) if (rr.getWarning()) warningsPc.add(rr);
-  }
-
-  /**
-   * Get ifd count.
-   *
-   * @return the numbr of ifd's
-   */
-  public int getIfdCount() {
-    return ifdCount;
-  }
-
-  /**
-   * Get isimg at index.
-   *
-   * @param index the index
-   * @return the isimg list
-   */
-  public Boolean getIsimgAt(int index) {
-    return listIsimg.get(index);
-  }
-
-  /**
-   * Get hasSubIfd at index.
-   *
-   * @param index the index
-   * @return the list of hasSubIfd
-   */
-  public Boolean getHasSubIfdAt(int index) {
-    return listHasSubIfd.get(index);
-  }
-
-  /**
-   * Get width.
-   *
-   * @return the width
-   */
-  public String getWidth() {
-    return width;
-  }
-
-  /**
-   * Get height.
-   *
-   * @return the height
-   */
-  public String getHeight() {
-    return height;
-  }
-
-  /**
-   * Get Planar.
-   *
-   * @return the Planar
-   */
-  public String getPlanar() {
-    return planar;
-  }
-
-  /**
-   * Get Photometric.
-   *
-   * @return the Photometric
-   */
-  public String getPhotometric() {
-    return photo;
-  }
-
-  /**
-   * Get bits per sample.
-   *
-   * @return the height
-   */
-  public String getBitsPerSample() {
-    return bps;
-  }
-
-  /**
-   * Gets endianess.
-   *
-   * @return the endianess
-   */
-  public String getEndianess() {
-    return endianess;
-  }
-
-  /**
-   * Gets compression.
-   *
-   * @return the compression
-   */
-  public String getCompression() {
-    return compression;
   }
 
   /**
@@ -632,24 +464,6 @@ public class IndividualReport implements Comparable {
     if (profile == 0) return errorsIt0 != null;
     if (profile == 1) return errorsIt1 != null;
     return errorsIt2 != null;
-  }
-
-  /**
-   * Gets number images.
-   *
-   * @return the number of images
-   */
-  public String getNumberImages() {
-    return "" + numberimages;
-  }
-
-  /**
-   * Gets pixels density.
-   *
-   * @return the pixels density
-   */
-  public String getPixelsDensity() {
-    return "" + pixeldensity;
   }
 
   /**
@@ -746,24 +560,6 @@ public class IndividualReport implements Comparable {
   public List<RuleResult> getPCWarnings() {
     if (warningsPc == null) return new ArrayList<RuleResult>();
     return warningsPc;
-  }
-
-  /**
-   * Sets pc errors.
-   *
-   * @param errors the errors
-   */
-  public void setPCErrors(List<RuleResult> errors) {
-    errorsPc = errors;
-  }
-
-  /**
-   * Sets pc warnings.
-   *
-   * @param warnings the warnings
-   */
-  public void setPCWarnings(List<RuleResult> warnings) {
-    warningsPc = warnings;
   }
 
   /**

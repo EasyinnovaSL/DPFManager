@@ -6,7 +6,7 @@
 	<groupId>com.easyinnova</groupId>
 	<artifactId>dpf_manager</artifactId>
 	<packaging>jar</packaging>
-	<version>2.1.2</version>
+	<version>2.2</version>
 
     <!--Properties-->
     <properties>
@@ -107,6 +107,11 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</repository>
+		<repository>
+			<id>com.springsource.repository.bundles.external</id>
+			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/external</url>
 		</repository>
 	</repositories>
 
