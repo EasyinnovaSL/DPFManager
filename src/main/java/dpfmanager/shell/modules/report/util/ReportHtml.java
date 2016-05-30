@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Adrià Llorens Martinez
  * @version 1.0
@@ -71,7 +59,7 @@ public class ReportHtml extends ReportGeneric {
       if (!check) {
         imgPath = "html/img/noise.jpg";
       }
-      imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", imgPath);
+      imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", encodeUrl(imgPath));
 
       // Basic
       int percent = ir.calculatePercent();
@@ -121,7 +109,7 @@ public class ReportHtml extends ReportGeneric {
         imageBody = StringUtils.replace(imageBody, "##PC_CLASS##", "hide");
       }
 
-      imageBody = StringUtils.replace(imageBody, "##HREF##", "html/" + new File(ir.getReportPath()).getName() + ".html");
+      imageBody = StringUtils.replace(imageBody, "##HREF##", "html/" + encodeUrl(new File(ir.getReportPath()).getName() + ".html"));
       if (ir.getBaselineErrors().size() > 0) {
         imageBody = StringUtils.replace(imageBody, "##BL_ERR_C##", "error");
       } else {
@@ -226,42 +214,42 @@ public class ReportHtml extends ReportGeneric {
     htmlBody = StringUtils.replace(htmlBody, "##COUNT##", "" + scount);
     htmlBody = StringUtils.replace(htmlBody, "##OK##", "" + gr.getReportsOk());
 
-    if (gr.getHasBl()){
+    if (gr.getHasBl()) {
       htmlBody = StringUtils.replace(htmlBody, "##BL_OK##", "" + gr.getReportsBl());
       htmlBody = StringUtils.replace(htmlBody, "##BL_TYP##", gr.getReportsBl() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_BL##", "hide");
     }
 
-    if (gr.getHasEp()){
+    if (gr.getHasEp()) {
       htmlBody = StringUtils.replace(htmlBody, "##EP_OK##", "" + gr.getReportsEp());
       htmlBody = StringUtils.replace(htmlBody, "##EP_TYP##", gr.getReportsEp() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_EP##", "hide");
     }
 
-    if (gr.getHasIt0()){
+    if (gr.getHasIt0()) {
       htmlBody = StringUtils.replace(htmlBody, "##IT_OK##", "" + gr.getReportsIt0());
       htmlBody = StringUtils.replace(htmlBody, "##IT_TYP##", gr.getReportsIt0() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_IT##", "hide");
     }
 
-    if (gr.getHasIt1()){
+    if (gr.getHasIt1()) {
       htmlBody = StringUtils.replace(htmlBody, "##IT1_OK##", "" + gr.getReportsIt1());
       htmlBody = StringUtils.replace(htmlBody, "##IT1_TYP##", gr.getReportsIt1() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_IT1##", "hide");
     }
 
-    if (gr.getHasIt2()){
+    if (gr.getHasIt2()) {
       htmlBody = StringUtils.replace(htmlBody, "##IT2_OK##", "" + gr.getReportsIt2());
       htmlBody = StringUtils.replace(htmlBody, "##IT2_TYP##", gr.getReportsIt2() == gr.getReportsCount() ? "success" : "error");
     } else {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_IT2##", "hide");
     }
 
-    if (gr.getHasPc()){
+    if (gr.getHasPc()) {
       htmlBody = StringUtils.replace(htmlBody, "##PC_OK##", "" + gr.getReportsPc());
       htmlBody = StringUtils.replace(htmlBody, "##PC_TYP##", gr.getReportsPc() == gr.getReportsCount() ? "success" : "error");
     } else {
@@ -301,5 +289,9 @@ public class ReportHtml extends ReportGeneric {
 
     htmlBody = htmlBody.replaceAll("\\.\\./", "");
     generator.writeToFile(outputfile, htmlBody);
+  }
+
+  private String encodeUrl(String str) {
+    return str.replaceAll("#", "%23");
   }
 }

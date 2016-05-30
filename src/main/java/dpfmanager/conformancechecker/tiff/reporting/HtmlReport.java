@@ -22,8 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 /**
  * Created by easy on 05/05/2016.
  */
@@ -31,8 +29,8 @@ public class HtmlReport extends Report {
   /**
    * Parse an individual report to HTML.
    *
-   * @param ir         the individual report.
-   * @param mode       the mode (1, 2).
+   * @param ir   the individual report.
+   * @param mode the mode (1, 2).
    */
   public String parseIndividual(IndividualReport ir, int mode, int id) {
     String templatePath = "templates/individual.html";
@@ -46,7 +44,7 @@ public class HtmlReport extends Report {
     if (thumb == null) {
       imgPath = "img/noise.jpg";
     }
-    htmlBody = StringUtils.replace(htmlBody, "##IMG_PATH##", imgPath);
+    htmlBody = StringUtils.replace(htmlBody, "##IMG_PATH##", encodeUrl(imgPath));
 
     // Basic info
     htmlBody = StringUtils.replace(htmlBody, "##IMG_NAME##", ir.getFileName());
@@ -76,11 +74,11 @@ public class HtmlReport extends Report {
 
     if (mode == 1) {
       htmlBody = StringUtils.replace(htmlBody, "##CL_LINKR2##", "show");
-      htmlBody = StringUtils.replace(htmlBody, "##LINK2##", new File(fileName).getName() + "_fixed.html");
+      htmlBody = StringUtils.replace(htmlBody, "##LINK2##", encodeUrl(new File(fileName).getName() + "_fixed.html"));
     }
     if (mode == 2) {
       htmlBody = StringUtils.replace(htmlBody, "##CL_LINKR1##", "show");
-      htmlBody = StringUtils.replace(htmlBody, "##LINK1##", new File(fileName).getName() + ".html");
+      htmlBody = StringUtils.replace(htmlBody, "##LINK1##", encodeUrl(new File(fileName).getName() + ".html"));
     }
 
     String dif;
@@ -358,15 +356,15 @@ public class HtmlReport extends Report {
     }
     while (ifd != null) {
       String typ = " - Main image";
-      if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()){
+      if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) {
         typ = " - Thumbnail";
       }
       String aIni = "";
       String aBody = " " + ifd.toString() + typ;
       String aEnd = "";
-      if (hasIFDList){
+      if (hasIFDList) {
         String bold = "";
-        if (index == 0){
+        if (index == 0) {
           bold = "bold";
         }
         aIni = "<a id='liifd" + index + "' href='javascript:void(0)' onclick='showIfd(" + index + ")' class='liifdlist " + bold + "'>";
@@ -375,10 +373,10 @@ public class HtmlReport extends Report {
       ul += "<li><i class=\"fa fa-file-o\"></i>" + aIni + aBody + aEnd;
       index++;
       if (ifd.getsubIFD() != null) {
-        typ="";
+        typ = "";
         if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Main image";
         else typ = " - Thumbnail";
-        ul += "<ul><li><i class=\"fa fa-file-o\"></i> SubIFD"+typ+"</li></ul>";
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> SubIFD" + typ + "</li></ul>";
       }
       if (ifd.containsTagId(34665)) {
         ul += "<ul><li><i class=\"fa fa-file-o\"></i> EXIF</li></ul>";
@@ -482,5 +480,9 @@ public class HtmlReport extends Report {
     }
 
     return text;
+  }
+
+  private String encodeUrl(String str) {
+    return str.replaceAll("#", "%23");
   }
 }
