@@ -640,7 +640,7 @@ public class IndividualReport implements Comparable {
       IndividualReport other = (IndividualReport) o;
       Integer thisPercent = calculatePercent();
       Integer otherPercent = other.calculatePercent();
-      return otherPercent.compareTo(thisPercent);
+      return thisPercent.compareTo(otherPercent);
     } else {
       return -1;
     }
