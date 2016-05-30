@@ -12,12 +12,12 @@ sudo: required
 matrix:
   include:
     # Custom builds
-#    - env: TOKEN=cmd
-#      script: mvn test -B -Dtest=commandline/*Test.java,implementationchecker/*Test.java
-#    - env: TOKEN=gui
-#      script: mvn test -B -Dtest=gui/*Test.java
-    - env: TOKEN=server
-      script: mvn test -B -Dtest=server/*Test.java
+    - env: TOKEN=cmd
+      script: mvn test -B -Dtest=commandline/*Test.java,implementationchecker/*Test.java
+    - env: TOKEN=gui
+      script: mvn test -B -Dtest=gui/*Test.java
+#    - env: TOKEN=server
+#      script: mvn test -B -Dtest=server/*Test.java
   exclude:
     # Exclude default build
     - jdk: oraclejdk8
