@@ -14,6 +14,11 @@
     -fx-border-width: 0;
 }
 
+.border-top {
+    -fx-border-width: 2px 0 0 0;
+    -fx-border-color: #333333;
+}
+
 .text-field, .paneRadios{
     -fx-background: white;
 }
@@ -390,7 +395,7 @@
 /* Dividers */
 
 .split-pane:vertical .split-pane-divider {
-    -fx-background-color: #F2F2F2;
+    -fx-background-color: #333333;
     -fx-padding: 0 0 0 0;
 }
 .split-pane:vertical .split-pane-divider.show-divider {
