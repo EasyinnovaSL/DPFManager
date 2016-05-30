@@ -19,10 +19,11 @@ public class FullRemoteTest extends ServerTest {
     String path = ReportGenerator.createReportPath(true);
 
     // Start server
+    System.out.println("Starting server mode...");
     startServer();
 
     // Start check
-    System.out.println("Running full remote check");
+    System.out.println("Running full remote check...");
 
     String[] args = new String[4];
     args[0] = "-url";
@@ -34,6 +35,10 @@ public class FullRemoteTest extends ServerTest {
     waitForFinishMultiThred(45);
 
     // Check report created
+    checkReportsCreated(path);
+  }
+
+  private void checkReportsCreated(String path){
     int num = 1;
     if (path.endsWith("/")) {
       path = path.substring(0, path.length() - 1);

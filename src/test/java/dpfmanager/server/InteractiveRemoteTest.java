@@ -1,41 +1,111 @@
 package dpfmanager.server;
 
 import dpfmanager.shell.core.app.MainConsoleApp;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
 
 /**
  * Created by Adri on 27/05/2016.
  */
 public class InteractiveRemoteTest extends ServerTest {
 
-//  @Test
-//  public void testFullRemoteCheck() throws Exception {
-//    // Start server
-//    startServer();
-//
-//    // Start check
-//    System.out.println("Running full remote check");
-//
-//    // Old System.out
-////    PrintStream old = System.out;
-//
-//    // Custom system out
-////    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-////    PrintStream ps = new PrintStream(baos);
-////    System.setOut(ps);
-//
-//    String[] args = new String[3];
-//    args[0] = "-url";
-//    args[1] = "127.0.0.1:9000/dpfmanager";
-//    args[2] = "D:/Bilevel.tif";
-//    MainConsoleApp.main(args);
-//
-//    waitForFinishMultiThred(20);
-//
-//    // Put things back
-////    System.out.flush();
-////    System.setOut(old);
-//  }
+  private PrintStream old;
+  private ByteArrayOutputStream baos;
 
+  @Test
+  public void testInteractiveRemote() throws Exception {
+    // Get last report path
+    String path = ReportGenerator.createReportPath(true);
+
+    // Custom system out
+    old = System.out;
+    baos = new ByteArrayOutputStream();
+    PrintStream ps = new PrintStream(baos);
+    System.setOut(ps);
+
+    // Start server
+    printOut("Starting server mode...");
+    startServer();
+
+    // Start check
+    printOut("Running interactive remote test...");
+
+    String[] argsCheck = new String[3];
+    argsCheck[0] = "-url";
+    argsCheck[1] = "127.0.0.1:9000/dpfmanager";
+    argsCheck[2] = "D:/Bilevel.tif";
+    String job = getOutputJob(argsCheck,"");
+
+    while (job != null) {
+      sleep(1000);
+      String[] argsJob = new String[4];
+      argsJob[0] = "-url";
+      argsJob[1] = "127.0.0.1:9000/dpfmanager";
+      argsJob[2] = "-job";
+      argsJob[3] = job;
+      job = getOutputJob(argsJob, job);
+    }
+
+    // Put things back
+    System.out.flush();
+    System.setOut(old);
+
+    // Check report created
+    checkReportsCreated(path);
+  }
+
+  private void checkReportsCreated(String path){
+    int num = 1;
+    if (path.endsWith("/")) {
+      path = path.substring(0, path.length() - 1);
+      String number = path.substring(path.lastIndexOf("/") + 1, path.length());
+      path = path.substring(0, path.lastIndexOf("/"));
+      num = Integer.parseInt(number) + 1;
+    }
+    String folder1 = path + "/" + num + "/";
+    String zip = path + "/" + num + ".zip";
+    String folder2 = path + "/" + ++num + "/";
+
+
+    File f1 = new File(folder1);
+    File f2 = new File(folder2);
+    File fz = new File(zip);
+
+    Assert.assertEquals(true, f1.exists() && f1.isDirectory());
+    Assert.assertEquals(true, f2.exists() && f2.isDirectory());
+    Assert.assertEquals(true, fz.exists() && fz.isFile());
+  }
+
+  private String getOutputJob(String[] args, String lastJob) throws Exception {
+    MainConsoleApp.main(args);
+    waitForFinishMultiThred(20);
+    String output = baos.toString();
+    baos.reset();
+    String message = "Started job with id: ";
+    String still = "This job is still running.";
+    String job = null;
+    String[] lines = output.split("\n");
+    for (String line : lines) {
+      if (line.startsWith(message)) {
+        job = line.substring(message.length(), line.length());
+      } else if (line.startsWith(still)){
+        return lastJob;
+      }
+    }
+    if (job != null) {
+      job = job.replace("\r", "");
+    }
+    return job;
+  }
+
+  private void printOut(String msg) {
+    old.println(msg);
+    old.flush();
+  }
 }

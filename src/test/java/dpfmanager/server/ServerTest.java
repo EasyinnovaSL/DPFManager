@@ -18,7 +18,7 @@ public class ServerTest extends CommandLineTest {
   public void stopServer() {
   }
 
-  private void sleep(int milis) {
+  public void sleep(int milis) {
     try {
       Thread.sleep(milis);
     } catch (Exception e) {
