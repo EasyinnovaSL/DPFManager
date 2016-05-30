@@ -138,7 +138,6 @@ public class DatabaseConnection {
   public void cleanJobs() {
     for (Jobs job : getAllJobs()) {
       if (deleteJob(job)) {
-        System.out.println("L'elimino :P");
         deleteJob(job.getId());
       }
     }
