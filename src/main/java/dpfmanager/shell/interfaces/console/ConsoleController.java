@@ -250,10 +250,15 @@ public class ConsoleController {
     printOut("    -v: Shows application version number");
     printOut("    -gui: Launches graphical user interface");
     printOut("    -configuration <filename>: Selects a configuration file");
-    printOut("    -o <path>: Specifies the output folder (overriding the one specified in the configuration file, if selected).");
-    printOut("    -r[deepness]: Check directories recursively, with the specified depth. Default is '-r1'");
+    printOut("    -o <path>: Specifies the output folder (overriding the one specified in the config file).");
+    printOut("    -reportformat '[xml, json, pdf, html]': Specifies the report format (overriding the one in the config file). Default is 'xml,html'.");
+    printOut("    -r[depth]: Check directories recursively. If no depth is given (-r) then it is fully-recursive. Default is '-r1'");
     printOut("    -s: Silent execution (do not open the report at the end)");
-    printOut("    -reportformat '[xml, json, pdf, html]': Specifies the report format. Default is 'xml,html'.");
+    printOut("    -t[N]: Specify maximum number of threads used for checking. By default, SO chooses.");
+    printOut("    -url <url:port>: Connect to a remote conformance checker.");
+    printOut("    -job <job_id>: Get job state.");
+    printOut("    -server [-p <port_number>]: Init server on the given port (default port is randomly chosen).");
+    printOut("    -w: Wait for a remote check to finish. Default is false.");
   }
 
   /**
