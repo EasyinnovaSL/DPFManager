@@ -41,6 +41,11 @@ public class TimerController extends DpfSpringController {
     }
   }
 
+  @Override
+  public Object handleMessageWithResponse(DpfMessage message) {
+    return null;
+  }
+
   @PostConstruct
   public void init() {
     service.setContext(new ConsoleContext(appContext));

@@ -15,10 +15,6 @@ import com.easyinnova.tiff.model.ReadTagsIOException;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 

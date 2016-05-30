@@ -1,12 +1,12 @@
 package dpfmanager.shell.modules.threading.core;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
-import dpfmanager.shell.interfaces.gui.workbench.DpfCloseEvent;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.DatabaseMessage;
@@ -21,7 +21,6 @@ import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 import dpfmanager.shell.modules.timer.messages.TimerMessage;
 import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
-import javafx.stage.WindowEvent;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
@@ -34,7 +33,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 import javax.annotation.PostConstruct;
@@ -117,12 +115,12 @@ public class ThreadingService extends DpfService {
       cancelRequest(tm.getUuid());
     } else if (tm.isCancel() && !tm.isRequest()){
       cancelFinish(tm.getUuid());
-    } else if (tm.isPause() && !tm.isRequest()){
+    } else if (tm.isPause() && !tm.isRequest()) {
       pauseFinish(tm.getUuid());
     }
   }
 
-  public void closeRequested(){
+  public void closeRequested() {
     context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(!checks.isEmpty()));
   }
 
@@ -171,7 +169,7 @@ public class ThreadingService extends DpfService {
   public void handleGlobalStatus(GlobalStatusMessage gm, boolean silence) {
     if (gm.isNew()) {
       // New file check
-      Long uuid = System.currentTimeMillis();
+      Long uuid = gm.getUuid();
       FileCheck fc = new FileCheck(uuid);
       boolean pending = false;
       if (runningChecks() >= DpFManagerConstants.MAX_CHECKS) {
@@ -196,6 +194,7 @@ public class ThreadingService extends DpfService {
       FileCheck fc = checks.get(gm.getUuid());
       removeZipFolder(fc.getInternal());
       removeDownloadFolder(fc.getInternal());
+      removeServerFolder(fc.getUuid());
       if (context.isGui()) {
         // Notify task manager
         needReload = true;
@@ -282,6 +281,17 @@ public class ThreadingService extends DpfService {
       }
     } catch (Exception e) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove internal folder", e));
+    }
+  }
+
+  public void removeServerFolder(Long uuid) {
+    try {
+      File folder = new File(DPFManagerProperties.getServerDir() + "/" + uuid);
+      if (folder.exists() && folder.isDirectory()) {
+        FileUtils.deleteDirectory(folder);
+      }
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove server folder", e));
     }
   }
 

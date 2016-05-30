@@ -2,7 +2,6 @@ package dpfmanager.shell.modules.threading.messages;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
 /**
@@ -25,9 +24,10 @@ public class GlobalStatusMessage extends DpfMessage {
   private String input;
   private DpfRunnable run;
 
-  public GlobalStatusMessage(Type t, DpfRunnable r, String i) {
+  public GlobalStatusMessage(Type t, Long u, DpfRunnable r, String i) {
     // New
     type = t;
+    uuid = u;
     run = r;
     input = i;
   }

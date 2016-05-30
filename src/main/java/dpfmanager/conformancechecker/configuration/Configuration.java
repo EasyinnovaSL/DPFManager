@@ -137,8 +137,12 @@ public class Configuration {
     for (String format : formats) {
       writer.println("FORMAT\t" + format);
     }
-    rules.Write(writer);
-    fixes.Write(writer);
+    if (rules != null){
+      rules.Write(writer);
+    }
+    if (fixes != null) {
+      fixes.Write(writer);
+    }
     if (output != null) {
       writer.println("OUTPUT\t" + output);
     }

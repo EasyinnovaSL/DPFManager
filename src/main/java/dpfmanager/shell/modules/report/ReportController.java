@@ -43,6 +43,11 @@ public class ReportController extends DpfSpringController {
     }
   }
 
+  @Override
+  public Object handleMessageWithResponse(DpfMessage message) {
+    return null;
+  }
+
   @PostConstruct
   public void init() {
     DpfContext dpfContext = new ConsoleContext(appContext);

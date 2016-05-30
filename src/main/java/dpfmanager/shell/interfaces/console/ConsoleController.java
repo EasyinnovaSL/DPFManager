@@ -2,21 +2,32 @@ package dpfmanager.shell.interfaces.console;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.shell.application.launcher.noui.ApplicationParameters;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
+import dpfmanager.shell.modules.client.messages.RequestMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
+import org.apache.tools.zip.ZipEntry;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,9 +42,15 @@ public class ConsoleController {
    */
   private ConsoleContext context;
 
+  /**
+   * The parsed args
+   */
+  private Map<String, String> parameters;
+
   // Config related params
   private String outputFolder;
-  private ArrayList<String> files;
+  private List<String> files;
+  private List<String> tmpFiles;
   private boolean xml;
   private boolean json;
   private boolean html;
@@ -42,12 +59,10 @@ public class ConsoleController {
   private boolean explicitFormats;
   private boolean explicitOutput;
 
-  // Global params
-  private ApplicationParameters parameters;
-
   public ConsoleController(ConsoleContext c) {
     setDefault();
     context = c;
+    tmpFiles = new ArrayList<>();
   }
 
   private void setDefault() {
@@ -68,8 +83,23 @@ public class ConsoleController {
    * Main run function
    */
   public void run() {
-    context.sendAllControllers(parameters);
-    readConformanceChecker();
+    if (!parameters.containsKey("-url")) {
+      // Normal mode
+      readConformanceChecker();
+      parseConfig();
+      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(files, config));
+    } else if (parameters.containsKey("-job")) {
+      // Ask for job
+      context.send(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.ASK, parameters.get("-job")));
+    } else {
+      // Remote check
+      parseConfig();
+      parseFolders();
+      context.send(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.CHECK, files, tmpFiles, config));
+    }
+  }
+
+  private void parseConfig() {
     if (config != null) {
       if (explicitFormats) {
         config.getFormats().clear();
@@ -92,8 +122,48 @@ public class ConsoleController {
       config.getIsos().add("Tiff/IT");
       config.setOutput(outputFolder);
     }
+  }
 
-    context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(ConformanceMessage.Type.CONSOLE, files, config, parameters.getRecursive()));
+  private void parseFolders() {
+    for (String file : files) {
+      if (new File(file).isDirectory()) {
+        String zipPath = zipFolder(file);
+        if (zipPath != null) {
+          tmpFiles.add(zipPath);
+        }
+      }
+    }
+  }
+
+  public String zipFolder(String folder) {
+    try {
+      if (!folder.endsWith("/") && !folder.endsWith("\\")){
+        folder = folder + "/";
+      }
+      File outputFile = Files.createTempFile("input", ".zip").toFile();
+      ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(outputFile));
+      compressDirectoryToZipfile(folder, folder, zipFile);
+      IOUtils.closeQuietly(zipFile);
+      return outputFile.getAbsolutePath();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  private void compressDirectoryToZipfile(String rootDir, String sourceDir, ZipOutputStream out) throws IOException, FileNotFoundException {
+    for (File file : new File(sourceDir).listFiles()) {
+      if (file.isDirectory()) {
+        compressDirectoryToZipfile(rootDir, sourceDir + file.getName() + File.separator, out);
+      } else {
+        ZipEntry entry = new ZipEntry(sourceDir.replace(rootDir, "") + file.getName());
+        out.putNextEntry(entry);
+
+        FileInputStream in = new FileInputStream(sourceDir + file.getName());
+        IOUtils.copy(in, out);
+        IOUtils.closeQuietly(in);
+      }
+    }
   }
 
   /**
@@ -197,10 +267,6 @@ public class ConsoleController {
   /**
    * Setters
    */
-  public void setParameters(ApplicationParameters p) {
-    parameters = p;
-  }
-
   public void setOutputFolder(String outputFolder) {
     this.outputFolder = outputFolder;
   }
@@ -235,6 +301,10 @@ public class ConsoleController {
 
   public void setExplicitOutput(boolean explicitOutput) {
     this.explicitOutput = explicitOutput;
+  }
+
+  public void setParameters(Map<String, String> parameters) {
+    this.parameters = parameters;
   }
 
   /**

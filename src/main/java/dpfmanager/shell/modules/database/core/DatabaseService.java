@@ -8,14 +8,17 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
+import dpfmanager.shell.modules.server.messages.StatusMessage;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 20/04/2016.
@@ -27,6 +30,9 @@ public class DatabaseService extends DpfService {
   private Integer pid;
   private DatabaseConnection connection;
   private DatabaseCache cache;
+
+  @Resource(name = "parameters")
+  private Map<String, String> parameters;
 
   @PostConstruct
   public void init() {
@@ -70,9 +76,9 @@ public class DatabaseService extends DpfService {
 
   public void createJob(DatabaseMessage dm) {
     // Get origin
-    String origin = "CMD";
-    if (context.isGui()) {
-      origin = "GUI";
+    String origin = "GUI";
+    if (!context.isGui()) {
+      origin = parameters.get("mode");
     }
     int state = 1;
     if (dm.getPending()) {
@@ -124,6 +130,17 @@ public class DatabaseService extends DpfService {
       cache.pauseJob(dm.getUuid());
       forceSyncDatabase();
     }
+  }
+
+  public StatusMessage getJobStatus(Long id) {
+    Jobs job = connection.getJob(id);
+    StatusMessage.Status status = StatusMessage.Status.RUNNING;
+    if (job.getState() == 2){
+      status = StatusMessage.Status.FINISHED;
+    } else if (job.getState() == -1){
+      status = StatusMessage.Status.NOTFOUND;
+    }
+    return new StatusMessage(status, job.getOutput(), job.getProcessedFiles(), job.getTotalFiles());
   }
 
   public void getJobs() {

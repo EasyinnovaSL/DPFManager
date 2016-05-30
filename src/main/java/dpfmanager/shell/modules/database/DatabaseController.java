@@ -6,6 +6,7 @@ import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.database.core.DatabaseService;
 import dpfmanager.shell.modules.database.messages.DatabaseMessage;
+import dpfmanager.shell.modules.server.messages.PostMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -30,6 +31,17 @@ public class DatabaseController extends DpfSpringController {
     if (dpfMessage.isTypeOf(DatabaseMessage.class)){
       service.handleDatabaseMessage(dpfMessage.getTypedMessage(DatabaseMessage.class));
     }
+  }
+
+  @Override
+  public Object handleMessageWithResponse(DpfMessage dpfMessage) {
+    if (dpfMessage.isTypeOf(PostMessage.class)){
+      PostMessage pm = dpfMessage.getTypedMessage(PostMessage.class);
+      if (pm.isAsk()){
+        return service.getJobStatus(pm.getId());
+      }
+    }
+    return null;
   }
 
   @PostConstruct

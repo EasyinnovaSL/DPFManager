@@ -17,6 +17,8 @@ import java.util.Properties;
  */
 public class DPFManagerProperties {
 
+  private static boolean finished = false;
+
   public static String getVersion(){
     String filename = "version.properties";
     InputStream input = MainGuiApp.class.getClassLoader().getResourceAsStream(filename);
@@ -153,6 +155,15 @@ public class DPFManagerProperties {
     return System.getProperty("user.home") + "/DPF Manager";
   }
 
+  public static String getReportsDir() {
+    String dir = getConfigDir() + "/reports";
+    File file = new File(dir);
+    if (!file.exists()){
+      file.mkdirs();
+    }
+    return dir;
+  }
+
   public static String getDataDir() {
     String dataDir = getConfigDir() + "/data";
     File dataFile = new File(dataDir);
@@ -160,5 +171,25 @@ public class DPFManagerProperties {
       dataFile.mkdirs();
     }
     return dataDir;
+  }
+
+  public static String getServerDir() {
+    String dataDir = getConfigDir() + "/server";
+    File dataFile = new File(dataDir);
+    if (!dataFile.exists()){
+      dataFile.mkdirs();
+    }
+    return dataDir;
+  }
+
+  /**
+   * Finish control for test
+   */
+  public static boolean isFinished() {
+    return finished;
+  }
+
+  public static void setFinished(boolean f) {
+    finished = f;
   }
 }

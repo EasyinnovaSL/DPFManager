@@ -22,6 +22,7 @@ public class DatabaseCache {
   }
 
   public void insertNewJob(Long uuid, int state, int total, String input, String origin, int pid, String output) {
+    Long current = System.currentTimeMillis();
     Jobs job = new Jobs();
     job.setId(uuid);
     job.setState(state);
@@ -30,7 +31,7 @@ public class DatabaseCache {
     if (state == 0) {
       job.setInit(null);
     } else {
-      job.setInit(System.currentTimeMillis());
+      job.setInit(current);
     }
     job.setFinish(null);
     job.setInput(input);
@@ -38,7 +39,7 @@ public class DatabaseCache {
     job.setPid(pid);
     job.setOutput(output);
     job.setTime(null);
-    job.setLastUpdate(System.currentTimeMillis());
+    job.setLastUpdate(current);
     jobs.put(uuid, job);
   }
 

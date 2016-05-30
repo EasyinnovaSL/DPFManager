@@ -28,6 +28,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValid
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -568,7 +569,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
       // Wait for finish (timeout 60s)
       int timeout = 0;
-      while (!ConsoleLauncher.isFinished() && timeout < 60) {
+      while (!DPFManagerProperties.isFinished() && timeout < 60) {
         Thread.sleep(1000);
         timeout++;
       }
