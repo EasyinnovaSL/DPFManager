@@ -47,10 +47,8 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
-import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
 import io.netty.handler.codec.http.multipart.DiskAttribute;
 import io.netty.handler.codec.http.multipart.DiskFileUpload;
-import io.netty.handler.codec.http.multipart.HttpDataFactory;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
@@ -102,20 +100,13 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<HttpObject> {
     if (msg instanceof HttpRequest) {
       HttpRequest request = this.request = (HttpRequest) msg;
       URI uri = new URI(request.uri());
-      if (uri.getPath().startsWith("/dpfmanager")) {
-        if (request.method().equals(HttpMethod.GET)) {
-          // New GET request
-          String path = uri.getPath().replace("/dpfmanager", "");
-          tractReadGet(ctx, path);
-          return;
-        } else {
-          sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
-          return;
-        }
+      if (request.method().equals(HttpMethod.GET)) {
+        // New GET request
+        String path = uri.getPath();
+        tractReadGet(ctx, path);
+        return;
       } else {
-        // Wrong URI
-        responseContent.append("Wrong request uri!");
-        writeResponse(ctx.channel());
+        sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
         return;
       }
     }

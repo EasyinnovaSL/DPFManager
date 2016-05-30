@@ -58,6 +58,11 @@ public class CommandLineTest {
         File file = new File(folder + index);
         while (file.exists()) {
           FileUtils.deleteDirectory(file);
+          // Zip
+          File zipFile = new File(file.getAbsolutePath()+".zip");
+          if (zipFile.exists()){
+            zipFile.delete();
+          }
           index++;
           file = new File(folder + index);
         }

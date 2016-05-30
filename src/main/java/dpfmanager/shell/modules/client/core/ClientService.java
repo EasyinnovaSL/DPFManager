@@ -206,6 +206,7 @@ public class ClientService extends DpfService {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot unzip the report."));
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Report downloaded at: " + output));
+      DPFManagerProperties.setFinished(true);
     }
   }
 
