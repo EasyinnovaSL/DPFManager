@@ -38,7 +38,7 @@ public class InteractiveRemoteTest extends ServerTest {
 
     String[] argsCheck = new String[3];
     argsCheck[0] = "-url";
-    argsCheck[1] = "127.0.0.1:9000/dpfmanager";
+    argsCheck[1] = "127.0.0.1:9000";
     argsCheck[2] = "D:/Bilevel.tif";
     String job = getOutputJob(argsCheck,"");
 
@@ -46,7 +46,7 @@ public class InteractiveRemoteTest extends ServerTest {
       sleep(1000);
       String[] argsJob = new String[4];
       argsJob[0] = "-url";
-      argsJob[1] = "127.0.0.1:9000/dpfmanager";
+      argsJob[1] = "127.0.0.1:9000";
       argsJob[2] = "-job";
       argsJob[3] = job;
       job = getOutputJob(argsJob, job);
@@ -84,7 +84,7 @@ public class InteractiveRemoteTest extends ServerTest {
 
   private String getOutputJob(String[] args, String lastJob) throws Exception {
     MainConsoleApp.main(args);
-    waitForFinishMultiThred(20);
+    waitForFinishMultiThred(30);
     String output = baos.toString();
     baos.reset();
     String message = "Started job with id: ";

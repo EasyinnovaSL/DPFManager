@@ -27,7 +27,7 @@ public class FullRemoteTest extends ServerTest {
 
     String[] args = new String[4];
     args[0] = "-url";
-    args[1] = "127.0.0.1:9000/dpfmanager";
+    args[1] = "127.0.0.1:9000";
     args[2] = "-w";
     args[3] = "src/test/resources/Small/Bilevel.tif";
     MainConsoleApp.main(args);

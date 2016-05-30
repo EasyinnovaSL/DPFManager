@@ -77,6 +77,6 @@ public final class HttpServer {
   }
 
   public String getServerUri() {
-    return (SSL ? "https" : "http") + "://127.0.0.1:" + PORT + "/dpfmanager";
+    return (SSL ? "https" : "http") + "://127.0.0.1:" + PORT;
   }
 }
