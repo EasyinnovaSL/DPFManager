@@ -494,14 +494,17 @@ public class XmlReport {
       ifd = ir.getTiffModel().getFirstIFD();
       int numBlankPages = 0;
       ImageReader reader = null;
-      try {
-        File fi = new File(ir.getFilePath());
-        ImageInputStream iis = javax.imageio.ImageIO.createImageInputStream(fi);
-        Iterator<ImageReader> iterator = ImageIO.getImageReaders(iis);
-        reader = iterator.next();
-        reader.setInput(iis);
-      } catch (Exception e) {
-        reader = null;
+      ImageInputStream iis = null;
+      if (checkBlankPages) {
+        try {
+          File fi = new File(ir.getFilePath());
+          iis = javax.imageio.ImageIO.createImageInputStream(fi);
+          Iterator<ImageReader> iterator = ImageIO.getImageReaders(iis);
+          reader = iterator.next();
+          reader.setInput(iis);
+        } catch (Exception e) {
+          reader = null;
+        }
       }
       int imageIndex = 0;
       while (ifd != null) {
@@ -608,6 +611,15 @@ public class XmlReport {
         }
 
         ifd = ifd.getNextIFD();
+      }
+      if (checkBlankPages) {
+        if (iis != null) {
+          try {
+            iis.close();
+          } catch (Exception e) {
+
+          }
+        }
       }
 
       infoElement = doc.createElement("NumberBlankImages");
@@ -749,7 +761,7 @@ public class XmlReport {
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
       Document doc = docBuilder.newDocument();
       Element report = buildReportIndividual(doc, ir, rules);
-      doc.appendChild(report);
+      if (report != null) doc.appendChild(report);
 
       // write the content into xml file
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
