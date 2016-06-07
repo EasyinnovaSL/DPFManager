@@ -519,6 +519,24 @@ public class XmlReport {
         infoElement.setAttribute("BitDepth", bps);
         report.appendChild(infoElement);
 
+        String eqxy = "1";
+        if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))) {
+          if (!ifd.getTag("XResolution").toString().equals(ifd.getTag("YResolution").toString())) eqxy = "0";
+        }
+
+        infoElement = doc.createElement("EqualXYResolution");
+        infoElement.setTextContent(eqxy);
+        infoElement.setAttribute("EqualXYResolution", eqxy);
+        report.appendChild(infoElement);
+
+        String extra = "0";
+        if (ifd.getTags().containsTagId(TiffTags.getTagId("ExtraSamples")))
+          extra = ifd.getTag("ExtraSamples").getCardinality() + "";
+        infoElement = doc.createElement("ExtraChannels");
+        infoElement.setTextContent(extra);
+        infoElement.setAttribute("ExtraChannels", extra);
+        report.appendChild(infoElement);
+
         if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Compression"))) {
           infoElement = doc.createElement("Compression");
           int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());

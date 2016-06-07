@@ -652,7 +652,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     for (File date : dates){
       if (date.isDirectory()){
         for (File id : date.listFiles()){
-          if (containsSummary(id.listFiles())){
+          if (id.isDirectory() && containsSummary(id.listFiles())){
             nReports++;
           }
         }

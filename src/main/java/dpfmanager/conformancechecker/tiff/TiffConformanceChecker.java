@@ -189,6 +189,21 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "description", "Bit Depth");
       addElement(doc, field, "operators", ">,<,=");
       addElement(doc, field, "values", "1,2,4,8,16,32,64");
+      // Extra Channels
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "ExtraChannels");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "Extra Channels");
+      addElement(doc, field, "operators", ">,<,=");
+      // XY Resolution
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "EqualXYResolution");
+      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "description", "XResolution equal to YResolution");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", "0,1");
       // BlankPage
       field = doc.createElement("field");
       fields.appendChild(field);
