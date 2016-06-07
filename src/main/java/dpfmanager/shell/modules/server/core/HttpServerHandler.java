@@ -44,7 +44,7 @@ public class HttpServerHandler extends ByteToMessageDecoder {
 
     final int magic1 = in.getUnsignedByte(in.readerIndex());
     final int magic2 = in.getUnsignedByte(in.readerIndex() + 1);
-    if (isPost(magic1, magic2)) {
+    if (isPost(magic1, magic2) || isOptions(magic1, magic2)) {
       // POST
       ChannelPipeline pipeline = ctx.pipeline();
       pipeline.addLast(new HttpRequestDecoder());
@@ -67,6 +67,10 @@ public class HttpServerHandler extends ByteToMessageDecoder {
 
   private boolean isPost(int magic1, int magic2) {
     return magic1 == 'P' && magic2 == 'O';
+  }
+
+  private boolean isOptions(int magic1, int magic2) {
+    return magic1 == 'O' && magic2 == 'P';
   }
 
   private boolean isGet(int magic1, int magic2) {

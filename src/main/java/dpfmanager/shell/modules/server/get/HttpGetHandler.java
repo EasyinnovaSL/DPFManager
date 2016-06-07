@@ -52,6 +52,8 @@ import io.netty.handler.codec.http.multipart.DiskFileUpload;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -148,6 +150,12 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<HttpObject> {
         }
 
         // Decide whether to close the connection or not.
+        lastContentFuture.addListener(new GenericFutureListener() {
+          @Override
+          public void operationComplete(Future future) throws Exception {
+            file.delete();
+          }
+        });
         if (!HttpUtil.isKeepAlive(request)) {
           lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }

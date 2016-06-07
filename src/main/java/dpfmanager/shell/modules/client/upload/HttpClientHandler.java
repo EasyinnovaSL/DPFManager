@@ -26,7 +26,6 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.util.CharsetUtil;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -37,9 +36,6 @@ public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
   private DpfContext context;
   private String message;
   private List<File> deletes;
-  private boolean plain;
-  private File file;
-  private PrintWriter writer;
 
   public HttpClientHandler(DpfContext context, List<File> deletes) {
     this.context = context;

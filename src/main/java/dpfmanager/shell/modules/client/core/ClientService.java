@@ -153,7 +153,7 @@ public class ClientService extends DpfService {
   public void parseCheckResponse(Map<String, String> map) {
     if (map.containsKey("error")) {
       // Error ocurred in server
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, map.get("error")));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, map.get("myerror")));
     } else {
       // Everything OK
       if (parameters.containsKey("-w")) {
