@@ -143,6 +143,17 @@ public class DatabaseService extends DpfService {
     return new StatusMessage(status, job.getOutput(), job.getProcessedFiles(), job.getTotalFiles());
   }
 
+  public StatusMessage getJobStatusByHash(String hash) {
+    Jobs job = connection.getJob(hash);
+    StatusMessage.Status status = StatusMessage.Status.RUNNING;
+    if (job.getState() == 2){
+      status = StatusMessage.Status.FINISHED;
+    } else if (job.getState() == -1){
+      status = StatusMessage.Status.NOTFOUND;
+    }
+    return new StatusMessage(status, job.getOutput(), job.getProcessedFiles(), job.getTotalFiles());
+  }
+
   public void getJobs() {
     List<Jobs> jobs = connection.getJobs();
     context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(jobs, pid));

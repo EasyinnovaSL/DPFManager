@@ -3,6 +3,8 @@ package dpfmanager.shell.modules.database.core;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.database.tables.Jobs;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +27,7 @@ public class DatabaseCache {
     Long current = System.currentTimeMillis();
     Jobs job = new Jobs();
     job.setId(uuid);
+    job.setHash(DigestUtils.sha256Hex(uuid.toString()));
     job.setState(state);
     job.setTotalFiles(total);
     job.setProcessedFiles(0);

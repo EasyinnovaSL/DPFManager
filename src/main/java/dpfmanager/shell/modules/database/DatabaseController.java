@@ -37,8 +37,10 @@ public class DatabaseController extends DpfSpringController {
   public Object handleMessageWithResponse(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(PostMessage.class)){
       PostMessage pm = dpfMessage.getTypedMessage(PostMessage.class);
-      if (pm.isAsk()){
+      if (pm.isAsk() && pm.getHash() == null){
         return service.getJobStatus(pm.getId());
+      } else if (pm.isAsk()){
+        return service.getJobStatusByHash(pm.getHash());
       }
     }
     return null;

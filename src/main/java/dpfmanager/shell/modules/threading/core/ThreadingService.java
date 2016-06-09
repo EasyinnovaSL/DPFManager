@@ -59,6 +59,7 @@ public class ThreadingService extends DpfService {
   private Queue<FileCheck> pendingChecks;
 
   private boolean needReload;
+  private int totalChecks;
 
   @PostConstruct
   public void init() {
@@ -66,6 +67,7 @@ public class ThreadingService extends DpfService {
     checks = new HashMap<>();
     pendingChecks = new LinkedList<>();
     needReload = true;
+    totalChecks = 0;
   }
 
   @PreDestroy
@@ -204,6 +206,12 @@ public class ThreadingService extends DpfService {
       }
       context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.FINISH, gm.getUuid()));
       checks.remove(gm.getUuid());
+      totalChecks++;
+      if (totalChecks >= 10){
+        System.gc();
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Run Garbage Collector"));
+        totalChecks = 0;
+      }
       // Start pending checks
       startPendingChecks();
     } else if (context.isGui() && gm.isReload()) {

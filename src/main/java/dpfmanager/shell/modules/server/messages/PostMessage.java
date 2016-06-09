@@ -16,6 +16,7 @@ public class PostMessage extends DpfMessage {
   private Long id;
   private String filepath;
   private String configpath;
+  private String hash;
 
   public PostMessage(Type t, Long u, String fp, String cp) {
     // Post
@@ -23,12 +24,20 @@ public class PostMessage extends DpfMessage {
     uuid = u;
     filepath = fp;
     configpath = cp;
+    hash = null;
   }
 
   public PostMessage(Type t, Long i) {
-    // Ask
+    // Ask with id
     type = t;
     id = i;
+    hash = null;
+  }
+
+  public PostMessage(Type t, String h) {
+    // Ask with hash
+    type = t;
+    hash = h;
   }
 
   public boolean isPost() {
@@ -53,5 +62,9 @@ public class PostMessage extends DpfMessage {
 
   public String getConfigpath() {
     return configpath;
+  }
+
+  public String getHash() {
+    return hash;
   }
 }
