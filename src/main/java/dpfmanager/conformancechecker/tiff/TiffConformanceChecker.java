@@ -48,6 +48,7 @@ import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
+import com.easyinnova.tiff.model.types.IccProfile;
 import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
@@ -251,6 +252,14 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "description", "Byte Order (BigEndian, LittleEndian)");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", ByteOrder.BIG_ENDIAN.toString() + "," + ByteOrder.LITTLE_ENDIAN.toString());
+      // IccProfileClass
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "IccProfileClass");
+      addElement(doc, field, "type", "string");
+      addElement(doc, field, "description", "IccProfileClass");
+      addElement(doc, field, "operators", "=");
+      addElement(doc, field, "values", IccProfile.ProfileClass.Abstract + "," + IccProfile.ProfileClass.Input + "," + IccProfile.ProfileClass.Display + "," + IccProfile.ProfileClass.Output + "," + IccProfile.ProfileClass.DeviceLink + "," + IccProfile.ProfileClass.ColorSpace + "," + IccProfile.ProfileClass.NamedColor + "," + IccProfile.ProfileClass.Unknown);
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
@@ -542,7 +551,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
           XmlReport xmlReport = new XmlReport();
           String output = xmlReport.parseIndividual(ir, config.getRules());
           ir.setConformanceCheckerReport(output);
-          ir.setPcValidation(getPcValidation(output));
+          if (config.getRules().getRules().size() > 0) {
+            ir.setPcValidation(getPcValidation(output));
+          }
 
           Fixes fixes = config.getFixes();
           if (config.getFormats().contains("HTML")) {

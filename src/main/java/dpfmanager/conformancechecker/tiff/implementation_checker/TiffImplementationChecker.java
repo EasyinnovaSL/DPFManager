@@ -494,6 +494,18 @@ public class TiffImplementationChecker {
     tt.setCardinality(tv.getCardinality());
     tt.setType(com.easyinnova.tiff.model.TiffTags.getTagTypeName(tv.getType()));
     tt.setOffset(tv.getReadOffset());
+    if (tt.getType() != null && tt.getType().equals("ASCII")) {
+      if (tv.getCardinality() > 0) {
+        tt.setLastByte(tv.getValue().get(tv.getCardinality() - 1).toByte());
+        boolean duplicatedNuls = false;
+        for (int i=1;i<tv.getCardinality();i++) {
+          if (tv.getValue().get(i).toByte() == 0 && tv.getValue().get(i-1).toByte() == 0) {
+            duplicatedNuls = true;
+          }
+        }
+        tt.setDuplicatedNuls(duplicatedNuls);
+      }
+    }
     if (tv.getId() == 34665) {
       // EXIF
       TiffIfd ifd = createIfdNode(tv, "exif");

@@ -188,7 +188,7 @@
    <reference>Section 6, page 24</reference>
   </rule>
   <rule context="ifd[type=RGB]">
-   <assert test="{tags.tag[name=SamplesPerPixel] == 3}">Invalid Samples per Pixel for RGB image</assert>
+   <assert test="{tags.tag[name=SamplesPerPixel] &gt; 2}">Invalid Samples per Pixel for RGB image</assert>
    <reference>Section 6, page 24</reference>
   </rule>
  </rules>
@@ -261,7 +261,13 @@
  </rules>
  
  <rules description="tagtype-check">
-      <rule context="tag[id=40960]">
+  <rule context="tag[type=ASCII]">
+   <assert test="{duplicatedNuls==false}">String contains multiple nulls</assert>
+  </rule>
+  <rule context="tag[type=ASCII]">
+   <assert test="{lastByte==0}">String does not end with null</assert>
+  </rule>
+  <rule context="tag[id=40960]">
    <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
   </rule>
   <rule context="tag[id=0]">

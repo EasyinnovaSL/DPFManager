@@ -387,6 +387,20 @@ public class HtmlReport extends Report {
       if (ifd.containsTagId(33723)) {
         ul += "<ul><li><i class=\"fa fa-file-o\"></i> IPTC</li></ul>";
       }
+      if (index == 1) {
+        if (ir.getTiffModel().getIccProfile() != null) {
+          String creat = "";
+          if (ir.getTiffModel().getIccProfile().getCreator() != null) {
+            creat = "<li>Creator: " + ir.getTiffModel().getIccProfile().getCreator().getCreator() + "</li>";
+          }
+          ul += "<ul><li><i class=\"fa fa-file-o\"></i> ICC<ul>" +
+              "<li>Description: " + ir.getTiffModel().getIccProfile().getDescription() + "</li>" +
+              creat +
+              "<li>Version: " + ir.getTiffModel().getIccProfile().getVersion() + "</li>" +
+              "<li>Class: " + ir.getTiffModel().getIccProfile().getProfileClass().toString() + "</li></ul>" +
+              "</li></ul>";
+        }
+      }
       ul += "</li>";
       ifd = ifd.getNextIFD();
     }

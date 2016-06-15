@@ -475,6 +475,30 @@ public class XmlReport {
       infoElement.setAttribute("ByteOrder", endianess);
       report.appendChild(infoElement);
 
+      if (ir.getTiffModel() != null && ir.getTiffModel().getIccProfile() != null) {
+        infoElement = doc.createElement("IccProfileClass");
+        infoElement.setTextContent(ir.getTiffModel().getIccProfile().getProfileClass() + "");
+        infoElement.setAttribute("IccProfileClass", "" + ir.getTiffModel().getIccProfile().getProfileClass());
+        report.appendChild(infoElement);
+
+        infoElement = doc.createElement("IccProfileDescription");
+        infoElement.setTextContent(ir.getTiffModel().getIccProfile().getDescription());
+        infoElement.setAttribute("IccProfileDescription", "" + ir.getTiffModel().getIccProfile().getDescription());
+        report.appendChild(infoElement);
+
+        if (ir.getTiffModel().getIccProfile().getCreator() != null) {
+          infoElement = doc.createElement("IccProfileCreator");
+          infoElement.setTextContent(ir.getTiffModel().getIccProfile().getCreator().getCreator());
+          infoElement.setAttribute("IccProfileCreator", "" + ir.getTiffModel().getIccProfile().getCreator().getCreator());
+          report.appendChild(infoElement);
+        }
+
+        infoElement = doc.createElement("IccProfileVersion");
+        infoElement.setTextContent(ir.getTiffModel().getIccProfile().getVersion());
+        infoElement.setAttribute("IccProfileVersion", "" + ir.getTiffModel().getIccProfile().getVersion());
+        report.appendChild(infoElement);
+      }
+
       infoElement = doc.createElement("NumberImages");
       String numberimages = ir.getTiffModel().getImageIfds().size() + "";
       infoElement.setTextContent(numberimages);
@@ -509,15 +533,17 @@ public class XmlReport {
       int imageIndex = 0;
       while (ifd != null) {
         // For each image
-        String bps = ifd.getMetadata().get("BitsPerSample").toString();
-        infoElement = doc.createElement("bitspersample");
-        infoElement.setTextContent(bps);
-        report.appendChild(infoElement);
+        if (ifd.getMetadata() != null && ifd.getMetadata().get("BitsPerSample") != null) {
+          String bps = ifd.getMetadata().get("BitsPerSample").toString();
+          infoElement = doc.createElement("bitspersample");
+          infoElement.setTextContent(bps);
+          report.appendChild(infoElement);
 
-        infoElement = doc.createElement("BitDepth");
-        infoElement.setTextContent(bps);
-        infoElement.setAttribute("BitDepth", bps);
-        report.appendChild(infoElement);
+          infoElement = doc.createElement("BitDepth");
+          infoElement.setTextContent(bps);
+          infoElement.setAttribute("BitDepth", bps);
+          report.appendChild(infoElement);
+        }
 
         String eqxy = "1";
         if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))) {
@@ -537,7 +563,7 @@ public class XmlReport {
         infoElement.setAttribute("ExtraChannels", extra);
         report.appendChild(infoElement);
 
-        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Compression"))) {
+        if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("Compression"))) {
           infoElement = doc.createElement("Compression");
           int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
           String value = comp > 0 ? TiffConformanceChecker.compressionName(comp) : "Unknown";
@@ -547,7 +573,7 @@ public class XmlReport {
         }
 
         String value = "Unknown";
-        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("PhotometricInterpretation"))) {
+        if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("PhotometricInterpretation"))) {
           int photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
           value = TiffConformanceChecker.photometricName(photo);
         }
@@ -557,7 +583,7 @@ public class XmlReport {
         report.appendChild(infoElement);
 
         value = "Unknown";
-        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("PlanarConfiguration"))) {
+        if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("PlanarConfiguration"))) {
           int planar = Integer.parseInt(ifd.getMetadata().get("PlanarConfiguration").toString());
           value = TiffConformanceChecker.planarName(planar);
         }
@@ -567,7 +593,7 @@ public class XmlReport {
         report.appendChild(infoElement);
 
         String pixeldensity = "0";
-        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("ResolutionUnit")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("XResolution")))
+        if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("ResolutionUnit")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("XResolution")))
         {
           try {
             double ru = Double.parseDouble(ifd.getMetadata().get("ResolutionUnit").toString());
