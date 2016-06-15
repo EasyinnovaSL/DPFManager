@@ -108,7 +108,7 @@ public class InteroperabilityTest extends CommandLineTest {
     assertEquals(true, xml != null);
     assertEquals(true, xml.contains("<tiffValidationObject>"));
     assertEquals(true, xml.contains("<correctStrips>1</correctStrips>"));
-    assertEquals(true, xml.contains("<tag id=\"257\" name=\"ImageLength\">"));
+    assertEquals(true, xml.contains("<tag id=\"257\" name=\"ImageLength\" type=\"SHORT\">"));
     assertEquals(true, xml.contains("<size>115396</size>"));
     assertEquals(true, xml.contains("</tiffValidationObject>"));
   }

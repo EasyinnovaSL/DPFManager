@@ -551,7 +551,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           XmlReport xmlReport = new XmlReport();
           String output = xmlReport.parseIndividual(ir, config.getRules());
           ir.setConformanceCheckerReport(output);
-          if (config.getRules().getRules().size() > 0) {
+          if (config.getRules() != null && config.getRules().getRules() != null && config.getRules().getRules().size() > 0) {
             ir.setPcValidation(getPcValidation(output));
           }
 
