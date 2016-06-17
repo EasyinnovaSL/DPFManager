@@ -8,8 +8,6 @@ import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
 import org.apache.logging.log4j.Level;
-import org.sqlite.SQLiteConfig;
-import org.sqlite.SQLiteOpenMode;
 
 import java.io.File;
 import java.sql.Connection;
@@ -29,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class DatabaseConnection {
 
   private Connection globalConnection;
-  private SQLiteConfig dbConfig;
+  //  private SQLiteConfig dbConfig;
   private String dbUrl;
 
   private DpfContext context;
@@ -48,12 +46,8 @@ public class DatabaseConnection {
   public void init() {
     String filename = getDatabaseFile();
     try {
-      Class.forName("org.sqlite.JDBC");
-      dbUrl = "jdbc:sqlite:" + filename;
-      dbConfig = new SQLiteConfig();
-      dbConfig.setBusyTimeout("30000");
-      dbConfig.setOpenMode(SQLiteOpenMode.READWRITE);
-      dbConfig.setLockingMode(SQLiteConfig.LockingMode.NORMAL);
+      Class.forName("org.h2.Driver");
+      dbUrl = "jdbc:h2:" + filename + ";AUTO_SERVER=TRUE";
       globalConnection = connect();
       createFirstTable();
     } catch (Exception e) {
@@ -68,7 +62,7 @@ public class DatabaseConnection {
   public Connection connect() {
     Connection connection = null;
     try {
-      connection = DriverManager.getConnection(dbUrl, dbConfig.toProperties());
+      connection = DriverManager.getConnection(dbUrl);
     } catch (SQLException e) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot connect to database."));
     }
@@ -153,7 +147,7 @@ public class DatabaseConnection {
     Jobs job = new Jobs();
     try {
       Statement stmt = globalConnection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE+" WHERE "+Jobs.ID+" = "+ id);
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.ID + " = " + id);
       while (rs.next()) {
         job.parseResultSet(rs);
       }
@@ -220,7 +214,7 @@ public class DatabaseConnection {
         }
         pstmt.setString(7, job.getInput());
         pstmt.setString(8, job.getOrigin());
-        pstmt.setLong(9, job.getPid());
+        pstmt.setInt(9, job.getPid());
         pstmt.setString(10, job.getOutput());
         if (job.getTime() != null) {
           pstmt.setLong(11, job.getTime());
@@ -233,6 +227,7 @@ public class DatabaseConnection {
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error creating new job."));
+        e.printStackTrace();
       } finally {
         releaseConnection();
       }
@@ -350,23 +345,25 @@ public class DatabaseConnection {
    * Private DB functions
    */
   synchronized private void createFirstTable() throws Exception {
-    Statement stmt = globalConnection.createStatement();
+    if (globalConnection != null) {
+      Statement stmt = globalConnection.createStatement();
 
-    // Check need delete table
-    if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
-      stmt.execute(Jobs.delIndexIdSql);
-      stmt.execute(Jobs.delIndexPidSql);
-      stmt.execute(Jobs.deleteSql);
-      DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
+      // Check need delete table
+      if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
+        stmt.execute(Jobs.delIndexIdSql);
+        stmt.execute(Jobs.delIndexPidSql);
+        stmt.execute(Jobs.deleteSql);
+        DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
+      }
+
+      // Create table
+      stmt.execute(Jobs.createSql);
+      stmt.execute(Jobs.indexIdSql);
+      stmt.execute(Jobs.indexPidSql);
+
+      // Close statement
+      stmt.close();
     }
-
-    // Create table
-    stmt.execute(Jobs.createSql);
-    stmt.execute(Jobs.indexIdSql);
-    stmt.execute(Jobs.indexPidSql);
-
-    // Close statement
-    stmt.close();
   }
 
   private void insertTestJob() {
@@ -388,7 +385,7 @@ public class DatabaseConnection {
   }
 
   private String getDatabaseFile() {
-    return DPFManagerProperties.getDataDir() + "/dpfmanager.db";
+    return DPFManagerProperties.getDataDir() + "/dpfmanager.h2";
   }
 
   private String getDatabaseLockFile() {
