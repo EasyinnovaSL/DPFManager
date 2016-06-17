@@ -42,7 +42,7 @@ public class Jobs {
       "    " + INIT + " BIGINT," +
       "    " + FINISH + " BIGINT," +
       "    " + INPUT + " VARCHAR(255)," +
-      "    " + ORIGIN + " VARCHAR(3)," +
+      "    " + ORIGIN + " VARCHAR(10)," +
       "    " + PID + " INTEGER NOT NULL," +
       "    " + OUTPUT + " VARCHAR(255)," +
       "    " + TIME + " BIGINT," +
