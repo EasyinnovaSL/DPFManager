@@ -43,7 +43,7 @@ public class BarComponent extends DpfSimpleView {
     if (message.isTypeOf(WidgetMessage.class)){
       WidgetMessage wm = message.getTypedMessage(WidgetMessage.class);
       if (wm.isTasks() && wm.isShow() && !fragment.getController().isTasksvisible()){
-        fragment.getController().showHideTasksInConsole();
+        fragment.getController().showHideTasks();
       }
     }
   }

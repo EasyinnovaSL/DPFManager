@@ -1,23 +1,41 @@
 package dpfmanager.shell.interfaces.gui.fragment;
 
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.util.NodeUtil;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.SplitPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Created by Adrià Llorens on 03/03/2016.
@@ -30,169 +48,133 @@ public class BarFragment {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @FXML
-  private SplitPane botSplitBar;
-
-  @FXML
-  private HBox hboxConsole;
-  @FXML
-  private HBox hboxTask;
-
-  // Buttons in Console
-  @FXML
-  private Button consoleButInConsole;
+  private Button consoleBut;
   @FXML
   private StackPane consoleSeparator;
   @FXML
-  private Button taskButInConsole;
+  private Button taskBut;
 
-  // Buttons in Tasks
   @FXML
-  private Button consoleButInTask;
-  @FXML
-  private StackPane tasksSeparator;
-  @FXML
-  private Button taskButInTask;
+  private ComboBox comboBox;
 
-  private Node dividerBar;
-  private double pos;
   private boolean firsttime = true;
   private boolean consoleVisible = false;
   private boolean tasksVisible = false;
+  private Map<String,String> languages;
 
   // Main functions
 
   public void init() {
     if (firsttime) {
       setDefault();
-//      listenProperties();
+      initLanguages();
       firsttime = false;
     }
   }
 
-  public void setDefault() {
-    NodeUtil.showNode(hboxConsole);
-    NodeUtil.showNode(consoleButInConsole);
-    NodeUtil.showNode(consoleSeparator);
-    NodeUtil.showNode(taskButInConsole);
+  private void initLanguages() {
+    languages = new HashMap<>();
+    List<String> strLocales = loadLanguages();
+    for (String strLocale : strLocales){
+      Locale loc = new Locale(strLocale);
+      languages.put(loc.getDisplayLanguage(), strLocale);
+      comboBox.getItems().add(loc.getDisplayLanguage());
+    }
+    Collections.sort(comboBox.getItems());
+    comboBox.setValue(Locale.getDefault().getDisplayName());
   }
 
-  private void listenProperties(){
-    botSplitBar.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        botSplitBar.setDividerPositions(1);
+  private List<String> loadLanguages(){
+    List<String> array = new ArrayList<>();
+    try {
+      // Load from jar
+      String path = "DPF Manager-jfx.jar";
+      if (new File(path).exists()) {
+        ZipInputStream zip = new ZipInputStream(new FileInputStream(path));
+        for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+          if (!entry.isDirectory() && entry.getName().endsWith(".properties") && entry.getName().contains("bundles") && !entry.getName().contains("language.properties")) {
+            array.add(entry.getName().substring(entry.getName().lastIndexOf("/") + 1).replace("language_", "").replace(".properties", ""));
+          }
+        }
       }
-    });
+    } catch (Exception ex) {
+    }
+
+    if (array.isEmpty()) {
+      // Load through reflections
+      Reflections reflections = new Reflections("", new ResourcesScanner());
+      Set<String> resources = reflections.getResources(Pattern.compile(".*\\.properties"));
+      for (String resource : resources) {
+        if (resource.contains("bundles/language_") && !resource.endsWith("language.properties")){
+          array.add(resource.replace("bundles/language_","").replace(".properties",""));
+        }
+      }
+    }
+
+    // Add default, english
+    array.add("en");
+
+    return array;
+  }
+
+  public void setDefault() {
+    NodeUtil.showNode(consoleBut);
+    NodeUtil.showNode(consoleSeparator);
+    NodeUtil.showNode(taskBut);
   }
 
   /**
    * Console pane
    */
   @FXML
-  protected void showHideConsoleInConsole(ActionEvent event) throws Exception {
-    if (consoleButInConsole.getStyleClass().contains("active")) {
+  protected void showHideConsole(ActionEvent event) throws Exception {
+    if (consoleBut.getStyleClass().contains("active")) {
       // Hide Console
       consoleVisible = false;
-      consoleButInConsole.getStyleClass().remove("active");
+      consoleBut.getStyleClass().remove("active");
       context.send(GuiConfig.COMPONENT_PANE, new WidgetMessage(WidgetMessage.Action.HIDE, WidgetMessage.Target.CONSOLE));
     } else {
       // Show console
       consoleVisible = true;
-      consoleButInConsole.getStyleClass().add("active");
+      consoleBut.getStyleClass().add("active");
       context.send(GuiConfig.COMPONENT_PANE, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.CONSOLE));
     }
-//    NodeUtil.hideNode(hboxConsole);
-//    NodeUtil.showNode(consoleButInTask);
-//    botSplitBar.setDividerPositions(0.0);
-//    hideDivider();
   }
 
-  public void showHideTasksInConsole() {
+  public void showHideTasks() {
     try {
-      showHideTasksInConsole(null);
+      showHideTasks(null);
     } catch (Exception e) {
     }
   }
 
   @FXML
-  protected void showHideTasksInConsole(ActionEvent event) throws Exception {
-    if (taskButInConsole.getStyleClass().contains("active")) {
+  protected void showHideTasks(ActionEvent event) throws Exception {
+    if (taskBut.getStyleClass().contains("active")) {
       // Hide tasks
       tasksVisible = false;
-      taskButInConsole.getStyleClass().remove("active");
+      taskBut.getStyleClass().remove("active");
       context.send(GuiConfig.COMPONENT_PANE, new WidgetMessage(WidgetMessage.Action.HIDE, WidgetMessage.Target.TASKS));
     } else {
       // Show tasks
       tasksVisible = true;
-      taskButInConsole.getStyleClass().add("active");
+      taskBut.getStyleClass().add("active");
       context.send(GuiConfig.COMPONENT_PANE, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.TASKS));
     }
-//    NodeUtil.showNode(hboxTask);
-//    NodeUtil.hideNode(taskButInConsole);
-//    NodeUtil.hideNode(consoleSeparator);
-//    NodeUtil.hideNode(tasksSeparator);
-//    showDivider();
   }
 
   /**
-   * Tasks pane
+   * Language
    */
   @FXML
-  protected void showHideConsoleInTask(ActionEvent event) throws Exception {
-    if (taskButInConsole.getStyleClass().contains("active")) {
-      // Hide tasks
-      taskButInConsole.getStyleClass().remove("active");
-    } else {
-      // Show tasks
-      taskButInConsole.getStyleClass().add("active");
-    }
-//    NodeUtil.showNode(hboxConsole);
-//    NodeUtil.hideNode(consoleButInTask);
-//    NodeUtil.hideNode(consoleSeparator);
-//    NodeUtil.hideNode(tasksSeparator);
-//    showDivider();
-  }
-
-  @FXML
-  protected void showHideTaskInTask(ActionEvent event) throws Exception {
-//    NodeUtil.hideNode(hboxTask);
-//    NodeUtil.showNode(taskButInConsole);
-//    botSplitBar.setDividerPositions(1.0);
-//    hideDivider();
-  }
-
-  /**
-   * Divider
-   */
-
-  private Node getDividerBar() {
-    if (dividerBar == null) {
-      dividerBar = botSplitBar.lookup(".split-pane-divider");
-    }
-    return dividerBar;
-  }
-
-  private void saveDividerPos() {
-    double aux = botSplitBar.getDividerPositions()[0];
-    if (aux != 0.0 && aux != 1.0) {
-      pos = aux;
-    }
-  }
-
-  private void hideDivider() {
-    saveDividerPos();
-    if (getDividerBar().getStyleClass().contains("show-divider")) {
-      getDividerBar().getStyleClass().remove("show-divider");
-    }
-  }
-
-  private void showDivider() {
-    if (!getDividerBar().getStyleClass().contains("show-divider")) {
-      getDividerBar().getStyleClass().add("show-divider");
-    }
-    botSplitBar.setDividerPositions(pos);
+  protected void onChangeLanguage(ActionEvent event) throws Exception {
+    String display = (String) comboBox.getValue();
+    DPFManagerProperties.setLanguage(languages.get(display));
+    context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("changeLanguage")));
   }
 
   /**
