@@ -3,6 +3,8 @@ package dpfmanager.shell.modules.messages.messages;
 import dpfmanager.shell.core.messages.DpfMessage;
 import javafx.scene.control.Alert;
 
+import java.util.ResourceBundle;
+
 /**
  * Created by Adrià Llorens on 23/03/2016.
  */
@@ -53,14 +55,15 @@ public class AlertMessage extends DpfMessage {
   }
 
   private String getDefaultTitle(Type type){
+    ResourceBundle bundle = ResourceBundle.getBundle("bundles.language");
     if (type.equals(Type.ERROR)){
-      return "Error";
+      return bundle.getString("error");
     } else if (type.equals(Type.WARNING)){
-      return "Warning";
+      return bundle.getString("warning");
     } else if (type.equals(Type.INFO)){
-      return "Help";
+      return bundle.getString("help");
     } else if (type.equals(Type.ALERT)){
-      return "Alert";
+      return bundle.getString("alert");
     }
     return "";
   }

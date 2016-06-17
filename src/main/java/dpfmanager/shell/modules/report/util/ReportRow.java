@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ResourceBundle;
 
 /**
  * Created by easy on 17/09/2015.
@@ -263,7 +264,7 @@ public class ReportRow {
    * @param file      the file
    * @return the report row
    */
-  public static ReportRow createRowFromXml(String reportDay, File file) {
+  public static ReportRow createRowFromXml(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       File parent = new File(file.getParent());
@@ -316,7 +317,7 @@ public class ReportRow {
         score = passed * 100 / n;
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
       return row;
     } catch (Exception e) {
       return null;
@@ -341,7 +342,7 @@ public class ReportRow {
    * @param file      the file
    * @return the report row
    */
-  public static ReportRow createRowFromHtml(String reportDay, File file) {
+  public static ReportRow createRowFromHtml(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       File parent = new File(file.getParent() + "/html");
@@ -416,7 +417,7 @@ public class ReportRow {
         }
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
       return row;
     } catch (Exception e) {
       return null;
@@ -430,7 +431,7 @@ public class ReportRow {
    * @param file      the file
    * @return the report row
    */
-  public static ReportRow createRowFromJson(String reportDay, File file) {
+  public static ReportRow createRowFromJson(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       File parent = new File(file.getParent());
@@ -481,7 +482,7 @@ public class ReportRow {
       }
 
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
       return row;
     } catch (Exception e) {
       return null;
@@ -495,7 +496,7 @@ public class ReportRow {
    * @param file      the file
    * @return the report row
    */
-  public static ReportRow createRowFromPdf(String reportDay, File file) {
+  public static ReportRow createRowFromPdf(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       String n = "?";
@@ -503,7 +504,7 @@ public class ReportRow {
       String stime = getStime(file.getPath());
       String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".pdf");
 
-      ReportRow row = new ReportRow(sdate, stime, input, n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1",errors), bundle.getString("warnings").replace("%1",warnings), bundle.getString("passed").replace("%1",passed), score + "%");
       return row;
     } catch (Exception e) {
       return null;

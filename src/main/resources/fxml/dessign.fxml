@@ -29,7 +29,7 @@
                     <Insets bottom="60.0" top="40.0" />
                 </VBox.margin>
             </ImageView>
-            <Label styleClass="mainTitle" text="CONFORMANCE CHECKER" />
+            <Label id="conformanceTitle" styleClass="mainTitle" text="%conformanceTitle" />
             <ImageView focusTraversable="true" preserveRatio="true">
                 <image> <Image url="@../images/lineTop.png" /></image>
                 <VBox.margin>
@@ -38,7 +38,7 @@
             </ImageView>
             <HBox alignment="CENTER">
                 <children>
-                   <Label styleClass="label-info" text="Files" />
+                   <Label id="labelFiles" styleClass="label-info" text="%labelFiles" />
                    <Button fx:id="fileInfoBut" mnemonicParsing="false" onAction="#showFileInfo" styleClass="button-info">
                       <HBox.margin>
                          <Insets left="5.0" />
@@ -55,19 +55,19 @@
                 <children>
                <VBox>
                   <children>
-                          <TextField fx:id="inputText" maxHeight="41.0" maxWidth="382.0" minHeight="41.0" prefWidth="382.0" text="Select a file">
+                          <TextField fx:id="inputText" maxHeight="41.0" maxWidth="382.0" minHeight="41.0" prefWidth="382.0" text="%inputText">
                               <cursor>
                                   <Cursor fx:constant="TEXT" />
                               </cursor>
                           </TextField>
-                     <CheckBox fx:id="recursiveCheck" mnemonicParsing="false" styleClass="checkreport" text="Recursive">
+                     <CheckBox fx:id="recursiveCheck" mnemonicParsing="false" styleClass="checkreport" text="%recursiveCheck">
                         <VBox.margin>
                            <Insets left="5.0" top="5.0" />
                         </VBox.margin>
                      </CheckBox>
                   </children>
                </VBox>
-                    <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectFileClicked" styleClass="secondary-button" text="Select">
+                    <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectFileClicked" styleClass="secondary-button" text="%selectButton">
                   <HBox.margin>
                      <Insets left="5.0" />
                   </HBox.margin></Button>
@@ -83,7 +83,7 @@
             </HBox>
             <HBox alignment="CENTER">
                 <children>
-                    <Label styleClass="label-info" text="Configuration" />
+                    <Label styleClass="label-info" text="%labelConfiguration" />
                     <Button fx:id="configInfoBut" mnemonicParsing="false" onAction="#showConfigInfo" styleClass="button-info">
                         <HBox.margin>
                             <Insets left="5.0" />
@@ -106,19 +106,19 @@
             </ScrollPane>
             <HBox alignment="CENTER">
                 <children>
-                    <Button fx:id="newButton" mnemonicParsing="false" onAction="#newButtonClicked" styleClass="button-trans" text="NEW">
+                    <Button fx:id="newButton" mnemonicParsing="false" onAction="#newButtonClicked" styleClass="button-trans" text="%newButton">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button fx:id="importButton" mnemonicParsing="false" onAction="#importButtonClicked" styleClass="button-trans" text="IMPORT">
+                    <Button fx:id="importButton" mnemonicParsing="false" onAction="#importButtonClicked" styleClass="button-trans" text="%importButton">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button fx:id="editButton" mnemonicParsing="false" onAction="#editButtonClicked" styleClass="button-trans" text="EDIT">
+                    <Button fx:id="editButton" mnemonicParsing="false" onAction="#editButtonClicked" styleClass="button-trans" text="%editButton">
                       <HBox.margin>
                          <Insets right="8.0" />
                       </HBox.margin></Button>
-                    <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteButtonClicked" styleClass="button-trans" text="DELETE" />
+                    <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteButtonClicked" styleClass="button-trans" text="%deleteButton" />
                 </children>
                 <VBox.margin>
                    <Insets bottom="15.0" />
@@ -130,7 +130,7 @@
                     <Insets bottom="20.0" left="65.0" right="65.0" />
                 </VBox.margin>
             </ImageView>
-         <Button fx:id="checkFilesButton" mnemonicParsing="false" onAction="#checkFilesClicked" styleClass="main-button" text="Check files">
+         <Button fx:id="checkFilesButton" mnemonicParsing="false" onAction="#checkFilesClicked" styleClass="main-button" text="%checkFilesButton">
             <VBox.margin>
                <Insets bottom="30.0" />
             </VBox.margin>

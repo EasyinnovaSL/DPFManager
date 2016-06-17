@@ -14,6 +14,7 @@ import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -31,14 +32,14 @@ import java.util.Optional;
 public class DessignController extends DpfController<DessignModel, DessignView> {
 
   public void mainCheckFiles() {
-    if (getView().getInputText().getText().equals("Select a file") || getView().getInputText().getText().equals("Select a folder")) {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a file"));
+    if (getView().getInputText().getText().equals(getBundle().getString("selectFile")) || getView().getInputText().getText().equals(getBundle().getString("selectFolder"))) {
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertFile")));
       return;
     }
 
     RadioButton radio = getView().getSelectedConfig();
     if (radio == null) {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertConfigFile")));
       return;
     }
 
@@ -57,9 +58,9 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     ComboBox c = getView().getComboChoice();
     String configDir = DPFManagerProperties.getDefaultDirFile();
     //getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.DEBUG, "Config dir: " + configDir));
-    if (c.getValue() == "File") {
+    if (c.getValue().equals(getBundle().getString("comboFile"))) {
       FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Open File");
+      fileChooser.setTitle(getBundle().getString("openFile"));
       fileChooser.setInitialDirectory(new File(configDir));
       List<File> files = fileChooser.showOpenMultipleDialog(GuiWorkbench.getMyStage());
       if (files != null) {
@@ -76,9 +77,9 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           DPFManagerProperties.setDefaultDirFile(path);
         }
       }
-    } else {
+    } else if (c.getValue().equals(getBundle().getString("comboFolder"))){
       DirectoryChooser folderChooser = new DirectoryChooser();
-      folderChooser.setTitle("Open Folder");
+      folderChooser.setTitle(getBundle().getString("openFolder"));
       folderChooser.setInitialDirectory(new File(configDir));
       File directory = folderChooser.showDialog(GuiWorkbench.getMyStage());
       if (directory != null) {
@@ -100,7 +101,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       am.add(GuiConfig.PERSPECTIVE_CONFIG + "." + GuiConfig.COMPONENT_CONFIG, new ConfigMessage(ConfigMessage.Type.EDIT, path));
       getContext().send(GuiConfig.PERSPECTIVE_CONFIG, am);
     } else {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertConfigFile")));
     }
   }
 
@@ -114,9 +115,9 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       //Ask for file
       String configDir = DPFManagerProperties.getDefaultDirConfig();
       FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Open Config");
+      fileChooser.setTitle(getBundle().getString("openConfig"));
       fileChooser.setInitialDirectory(new File(configDir));
-      FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("DPF config files (*.dpf)", "*.dpf");
+      FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(getBundle().getString("dpfConfigFiles"), "*.dpf");
       fileChooser.getExtensionFilters().add(extFilter);
       file = fileChooser.showOpenDialog(GuiWorkbench.getMyStage());
     }
@@ -124,11 +125,11 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     if (file != null) {
       DPFManagerProperties.setDefaultDirConfig(file.getParent());
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-      alert.setTitle("Copy configuration");
-      alert.setHeaderText("Do you want to copy the config file into config folder?");
-      alert.setContentText("Caution: This may override an existing config file.");
-      ButtonType buttonTypeYes = new ButtonType("Yes");
-      ButtonType buttonTypeNo = new ButtonType("No");
+      alert.setTitle(getBundle().getString("copyTitle"));
+      alert.setHeaderText(getBundle().getString("copyHeader"));
+      alert.setContentText(getBundle().getString("copyContent"));
+      ButtonType buttonTypeYes = new ButtonType(getBundle().getString("yes"));
+      ButtonType buttonTypeNo = new ButtonType(getBundle().getString("no"));
       alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
 
       Optional<ButtonType> result = alert.showAndWait();
@@ -149,7 +150,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
         if (error) {
           // Add source file
           getView().addConfigFile(file.getAbsolutePath(), false);
-          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, "Error copying config file."));
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, getBundle().getString("errorCopyConfig")));
         } else if (needAdd) {
           getView().addConfigFile(configFile.getName(), false);
         }
@@ -164,7 +165,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     if (file.delete()) {
       getView().deleteSelectedConfig();
     } else {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "There was an error deleting the configuration file"));
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, getBundle().getString("deleteError")));
     }
   }
 

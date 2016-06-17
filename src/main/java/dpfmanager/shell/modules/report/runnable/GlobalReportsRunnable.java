@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Level;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 13/04/2016.
@@ -69,7 +70,8 @@ public class GlobalReportsRunnable extends DpfRunnable {
     String summaryXml = null;
     try {
       summaryXml = generator.makeSummaryReport(internalReportFolder, global, config);
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Created global report into '" + internalReportFolder + "'"));
+      ResourceBundle bundle = DPFManagerProperties.getBundle();
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", internalReportFolder)));
     } catch (OutOfMemoryError e) {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
     }

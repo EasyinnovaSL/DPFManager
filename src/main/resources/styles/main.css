@@ -228,9 +228,6 @@
     -fx-translate-x: -15;
 }
 .combo-dpf .combo-box .list-cell {
-    -fx-text-fill: white;
-}
-.combo-dpf .combo-box .list-cell {
     -fx-background: #31C2F3;
     -fx-background-color: transparent;
     -fx-text-fill: white;
@@ -279,6 +276,9 @@
 }
 .combo-dpf .arrow {
     -fx-background-color: white;
+}
+.redTest{
+    -fx-text-fill: red;
 }
 
 /* Combo Box Custom White */

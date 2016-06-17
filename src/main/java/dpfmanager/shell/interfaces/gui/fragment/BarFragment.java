@@ -24,6 +24,7 @@ import org.jacpfx.rcp.context.Context;
  */
 @Fragment(id = GuiConfig.FRAGMENT_BAR,
     viewLocation = "/fxml/bottom-bar.fxml",
+    resourceBundleLocation = "bundles.language",
     scope = Scope.SINGLETON)
 public class BarFragment {
 

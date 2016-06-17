@@ -28,4 +28,5 @@ public class UiMessage extends DpfMessage {
     return type.equals(Type.RELOAD);
   }
 
+
 }

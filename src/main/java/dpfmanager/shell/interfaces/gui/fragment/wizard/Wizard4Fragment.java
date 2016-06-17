@@ -30,21 +30,24 @@ import org.jacpfx.rcp.context.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 08/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_4,
     viewLocation = "/fxml/config/subconfig4.fxml",
+    resourceBundleLocation = "bundles.language",
     scope = Scope.SINGLETON)
 public class Wizard4Fragment {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @FXML
   private VBox autoFixesBox;
-
   @FXML
   private VBox fixesBox;
 
@@ -235,7 +238,7 @@ public class Wizard4Fragment {
     }
 
     // Value combo box or text field
-    if (item.equals("Add Tag")) {
+    if (item.equals(bundle.getString("addTag"))) {
       TextField value = new TextField();
       value.setId("textField");
       value.getStyleClass().add("txtFix");
