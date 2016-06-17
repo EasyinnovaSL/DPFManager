@@ -41,7 +41,7 @@
                         <Insets />
                     </opaqueInsets>
                 </Separator>
-            <ComboBox fx:id="comboBox" onAction="#onChangeLanguage" prefWidth="150.0" />
+            <ComboBox fx:id="comboBox" maxHeight="19.0" minHeight="19.0" onAction="#onChangeLanguage" prefHeight="19.0" styleClass="combo-box-grey" />
             </children>
         </HBox>
     </children>

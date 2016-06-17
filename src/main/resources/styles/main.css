@@ -277,9 +277,49 @@
 .combo-dpf .arrow {
     -fx-background-color: white;
 }
-.redTest{
-    -fx-text-fill: red;
+
+
+/* Combo Box Langauges */
+.combo-box-grey {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 0 0 0 10;
+    -fx-border-width: 0 0 0 2;
+    -fx-border-color: #F2F2F2;
+    -fx-cursor: hand;
 }
+.combo-box-grey .list-cell {
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-text-fill: #1cc2ff;
+    -fx-cell-size: 30px;
+    -fx-border: 0;
+    -fx-padding: 0;
+}
+.combo-box-grey .combo-box-popup .list-view {
+    -fx-background-color: #333333;
+    -fx-border-width: 2px;
+    -fx-border-color: #F2F2F2;
+}
+.combo-box-grey .combo-box-popup .list-view .list-cell {
+    -fx-text-fill: #bfbfbf;
+    -fx-padding: 5 5 5 5;
+}
+.combo-box-grey .combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-text-fill: #1cc2ff;
+}
+.combo-box-grey .arrow,
+.combo-box-grey .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box-grey .scroll-bar:vertical{
+    -fx-opacity: 0;
+}
+
 
 /* Combo Box Custom White */
 
