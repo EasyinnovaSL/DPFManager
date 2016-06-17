@@ -1,3 +1,5 @@
 #! /bin/bash
-rm /usr/bin/dpf-manager
+if [ -f /usr/bin/dpf-manager ]; then
+    rm /usr/bin/dpf-manager
+fi
 
