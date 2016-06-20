@@ -81,11 +81,15 @@ public class BarFragment {
     List<String> strLocales = loadLanguages();
     for (String strLocale : strLocales){
       Locale loc = new Locale(strLocale);
-      languages.put(loc.getDisplayLanguage(), strLocale);
-      comboBox.getItems().add(loc.getDisplayLanguage());
+      languages.put(loc.getDisplayLanguage().toLowerCase(), strLocale);
+      comboBox.getItems().add(upperFirstLetter(loc.getDisplayLanguage()));
     }
     Collections.sort(comboBox.getItems());
-    comboBox.setValue(Locale.getDefault().getDisplayName());
+    comboBox.setValue(upperFirstLetter(Locale.getDefault().getDisplayName()));
+  }
+
+  private String upperFirstLetter(String word){
+    return word.substring(0, 1).toUpperCase() + word.substring(1);
   }
 
   private List<String> loadLanguages(){
@@ -173,7 +177,7 @@ public class BarFragment {
   @FXML
   protected void onChangeLanguage(ActionEvent event) throws Exception {
     String display = (String) comboBox.getValue();
-    DPFManagerProperties.setLanguage(languages.get(display));
+    DPFManagerProperties.setLanguage(languages.get(display.toLowerCase()));
     context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("changeLanguage")));
   }
 

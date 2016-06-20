@@ -1,6 +1,9 @@
 package dpfmanager.shell.modules.messages.messages;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.messages.DpfMessage;
+
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 06/04/2016.
@@ -13,8 +16,9 @@ public class JacpExceptionMessage extends DpfMessage {
   private Throwable throwable;
 
   public JacpExceptionMessage(Throwable t){
-    title = "Gui Exception";
-    header = "A gui error has occurred!";
+    ResourceBundle bundle = DPFManagerProperties.getBundle();
+    title = bundle.getString("guiException");
+    header = bundle.getString("guiError");
     content = t.getMessage();
     throwable = t;
   }
