@@ -54,10 +54,11 @@ public class ServerLauncher {
   private ResourceBundle bundle;
 
   public ServerLauncher(String[] args) {
-    // Update locale
-    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
-    bundle = DPFManagerProperties.getBundle();
     DPFManagerProperties.setFinished(false);
+    // Parameters
+    params = new ArrayList(Arrays.asList(args));
+    // Update locale
+    updateLanguage();
     // Load spring context
     AppContext.loadContext("DpfSpringServer.xml");
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
@@ -66,8 +67,23 @@ public class ServerLauncher {
     context = new ConsoleContext(AppContext.getApplicationContext());
     // The main controller
     controller = new ServerController(context);
-    // Parameters
-    params = new ArrayList(Arrays.asList(args));
+  }
+
+  /**
+   * Update the app language.
+   */
+  private void updateLanguage(){
+    // Check if language is specified
+    if (params.contains("-l")){
+      int langIndex = params.indexOf("-l") +1;
+      String language = params.get(langIndex);
+      Locale newLocale = new Locale(language);
+      if (newLocale != null){
+        DPFManagerProperties.setLanguage(language);
+      }
+    }
+    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
+    bundle = DPFManagerProperties.getBundle();
   }
 
   /**

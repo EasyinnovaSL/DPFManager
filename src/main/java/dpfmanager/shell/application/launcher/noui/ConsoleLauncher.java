@@ -55,20 +55,36 @@ public class ConsoleLauncher {
   private Map<String, String> parameters;
 
   public ConsoleLauncher(String[] args) {
-    // Update locale
-    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
-    bundle = DPFManagerProperties.getBundle();
     DPFManagerProperties.setFinished(false);
+    // Program input
+    params = new ArrayList(Arrays.asList(args));
+    // Update locale
+    updateLanguage();
     // Load spring context
     AppContext.loadContext("DpfSpringConsole.xml");
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
     parameters.put("mode", "CMD");
     //Load DpfContext
     context = new ConsoleContext(AppContext.getApplicationContext());
-    // Program input
-    params = new ArrayList(Arrays.asList(args));
     // The main controller
     controller = new ConsoleController(context,bundle);
+  }
+
+  /**
+   * Update the app language.
+   */
+  private void updateLanguage(){
+    // Check if language is specified
+    if (params.contains("-l")){
+      int langIndex = params.indexOf("-l") +1;
+      String language = params.get(langIndex);
+      Locale newLocale = new Locale(language);
+      if (newLocale != null){
+        DPFManagerProperties.setLanguage(language);
+      }
+    }
+    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
+    bundle = DPFManagerProperties.getBundle();
   }
 
   /**
@@ -180,6 +196,8 @@ public class ConsoleLauncher {
           printOut(bundle.getString("specifyUrl"));
           argsError = true;
         }
+      } else if (arg.equals("-l")) {
+        // nothing, checked before
       } else if (arg.startsWith("-")) {
         // unknown option
         printOut(bundle.getString("unknownOption").replace("%1",arg));

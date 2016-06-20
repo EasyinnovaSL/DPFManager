@@ -249,7 +249,7 @@ public class ConsoleController {
     for (int i = 1; i<4; i++){
       printOut(bundle.getString("help"+i));
     }
-    for (int i = 4; i<17; i++){
+    for (int i = 4; i<18; i++){
       printOut("    "+bundle.getString("help"+i));
     }
   }
