@@ -6,17 +6,17 @@
  <description>Tiff Revision 6.0 Final - June 3, 1992</description>
  
  <rules description="header-check">
-  <rule context="tiffValidationObject" critical="1">
+  <rule context="tiffValidationObject" level="critical">
    <assert test="{count(header)==1}" diagnostics="d1 d2">Header must exist and be unique</assert>
    <diagnostic id="d1" lang="en">Header must exist and be unique</diagnostic>
    <diagnostic id="d2" lang="es">Tiene que existir una única cabecera</diagnostic>
    <reference>Section 2, page 13</reference>
   </rule>
-  <rule context="header" critical="1">
+  <rule context="header" level="critical">
    <assert test="{byteOrder}">ByteOrder must be defined</assert>
    <reference>Section 2, page 13</reference>
   </rule>
-  <rule context="header" critical="1">
+  <rule context="header" level="critical">
    <assert test="{byteOrder=='BIG_ENDIAN'}||{byteOrder=='LITTLE_ENDIAN'}">ByteOrder must be BIG_ENDIAN or LITTLE_ENDIAN</assert>
    <reference>Section 2, page 13</reference>
   </rule>
@@ -42,6 +42,14 @@
   <rule context="*">
    <assert test="{offset &lt; $tiffValidationObject.size$}">Bad offset position</assert>
    <reference>Section 2, page 13</reference>
+  </rule>
+  <rule context="*">
+   <assert test="{usedOffset==false}">Offset already used</assert>
+   <reference>Section 7, page 26</reference>
+  </rule>
+  <rule context="*">
+   <assert test="{offsetOverlap==false}">Overlapped offset</assert>
+   <reference>Section 7, page 26</reference>
   </rule>
  </rules>
  
@@ -202,28 +210,28 @@
    <assert test="{tags.tag[name=ImageLength]}">Image Length tag must exist</assert>
    <reference>Section 8, page 34</reference>
   </rule>
-  <rule context="ifd">
-   <assert test="{tags.tag[name=ImageLength] > 0}">Image Length must be greater than 0</assert>
+  <rule context="ifd" level="warning">
+   <assert test="{tags.tag[name=ImageLength] > 0}">Image Length should be greater than 0</assert>
    <reference>Section 8, page 34</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=ImageWidth]}">Image Width tag must exist</assert>
    <reference>Section 8, page 34</reference>
   </rule>
-  <rule context="ifd">
-   <assert test="{tags.tag[name=ImageWidth] > 0}">Image Width must be greater than 0</assert>
+  <rule context="ifd" level="warning">
+   <assert test="{tags.tag[name=ImageWidth] > 0}">Image Width should be greater than 0</assert>
    <reference>Section 8, page 34</reference>
   </rule>
   <rule context="tags">
    <assert test="{tag[name=ResolutionUnit] == 1} || {tag[name=ResolutionUnit] == 2} || {tag[name=ResolutionUnit] == 3}">Resolution Unit possible values are 1, 2 and 3</assert>
    <reference>Section 8, page 38</reference>
   </rule>
-  <rule context="tags">
-   <assert test="{tag[name=XResolution] > 0}">X Resolution must be greater than 0</assert>
+  <rule context="tags" level="warning">
+   <assert test="{tag[name=XResolution] > 0}">X Resolution should be greater than 0</assert>
    <reference>Section 8, page 41</reference>
   </rule>
-  <rule context="tags">
-   <assert test="{tag[name=YResolution] > 0}">Y Resolution must be greater than 0</assert>
+  <rule context="tags" level="warning">
+   <assert test="{tag[name=YResolution] > 0}">Y Resolution should be greater than 0</assert>
    <reference>Section 8, page 41</reference>
   </rule>
   <rule context="tags">
@@ -1708,27 +1716,27 @@
 
  <rules description="cardinality-formulas">
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGLosslessPredictors tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGPointTransforms tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGQTables tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGDCTables tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGACTables tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of WhiteLevel tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
@@ -1736,27 +1744,27 @@
    <reference>Section 8, page 29 and 39</reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=MinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=MinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of MinSampleValue tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=MaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=MaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of MaxSampleValue tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMinSampleValue tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMaxSampleValue tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=ImageBaseColor].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=ImageBaseColor].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of ImageBaseColor tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
   <rule context="ifd[class=image]">
-   <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality must match SamplesPerPixel value</assert>
+   <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SampleFormat tag must match SamplesPerPixel value</assert>
    <reference></reference>
   </rule>
  </rules>

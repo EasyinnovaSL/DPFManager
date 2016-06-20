@@ -44,7 +44,7 @@ public class ValidationResult {
   public List<RuleResult> getErrors() {
     List<RuleResult> errors = new ArrayList<>();
     for (RuleResult res : result) {
-      if (!res.ok()) {
+      if (!res.ok() && !res.getWarning()) {
         errors.add(res);
       }
     }
@@ -57,7 +57,12 @@ public class ValidationResult {
    * @return the warnings
    */
   public List<RuleResult> getWarnings() {
-    List<RuleResult> warnings = new ArrayList<>();
-    return warnings;
+    List<RuleResult> errors = new ArrayList<>();
+    for (RuleResult res : result) {
+      if (!res.ok() && res.getWarning()) {
+        errors.add(res);
+      }
+    }
+    return errors;
   }
 }
