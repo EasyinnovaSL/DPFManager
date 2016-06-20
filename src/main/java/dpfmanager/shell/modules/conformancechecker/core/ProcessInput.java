@@ -4,6 +4,7 @@ import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.external.ExternalConformanceChecker;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -23,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by Victor Muñoz on 04/09/2015.
@@ -30,9 +32,10 @@ import java.util.List;
 public class ProcessInput {
 
   private DpfContext context;
+  private ResourceBundle bundle;
 
   public ProcessInput() {
-
+    bundle = DPFManagerProperties.getBundle();
   }
 
   /**
@@ -97,9 +100,9 @@ public class ProcessInput {
       }
     }
     if (result != null) {
-      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Conformance checker for file " + filename + ": " + result.toString()));
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("ccForFile").replace("%1",filename).replace("%2", result.toString())));
     } else {
-      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Conformance checker for file " + filename + " not found"));
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("ccNotFound").replace("%1",filename)));
     }
     return result;
   }
@@ -128,18 +131,18 @@ public class ProcessInput {
           File file = new File(filename2);
           file.delete();
         } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "The file in the URL " + filename + " is not an accepted format"));
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("unacceptedFormatUrl").replace("%1", filename)));
         }
       } catch (ReadTagsIOException e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorInFile").replace("%1", filename)));
       } catch (ReadIccConfigIOException e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorInFile").replace("%1", filename)));
       } catch (MalformedURLException e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorInFile").replace("%1", filename)));
       } catch (UnsupportedEncodingException e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorInFile").replace("%1", filename)));
       } catch (IOException e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorInFile").replace("%1", filename)));
       }
     } else {
       // File
@@ -148,11 +151,11 @@ public class ProcessInput {
         try {
           ir = cc.processFile(filename, filename, internalReportFolder, config, id);
         } catch (Exception ex) {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in File " + filename));
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorInFile").replace("%1", filename)));
           ex.printStackTrace();
         }
       } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "File " + filename + " is not an accepted format"));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("unacceptedFormat").replace("%1", filename)));
       }
     }
     return ir;

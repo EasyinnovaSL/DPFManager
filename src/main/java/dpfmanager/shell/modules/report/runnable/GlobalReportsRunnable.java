@@ -70,10 +70,9 @@ public class GlobalReportsRunnable extends DpfRunnable {
     String summaryXml = null;
     try {
       summaryXml = generator.makeSummaryReport(internalReportFolder, global, config);
-      ResourceBundle bundle = DPFManagerProperties.getBundle();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", internalReportFolder)));
     } catch (OutOfMemoryError e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occured", "Out of memory"));
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorOccurred"), bundle.getString("outOfMemory")));
     }
 
     // Send report over FTP
@@ -82,7 +81,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
         sendFtpCamel(summaryXml);
       }
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred", e));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), e));
       e.printStackTrace();
     }
 
@@ -98,7 +97,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
    */
   private void sendFtpCamel(String summaryXml)
       throws NoSuchAlgorithmException {
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Sending feedback"));
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("sendingFeedback")));
     String ftp = "84.88.145.109";
     String user = "preformaapp";
     String password = "2.eX#lh>";
@@ -117,7 +116,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Feedback sent"));
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("feedbackSent")));
   }
 
 }

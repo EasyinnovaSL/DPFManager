@@ -71,6 +71,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
@@ -79,6 +80,7 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
   private final HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
 
   private DpfContext context;
+  private ResourceBundle bundle;
 
   private HttpRequest request;
   private HttpData partialContent;
@@ -103,6 +105,7 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
 
   public HttpPostHandler(DpfContext context) {
     this.context = context;
+    bundle = DPFManagerProperties.getBundle();
   }
 
   @Override
@@ -202,10 +205,10 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
     map.put("id", uuid.toString());
     if (configpath == null) {
       // Error miss config file
-      map.put("error", "Missing config file (name = config)");
+      map.put("error", bundle.getString("missingConfig"));
     } else if (filepath == null) {
       // Error miss file to check
-      map.put("error", "Missing file to check");
+      map.put("error", bundle.getString("missingFile"));
     }
     responseContent.append(new Gson().toJson(map));
     writeResponse(ctx.channel());

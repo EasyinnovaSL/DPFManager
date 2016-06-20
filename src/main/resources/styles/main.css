@@ -312,9 +312,11 @@
 .combo-box-grey .combo-box-popup .list-view .list-cell:filled:hover {
     -fx-text-fill: #1cc2ff;
 }
-.combo-box-grey .arrow,
 .combo-box-grey .arrow-button {
     -fx-background-color: transparent;
+}
+.combo-box-grey .arrow {
+    -fx-background-color: #1cc2ff;
 }
 .combo-box-grey .scroll-bar:vertical{
     -fx-opacity: 0;

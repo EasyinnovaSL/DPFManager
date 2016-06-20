@@ -17,7 +17,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
 
@@ -46,7 +48,15 @@ public class ServerLauncher {
    */
   private List<String> params;
 
+  /**
+   * The resource bundle
+   */
+  private ResourceBundle bundle;
+
   public ServerLauncher(String[] args) {
+    // Update locale
+    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
+    bundle = DPFManagerProperties.getBundle();
     DPFManagerProperties.setFinished(false);
     // Load spring context
     AppContext.loadContext("DpfSpringServer.xml");
@@ -89,7 +99,7 @@ public class ServerLauncher {
     if (!argsError) {
       context.send(BasicConfig.MODULE_SERVER, new ServerMessage(ServerMessage.Type.START));
     } else {
-      printOut("Parameters error");
+      printOut(bundle.getString("paramError"));
     }
   }
 
@@ -117,7 +127,7 @@ public class ServerLauncher {
   }
 
   private void printException(Exception ex){
-    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception has occurred!", ex));
+    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
   }
 
   /**

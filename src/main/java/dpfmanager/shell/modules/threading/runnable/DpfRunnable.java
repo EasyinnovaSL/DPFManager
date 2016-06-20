@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.threading.runnable;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -7,6 +8,8 @@ import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 
 import org.apache.logging.log4j.Level;
+
+import java.util.ResourceBundle;
 
 import javax.xml.bind.SchemaOutputResolver;
 
@@ -26,6 +29,8 @@ public abstract class DpfRunnable implements Runnable {
   protected DpfContext context;
   private Long uuid;
 
+  protected ResourceBundle bundle;
+
   public DpfRunnable() {
     name = "";
     paused = false;
@@ -34,6 +39,8 @@ public abstract class DpfRunnable implements Runnable {
 
     init = false;
     finish = false;
+
+    bundle = DPFManagerProperties.getBundle();
   }
 
   public void setName(String n){
@@ -53,7 +60,7 @@ public abstract class DpfRunnable implements Runnable {
     } catch (OutOfMemoryError err){
       // Cancel the check and informs out of memory
       context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, getUuid(), true));
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("The check is cancelled.", err));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("checkCancelled"), err));
     }
   }
 

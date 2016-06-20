@@ -44,36 +44,6 @@ public class ConformanceCheckerModel extends DpfModel<DessignView, DessignContro
     isos = conformance.getConformanceCheckerStandards();
   }
 
-  private Document convertStringToDocument(String xmlStr) {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder;
-    try {
-      builder = factory.newDocumentBuilder();
-      Document doc = builder.parse(new InputSource(new StringReader(xmlStr)));
-      return doc;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  public void setTxtFile(String txt) {
-    txtFile = txt;
-  }
-
-  public String getTxtFile() {
-    return txtFile;
-  }
-
-  /**
-   * Gets extensions.
-   *
-   * @return the extensions
-   */
-  public ArrayList<String> getExtensions() {
-    return extensions;
-  }
-
   /**
    * Gets fields.
    *
@@ -81,49 +51,6 @@ public class ConformanceCheckerModel extends DpfModel<DessignView, DessignContro
    */
   public ArrayList<Field> getFields() {
     return fields;
-  }
-
-  /**
-   * Gets fixes.
-   *
-   * @return the fixes
-   */
-  public ArrayList<String> getFixes() {
-    ArrayList<String> fixes = new ArrayList<>();
-    fixes.add("Remove Tag");
-    fixes.add("Add Tag");
-    return fixes;
-  }
-
-  /**
-   * Gets fix fields.
-   *
-   * @return the fix fields
-   */
-  public ArrayList<String> getFixFields() {
-    ArrayList<String> fields = new ArrayList<>();
-    fields.add("ImageDescription");
-    fields.add("Copyright");
-    fields.add("Artist");
-    return fields;
-  }
-
-  public ArrayList<String> getOperators(String name) {
-    for (Field field : fields) {
-      if (field.getName().equals(name)) {
-        return field.getOperators();
-      }
-    }
-    return new ArrayList<>();
-  }
-
-  public ArrayList<String> getValues(String name) {
-    for (Field field : fields) {
-      if (field.getName().equals(name)) {
-        return field.getValues();
-      }
-    }
-    return new ArrayList<>();
   }
 
   public boolean readConfig(String path) {

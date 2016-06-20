@@ -79,7 +79,7 @@ public class ProcessInputRunnable extends DpfRunnable {
     switch (filetype) {
       case -1:
         // ERROR
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in input path " + input));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorInput").replace("%1",input)));
         break;
       case 0:
         // Folder
