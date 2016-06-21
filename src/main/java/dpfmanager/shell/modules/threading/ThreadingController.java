@@ -49,7 +49,6 @@ public class ThreadingController extends DpfSpringController {
       // Now close application only if it is not server mode
       if (gm.isFinish() && parameters.get("mode").equals("CMD")) {
         AppContext.close();
-        DPFManagerProperties.setFinished(true);
       }
     } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
       RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);
