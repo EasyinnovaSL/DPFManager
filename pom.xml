@@ -298,6 +298,13 @@
 			<version>4.1.0.CR7</version>
 		</dependency>
 
+		<!--Codec Sha256-->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<!--Common Build Plugins-->

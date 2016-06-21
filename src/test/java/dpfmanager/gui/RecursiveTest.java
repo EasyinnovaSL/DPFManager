@@ -48,7 +48,7 @@ public class RecursiveTest extends ApplicationTest {
 
     // Check without recursive
     clickOnAndReload("#checkFilesButton");
-    clickOnAndReloadBot("#taskButInConsole");
+    clickOnAndReloadBot("#taskBut");
 
     // Check with recursive
     clickOnAndReload("#comboChoice");
@@ -59,7 +59,7 @@ public class RecursiveTest extends ApplicationTest {
 
     // Wait for checks
     waitForCheckFiles(2);
-    clickOnAndReloadBot("#taskButInConsole");
+    clickOnAndReloadBot("#taskBut");
 
     //Check table view
     clickOnAndReloadTop("#butReports", "#pane-reports");

@@ -69,7 +69,7 @@ public class JobsTest extends ApplicationTest {
 
     // Init new check
     clickOnAndReloadTop("#butDessign", "#pane-design");
-    clickOnAndReloadBot("#taskButInConsole");
+    clickOnAndReloadBot("#taskBut");
     GuiWorkbench.setTestParam("import", inputConfigPath);
     clickOnScroll("#importButton");
     clickOnScroll("No");

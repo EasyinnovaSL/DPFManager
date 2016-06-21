@@ -65,6 +65,7 @@ public class ThreadingService extends DpfService {
   private Queue<FileCheck> pendingChecks;
 
   private boolean needReload;
+  private int totalChecks;
 
   @PostConstruct
   public void init() {
@@ -73,6 +74,7 @@ public class ThreadingService extends DpfService {
     checks = new HashMap<>();
     pendingChecks = new LinkedList<>();
     needReload = true;
+    totalChecks = 0;
   }
 
   @PreDestroy
@@ -201,7 +203,7 @@ public class ThreadingService extends DpfService {
       FileCheck fc = checks.get(gm.getUuid());
       removeZipFolder(fc.getInternal());
       removeDownloadFolder(fc.getInternal());
-      removeServerFolder(fc.getUuid());
+      moveServerFolder(fc.getUuid(), fc.getInternal());
       if (context.isGui()) {
         // Notify task manager
         needReload = true;
@@ -211,6 +213,12 @@ public class ThreadingService extends DpfService {
       }
       context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.FINISH, gm.getUuid()));
       checks.remove(gm.getUuid());
+      totalChecks++;
+      if (totalChecks >= 10){
+        System.gc();
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Run Garbage Collector"));
+        totalChecks = 0;
+      }
       // Start pending checks
       startPendingChecks();
     } else if (context.isGui() && gm.isReload()) {
@@ -269,7 +277,7 @@ public class ThreadingService extends DpfService {
     }
   }
 
-  public void removeDownloadFolder(String internal) {
+  private void removeDownloadFolder(String internal) {
     try {
       File zipFolder = new File(internal + "download");
       if (zipFolder.exists() && zipFolder.isDirectory()) {
@@ -280,7 +288,7 @@ public class ThreadingService extends DpfService {
     }
   }
 
-  public void removeInternalFolder(String internal) {
+  private void removeInternalFolder(String internal) {
     try {
       File folder = new File(internal);
       if (folder.exists() && folder.isDirectory()) {
@@ -291,7 +299,7 @@ public class ThreadingService extends DpfService {
     }
   }
 
-  public void removeServerFolder(Long uuid) {
+  private void removeServerFolder(Long uuid) {
     try {
       File folder = new File(DPFManagerProperties.getServerDir() + "/" + uuid);
       if (folder.exists() && folder.isDirectory()) {
@@ -299,6 +307,18 @@ public class ThreadingService extends DpfService {
       }
     } catch (Exception e) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excServer"), e));
+    }
+  }
+
+  private void moveServerFolder(Long uuid, String internal) {
+    try {
+      File dest = new File(internal+"input");
+      File src = new File(DPFManagerProperties.getServerDir() + "/" + uuid);
+      if (src.exists() && src.isDirectory()) {
+        FileUtils.moveDirectory(src, dest);
+      }
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove server folder", e));
     }
   }
 
