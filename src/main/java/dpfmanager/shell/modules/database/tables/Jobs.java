@@ -36,19 +36,19 @@ public class Jobs {
 
   // Create SQL query
   public static String createSql = "CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-      "    " + ID + " INTEGER NOT NULL PRIMARY KEY," +
+      "    " + ID + " BIGINT NOT NULL PRIMARY KEY," +
       "    " + HASH + " VARCHAR(255)," +
       "    " + STATE + " INTEGER," +
       "    " + TOTAL_FILES + " INTEGER," +
       "    " + PROCESSED_FILES + " INTEGER," +
-      "    " + INIT + " DATE," +
-      "    " + FINISH + " DATE," +
+      "    " + INIT + " BIGINT," +
+      "    " + FINISH + " BIGINT," +
       "    " + INPUT + " VARCHAR(255)," +
-      "    " + ORIGIN + " VARCHAR(3)," +
+      "    " + ORIGIN + " VARCHAR(10)," +
       "    " + PID + " INTEGER NOT NULL," +
       "    " + OUTPUT + " VARCHAR(255)," +
-      "    " + TIME + " DATE," +
-      "    " + LAST_UPDATE + " DATE" +
+      "    " + TIME + " BIGINT," +
+      "    " + LAST_UPDATE + " BIGINT" +
       ");";
 
   // Index SQl querys
