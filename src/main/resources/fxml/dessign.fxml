@@ -51,11 +51,11 @@
                     <Insets bottom="6.0" top="3.0" />
                 </VBox.margin>
             </Pane>
-            <HBox alignment="TOP_CENTER">
+            <HBox alignment="TOP_CENTER" maxWidth="504.0" minWidth="504.0">
                 <children>
-               <VBox>
+               <VBox HBox.hgrow="ALWAYS">
                   <children>
-                          <TextField fx:id="inputText" maxHeight="41.0" maxWidth="382.0" minHeight="41.0" prefWidth="382.0" text="%inputText">
+                          <TextField fx:id="inputText" maxHeight="41.0" minHeight="41.0" text="%inputText">
                               <cursor>
                                   <Cursor fx:constant="TEXT" />
                               </cursor>

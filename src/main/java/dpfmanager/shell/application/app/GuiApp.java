@@ -25,8 +25,6 @@ public class GuiApp extends GuiLauncher {
 
   @Override
   protected void postInit(Stage stage) {
-    // Update locale
-    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
     // Logo img
     Image img = new Image("/gui-logo-white.png");
     if (img != null) {
@@ -52,6 +50,8 @@ public class GuiApp extends GuiLauncher {
 
   @Override
   public String getXmlConfig() {
+    // Update locale
+    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
     return "DpfSpringGui.xml";
   }
 

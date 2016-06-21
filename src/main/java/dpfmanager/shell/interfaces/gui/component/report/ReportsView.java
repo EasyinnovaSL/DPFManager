@@ -136,13 +136,13 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     );
 
     TableColumn colN = new TableColumn(bundle.getString("colN"));
-    setMinMaxWidth(colN, 50);
+    setMinMaxWidth(colN, 70);
     colN.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("nfiles")
     );
 
     TableColumn colFile = new TableColumn(bundle.getString("colFile"));
-    setMinMaxWidth(colFile, 200);
+    setMinMaxWidth(colFile, 160);
     colFile.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("input")
     );
@@ -154,7 +154,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     );
 
     TableColumn colWarnings = new TableColumn(bundle.getString("colWarnings"));
-    setMinMaxWidth(colWarnings, 65);
+    setMinMaxWidth(colWarnings, 85);
     colWarnings.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("warnings")
     );
@@ -177,14 +177,13 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
     );
 
-    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
+    tabReports.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     tabReports.setPrefWidth(840.0);
+    tabReports.setFixedCellSize(28.0);
+    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
     tabReports.setCursor(Cursor.DEFAULT);
     tabReports.setEditable(false);
-    // Fixed size
-    tabReports.setFixedCellSize(28.0);
     tabReports.setMaxHeight(470.0);
-//    tabReports.setMinHeight(100.0);
 
     // Change column colors
     changeColumnTextColor(colDate, Color.LIGHTGRAY);
