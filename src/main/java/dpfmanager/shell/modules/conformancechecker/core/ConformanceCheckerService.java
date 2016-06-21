@@ -9,6 +9,7 @@ import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
 import dpfmanager.shell.modules.conformancechecker.runnable.ProcessInputRunnable;
+import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -35,6 +37,9 @@ public class ConformanceCheckerService extends DpfService {
   private int recursive;
   private boolean silence;
   private Long uuid;
+
+  @Resource(name = "parameters")
+  private Map<String, String> parameters;
 
   /** The list of checks waiting for process input*/
   private Map<Long,ProcessInputParameters> filesToCheck;
@@ -113,8 +118,12 @@ public class ConformanceCheckerService extends DpfService {
       // Start check
       startCheck(pim.getUuid(),filesToCheck.get(pim.getUuid()));
     } else {
-      // Finish app
-      AppContext.close();
+      filesToCheck.remove(pim.getUuid());
+      cancelCheck(pim.getUuid());
+      if (parameters.get("mode") != null && parameters.get("mode").equals("CMD")) {
+        // Finish app
+        AppContext.close();
+      }
     }
   }
 
@@ -124,6 +133,11 @@ public class ConformanceCheckerService extends DpfService {
 
     // Now process files
     ProcessFiles(uuid, pip.getFiles(), pip.getConfig(), pip.getInternalReportFolder());
+  }
+
+  public void cancelCheck(Long uuid) {
+    // Cancel in DB
+    getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.CANCEL, uuid));
   }
 
   /**
