@@ -499,6 +499,10 @@
 .table-view:row-selection .table-row-cell:selected .table-cell{
     -fx-border-color: transparent;
 }
+.table-view .scroll-bar:horizontal{
+    -fx-background-color: transparent;
+    -fx-opacity: 0;
+}
 
 /* Text Area */
 .text-area{
