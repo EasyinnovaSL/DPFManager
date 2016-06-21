@@ -218,7 +218,10 @@ public class DeleteFileTest extends CommandLineTest {
 
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
-        "FORMAT\tXML,HTML,JSON,PDF\n" +
+        "FORMAT\tHTML\n" +
+        "FORMAT\tXML\n" +
+        "FORMAT\tPDF\n" +
+        "FORMAT\tJSON\n" +
         "RULE\tBlankPage,=,1\n");
     bw.close();
 
