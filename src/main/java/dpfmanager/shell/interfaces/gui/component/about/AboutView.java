@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_ABOUT,
     viewLocation = "/fxml/about.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_ABOUT)
 public class AboutView extends DpfSimpleView {
 
@@ -52,8 +53,7 @@ public class AboutView extends DpfSimpleView {
 
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
-    String txt = lblVersion.getText() + DPFManagerProperties.getVersion();
-    lblVersion.setText(txt);
+    lblVersion.setText(DPFManagerProperties.getVersion());
     chkFeedback.setSelected(DPFManagerProperties.getFeedback());
   }
 

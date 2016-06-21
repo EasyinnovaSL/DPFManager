@@ -38,7 +38,4 @@ public class ServerController {
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, message));
   }
 
-  private void printException(Exception ex) {
-    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception has occurred!", ex));
-  }
 }

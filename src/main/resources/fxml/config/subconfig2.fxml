@@ -9,5 +9,5 @@
             <Insets left="250.0" />
         </VBox.margin>
     </VBox>
-    <Button fx:id="addRuleButton" onAction="#addRule" maxWidth="180.0" minWidth="180.0" mnemonicParsing="false" prefWidth="180.0" styleClass="secondary-button" text="Add Rule" />
+    <Button fx:id="addRuleButton" maxWidth="180.0" mnemonicParsing="false" onAction="#addRule" styleClass="secondary-button" text="%w2AddRule" />
 </VBox>

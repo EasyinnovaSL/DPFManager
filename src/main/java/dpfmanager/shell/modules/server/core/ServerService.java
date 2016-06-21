@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.server.core;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -31,6 +33,7 @@ public class ServerService extends DpfService {
   private HttpServer server;
   private int port;
   private ExecutorService executor;
+  private ResourceBundle bundle;
 
   @Resource(name="parameters")
   private Map<String, String> parameters;
@@ -42,6 +45,7 @@ public class ServerService extends DpfService {
   @PostConstruct
   public void init() {
     // No context yet
+    bundle = DPFManagerProperties.getBundle();
     executor = Executors.newCachedThreadPool();
     // Random port
     port = randInt(49152, 65535);
@@ -68,7 +72,7 @@ public class ServerService extends DpfService {
       server = new HttpServer(port, context);
       server.start();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Failed to start server at " + server.getServerUri()));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("failedServer").replace("%1",server.getServerUri())));
     }
   }
 

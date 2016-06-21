@@ -73,16 +73,16 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
               File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
 
               if (reportXml.exists() && reportXml.length() > 0) {
-                rr = ReportRow.createRowFromXml(reportDay, reportXml);
+                rr = ReportRow.createRowFromXml(reportDay, reportXml, getBundle());
               }
               if (rr == null && reportJson.exists() && reportJson.length() > 0) {
-                rr = ReportRow.createRowFromJson(reportDay, reportJson);
+                rr = ReportRow.createRowFromJson(reportDay, reportJson, getBundle());
               }
               if (rr == null && reportHtml.exists() && reportHtml.length() > 0) {
-                rr = ReportRow.createRowFromHtml(reportDay, reportHtml);
+                rr = ReportRow.createRowFromHtml(reportDay, reportHtml, getBundle());
               }
               if (rr == null && reportPdf.exists() && reportPdf.length() > 0) {
-                rr = ReportRow.createRowFromPdf(reportDay, reportPdf);
+                rr = ReportRow.createRowFromPdf(reportDay, reportPdf, getBundle());
               }
 
               if (rr != null) {

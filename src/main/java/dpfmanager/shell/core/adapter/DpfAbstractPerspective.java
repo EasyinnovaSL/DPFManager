@@ -18,11 +18,17 @@ import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+
+import com.sun.javafx.scene.control.skin.TableColumnHeader;
 
 import org.jacpfx.api.message.Message;
 import org.jacpfx.rcp.componentLayout.PerspectiveLayout;
@@ -31,6 +37,10 @@ import org.jacpfx.rcp.context.Context;
 import org.jacpfx.rcp.perspective.FXPerspective;
 import org.jacpfx.rcp.util.LayoutUtil;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 /**
  * Created by Adrià Llorens on 03/03/2016.
  */
@@ -38,12 +48,15 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
 
   protected Node divider;
 
+  protected BorderPane borderPane;
   protected AnchorPane mainPane;
   protected StackPane bottomPane;
   protected SplitPane mainSplit;
   protected StackPane bottomBar;
 
   protected ManagedFragmentHandler<BarFragment> fragmentBar;
+
+  protected Locale currentLocale = Locale.getDefault();
 
   /**
    * Handle default messages
@@ -71,7 +84,7 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
       UiMessage um = dpfMessage.getTypedMessage(UiMessage.class);
       if (um.isShow()){
         onShow();
-      } else{
+      } else if (um.isReload()){
         onReload();
       }
     }else if (dpfMessage.isTypeOf(WidgetMessage.class)) {

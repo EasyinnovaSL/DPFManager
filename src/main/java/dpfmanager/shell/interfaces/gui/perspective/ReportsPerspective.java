@@ -5,6 +5,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -40,7 +41,6 @@ public class ReportsPerspective extends DpfAbstractPerspective {
   @Resource
   public Context context;
 
-  private BorderPane borderPane;
   private ScrollPane scrollPane;
 
   private boolean firsttime;
