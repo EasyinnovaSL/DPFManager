@@ -21,7 +21,10 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.server.messages.PostMessage;
+import dpfmanager.shell.modules.server.messages.StatusMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -52,6 +55,8 @@ import io.netty.handler.codec.http.multipart.DiskFileUpload;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -117,8 +122,15 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<HttpObject> {
    */
 
   private void tractReadGet(ChannelHandlerContext ctx, String zipPath) {
-    // Send the zip report
+    // Parse params
     String path = DPFManagerProperties.getReportsDir() + zipPath;
+    if (!zipPath.endsWith(".zip")){
+      String hash = zipPath.substring(1,zipPath.length());
+      StatusMessage sm = (StatusMessage) context.sendAndWaitResponse(BasicConfig.MODULE_DATABASE, new PostMessage(PostMessage.Type.ASK, hash));
+      path = sm.getFolder().substring(0, sm.getFolder().length()-1)+ ".zip";
+    }
+
+    // Send the zip report
     File file = new File(path);
     if (file.exists()) {
       try {
@@ -130,9 +142,7 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<HttpObject> {
         HttpUtil.setContentLength(response, fileLength);
         setContentTypeHeader(response, file);
         setDateAndCacheHeaders(response, file);
-        if (HttpUtil.isKeepAlive(request)) {
-          response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        }
+        response.headers().remove(HttpHeaderNames.CONNECTION);
 
         // Write the initial line and the header.
         ctx.write(response);
@@ -147,6 +157,13 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<HttpObject> {
           lastContentFuture = ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)), ctx.newProgressivePromise());
         }
 
+        // Delete the zip after download?
+        lastContentFuture.addListener(new GenericFutureListener() {
+          @Override
+          public void operationComplete(Future future) throws Exception {
+//            file.delete();
+          }
+        });
         // Decide whether to close the connection or not.
         if (!HttpUtil.isKeepAlive(request)) {
           lastContentFuture.addListener(ChannelFutureListener.CLOSE);
@@ -160,52 +177,10 @@ public class HttpGetHandler extends SimpleChannelInboundHandler<HttpObject> {
     }
   }
 
-  /**
-   * Util functions
-   */
-
-  private void writeResponse(Channel channel) {
-    // Convert the response content to a ChannelBuffer.
-    ByteBuf buf = copiedBuffer(responseContent.toString(), CharsetUtil.UTF_8);
-    responseContent.setLength(0);
-
-    // Decide whether to close the connection or not.
-    boolean close = request.headers().contains(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE, true)
-        || request.protocolVersion().equals(HttpVersion.HTTP_1_0)
-        && !request.headers().contains(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE, true);
-
-    // Build the response object.
-    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, buf);
-    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
-
-    if (!close) {
-      response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, buf.readableBytes());
-    }
-
-    Set<Cookie> cookies;
-    String value = request.headers().get(HttpHeaderNames.COOKIE);
-    if (value == null) {
-      cookies = Collections.emptySet();
-    } else {
-      cookies = ServerCookieDecoder.STRICT.decode(value);
-    }
-    if (!cookies.isEmpty()) {
-      // Reset the cookies if necessary.
-      for (Cookie cookie : cookies) {
-        response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
-      }
-    }
-    // Write the response.
-    ChannelFuture future = channel.writeAndFlush(response);
-    // Close the connection after the write operation is done if necessary.
-    if (close) {
-      future.addListener(ChannelFutureListener.CLOSE);
-    }
-  }
-
   private void setContentTypeHeader(HttpResponse response, File file) {
     MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
     response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeTypesMap.getContentType(file.getPath()));
+    response.headers().set(HttpHeaderNames.CONTENT_DISPOSITION, "attachment; filename=report.zip");
   }
 
   private void setDateAndCacheHeaders(HttpResponse response, File fileToCache) {

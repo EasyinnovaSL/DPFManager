@@ -168,6 +168,21 @@ public class DatabaseConnection {
     return job;
   }
 
+  public Jobs getJob(String hash) {
+    Jobs job = new Jobs();
+    try {
+      Statement stmt = globalConnection.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE+" WHERE "+Jobs.HASH+" LIKE \""+ hash+"\"");
+      while (rs.next()) {
+        job.parseResultSet(rs);
+      }
+      stmt.close();
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
+    }
+    return job;
+  }
+
   public List<Jobs> getJobs() {
     List<Jobs> jobs = new ArrayList<>();
     for (Jobs job : getAllJobs()) {
@@ -209,29 +224,30 @@ public class DatabaseConnection {
       try {
         PreparedStatement pstmt = globalConnection.prepareStatement(Jobs.insertJobSql);
         pstmt.setLong(1, job.getId());
-        pstmt.setInt(2, job.getState());
-        pstmt.setInt(3, job.getTotalFiles());
-        pstmt.setInt(4, job.getProcessedFiles());
+        pstmt.setString(2, job.getHash());
+        pstmt.setInt(3, job.getState());
+        pstmt.setInt(4, job.getTotalFiles());
+        pstmt.setInt(5, job.getProcessedFiles());
         if (job.getInit() != null) {
-          pstmt.setLong(5, job.getInit());
-        } else {
-          pstmt.setNull(5, 0);
-        }
-        if (job.getFinish() != null) {
-          pstmt.setLong(6, job.getFinish());
+          pstmt.setLong(6, job.getInit());
         } else {
           pstmt.setNull(6, 0);
         }
-        pstmt.setString(7, job.getInput());
-        pstmt.setString(8, job.getOrigin());
-        pstmt.setLong(9, job.getPid());
-        pstmt.setString(10, job.getOutput());
-        if (job.getTime() != null) {
-          pstmt.setLong(11, job.getTime());
+        if (job.getFinish() != null) {
+          pstmt.setLong(7, job.getFinish());
         } else {
-          pstmt.setNull(11, 0);
+          pstmt.setNull(7, 0);
         }
-        pstmt.setLong(12, job.getLastUpdate());
+        pstmt.setString(8, job.getInput());
+        pstmt.setString(9, job.getOrigin());
+        pstmt.setLong(10, job.getPid());
+        pstmt.setString(11, job.getOutput());
+        if (job.getTime() != null) {
+          pstmt.setLong(12, job.getTime());
+        } else {
+          pstmt.setNull(12, 0);
+        }
+        pstmt.setLong(13, job.getLastUpdate());
         pstmt.executeUpdate();
         pstmt.close();
         lastUpdate = System.currentTimeMillis();
