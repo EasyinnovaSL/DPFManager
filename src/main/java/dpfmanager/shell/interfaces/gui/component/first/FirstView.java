@@ -38,11 +38,14 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_FIRST,
     viewLocation = "/fxml/first.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_FIRST)
 public class FirstView extends DpfSimpleView {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @FXML
   private TextField txtEmail, txtName, txtSurname, txtJob, txtOrganization, txtCountry;
@@ -81,12 +84,12 @@ public class FirstView extends DpfSimpleView {
         if (txtCountry.getText().length() == 0) ok = false;
         if (txtWhy.getText().length() == 0) ok = false;
         if (!ok) {
-          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Missing data", "Please fill in all the fields"));
+          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("missingData"), bundle.getString("fillData")));
           return;
         }
         if (txtEmail.getText().indexOf("@") < 0 || txtEmail.getText().indexOf("@") > txtEmail.getText().lastIndexOf(".")) {
           ok = false;
-          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Incorrect email", "Please write your email correctly"));
+          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("incorrectEmail"), bundle.getString("rewriteEmail")));
         }
         if (ok) {
           String url = "http://dpfmanager.org/form.php";
@@ -130,7 +133,7 @@ public class FirstView extends DpfSimpleView {
           if (getok) {
             DPFManagerProperties.setFirstTime(false);
           } else {
-            context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "An error occurred", "Sorry, we could not proceed your request. Try again the next time you run DPFManager"));
+            context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorOccurred"), bundle.getString("tryAgain")));
             DPFManagerProperties.setFirstTime(true);
           }
         }
@@ -141,7 +144,7 @@ public class FirstView extends DpfSimpleView {
       // Show main
       context.send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage());
     } catch (Exception ex) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception occurred", ex));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
     }
   }
 

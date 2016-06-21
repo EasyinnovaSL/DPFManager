@@ -35,8 +35,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+
+import com.sun.javafx.scene.control.skin.TableColumnHeader;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
@@ -45,6 +48,7 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -53,13 +57,18 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_REPORTS,
     viewLocation = "/fxml/summary.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_REPORTS)
 public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   // View elements
+  @FXML
+  private VBox reportsVbox;
   @FXML
   private Button loadMore;
   @FXML
@@ -111,70 +120,70 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     // Init MVC
     setModel(new ReportsModel());
     setController(new ReportsController());
+    getModel().setResourcebundle(bundle);
     addHeaders();
   }
 
   private void addHeaders() {
-    TableColumn colDate = new TableColumn("Date");
+    TableColumn colDate = new TableColumn(bundle.getString("colDate"));
     setMinMaxWidth(colDate, 85);
     colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
-    TableColumn colTime = new TableColumn("Time");
+    TableColumn colTime = new TableColumn(bundle.getString("colTime"));
     setMinMaxWidth(colTime, 75);
     colTime.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("time")
     );
 
-    TableColumn colN = new TableColumn("#Files");
-    setMinMaxWidth(colN, 50);
+    TableColumn colN = new TableColumn(bundle.getString("colN"));
+    setMinMaxWidth(colN, 70);
     colN.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("nfiles")
     );
 
-    TableColumn colFile = new TableColumn("Input");
-    setMinMaxWidth(colFile, 200);
+    TableColumn colFile = new TableColumn(bundle.getString("colFile"));
+    setMinMaxWidth(colFile, 160);
     colFile.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("input")
     );
 
-    TableColumn colErrors = new TableColumn("Errors");
+    TableColumn colErrors = new TableColumn(bundle.getString("colErrors"));
     setMinMaxWidth(colErrors, 65);
     colErrors.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("errors")
     );
 
-    TableColumn colWarnings = new TableColumn("Warnings");
-    setMinMaxWidth(colWarnings, 65);
+    TableColumn colWarnings = new TableColumn(bundle.getString("colWarnings"));
+    setMinMaxWidth(colWarnings, 85);
     colWarnings.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("warnings")
     );
 
-    TableColumn colPassed = new TableColumn("Passed");
+    TableColumn colPassed = new TableColumn(bundle.getString("colPassed"));
     setMinMaxWidth(colPassed, 65);
     colPassed.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("passed")
     );
 
-    colScore = new TableColumn("Score");
+    colScore = new TableColumn(bundle.getString("colScore"));
     setMinMaxWidth(colScore, 75);
     colScore.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("score")
     );
 
-    colFormats = new TableColumn("Formats");
+    colFormats = new TableColumn(bundle.getString("colFormats"));
     setMinMaxWidth(colFormats, 150);
     colFormats.setCellValueFactory(
         new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
     );
 
-    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
+    tabReports.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     tabReports.setPrefWidth(840.0);
+    tabReports.setFixedCellSize(28.0);
+    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
     tabReports.setCursor(Cursor.DEFAULT);
     tabReports.setEditable(false);
-    // Fixed size
-    tabReports.setFixedCellSize(28.0);
     tabReports.setMaxHeight(470.0);
-//    tabReports.setMinHeight(100.0);
 
     // Change column colors
     changeColumnTextColor(colDate, Color.LIGHTGRAY);

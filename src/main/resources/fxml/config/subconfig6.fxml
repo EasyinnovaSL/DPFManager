@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -9,6 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+
 <VBox xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <GridPane>
         <columnConstraints>
@@ -26,7 +32,7 @@
                         <Insets right="20.0" />
                     </HBox.margin>
                 </ImageView>
-                <Label styleClass="label-info" text="Implementation checker" />
+                <Label styleClass="label-info" text="%w6ImplCheck" />
                 <GridPane.margin>
                     <Insets left="200.0" />
                 </GridPane.margin>
@@ -59,7 +65,7 @@
                         <Insets right="20.0" />
                     </HBox.margin>
                 </ImageView>
-                <Label styleClass="label-info" text="Policy checker" />
+                <Label styleClass="label-info" text="%w6PolCheck" />
                 <GridPane.margin>
                     <Insets left="200.0" />
                 </GridPane.margin>
@@ -92,7 +98,7 @@
                         <Insets right="20.0" />
                     </HBox.margin>
                 </ImageView>
-                <Label styleClass="label-info" text="Report" />
+                <Label styleClass="label-info" text="%w6Report" />
                 <GridPane.margin>
                     <Insets left="200.0" />
                 </GridPane.margin>
@@ -125,7 +131,7 @@
                         <Insets right="20.0" />
                     </HBox.margin>
                 </ImageView>
-                <Label styleClass="label-info" text="Metadata fixer" />
+                <Label styleClass="label-info" text="%w6MetaFix" />
                 <GridPane.margin>
                     <Insets left="200.0" />
                 </GridPane.margin>
@@ -158,12 +164,12 @@
                         <Insets right="20.0" />
                     </HBox.margin>
                 </ImageView>
-                <Label styleClass="label-info" text="Periodical checks" />
+                <Label styleClass="label-info" text="%w6PerCheck" />
                 <GridPane.margin>
                     <Insets left="200.0" />
                 </GridPane.margin>
             </HBox>
-            <Label fx:id="labPeriodical" styleClass="label-white" text="None" GridPane.columnIndex="1" />
+            <Label fx:id="labPeriodical" styleClass="label-white" text="%w6None" GridPane.columnIndex="1" />
         </children>
         <VBox.margin>
             <Insets bottom="15.0" top="10.0" />

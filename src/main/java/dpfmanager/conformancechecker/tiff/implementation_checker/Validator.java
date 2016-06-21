@@ -252,15 +252,20 @@ public class Validator {
             else {
               String value2 = op2.getValue();
               if (value.contains("/"))
-                value = Float.parseFloat(value.split("/")[0]) / Float.parseFloat(value.split("/")[1]) + "";
+                value = Double.parseDouble(value.split("/")[0]) / Double.parseDouble(value.split("/")[1]) + "";
               if (value2.contains("/"))
-                value2 = Float.parseFloat(value2.split("/")[0]) / Float.parseFloat(value2.split("/")[1]) + "";
+                value2 = Double.parseDouble(value2.split("/")[0]) / Double.parseDouble(value2.split("/")[1]) + "";
               if (operation.equals("==")) ok = value.equals(value2);
               else if (operation.equals("!="))
-                ok = Float.parseFloat(value) != Float.parseFloat(value2);
+                ok = !value.equals(value2);
               else if (operation.equals(">"))
-                ok = Float.parseFloat(value) > Float.parseFloat(value2);
-              else ok = Float.parseFloat(value) < Float.parseFloat(value2);
+                ok = Double.parseDouble(value) > Double.parseDouble(value2);
+              else {
+                ok = Double.parseDouble(value) < Double.parseDouble(value2);
+
+                if (!ok)
+                  ok = false;
+              }
             }
           }
         } else {

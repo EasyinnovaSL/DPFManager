@@ -2,6 +2,7 @@ package dpfmanager.shell.modules.conformancechecker;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.DpfLogger;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.GuiContext;
@@ -41,7 +42,7 @@ public class ConformanceCheckerModule extends DpfModule {
         String path = cm.getPath();
         String input = cm.getInput();
         if (!service.readConfig(path)) {
-          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, "Error reading configuration file"));
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
         } else {
           service.setParameters(null, cm.getRecursive(), null);
           service.initProcessInputRun(input);

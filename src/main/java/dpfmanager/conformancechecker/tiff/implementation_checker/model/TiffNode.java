@@ -100,7 +100,7 @@ public class TiffNode implements TiffNodeInterface {
         for (String filter : filters) {
           String childValue = filter.substring(filter.indexOf("=") + 1).trim();
           String childName = filter.substring(0, filter.indexOf("=")).trim();
-          if (!hasChild(childName) || !getChild(childName).getValue().equals(childValue))
+          if (!hasChild(childName) || getChild(childName).getValue() == null || !getChild(childName).getValue().equals(childValue))
             matches = false;
         }
         return matches;

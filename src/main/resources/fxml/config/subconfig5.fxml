@@ -7,5 +7,5 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
-    <Label styleClass="label-info" text="Not implemented Yet" />
+    <Label styleClass="label-info" text="%w5NoImplemented" />
 </VBox>

@@ -117,24 +117,31 @@ public class RuleElement {
     } catch (Exception ex) {
 
     }
+    if(fieldName.equals("true") || fieldName.equals("false"))
+      return fieldName;
+
     if (node == null) return null;
     if (!node.hasChild(getName(), filter)) return null;
     String op1value = node.getChild(getName(), filter).getValue();
     String value = operate(op1value);
-    if (value.contains("/")) {
-      try {
-        int inum = Integer.parseInt(value.substring(0, value.indexOf("/")));
-        int iden = Integer.parseInt(value.substring(value.indexOf("/") + 1));
-        return (inum / (float)iden) + "";
-      } catch (Exception ex) {
+    if (value != null) {
+      if (value.contains("/")) {
+        try {
+          int inum = Integer.parseInt(value.substring(0, value.indexOf("/")));
+          int iden = Integer.parseInt(value.substring(value.indexOf("/") + 1));
+          return (inum / (float) iden) + "";
+        } catch (Exception ex) {
 
+        }
       }
-    }
-    if (value.startsWith("[") && value.endsWith("]")) {
-      String val = value.substring(1);
-      val = val.substring(0, val.length() - 1);
-      val = val.split(",")[0];
-      value = val;
+      if (value.startsWith("[") && value.endsWith("]")) {
+        String val = value.substring(1);
+        val = val.substring(0, val.length() - 1);
+        val = val.split(",")[0];
+        value = val;
+      }
+    } else {
+      value = "";
     }
     return value;
   }

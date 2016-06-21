@@ -29,6 +29,7 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 /**
@@ -36,12 +37,14 @@ import java.util.regex.Pattern;
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_2,
     viewLocation = "/fxml/config/subconfig2.fxml",
-    localeID = "en_US",
+    resourceBundleLocation = "bundles.language",
     scope = Scope.SINGLETON)
 public class Wizard2Fragment {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @FXML
   private VBox rulesBox;
@@ -143,7 +146,7 @@ public class Wizard2Fragment {
 
     // Checkboc
     CheckBox warning = new CheckBox();
-    warning.setText("Warning");
+    warning.setText(bundle.getString("w2Warning"));
     warning.getStyleClass().add("checkreport");
     warning.setSelected(bwarning);
 

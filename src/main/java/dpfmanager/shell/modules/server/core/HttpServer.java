@@ -15,6 +15,7 @@
  */
 package dpfmanager.shell.modules.server.core;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -67,7 +68,7 @@ public final class HttpServer {
 
       Channel ch = b.bind(PORT).sync().channel();
 
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Started server at " + getServerUri()));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, DPFManagerProperties.getBundle().getString("startedServer").replace("%1", getServerUri())));
 
       ch.closeFuture().sync();
     } finally {

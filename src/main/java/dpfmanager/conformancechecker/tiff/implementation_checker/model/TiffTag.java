@@ -18,6 +18,8 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
   String type;
   int offset;
   String value;
+  boolean duplicatedNuls;
+  int lastByte;
   TiffIfd exif;
   TiffIfd subifd;
   TiffIfd globalparameters;
@@ -53,8 +55,25 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     this.type = type;
   }
 
+  @XmlAttribute
   public String getType() {
     return type;
+  }
+
+  public void setLastByte(int val) {
+    this.lastByte = val;
+  }
+
+  public int getLastByte() {
+    return lastByte;
+  }
+
+  public void setDuplicatedNuls(boolean val) {
+    this.duplicatedNuls = val;
+  }
+
+  public boolean getDuplicatedNuls() {
+    return duplicatedNuls;
   }
 
   public void setOffset(int offset) {
@@ -113,6 +132,8 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("name", name));
     childs.add(new TiffSingleNode("type", type));
     childs.add(new TiffSingleNode("value", value));
+    childs.add(new TiffSingleNode("duplicatedNuls", duplicatedNuls + ""));
+    childs.add(new TiffSingleNode("lastByte", lastByte + ""));
     if (exif !=null) {
       childs.add(exif);
     }

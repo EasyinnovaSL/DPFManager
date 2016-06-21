@@ -47,11 +47,14 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_CONFIG,
     viewLocation = "/fxml/config.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_CONFIG)
 public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @FXML
   private HBox hboxSave;
@@ -108,6 +111,8 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     // Set model and controller
     setModel(new ConfigModel());
     setController(new ConfigController());
+    getController().setResourcebundle(bundle);
+    getModel().setResourcebundle(bundle);
 
     stepsButtons = Arrays.asList(step1, step2, step3, step4, step5 ,step6);
 
@@ -243,22 +248,22 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   public void changeStepTitle(int x){
     switch (x){
       case 1:
-        stepTitle.setText("IMPLEMENTATION CHECKER");
+        stepTitle.setText(bundle.getString("configIC"));
         break;
       case 2:
-        stepTitle.setText("POLICY CHECKER");
+        stepTitle.setText(bundle.getString("configPC"));
         break;
       case 3:
-        stepTitle.setText("REPORT");
+        stepTitle.setText(bundle.getString("configReport"));
         break;
       case 4:
-        stepTitle.setText("METADATA FIXER");
+        stepTitle.setText(bundle.getString("configMF"));
         break;
       case 5:
-        stepTitle.setText("PERIODICAL CHECKS");
+        stepTitle.setText(bundle.getString("configPeC"));
         break;
       case 6:
-        stepTitle.setText("CONFIGURATION SUMMARY");
+        stepTitle.setText(bundle.getString("configCS"));
         break;
     }
 
@@ -273,10 +278,10 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
       } else {
         NodeUtil.showNode(hboxSave);
       }
-      continueButton.setText("Save configuration");
+      continueButton.setText(bundle.getString("configSave"));
     } else {
       NodeUtil.hideNode(hboxSave);
-      continueButton.setText("Continue");
+      continueButton.setText(bundle.getString("configContinue"));
     }
   }
 
