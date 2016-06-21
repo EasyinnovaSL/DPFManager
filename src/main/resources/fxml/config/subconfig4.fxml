@@ -6,7 +6,7 @@
 <VBox id="wizStep4" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <VBox fx:id="autoFixesBox">
         <VBox.margin>
-            <Insets left="250.0" bottom="20.0"/>
+            <Insets bottom="20.0" left="250.0" />
         </VBox.margin>
     </VBox>
     <VBox fx:id="fixesBox">
@@ -14,5 +14,5 @@
             <Insets left="250.0" />
         </VBox.margin>
     </VBox>
-    <Button id="addFixButton" maxWidth="180.0" minWidth="180.0" onAction="#addFix" mnemonicParsing="false" prefWidth="180.0" styleClass="secondary-button" text="Add Fix"/>
+    <Button id="addFixButton" minWidth="180.0" mnemonicParsing="false" onAction="#addFix" styleClass="secondary-button" text="%w4AddFix" />
 </VBox>

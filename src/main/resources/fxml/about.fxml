@@ -8,32 +8,45 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
 
 <AnchorPane id="pane-about" prefHeight="313.0" prefWidth="761.0" style="-fx-border-width: 0;" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox layoutX="45.0" layoutY="-83.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label id="aboutTitle" styleClass="clabel-title" text="About DPF Manager">
+                <Label id="aboutTitle" styleClass="clabel-title" text="%aboutTitle">
                     <VBox.margin>
                         <Insets bottom="5.0" top="10.0" />
                     </VBox.margin>
                 </Label>
-                <Label fx:id="lblVersion" prefHeight="25.0" prefWidth="182.0" styleClass="clabel" text="version " wrapText="true">
-                    <VBox.margin>
-                        <Insets bottom="25.0" />
-                    </VBox.margin>
+                <HBox>
+                    <children>
+                        <Label prefHeight="25.0" styleClass="clabel" text="%aboutVersion" wrapText="true" />
+                        <Label fx:id="lblVersion" prefHeight="25.0" styleClass="clabel" text="Unknown" wrapText="true">
+                            <HBox.margin>
+                                <Insets left="4.0" />
+                            </HBox.margin>
+                        </Label>
+                    </children>
+                </HBox>
+                <Label styleClass="clabel" text="%aboutLine1" wrapText="true" />
+                <Label prefHeight="50.0" styleClass="clabel" text="%aboutLine2" wrapText="true" />
+                <Label text="%aboutLine3" wrapText="true">
+                    <styleClass>
+                        <String fx:value="clabel" />
+                        <String fx:value="translate" />
+                        <String fx:value="trad-aboutLine3" />
+                    </styleClass>
                 </Label>
-                <Label styleClass="clabel" text="DPF Manager is the most advanced TIFF conformance checker for digital preservation." wrapText="true" />
-                <Label prefHeight="50.0" styleClass="clabel" text="DPF Manager is promoted by Easy Innova, the Digital Humanities Lab of the University of Basel and the Agents Research Lab of the University of It is supported by many memory institutions." wrapText="true" />
-                <Label styleClass="clabel" text="DPF Manager has been created in parallel with Tiff Library 4J, an open source TIFF library for java." wrapText="true" />
-                <Label prefHeight="50.0" styleClass="clabel" text="This initiative has been boosted by PREFORMA, a PCP project that aims to address the challenge of implementing good quality standardised file formats for preserving data content in the long term." wrapText="true" />
-                <Label prefHeight="25.0" styleClass="clabel" text="Check the DPF Manager website for more information and manuals http://www.dpfmanager.org" wrapText="true">
+                <Label prefHeight="50.0" styleClass="clabel" text="%aboutLine4" wrapText="true" />
+                <Label prefHeight="25.0" styleClass="clabel" text="%aboutLine5" wrapText="true">
                     <VBox.margin>
                         <Insets bottom="20.0" />
                     </VBox.margin>
                 </Label>
-                <CheckBox fx:id="chkFeedback" mnemonicParsing="false" onAction="#changeFeedback" styleClass="checklegal" text="I authorize the DPF Manager to automatically send feedback" />
+                <CheckBox fx:id="chkFeedback" mnemonicParsing="false" onAction="#changeFeedback" styleClass="clabel" text="%aboutAutorize" />
             </children>
             <padding>
                 <Insets left="30.0" top="10.0" />

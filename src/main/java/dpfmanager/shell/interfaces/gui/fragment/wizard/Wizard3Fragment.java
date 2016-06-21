@@ -17,30 +17,30 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 08/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_3,
     viewLocation = "/fxml/config/subconfig3.fxml",
+    resourceBundleLocation = "bundles.language",
     scope = Scope.SINGLETON)
 public class Wizard3Fragment {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @FXML
   private CheckBox chkDefaultOutput;
-
   @FXML
   private HBox hboxOutput;
-
   @FXML
   private TextField txtOutput;
-
   @FXML
   private Button butOutput;
-
   @FXML
   private CheckBox chkHtml, chkXml, chkJson, chkPdf;
 
@@ -105,7 +105,7 @@ public class Wizard3Fragment {
   @FXML
   public void browseOutput(ActionEvent event) {
     DirectoryChooser folderChooser = new DirectoryChooser();
-    folderChooser.setTitle("Select Output Folder");
+    folderChooser.setTitle(bundle.getString("w3SelectOutput"));
     //folderChooser.setInitialDirectory(new File(getDefaultBrowseDirectory()));
     File directory = folderChooser.showDialog(GuiWorkbench.getMyStage());
     if (directory != null) {

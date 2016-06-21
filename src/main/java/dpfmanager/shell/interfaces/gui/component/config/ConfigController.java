@@ -57,17 +57,17 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
         String name = getView().getSaveFilename();
         if (name.isEmpty()) {
           // Empty input
-          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please, enter the filename."));
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("enterFilename")));
         } else {
           name = checkInput(name);
           if (name == null) {
             // Alert incorrect name format
-            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please, enter only the filename, not a path."));
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("noEnterPath")));
           } else {
             file = new File(DPFManagerProperties.getConfigDir() + "/" + name);
             if (file.exists()) {
               // Alert name exists
-              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "There is already a file with this name."));
+              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("enterDuplicate")));
               file = null;
             }
           }
@@ -80,7 +80,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
         getModel().saveConfig(file.getAbsolutePath());
         getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
       } catch (Exception ex) {
-        getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
+        getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(getBundle().getString("exception"), ex));
       }
     }
   }

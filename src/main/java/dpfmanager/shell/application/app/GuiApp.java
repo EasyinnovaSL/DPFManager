@@ -1,6 +1,7 @@
 package dpfmanager.shell.application.app;
 
 import dpfmanager.shell.application.launcher.ui.GuiLauncher;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.CustomErrorHandler;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.application.Application;
@@ -10,6 +11,8 @@ import javafx.stage.Stage;
 
 import org.jacpfx.api.handler.ErrorDialogHandler;
 import org.jacpfx.rcp.workbench.FXWorkbench;
+
+import java.util.Locale;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -22,6 +25,7 @@ public class GuiApp extends GuiLauncher {
 
   @Override
   protected void postInit(Stage stage) {
+    // Logo img
     Image img = new Image("/gui-logo-white.png");
     if (img != null) {
       stage.getIcons().add(img);
@@ -46,6 +50,8 @@ public class GuiApp extends GuiLauncher {
 
   @Override
   public String getXmlConfig() {
+    // Update locale
+    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
     return "DpfSpringGui.xml";
   }
 

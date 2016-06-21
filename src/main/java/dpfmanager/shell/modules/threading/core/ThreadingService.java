@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -55,6 +56,11 @@ public class ThreadingService extends DpfService {
    */
   private int cores;
 
+  /**
+   * The resource bundle
+   */
+  private ResourceBundle bundle;
+
   private Map<Long, FileCheck> checks;
   private Queue<FileCheck> pendingChecks;
 
@@ -63,6 +69,7 @@ public class ThreadingService extends DpfService {
   @PostConstruct
   public void init() {
     // No context yet
+    bundle = DPFManagerProperties.getBundle();
     checks = new HashMap<>();
     pendingChecks = new LinkedList<>();
     needReload = true;
@@ -187,7 +194,7 @@ public class ThreadingService extends DpfService {
       // Init file check
       FileCheck fc = checks.get(gm.getUuid());
       fc.init(gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Starting check: " + gm.getInput()));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("startingCheck").replace("%1",gm.getInput())));
       context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.INIT, fc.getUuid(), fc.getTotal(), fc.getInternal()));
     } else if (gm.isFinish()) {
       // Finish file check
@@ -258,7 +265,7 @@ public class ThreadingService extends DpfService {
         FileUtils.deleteDirectory(zipFolder);
       }
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove zip", e));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excZip"), e));
     }
   }
 
@@ -269,7 +276,7 @@ public class ThreadingService extends DpfService {
         FileUtils.deleteDirectory(zipFolder);
       }
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove zip", e));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excDownload"), e));
     }
   }
 
@@ -280,7 +287,7 @@ public class ThreadingService extends DpfService {
         FileUtils.deleteDirectory(folder);
       }
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove internal folder", e));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excInternal"), e));
     }
   }
 
@@ -291,7 +298,7 @@ public class ThreadingService extends DpfService {
         FileUtils.deleteDirectory(folder);
       }
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove server folder", e));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excServer"), e));
     }
   }
 
@@ -311,10 +318,10 @@ public class ThreadingService extends DpfService {
         fullHtmlPath = fullHtmlPath.replaceAll("\\\\", "/");
         Desktop.getDesktop().browse(new URI("file:///" + fullHtmlPath.replaceAll(" ", "%20")));
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Error opening the bowser with the global report.", e));
+        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("browserError"), e));
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Desktop services not suported."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("deskServError")));
     }
   }
 

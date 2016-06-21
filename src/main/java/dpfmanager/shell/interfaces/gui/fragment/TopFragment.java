@@ -24,16 +24,19 @@ import org.jacpfx.rcp.util.LayoutUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 04/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_TOP,
+    resourceBundleLocation = "bundles.language",
     scope = Scope.SINGLETON)
 public class TopFragment extends FlowPane {
 
   @Resource
   private Context context;
+  private ResourceBundle bundle;
 
   private ToggleButton showDessign;
   private ToggleButton showReports;
@@ -61,13 +64,13 @@ public class TopFragment extends FlowPane {
     showDessign.setId(ButDessign);
     topButtons.add(showDessign);
 
-    showReports = new ToggleButton("Reports");
+    showReports = new ToggleButton("reports");
     showReports.getStyleClass().add("top-button");
     showReports.getStyleClass().add("top-button-center");
     showReports.setId(ButReports);
     topButtons.add(showReports);
 
-    showAbout = new ToggleButton("About");
+    showAbout = new ToggleButton("about");
     showAbout.getStyleClass().add("top-button");
     showAbout.setId(ButAbout);
     topButtons.add(showAbout);
@@ -79,8 +82,12 @@ public class TopFragment extends FlowPane {
     this.getStyleClass().add("top-pane");
     this.getStyleClass().add("background-main");
     this.setAlignment(Pos.TOP_CENTER);
+  }
 
-    LayoutUtil.GridPaneUtil.setFullGrow(Priority.ALWAYS, this);
+  public void setBundle(ResourceBundle bundle) {
+    showDessign.setText(bundle.getString("conformanceChecker"));
+    showReports.setText(bundle.getString("reports"));
+    showAbout.setText(bundle.getString("about"));
   }
 
   private StackPane createSeparator() {

@@ -17,7 +17,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
 
@@ -46,8 +48,17 @@ public class ServerLauncher {
    */
   private List<String> params;
 
+  /**
+   * The resource bundle
+   */
+  private ResourceBundle bundle;
+
   public ServerLauncher(String[] args) {
     DPFManagerProperties.setFinished(false);
+    // Parameters
+    params = new ArrayList(Arrays.asList(args));
+    // Update locale
+    updateLanguage();
     // Load spring context
     AppContext.loadContext("DpfSpringServer.xml");
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
@@ -56,8 +67,23 @@ public class ServerLauncher {
     context = new ConsoleContext(AppContext.getApplicationContext());
     // The main controller
     controller = new ServerController(context);
-    // Parameters
-    params = new ArrayList(Arrays.asList(args));
+  }
+
+  /**
+   * Update the app language.
+   */
+  private void updateLanguage(){
+    // Check if language is specified
+    if (params.contains("-l")){
+      int langIndex = params.indexOf("-l") +1;
+      String language = params.get(langIndex);
+      Locale newLocale = new Locale(language);
+      if (newLocale != null){
+        DPFManagerProperties.setLanguage(language);
+      }
+    }
+    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
+    bundle = DPFManagerProperties.getBundle();
   }
 
   /**
@@ -89,7 +115,7 @@ public class ServerLauncher {
     if (!argsError) {
       context.send(BasicConfig.MODULE_SERVER, new ServerMessage(ServerMessage.Type.START));
     } else {
-      printOut("Parameters error");
+      printOut(bundle.getString("paramError"));
     }
   }
 
@@ -117,7 +143,7 @@ public class ServerLauncher {
   }
 
   private void printException(Exception ex){
-    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception has occurred!", ex));
+    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
   }
 
   /**

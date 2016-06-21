@@ -21,6 +21,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,6 +37,8 @@ public class DatabaseConnection {
   private Long lastUpdate;
   private Long initTime;
 
+  private ResourceBundle bundle;
+
   public DatabaseConnection(DpfContext c) {
     context = c;
     initTime = System.currentTimeMillis();
@@ -46,6 +49,7 @@ public class DatabaseConnection {
    * Init function
    */
   public void init() {
+    bundle = DPFManagerProperties.getBundle();
     String filename = getDatabaseFile();
     try {
       Class.forName("org.sqlite.JDBC");
@@ -58,7 +62,7 @@ public class DatabaseConnection {
       createFirstTable();
     } catch (Exception e) {
       e.printStackTrace();
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot connect to database (" + filename + ")."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB2").replace("%1",filename)));
     }
   }
 
@@ -70,7 +74,7 @@ public class DatabaseConnection {
     try {
       connection = DriverManager.getConnection(dbUrl, dbConfig.toProperties());
     } catch (SQLException e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot connect to database."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
     }
     return connection;
   }
@@ -82,7 +86,7 @@ public class DatabaseConnection {
     try {
       globalConnection.close();
     } catch (SQLException e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot close the database."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotCloseDB")));
     }
   }
 
@@ -159,7 +163,7 @@ public class DatabaseConnection {
       }
       stmt.close();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
     }
     return job;
   }
@@ -190,12 +194,12 @@ public class DatabaseConnection {
         }
         stmt.close();
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error obtaining program pid."));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetPid")));
       } finally {
         releaseConnection();
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
     }
     return maxPid;
   }
@@ -232,12 +236,12 @@ public class DatabaseConnection {
         pstmt.close();
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error creating new job."));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorCreateJob")));
       } finally {
         releaseConnection();
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
     }
   }
 
@@ -263,12 +267,12 @@ public class DatabaseConnection {
         globalConnection.setAutoCommit(true);
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error updating job."));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorUpdateJob")));
       } finally {
         releaseConnection();
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
     }
   }
 
@@ -284,7 +288,7 @@ public class DatabaseConnection {
       }
       stmt.close();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
     }
     return jobs;
   }
@@ -298,12 +302,12 @@ public class DatabaseConnection {
         stmt.close();
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error deleting job."));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorDeleteJob")));
       } finally {
         releaseConnection();
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
     }
   }
 

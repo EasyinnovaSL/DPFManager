@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -58,10 +59,12 @@ public class ConsoleController {
   private Configuration config;
   private boolean explicitFormats;
   private boolean explicitOutput;
+  private ResourceBundle bundle;
 
-  public ConsoleController(ConsoleContext c) {
+  public ConsoleController(ConsoleContext c, ResourceBundle r) {
     setDefault();
     context = c;
+    bundle = r;
     tmpFiles = new ArrayList<>();
   }
 
@@ -182,11 +185,11 @@ public class ConsoleController {
       if (name != null && name.getLength() > 0) {
         NodeList subList = name.item(0).getChildNodes();
         if (subList != null && subList.getLength() > 0) {
-          printOut("Conformance checker: " + subList.item(0).getNodeValue());
+          printOut(bundle.getString("confCheck").replace("%1", subList.item(0).getNodeValue()));
         }
       }
 
-      printOut("Extensions: ");
+      printOut(bundle.getString("extensions"));
       NodeList extensions = doc.getElementsByTagName("extension");
       String extensionsStr = "";
       if (extensions != null && extensions.getLength() > 0) {
@@ -215,12 +218,12 @@ public class ConsoleController {
               desc = nodes.item(j).getTextContent();
             }
           }
-          printOut("Standard: " + stdName + " (" + desc + ")");
+          printOut(bundle.getString("standard").replace("%1",stdName).replace("%2",desc));
         }
       }
       printOut("");
     } catch (Exception e) {
-      printOut("Failed communication with conformance checker: " + e.getMessage());
+      printOut(bundle.getString("failedCC").replace("%1", e.getMessage()));
     }
   }
 
@@ -243,30 +246,19 @@ public class ConsoleController {
    */
   public void displayHelp() {
     printOut("");
-    printOut("Usage: dpfmanager [options] source1 [source2 ... sourceN]");
-    printOut("(the sources can be single TIF files, directories, zip files or URLs)");
-    printOut("Options:");
-    printOut("    -help: Displays this help message");
-    printOut("    -v: Shows application version number");
-    printOut("    -gui: Launches graphical user interface");
-    printOut("    -configuration <filename>: Selects a configuration file");
-    printOut("    -o <path>: Specifies the output folder (overriding the one specified in the config file).");
-    printOut("    -reportformat '[xml, json, pdf, html]': Specifies the report format (overriding the one in the config file). Default is 'xml,html'.");
-    printOut("    -r[depth]: Check directories recursively. If no depth is given (-r) then it is fully-recursive. Default is '-r1'");
-    printOut("    -s: Silent execution (do not open the report at the end)");
-    printOut("    -t[N]: Specify maximum number of threads used for checking. By default, SO chooses.");
-    printOut("    -url <url:port>: Connect to a remote conformance checker.");
-    printOut("    -job <job_id>: Get job state.");
-    printOut("    -server [-p <port_number>]: Init server on the given port (default port is randomly chosen).");
-    printOut("    -w: Wait for a remote check to finish. Default is false.");
+    for (int i = 1; i<4; i++){
+      printOut(bundle.getString("help"+i));
+    }
+    for (int i = 4; i<18; i++){
+      printOut("    "+bundle.getString("help"+i));
+    }
   }
 
   /**
    * Shows program version.
    */
   public void displayVersion() {
-    String sversion = DPFManagerProperties.getVersion();
-    printOut("DPF Manager version " + sversion);
+    printOut(bundle.getString("dpfVersion").replace("%1",DPFManagerProperties.getVersion()));
   }
 
   /**
@@ -324,6 +316,6 @@ public class ConsoleController {
   }
 
   private void printException(Exception ex) {
-    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception has occurred!", ex));
+    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
   }
 }
