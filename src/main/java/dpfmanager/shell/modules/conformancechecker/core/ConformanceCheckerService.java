@@ -117,7 +117,7 @@ public class ConformanceCheckerService extends DpfService {
     if (left == 0 && filesToCheck.get(pim.getUuid()).getFiles().size() > 0){
       // Start check
       startCheck(pim.getUuid(),filesToCheck.get(pim.getUuid()));
-    } else {
+    } else if (left == 0){
       filesToCheck.remove(pim.getUuid());
       cancelCheck(pim.getUuid());
       if (parameters.get("mode") != null && parameters.get("mode").equals("CMD")) {
