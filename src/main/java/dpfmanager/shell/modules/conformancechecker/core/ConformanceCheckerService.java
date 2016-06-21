@@ -1,9 +1,11 @@
 package dpfmanager.shell.modules.conformancechecker.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
 import dpfmanager.shell.modules.conformancechecker.runnable.ProcessInputRunnable;
@@ -107,9 +109,12 @@ public class ConformanceCheckerService extends DpfService {
 
     // Check if waiting is finish
     Integer left = filesToCheck.get(pim.getUuid()).getToWait();
-    if (left == 0){
+    if (left == 0 && filesToCheck.get(pim.getUuid()).getFiles().size() > 0){
       // Start check
       startCheck(pim.getUuid(),filesToCheck.get(pim.getUuid()));
+    } else {
+      // Finish app
+      AppContext.close();
     }
   }
 

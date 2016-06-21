@@ -216,7 +216,7 @@ public class ThreadingService extends DpfService {
       totalChecks++;
       if (totalChecks >= 10){
         System.gc();
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Run Garbage Collector"));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("runGC")));
         totalChecks = 0;
       }
       // Start pending checks
