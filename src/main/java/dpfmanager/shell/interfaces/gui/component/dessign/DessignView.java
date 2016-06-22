@@ -152,6 +152,9 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       }
     });
     vBoxConfig.getChildren().add(radio);
+    if (selected){
+      selectedButton = radio;
+    }
   }
 
   public void deleteSelectedConfig() {
