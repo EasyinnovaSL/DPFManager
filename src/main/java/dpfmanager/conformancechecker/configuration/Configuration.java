@@ -41,6 +41,7 @@ public class Configuration {
   private ArrayList<String> formats;
   private Fixes fixes;
   private String output = null;
+  private String description = null;
   private int version;
 
   /**
@@ -127,6 +128,15 @@ public class Configuration {
    */
   public void setOutput(String path) {
     output = path;
+  }
+
+  /**
+   * Sets description.
+   *
+   * @param desc the description
+   */
+  public void setDescription(String desc) {
+    description = desc;
   }
 
   /**
@@ -225,6 +235,12 @@ public class Configuration {
       elem.setTextContent(output);
       configurationE.appendChild(elem);
     }
+    // Description
+    if (description != null) {
+      Element elem = doc.createElement("description");
+      elem.setTextContent(description);
+      configurationE.appendChild(elem);
+    }
     // Finish
     doc.appendChild(configurationE);
 
@@ -281,7 +297,7 @@ public class Configuration {
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
     Document doc = dBuilder.parse(fXmlFile);
 
-    // Read xml version and output
+    // Read xml version, output and description
     NodeList nList = doc.getDocumentElement().getChildNodes();
     for (int i = 0; i < nList.getLength(); i++) {
       Node node = nList.item(i);
@@ -293,6 +309,9 @@ public class Configuration {
             break;
           case "output":
             output = elem.getTextContent();
+            break;
+          case "description":
+            description = elem.getTextContent();
             break;
         }
       }
@@ -495,5 +514,9 @@ public class Configuration {
       if (i + 1 < isos.size()) txt += ", ";
     }
     return txt;
+  }
+
+  public String getDescription() {
+    return description;
   }
 }

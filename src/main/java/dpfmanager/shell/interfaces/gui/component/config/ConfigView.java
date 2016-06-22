@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -57,11 +58,17 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   private ResourceBundle bundle;
 
   @FXML
-  private HBox hboxSave;
+  private GridPane gridSave;
+  @FXML
+  private HBox hboxName;
+  @FXML
+  private HBox hboxDescription;
   @FXML
   private Button continueButton;
   @FXML
   private TextField saveNameInput;
+  @FXML
+  private TextField saveDescInput;
   @FXML
   private ImageView configArrow;
   @FXML
@@ -102,6 +109,11 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     if (message != null && message.isTypeOf(ConfigMessage.class)) {
       getController().clearAllSteps();
       gotoConfig(1);
+      if (!isEdit) {
+        saveDescInput.clear();
+      } else {
+        saveDescInput.setText(getModel().getConfiguration().getDescription());
+      }
     }
     return null;
   }
@@ -273,14 +285,15 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public void setContinueButton(int x){
     if (x == 6) {
+      NodeUtil.showNode(gridSave);
       if (isEdit) {
-        NodeUtil.hideNode(hboxSave);
+        NodeUtil.hideNode(hboxName);
       } else {
-        NodeUtil.showNode(hboxSave);
+        NodeUtil.showNode(hboxName);
       }
       continueButton.setText(bundle.getString("configSave"));
     } else {
-      NodeUtil.hideNode(hboxSave);
+      NodeUtil.hideNode(gridSave);
       continueButton.setText(bundle.getString("configContinue"));
     }
   }
@@ -297,6 +310,10 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public String getSaveFilename(){
     return saveNameInput.getText();
+  }
+
+  public String getDescription(){
+    return saveDescInput.getText();
   }
 
   @Override
