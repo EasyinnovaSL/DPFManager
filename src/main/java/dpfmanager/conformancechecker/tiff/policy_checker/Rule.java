@@ -111,4 +111,20 @@ public class Rule {
       }
     }
   }
+
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
+
+  public void setOperator(String operator) {
+    this.operator = operator;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
+  }
+
+  public void setWarning(boolean warning) {
+    this.warning = warning;
+  }
 }

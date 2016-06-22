@@ -68,4 +68,19 @@ public class Fixes {
     fix.ReadTxt(txt);
     fixes.add(fix);
   }
+
+  /**
+   * Add fix from parameters.
+   *
+   * @param tag the tag
+   * @param operator the operator
+   * @param value the value
+   */
+  public void addFix(String tag, String operator, String value) {
+    Fix fix = new Fix();
+    fix.setTag(tag);
+    fix.setOperator(operator);
+    fix.setValue(value);
+    fixes.add(fix);
+  }
 }
