@@ -160,8 +160,8 @@
    <reference>Section 5, page 23</reference>
   </rule>
   <rule context="ifd[type=Pallete]">
-   <assert test="{tags.tag[name=ColorMap].Cardinality == 3*2^BitsPerSample}">Incorrect Color Map Cardinality</assert>
-   <reference>Section 5, page 23</reference>
+   <assert test="{tags.tag[name=ColorMap]}">Color Map must be included in pallette-color images</assert>
+   <reference>Section 8, page 30</reference>
   </rule>
   <rule context="ifd[type=Transparency]">
    <assert test="{tags.tag[name=BitsPerSample] == 1}">Invalid Bits per Sample for Transparency Mask image</assert>
@@ -225,6 +225,14 @@
   <rule context="tags">
    <assert test="{tag[name=ResolutionUnit] == 1} || {tag[name=ResolutionUnit] == 2} || {tag[name=ResolutionUnit] == 3}">Resolution Unit possible values are 1, 2 and 3</assert>
    <reference>Section 8, page 38</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{tag[name=XResolution]}">X Resolution tag must exist</assert>
+   <reference>Section 7, page 27</reference>
+  </rule>
+  <rule context="tags">
+   <assert test="{tag[name=YResolution]}">Y Resolution tag must exist</assert>
+   <reference>Section 7, page 27</reference>
   </rule>
   <rule context="tags" level="warning">
    <assert test="{tag[name=XResolution] > 0}">X Resolution should be greater than 0</assert>
