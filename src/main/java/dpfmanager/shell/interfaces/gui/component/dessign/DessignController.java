@@ -149,13 +149,13 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
         }
         if (error) {
           // Add source file
-          getView().addConfigFile(file.getAbsolutePath(), false);
+          getView().addConfigFile(file.getAbsolutePath(), file, false);
           getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, getBundle().getString("errorCopyConfig")));
         } else if (needAdd) {
-          getView().addConfigFile(configFile.getName(), false);
+          getView().addConfigFile(configFile.getName(), configFile, false);
         }
       } else {
-        getView().addConfigFile(file.getAbsolutePath(), false);
+        getView().addConfigFile(file.getAbsolutePath(), file, false);
       }
     }
   }

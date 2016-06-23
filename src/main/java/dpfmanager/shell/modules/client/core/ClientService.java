@@ -112,6 +112,7 @@ public class ClientService extends DpfService {
       config.SaveFile(dest.getAbsolutePath());
       client.addConfig(dest);
     } catch (Exception e) {
+      e.printStackTrace();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorTmpFile")));
       return;
     }

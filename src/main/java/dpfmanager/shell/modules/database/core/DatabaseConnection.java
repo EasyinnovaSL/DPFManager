@@ -10,6 +10,9 @@ import dpfmanager.shell.modules.messages.messages.LogMessage;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -49,13 +52,25 @@ public class DatabaseConnection {
     bundle = DPFManagerProperties.getBundle();
     String filename = getDatabaseFile();
     try {
+      checkLockFile();
       Class.forName("org.h2.Driver");
       dbUrl = "jdbc:h2:" + filename + ";AUTO_SERVER=TRUE";
       globalConnection = connect();
       createFirstTable();
     } catch (Exception e) {
-      e.printStackTrace();
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB2").replace("%1",filename)));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB2").replace("%1", filename)));
+    }
+  }
+
+  private void checkLockFile() throws Exception {
+    File lockFile = new File(getDatabaseLockFile());
+    if (lockFile.exists()) {
+      BasicFileAttributes attr = Files.readAttributes(Paths.get(getDatabaseLockFile()), BasicFileAttributes.class);
+      Long fileMilis = attr.creationTime().toMillis();
+      Long currentMilis = System.currentTimeMillis();
+      if (currentMilis - fileMilis > (60 * 1000)) {
+        lockFile.delete();
+      }
     }
   }
 
@@ -165,7 +180,7 @@ public class DatabaseConnection {
     Jobs job = new Jobs();
     try {
       Statement stmt = globalConnection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE+" WHERE "+Jobs.HASH+" LIKE \""+ hash+"\"");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.HASH + " LIKE \"" + hash + "\"");
       while (rs.next()) {
         job.parseResultSet(rs);
       }

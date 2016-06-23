@@ -59,4 +59,21 @@ public class Rules {
     rule.ReadTxt(txt);
     rules.add(rule);
   }
+
+  /**
+   * Add rule from parameters.
+   *
+   * @param tag the tag
+   * @param operator the operator
+   * @param value the value
+   * @param warning the warning
+   */
+  public void addRule(String tag, String operator, String value, boolean warning) {
+    Rule rule = new Rule();
+    rule.setTag(tag);
+    rule.setOperator(operator);
+    rule.setValue(value);
+    rule.setWarning(warning);
+    rules.add(rule);
+  }
 }

@@ -1,22 +1,38 @@
 package dpfmanager.conformancechecker.configuration;
 
-import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
+import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.DpFManagerConstants;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * Created by easy on 06/10/2015.
@@ -27,6 +43,10 @@ public class Configuration {
   private ArrayList<String> formats;
   private Fixes fixes;
   private String output = null;
+  private String description = null;
+  private int version;
+
+  private ResourceBundle bundle;
 
   /**
    * Gets isos.
@@ -84,6 +104,8 @@ public class Configuration {
     rules = new Rules();
     formats = new ArrayList<>();
     fixes = new Fixes();
+    version = 0;
+    bundle = DPFManagerProperties.getBundle();
   }
 
   /**
@@ -99,7 +121,7 @@ public class Configuration {
   /**
    * Set the default values for a new configuration
    */
-  public void initDefault(){
+  public void initDefault() {
     addISO("Baseline");
     addFormat("HTML");
   }
@@ -114,8 +136,16 @@ public class Configuration {
   }
 
   /**
-   * Gets output.
-   * Null means default.
+   * Sets description.
+   *
+   * @param desc the description
+   */
+  public void setDescription(String desc) {
+    description = desc;
+  }
+
+  /**
+   * Gets output. Null means default.
    *
    * @return the output
    */
@@ -130,23 +160,109 @@ public class Configuration {
    * @throws Exception the exception
    */
   public void SaveFile(String filename) throws Exception {
-    PrintWriter writer = new PrintWriter(filename, "UTF-8");
+    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+    Document doc = docBuilder.newDocument();
+
+    Element configurationE = doc.createElement("configuration");
+    // XML Version
+    Element versionE = doc.createElement("version");
+    versionE.setTextContent(String.valueOf(DpFManagerConstants.CONFIGURATION_VERSION));
+    configurationE.appendChild(versionE);
+    // ISOs
+    Element isosE = doc.createElement("isos");
     for (String iso : isos) {
-      writer.println("ISO\t" + iso);
+      Element elem = doc.createElement("iso");
+      elem.setTextContent(iso);
+      isosE.appendChild(elem);
     }
+    configurationE.appendChild(isosE);
+    // Formats
+    Element formatsE = doc.createElement("formats");
     for (String format : formats) {
-      writer.println("FORMAT\t" + format);
+      Element elem = doc.createElement("format");
+      elem.setTextContent(format);
+      formatsE.appendChild(elem);
     }
-    if (rules != null){
-      rules.Write(writer);
+    configurationE.appendChild(formatsE);
+    // Rules
+    Element rulesE = doc.createElement("rules");
+    if (rules != null) {
+      for (Rule rule : rules.getRules()) {
+        Element ruleE = doc.createElement("rule");
+        if (rule.getTag() != null) {
+          Element elem = doc.createElement("tag");
+          elem.setTextContent(rule.getTag());
+          ruleE.appendChild(elem);
+        }
+        if (rule.getOperator() != null) {
+          Element elem = doc.createElement("operator");
+          elem.setTextContent(rule.getOperator());
+          ruleE.appendChild(elem);
+        }
+        if (rule.getValue() != null) {
+          Element elem = doc.createElement("value");
+          elem.setTextContent(rule.getValue());
+          ruleE.appendChild(elem);
+        }
+        if (rule.getWarning()) {
+          Element elem = doc.createElement("warning");
+          elem.setTextContent(String.valueOf(rule.getWarning()));
+          ruleE.appendChild(elem);
+        }
+        rulesE.appendChild(ruleE);
+      }
     }
+    configurationE.appendChild(rulesE);
+    Element fixesE = doc.createElement("fixes");
+    // Fixes
     if (fixes != null) {
-      fixes.Write(writer);
+      for (Fix fix : fixes.getFixes()) {
+        Element fixE = doc.createElement("fix");
+        if (fix.getTag() != null) {
+          Element elem = doc.createElement("tag");
+          elem.setTextContent(fix.getTag());
+          fixE.appendChild(elem);
+        }
+        if (fix.getOperator() != null) {
+          Element elem = doc.createElement("operator");
+          elem.setTextContent(fix.getOperator());
+          fixE.appendChild(elem);
+        }
+        if (fix.getValue() != null) {
+          Element elem = doc.createElement("value");
+          elem.setTextContent(fix.getValue());
+          fixE.appendChild(elem);
+        }
+        fixesE.appendChild(fixE);
+      }
     }
+    configurationE.appendChild(fixesE);
+    // Output
     if (output != null) {
-      writer.println("OUTPUT\t" + output);
+      Element elem = doc.createElement("output");
+      elem.setTextContent(output);
+      configurationE.appendChild(elem);
     }
-    writer.close();
+    // Description
+    if (description != null) {
+      Element elem = doc.createElement("description");
+      elem.setTextContent(description);
+      configurationE.appendChild(elem);
+    }
+    // Finish
+    doc.appendChild(configurationE);
+
+    // write the content into xml file
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    Transformer transformer = transformerFactory.newTransformer();
+    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+    DOMSource source = new DOMSource(doc);
+
+    File f = new File(filename);
+    StreamResult result = new StreamResult(f);
+    transformer.transform(source, result);
   }
 
   private InputStream getInputStream(String filename) throws Exception {
@@ -179,30 +295,166 @@ public class Configuration {
   }
 
   /**
+   * Read file new format (xml).
+   *
+   * @param filename the filename
+   * @throws Exception the exception
+   */
+  public void ReadFileNew(String filename) throws Exception {
+    File fXmlFile = new File(filename);
+    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    Document doc = dBuilder.parse(fXmlFile);
+
+    // Read xml version, output and description
+    NodeList nList = doc.getDocumentElement().getChildNodes();
+    for (int i = 0; i < nList.getLength(); i++) {
+      Node node = nList.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        Element elem = (Element) node;
+        switch (elem.getTagName()) {
+          case "version":
+            version = Integer.parseInt(elem.getTextContent());
+            break;
+          case "output":
+            output = elem.getTextContent();
+            break;
+          case "description":
+            description = elem.getTextContent();
+            break;
+        }
+      }
+    }
+
+    // Read ISOs
+    NodeList isoList = doc.getElementsByTagName("iso");
+    for (int i = 0; i < isoList.getLength(); i++) {
+      Node node = isoList.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        Element elem = (Element) node;
+        isos.add(elem.getTextContent());
+      }
+    }
+
+    // Read formats
+    NodeList formatsList = doc.getElementsByTagName("format");
+    for (int i = 0; i < formatsList.getLength(); i++) {
+      Node node = formatsList.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        Element elem = (Element) node;
+        formats.add(elem.getTextContent());
+      }
+    }
+
+    // Read rules
+    NodeList rulesList = doc.getElementsByTagName("rule");
+    for (int i = 0; i < rulesList.getLength(); i++) {
+      Node node = rulesList.item(i);
+      String tag = null, operator = null, value = null;
+      boolean warning = false;
+      NodeList childs = node.getChildNodes();
+      for (int j = 0; j < childs.getLength(); j++) {
+        Node child = childs.item(j);
+        if (child.getNodeType() == Node.ELEMENT_NODE) {
+          Element elem = (Element) child;
+          switch (elem.getTagName()) {
+            case "tag":
+              tag = elem.getTextContent();
+              break;
+            case "operator":
+              operator = elem.getTextContent();
+              break;
+            case "value":
+              value = elem.getTextContent();
+              break;
+            case "warning":
+              warning = elem.getTextContent().equals("true");
+              break;
+          }
+        }
+      }
+      rules.addRule(tag, operator, value, warning);
+    }
+
+    // Read fixes
+    NodeList fixesList = doc.getElementsByTagName("fix");
+    for (int i = 0; i < fixesList.getLength(); i++) {
+      Node node = fixesList.item(i);
+      String tag = null, operator = null, value = null;
+      NodeList childs = node.getChildNodes();
+      for (int j = 0; j < childs.getLength(); j++) {
+        Node child = childs.item(j);
+        if (child.getNodeType() == Node.ELEMENT_NODE) {
+          Element elem = (Element) child;
+          switch (elem.getTagName()) {
+            case "tag":
+              tag = elem.getTextContent();
+              break;
+            case "operator":
+              operator = elem.getTextContent();
+              break;
+            case "value":
+              value = elem.getTextContent();
+              break;
+          }
+        }
+      }
+      fixes.addFix(tag, operator, value);
+    }
+
+    // Read output
+    output = null;
+    NodeList outputList = doc.getElementsByTagName("output");
+    if (outputList.getLength() > 0) {
+      Node node = outputList.item(0);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        Element elem = (Element) node;
+        output = elem.getTextContent();
+      }
+    }
+  }
+
+  /**
    * Read file.
    *
    * @param filename the filename
    * @throws Exception the exception
    */
   public void ReadFile(String filename) throws Exception {
-    output = null;
     BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream(filename)));
     try {
       String line = br.readLine();
-
-      while (line != null) {
-        if (line.contains("\t")) {
-          String field1 = line.substring(0, line.indexOf("\t"));
-          String field2 = line.substring(line.indexOf("\t") + 1);
-          switch (field1) {
-            case "ISO": isos.add(field2); break;
-            case "FORMAT": formats.add(field2); break;
-            case "FIX": fixes.addFixFromTxt(field2); break;
-            case "RULE": rules.addRuleFromTxt(field2); break;
-            case "OUTPUT": output = field2; break;
+      if (line != null && line.startsWith("<?xml")) {
+        // New format
+        br.close();
+        ReadFileNew(filename);
+      } else {
+        // Old format
+        output = null;
+        while (line != null) {
+          if (line.contains("\t")) {
+            String field1 = line.substring(0, line.indexOf("\t"));
+            String field2 = line.substring(line.indexOf("\t") + 1);
+            switch (field1) {
+              case "ISO":
+                isos.add(field2);
+                break;
+              case "FORMAT":
+                formats.add(field2);
+                break;
+              case "FIX":
+                fixes.addFixFromTxt(field2);
+                break;
+              case "RULE":
+                rules.addRuleFromTxt(field2);
+                break;
+              case "OUTPUT":
+                output = field2;
+                break;
+            }
           }
+          line = br.readLine();
         }
-        line = br.readLine();
       }
     } finally {
       br.close();
@@ -216,12 +468,12 @@ public class Configuration {
    */
   public String getTxtRules() {
     String txt = "";
-    for (int i=0;i<rules.getRules().size();i++) {
+    for (int i = 0; i < rules.getRules().size(); i++) {
       Rule rule = rules.getRules().get(i);
       String val = "";
       if (rule.getValue() != null) val = rule.getValue();
       txt += (rule.getTag() + " " + rule.getOperator() + " " + val).trim();
-      if (i+1 < rules.getRules().size()) txt += ", ";
+      if (i + 1 < rules.getRules().size()) txt += ", ";
     }
     return txt;
   }
@@ -233,14 +485,14 @@ public class Configuration {
    */
   public String getTxtFixes() {
     String txt = "";
-    for (int i=0;i<fixes.getFixes().size();i++) {
+    for (int i = 0; i < fixes.getFixes().size(); i++) {
       Fix fix = fixes.getFixes().get(i);
       String val = "";
-      String op = fix.getOperator();
+      String op = bundle.getString(fix.getOperator());
       if (op == null) op = "";
       if (fix.getValue() != null && !fix.getValue().isEmpty()) val = "'" + fix.getValue() + "'";
       txt += (op + " " + fix.getTag() + " " + val).trim();
-      if (i+1 < fixes.getFixes().size()) txt += ", ";
+      if (i + 1 < fixes.getFixes().size()) txt += ", ";
     }
     return txt;
   }
@@ -252,9 +504,9 @@ public class Configuration {
    */
   public String getTxtFormats() {
     String txt = "";
-    for (int i=0;i<formats.size();i++) {
+    for (int i = 0; i < formats.size(); i++) {
       txt += formats.get(i);
-      if (i+1 < formats.size()) txt += ", ";
+      if (i + 1 < formats.size()) txt += ", ";
     }
     return txt;
   }
@@ -266,10 +518,14 @@ public class Configuration {
    */
   public String getTxtIsos() {
     String txt = "";
-    for (int i=0;i<isos.size();i++) {
+    for (int i = 0; i < isos.size(); i++) {
       txt += isos.get(i);
-      if (i+1 < isos.size()) txt += ", ";
+      if (i + 1 < isos.size()) txt += ", ";
     }
     return txt;
+  }
+
+  public String getDescription() {
+    return description;
   }
 }

@@ -23,6 +23,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
 import org.jacpfx.api.annotations.Resource;
@@ -30,9 +31,15 @@ import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.util.ResourceBundle;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -131,7 +138,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
-          addConfigFile(fileEntry.getName(), fileEntry.getName().equalsIgnoreCase(previous));
+          addConfigFile(fileEntry.getName(), fileEntry, fileEntry.getName().equalsIgnoreCase(previous));
         }
       }
     }
@@ -139,12 +146,16 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     configScroll.setContent(vBoxConfig);
   }
 
-  public void addConfigFile(String text, boolean selected) {
+  public void addConfigFile(String text, File file, boolean selected) {
     RadioButton radio = new RadioButton();
     radio.setId("radioConfig" + vBoxConfig.getChildren().size());
     radio.setText(text);
     radio.setToggleGroup(group);
     radio.setSelected(selected);
+    String description = readDescription(file);
+    if (description != null && !description.isEmpty()) {
+      radio.setTooltip(new Tooltip(description));
+    }
     radio.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -155,6 +166,27 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     if (selected){
       selectedButton = radio;
     }
+  }
+
+  private String readDescription(File file){
+    try {
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(file);
+      NodeList nList = doc.getDocumentElement().getChildNodes();
+      for (int i = 0; i < nList.getLength(); i++) {
+        org.w3c.dom.Node node = nList.item(i);
+        if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+          Element elem = (Element) node;
+          if (elem.getTagName().equals("description")){
+            return elem.getTextContent();
+          }
+        }
+      }
+    } catch (Exception e){
+      return null;
+    }
+    return null;
   }
 
   public void deleteSelectedConfig() {

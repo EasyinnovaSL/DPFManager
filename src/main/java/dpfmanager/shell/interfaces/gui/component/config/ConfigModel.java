@@ -90,8 +90,8 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
 
   public ArrayList<String> getFixes() {
     ArrayList<String> fixes = new ArrayList<>();
-    fixes.add(getBundle().getString("removeTag"));
-    fixes.add(getBundle().getString("addTag"));
+    fixes.add("removeTag");
+    fixes.add("addTag");
     return fixes;
   }
 

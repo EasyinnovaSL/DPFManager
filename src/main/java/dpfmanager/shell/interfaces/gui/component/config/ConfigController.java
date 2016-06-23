@@ -42,6 +42,10 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
   }
 
   public void saveConfig() {
+    // Save description
+    String description = getView().getDescription();
+    getModel().getConfiguration().setDescription(description);
+    // Save to file
     File file = null;
     String path = getModel().getPath();
     if (path != null) {
