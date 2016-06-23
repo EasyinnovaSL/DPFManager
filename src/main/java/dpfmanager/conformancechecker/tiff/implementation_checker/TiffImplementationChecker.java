@@ -14,10 +14,15 @@ import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
 
+import org.jsoup.Connection;
+
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 
 /**
  * Created by easy on 08/03/2016.
@@ -25,6 +30,7 @@ import java.util.List;
 public class TiffImplementationChecker {
   private TiffDocument tiffDoc;
   boolean setITFields = false;
+  private Hashtable<Integer, Integer> usedOffsetsSizes;
 
   public void setITFields(boolean setITFields) {
     this.setITFields = setITFields;
@@ -33,6 +39,7 @@ public class TiffImplementationChecker {
   public TiffValidationObject CreateValidationObject(TiffDocument tiffDoc) {
     this.tiffDoc = tiffDoc;
     TiffValidationObject tiffValidate = new TiffValidationObject();
+    usedOffsetsSizes = new Hashtable<>();
 
     // Generic info
     tiffValidate.setSize(tiffDoc.getSize());
@@ -43,9 +50,13 @@ public class TiffImplementationChecker {
     header.setMagicNumber(tiffDoc.getMagicNumber() + "");
     header.setOffset(tiffDoc.getFirstIFDOffset());
     tiffValidate.setHeader(header);
+    usedOffsetsSizes.put(0, 8);
 
     // IFDs
     IFD ifd = tiffDoc.getFirstIFD();
+    if (ifd != null) {
+      usedOffsetsSizes.put(tiffDoc.getFirstIFDOffset(), 4);
+    }
     List<TiffIfd> ifdsList = new ArrayList<TiffIfd>();
     int n = 1;
     HashSet<Integer> usedOffsets = new HashSet<>();
@@ -58,6 +69,9 @@ public class TiffImplementationChecker {
         break;
       } else {
         usedOffsets.add(ifd.getNextOffset());
+      }
+      if (ifd.getNextIFD() != null) {
+        usedOffsetsSizes.put(ifd.getNextOffset(), 4);
       }
       ifd = ifd.getNextIFD();
     }
@@ -102,6 +116,7 @@ public class TiffImplementationChecker {
       }
       prevTagId = tv.getId();
       tags.add(CreateTiffTag(tv));
+      usedOffsetsSizes.put(tv.getReadOffset(), tv.getReadlength());
     }
     TiffTags tiffTags = new TiffTags();
     tiffTags.setTags(tags);
@@ -487,6 +502,17 @@ public class TiffImplementationChecker {
     return ifd;
   }
 
+  boolean checkOffsetOverlapped(int offset, int length) {
+    for (Integer usedOffset : usedOffsetsSizes.keySet()) {
+      int size = usedOffsetsSizes.get(usedOffset);
+      if (offset >= usedOffset && offset < usedOffset + size)
+        return true;
+      if (offset + length >= usedOffset && offset + length < usedOffset + size)
+        return true;
+    }
+    return false;
+  }
+
   public TiffTag CreateTiffTag(TagValue tv) {
     TiffTag tt = new TiffTag();
     tt.setId(tv.getId());
@@ -494,6 +520,12 @@ public class TiffImplementationChecker {
     tt.setCardinality(tv.getCardinality());
     tt.setType(com.easyinnova.tiff.model.TiffTags.getTagTypeName(tv.getType()));
     tt.setOffset(tv.getReadOffset());
+    if (usedOffsetsSizes.get(tv.getReadOffset()) != null) {
+      tt.setUsedOffset(true);
+    } else {
+      tt.setOffsetOverlap(checkOffsetOverlapped(tv.getReadOffset(), tv.getReadlength()));
+      usedOffsetsSizes.put(tv.getReadOffset(), tv.getReadlength());
+    }
     if (tt.getType() != null && tt.getType().equals("ASCII")) {
       if (tv.getCardinality() > 0) {
         tt.setLastByte(tv.getValue().get(tv.getCardinality() - 1).toByte());
@@ -531,7 +563,7 @@ public class TiffImplementationChecker {
       }
       tt.setIptc(keyvalues);
     } else {
-      tt.setValue(tv.toString());
+      tt.setValue(tv.toString().replaceAll("\\p{C}", "?"));
     }
     return tt;
   }
