@@ -187,51 +187,55 @@ public class Configuration {
     configurationE.appendChild(formatsE);
     // Rules
     Element rulesE = doc.createElement("rules");
-    for (Rule rule : rules.getRules()) {
-      Element ruleE = doc.createElement("rule");
-      if (rule.getTag() != null) {
-        Element elem = doc.createElement("tag");
-        elem.setTextContent(rule.getTag());
-        ruleE.appendChild(elem);
+    if (rules != null) {
+      for (Rule rule : rules.getRules()) {
+        Element ruleE = doc.createElement("rule");
+        if (rule.getTag() != null) {
+          Element elem = doc.createElement("tag");
+          elem.setTextContent(rule.getTag());
+          ruleE.appendChild(elem);
+        }
+        if (rule.getOperator() != null) {
+          Element elem = doc.createElement("operator");
+          elem.setTextContent(rule.getOperator());
+          ruleE.appendChild(elem);
+        }
+        if (rule.getValue() != null) {
+          Element elem = doc.createElement("value");
+          elem.setTextContent(rule.getValue());
+          ruleE.appendChild(elem);
+        }
+        if (rule.getWarning()) {
+          Element elem = doc.createElement("warning");
+          elem.setTextContent(String.valueOf(rule.getWarning()));
+          ruleE.appendChild(elem);
+        }
+        rulesE.appendChild(ruleE);
       }
-      if (rule.getOperator() != null) {
-        Element elem = doc.createElement("operator");
-        elem.setTextContent(rule.getOperator());
-        ruleE.appendChild(elem);
-      }
-      if (rule.getValue() != null) {
-        Element elem = doc.createElement("value");
-        elem.setTextContent(rule.getValue());
-        ruleE.appendChild(elem);
-      }
-      if (rule.getWarning()) {
-        Element elem = doc.createElement("warning");
-        elem.setTextContent(String.valueOf(rule.getWarning()));
-        ruleE.appendChild(elem);
-      }
-      rulesE.appendChild(ruleE);
     }
     configurationE.appendChild(rulesE);
-    // Fixes
     Element fixesE = doc.createElement("fixes");
-    for (Fix fix : fixes.getFixes()) {
-      Element fixE = doc.createElement("fix");
-      if (fix.getTag() != null) {
-        Element elem = doc.createElement("tag");
-        elem.setTextContent(fix.getTag());
-        fixE.appendChild(elem);
+    // Fixes
+    if (fixes != null) {
+      for (Fix fix : fixes.getFixes()) {
+        Element fixE = doc.createElement("fix");
+        if (fix.getTag() != null) {
+          Element elem = doc.createElement("tag");
+          elem.setTextContent(fix.getTag());
+          fixE.appendChild(elem);
+        }
+        if (fix.getOperator() != null) {
+          Element elem = doc.createElement("operator");
+          elem.setTextContent(fix.getOperator());
+          fixE.appendChild(elem);
+        }
+        if (fix.getValue() != null) {
+          Element elem = doc.createElement("value");
+          elem.setTextContent(fix.getValue());
+          fixE.appendChild(elem);
+        }
+        fixesE.appendChild(fixE);
       }
-      if (fix.getOperator() != null) {
-        Element elem = doc.createElement("operator");
-        elem.setTextContent(fix.getOperator());
-        fixE.appendChild(elem);
-      }
-      if (fix.getValue() != null) {
-        Element elem = doc.createElement("value");
-        elem.setTextContent(fix.getValue());
-        fixE.appendChild(elem);
-      }
-      fixesE.appendChild(fixE);
     }
     configurationE.appendChild(fixesE);
     // Output
