@@ -4,6 +4,7 @@ import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.DpFManagerConstants;
 
 import org.w3c.dom.Document;
@@ -21,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -43,6 +45,8 @@ public class Configuration {
   private String output = null;
   private String description = null;
   private int version;
+
+  private ResourceBundle bundle;
 
   /**
    * Gets isos.
@@ -101,6 +105,7 @@ public class Configuration {
     formats = new ArrayList<>();
     fixes = new Fixes();
     version = 0;
+    bundle = DPFManagerProperties.getBundle();
   }
 
   /**
@@ -479,7 +484,7 @@ public class Configuration {
     for (int i = 0; i < fixes.getFixes().size(); i++) {
       Fix fix = fixes.getFixes().get(i);
       String val = "";
-      String op = fix.getOperator();
+      String op = bundle.getString(fix.getOperator());
       if (op == null) op = "";
       if (fix.getValue() != null && !fix.getValue().isEmpty()) val = "'" + fix.getValue() + "'";
       txt += (op + " " + fix.getTag() + " " + val).trim();

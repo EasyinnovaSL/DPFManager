@@ -184,6 +184,7 @@ public class Wizard4Fragment {
     }
     if (action != null) {
       if (!bundle.containsKey(action)){
+        // Old format
         comboBox.setValue(action);
       } else {
         comboBox.setValue(bundle.getString(action));
@@ -247,7 +248,7 @@ public class Wizard4Fragment {
     }
 
     // Value combo box or text field
-    if (item.equals("addTag")) {
+    if (item.equals("addTag") || item.equals("Add Tag")) {
       TextField value = new TextField();
       value.setId("textField");
       value.getStyleClass().add("txtFix");
