@@ -81,7 +81,7 @@
                         <children>
                             <HBox>
                                 <children>
-                                    <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectFileClicked" styleClass="secondary-button" text="%selectButton" />
+                                    <Button fx:id="selectButton" maxHeight="41.0" minHeight="41.0" mnemonicParsing="false" onAction="#selectFileClicked" prefHeight="41.0" styleClass="secondary-button" text="%selectButton" />
                                     <ComboBox fx:id="comboChoice" onAction="#onChangeInputType" prefWidth="150.0" styleClass="combo-dpf">
                                         <HBox.margin>
                                             <Insets left="5.0" top="5.0" />
