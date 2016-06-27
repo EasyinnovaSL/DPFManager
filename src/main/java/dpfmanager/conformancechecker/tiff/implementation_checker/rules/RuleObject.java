@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class RuleObject {
   String context;
   String reference;
-  int critical;
+  String level;
   AssertObject assertion;
   List<DiagnosticObject> diagnostics = null;
 
@@ -42,12 +42,12 @@ public class RuleObject {
   }
 
   @XmlAttribute
-  public void setCritical(int critical) {
-    this.critical = critical;
+  public void setLevel(String level) {
+    this.level = level;
   }
 
-  public int getCritical() {
-    return critical;
+  public String getLevel() {
+    return level;
   }
 
   @XmlElement(name = "assert")
@@ -64,5 +64,13 @@ public class RuleObject {
     String s = "";
     s += assertion.toString();
     return s;
+  }
+
+  public boolean isCritical() {
+    return level != null && level.equals("critical");
+  }
+
+  public boolean isWarning() {
+    return level != null && level.equals("warning");
   }
 }

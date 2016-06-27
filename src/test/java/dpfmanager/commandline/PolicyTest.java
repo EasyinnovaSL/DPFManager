@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Created by easy on 13/10/2015.
@@ -460,4 +461,123 @@ public class PolicyTest extends CommandLineTest {
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }
+
+  @Test
+  public void testPoliciesOk() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String path = "temp/output";
+    int idx = 1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String configfile = "temp/xx.cfg";
+    idx = 0;
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
+    bw.write("ISO\tBaseline\n" +
+        "FORMAT\tHTML\n" +
+        "RULE\tDPI,=,Even\n" +
+        "RULE\tBlankPage,=,False\n" +
+        "RULE\tEqualXYResolution,=,True\n");
+    bw.close();
+
+    String[] args = new String[6];
+    args[0] = "src/test/resources/classes/IMG_OK.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+    args[4] = "-configuration";
+    args[5] = configfile;
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    File directori = new File(path + "/html");
+    assertEquals(directori.exists(), true);
+
+    String html = null;
+    for (String file : directori.list()) {
+      if (file.equals("1-IMG_OK.tif.html")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
+        html = new String(encoded);
+      }
+    }
+    assertEquals(html != null, true);
+    String policyCheck = html.substring(html.indexOf("##ROW_PC##"));
+    policyCheck = policyCheck.substring(0, policyCheck.indexOf("</tr>"));
+    assertEquals(policyCheck.contains("<td class=\"error\">"), false);
+    assertEquals(policyCheck.contains("<td class=\"info\">0</td>"), true);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
+  }
+
+  @Test
+  public void testPoliciesKo() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    if (!new File("temp").exists()) {
+      new File("temp").mkdir();
+    }
+
+    String path = "temp/output";
+    int idx = 1;
+    while (new File(path).exists()) path = "temp/output" + idx++;
+
+    String configfile = "temp/xx.cfg";
+    idx = 0;
+    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
+
+    PrintWriter bw = new PrintWriter(configfile);
+    bw.write("ISO\tBaseline\n" +
+        "FORMAT\tHTML\n" +
+        "RULE\tDPI,=,Uneven\n" +
+        "RULE\tBlankPage,=,True\n" +
+        "RULE\tEqualXYResolution,=,False\n");
+    bw.close();
+
+    String[] args = new String[6];
+    args[0] = "src/test/resources/classes/IMG_OK.tif";
+    args[1] = "-s";
+    args[2] = "-o";
+    args[3] = path;
+    args[4] = "-configuration";
+    args[5] = configfile;
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    File directori = new File(path + "/html");
+    assertEquals(directori.exists(), true);
+
+    String html = null;
+    for (String file : directori.list()) {
+      if (file.equals("1-IMG_OK.tif.html")) {
+        byte[] encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
+        html = new String(encoded);
+      }
+    }
+    assertEquals(html != null, true);
+    String policyCheck = html.substring(html.indexOf("##ROW_PC##"));
+    policyCheck = policyCheck.substring(0, policyCheck.indexOf("</tr>"));
+    assertEquals(policyCheck.contains("<td class=\"error\">3</td>"), true);
+    assertEquals(policyCheck.contains("<td class=\"info\">0</td>"), true);
+
+    FileUtils.deleteDirectory(new File(path));
+
+    new File(configfile).delete();
+    FileUtils.deleteDirectory(new File("temp"));
+  }
+
 }

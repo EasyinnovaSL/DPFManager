@@ -392,7 +392,7 @@ public class PolicyCheckTest extends CommandLineTest {
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
         "FORMAT\tHTML\n" +
-        "RULE\tBlankPage,=,0,1\n");
+        "RULE\tBlankPage,=,False,1\n");
     bw.close();
 
     String[] args = new String[6];

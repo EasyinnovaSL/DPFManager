@@ -19,6 +19,8 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
   int offset;
   String value;
   boolean duplicatedNuls;
+  boolean usedOffset;
+  boolean offsetOverlap;
   int lastByte;
   TiffIfd exif;
   TiffIfd subifd;
@@ -74,6 +76,22 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
 
   public boolean getDuplicatedNuls() {
     return duplicatedNuls;
+  }
+
+  public void setUsedOffset(boolean val) {
+    this.usedOffset = val;
+  }
+
+  public boolean getUsedOffset() {
+    return usedOffset;
+  }
+
+  public void setOffsetOverlap(boolean val) {
+    this.offsetOverlap = val;
+  }
+
+  public boolean getOffsetOverlap() {
+    return offsetOverlap;
   }
 
   public void setOffset(int offset) {
@@ -134,6 +152,8 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("value", value));
     childs.add(new TiffSingleNode("duplicatedNuls", duplicatedNuls + ""));
     childs.add(new TiffSingleNode("lastByte", lastByte + ""));
+    childs.add(new TiffSingleNode("usedOffset", usedOffset + ""));
+    childs.add(new TiffSingleNode("offsetOverlap", offsetOverlap + ""));
     if (exif !=null) {
       childs.add(exif);
     }

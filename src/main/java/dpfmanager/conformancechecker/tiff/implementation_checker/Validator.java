@@ -131,7 +131,7 @@ public class Validator {
         List<TiffNode> objects = model.getObjectsFromContext(context, true);
         for (TiffNode node : objects) {
           boolean ok = checkRule(rule, node);
-          if (!ok && rule.getCritical() == 1) {
+          if (!ok && rule.isCritical()) {
             bbreak = true;
             break;
           }
@@ -301,6 +301,10 @@ public class Validator {
 
     if (ok) {
       RuleResult rr = new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString());
+      result.add(rr);
+    } else if (rule.isWarning()) {
+      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+      rr.setWarning(true);
       result.add(rr);
     } else {
       RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
