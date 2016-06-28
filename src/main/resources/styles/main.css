@@ -278,6 +278,33 @@
     -fx-background-color: white;
 }
 
+/* Reload Button */
+#reloadButton {
+    -fx-translate-x: -47;
+    -fx-translate-y: -35;
+    -fx-background-image: url('../images/refresh20.png');
+    -fx-background-color: transparent;
+    -fx-background-repeat: stretch;
+    -fx-background-size: 20 20;
+    -fx-background-position: center center;
+    -fx-min-width: 20;
+    -fx-max-width: 20;
+    -fx-min-height: 20;
+    -fx-max-height: 20;
+}
+#reloadButton:hover {
+    -fx-translate-x: -48;
+    -fx-translate-y: -36;
+    -fx-background-image: url('../images/refresh22.png');
+    -fx-background-color: transparent;
+    -fx-background-repeat: stretch;
+    -fx-background-size: 22 22;
+    -fx-background-position: center center;
+    -fx-min-width: 22;
+    -fx-max-width: 22;
+    -fx-min-height: 22;
+    -fx-max-height: 22;
+}
 
 /* Combo Box Langauges */
 .combo-box-grey {
@@ -451,6 +478,17 @@
 
 .split-pane:horizontal .split-pane-divider.show-divider {
     -fx-padding: 0 1 0 1;
+}
+
+
+/* Tree View */
+.check-box-tree-cell,
+.check-box-tree-cell:selected:focused:filled{
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+}
+.check-box-tree-cell .arrow{
+    -fx-background-color: black;
 }
 
 

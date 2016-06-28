@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -22,28 +23,32 @@
 
 <AnchorPane id="pane-design" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox id="dessignVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox id="dessignVbox" fx:id="mainVBox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <ImageView focusTraversable="true" preserveRatio="true" styleClass="main-logo">
-                <image> <Image url="@../images/logo.png" /></image>
+                <image>
+                    <Image url="@../images/logo.png" />
+                </image>
                 <VBox.margin>
                     <Insets bottom="60.0" top="40.0" />
                 </VBox.margin>
             </ImageView>
             <Label id="conformanceTitle" styleClass="mainTitle" text="%conformanceTitle" />
             <ImageView focusTraversable="true" preserveRatio="true">
-                <image> <Image url="@../images/lineTop.png" /></image>
+                <image>
+                    <Image url="@../images/lineTop.png" />
+                </image>
                 <VBox.margin>
                     <Insets bottom="30.0" left="65.0" right="65.0" top="10.0" />
                 </VBox.margin>
             </ImageView>
             <HBox alignment="CENTER">
                 <children>
-                   <Label id="labelFiles" styleClass="label-info" text="%labelFiles" />
-                   <Button fx:id="fileInfoBut" mnemonicParsing="false" onAction="#showFileInfo" styleClass="button-info">
-                      <HBox.margin>
-                         <Insets left="5.0" />
-                      </HBox.margin>
-                   </Button>
+                    <Label id="labelFiles" styleClass="label-info" text="%labelFiles" />
+                    <Button fx:id="fileInfoBut" mnemonicParsing="false" onAction="#showFileInfo" styleClass="button-info">
+                        <HBox.margin>
+                            <Insets left="5.0" />
+                        </HBox.margin>
+                    </Button>
                 </children>
             </HBox>
             <Pane styleClass="separator-line">
@@ -53,33 +58,53 @@
             </Pane>
             <HBox alignment="TOP_CENTER" maxWidth="504.0" minWidth="504.0">
                 <children>
-               <VBox HBox.hgrow="ALWAYS">
-                  <children>
-                          <TextField fx:id="inputText" maxHeight="41.0" minHeight="41.0" text="%inputText">
-                              <cursor>
-                                  <Cursor fx:constant="TEXT" />
-                              </cursor>
-                          </TextField>
-                     <CheckBox fx:id="recursiveCheck" mnemonicParsing="false" styleClass="checkreport" text="%recursiveCheck">
+                    <VBox HBox.hgrow="ALWAYS">
+                        <children>
+                            <TextField fx:id="inputText" maxHeight="41.0" minHeight="41.0" text="%inputText">
+                                <cursor>
+                                    <Cursor fx:constant="TEXT" />
+                                </cursor>
+                            </TextField>
+                            <HBox fx:id="treeViewHBox" maxHeight="250.0" minHeight="250.0" prefHeight="250.0">
+                                <VBox.margin>
+                                    <Insets />
+                                </VBox.margin>
+                            </HBox>
+                            <CheckBox fx:id="recursiveCheck" mnemonicParsing="false" styleClass="checkreport" text="%recursiveCheck">
+                                <VBox.margin>
+                                    <Insets left="5.0" top="5.0" />
+                                </VBox.margin>
+                            </CheckBox>
+                        </children>
+                    </VBox>
+                    <VBox>
+                        <children>
+                            <HBox>
+                                <children>
+                                    <Button fx:id="selectButton" maxHeight="41.0" minHeight="41.0" mnemonicParsing="false" onAction="#selectFileClicked" prefHeight="41.0" styleClass="secondary-button" text="%selectButton" />
+                                    <ComboBox fx:id="comboChoice" onAction="#onChangeInputType" prefWidth="150.0" styleClass="combo-dpf">
+                                        <HBox.margin>
+                                            <Insets left="5.0" top="5.0" />
+                                        </HBox.margin>
+                                    </ComboBox>
+                                </children>
+                                <VBox.margin>
+                                    <Insets />
+                                </VBox.margin>
+                            </HBox>
+                            <Button fx:id="reloadButton" mnemonicParsing="false" onAction="#reloadTreeView">
                         <VBox.margin>
-                           <Insets left="5.0" top="5.0" />
-                        </VBox.margin>
-                     </CheckBox>
-                  </children>
-               </VBox>
-                    <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectFileClicked" styleClass="secondary-button" text="%selectButton">
-                  <HBox.margin>
-                     <Insets left="5.0" />
-                  </HBox.margin></Button>
-               <ComboBox fx:id="comboChoice" onAction="#onChangeInputType" prefWidth="150.0" styleClass="combo-dpf">
-                  <HBox.margin>
-                     <Insets left="5.0" top="5.0" />
-                  </HBox.margin>
-               </ComboBox>
+                           <Insets />
+                        </VBox.margin></Button>
+                        </children>
+                        <HBox.margin>
+                            <Insets left="10.0" />
+                        </HBox.margin>
+                    </VBox>
                 </children>
-            <VBox.margin>
-               <Insets bottom="30.0" />
-            </VBox.margin>
+                <VBox.margin>
+                    <Insets bottom="30.0" />
+                </VBox.margin>
             </HBox>
             <HBox alignment="CENTER">
                 <children>
@@ -98,43 +123,48 @@
             </Pane>
             <ScrollPane fx:id="configScroll" hbarPolicy="AS_NEEDED" maxWidth="504.0" minHeight="175.0" prefHeight="175.0" prefWidth="504.0" styleClass="paneRadios">
                 <VBox.margin>
-                   <Insets bottom="15.0" />
+                    <Insets bottom="15.0" />
                 </VBox.margin>
                 <cursor>
-                   <Cursor fx:constant="HAND" />
+                    <Cursor fx:constant="HAND" />
                 </cursor>
             </ScrollPane>
             <HBox alignment="CENTER">
                 <children>
                     <Button fx:id="newButton" mnemonicParsing="false" onAction="#newButtonClicked" styleClass="button-trans" text="%newButton">
-                      <HBox.margin>
-                         <Insets right="8.0" />
-                      </HBox.margin></Button>
+                        <HBox.margin>
+                            <Insets right="8.0" />
+                        </HBox.margin>
+                    </Button>
                     <Button fx:id="importButton" mnemonicParsing="false" onAction="#importButtonClicked" styleClass="button-trans" text="%importButton">
-                      <HBox.margin>
-                         <Insets right="8.0" />
-                      </HBox.margin></Button>
+                        <HBox.margin>
+                            <Insets right="8.0" />
+                        </HBox.margin>
+                    </Button>
                     <Button fx:id="editButton" mnemonicParsing="false" onAction="#editButtonClicked" styleClass="button-trans" text="%editButton">
-                      <HBox.margin>
-                         <Insets right="8.0" />
-                      </HBox.margin></Button>
+                        <HBox.margin>
+                            <Insets right="8.0" />
+                        </HBox.margin>
+                    </Button>
                     <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteButtonClicked" styleClass="button-trans" text="%deleteButton" />
                 </children>
                 <VBox.margin>
-                   <Insets bottom="15.0" />
+                    <Insets bottom="15.0" />
                 </VBox.margin>
             </HBox>
             <ImageView focusTraversable="true" preserveRatio="true">
-                <image> <Image url="@../images/lineBottom.png" /></image>
+                <image>
+                    <Image url="@../images/lineBottom.png" />
+                </image>
                 <VBox.margin>
                     <Insets bottom="20.0" left="65.0" right="65.0" />
                 </VBox.margin>
             </ImageView>
-         <Button fx:id="checkFilesButton" mnemonicParsing="false" onAction="#checkFilesClicked" styleClass="main-button" text="%checkFilesButton">
-            <VBox.margin>
-               <Insets bottom="30.0" />
-            </VBox.margin>
-         </Button>
+            <Button fx:id="checkFilesButton" mnemonicParsing="false" onAction="#checkFilesClicked" styleClass="main-button" text="%checkFilesButton">
+                <VBox.margin>
+                    <Insets bottom="30.0" />
+                </VBox.margin>
+            </Button>
         </VBox>
     </children>
 </AnchorPane>

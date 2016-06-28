@@ -14,7 +14,6 @@ import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -32,9 +31,27 @@ import java.util.Optional;
 public class DessignController extends DpfController<DessignModel, DessignView> {
 
   public void mainCheckFiles() {
-    if (getView().getInputText().getText().equals(getBundle().getString("selectFile")) || getView().getInputText().getText().equals(getBundle().getString("selectFolder"))) {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertFile")));
-      return;
+    String input = "";
+    List<String> treeSelected = getView().getTreeSelectedItems();
+    if (treeSelected != null) {
+      // Tree view
+      if (treeSelected.isEmpty()) {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertFile")));
+        return;
+      } else {
+        for (String sel : treeSelected) {
+          input += sel + ";";
+        }
+        input = input.substring(0, input.length() - 1);
+      }
+    } else {
+      // Input text
+      if (getView().getInputText().getText().equals(getBundle().getString("selectFile")) || getView().getInputText().getText().equals(getBundle().getString("selectFolder"))) {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertFile")));
+        return;
+      } else {
+        input = getView().getInputText().getText();
+      }
     }
 
     RadioButton radio = getView().getSelectedConfig();
@@ -44,7 +61,6 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     }
 
     // Send to conformance checker module
-    String input = getView().getInputText().getText();
     String path = getFileByPath(radio.getText()).getAbsolutePath();
     int recursive = getView().getRecursive();
     ArrayMessage am = new ArrayMessage();
@@ -77,7 +93,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
           DPFManagerProperties.setDefaultDirFile(path);
         }
       }
-    } else if (c.getValue().equals(getBundle().getString("comboFolder"))){
+    } else if (c.getValue().equals(getBundle().getString("comboFolder"))) {
       DirectoryChooser folderChooser = new DirectoryChooser();
       folderChooser.setTitle(getBundle().getString("openFolder"));
       folderChooser.setInitialDirectory(new File(configDir));

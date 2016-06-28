@@ -17,15 +17,23 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import org.controlsfx.control.CheckTreeView;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -36,6 +44,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -58,6 +73,8 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   private ResourceBundle bundle;
 
   @FXML
+  private HBox treeViewHBox;
+  @FXML
   private ComboBox comboChoice;
   @FXML
   private VBox loadingVbox;
@@ -67,10 +84,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   private TextField inputText;
   @FXML
   private CheckBox recursiveCheck;
+  @FXML
+  private Button reloadButton;
 
   private VBox vBoxConfig;
   private ToggleGroup group;
   private RadioButton selectedButton;
+  private CheckTreeView<String> checkTreeView;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -118,9 +138,47 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       comboChoice.setMinWidth(10.0);
       comboChoice.getItems().add(bundle.getString("comboFile"));
       comboChoice.getItems().add(bundle.getString("comboFolder"));
+      comboChoice.getItems().add(bundle.getString("comboTreeview"));
       comboChoice.setValue(bundle.getString("comboFile"));
     }
     NodeUtil.hideNode(recursiveCheck);
+
+    // Add TreeView
+    addTreeView();
+    NodeUtil.hideNode(treeViewHBox);
+    NodeUtil.hideNode(reloadButton);
+  }
+
+  private void addTreeView() {
+    // Root node (my computer)
+    CheckBoxTreeItem<String> rootNode = new CheckBoxTreeItem<>(getHostName(), new ImageView(new Image("images/computer.png")));
+    checkTreeView = new CheckTreeView<>(rootNode);
+    rootNode.addEventHandler(TreeItem.<Object>branchExpandedEvent(), new ExpandEventHandler(checkTreeView));
+    rootNode.addEventHandler(TreeItem.<Object>branchCollapsedEvent(), new CollapseEventHandler());
+
+    // Root items
+    Iterable<Path> rootDirectories = FileSystems.getDefault().getRootDirectories();
+    for (Path name : rootDirectories) {
+      if (Files.isDirectory(name)) {
+        FilePathTreeItem treeNode = new FilePathTreeItem(name);
+        rootNode.getChildren().add(treeNode);
+      }
+    }
+    rootNode.setExpanded(true);
+
+    // Add data and add to gui
+    treeViewHBox.getChildren().clear();
+    treeViewHBox.getChildren().add(checkTreeView);
+    HBox.setHgrow(checkTreeView, Priority.ALWAYS);
+  }
+
+  private String getHostName() {
+    String hostName = bundle.getString("myComputer");
+    try {
+      hostName = InetAddress.getLocalHost().getHostName();
+    } catch (UnknownHostException x) {
+    }
+    return hostName;
   }
 
   private void addConfigFiles() {
@@ -163,12 +221,12 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       }
     });
     vBoxConfig.getChildren().add(radio);
-    if (selected){
+    if (selected) {
       selectedButton = radio;
     }
   }
 
-  private String readDescription(File file){
+  private String readDescription(File file) {
     try {
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -178,12 +236,12 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
         org.w3c.dom.Node node = nList.item(i);
         if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
           Element elem = (Element) node;
-          if (elem.getTagName().equals("description")){
+          if (elem.getTagName().equals("description")) {
             return elem.getTextContent();
           }
         }
       }
-    } catch (Exception e){
+    } catch (Exception e) {
       return null;
     }
     return null;
@@ -213,14 +271,30 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   protected void onChangeInputType(ActionEvent event) throws Exception {
     if (comboChoice.getValue() == bundle.getString("comboFile")) {
       inputText.setText(bundle.getString("selectFile"));
+      NodeUtil.showNode(inputText);
       NodeUtil.hideNode(recursiveCheck);
+      NodeUtil.hideNode(treeViewHBox);
+      NodeUtil.hideNode(reloadButton);
     } else if (comboChoice.getValue() == bundle.getString("comboFolder")) {
       inputText.setText(bundle.getString("selectFolder"));
+      NodeUtil.showNode(inputText);
       NodeUtil.showNode(recursiveCheck);
+      NodeUtil.hideNode(treeViewHBox);
+      NodeUtil.hideNode(reloadButton);
+    } else if (comboChoice.getValue() == bundle.getString("comboTreeview")) {
+      NodeUtil.hideNode(inputText);
+      NodeUtil.hideNode(recursiveCheck);
+      NodeUtil.showNode(treeViewHBox);
+      NodeUtil.showNode(reloadButton);
     }
     if (!GuiWorkbench.isTestMode()) {
       getController().selectInputAction();
     }
+  }
+
+  @FXML
+  protected void reloadTreeView(ActionEvent event) throws Exception {
+    addTreeView();
   }
 
   @FXML
@@ -259,7 +333,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   protected void deleteButtonClicked(ActionEvent event) throws Exception {
     RadioButton radio = getSelectedConfig();
     if (radio != null) {
-      AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("deleteConfirmation").replace("%1",radio.getText()), bundle.getString("deleteInfo"));
+      AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("deleteConfirmation").replace("%1", radio.getText()), bundle.getString("deleteInfo"));
       am.setTitle(bundle.getString("deleteTitle"));
       getContext().send(BasicConfig.MODULE_MESSAGE, am);
     } else {
@@ -267,6 +341,29 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     }
   }
 
+  public List<String> getTreeSelectedItems() {
+    if (treeViewHBox.isVisible()) {
+      int index = 0;
+      List<String> selected = new ArrayList<>();
+      TreeItem<String> item = checkTreeView.getTreeItem(index);
+      while (item != null) {
+        if (item instanceof FilePathTreeItem) {
+          FilePathTreeItem fpItem = (FilePathTreeItem) item;
+          if (!fpItem.isDirectory() && fpItem.isFullSelected()) {
+            if (!selected.contains(fpItem.getParentPath())) {
+              selected.add(fpItem.getFullPath());
+            }
+          } else if (fpItem.isFullSelected()) {
+            selected.add(fpItem.getFullPath());
+          }
+        }
+        item = checkTreeView.getTreeItem(++index);
+      }
+      return selected;
+    } else {
+      return null;
+    }
+  }
 
   public RadioButton getSelectedConfig() {
     RadioButton radio = (RadioButton) group.getSelectedToggle();
