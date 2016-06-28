@@ -1725,23 +1725,23 @@
  <rules description="cardinality-formulas">
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGLosslessPredictors tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 22, page 107</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGPointTransforms tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 22, page 107</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGQTables tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 22, page 107</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGDCTables tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 22, page 107</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGACTables tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 22, page 107</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of WhiteLevel tag must match SamplesPerPixel value</assert>
@@ -1753,19 +1753,19 @@
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=MinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of MinSampleValue tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 8, page 35</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=MaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of MaxSampleValue tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 8, page 35</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMinSampleValue tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 8, page 35</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMaxSampleValue tag must match SamplesPerPixel value</assert>
-   <reference></reference>
+   <reference>Section 8, page 35</reference>
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=ImageBaseColor].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of ImageBaseColor tag must match SamplesPerPixel value</assert>
@@ -1773,6 +1773,14 @@
   </rule>
   <rule context="ifd[class=image]">
    <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SampleFormat tag must match SamplesPerPixel value</assert>
+   <reference>Section 19, page 80</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=CMYKEquivalent].cardinality == 4*tags.tag[name=SamplesPerPixel]}">CMYKEquivalent count must be 4*Bits per Sample</assert>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule context="ifd[class=image]">
+   <assert test="{tags.tag[name=Decode].cardinality == 2*tags.tag[name=Decode]}">Decode count must be 2*Bits per Sample</assert>
    <reference></reference>
   </rule>
  </rules>

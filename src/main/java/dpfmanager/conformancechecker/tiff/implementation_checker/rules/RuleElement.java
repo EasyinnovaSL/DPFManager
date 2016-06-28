@@ -13,6 +13,7 @@ public class RuleElement {
   TiffNode node;
   TiffNode model;
   public boolean valid;
+  String multiplier;
 
   public RuleElement(String field, TiffNode nodeBase, TiffNode model) {
     valid = true;
@@ -20,6 +21,10 @@ public class RuleElement {
     this.model = model;
     filter = null;
     fieldName = field;
+    if (fieldName.contains("*")) {
+      multiplier = fieldName.substring(0, fieldName.indexOf("*"));
+      fieldName = fieldName.substring(fieldName.indexOf("*")+1);
+    }
     if (!fieldName.startsWith("$")) {
       while (fieldName.contains(".") || fieldName.contains("[")) {
         int indexDot = fieldName.indexOf(".");
@@ -89,6 +94,14 @@ public class RuleElement {
     return node.getChildren(getName(), filter);
   }
 
+  String operateMultiplier(String val) {
+    String value = val;
+    if (multiplier != null) {
+      value = (Integer.parseInt(val) * Integer.parseInt(multiplier)) + "";
+    }
+    return value;
+  }
+
   public String getValue() {
     if (fieldName.startsWith("$") && fieldName.endsWith("$")) {
       String val = fieldName.replace("$", "");
@@ -104,16 +117,16 @@ public class RuleElement {
         if (node == null) return null;
       }
       val = node.getValue();
-      return val;
-    }
-    if (fieldName.startsWith("'") && fieldName.endsWith("'")) {
+      return operateMultiplier(val);
+    } else if (fieldName.startsWith("'") && fieldName.endsWith("'")) {
       String val = fieldName.substring(1);
       val = val.substring(0, val.length() - 1);
-      return val;
+      return operateMultiplier(val);
     }
+
     try {
       int ival = Integer.parseInt(fieldName);
-      return ival + "";
+      return operateMultiplier(ival + "");
     } catch (Exception ex) {
 
     }
@@ -143,6 +156,6 @@ public class RuleElement {
     } else {
       value = "";
     }
-    return value;
+    return operateMultiplier(value);
   }
 }

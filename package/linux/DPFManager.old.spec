@@ -1,6 +1,6 @@
 Summary: DPF Manager
 Name: dpf-manager
-Version: 2.2
+Version: 2.3
 Release: 1
 License: Unknown
 Vendor: DPF Manager
@@ -69,4 +69,4 @@ fi
 
 rm /usr/bin/dpf-manager
 
-%clean
+%clean

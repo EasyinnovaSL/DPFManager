@@ -214,6 +214,8 @@ public class Validator {
 
       // Analyze clausules
       for (String clausule : clausules.getClausules()) {
+        if (clausule.contains("*"))
+          clausule = clausule;
         if (clausule.startsWith("count(")) {
           // Child count
           String countField = clausule.substring(clausule.indexOf("(") + 1);
