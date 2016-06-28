@@ -334,10 +334,11 @@ public class HtmlReport extends Report {
       if (tag.index > 0) seeTr = " hide";
       String expert = "";
       if (tag.expert) expert = " expert";
-      row = "<tr class='ifd ifd" + tag.index + seeTr + expert + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+      row = "<tr class='ifd ifd" + tag.index + seeTr + expert + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
       String sDif = "";
       if (tag.dif < 0) sDif = "<i class=\"fa fa-times\"></i>";
       else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";
+      row = row.replace("##ICON##", "<i class=\"icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", tag.tv.getName());
       row = row.replace("##VALUE##", tag.tv.getDescriptiveValue());
