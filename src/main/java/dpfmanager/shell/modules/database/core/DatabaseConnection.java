@@ -180,13 +180,13 @@ public class DatabaseConnection {
     Jobs job = new Jobs();
     try {
       Statement stmt = globalConnection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.HASH + " LIKE \"" + hash + "\"");
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.HASH + " LIKE '" + hash + "'");
       while (rs.next()) {
         job.parseResultSet(rs);
       }
       stmt.close();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
     }
     return job;
   }
