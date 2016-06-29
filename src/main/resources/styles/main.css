@@ -684,3 +684,7 @@
     -fx-font-weight: bold;
     /*-fx-font-family: 'Roboto-Bold';*/
 }
+
+.report-icon{
+    width: 5px!important;
+}
