@@ -268,6 +268,11 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   }
 
   @FXML
+  protected void periodicalClicked(ActionEvent event) throws Exception {
+
+  }
+
+  @FXML
   protected void onChangeInputType(ActionEvent event) throws Exception {
     if (comboChoice.getValue() == bundle.getString("comboFile")) {
       inputText.setText(bundle.getString("selectFile"));

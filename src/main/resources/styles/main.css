@@ -33,6 +33,9 @@
 
 .main-logo{  }
 
+.topTriangle{
+}
+
 /* Split Panes */
 
 .split-pane {
@@ -213,13 +216,6 @@
 }
 #step5.grey-but{
     -fx-background-image: url('../images/tab-buttons/tab-5-grey.png');
-}
-
-#step6.blue-but{
-    -fx-background-image: url('../images/tab-buttons/tab-6-blue.png');
-}
-#step6.grey-but{
-    -fx-background-image: url('../images/tab-buttons/tab-6-grey.png');
 }
 
 /* ComboBox Custom Blue */
