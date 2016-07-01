@@ -39,8 +39,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
-import com.sun.javafx.scene.control.skin.TableColumnHeader;
-
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -48,7 +46,6 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -104,10 +101,10 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public Node handleMessageOnFX(DpfMessage message) {
     if (message != null && message.isTypeOf(ReportsMessage.class)) {
       ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
-      if (rMessage.isReload()){
+      if (rMessage.isReload()) {
         showLoading();
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
-      } else if (rMessage.isRead()){
+      } else if (rMessage.isRead()) {
         addData();
         hideLoading();
       }
@@ -196,7 +193,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     changeColumnTextColor(colScore, Color.LIGHTGRAY);
   }
 
-  private void setMinMaxWidth(TableColumn column, int width){
+  private void setMinMaxWidth(TableColumn column, int width) {
     column.setMinWidth(width);
     column.setPrefWidth(width);
     column.setMaxWidth(width);
@@ -225,7 +222,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     addFormatIcons();
   }
 
-  private void resizeTable(){
+  private void resizeTable() {
     double height = tabReports.getFixedCellSize() * tabReports.getItems().size() + tabReports.getFixedCellSize();
     if (height > 470) {
       height = 470.0;
@@ -323,7 +320,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
                   public void handle(MouseEvent event) {
                     ArrayMessage am = new ArrayMessage();
                     am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-                    am.add(GuiConfig.PERSPECTIVE_SHOW+"."+GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
+                    am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
                     getContext().send(GuiConfig.PERSPECTIVE_SHOW, am);
                   }
                 });
@@ -350,7 +347,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     });
   }
 
-  private void showLoading(){
+  private void showLoading() {
     indicator.setProgress(-1.0);
     NodeUtil.showNode(indicator);
     NodeUtil.hideNode(tabReports);
@@ -358,7 +355,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     NodeUtil.hideNode(loadMore);
   }
 
-  private void hideLoading(){
+  private void hideLoading() {
     NodeUtil.hideNode(indicator);
     NodeUtil.showNode(tabReports);
 

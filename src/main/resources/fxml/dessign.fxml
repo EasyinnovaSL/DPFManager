@@ -155,11 +155,6 @@
             </ImageView>
             <Button fx:id="checkFilesButton" mnemonicParsing="false" onAction="#checkFilesClicked" styleClass="main-button" text="%checkFilesButton">
                 <VBox.margin>
-                    <Insets bottom="20.0" />
-                </VBox.margin>
-            </Button>
-            <Button fx:id="periodicalbutton" mnemonicParsing="false" onAction="#periodicalClicked" styleClass="secondary-button" text="Save as periodical check">
-                <VBox.margin>
                     <Insets bottom="30.0" />
                 </VBox.margin>
             </Button>
