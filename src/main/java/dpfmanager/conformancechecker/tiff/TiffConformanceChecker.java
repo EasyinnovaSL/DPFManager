@@ -32,6 +32,7 @@ import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
+import dpfmanager.conformancechecker.tiff.reporting.MetsReport;
 import dpfmanager.conformancechecker.tiff.reporting.PdfReport;
 import dpfmanager.conformancechecker.tiff.reporting.XmlReport;
 import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
@@ -555,6 +556,11 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ir.setPcValidation(getPcValidation(output));
           }
 
+          //Mets report
+          MetsReport metsReport = new MetsReport();
+          output = metsReport.parseIndividual(ir, config.getRules());
+          ir.setConformanceCheckerReportMets(output);
+
           Fixes fixes = config.getFixes();
           if (config.getFormats().contains("HTML")) {
             int htmlMode = 0;
@@ -642,6 +648,12 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ir2.setPcValidation(getPcValidation(output));
             ir.setCompareReport(ir2);
             ir2.setCompareReport(ir);
+
+            //Make due report in METS
+            MetsReport metsReportFixed = new MetsReport();
+            output = metsReport.parseIndividual(ir2, config.getRules());
+            ir.setConformanceCheckerReportMets(output);
+
 
             if (config.getFormats().contains("HTML")) {
               HtmlReport htmlReport = new HtmlReport();
