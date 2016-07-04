@@ -5,14 +5,18 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResul
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
+import dpfmanager.conformancechecker.tiff.reporting.METS.dc.*;
+import dpfmanager.conformancechecker.tiff.reporting.METS.dc.ObjectFactory;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
 import dpfmanager.conformancechecker.tiff.reporting.METS.mets.*;
+import dpfmanager.conformancechecker.tiff.reporting.METS.dc.*;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.ImageStrips;
+import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.Strip;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -85,6 +89,47 @@ public class MetsReport {
     if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) isThumbail = true;
 
     return isThumbail;
+  }
+
+  private  MdSecType.MdWrap extractMdWrap (IndividualReport ir){
+
+    String title;
+    String creator;
+    String description;
+    String date;
+    String type = "image/tiff";
+    String rights;
+    MdSecType.MdWrap mdwrap = new MdSecType.MdWrap();
+    mdwrap.setID("W" + mdwrap.hashCode());
+    mdwrap.setMDTYPEVERSION("1.1");
+    mdwrap.setMDTYPE("DC");
+
+    try{
+      GregorianCalendar gregorianCalendar = new GregorianCalendar();
+      DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
+      XMLGregorianCalendar now =
+            datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
+      mdwrap.setCREATED(now);
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+//    ObjectFactory documentDc = new ObjectFactory();
+//    ElementContainer container = documentDc.createElementContainer();
+//    TiffDocument tiff = ir.getTiffModel();
+//    Metadata tiffData = tiff.getMetadata();
+//    SimpleLiteral simple = new SimpleLiteral();
+//    if(tiffData.get("title") == null){
+//      title = "";
+//    }else{
+//      title = tiffData.get("title").toString();
+//    }
+//    simple.setLang(title);
+//    container.setLiteral(documentDc.createTitle(simple));
+//    MdSecType.MdWrap.XmlData xmlData = new MdSecType.MdWrap.XmlData();
+//    xmlData.setData(container);
+//    mdwrap.setXmlData(xmlData);
+
+    return mdwrap;
   }
 
   //try to do it recursive
@@ -164,7 +209,7 @@ public class MetsReport {
    * @param index the index
    * @return the stream
    */
-  private List<FileType.Stream> createIfdStream( IndividualReport ir, IFD ifd, int index) {
+  private List<FileType.Stream> extractStreamsFromIFD( IndividualReport ir, IFD ifd, int index) {
 
     List<FileType.Stream> streamList = new ArrayList<FileType.Stream>();
 
@@ -209,53 +254,6 @@ public class MetsReport {
     return streamList;
   }
 
-  /**
-   * Gets tags.
-   *
-   * @param ir the ir
-   * @return the tags
-   */
-  protected ArrayList<ReportTag> getTags(IndividualReport ir) {
-    ArrayList<ReportTag> list = new ArrayList<ReportTag>();
-    TiffDocument td = ir.getTiffModel();
-    IFD ifd = td.getFirstIFD();
-    IFD ifdcomp = null;
-    if (ir.getCompareReport() != null) {
-      ifdcomp = ir.getCompareReport().getTiffModel().getFirstIFD();
-    }
-    td.getFirstIFD();
-    int index = 0;
-    while (ifd != null) {
-      IfdTags meta = ifd.getMetadata();
-      for (TagValue tv : meta.getTags()) {
-        ReportTag tag = new ReportTag();
-        tag.index = index;
-        tag.tv = tv;
-        if (ifdcomp != null) {
-          if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
-            tag.dif = 1;
-        }
-        if (!showTag(tv)) tag.expert = true;
-        list.add(tag);
-      }
-      if (ifdcomp != null) {
-        for (TagValue tv : ifdcomp.getMetadata().getTags()) {
-          if (!meta.containsTagId(tv.getId())) {
-            ReportTag tag = new ReportTag();
-            tag.index = index;
-            tag.tv = tv;
-            tag.dif = -1;
-            if (!showTag(tv)) tag.expert = true;
-            list.add(tag);
-          }
-        }
-      }
-      ifd = ifd.getNextIFD();
-      if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
-      index++;
-    }
-    return list;
-  }
 
   /**
    * Read showable tags file.
@@ -310,147 +308,6 @@ public class MetsReport {
     return hs;
   }
 
-  /**
-   * Show Tag.
-   *
-   * @param tv The tag value
-   * @return true, if successful
-   */
-  protected boolean showTag(TagValue tv) {
-    HashSet<String> showableTags = readShowableTags();
-    /*showableTags.add("ImageWidth");
-    showableTags.add("ImageLength");
-    showableTags.add("BitsPerSample");
-    showableTags.add("Compression");
-    showableTags.add("PhotometricInterpretation");
-    showableTags.add("ImageDescription");
-    showableTags.add("Make");
-    showableTags.add("Model");
-    showableTags.add("Orientation");
-    showableTags.add("SamplesPerPixel");
-    showableTags.add("XResolution");
-    showableTags.add("YResolution");
-    showableTags.add("ResolutionUnit");
-    showableTags.add("PlanarConfiguration");
-    showableTags.add("Software");
-    showableTags.add("DateTime");
-    showableTags.add("Artist");
-    showableTags.add("Copyright");
-    showableTags.add("DateTimeOriginal");
-    showableTags.add("Flash");
-    showableTags.add("TIFFEPStandardID");*/
-    //if (tv.getName().equals(""+tv.getId())) return false;
-    return showableTags.contains(tv.getName());
-  }
-
-  /**
-   * Adds the errors warnings.
-   *
-   * @param doc the doc
-   * @param results the results
-   * @param errors the errors
-   * @param warnings the warnings
-   */
-  private void addErrorsWarnings(Document doc, Element results,
-                                 List<RuleResult> errors, List<RuleResult> warnings) {
-    // errors
-    for (int i = 0; i < errors.size(); i++) {
-      RuleResult value = errors.get(i);
-      Element error = doc.createElement("rule_result");
-
-      // level
-      Element level = doc.createElement("level");
-      level.setTextContent("critical");
-      error.appendChild(level);
-
-      // msg
-      Element msg = doc.createElement("message");
-      msg.setTextContent(value.getDescription());
-      error.appendChild(msg);
-
-      // context
-      msg = doc.createElement("context");
-      msg.setTextContent(value.getContext());
-      error.appendChild(msg);
-
-      // location
-      msg = doc.createElement("location");
-      msg.setTextContent(value.getLocation());
-      error.appendChild(msg);
-
-      // rule
-      if (value.getRule() != null) {
-        msg = doc.createElement("ruleId");
-        msg.setTextContent(value.getRule().getReference());
-        error.appendChild(msg);
-
-        msg = doc.createElement("ruleTest");
-        msg.setTextContent(value.getRule().getAssertionField().getTest());
-        error.appendChild(msg);
-
-        msg = doc.createElement("ruleValue");
-        msg.setTextContent(value.getRule().getAssertionField().getValue());
-        error.appendChild(msg);
-      }
-
-      results.appendChild(error);
-    }
-
-    // warnings
-    for (int i = 0; i < warnings.size(); i++) {
-      RuleResult value = warnings.get(i);
-      Element warning = doc.createElement("rule_result");
-
-      // level
-      Element level = doc.createElement("level");
-      level.setTextContent("warning");
-      warning.appendChild(level);
-
-      // msg
-      Element msg = doc.createElement("message");
-      msg.setTextContent(value.getDescription());
-      warning.appendChild(msg);
-
-      // context
-      msg = doc.createElement("context");
-      msg.setTextContent(value.getContext());
-      warning.appendChild(msg);
-
-      // location
-      msg = doc.createElement("location");
-      msg.setTextContent(value.getLocation());
-      warning.appendChild(msg);
-
-      // rule
-      if (value.getRule() != null) {
-        msg = doc.createElement("ruleId");
-        msg.setTextContent(value.getRule().getReference());
-        warning.appendChild(msg);
-
-        msg = doc.createElement("ruleTest");
-        msg.setTextContent(value.getRule().getAssertionField().getTest());
-        warning.appendChild(msg);
-
-        msg = doc.createElement("ruleValue");
-        msg.setTextContent(value.getRule().getAssertionField().getValue());
-        warning.appendChild(msg);
-      }
-
-      results.appendChild(warning);
-    }
-  }
-
-  private ImageReader getTiffImageReader() {
-    Iterator<ImageReader> imageReaders = ImageIO.getImageReadersByFormatName("TIFF");
-    if (!imageReaders.hasNext()) {
-      throw new UnsupportedOperationException("No TIFF Reader found!");
-    }
-    return imageReaders.next();
-  }
-
-  private ImageInputStream openImageInputStream(String filename) throws IOException {
-    return ImageIO.createImageInputStream(filename);
-  }
 
   private FileType createFile(IndividualReport ir){
     int index = 0;
@@ -462,7 +319,7 @@ public class MetsReport {
     List<FileType.Stream> streams = new ArrayList<FileType.Stream>();
 
     while (ifd != null) {
-      streams.addAll(createIfdStream(ir, ifd, index)); //to each idf, create own streams
+      streams.addAll(extractStreamsFromIFD(ir, ifd, index)); //to each idf, create own streams
       ifd = ifd.getNextIFD();
       index++;
     }
@@ -495,29 +352,21 @@ public class MetsReport {
     metsHdr.setRECORDSTATUS("Incoming");
     MetsType.MetsHdr.Agent agent = new MetsType.MetsHdr.Agent();
     agent.setROLE("CREATOR");
-    agent.setID("A"+agent.hashCode());
+    agent.setID("A" + agent.hashCode());
     agent.setName("C. Reator");
     metsHdr.setAgent(agent);
     mets.setMetsHdr(metsHdr);
 
-    try {
-      //mets dmdSec
-      MdSecType dmdSec = new MdSecType();
-      dmdSec.setID("D" + dmdSec.hashCode());
-      GregorianCalendar gregorianCalendar = new GregorianCalendar();
-      DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
-      XMLGregorianCalendar now =
-          datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
-      dmdSec.setCREATED(now);
-      MdSecType.MdWrap mdwrap = new MdSecType.MdWrap();
-      mdwrap.setID("M" + mdwrap.hashCode());
-      mdwrap.setMDTYPE("MODS");
-      dmdSec.setMdWrap(mdwrap);
-      mets.setDmdSec(dmdSec);
 
-    }catch (DatatypeConfigurationException e) {
-        e.printStackTrace();
-    }
+    //mets dmdSec
+    MdSecType dmdSec = new MdSecType();
+    dmdSec.setID("D" + dmdSec.hashCode());
+    dmdSec.setSTATUS("");
+    MdSecType.MdWrap mdwrap = extractMdWrap(ir);
+
+    dmdSec.setMdWrap(mdwrap);
+    mets.setDmdSec(dmdSec);
+
 
     //mets amdSec
     AmdSecType amdsec = new AmdSecType();
@@ -579,34 +428,21 @@ public class MetsReport {
       Mets mets = new Mets();
       mets = buildReportIndividual(ir, rules);
 
-      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-      Document doc = docBuilder.newDocument();
-
       JAXBContext context = null;
       context = JAXBContext.newInstance(Mets.class);
       Marshaller m = null;
       m = context.createMarshaller();
        //for pretty-print XML in JAXB
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      m.marshal(mets, doc);
+      StringWriter sw = new StringWriter();
+      m.marshal(mets, sw);
 
       //to String
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
-      Transformer transformer = transformerFactory.newTransformer();
-      StringWriter writer = new StringWriter();
-      transformer.transform(new DOMSource(doc), new StreamResult(writer));
-      String output = writer.getBuffer().toString();
+        String output = sw.toString();
 
       return output;
     } catch (JAXBException e) {
       e.printStackTrace();
-      return "";
-    }catch (ParserConfigurationException pce) {
-      pce.printStackTrace();
-      return "";
-    }catch (TransformerException tfe) {
-      tfe.printStackTrace();
       return "";
     }
 
