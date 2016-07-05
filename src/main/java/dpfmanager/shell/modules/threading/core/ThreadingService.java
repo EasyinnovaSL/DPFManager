@@ -9,7 +9,7 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
-import dpfmanager.shell.modules.database.messages.DatabaseMessage;
+import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -118,11 +118,11 @@ public class ThreadingService extends DpfService {
     if (tm.isPause() && tm.isRequest()) {
       myExecutor.pause(tm.getUuid());
     } else if (tm.isResume()) {
-      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.RESUME, tm.getUuid()));
+      context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.RESUME, tm.getUuid()));
       myExecutor.resume(tm.getUuid());
     } else if (tm.isCancel() && tm.isRequest()) {
       cancelRequest(tm.getUuid());
-    } else if (tm.isCancel() && !tm.isRequest()){
+    } else if (tm.isCancel() && !tm.isRequest()) {
       cancelFinish(tm.getUuid());
     } else if (tm.isPause() && !tm.isRequest()) {
       pauseFinish(tm.getUuid());
@@ -130,19 +130,19 @@ public class ThreadingService extends DpfService {
   }
 
   public void closeRequested() {
-    context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(!checks.isEmpty()));
+    context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(CloseMessage.Type.THREADING, !checks.isEmpty()));
   }
 
-  private void cancelRequest(Long uuid){
+  private void cancelRequest(Long uuid) {
     // Check if is pending
     FileCheck pending = null;
-    for (FileCheck check : pendingChecks){
-      if (uuid.equals(check.getUuid())){
+    for (FileCheck check : pendingChecks) {
+      if (uuid.equals(check.getUuid())) {
         pending = check;
         break;
       }
     }
-    if (pending != null){
+    if (pending != null) {
       // Cancel pending
       pendingChecks.remove(pending);
       context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.CANCEL, uuid));
@@ -154,7 +154,7 @@ public class ThreadingService extends DpfService {
 
   public void cancelFinish(Long uuid) {
     // Update db
-    getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.CANCEL, uuid));
+    getContext().send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.CANCEL, uuid));
 
     if (checks.get(uuid) != null) {
       // Remove folder
@@ -170,7 +170,7 @@ public class ThreadingService extends DpfService {
 
   public void pauseFinish(Long uuid) {
     // Update db
-    getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.PAUSE, uuid));
+    getContext().send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.PAUSE, uuid));
     // Refresh tasks
     context.send(BasicConfig.MODULE_TIMER, new TimerMessage(TimerMessage.Type.RUN, JobsStatusTask.class));
   }
@@ -191,13 +191,13 @@ public class ThreadingService extends DpfService {
         checks.put(uuid, fc);
         context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, gm.getRunnable()));
       }
-      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.NEW, uuid, gm.getInput(), pending));
+      context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.NEW, uuid, gm.getInput(), pending));
     } else if (gm.isInit()) {
       // Init file check
       FileCheck fc = checks.get(gm.getUuid());
       fc.init(gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("startingCheck").replace("%1",gm.getInput())));
-      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.INIT, fc.getUuid(), fc.getTotal(), fc.getInternal()));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("startingCheck").replace("%1", gm.getInput())));
+      context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.INIT, fc.getUuid(), fc.getTotal(), fc.getInternal()));
     } else if (gm.isFinish()) {
       // Finish file check
       FileCheck fc = checks.get(gm.getUuid());
@@ -211,10 +211,10 @@ public class ThreadingService extends DpfService {
         // No ui, show to user
         showToUser(fc.getInternal(), fc.getConfig().getOutput());
       }
-      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.FINISH, gm.getUuid()));
+      context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.FINISH, gm.getUuid()));
       checks.remove(gm.getUuid());
       totalChecks++;
-      if (totalChecks >= 10){
+      if (totalChecks >= 10) {
         System.gc();
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("runGC")));
         totalChecks = 0;
@@ -246,7 +246,7 @@ public class ThreadingService extends DpfService {
         // Individual with errors
         fc.addError();
       }
-      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.UPDATE, uuid));
+      context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.UPDATE, uuid));
     }
   }
 
@@ -254,7 +254,7 @@ public class ThreadingService extends DpfService {
     if (!pendingChecks.isEmpty()) {
       FileCheck fc = pendingChecks.poll();
       checks.put(fc.getUuid(), fc);
-      context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.START, fc.getUuid()));
+      context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.START, fc.getUuid()));
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(fc.getUuid(), fc.getInitialTask()));
     }
   }
@@ -312,7 +312,7 @@ public class ThreadingService extends DpfService {
 
   private void moveServerFolder(Long uuid, String internal) {
     try {
-      File dest = new File(internal+"input");
+      File dest = new File(internal + "input");
       File src = new File(DPFManagerProperties.getServerDir() + "/" + uuid);
       if (src.exists() && src.isDirectory()) {
         FileUtils.moveDirectory(src, dest);

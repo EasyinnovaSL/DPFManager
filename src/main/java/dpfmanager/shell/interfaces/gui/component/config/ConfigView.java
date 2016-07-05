@@ -152,7 +152,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   protected void doContinue(){
     int lastBlue = 1, i = 1;
     boolean found = false;
-    while (!found && i < 7) {
+    while (!found && i < 6) {
       if (getStepButton(i).getStyleClass().contains("blue-but")) {
         lastBlue = i;
       } else {
@@ -220,7 +220,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public void setStepsBlue(int x) {
     if (x < 1 || x > 5) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested step button out of bounds!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("stepOutOfBounds")));
       return;
     }
 
@@ -285,7 +285,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public Button getStepButton(int x) {
     if (x < 1 || x > 5) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested step button out of bounds!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("stepOutOfBounds")));
       return null;
     }
     return stepsButtons.get(x - 1);

@@ -30,14 +30,14 @@ public class AlertsManager {
     return alert;
   }
 
-  public static Alert createAskAlert() {
+  public static Alert createAskAlert(String header, String content) {
     ResourceBundle bundle = DPFManagerProperties.getBundle();
     String YES = bundle.getString("yes");
     String NO = bundle.getString("no");
     Alert alert = new Alert(Alert.AlertType.WARNING);
     alert.setTitle(bundle.getString("askAlertClose"));
-    alert.setHeaderText(bundle.getString("askAlertRunning"));
-    alert.setContentText(bundle.getString("askAlertQuestion"));
+    alert.setHeaderText(header);
+    alert.setContentText(content);
     ButtonType buttonNo = new ButtonType(NO, ButtonData.NO);
     ButtonType buttonYes = new ButtonType(YES, ButtonData.YES);
     alert.getButtonTypes().setAll(buttonNo, buttonYes);

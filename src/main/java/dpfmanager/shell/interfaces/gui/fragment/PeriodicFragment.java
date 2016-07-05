@@ -3,21 +3,26 @@ package dpfmanager.shell.interfaces.gui.fragment;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.messages.PeriodicalMessage;
+import dpfmanager.shell.interfaces.gui.component.periodical.PeriodicalController;
 import dpfmanager.shell.interfaces.gui.component.periodical.Periodicity;
 import dpfmanager.shell.interfaces.gui.component.periodical.TimeSpinner;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.database.messages.CronMessage;
+import dpfmanager.shell.modules.database.tables.Crons;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -27,8 +32,6 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -78,7 +81,25 @@ public class PeriodicFragment {
   @FXML
   private ComboBox monthDay;
 
+  @FXML
+  private ProgressIndicator saveLoading;
+  @FXML
+  private ProgressIndicator deleteLoadingInEdit;
+  @FXML
+  private ProgressIndicator deleteLoadingInView;
+
+  @FXML
+  private Button deleteButtonInView;
+  @FXML
+  private Button deleteButtonInEdit;
+  @FXML
+  private Button saveButton;
+  @FXML
+  private Button editButton;
+
+
   /* Periodical Check info */
+  private String uuid;
   private String input;
   private String configuration;
   private Periodicity periodicity;
@@ -86,29 +107,41 @@ public class PeriodicFragment {
   /* Status */
   private boolean saved;
   private boolean editing;
+  private boolean newC;
   private boolean delete;
 
-  public void init() {
+  /* Controller */
+  private PeriodicalController controller;
+
+  public void init(PeriodicalController cont) {
     // Empty periodical check
+    controller = cont;
     saved = false;
     editing = false;
+    newC = true;
     delete = false;
     loadInputType();
     loadConfigurations();
     loadPeriodicity();
+    hideLoading();
     NodeUtil.hideNode(gridView);
     NodeUtil.showNode(gridEdit);
   }
 
-  public void init(String input, String configuration) {
+  public void init(PeriodicalController cont, Crons cron) {
     // Load periodical check
+    controller = cont;
+    uuid = cron.getId();
     this.saved = true;
-    this.editing = true;
+    this.newC = false;
+    this.editing = false;
     this.delete = false;
-    this.input = input;
-    this.configuration = configuration;
+    this.input = cron.getInput();
+    this.configuration = cron.getConfiguration();
+    this.periodicity = new Periodicity(cron);
 
     loadInputType();
+    hideLoading();
     NodeUtil.showNode(gridView);
     NodeUtil.hideNode(gridEdit);
 
@@ -124,28 +157,50 @@ public class PeriodicFragment {
     // Show
     NodeUtil.hideNode(gridView);
     NodeUtil.showNode(gridEdit);
+    saved = false;
+    editing = true;
   }
 
   @FXML
   protected void deleteClicked(ActionEvent event) throws Exception {
+    showLoadingDelete();
     delete = true;
-    if (!isSaved()){
+    if (newC) {
       // Only from GUI
       context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicalMessage(PeriodicalMessage.Type.DELETE));
     } else {
-      // Delete from crontab TODO
-      context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicalMessage(PeriodicalMessage.Type.DELETE));
+      // Delete from OS task and BD
+      if (controller.deletePeriodicalCheck(uuid)) {
+        ArrayMessage am = new ArrayMessage();
+        am.add(BasicConfig.MODULE_DATABASE, new CronMessage(CronMessage.Type.DELETE, uuid));
+        am.add(GuiConfig.COMPONENT_PERIODICAL, new PeriodicalMessage(PeriodicalMessage.Type.DELETE));
+        context.send(BasicConfig.MODULE_DATABASE, am);
+      }
     }
+    hideLoading();
   }
 
   @FXML
   protected void saveClicked(ActionEvent event) throws Exception {
+    showLoadingSave();
     if (savePeriodical()) {
-      saved = true;
-      printViewMode();
-      NodeUtil.showNode(gridView);
-      NodeUtil.hideNode(gridEdit);
+      if (uuid == null) {
+        uuid = "dpf-" + System.currentTimeMillis();
+      }
+      if (controller.savePeriodicalCheck(uuid, input, configuration, periodicity, editing)) {
+        // Everything ok
+        saved = true;
+        newC = false;
+        printViewMode();
+        NodeUtil.showNode(gridView);
+        NodeUtil.hideNode(gridEdit);
+        context.send(BasicConfig.MODULE_DATABASE, new CronMessage(CronMessage.Type.SAVE, uuid, input, configuration, periodicity));
+      } else {
+        // Error saving periodical check
+        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorSavePeriodic")));
+      }
     }
+    hideLoading();
   }
 
   @FXML
@@ -244,7 +299,11 @@ public class PeriodicFragment {
 
   private void loadPeriodicity() {
     if (spinner == null) {
-      spinner = new TimeSpinner();
+      if (periodicity != null) {
+        spinner = new TimeSpinner(periodicity.getTime());
+      } else {
+        spinner = new TimeSpinner();
+      }
       timeHbox.getChildren().add(spinner);
     }
 
@@ -258,6 +317,20 @@ public class PeriodicFragment {
         monthDay.getItems().add(i);
       }
       monthDay.setValue(1);
+    }
+
+    if (periodicity != null) {
+      if (periodicity.getDayOfWeek() != null && periodicity.getDayOfWeek() > 0) {
+        radioWeekly.setSelected(true);
+        weekDay.setValue(periodicity.getDayOfWeekString(bundle));
+        weekDay.setDisable(false);
+      } else if (periodicity.getDayOfMonth() != null && periodicity.getDayOfMonth() > 0) {
+        radioMonthly.setSelected(true);
+        monthDay.setValue(periodicity.getDayOfMonth());
+        monthDay.setDisable(false);
+      } else {
+        radioDaily.setSelected(true);
+      }
     }
   }
 
@@ -285,7 +358,7 @@ public class PeriodicFragment {
     } else if (radioWeekly.isSelected()) {
       periodicity = new Periodicity(Periodicity.Mode.WEEKLY, spinner.getValue());
       periodicity.setDayOfWeek(getDayOfWeek());
-      periodicity.setDayOfWeekString((String)weekDay.getValue());
+      periodicity.setDayOfWeekString((String) weekDay.getValue());
     } else if (radioMonthly.isSelected()) {
       periodicity = new Periodicity(Periodicity.Mode.MONTHLY, spinner.getValue());
       periodicity.setDayOfMonth((Integer) monthDay.getValue());
@@ -296,12 +369,12 @@ public class PeriodicFragment {
     return true;
   }
 
-  private Integer getDayOfWeek(){
+  private Integer getDayOfWeek() {
     int index = 0;
     boolean found = false;
-    while (!found && index < 7){
+    while (!found && index < 7) {
       String day = (String) weekDay.getItems().get(index);
-      if (day.equals(weekDay.getValue())){
+      if (day.equals(weekDay.getValue())) {
         found = true;
       }
       index++;
@@ -321,12 +394,50 @@ public class PeriodicFragment {
         case DAILY:
           return bundle.getString("dailyInfo").replace("%1", periodicity.getTimeString());
         case WEEKLY:
-          return bundle.getString("weeklyInfo").replace("%1", periodicity.getDayOfWeekString()).replace("%2", periodicity.getTimeString());
+          return bundle.getString("weeklyInfo").replace("%1", periodicity.getDayOfWeekString(bundle)).replace("%2", periodicity.getTimeString());
         case MONTHLY:
           return bundle.getString("monthlyInfo").replace("%1", periodicity.getDayOfMonth().toString()).replace("%2", periodicity.getTimeString());
       }
     }
     return "";
+  }
+
+  /**
+   * Loadings
+   */
+  private void showLoadingSave() {
+    NodeUtil.showNode(saveLoading);
+    hideButtons();
+  }
+
+  private void showLoadingDelete() {
+    if (gridView.isVisible()) {
+      NodeUtil.showNode(deleteLoadingInView);
+    } else {
+      NodeUtil.showNode(deleteLoadingInEdit);
+    }
+    hideButtons();
+  }
+
+  private void hideLoading() {
+    NodeUtil.hideNode(saveLoading);
+    NodeUtil.hideNode(deleteLoadingInEdit);
+    NodeUtil.hideNode(deleteLoadingInView);
+    showButtons();
+  }
+
+  private void showButtons() {
+    NodeUtil.showNode(saveButton);
+    NodeUtil.showNode(editButton);
+    NodeUtil.showNode(deleteButtonInEdit);
+    NodeUtil.showNode(deleteButtonInView);
+  }
+
+  private void hideButtons() {
+    NodeUtil.hideNode(saveButton);
+    NodeUtil.hideNode(editButton);
+    NodeUtil.hideNode(deleteButtonInEdit);
+    NodeUtil.hideNode(deleteButtonInView);
   }
 
   public boolean isSaved() {

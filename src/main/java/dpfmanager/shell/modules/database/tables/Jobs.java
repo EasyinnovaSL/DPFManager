@@ -61,7 +61,7 @@ public class Jobs {
   public static String delIndexPidSql = "DROP INDEX IF EXISTS " + INDEX_PID + ";";
 
   // Insert SQL query
-  public static String insertJobSql = "INSERT INTO jobs(" + ID + "," + HASH + "," + STATE + "," + TOTAL_FILES + "," + PROCESSED_FILES + "," + INIT + "," + FINISH + "," + INPUT + "," + ORIGIN + "," + PID + "," + OUTPUT + "," + TIME + "," + LAST_UPDATE + ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);";
+  public static String insertJobSql = "INSERT INTO " + TABLE + "(" + ID + "," + HASH + "," + STATE + "," + TOTAL_FILES + "," + PROCESSED_FILES + "," + INIT + "," + FINISH + "," + INPUT + "," + ORIGIN + "," + PID + "," + OUTPUT + "," + TIME + "," + LAST_UPDATE + ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 
   /**

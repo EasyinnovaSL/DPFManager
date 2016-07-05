@@ -80,7 +80,7 @@ public class GuiWorkbench implements FXWorkbench {
       @Override
       public void handle(WindowEvent event) {
         if (!(event instanceof DpfCloseEvent)) {
-          context.send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_THREADING, new CloseMessage(true));
+          context.send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_THREADING, new CloseMessage(CloseMessage.Type.THREADING));
           event.consume();
         } else {
           closeHandler.handle(event);

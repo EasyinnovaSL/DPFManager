@@ -5,6 +5,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.modules.database.messages.CronMessage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 
@@ -29,7 +30,7 @@ import java.util.ResourceBundle;
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
         BasicConfig.MODULE_MESSAGE,
-        BasicConfig.MODULE_CONFORMANCE
+        BasicConfig.MODULE_DATABASE
     }
 )
 public class PeriodicalPerspective extends DpfAbstractPerspective {
