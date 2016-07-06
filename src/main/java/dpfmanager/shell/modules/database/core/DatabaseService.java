@@ -6,9 +6,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
-import dpfmanager.shell.modules.database.messages.CronMessage;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
-import dpfmanager.shell.modules.database.tables.Crons;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.server.messages.StatusMessage;
 
@@ -52,47 +50,6 @@ public class DatabaseService extends DpfService {
 
   private void cleanDatabase() {
     connection.cleanJobs();
-  }
-
-  /**
-   * Crons
-   */
-
-  public void handleCronMessage(CronMessage cm) {
-    if (cm.isSave()) {
-      saveCron(cm);
-    } else if (cm.isDelete()) {
-      deleteCron(cm);
-    } else if (cm.isGet()) {
-      getCrons();
-    }
-  }
-
-  public void saveCron(CronMessage dm) {
-    if (cache.containsCron(dm.getUuid())) {
-      // Editing
-      cache.updateCron(dm.getUuid(), dm.getInput(), dm.getConfiguration(), dm.getPeriodicity());
-      connection.updateCron(cache.getCron(dm.getUuid()));
-    } else {
-      // New
-      cache.insertNewCron(dm.getUuid(), dm.getInput(), dm.getConfiguration(), dm.getPeriodicity());
-      connection.insertCron(cache.getCron(dm.getUuid()));
-    }
-  }
-
-  public void deleteCron(CronMessage dm) {
-    if (cache.containsCron(dm.getUuid())) {
-      connection.deleteCron(cache.getCron(dm.getUuid()));
-      cache.deleteCron(dm.getUuid());
-    }
-  }
-
-  public void getCrons() {
-    List<Crons> list = connection.getAllCrons();
-    if (!list.isEmpty()){
-      cache.setCrons(list);
-      context.send(GuiConfig.PERSPECTIVE_PERIODICAL + "." + GuiConfig.COMPONENT_PERIODICAL, new CronMessage(CronMessage.Type.RESPONSE, list));
-    }
   }
 
   /**

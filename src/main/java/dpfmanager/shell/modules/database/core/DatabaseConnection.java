@@ -4,7 +4,6 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.modules.database.tables.Crons;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
@@ -341,96 +340,6 @@ public class DatabaseConnection {
   }
 
   /**
-   * Crons functions
-   */
-  synchronized public void insertCron(Crons cron) {
-    if (blockConnection()) {
-      try {
-        PreparedStatement pstmt = globalConnection.prepareStatement(Crons.insertCronSql);
-        pstmt.setString(1, cron.getId());
-        pstmt.setString(2, cron.getInput());
-        pstmt.setString(3, cron.getConfiguration());
-        pstmt.setString(4, cron.getPeriodTime());
-        pstmt.setInt(5, cron.getPeriodMode());
-        pstmt.setInt(6, cron.getSpecWeekly());
-        pstmt.setInt(7, cron.getSpecMonthly());
-        pstmt.executeUpdate();
-        pstmt.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorCreateCron")));
-      } finally {
-        releaseConnection();
-      }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
-    }
-  }
-
-  synchronized public void updateCron(Crons cron) {
-    if (blockConnection()) {
-      try {
-        globalConnection.setAutoCommit(false);
-        String updateSql = "UPDATE " + Crons.TABLE + " SET " +
-            Crons.INPUT + " = '" + cron.getInput() + "', " +
-            Crons.CONFIGURATION + " = '" + cron.getConfiguration() + "', " +
-            Crons.PERIOD_TIME + " = '" + cron.getPeriodTime() + "', " +
-            Crons.PERIOD_MODE + " = " + cron.getPeriodMode() + ", " +
-            Crons.SPEC_WEEKLY + " = " + cron.getSpecWeekly() + ", " +
-            Crons.SPEC_MONTHLY + " = " + cron.getSpecMonthly() + "" +
-            " WHERE " + Crons.ID + " LIKE '" + cron.getId() + "'";
-        Statement stmt = globalConnection.createStatement();
-        stmt.execute(updateSql);
-        stmt.close();
-        globalConnection.commit();
-        globalConnection.setAutoCommit(true);
-      } catch (Exception e) {
-        e.printStackTrace();
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorUpdateCron")));
-      } finally {
-        releaseConnection();
-      }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
-    }
-  }
-
-  synchronized public void deleteCron(Crons cron) {
-    if (blockConnection()) {
-      try {
-        String deleteSql = "DELETE FROM " + Crons.TABLE + " WHERE " + Crons.ID + " LIKE '" + cron.getId() + "'";
-        Statement stmt = globalConnection.createStatement();
-        stmt.execute(deleteSql);
-        stmt.close();
-      } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorDeleteCronDB")));
-      } finally {
-        releaseConnection();
-      }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
-    }
-  }
-
-  synchronized public List<Crons> getAllCrons() {
-    List<Crons> crons = new ArrayList<>();
-    try {
-      Statement stmt = globalConnection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Crons.TABLE);
-      while (rs.next()) {
-        Crons cron = new Crons();
-        cron.parseResultSet(rs);
-        crons.add(cron);
-      }
-      stmt.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetCrons")));
-    }
-    return crons;
-  }
-
-  /**
    * Locks functions
    */
   private boolean blockConnection() {
@@ -477,8 +386,6 @@ public class DatabaseConnection {
         stmt.execute(Jobs.delIndexIdSql);
         stmt.execute(Jobs.delIndexPidSql);
         stmt.execute(Jobs.deleteSql);
-        stmt.execute(Crons.delIndexIdSql);
-        stmt.execute(Crons.deleteSql);
         DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
       }
 
@@ -486,8 +393,6 @@ public class DatabaseConnection {
       stmt.execute(Jobs.createSql);
       stmt.execute(Jobs.indexIdSql);
       stmt.execute(Jobs.indexPidSql);
-      stmt.execute(Crons.createSql);
-      stmt.execute(Crons.indexIdSql);
 
       // Close statement
       stmt.close();

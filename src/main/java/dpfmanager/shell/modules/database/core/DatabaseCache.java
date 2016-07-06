@@ -1,15 +1,12 @@
 package dpfmanager.shell.modules.database.core;
 
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.interfaces.gui.component.periodical.Periodicity;
-import dpfmanager.shell.modules.database.tables.Crons;
 import dpfmanager.shell.modules.database.tables.Jobs;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,81 +15,11 @@ import java.util.Map;
 public class DatabaseCache {
 
   private Map<Long, Jobs> jobs;
-  private Map<String, Crons> crons;
   private DpfContext context;
 
   public DatabaseCache(DpfContext c) {
     context = c;
     jobs = new HashMap<>();
-    crons = new HashMap<>();
-  }
-
-  /**
-   * Crons
-   */
-  public void insertNewCron(String uuid, String input, String configuration, Periodicity periodicity) {
-    Crons cron = new Crons();
-    cron.setId(uuid);
-    cron.setInput(input);
-    cron.setConfiguration(configuration);
-    cron.setPeriodTime(periodicity.getTimeString());
-    switch (periodicity.getMode()){
-      case DAILY:
-        cron.setPeriodMode(0);
-        break;
-      case WEEKLY:
-        cron.setPeriodMode(1);
-        cron.setSpecWeekly(periodicity.getDayOfWeek());
-        break;
-      case MONTHLY:
-        cron.setPeriodMode(2);
-        cron.setSpecMonthly(periodicity.getDayOfMonth());
-        break;
-    }
-    crons.put(uuid, cron);
-  }
-
-  public void updateCron(String uuid, String input, String configuration, Periodicity periodicity) {
-    Crons cron = crons.get(uuid);
-    cron.setId(uuid);
-    cron.setInput(input);
-    cron.setConfiguration(configuration);
-    cron.setPeriodTime(periodicity.getTimeString());
-    switch (periodicity.getMode()){
-      case DAILY:
-        cron.setPeriodMode(0);
-        break;
-      case WEEKLY:
-        cron.setPeriodMode(1);
-        cron.setSpecWeekly(periodicity.getDayOfWeek());
-        break;
-      case MONTHLY:
-        cron.setPeriodMode(2);
-        cron.setSpecMonthly(periodicity.getDayOfMonth());
-        break;
-    }
-  }
-
-  public void setCrons(List<Crons> list) {
-    for (Crons cron : list){
-      crons.put(cron.getId(), cron);
-    }
-  }
-
-  public boolean containsCron(String uuid) {
-    return crons.containsKey(uuid);
-  }
-
-  public void deleteCron(String uuid) {
-    crons.remove(uuid);
-  }
-
-  public Crons getCron(String uuid) {
-    return crons.get(uuid);
-  }
-
-  public Collection<Crons> getCrons() {
-    return crons.values();
   }
 
   /**

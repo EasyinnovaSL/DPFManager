@@ -373,7 +373,8 @@
     -fx-background-color: gray;
     -fx-text-fill: -fx-text-inner-color;
 }
-.combo-box-white {
+.combo-box-white,
+.combo-box-white .combo-box{
     -fx-background-color: white;
     -fx-background-radius: 5, 5, 4, 3;
     -fx-background-insets: 0 0 -1 0, 0, 1, 2;

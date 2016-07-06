@@ -5,7 +5,6 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.database.core.DatabaseService;
-import dpfmanager.shell.modules.database.messages.CronMessage;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
 
 import org.jacpfx.api.annotations.Resource;
@@ -35,8 +34,6 @@ public class DatabaseModule extends DpfModule {
   public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(JobsMessage.class)){
       service.handleJobsMessage(dpfMessage.getTypedMessage(JobsMessage.class));
-    } else if (dpfMessage.isTypeOf(CronMessage.class)){
-      service.handleCronMessage(dpfMessage.getTypedMessage(CronMessage.class));
     }
   }
 

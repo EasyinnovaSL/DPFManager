@@ -6,8 +6,6 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.interfaces.gui.component.messages.PeriodicalMessage;
 import dpfmanager.shell.interfaces.gui.fragment.PeriodicFragment;
-import dpfmanager.shell.modules.database.messages.CronMessage;
-import dpfmanager.shell.modules.database.tables.Crons;
 import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,8 +19,6 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -44,8 +40,6 @@ public class PeriodicalView extends DpfView<PeriodicalModel, PeriodicalControlle
   @FXML
   private VBox mainVBox;
 
-  private List<ManagedFragmentHandler<PeriodicFragment>> periodicalsFragments;
-
   @Override
   public void sendMessage(String target, Object dpfMessage) {
     context.send(target, dpfMessage);
@@ -53,7 +47,7 @@ public class PeriodicalView extends DpfView<PeriodicalModel, PeriodicalControlle
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
-    if (message != null && message.isTypeOf(CloseMessage.class)){
+    if (message != null && message.isTypeOf(CloseMessage.class)) {
       closeRequested();
     }
   }
@@ -64,11 +58,6 @@ public class PeriodicalView extends DpfView<PeriodicalModel, PeriodicalControlle
       PeriodicalMessage pm = message.getTypedMessage(PeriodicalMessage.class);
       if (pm.isDelete()) {
         deletePeriodicals();
-      }
-    } else if (message != null && message.isTypeOf(CronMessage.class)) {
-      CronMessage cm = message.getTypedMessage(CronMessage.class);
-      if (cm.isResponse()) {
-        addCronsToView(message.getTypedMessage(CronMessage.class).getCrons());
       }
     }
     return null;
@@ -86,25 +75,17 @@ public class PeriodicalView extends DpfView<PeriodicalModel, PeriodicalControlle
     setController(new PeriodicalController());
     getController().setResourcebundle(bundle);
 
-    // Init periodical checks list
-    periodicalsFragments = new ArrayList<>();
-
-    // Read from database
-    context.send(BasicConfig.MODULE_DATABASE, new CronMessage(CronMessage.Type.GET));
+    // Read from command line
+    getController().readPeriodicalChecksWindows();
   }
 
-  private void addCronsToView(List<Crons> list) {
-    for (Crons cron : list) {
-      ManagedFragmentHandler<PeriodicFragment> handler = getContext().getManagedFragmentHandler(PeriodicFragment.class);
-      handler.getController().init(getController(), cron);
-      periodicalsFragments.add(handler);
-      mainVBox.getChildren().add(handler.getFragmentNode());
-    }
+  public void addPeriodicalFragmentToView(ManagedFragmentHandler<PeriodicFragment> handler) {
+    mainVBox.getChildren().add(handler.getFragmentNode());
   }
 
   private void deletePeriodicals() {
     ManagedFragmentHandler<PeriodicFragment> toDelete = null;
-    for (ManagedFragmentHandler<PeriodicFragment> handler : periodicalsFragments) {
+    for (ManagedFragmentHandler<PeriodicFragment> handler : getModel().getPeriodicalsFragments()) {
       if (handler.getController().isDelete()) {
         toDelete = handler;
         break;
@@ -112,14 +93,14 @@ public class PeriodicalView extends DpfView<PeriodicalModel, PeriodicalControlle
     }
     if (toDelete != null) {
       mainVBox.getChildren().remove(toDelete.getFragmentNode());
-      periodicalsFragments.remove(toDelete);
+      getModel().removePeriodicalCheck(toDelete);
     }
   }
 
-  private void closeRequested(){
+  private void closeRequested() {
     boolean found = false;
-    for ( ManagedFragmentHandler<PeriodicFragment> handler : periodicalsFragments){
-      if (!handler.getController().isSaved()){
+    for (ManagedFragmentHandler<PeriodicFragment> handler : getModel().getPeriodicalsFragments()) {
+      if (!handler.getController().isSaved()) {
         found = true;
         break;
       }
@@ -131,8 +112,12 @@ public class PeriodicalView extends DpfView<PeriodicalModel, PeriodicalControlle
   protected void newButtonClicked(ActionEvent event) throws Exception {
     ManagedFragmentHandler<PeriodicFragment> handler = getContext().getManagedFragmentHandler(PeriodicFragment.class);
     handler.getController().init(getController());
-    periodicalsFragments.add(handler);
-    mainVBox.getChildren().add(handler.getFragmentNode());
+    getModel().addPeriodicalsFragments(handler);
+    addPeriodicalFragmentToView(handler);
+  }
+
+  public <T> ManagedFragmentHandler<T> getManagedFragmentHandler(Class<T> clazz){
+    return context.getManagedFragmentHandler(clazz);
   }
 
 }

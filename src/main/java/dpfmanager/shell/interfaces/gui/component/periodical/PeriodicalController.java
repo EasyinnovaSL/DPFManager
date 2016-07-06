@@ -3,15 +3,19 @@ package dpfmanager.shell.interfaces.gui.component.periodical;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.mvc.DpfController;
-import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
 import org.apache.logging.log4j.Level;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * Created by Adrià Llorens on 07/03/2016.
@@ -21,7 +25,45 @@ public class PeriodicalController extends DpfController<PeriodicalModel, Periodi
   public PeriodicalController() {
   }
 
-   /**
+  /**
+   * Read periodical checks from System tasks
+   */
+  public void readPeriodicalChecksWindows() {
+    try {
+      // WINDOWS
+      String command = "schtasks /query /xml";
+      Process proc = Runtime.getRuntime().exec(command);
+      readProcessOutput(proc, "D:/filename.xml");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void readProcessOutput(Process process, String filename) throws IOException {
+    BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    PrintWriter out = new PrintWriter(filename);
+    String line;
+    String xmlTask = "";
+    String uuid = "";
+    boolean readingDpfTask = false;
+    while ((line = in.readLine()) != null) {
+      if (readingDpfTask) {
+        xmlTask += line;
+        if (line.startsWith("</Task>")) {
+          getModel().parseXmlString(xmlTask, uuid);
+          readingDpfTask = false;
+          xmlTask = "";
+        }
+      } else if (line.startsWith("<!-- \\dpf")) {
+        readingDpfTask = true;
+        uuid = line.substring(6, line.length() - 4);
+      }
+    }
+    in.close();
+    out.close();
+  }
+
+  /**
    * Delete function
    */
   public boolean deletePeriodicalCheck(String id) {
@@ -71,7 +113,6 @@ public class PeriodicalController extends DpfController<PeriodicalModel, Periodi
         return saveUnixCron(params, periodicity);
       }
     } else {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, getBundle().getString("errorDeleteCron")));
       return false;
     }
   }
@@ -88,7 +129,8 @@ public class PeriodicalController extends DpfController<PeriodicalModel, Periodi
           command = "schtasks /create /tn \"" + id + "\" /tr \"" + dpfCommand + "\" /sc daily /st " + periodicity.getTimeString();
           break;
         case WEEKLY:
-          command = "schtasks /create /tn \"" + id + "\" /tr \"" + dpfCommand + "\" /sc weekly /d " + parseDayOfWeek(periodicity.getDayOfWeek()) + " /st " + periodicity.getTimeString();
+          command = "schtasks /create /tn \"" + id + "\" /tr \"" + dpfCommand + "\" /sc weekly /d " + parseDaysOfWeek(periodicity.getDaysOfWeek()) + " /st " + periodicity.getTimeString();
+          System.out.println(command);
           break;
         case MONTHLY:
           command = "schtasks /create /tn \"" + id + "\" /tr \"" + dpfCommand + "\" /sc monthly /d " + periodicity.getDayOfMonth() + " /st " + periodicity.getTimeString();
@@ -108,24 +150,37 @@ public class PeriodicalController extends DpfController<PeriodicalModel, Periodi
     return false;
   }
 
-  private String parseDayOfWeek(Integer day) {
-    switch (day) {
-      case 1:
-        return "MON";
-      case 2:
-        return "TUE";
-      case 3:
-        return "WED";
-      case 4:
-        return "THU";
-      case 5:
-        return "FRI";
-      case 6:
-        return "SAT";
-      case 7:
-        return "SUN";
+  private String parseDaysOfWeek(List<Integer> days) {
+    String ret = "";
+    for (Integer day: days) {
+      if (!ret.isEmpty()){
+        ret += ",";
+      }
+      switch (day) {
+        case 1:
+          ret += "MON";
+          break;
+        case 2:
+          ret += "TUE";
+          break;
+        case 3:
+          ret += "WED";
+          break;
+        case 4:
+          ret += "THU";
+          break;
+        case 5:
+          ret += "FRI";
+          break;
+        case 6:
+          ret += "SAT";
+          break;
+        case 7:
+          ret += "SUN";
+          break;
+      }
     }
-    return "";
+    return ret;
   }
 
   private void createIfNotExistsVBS() {
