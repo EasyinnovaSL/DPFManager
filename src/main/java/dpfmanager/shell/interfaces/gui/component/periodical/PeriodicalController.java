@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -33,15 +32,14 @@ public class PeriodicalController extends DpfController<PeriodicalModel, Periodi
       // WINDOWS
       String command = "schtasks /query /xml";
       Process proc = Runtime.getRuntime().exec(command);
-      readProcessOutput(proc, "D:/filename.xml");
+      readProcessOutput(proc);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  private void readProcessOutput(Process process, String filename) throws IOException {
+  private void readProcessOutput(Process process) throws IOException {
     BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    PrintWriter out = new PrintWriter(filename);
     String line;
     String xmlTask = "";
     String uuid = "";
@@ -60,7 +58,6 @@ public class PeriodicalController extends DpfController<PeriodicalModel, Periodi
       }
     }
     in.close();
-    out.close();
   }
 
   /**
@@ -152,8 +149,8 @@ public class PeriodicalController extends DpfController<PeriodicalModel, Periodi
 
   private String parseDaysOfWeek(List<Integer> days) {
     String ret = "";
-    for (Integer day: days) {
-      if (!ret.isEmpty()){
+    for (Integer day : days) {
+      if (!ret.isEmpty()) {
         ret += ",";
       }
       switch (day) {
