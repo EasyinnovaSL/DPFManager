@@ -206,11 +206,53 @@
 	var ifdSelected = 0;
 	function showIfd(nameid){
 		ifdSelected= nameid;
+		$(".xmp").hide();
+		$(".exif").hide();
+		$(".iptc").hide();
 		$(".liifdlist").removeClass("bold");
 		$("#liifd"+ifdSelected).addClass("bold");
 		$(".ifd").removeClass("hide");
 		$(".ifd").hide();
 		$(".ifd"+ifdSelected).show();
+		expertChanged();
+	}
+	var xmpSelected = 0;
+	function showXmp(nameid){
+		xmpSelected= nameid;
+		$(".ifd").hide();
+		$(".exif").hide();
+		$(".iptc").hide();
+		$(".lixmplist").removeClass("bold");
+		$("#lixmp"+xmpSelected).addClass("bold");
+		$(".xmp").removeClass("hide");
+		$(".xmp").hide();
+		$(".xmp"+xmpSelected).show();
+		expertChanged();
+	}
+	var exifSelected = 0;
+	function showExif(nameid){
+		exifSelected= nameid;
+		$(".xmp").hide();
+		$(".ifd").hide();
+		$(".iptc").hide();
+		$(".liexiflist").removeClass("bold");
+		$("#liexif"+exifSelected).addClass("bold");
+		$(".exif").removeClass("hide");
+		$(".exif").hide();
+		$(".exif"+xmpSelected).show();
+		expertChanged();
+	}
+	var iptcSelected = 0;
+	function showIptc(nameid){
+		iptcSelected= nameid;
+		$(".exif").hide();
+		$(".xmp").hide();
+		$(".ifd").hide();
+		$(".liiptclist").removeClass("bold");
+		$("#liiptc"+iptcSelected).addClass("bold");
+		$(".iptc").removeClass("hide");
+		$(".iptc").hide();
+		$(".iptc"+iptcSelected).show();
 		expertChanged();
 	}
 	function expertChanged(){

@@ -357,3 +357,7 @@ h4 i{
 .show{
 	display:block;
 }
+
+.xmp,.exif,.iptc {
+	display:none;
+}

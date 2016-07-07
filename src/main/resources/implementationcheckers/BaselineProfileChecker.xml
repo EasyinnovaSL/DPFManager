@@ -6,6 +6,10 @@
  <description>Tiff Revision 6.0 Final - June 3, 1992</description>
  
  <rules description="header-check">
+  <rule context="tags" level="warning">
+   <assert test="{tag[name=PageNumber](0) &lt; tag[name=PageNumber](1)}">Incoherent page number</assert>
+   <reference>Section 12, page 55</reference>
+  </rule>
   <rule context="tiffValidationObject" level="critical">
    <assert test="{count(header)==1}" diagnostics="d1 d2">Header must exist and be unique</assert>
    <diagnostic id="d1" lang="en">Header must exist and be unique</diagnostic>
@@ -1183,6 +1187,9 @@
  </rules>
  
  <rules description="tagcardinality-check">
+  <rule context="*">
+   <assert test="{cardinality!=0}">Tag cardinality cannot be zero</assert>
+  </rule>
   <rule context="tag[id=40960]">
    <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
   </rule>
