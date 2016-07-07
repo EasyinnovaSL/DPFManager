@@ -4,12 +4,13 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.component.messages.PeriodicalMessage;
 import dpfmanager.shell.interfaces.gui.component.periodical.PeriodicalController;
-import dpfmanager.shell.interfaces.gui.component.periodical.Periodicity;
 import dpfmanager.shell.interfaces.gui.component.periodical.TimeSpinner;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.periodic.core.PeriodicCheck;
+import dpfmanager.shell.modules.periodic.core.Periodicity;
+import dpfmanager.shell.modules.periodic.messages.PeriodicMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -21,7 +22,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -101,27 +101,18 @@ public class PeriodicFragment {
 
 
   /* Periodical Check info */
-  private String uuid;
-  private String input;
-  private String configuration;
-  private Periodicity periodicity;
+  private PeriodicCheck info;
 
   /* Status */
   private boolean saved;
-  private boolean editing;
-  private boolean newC;
-  private boolean delete;
+  private boolean newCheck;
 
-  /* Controller */
-  private PeriodicalController controller;
-
-  public void init(PeriodicalController cont) {
+  public void init() {
     // Empty periodical check
-    controller = cont;
     saved = false;
-    editing = false;
-    newC = true;
-    delete = false;
+    newCheck = true;
+    info = new PeriodicCheck();
+
     loadInputType();
     loadConfigurations();
     loadPeriodicity();
@@ -130,17 +121,11 @@ public class PeriodicFragment {
     NodeUtil.showNode(gridEdit);
   }
 
-  public void init(PeriodicalController cont, String uuid, String input, String configuration, Periodicity periodicity) {
+  public void init(PeriodicCheck check) {
     // Load periodical check
-    controller = cont;
-    this.uuid = uuid;
+    info = check;
     this.saved = true;
-    this.newC = false;
-    this.editing = false;
-    this.delete = false;
-    this.input = input;
-    this.configuration = configuration;
-    this.periodicity = periodicity;
+    this.newCheck = false;
 
     loadInputType();
     hideLoading();
@@ -160,46 +145,42 @@ public class PeriodicFragment {
     NodeUtil.hideNode(gridView);
     NodeUtil.showNode(gridEdit);
     saved = false;
-    editing = true;
   }
 
   @FXML
   protected void deleteClicked(ActionEvent event) throws Exception {
     showLoadingDelete();
-    delete = true;
-    if (newC) {
+    if (newCheck) {
       // Only from GUI
-      context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicalMessage(PeriodicalMessage.Type.DELETE));
+      context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, getUuid(), true));
     } else {
-      // Delete from OS task and GUI
-      if (controller.deletePeriodicalCheck(uuid)) {
-        context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicalMessage(PeriodicalMessage.Type.DELETE));
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorDeleteCron")));
-      }
+      // Delete from OS tasks
+      context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, getUuid()));
     }
-    hideLoading();
   }
 
   @FXML
   protected void saveClicked(ActionEvent event) throws Exception {
     showLoadingSave();
     if (savePeriodical()) {
-      if (uuid == null) {
-        uuid = "dpf-" + System.currentTimeMillis();
-      }
-      if (controller.savePeriodicalCheck(uuid, input, configuration, periodicity, editing)) {
-        // Everything ok
-        saved = true;
-        newC = false;
-        printViewMode();
-        NodeUtil.showNode(gridView);
-        NodeUtil.hideNode(gridEdit);
+      if (newCheck) {
+        // Save new
+        context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.SAVE, info));
       } else {
-        // Error saving periodical check
-        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorSavePeriodic")));
+        // Edit old
+        context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.EDIT, info));
       }
+    } else {
+      hideLoading();
     }
+  }
+
+  public void savedSuccess() {
+    saved = true;
+    newCheck = false;
+    printViewMode();
+    NodeUtil.showNode(gridView);
+    NodeUtil.hideNode(gridEdit);
     hideLoading();
   }
 
@@ -275,8 +256,8 @@ public class PeriodicFragment {
       comboChoice.getItems().add(bundle.getString("comboFolder"));
       comboChoice.setValue(bundle.getString("comboFile"));
     }
-    if (input != null) {
-      inputText.setText(input);
+    if (info.getInput() != null) {
+      inputText.setText(info.getInput());
     }
   }
 
@@ -292,22 +273,22 @@ public class PeriodicFragment {
         }
       }
     }
-    if (configuration != null) {
-      configChoice.setValue(configuration);
+    if (info.getConfiguration() != null) {
+      configChoice.setValue(info.getConfiguration());
     }
   }
 
   private void loadPeriodicity() {
     if (spinner == null) {
-      if (periodicity != null) {
-        spinner = new TimeSpinner(periodicity.getTime());
+      if (info.getPeriodicity() != null) {
+        spinner = new TimeSpinner(info.getPeriodicity().getTime());
       } else {
         spinner = new TimeSpinner();
       }
       timeHbox.getChildren().add(spinner);
     }
 
-    if (hboxWeekly.getChildren().size() == 2){
+    if (hboxWeekly.getChildren().size() == 2) {
       weekDay = new CheckComboBox();
       weekDay.getStyleClass().addAll("combo-box-white", "dpf-bar");
       weekDay.setDisable(true);
@@ -323,12 +304,13 @@ public class PeriodicFragment {
       monthDay.setValue(1);
     }
 
-    if (periodicity != null) {
+    if (info.getPeriodicity() != null) {
+      Periodicity periodicity = info.getPeriodicity();
       if (!periodicity.getDaysOfWeek().isEmpty()) {
         radioWeekly.setSelected(true);
         weekDay.setDisable(false);
         for (Integer day : periodicity.getDaysOfWeek()) {
-          weekDay.getCheckModel().check(day-1);
+          weekDay.getCheckModel().check(day - 1);
         }
       } else if (periodicity.getDayOfMonth() != null && periodicity.getDayOfMonth() > 0) {
         radioMonthly.setSelected(true);
@@ -346,7 +328,7 @@ public class PeriodicFragment {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertFile")));
       return false;
     } else {
-      input = inputText.getText();
+      info.setInput(inputText.getText());
     }
 
     // Check configuration
@@ -355,18 +337,20 @@ public class PeriodicFragment {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertConfigFile")));
       return false;
     } else {
-      configuration = value;
+      info.setConfiguration(value);
     }
 
     // Periodicity
     if (radioDaily.isSelected()) {
-      periodicity = new Periodicity(Periodicity.Mode.DAILY, spinner.getValue());
+      info.setPeriodicity(new Periodicity(Periodicity.Mode.DAILY, spinner.getValue()));
     } else if (radioWeekly.isSelected()) {
-      periodicity = new Periodicity(Periodicity.Mode.WEEKLY, spinner.getValue());
+      Periodicity periodicity = new Periodicity(Periodicity.Mode.WEEKLY, spinner.getValue());
       periodicity.setDaysOfWeek(getDaysOfWeek());
+      info.setPeriodicity(periodicity);
     } else if (radioMonthly.isSelected()) {
-      periodicity = new Periodicity(Periodicity.Mode.MONTHLY, spinner.getValue());
+      Periodicity periodicity = new Periodicity(Periodicity.Mode.MONTHLY, spinner.getValue());
       periodicity.setDayOfMonth((Integer) monthDay.getValue());
+      info.setPeriodicity(periodicity);
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertPeriodicity")));
       return false;
@@ -378,18 +362,19 @@ public class PeriodicFragment {
     List<Integer> list = new ArrayList<>();
     for (Object obj : weekDay.getCheckModel().getCheckedIndices()) {
       Integer index = (Integer) obj;
-      list.add(index+1);
+      list.add(index + 1);
     }
     return list;
   }
 
   private void printViewMode() {
-    viewInput.setText(input);
-    viewConfig.setText(configuration);
+    viewInput.setText(info.getInput());
+    viewConfig.setText(info.getConfiguration());
     viewPeriod.setText(parsePeriodicityInfo());
   }
 
   private String parsePeriodicityInfo() {
+    Periodicity periodicity = info.getPeriodicity();
     if (periodicity != null) {
       switch (periodicity.getMode()) {
         case DAILY:
@@ -420,7 +405,7 @@ public class PeriodicFragment {
     hideButtons();
   }
 
-  private void hideLoading() {
+  public void hideLoading() {
     NodeUtil.hideNode(saveLoading);
     NodeUtil.hideNode(deleteLoadingInEdit);
     NodeUtil.hideNode(deleteLoadingInView);
@@ -446,18 +431,11 @@ public class PeriodicFragment {
    */
 
   public String getUuid() {
-    return uuid;
+    return info.getUuid();
   }
 
   public boolean isSaved() {
     return saved;
   }
 
-  public boolean isEditing() {
-    return editing;
-  }
-
-  public boolean isDelete() {
-    return delete;
-  }
 }

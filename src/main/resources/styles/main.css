@@ -380,6 +380,10 @@
     -fx-background-insets: 0 0 -1 0, 0, 1, 2;
     -fx-padding: 0;
 }
+.combo-box-white:disabled,
+.combo-box-white .combo-box:disabled{
+    -fx-opacity: 0.5;
+}
 .combo-box-white .arrow {
     -fx-background-color: black;
 }

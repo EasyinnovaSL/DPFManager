@@ -1,4 +1,4 @@
-package dpfmanager.shell.interfaces.gui.component.periodical;
+package dpfmanager.shell.modules.periodic.core;
 
 
 import java.time.LocalTime;
