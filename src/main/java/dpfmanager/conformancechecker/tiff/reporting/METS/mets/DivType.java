@@ -91,7 +91,7 @@ import javax.xml.namespace.QName;
 @XmlType(name = "divType", propOrder = {
     "mptr",
     "fptr",
-    "div"
+    "div",
 })
 public class DivType {
 

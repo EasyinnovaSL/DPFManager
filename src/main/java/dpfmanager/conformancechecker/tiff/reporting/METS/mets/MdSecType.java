@@ -8,15 +8,18 @@
 
 package dpfmanager.conformancechecker.tiff.reporting.METS.mets;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -1259,12 +1262,11 @@ public class MdSecType {
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "any"
+            "elementContainer",
         })
         public static class XmlData {
 
-            @XmlAnyElement(lax = true)
-            protected List<Object> any;
+            protected List<SimpleLiteral> elementContainer;
 
             /**
              * Gets the value of the any property.
@@ -1289,11 +1291,100 @@ public class MdSecType {
              * 
              * 
              */
-            public List<Object> getAny() {
-                if (any == null) {
-                    any = new ArrayList<Object>();
+            public List<SimpleLiteral> getAny() {
+                if (elementContainer == null) {
+                  elementContainer = new ArrayList<SimpleLiteral>();
                 }
-                return this.any;
+                return this.elementContainer;
+            }
+
+            public void setData(SimpleLiteral o){
+                if (elementContainer == null) {
+                  elementContainer = new ArrayList<SimpleLiteral>();
+                }
+                this.elementContainer.add(o);
+            }
+
+            @XmlAccessorType(XmlAccessType.FIELD)
+            @XmlType(name = "", propOrder = {
+                "rights",
+                "title",
+                "creator",
+                "description",
+                "type",
+                "date"
+            })
+            public static class SimpleLiteral{
+
+              //decided to declare all avaible atributtes to prevent bad declaration practises
+              @XmlElement(name = "dc:rights")
+              private String rights;
+              @XmlElement(name = "dc:title")
+              private String title;
+              @XmlElement(name = "dc:creator")
+              private String creator;
+              @XmlElement(name = "dc:description")
+              private String description;
+              @XmlElement(name = "dc:type")
+              private String type;
+              @XmlElement(name = "dc:date")
+              private String date;
+
+              /**
+               * set rights method
+               * @param value
+               */
+              public void setRights (String value){
+                this.rights= value;
+              }
+
+              /**
+               *
+               * @return rights attribute
+               */
+
+              public String getRights (){
+                return this.rights;
+              }
+
+              /*
+                Set
+               */
+              public void setTitle (String value){
+                this.title= value;
+              }
+              public String getTitle (){
+                return this.title;
+              }
+
+              public void setCreator (String value){
+                this.creator= value;
+              }
+              public String getCreator (){
+                return this.creator;
+              }
+
+              public void setDescription (String value){
+                this.description= value;
+              }
+              public String getDescription (){
+                return this.description;
+              }
+
+              public void setType (String value){
+                this.type= value;
+              }
+              public String getType (){
+                return this.type;
+              }
+
+              public void setDate (String value){
+                this.date= value;
+              }
+              public String getDate (){
+                return this.date;
+              }
+
             }
 
         }

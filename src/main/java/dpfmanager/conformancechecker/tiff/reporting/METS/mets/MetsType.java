@@ -180,7 +180,7 @@ import javax.xml.namespace.QName;
     "fileSec",
     "structMap",
     "structLink",
-    "behaviorSec"
+    "behaviorSec",
 })
 @XmlSeeAlso({
     Mets.class
@@ -208,9 +208,21 @@ public class MetsType {
     protected String type;
     @XmlAttribute(name = "PROFILE")
     protected String profile;
+    @XmlAttribute(name = "xmlns:xsi")
+    protected String xmlsXsi;
+    @XmlAttribute(name = "xmlns:dc")
+    protected String xmlsDc;
+    @XmlAttribute(name = "xsi:schemaLocation")
+    protected String xmlsSchema;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+
+    public MetsType (){
+        this.xmlsXsi = "http://www.w3.org/2001/XMLSchema-instance";
+        this.xmlsSchema = "http://www.loc.gov/standards/mets/mets.xsd";
+        this.xmlsDc ="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd";
+    }
     /**
      * Obtiene el valor de la propiedad metsHdr.
      * 
@@ -545,8 +557,7 @@ public class MetsType {
     */
     public void marshal(Element root, Document doc) {
         String metsNs = "http://www.loc.gov/METS/";
-
-        // set up namespace declarations and schema references
+        // set up namespace declarations and schema references from Mets
         root.setAttribute("xmlns:mets", metsNs);
         root.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
         root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");

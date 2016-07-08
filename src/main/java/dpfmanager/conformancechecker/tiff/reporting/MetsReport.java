@@ -1,51 +1,24 @@
 package dpfmanager.conformancechecker.tiff.reporting;
 
-import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
-import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
-import dpfmanager.conformancechecker.tiff.reporting.METS.dc.*;
-import dpfmanager.conformancechecker.tiff.reporting.METS.dc.ObjectFactory;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.ReportHtml;
-import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
 import dpfmanager.conformancechecker.tiff.reporting.METS.mets.*;
-import dpfmanager.conformancechecker.tiff.reporting.METS.dc.*;
 
-import com.easyinnova.tiff.model.IfdTags;
-import com.easyinnova.tiff.model.ImageStrips;
 import com.easyinnova.tiff.model.Metadata;
-import com.easyinnova.tiff.model.Strip;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.TiffObject;
-import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 
-import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-import sun.awt.image.ImageDecoder;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.math.BigInteger;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,15 +28,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.DocumentBuilder;
@@ -71,8 +39,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -82,23 +52,17 @@ import javax.xml.transform.stream.StreamResult;
 public class MetsReport {
 
   //this is a temporary method
-  private boolean isThumbail(IFD ifd){
-    boolean isThumbail = false;
-    if (ifd.getTags().containsTagId(254) && BigInteger.valueOf(ifd.getTags().get(254).getFirstNumericValue()).testBit(0)) isThumbail = true;
-    if (ifd.getTags().containsTagId(255) && ifd.getTags().get(255).getFirstNumericValue() == 2) isThumbail = true;
-    if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) isThumbail = true;
-
-    return isThumbail;
-  }
+//  private boolean isThumbail(IFD ifd){
+//    boolean isThumbail = false;
+//    if (ifd.getTags().containsTagId(254) && BigInteger.valueOf(ifd.getTags().get(254).getFirstNumericValue()).testBit(0)) isThumbail = true;
+//    if (ifd.getTags().containsTagId(255) && ifd.getTags().get(255).getFirstNumericValue() == 2) isThumbail = true;
+//    if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) isThumbail = true;
+//
+//    return isThumbail;
+//  }
 
   private  MdSecType.MdWrap extractMdWrap (IndividualReport ir){
 
-    String title;
-    String creator;
-    String description;
-    String date;
-    String type = "image/tiff";
-    String rights;
     MdSecType.MdWrap mdwrap = new MdSecType.MdWrap();
     mdwrap.setID("W" + mdwrap.hashCode());
     mdwrap.setMDTYPEVERSION("1.1");
@@ -113,21 +77,31 @@ public class MetsReport {
     }catch(Exception e){
         e.printStackTrace();
     }
-//    ObjectFactory documentDc = new ObjectFactory();
-//    ElementContainer container = documentDc.createElementContainer();
-//    TiffDocument tiff = ir.getTiffModel();
-//    Metadata tiffData = tiff.getMetadata();
-//    SimpleLiteral simple = new SimpleLiteral();
-//    if(tiffData.get("title") == null){
-//      title = "";
-//    }else{
-//      title = tiffData.get("title").toString();
-//    }
-//    simple.setLang(title);
-//    container.setLiteral(documentDc.createTitle(simple));
-//    MdSecType.MdWrap.XmlData xmlData = new MdSecType.MdWrap.XmlData();
-//    xmlData.setData(container);
-//    mdwrap.setXmlData(xmlData);
+    MdSecType.MdWrap.XmlData xmlData = new MdSecType.MdWrap.XmlData();
+    MdSecType.MdWrap.XmlData.SimpleLiteral literal = new MdSecType.MdWrap.XmlData.SimpleLiteral();
+    literal.setType("image/tiff");
+
+    //getting tiff info
+    TiffDocument tiffDocument = ir.getTiffModel();
+    Metadata metadata = tiffDocument.getMetadata();
+    if(metadata.get("title") != null){
+      literal.setTitle(metadata.get("title").toString());
+    }
+    if(metadata.get("creator") != null){
+      literal.setCreator(metadata.get("creator").toString());
+    }
+    if(metadata.get("Description") != null){
+      literal.setDescription(metadata.get("Description").toString());
+    }
+    if(metadata.get("dateTime") != null){
+      literal.setDate(metadata.get("dateTime").toString());
+    }
+    if(metadata.get("Copyright") != null){
+      literal.setRights(metadata.get("Copyright").toString());
+    }
+
+    xmlData.setData(literal);
+    mdwrap.setXmlData(xmlData);
 
     return mdwrap;
   }
@@ -139,9 +113,9 @@ public class MetsReport {
     DivType div = new DivType();
     div.setID("I" + div.hashCode());
     div.setTYPE("IFD");
-    if (ifd.isImage() && !isThumbail(ifd)){
+    if (ifd.isImage() && !ifd.isThumbnail()){
       div.setLABEL("Main Image");
-    }else if(ifd.isImage() && isThumbail(ifd)){
+    }else if(ifd.isImage() && ifd.isThumbnail()){
       div.setLABEL("Thumbail");
     }
     DivType.Fptr fptr = new DivType.Fptr();
@@ -172,8 +146,8 @@ public class MetsReport {
       areaT.setID("a" + areaT.hashCode());
       areaT.setFILEID(file);
       TagValue auxTagValue = iterator.next(); //we need it to work with it
-      areaT.setBEGIN("0");
-      areaT.setEND("0");
+      areaT.setBEGIN(String.valueOf(auxTagValue.getTagOffset()));
+      areaT.setEND(String.valueOf(auxTagValue.getTagOffset()+12));
       fptrT.setArea(areaT);
       divTag.setFptr(fptrT);
 
@@ -187,15 +161,15 @@ public class MetsReport {
       AreaType areaV = new AreaType();
       areaV.setID("a" + areaV.hashCode());
       areaV.setFILEID(file);
-      areaV.setBEGIN(String.valueOf(auxTagValue.getOffset()));
-      areaV.setEND(String.valueOf(auxTagValue.getOffset() + auxTagValue.getReadlength()));
+      areaV.setBEGIN(String.valueOf(auxTagValue.getReadOffset()));
+      areaV.setEND(String.valueOf(auxTagValue.getReadOffset() + auxTagValue.getReadlength()));
       fptrV.setArea(areaV);
       divValue.setFptr(fptrV);
 
       divTag.setDiv(divValue);
       div.setDiv(divTag);
     }
-    area.setEND(String.valueOf(startIfd + 2 + (tags * 12) + 4));
+    area.setEND(String.valueOf(startIfd + ifd.getLength()));
     fptr.setArea(area);
     div.setFptr(fptr);
     return div;
@@ -214,7 +188,7 @@ public class MetsReport {
     List<FileType.Stream> streamList = new ArrayList<FileType.Stream>();
 
     // SubImage and extras
-    boolean isThumbail = isThumbail(ifd);
+    boolean isThumbail = ifd.isThumbnail();
 
     List <String> streamsStrings = new ArrayList<String>();
 
@@ -425,22 +399,31 @@ public class MetsReport {
   public String parseIndividual(IndividualReport ir, Rules rules) {
 
     try {
+
       Mets mets = new Mets();
       mets = buildReportIndividual(ir, rules);
-
       JAXBContext context = null;
       context = JAXBContext.newInstance(Mets.class);
-      Marshaller m = null;
-      m = context.createMarshaller();
+//      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+//      DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+//      Document doc = docBuilder.newDocument();
+
+//      DOMResult res = new DOMResult();
+//      Marshaller marshaller = context.createMarshaller();
+//      marshaller.marshal(mets, res);
+//      Element elt = ((Document)res.getNode()).getDocumentElement();
+//      mets.marshal(elt,doc);
+
+      Marshaller m = context.createMarshaller();
        //for pretty-print XML in JAXB
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
       StringWriter sw = new StringWriter();
       m.marshal(mets, sw);
 
       //to String
-        String output = sw.toString();
 
-      return output;
+      return sw.toString();
+
     } catch (JAXBException e) {
       e.printStackTrace();
       return "";
