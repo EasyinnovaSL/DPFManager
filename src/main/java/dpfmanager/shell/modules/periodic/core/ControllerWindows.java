@@ -36,18 +36,17 @@ public class ControllerWindows extends Controller {
   private ResourceBundle bundle;
 
   public ControllerWindows(DpfContext context, ResourceBundle bundle) {
-
+    this.context = context;
+    this.bundle = bundle;
   }
 
   @Override
   public boolean savePeriodicalCheck(PeriodicCheck check) {
     try {
       createIfNotExistsVBS();
-      String parsedInput = parseInput(check.getInput());
-      String configPath = asString(getConfigurationPath(check.getConfiguration()));
-      String params = " -s -configuration " + configPath + " " + parsedInput;
+      String params = buildCommandArguments(check);
       String exe = asString(getVBSPath());
-      String dpfCommand = exe + params;
+      String dpfCommand = exe + " " + params;
       String command = "";
       Periodicity periodicity = check.getPeriodicity();
       switch (periodicity.getMode()) {
@@ -87,7 +86,6 @@ public class ControllerWindows extends Controller {
   @Override
   public List<PeriodicCheck> readPeriodicalChecks() {
     try {
-      // WINDOWS
       String command = "schtasks /query /xml";
       Process proc = Runtime.getRuntime().exec(command);
       return readProcessOutput(proc);
@@ -132,28 +130,9 @@ public class ControllerWindows extends Controller {
       Document doc = dBuilder.parse(is);
 
       // Parse input & configuration
-      String configuration = "";
-      String input = "";
       String arguments = doc.getDocumentElement().getElementsByTagName("Arguments").item(0).getTextContent();
-      String aux = arguments.substring(18); // Skip -s -configuration
-      String[] filesList = aux.split("\"");
-      boolean first = true;
-      for (String file : filesList) {
-        if (!file.replaceAll(" ", "").isEmpty()) {
-          if (first) {
-            // Configuration
-            configuration = file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".dpf"));
-            first = false;
-          } else {
-            // Input
-            if (input.isEmpty()) {
-              input = file;
-            } else {
-              input += ";" + file;
-            }
-          }
-        }
-      }
+      String input = getInputFromArguments(arguments);
+      String configuration = getConfigurationFromArguments(arguments);
 
       // Parse periodicity
       Periodicity periodicity = new Periodicity();

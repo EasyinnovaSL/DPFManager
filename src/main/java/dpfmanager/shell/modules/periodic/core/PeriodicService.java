@@ -34,26 +34,26 @@ public class PeriodicService extends DpfService {
     if (System.getProperty("os.name").startsWith("Windows")) {
       controller = new ControllerWindows(context, DPFManagerProperties.getBundle());
     } else {
-      controller = new ControllerLinux();
+      controller = new ControllerLinux(context, DPFManagerProperties.getBundle());
     }
   }
 
-  public void savePeriocicalCheck(PeriodicCheck check){
+  public void savePeriocicalCheck(PeriodicCheck check) {
     boolean result = controller.savePeriodicalCheck(check);
     context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.SAVE, check.getUuid(), result));
   }
 
-  public void editPeriocicalCheck(PeriodicCheck check){
+  public void editPeriocicalCheck(PeriodicCheck check) {
     boolean result = controller.editPeriodicalCheck(check);
     context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.EDIT, check.getUuid(), result));
   }
 
-  public void deletePeriocicalCheck(String uuid){
+  public void deletePeriocicalCheck(String uuid) {
     boolean result = controller.deletePeriodicalCheck(uuid);
     context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, uuid, result));
   }
 
-  public void readPeriodicalChecks(){
+  public void readPeriodicalChecks() {
     List<PeriodicCheck> list = controller.readPeriodicalChecks();
     context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.LIST, list));
   }

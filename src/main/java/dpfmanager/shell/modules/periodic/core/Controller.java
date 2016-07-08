@@ -94,5 +94,45 @@ public abstract class Controller {
     }
   }
 
+  protected String buildCommandArguments(PeriodicCheck check){
+    String parsedInput = parseInput(check.getInput());
+    String configPath = asString(getConfigurationPath(check.getConfiguration()));
+    return "-s -configuration " + configPath + " " + parsedInput;
+  }
+
+  protected String getInputFromArguments(String arguments){
+    String input = "";
+    String aux = arguments.substring(18); // Skip -s -configuration
+    String[] files = aux.split("\"");
+    boolean first = true;
+    for (String file : files) {
+      if (!file.replaceAll(" ", "").isEmpty()) {
+        if (first) {
+          // Configuration
+          first = false;
+        } else {
+          // Input
+          if (input.isEmpty()) {
+            input = file;
+          } else {
+            input += ";" + file;
+          }
+        }
+      }
+    }
+    return input;
+  }
+
+  protected String getConfigurationFromArguments(String arguments){
+    String aux = arguments.substring(18); // Skip -s -configuration
+    String[] files = aux.split("\"");
+    for (String file : files) {
+      if (!file.replaceAll(" ", "").isEmpty()) {
+        // Configuration
+        return file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".dpf"));
+      }
+    }
+    return "";
+  }
 
 }

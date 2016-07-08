@@ -69,7 +69,7 @@ public class TimeSpinner extends Spinner<LocalTime> {
   }
 
   public TimeSpinner(LocalTime time) {
-    setPrefWidth(70.0);
+    setPrefWidth(80.0);
     setEditable(true);
 
     // Create a StringConverter for converting between the text in the
