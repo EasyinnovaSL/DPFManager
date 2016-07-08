@@ -22,6 +22,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -292,6 +293,9 @@ public class PeriodicFragment {
       weekDay = new CheckComboBox();
       weekDay.getStyleClass().addAll("combo-box-white", "dpf-bar");
       weekDay.setDisable(true);
+      weekDay.setMinWidth(150);
+      weekDay.setPrefWidth(150);
+      weekDay.setMaxWidth(150);
       HBox.setMargin(weekDay, new Insets(0, 0, 0, 5));
       weekDay.getItems().addAll(bundle.getString("monday"), bundle.getString("tuesday"), bundle.getString("wednesday"), bundle.getString("thursday"), bundle.getString("friday"), bundle.getString("saturday"), bundle.getString("sunday"));
       hboxWeekly.getChildren().add(weekDay);
@@ -345,8 +349,14 @@ public class PeriodicFragment {
       info.setPeriodicity(new Periodicity(Periodicity.Mode.DAILY, spinner.getValue()));
     } else if (radioWeekly.isSelected()) {
       Periodicity periodicity = new Periodicity(Periodicity.Mode.WEEKLY, spinner.getValue());
-      periodicity.setDaysOfWeek(getDaysOfWeek());
-      info.setPeriodicity(periodicity);
+      List<Integer> days = getDaysOfWeek();
+      if (!days.isEmpty()){
+        periodicity.setDaysOfWeek(days);
+        info.setPeriodicity(periodicity);
+      } else {
+        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertPeriodicityWeek")));
+        return false;
+      }
     } else if (radioMonthly.isSelected()) {
       Periodicity periodicity = new Periodicity(Periodicity.Mode.MONTHLY, spinner.getValue());
       periodicity.setDayOfMonth((Integer) monthDay.getValue());

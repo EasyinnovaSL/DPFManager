@@ -12,5 +12,5 @@ public class ControllerMacOS extends ControllerLinux {
   public ControllerMacOS(DpfContext context, ResourceBundle bundle) {
     super(context, bundle);
   }
-  
+
 }
