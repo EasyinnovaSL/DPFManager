@@ -390,11 +390,25 @@ public class ConsoleController {
    */
   public void displayHelp() {
     printOut("");
-    for (int i = 1; i<4; i++){
-      printOut(bundle.getString("help"+i));
-    }
-    for (int i = 4; i<18; i++){
-      printOut("    "+bundle.getString("help"+i));
+    printOut(bundle.getString("help1"));
+    printOut(bundle.getString("help2"));
+    printOut("");
+    printOptions("helpO", 6);
+    printOut("");
+    printOptions("helpC", 7);
+    printOut("");
+    printOptions("helpR", 4);
+    printOut("");
+    printOptions("helpP", 6);
+    printOut("        " + bundle.getString("helpP61"));
+    printOut("        " + bundle.getString("helpP62"));
+    printOut("    "+bundle.getString("helpP7"));
+  }
+
+  public void printOptions(String prefix, int max) {
+    printOut(bundle.getString(prefix+"1"));
+    for (int i = 2; i<=max; i++){
+      printOut("    "+bundle.getString(prefix+i));
     }
   }
 
