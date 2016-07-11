@@ -103,6 +103,7 @@ public class ConsoleController {
         context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.SAVE, info));
       } else {
         printOut(bundle.getString("noSuchInfo"));
+        displayHelp();
       }
     } else if (parameters.containsKey("-editperiodic")){
       // Edit periodical check
@@ -112,6 +113,7 @@ public class ConsoleController {
         context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.EDIT, info));
       } else {
         printOut(bundle.getString("noSuchInfo"));
+        displayHelp();
       }
     } else if (parameters.containsKey("-removeperiodic")){
       // Remove periodical check
@@ -134,7 +136,7 @@ public class ConsoleController {
   }
 
   private PeriodicCheck parsePeriodicParameters(String uuid){
-    PeriodicCheck check = new PeriodicCheck(uuid);
+    PeriodicCheck check = new PeriodicCheck();
     if (uuid != null){
       check.setUuid(uuid);
     }
@@ -171,9 +173,12 @@ public class ConsoleController {
     periodicity.setTime(LocalTime.parse(time));
 
     // Periodicity
-    Periodicity.Mode mode = Periodicity.Mode.DAILY;
+    Periodicity.Mode mode;
     if (parameters.containsKey("-periodicity")){
       mode = parseMode(parameters.get("-periodicity"));
+    } else {
+      printOut(bundle.getString("specifyPeriodicity"));
+      return null;
     }
     periodicity.setMode(mode);
     if (mode.equals(Periodicity.Mode.WEEKLY)){

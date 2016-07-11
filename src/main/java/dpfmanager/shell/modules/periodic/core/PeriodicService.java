@@ -49,6 +49,9 @@ public class PeriodicService extends DpfService {
     boolean result = controller.savePeriodicalCheck(check);
     if (!result){
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorSavePeriodic")));
+    } else {
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("successSavePeriodic").replace("%1", check.getUuid())));
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, check.toString(bundle)));
     }
     context.sendGui(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.SAVE, check.getUuid(), result));
   }
@@ -57,6 +60,9 @@ public class PeriodicService extends DpfService {
     boolean result = controller.editPeriodicalCheck(check);
     if (!result){
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorEditPeriodic")));
+    } else {
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("successEditPeriodic").replace("%1", check.getUuid())));
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, check.toString(bundle)));
     }
     context.sendGui(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.EDIT, check.getUuid(), result));
   }
@@ -65,6 +71,8 @@ public class PeriodicService extends DpfService {
     boolean result = controller.deletePeriodicalCheck(uuid);
     if (!result){
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorDeleteCron")));
+    } else {
+      context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("successRemovePeriodic").replace("%1",uuid)));
     }
     context.sendGui(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, uuid, result));
   }

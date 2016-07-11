@@ -22,13 +22,6 @@ public class PeriodicCheck {
     periodicity = null;
   }
 
-  public PeriodicCheck(String uuid) {
-    this.uuid = uuid;
-    input = null;
-    configuration = null;
-    periodicity = null;
-  }
-
   public PeriodicCheck(String uuid, String input, String configuration, Periodicity periodicity) {
     this.uuid = uuid;
     this.input = input;
