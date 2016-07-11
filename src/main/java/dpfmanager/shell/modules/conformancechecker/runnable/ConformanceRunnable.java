@@ -46,7 +46,7 @@ public class ConformanceRunnable extends DpfRunnable {
     // Process the input and get a list of individual reports
     IndividualReport ir;
     ir = pi.processFile(filename, internalReportFolder, config, id);
-    if (ir != null) {
+    if (ir != null && !ir.isError()) {
       ir.setIdReport(id);
       ir.setInternalReportFolder(internalReportFolder);
       // Tell report module to create it
@@ -54,6 +54,11 @@ public class ConformanceRunnable extends DpfRunnable {
       context.send(BasicConfig.MODULE_REPORT, new IndividualReportMessage(ir, config));
     } else{
       // Tell multi threading that one report fail (no wait for it)
+      if (ir != null){
+        ir.setIdReport(id);
+        ir.setInternalReportFolder(internalReportFolder);
+        ir.setUuid(uuid);
+      }
       context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, uuid));
     }
   }

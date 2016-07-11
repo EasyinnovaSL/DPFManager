@@ -152,9 +152,9 @@ public class ProcessInput {
           ir = cc.processFile(filename, filename, internalReportFolder, config, id);
         } catch (Exception ex) {
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorInFile").replace("%1", filename)));
-          ex.printStackTrace();
         }
       } else {
+        ir = new IndividualReport(true);
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("unacceptedFormat").replace("%1", filename)));
       }
     }
