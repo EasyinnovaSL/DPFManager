@@ -4,7 +4,6 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.component.periodical.PeriodicalController;
 import dpfmanager.shell.interfaces.gui.component.periodical.TimeSpinner;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
@@ -22,7 +21,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -104,11 +102,24 @@ public class PeriodicFragment {
   /* Periodical Check info */
   private PeriodicCheck info;
 
+  /* Current configs */
+  private List<String> currentConfigs;
+
+  /* imported configs */
+  private List<String> importedConfigs;
+
   /* Status */
   private boolean saved;
   private boolean newCheck;
 
+  private void initDefault(){
+    currentConfigs = new ArrayList<>();
+    importedConfigs = new ArrayList<>();
+  }
+
   public void init() {
+    initDefault();
+
     // Empty periodical check
     saved = false;
     newCheck = true;
@@ -123,10 +134,12 @@ public class PeriodicFragment {
   }
 
   public void init(PeriodicCheck check) {
+    initDefault();
+
     // Load periodical check
+    saved = true;
+    newCheck = false;
     info = check;
-    this.saved = true;
-    this.newCheck = false;
 
     loadInputType();
     hideLoading();
@@ -213,6 +226,42 @@ public class PeriodicFragment {
     currentRadio.setSelected(true);
   }
 
+  @FXML
+  protected void configurationChanged(ActionEvent event) throws Exception {
+    if (configChoice.getValue() != null && configChoice.getValue().equals(bundle.getString("selectFromDisk"))) {
+      selectConfiguration();
+      System.out.println("Select form disk");
+    }
+  }
+
+  private void selectConfiguration() {
+    String txtFile = null;
+    String configDir = DPFManagerProperties.getDefaultDirConfig();
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle(bundle.getString("openFile"));
+    fileChooser.setInitialDirectory(new File(configDir));
+    File file = fileChooser.showOpenDialog(GuiWorkbench.getMyStage());
+    if (file != null) {
+      txtFile = file.getAbsolutePath();
+      if (file.exists() && file.getParent() != null && file.getParentFile().exists() && file.getParentFile().isDirectory()) {
+        String path = file.getParent();
+        DPFManagerProperties.setDefaultDirFile(path);
+      }
+    }
+    if (txtFile != null) {
+      // Reload configurations
+      info.setConfiguration(txtFile);
+      importedConfigs.add(txtFile);
+      configChoice.getItems().clear();
+      configChoice.getItems().addAll(currentConfigs);
+      configChoice.getItems().addAll(importedConfigs);
+      configChoice.getItems().add(bundle.getString("selectFromDisk"));
+      configChoice.setValue(txtFile);
+    } else {
+      configChoice.setValue("");
+    }
+  }
+
   private void selectInputAction() {
     String txtFile = null;
     String configDir = DPFManagerProperties.getDefaultDirFile();
@@ -263,20 +312,34 @@ public class PeriodicFragment {
   }
 
   private void loadConfigurations() {
-    // Add configurations
-    configChoice.getItems().clear();
+    // Read configurations
+    currentConfigs.clear();
     File folder = new File(DPFManagerProperties.getConfigDir());
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
           String name = fileEntry.getName().substring(0, fileEntry.getName().length() - 4);
-          configChoice.getItems().add(name);
+          currentConfigs.add(name);
         }
       }
     }
+
+    // Add current configs
+    configChoice.getItems().clear();
+    configChoice.getItems().addAll(currentConfigs);
+
+    // Selected one
     if (info.getConfiguration() != null) {
+      if (!currentConfigs.contains(info.getConfiguration())) {
+        // Add config from disk
+        importedConfigs.add(info.getConfiguration());
+        configChoice.getItems().add(info.getConfiguration());
+      }
       configChoice.setValue(info.getConfiguration());
     }
+
+    // Add select from disk
+    configChoice.getItems().add(bundle.getString("selectFromDisk"));
   }
 
   private void loadPeriodicity() {
@@ -350,7 +413,7 @@ public class PeriodicFragment {
     } else if (radioWeekly.isSelected()) {
       Periodicity periodicity = new Periodicity(Periodicity.Mode.WEEKLY, spinner.getValue());
       List<Integer> days = getDaysOfWeek();
-      if (!days.isEmpty()){
+      if (!days.isEmpty()) {
         periodicity.setDaysOfWeek(days);
         info.setPeriodicity(periodicity);
       } else {
@@ -380,22 +443,11 @@ public class PeriodicFragment {
   private void printViewMode() {
     viewInput.setText(info.getInput());
     viewConfig.setText(info.getConfiguration());
-    viewPeriod.setText(parsePeriodicityInfo());
-  }
-
-  private String parsePeriodicityInfo() {
-    Periodicity periodicity = info.getPeriodicity();
-    if (periodicity != null) {
-      switch (periodicity.getMode()) {
-        case DAILY:
-          return bundle.getString("dailyInfo").replace("%1", periodicity.getTimeString());
-        case WEEKLY:
-          return bundle.getString("weeklyInfo").replace("%1", periodicity.getDayOfWeekString(bundle)).replace("%2", periodicity.getTimeString());
-        case MONTHLY:
-          return bundle.getString("monthlyInfo").replace("%1", periodicity.getDayOfMonth().toString()).replace("%2", periodicity.getTimeString());
-      }
+    if (info.getPeriodicity() != null) {
+      viewPeriod.setText(info.getPeriodicity().toString(bundle));
+    } else {
+      viewPeriod.setText("");
     }
-    return "";
   }
 
   /**

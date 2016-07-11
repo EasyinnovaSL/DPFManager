@@ -5,6 +5,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.periodic.core.PeriodicService;
+import dpfmanager.shell.modules.periodic.messages.PeriodicMessage;
 import dpfmanager.shell.modules.timer.core.TimerService;
 import dpfmanager.shell.modules.timer.messages.TimerMessage;
 
@@ -28,6 +29,18 @@ public class PeriodicController extends DpfSpringController {
 
   @Override
   public void handleMessage(DpfMessage dpfMessage) {
+    if (dpfMessage.isTypeOf(PeriodicMessage.class)) {
+      PeriodicMessage pm = dpfMessage.getTypedMessage(PeriodicMessage.class);
+      if (pm.isRead()){
+        service.readPeriodicalChecksCmd();
+      } else if (pm.isDelete()){
+        service.deletePeriocicalCheck(pm.getUuid());
+      } else if (pm.isSave()){
+        service.savePeriocicalCheck(pm.getPeriodicCheck());
+      } else if (pm.isEdit()){
+        service.editPeriocicalCheck(pm.getPeriodicCheck());
+      }
+    }
   }
 
   @Override

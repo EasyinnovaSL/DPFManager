@@ -35,7 +35,7 @@ public class PeriodicModule extends DpfModule {
     if (dpfMessage.isTypeOf(PeriodicMessage.class)) {
       PeriodicMessage pm = dpfMessage.getTypedMessage(PeriodicMessage.class);
       if (pm.isRead()){
-        service.readPeriodicalChecks();
+        service.readPeriodicalChecksGui();
       } else if (pm.isDelete()){
         service.deletePeriocicalCheck(pm.getUuid());
       } else if (pm.isSave()){

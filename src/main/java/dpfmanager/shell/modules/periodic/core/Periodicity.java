@@ -56,7 +56,7 @@ public class Periodicity {
     return formatter.format(time);
   }
 
-  public void addDaysOfWeek(Integer day){
+  public void addDaysOfWeek(Integer day) {
     daysOfWeek.add(day);
   }
 
@@ -74,8 +74,8 @@ public class Periodicity {
 
   public String getDayOfWeekString(ResourceBundle bundle) {
     String ret = "";
-    for (Integer day : daysOfWeek){
-      if (!ret.isEmpty()){
+    for (Integer day : daysOfWeek) {
+      if (!ret.isEmpty()) {
         ret += ", ";
       }
       ret += parseFromNumber(day, bundle);
@@ -99,6 +99,21 @@ public class Periodicity {
         return bundle.getString("saturday");
       case 7:
         return bundle.getString("sunday");
+    }
+    return "";
+  }
+
+  /**
+   * Custom to string
+   */
+  public String toString(ResourceBundle bundle) {
+    switch (getMode()) {
+      case DAILY:
+        return bundle.getString("dailyInfo").replace("%1", getTimeString());
+      case WEEKLY:
+        return bundle.getString("weeklyInfo").replace("%1", getDayOfWeekString(bundle)).replace("%2", getTimeString());
+      case MONTHLY:
+        return bundle.getString("monthlyInfo").replace("%1", getDayOfMonth().toString()).replace("%2", getTimeString());
     }
     return "";
   }

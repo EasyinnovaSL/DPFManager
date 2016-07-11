@@ -98,9 +98,6 @@ public class CreateConfigFileTest extends ApplicationTest {
     clickOnScroll("#ID3 #removeButton");
     clickOnAndReload("#continueButton");
 
-    // Skip step 5
-    clickOnAndReload("#continueButton");
-
     // 6 - Save the file
     writeText("#saveNameInput", outputName);
     clickOnScroll("#continueButton");

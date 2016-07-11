@@ -2,6 +2,7 @@ package dpfmanager.shell.modules.periodic.core;
 
 import dpfmanager.shell.core.DPFManagerProperties;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -66,7 +67,12 @@ public abstract class Controller {
   }
 
   protected String getConfigurationPath(String config) {
-    return DPFManagerProperties.getConfigDir() + "/" + config + ".dpf";
+    File file = new File(config);
+    if (file.exists()){
+      return file.getAbsolutePath();
+    } else {
+      return DPFManagerProperties.getConfigDir() + "/" + config + ".dpf";
+    }
   }
 
   protected String asString(String str) {

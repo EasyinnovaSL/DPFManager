@@ -1,10 +1,14 @@
 package dpfmanager.shell.modules.periodic.core;
 
 
+import java.util.ResourceBundle;
+
 /**
  * Created by Adrià Llorens on 01/07/2016.
  */
 public class PeriodicCheck {
+
+  private static String EL = "\n";
 
   private String uuid;
   private String input;
@@ -13,6 +17,13 @@ public class PeriodicCheck {
 
   public PeriodicCheck() {
     uuid = "dpf-" + System.currentTimeMillis();
+    input = null;
+    configuration = null;
+    periodicity = null;
+  }
+
+  public PeriodicCheck(String uuid) {
+    this.uuid = uuid;
     input = null;
     configuration = null;
     periodicity = null;
@@ -59,5 +70,16 @@ public class PeriodicCheck {
 
   public void setPeriodicity(Periodicity periodicity) {
     this.periodicity = periodicity;
+  }
+
+  /**
+   * To String
+   */
+  public String toString(ResourceBundle bundle) {
+    String text = "ID: " + uuid + EL;
+    text += "   " + bundle.getString("input") + " " + input + EL;
+    text += "   " + bundle.getString("configuration") + " " + configuration + EL;
+    text += "   " + bundle.getString("periodicity") + " " + periodicity.toString(bundle) + EL;
+    return text;
   }
 }
