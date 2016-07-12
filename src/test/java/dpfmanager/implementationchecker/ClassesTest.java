@@ -31,7 +31,7 @@ public class ClassesTest extends TestCase {
       v.validateBaseline(content);
 
       if (errors > -1) {
-        assertEquals(v.getErrors().size(), tr.getBaselineValidation().getErrors().size());
+        assertEquals(errors, v.getErrors().size());
       } else {
         assertEquals(true, v.getErrors().size() > 0);
       }

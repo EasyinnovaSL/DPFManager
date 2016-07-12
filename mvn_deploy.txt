@@ -1,0 +1,1 @@
+mvn deploy -DskipTests -DperformRelease=true

@@ -60,7 +60,7 @@
   </rule>
   <rule context="ifds">
    <assert test="{circularReference == 0}">Circular reference</assert>
-   <reference></reference>
+   <reference>Section 7, page 26</reference>
   </rule>
   <rule context="ifds">
    <assert test="{count(ifd) > 0}">At least 1 IFD must exist</assert>
@@ -143,12 +143,60 @@
    <assert test="{tags.tag[name=Compression] &gt; 0}">Invalid Compression for Bilevel image</assert>
    <reference>Section 3, page 17</reference>
   </rule>
+  <rule context="ifd[type=Bilevel]" level="warning">
+   <assert test="{tags.tag[name=BitsPerSample]==1}">BitsPerSample should be 1 for Bilevel images</assert>
+   <reference>Section 3, page 21</reference>
+  </rule>
+  <rule context="ifd[type=Bilevel]" level="warning">
+   <assert test="{tags.tag[name=SamplesPerPixel]==1}">SamplesPerPixel should be 1 for Bilevel images</assert>
+   <reference>Section 8, page 39</reference>
+  </rule>
+  <rule context="ifd[type=Bilevel]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">Bilevel images should not contain tag ColorMap</assert>
+   <reference>Section 3, page 21</reference>
+  </rule>
+  <rule context="ifd[type=Bilevel]" level="warning">
+   <assert test="{!tags.tag[name=InkSet]}">Bilevel images should not contain tag InkSet</assert>
+   <reference>Section 3, page 21</reference>
+  </rule>
+  <rule context="ifd[type=Bilevel]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrCoefficients]}">Bilevel images should not contain tag YCbCrCoefficients</assert>
+   <reference>Section 3, page 21</reference>
+  </rule>
+  <rule context="ifd[type=Bilevel]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrPositioning]}">Bilevel images should not contain tag YCbCrPositioning</assert>
+   <reference>Section 3, page 21</reference>
+  </rule>
+  <rule context="ifd[type=Bilevel]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrSubSampling]}">Bilevel images should not contain tag YCbCrSubSampling</assert>
+   <reference>Section 3, page 21</reference>
+  </rule>
   <rule context="ifd[type=Grayscale]">
    <assert test="{tags.tag[name=BitsPerSample] &gt; 0}">Invalid Bits per Sample for Grayscale image</assert>
    <reference>Section 4, page 22</reference>
   </rule>
   <rule context="ifd[type=Grayscale]">
    <assert test="{tags.tag[name=Compression] &gt; 0}">Invalid Compression for Grayscale image</assert>
+   <reference>Section 4, page 22</reference>
+  </rule>
+  <rule context="ifd[type=Grayscale]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">Grayscale images should not contain tag ColorMap</assert>
+   <reference>Section 4, page 22</reference>
+  </rule>
+  <rule context="ifd[type=Grayscale]" level="warning">
+   <assert test="{!tags.tag[name=InkSet]}">Grayscale images should not contain tag InkSet</assert>
+   <reference>Section 4, page 22</reference>
+  </rule>
+  <rule context="ifd[type=Grayscale]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrCoefficients]}">Grayscale images should not contain tag YCbCrCoefficients</assert>
+   <reference>Section 4, page 22</reference>
+  </rule>
+  <rule context="ifd[type=Grayscale]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrPositioning]}">Grayscale images should not contain tag YCbCrPositioning</assert>
+   <reference>Section 4, page 22</reference>
+  </rule>
+  <rule context="ifd[type=Grayscale]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrSubSampling]}">Grayscale images should not contain tag YCbCrSubSampling</assert>
    <reference>Section 4, page 22</reference>
   </rule>
   <rule context="ifd[type=Pallete]">
@@ -163,13 +211,29 @@
    <assert test="{tags.tag[name=ColorMap]}">Color Map must be included in pallette-color images</assert>
    <reference>Section 8, page 30</reference>
   </rule>
+  <rule context="ifd[type=Pallete]" level="warning">
+   <assert test="{!tags.tag[name=InkSet]}">Pallete images should not contain tag InkSet</assert>
+   <reference>Section 5, page 23</reference>
+  </rule>
+  <rule context="ifd[type=Pallete]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrCoefficients]}">Pallete images should not contain tag YCbCrCoefficients</assert>
+   <reference>Section 5, page 23</reference>
+  </rule>
+  <rule context="ifd[type=Pallete]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrPositioning]}">Pallete images should not contain tag YCbCrPositioning</assert>
+   <reference>Section 5, page 23</reference>
+  </rule>
+  <rule context="ifd[type=Pallete]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrSubSampling]}">Pallete images should not contain tag YCbCrSubSampling</assert>
+   <reference>Section 5, page 23</reference>
+  </rule>
   <rule context="ifd[type=Transparency]">
    <assert test="{tags.tag[name=BitsPerSample] == 1}">Invalid Bits per Sample for Transparency Mask image</assert>
-   <reference></reference>
+   <reference>Section 8, page 37</reference>
   </rule>
   <rule context="ifd[type=Transparency]">
    <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid Samples per Pixel for Transparency Mask image</assert>
-   <reference></reference>
+   <reference>Section 8, page 37</reference>
   </rule>
   <rule context="ifd[type=CMYK]">
    <assert test="{tags.tag[name=BitsPerSample]}">Bits per Sample must exist for CMYK image</assert>
@@ -177,6 +241,22 @@
   </rule>
   <rule context="ifd[type=CMYK]">
    <assert test="{tags.tag[name=SamplesPerPixel]}">Samples per Pixel must exist for CMYK image</assert>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule context="ifd[type=CMYK]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">CMYK images should not contain tag ColorMap</assert>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule context="ifd[type=CMYK]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrCoefficients]}">CMYK images should not contain tag YCbCrCoefficients</assert>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule context="ifd[type=CMYK]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrPositioning]}">CMYK images should not contain tag YCbCrPositioning</assert>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule context="ifd[type=CMYK]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrSubSampling]}">CMYK images should not contain tag YCbCrSubSampling</assert>
    <reference>Section 16, page 69</reference>
   </rule>
   <rule context="ifd[type=YCbCr]">
@@ -187,8 +267,36 @@
    <assert test="{tags.tag[name=BitsPerSample] == 8}">Invalid Bits per Sample for YCbCr image</assert>
    <reference>Section 21, page 89</reference>
   </rule>
+  <rule context="ifd[type=YCbCr]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">YCbCr images should not contain tag ColorMap</assert>
+   <reference>Section 21, page 94</reference>
+  </rule>
+  <rule context="ifd[type=YCbCr]" level="warning">
+   <assert test="{!tags.tag[name=InkSet]}">YCbCr images should not contain tag InkSet</assert>
+   <reference>Section 21, page 94</reference>
+  </rule>
   <rule context="ifd[type=CIELab]">
    <assert test="{tags.tag[name=BitsPerSample] == 8}">Invalid Bits per Sample for CIELab image</assert>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">CIELab images should not contain tag ColorMap</assert>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=InkSet]}">CIELab images should not contain tag InkSet</assert>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrCoefficients]}">CIELab images should not contain tag YCbCrCoefficients</assert>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrPositioning]}">CIELab images should not contain tag YCbCrPositioning</assert>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrSubSampling]}">CIELab images should not contain tag YCbCrSubSampling</assert>
    <reference>Section 23, page 110</reference>
   </rule>
   <rule context="ifd[type=RGB]">
@@ -197,6 +305,26 @@
   </rule>
   <rule context="ifd[type=RGB]">
    <assert test="{tags.tag[name=SamplesPerPixel] &gt; 2}">Invalid Samples per Pixel for RGB image</assert>
+   <reference>Section 6, page 24</reference>
+  </rule>
+  <rule context="ifd[type=RGB]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">RGB images should not contain tag ColorMap</assert>
+   <reference>Section 6, page 24</reference>
+  </rule>
+  <rule context="ifd[type=RGB]" level="warning">
+   <assert test="{!tags.tag[name=InkSet]}">RGB images should not contain tag InkSet</assert>
+   <reference>Section 6, page 24</reference>
+  </rule>
+  <rule context="ifd[type=RGB]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrCoefficients]}">RGB images should not contain tag YCbCrCoefficients</assert>
+   <reference>Section 6, page 24</reference>
+  </rule>
+  <rule context="ifd[type=RGB]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrPositioning]}">RGB images should not contain tag YCbCrPositioning</assert>
+   <reference>Section 6, page 24</reference>
+  </rule>
+  <rule context="ifd[type=RGB]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrSubSampling]}">RGB images should not contain tag YCbCrSubSampling</assert>
    <reference>Section 6, page 24</reference>
   </rule>
  </rules>
@@ -273,6 +401,10 @@
   <rule context="ifd[class=image]">
    <assert test="{equalBitsPerSampleValues == 1}">Distinct Bits per Sample values</assert>
    <reference>Section 8, page 29</reference>
+  </rule>
+  <rule context="tags" level="warning">
+   <assert test="{tag[name=PageNumber](0) &lt; tag[name=PageNumber](1)}">Incoherent page number</assert>
+   <reference>Section 12, page 55</reference>
   </rule>
  </rules>
  
@@ -1183,6 +1315,9 @@
  </rules>
  
  <rules description="tagcardinality-check">
+  <rule context="*">
+   <assert test="{cardinality!=0}">Tag cardinality cannot be zero</assert>
+  </rule>
   <rule context="tag[id=40960]">
    <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
   </rule>
