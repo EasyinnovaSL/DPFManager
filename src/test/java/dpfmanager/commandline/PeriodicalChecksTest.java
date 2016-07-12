@@ -27,7 +27,7 @@ public class PeriodicalChecksTest extends CommandLineTest {
     String[] argsAdd = new String[8];
     argsAdd[0] = "-addperiodic";
     argsAdd[1] = "-periodicity";
-    argsAdd[2] = "daily";
+    argsAdd[2] = "D";
     argsAdd[3] = "-time";
     argsAdd[4] = "09:30";
     argsAdd[5] = "-configuration";
