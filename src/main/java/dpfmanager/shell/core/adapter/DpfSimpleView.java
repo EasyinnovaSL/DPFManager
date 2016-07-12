@@ -2,11 +2,13 @@ package dpfmanager.shell.core.adapter;
 
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.interfaces.gui.fragment.PeriodicFragment;
 import javafx.event.Event;
 import javafx.scene.Node;
 
 import org.jacpfx.api.message.Message;
 import org.jacpfx.rcp.component.FXComponent;
+import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 
 /**
  * Created by Adrià Llorens on 22/03/2016.

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
+
+<AnchorPane prefWidth="828.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <GridPane fx:id="gridView" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="15.0" minWidth="15.0" prefWidth="15.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <children>
+            <Label fx:id="viewInput" styleClass="lightgrey" text="">
+            <GridPane.margin>
+               <Insets right="10.0" />
+            </GridPane.margin></Label>
+            <Label fx:id="viewConfig" styleClass="lightgrey" text="" GridPane.columnIndex="1">
+            <GridPane.margin>
+               <Insets right="10.0" />
+            </GridPane.margin></Label>
+            <Label fx:id="viewPeriod" styleClass="lightgrey" text="" GridPane.columnIndex="2">
+            <GridPane.margin>
+               <Insets right="10.0" />
+            </GridPane.margin></Label>
+            <Button fx:id="editButton" mnemonicParsing="false" onAction="#editClicked" GridPane.columnIndex="3">
+                <styleClass>
+                    <String fx:value="edit-img" />
+                    <String fx:value="periodic-img" />
+                </styleClass>
+            </Button>
+            <Button fx:id="deleteButtonInView" mnemonicParsing="false" onAction="#deleteClicked" GridPane.columnIndex="4">
+                <styleClass>
+                    <String fx:value="delete-img" />
+                    <String fx:value="periodic-img" />
+                </styleClass>
+            </Button>
+            <ProgressIndicator fx:id="deleteLoadingInView" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="4" />
+        </children>
+    </GridPane>
+    <GridPane fx:id="gridEdit" minHeight="40.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="15.0" minWidth="15.0" prefWidth="15.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <children>
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveClicked" GridPane.columnIndex="3">
+                <styleClass>
+                    <String fx:value="save-img" />
+                    <String fx:value="periodic-img" />
+                </styleClass>
+            </Button>
+            <Button fx:id="deleteButtonInEdit" mnemonicParsing="false" onAction="#deleteClicked" GridPane.columnIndex="4">
+                <styleClass>
+                    <String fx:value="delete-img" />
+                    <String fx:value="periodic-img" />
+                </styleClass>
+            </Button>
+            <VBox alignment="CENTER_LEFT">
+                <children>
+                    <TextField fx:id="inputText" maxHeight="30.0" minHeight="30.0" text="%inputText" HBox.hgrow="ALWAYS">
+                        <cursor>
+                            <Cursor fx:constant="TEXT" />
+                        </cursor>
+                        <VBox.margin>
+                            <Insets right="10.0" />
+                        </VBox.margin>
+                    </TextField>
+                    <HBox alignment="CENTER_LEFT">
+                        <children>
+                            <Button fx:id="selectInputButton" maxHeight="30.0" minHeight="30.0" mnemonicParsing="false" onAction="#selectFileClicked" prefHeight="30.0" styleClass="select-button" text="%selectButton">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin>
+                            </Button>
+                            <ComboBox fx:id="comboChoice" maxWidth="20.0" minWidth="20.0" onAction="#onChangeInputType" prefWidth="20.0">
+                                <styleClass>
+                                    <String fx:value="combo-dpf" />
+                                    <String fx:value="combo-periodic" />
+                                </styleClass>
+                            </ComboBox>
+                        </children>
+                        <VBox.margin>
+                            <Insets top="5.0" />
+                        </VBox.margin>
+                    </HBox>
+                </children>
+            </VBox>
+            <VBox GridPane.columnIndex="2">
+                <children>
+                    <HBox fx:id="timeHbox" alignment="CENTER_LEFT">
+                        <children>
+                            <Label styleClass="lightgrey" text="%time" />
+                            <Separator opacity="0.0" HBox.hgrow="ALWAYS" />
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="5.0" top="5.0" />
+                        </VBox.margin>
+                    </HBox>
+                    <HBox>
+                        <children>
+                            <RadioButton fx:id="radioDaily" mnemonicParsing="false" onAction="#radioClicked" styleClass="lightgrey" text="%daily">
+                                <HBox.margin>
+                                    <Insets bottom="5.0" />
+                                </HBox.margin>
+                            </RadioButton>
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="5.0" />
+                        </VBox.margin>
+                    </HBox>
+                    <HBox fx:id="hboxWeekly" alignment="CENTER_LEFT">
+                        <children>
+                            <RadioButton fx:id="radioWeekly" mnemonicParsing="false" onAction="#radioClicked" styleClass="lightgrey" text="%weekly" HBox.hgrow="ALWAYS">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin>
+                            </RadioButton>
+                            <Separator opacity="0.0" HBox.hgrow="ALWAYS" />
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="5.0" />
+                        </VBox.margin>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT">
+                        <children>
+                            <RadioButton fx:id="radioMonthly" mnemonicParsing="false" onAction="#radioClicked" styleClass="lightgrey" text="%monthly" />
+                            <Separator opacity="0.0" HBox.hgrow="ALWAYS" />
+                            <ComboBox fx:id="monthDay" disable="true">
+                                <HBox.margin>
+                                    <Insets left="5.0" />
+                                </HBox.margin>
+                                <styleClass>
+                                    <String fx:value="combo-box-white" />
+                                    <String fx:value="dpf-bar" />
+                                </styleClass>
+                            </ComboBox>
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="5.0" />
+                        </VBox.margin>
+                    </HBox>
+                </children>
+                <GridPane.margin>
+                    <Insets right="10.0" />
+                </GridPane.margin>
+            </VBox>
+            <ProgressIndicator fx:id="saveLoading" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="3" />
+            <ProgressIndicator fx:id="deleteLoadingInEdit" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="4" />
+            <ComboBox fx:id="configChoice" maxHeight="30.0" minHeight="30.0" onAction="#configurationChanged" prefHeight="30.0" GridPane.columnIndex="1">
+                <styleClass>
+                    <String fx:value="combo-box-white" />
+                    <String fx:value="dpf-bar" />
+                </styleClass>
+            <GridPane.margin>
+               <Insets right="10.0" />
+            </GridPane.margin>
+            </ComboBox>
+        </children>
+    </GridPane>
+    <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+</AnchorPane>

@@ -10,7 +10,6 @@ import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard2Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard3Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard4Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard5Fragment;
-import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard6Fragment;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -29,7 +28,6 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
   private ManagedFragmentHandler<Wizard3Fragment> fragment3;
   private ManagedFragmentHandler<Wizard4Fragment> fragment4;
   private ManagedFragmentHandler<Wizard5Fragment> fragment5;
-  private ManagedFragmentHandler<Wizard6Fragment> fragment6;
 
   public void clearAllSteps() {
     fragment1.getController().clear();
@@ -37,7 +35,6 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     fragment3.getController().clear();
     fragment4.getController().clear();
     fragment5.getController().clear();
-    fragment6.getController().clear();
     getView().clear();
   }
 
@@ -134,8 +131,8 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
       case 4:
         fragment4.getController().loadFixes(getModel().getConfiguration());
         break;
-      case 6:
-        fragment6.getController().loadSummary(getModel().getConfiguration());
+      case 5:
+        fragment5.getController().loadSummary(getModel().getConfiguration());
         break;
     }
   }
@@ -162,10 +159,6 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
 
   public void setFragment5(ManagedFragmentHandler<Wizard5Fragment> fragment5) {
     this.fragment5 = fragment5;
-  }
-
-  public void setFragment6(ManagedFragmentHandler<Wizard6Fragment> fragment6) {
-    this.fragment6 = fragment6;
   }
 
 }

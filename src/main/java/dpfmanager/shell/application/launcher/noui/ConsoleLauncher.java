@@ -144,6 +144,7 @@ public class ConsoleLauncher {
               argsError = true;
             } else {
               controller.setConfig(config);
+              parameters.put("-configuration",xmlConfig);
             }
           } catch (Exception ex) {
             printOut(bundle.getString("incorrectConfigFile").replace("%1",xmlConfig));
@@ -198,6 +199,74 @@ public class ConsoleLauncher {
         }
       } else if (arg.equals("-l")) {
         // nothing, checked before
+      } else if (arg.equals("-listperiodic")) {
+        if (parameters.containsKey("-addperiodic") || parameters.containsKey("-editperiodic") || parameters.containsKey("-removeperiodic")){
+          printOut(bundle.getString("onlyOnePeriodicAction"));
+          argsError = true;
+        } else {
+          parameters.put("-listperiodic", "");
+        }
+      } else if (arg.equals("-addperiodic")) {
+        if (parameters.containsKey("-listperiodic") || parameters.containsKey("-editperiodic") || parameters.containsKey("-removeperiodic")){
+          printOut(bundle.getString("onlyOnePeriodicAction"));
+          argsError = true;
+        } else {
+          parameters.put("-addperiodic", "");
+        }
+      } else if (arg.equals("-editperiodic")) {
+        if (parameters.containsKey("-listperiodic") || parameters.containsKey("-addperiodic") || parameters.containsKey("-removeperiodic")){
+          printOut(bundle.getString("onlyOnePeriodicAction"));
+          argsError = true;
+        } else {
+          if (idx + 1 < params.size()) {
+            String uuid = params.get(++idx);
+            parameters.put("-editperiodic", uuid);
+          } else {
+            printOut(bundle.getString("specifyPeriodicId"));
+            argsError = true;
+          }
+        }
+      } else if (arg.equals("-removeperiodic")) {
+        if (parameters.containsKey("-listperiodic") || parameters.containsKey("-editperiodic") || parameters.containsKey("-addperiodic")){
+          printOut(bundle.getString("onlyOnePeriodicAction"));
+          argsError = true;
+        } else {
+          if (idx + 1 < params.size()) {
+            String uuid = params.get(++idx);
+            parameters.put("-removeperiodic", uuid);
+          } else {
+            printOut(bundle.getString("specifyPeriodicId"));
+            argsError = true;
+          }
+        }
+      } else if (arg.equals("-time")) {
+        if (idx + 1 < params.size()) {
+          String time = params.get(++idx);
+          parameters.put("-time", time);
+        } else {
+          printOut(bundle.getString("specifyTime"));
+          argsError = true;
+        }
+      } else if (arg.equals("-periodicity")) {
+        // mode
+        String mode = "";
+        if (idx + 1 < params.size()) {
+          mode = params.get(++idx);
+          parameters.put("-periodicity", mode);
+        } else {
+          printOut(bundle.getString("specifyPeriodicityMode"));
+          argsError = true;
+        }
+        // extra info (weekly & monthly)
+        if (mode.equals("weekly") || mode.equals("monthly")){
+          if (idx + 1 < params.size()) {
+            String extra = params.get(++idx);
+            parameters.put("-extra", extra);
+          } else {
+            printOut(bundle.getString("specifyPeriodicityExtra"));
+            argsError = true;
+          }
+        }
       } else if (arg.startsWith("-")) {
         // unknown option
         printOut(bundle.getString("unknownOption").replace("%1",arg));
@@ -219,7 +288,7 @@ public class ConsoleLauncher {
       argsError = true;
     }
 
-    if (files.size() == 0 && !parameters.containsKey("-job")) {
+    if (files.size() == 0 && !parameters.containsKey("-job") && !parameters.containsKey("-listperiodic") && !parameters.containsKey("-removeperiodic")) {
       printOut(bundle.getString("noFilesSpecified"));
       argsError = true;
     }

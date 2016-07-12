@@ -22,6 +22,7 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 import org.jacpfx.rcp.util.LayoutUtil;
 
+import java.awt.peer.ButtonPeer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -40,6 +41,7 @@ public class TopFragment extends FlowPane {
 
   private ToggleButton showDessign;
   private ToggleButton showReports;
+  private ToggleButton showPeriodical;
   private ToggleButton showAbout;
   private ToggleGroup group;
   private List<ToggleButton> topButtons;
@@ -50,6 +52,7 @@ public class TopFragment extends FlowPane {
 
   private String ButDessign = "butDessign";
   private String ButReports = "butReports";
+  private String ButPeriodical = "butPeriodical";
   private String ButAbout = "butAbout";
 
   private String currentId;
@@ -70,15 +73,21 @@ public class TopFragment extends FlowPane {
     showReports.setId(ButReports);
     topButtons.add(showReports);
 
+    showPeriodical = new ToggleButton("periodical");
+    showPeriodical.getStyleClass().add("top-button");
+    showPeriodical.getStyleClass().add("top-button-center");
+    showPeriodical.setId(ButPeriodical);
+    topButtons.add(showPeriodical);
+
     showAbout = new ToggleButton("about");
     showAbout.getStyleClass().add("top-button");
     showAbout.setId(ButAbout);
     topButtons.add(showAbout);
 
     group = new PersistentButtonToggleGroup();
-    group.getToggles().addAll(showDessign, showReports, showAbout);
+    group.getToggles().addAll(showDessign, showReports, showPeriodical, showAbout);
 
-    this.getChildren().addAll(showDessign, createSeparator(), showReports, createSeparator(), showAbout, createTriangle(1), createTriangle(2), createTriangle(3));
+    this.getChildren().addAll(showDessign, createSeparator(), showReports, createSeparator(), showPeriodical, createSeparator(), showAbout);
     this.getStyleClass().add("top-pane");
     this.getStyleClass().add("background-main");
     this.setAlignment(Pos.TOP_CENTER);
@@ -87,6 +96,7 @@ public class TopFragment extends FlowPane {
   public void setBundle(ResourceBundle bundle) {
     showDessign.setText(bundle.getString("conformanceChecker"));
     showReports.setText(bundle.getString("reports"));
+    showPeriodical.setText(bundle.getString("periodical"));
     showAbout.setText(bundle.getString("about"));
   }
 
@@ -138,6 +148,8 @@ public class TopFragment extends FlowPane {
       finalId = ButReports;
     } else if (id.equals(GuiConfig.PERSPECTIVE_ABOUT)) {
       finalId = ButAbout;
+    } else if (id.equals(GuiConfig.PERSPECTIVE_PERIODICAL)) {
+      finalId = ButPeriodical;
     }
     makeBlue(getToggleById(finalId));
   }
@@ -173,7 +185,7 @@ public class TopFragment extends FlowPane {
                   if (source.equals(target) && samePerspective(target.getId())) {
                     doReload(target.getId());
                   } else {
-                    showHideTriangles(target.getId());
+//                    showHideTriangles(target.getId());
                     doShow(target.getId());
                   }
                   mouseEvent.consume();
@@ -208,6 +220,9 @@ public class TopFragment extends FlowPane {
                     case "butAbout":
                       context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
                       break;
+                    case "butPeriodical":
+                      context.send(GuiConfig.PERSPECTIVE_PERIODICAL, new UiMessage(UiMessage.Type.SHOW));
+                      break;
                   }
                 }
 
@@ -241,6 +256,9 @@ public class TopFragment extends FlowPane {
                       break;
                     case "butAbout":
                       context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.RELOAD));
+                      break;
+                    case "butPeriodical":
+                      context.send(GuiConfig.PERSPECTIVE_PERIODICAL, new UiMessage(UiMessage.Type.RELOAD));
                       break;
                   }
                 }

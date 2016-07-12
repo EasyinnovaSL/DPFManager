@@ -5,7 +5,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 /**
  * Created by Adrià Llorens on 20/04/2016.
  */
-public class DatabaseMessage extends DpfMessage {
+public class JobsMessage extends DpfMessage {
 
   public enum Type {
     NEW, INIT, UPDATE, FINISH, GET, RESUME, CANCEL, PAUSE, START
@@ -18,7 +18,7 @@ public class DatabaseMessage extends DpfMessage {
   private String output;
   private boolean pending;
 
-  public DatabaseMessage(Type type, Long uuid, String input, boolean pending) {
+  public JobsMessage(Type type, Long uuid, String input, boolean pending) {
     // New
     this.type = type;
     this.uuid = uuid;
@@ -26,7 +26,7 @@ public class DatabaseMessage extends DpfMessage {
     this.pending = pending;
   }
 
-  public DatabaseMessage(Type type, Long uuid, int total, String output ) {
+  public JobsMessage(Type type, Long uuid, int total, String output) {
     // Init
     this.type = type;
     this.uuid = uuid;
@@ -34,13 +34,13 @@ public class DatabaseMessage extends DpfMessage {
     this.output = output;
   }
 
-  public DatabaseMessage(Type type, Long uuid) {
+  public JobsMessage(Type type, Long uuid) {
     // Update && Finish && Resume && Cancel && Pause && Start
     this.type = type;
     this.uuid = uuid;
   }
 
-  public DatabaseMessage(Type type) {
+  public JobsMessage(Type type) {
     // Get
     this.type = type;
   }

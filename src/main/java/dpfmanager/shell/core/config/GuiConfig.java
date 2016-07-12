@@ -9,6 +9,7 @@ public class GuiConfig {
     public static final String PERSPECTIVE_CONFIG = "p004";
     public static final String PERSPECTIVE_FIRST = "p005";
     public static final String PERSPECTIVE_SHOW = "p006";
+    public static final String PERSPECTIVE_PERIODICAL = "p007";
 
     /** Components */
     public static final String COMPONENT_TOP = "id001";
@@ -20,6 +21,7 @@ public class GuiConfig {
     public static final String COMPONENT_FIRST = "id007";
     public static final String COMPONENT_SHOW = "id008";
     public static final String COMPONENT_BAR = "id009";
+    public static final String COMPONENT_PERIODICAL = "id010";
 
     /** Target containers */
     public static final String TARGET_CONTAINER_TOP = "tc001";
@@ -31,6 +33,7 @@ public class GuiConfig {
     public static final String TARGET_CONTAINER_FIRST = "tc007";
     public static final String TARGET_CONTAINER_SHOW = "tc008";
     public static final String TARGET_CONTAINER_BAR = "tc009";
+    public static final String TARGET_CONTAINER_PERIODICAL = "tc010";
 
     /** Fragments */
     public static final String FRAGMENT_BOTTOM = "f001";
@@ -40,7 +43,7 @@ public class GuiConfig {
     public static final String FRAGMENT_WIZARD_3 = "f005";
     public static final String FRAGMENT_WIZARD_4 = "f006";
     public static final String FRAGMENT_WIZARD_5 = "f007";
-    public static final String FRAGMENT_WIZARD_6 = "f008";
-    public static final String FRAGMENT_BAR = "f009";
-    public static final String FRAGMENT_TASK = "f010";
+    public static final String FRAGMENT_BAR = "f008";
+    public static final String FRAGMENT_TASK = "f009";
+    public static final String FRAGMENT_PERIODIC = "f010";
 }

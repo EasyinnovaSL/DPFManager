@@ -59,11 +59,6 @@
                     </HBox.margin>
                 </Button>
                 <Button fx:id="step5" mnemonicParsing="false" onAction="#gotoConfig5" styleClass="config-but">
-                    <HBox.margin>
-                        <Insets right="35.0" />
-                    </HBox.margin>
-                </Button>
-                <Button fx:id="step6" mnemonicParsing="false" onAction="#gotoConfig6" styleClass="config-but">
                 </Button>
                 <VBox.margin>
                     <Insets bottom="12.0" top="10.0" />
@@ -100,7 +95,6 @@
             <!--<fx:include fx:id="included3" source="config/subconfig3.fxml" />-->
             <!--<fx:include fx:id="included4" source="config/subconfig4.fxml" />-->
             <!--<fx:include fx:id="included5" source="config/subconfig5.fxml" />-->
-            <!--<fx:include fx:id="included6" source="config/subconfig6.fxml" />-->
 
             <ImageView focusTraversable="true" preserveRatio="true">
                 <image> <Image url="@../images/lineBottom.png" /></image>

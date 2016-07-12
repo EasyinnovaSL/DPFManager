@@ -2,7 +2,7 @@ package dpfmanager.shell.modules.timer.tasks;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.modules.database.messages.DatabaseMessage;
+import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.timer.core.DpfTask;
 
 /**
@@ -17,7 +17,7 @@ public class JobsStatusTask extends DpfTask {
 
   @Override
   public void perform() {
-    context.send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.GET));
+    context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.GET));
   }
 
 }

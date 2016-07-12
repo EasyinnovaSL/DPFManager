@@ -389,7 +389,7 @@ public class DatabaseConnection {
         DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
       }
 
-      // Create table
+      // Create tables
       stmt.execute(Jobs.createSql);
       stmt.execute(Jobs.indexIdSql);
       stmt.execute(Jobs.indexPidSql);

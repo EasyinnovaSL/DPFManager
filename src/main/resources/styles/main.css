@@ -30,8 +30,14 @@
 .transparent {
     -fx-background-color: transparent;
 }
+.lightgrey{
+    -fx-text-fill: lightgrey;
+}
 
 .main-logo{  }
+
+.topTriangle{
+}
 
 /* Split Panes */
 
@@ -140,6 +146,15 @@
     -fx-border-width: 5;
     -fx-background-radius: 5;
 }
+.select-button {
+    -fx-text-fill: WHITE;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-background-color: #33ccff;
+    -fx-border-width: 2;
+    -fx-background-radius: 5;
+    -fx-padding: 7 30 7 5;
+}
 #selectButton{
     -fx-padding: 7 30 7 14;
 }
@@ -213,13 +228,6 @@
 }
 #step5.grey-but{
     -fx-background-image: url('../images/tab-buttons/tab-5-grey.png');
-}
-
-#step6.blue-but{
-    -fx-background-image: url('../images/tab-buttons/tab-6-blue.png');
-}
-#step6.grey-but{
-    -fx-background-image: url('../images/tab-buttons/tab-6-grey.png');
 }
 
 /* ComboBox Custom Blue */
@@ -365,11 +373,16 @@
     -fx-background-color: gray;
     -fx-text-fill: -fx-text-inner-color;
 }
-.combo-box-white {
+.combo-box-white,
+.combo-box-white .combo-box{
     -fx-background-color: white;
     -fx-background-radius: 5, 5, 4, 3;
     -fx-background-insets: 0 0 -1 0, 0, 1, 2;
     -fx-padding: 0;
+}
+.combo-box-white:disabled,
+.combo-box-white .combo-box:disabled{
+    -fx-opacity: 0.5;
 }
 .combo-box-white .arrow {
     -fx-background-color: black;
@@ -489,6 +502,68 @@
 }
 .check-box-tree-cell .arrow{
     -fx-background-color: black;
+}
+
+
+/* Table periodical */
+.periodicHeader{
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1cc2ff;
+    -fx-alignment: CENTER-LEFT;
+}
+.separator-periodic{
+    -fx-background-color: #808080;
+}
+.periodic-img{
+    -fx-background-color: transparent;
+    -fx-background-size: cover;
+    -fx-border-width: 0;
+    -fx-min-width: 20;
+    -fx-max-width: 20;
+    -fx-min-height: 20;
+    -fx-pref-height: 20;
+    -fx-max-height: 20;
+}
+.combo-periodic{
+    -fx-translate-x: -20;
+    -fx-cursor: hand;
+}
+.delete-img{
+    -fx-background-image: url('../images/periodic/trash-grey.png');
+}
+.delete-img:hover{
+    -fx-background-image: url('../images/periodic/trash-red.png');
+}
+.edit-img{
+    -fx-background-image: url('../images/periodic/edit-grey.png');
+}
+.edit-img:hover{
+    -fx-background-image: url('../images/periodic/edit-blue.png');
+}
+.save-img{
+    -fx-background-image: url('../images/periodic/save-grey.png');
+}
+.save-img:hover{
+    -fx-background-image: url('../images/periodic/save-green.png');
+}
+.button-trans-periodic{
+    -fx-text-fill: #31C2F3;
+    -fx-background-color: #333333;
+    -fx-border-width: 1;
+    -fx-border-color: white;
+    -fx-border-radius: 5;
+    -fx-min-width: 80;
+    -fx-max-width: 80;
+    -fx-min-height: 35;
+    -fx-max-height: 35;
+}
+.button-trans-periodic:pressed {
+    -fx-background-color: #9b9b9b;
+}
+.periodical-scroll .viewport,
+.periodical-scroll{
+    -fx-background-color: transparent;
 }
 
 

@@ -4,8 +4,6 @@ import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.database.core.DatabaseService;
-import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.timer.core.TimerService;
 import dpfmanager.shell.modules.timer.messages.TimerMessage;
 

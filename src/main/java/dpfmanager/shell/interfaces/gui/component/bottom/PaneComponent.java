@@ -9,7 +9,6 @@ import dpfmanager.shell.interfaces.gui.fragment.BottomFragment;
 import dpfmanager.shell.interfaces.gui.fragment.TaskFragment;
 import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
-import dpfmanager.shell.modules.database.messages.DatabaseMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.timer.messages.TimerMessage;
 import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;

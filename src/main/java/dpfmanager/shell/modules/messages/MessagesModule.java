@@ -1,8 +1,10 @@
 package dpfmanager.shell.modules.messages;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.CustomErrorHandler;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.util.TextAreaAppender;
 import dpfmanager.shell.interfaces.gui.workbench.DpfCloseEvent;
@@ -54,10 +56,19 @@ public class MessagesModule extends DpfModule {
     } else if (dpfMessage.isTypeOf(JacpExceptionMessage.class)) {
       tractGuiExceptionMessage(dpfMessage.getTypedMessage(JacpExceptionMessage.class));
     } else if (dpfMessage.isTypeOf(CloseMessage.class)) {
-      if (dpfMessage.getTypedMessage(CloseMessage.class).isAsk()) {
-        askForClose();
-      } else {
-        closeNow();
+      CloseMessage cm = dpfMessage.getTypedMessage(CloseMessage.class);
+      if (cm.isThreading()) {
+        if (cm.isAsk()){
+          askForCloseThreading();
+        } else {
+          context.send(GuiConfig.PERSPECTIVE_PERIODICAL + "." + GuiConfig.COMPONENT_PERIODICAL, new CloseMessage(CloseMessage.Type.PERIODICAL));
+        }
+      } else if (cm.isPeriodical()) {
+        if (cm.isAsk()){
+          askForClosePeriodical();
+        } else {
+          closeNow();
+        }
       }
     }
   }
@@ -74,12 +85,26 @@ public class MessagesModule extends DpfModule {
     });
   }
 
-  private void askForClose() {
-    // Ask for close
+  private void askForCloseThreading() {
+    ResourceBundle bundle = DPFManagerProperties.getBundle();
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        Alert alert = AlertsManager.createAskAlert();
+        Alert alert = AlertsManager.createAskAlert(bundle.getString("askAlertRunning"), bundle.getString("askAlertQuestion"));
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get().getButtonData().equals(ButtonBar.ButtonData.YES)) {
+          context.send(GuiConfig.PERSPECTIVE_PERIODICAL + "." + GuiConfig.COMPONENT_PERIODICAL, new CloseMessage(CloseMessage.Type.PERIODICAL));
+        }
+      }
+    });
+  }
+
+  private void askForClosePeriodical() {
+    ResourceBundle bundle = DPFManagerProperties.getBundle();
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        Alert alert = AlertsManager.createAskAlert(bundle.getString("askAlertPeriodical"), bundle.getString("askAlertPeriodicalContent"));
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get().getButtonData().equals(ButtonBar.ButtonData.YES)) {
           closeNow();

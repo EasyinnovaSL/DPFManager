@@ -1,7 +1,6 @@
 package dpfmanager.shell.modules.conformancechecker.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -9,8 +8,7 @@ import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
 import dpfmanager.shell.modules.conformancechecker.runnable.ProcessInputRunnable;
-import dpfmanager.shell.modules.database.messages.DatabaseMessage;
-import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
@@ -137,7 +135,7 @@ public class ConformanceCheckerService extends DpfService {
 
   public void cancelCheck(Long uuid) {
     // Cancel in DB
-    getContext().send(BasicConfig.MODULE_DATABASE, new DatabaseMessage(DatabaseMessage.Type.CANCEL, uuid));
+    getContext().send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.CANCEL, uuid));
   }
 
   /**
