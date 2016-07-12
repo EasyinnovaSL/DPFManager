@@ -174,7 +174,7 @@ public class ConsoleController {
 
     // Periodicity
     Periodicity.Mode mode;
-    if (parameters.containsKey("-periodicity")){
+    if (parameters.containsKey("-periodicity") && parseMode(parameters.get("-periodicity")) != null){
       mode = parseMode(parameters.get("-periodicity"));
     } else {
       printOut(bundle.getString("specifyPeriodicity"));
@@ -227,13 +227,20 @@ public class ConsoleController {
 
   private Periodicity.Mode parseMode(String mode){
     switch (mode){
-      case "weekly":
-        return Periodicity.Mode.WEEKLY;
-      case "monthly":
-        return Periodicity.Mode.MONTHLY;
-      default:
+      case "D":
         return Periodicity.Mode.DAILY;
+      case "W":
+        return Periodicity.Mode.WEEKLY;
+      case "M":
+        return Periodicity.Mode.MONTHLY;
+      case "d":
+        return Periodicity.Mode.DAILY;
+      case "w":
+        return Periodicity.Mode.WEEKLY;
+      case "m":
+        return Periodicity.Mode.MONTHLY;
     }
+    return null;
   }
 
   private boolean isValidTime(String time){
