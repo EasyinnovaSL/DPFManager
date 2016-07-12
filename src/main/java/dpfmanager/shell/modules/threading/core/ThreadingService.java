@@ -236,15 +236,14 @@ public class ThreadingService extends DpfService {
       if (ir != null) {
         // Individual report finished
         fc.addIndividual(ir);
-
-        // Check if all finished
-        if (fc.allFinished()) {
-          // Tell reports module
-          context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig()));
-        }
       } else {
         // Individual with errors
         fc.addError();
+      }
+      // Check if all finished
+      if (fc.allFinished()) {
+        // Tell reports module
+        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig()));
       }
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.UPDATE, uuid));
     }
