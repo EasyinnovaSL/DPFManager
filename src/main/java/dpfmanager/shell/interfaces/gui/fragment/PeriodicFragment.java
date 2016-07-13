@@ -10,6 +10,7 @@ import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.periodic.core.PeriodicCheck;
 import dpfmanager.shell.modules.periodic.core.Periodicity;
 import dpfmanager.shell.modules.periodic.messages.PeriodicMessage;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -19,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
@@ -230,7 +232,6 @@ public class PeriodicFragment {
   protected void configurationChanged(ActionEvent event) throws Exception {
     if (configChoice.getValue() != null && configChoice.getValue().equals(bundle.getString("selectFromDisk"))) {
       selectConfiguration();
-      System.out.println("Select form disk");
     }
   }
 
@@ -248,8 +249,9 @@ public class PeriodicFragment {
         DPFManagerProperties.setDefaultDirFile(path);
       }
     }
+
+    // Reload configs
     if (txtFile != null) {
-      // Reload configurations
       info.setConfiguration(txtFile);
       importedConfigs.add(txtFile);
       configChoice.getItems().clear();
@@ -258,7 +260,7 @@ public class PeriodicFragment {
       configChoice.getItems().add(bundle.getString("selectFromDisk"));
       configChoice.setValue(txtFile);
     } else {
-      configChoice.setValue("");
+      Platform.runLater(() -> configChoice.getSelectionModel().clearSelection());
     }
   }
 
@@ -391,16 +393,18 @@ public class PeriodicFragment {
 
   private boolean savePeriodical() {
     // Check input
-    if (inputText.getText().equals(bundle.getString("selectFile")) || inputText.getText().equals(bundle.getString("selectFolder"))) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertFile")));
-      return false;
-    } else {
-      info.setInput(inputText.getText());
+    String input = inputText.getText();
+    for (String file : input.split(";")){
+      if (!new File(file).exists()){
+        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertFile")));
+        return false;
+      }
     }
+    info.setInput(input);
 
     // Check configuration
     String value = (String) configChoice.getValue();
-    if (value == null) {
+    if (value == null || value.isEmpty()) {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertConfigFile")));
       return false;
     } else {
