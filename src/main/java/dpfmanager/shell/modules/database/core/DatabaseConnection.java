@@ -104,6 +104,9 @@ public class DatabaseConnection {
   public boolean deleteJob(Jobs job) {
     // Jobs older than 2 days (DpFManagerConstants.JOB_LIFE_HOURS)
     Long current = System.currentTimeMillis();
+    if (checkDate(job.getLastUpdate())) {
+      return true;
+    }
     if (checkDate(job.getInit())) {
       return true;
     }
