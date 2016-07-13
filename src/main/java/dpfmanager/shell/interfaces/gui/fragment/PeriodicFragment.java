@@ -246,7 +246,7 @@ public class PeriodicFragment {
       txtFile = file.getAbsolutePath();
       if (file.exists() && file.getParent() != null && file.getParentFile().exists() && file.getParentFile().isDirectory()) {
         String path = file.getParent();
-        DPFManagerProperties.setDefaultDirFile(path);
+        DPFManagerProperties.setDefaultDirConfig(path);
       }
     }
 
