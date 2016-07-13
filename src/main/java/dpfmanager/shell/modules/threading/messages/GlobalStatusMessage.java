@@ -13,7 +13,8 @@ public class GlobalStatusMessage extends DpfMessage {
     NEW,
     INIT,
     FINISH,
-    RELOAD
+    RELOAD,
+    CANCEL
   }
 
   private Type type;
@@ -48,6 +49,13 @@ public class GlobalStatusMessage extends DpfMessage {
     uuid = u;
   }
 
+  public GlobalStatusMessage(Type t, long u, String i) {
+    // Cancel
+    type = t;
+    uuid = u;
+    internal = i;
+  }
+
   public GlobalStatusMessage(Type t) {
     // Asking for reload
     type = t;
@@ -63,6 +71,10 @@ public class GlobalStatusMessage extends DpfMessage {
 
   public boolean isFinish() {
     return type.equals(Type.FINISH);
+  }
+
+  public boolean isCancel() {
+    return type.equals(Type.CANCEL);
   }
 
   public boolean isReload() {

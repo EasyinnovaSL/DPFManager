@@ -198,7 +198,7 @@ public class ThreadingService extends DpfService {
       fc.init(gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("startingCheck").replace("%1", gm.getInput())));
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.INIT, fc.getUuid(), fc.getTotal(), fc.getInternal()));
-    } else if (gm.isFinish()) {
+    } else if (gm.isFinish() || gm.isCancel()) {
       // Finish file check
       FileCheck fc = checks.get(gm.getUuid());
       removeZipFolder(fc.getInternal());
@@ -211,7 +211,11 @@ public class ThreadingService extends DpfService {
         // No ui, show to user
         showToUser(fc.getInternal(), fc.getConfig().getOutput());
       }
-      context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.FINISH, gm.getUuid()));
+      if (!gm.isCancel()) {
+        context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.FINISH, gm.getUuid()));
+      } else {
+        removeReportFolderIfEmpty(gm.getInternal());
+      }
       checks.remove(gm.getUuid());
       totalChecks++;
       if (totalChecks >= 10) {
@@ -306,6 +310,17 @@ public class ThreadingService extends DpfService {
       }
     } catch (Exception e) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excServer"), e));
+    }
+  }
+
+  private void removeReportFolderIfEmpty(String internal){
+    try {
+      File folder = new File(internal);
+      if (folder.exists() && folder.isDirectory() && folder.list().length == 0) {
+        FileUtils.deleteDirectory(folder);
+      }
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excInternal"), e));
     }
   }
 
