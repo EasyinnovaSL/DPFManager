@@ -101,6 +101,12 @@ public class AmdSecType {
         }
         return this.techMD;
     }
+    public void setTechMD(MdSecType tech) {
+        if (techMD == null) {
+            techMD = new ArrayList<MdSecType>();
+        }
+        this.techMD.add(tech);
+    }
 
     /**
      * Gets the value of the rightsMD property.
@@ -137,6 +143,7 @@ public class AmdSecType {
         }
         this.rightsMD.add(mdsec);
     }
+
 
     /**
      * Gets the value of the sourceMD property.

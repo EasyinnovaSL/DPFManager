@@ -333,6 +333,13 @@ public class FileType {
         return this.transformFile;
     }
 
+    public void setTransformFile(TransformFile t) {
+        if (transformFile == null) {
+            transformFile = new ArrayList<TransformFile>();
+        }
+        this.transformFile.add(t);
+    }
+
     /**
      * Gets the value of the file property.
      * 

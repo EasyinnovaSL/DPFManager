@@ -9,6 +9,8 @@
 package dpfmanager.conformancechecker.tiff.reporting.METS.mets;
 
 
+import dpfmanager.conformancechecker.tiff.reporting.METS.niso.Mix;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1262,11 +1264,13 @@ public class MdSecType {
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "elementContainer",
+            "dcContainer",
+            "nisoContainer"
         })
         public static class XmlData {
 
-            protected List<SimpleLiteral> elementContainer;
+            protected List<SimpleLiteral> dcContainer; //to contain Dublin core metadata
+            protected List<Mix> nisoContainer; //to contain NISO metadata
 
             /**
              * Gets the value of the any property.
@@ -1291,20 +1295,38 @@ public class MdSecType {
              * 
              * 
              */
-            public List<SimpleLiteral> getAny() {
-                if (elementContainer == null) {
-                  elementContainer = new ArrayList<SimpleLiteral>();
+            public List<SimpleLiteral> getLiteral() {
+                if (dcContainer == null) {
+                    dcContainer = new ArrayList<SimpleLiteral>();
                 }
-                return this.elementContainer;
+                return this.dcContainer;
             }
 
-            public void setData(SimpleLiteral o){
-                if (elementContainer == null) {
-                  elementContainer = new ArrayList<SimpleLiteral>();
+            public List<Mix> getMix() {
+                if (nisoContainer == null) {
+                    nisoContainer = new ArrayList<Mix>();
                 }
-                this.elementContainer.add(o);
+                return this.nisoContainer;
             }
 
+            public void setLiteral(SimpleLiteral o){
+                if (dcContainer == null) {
+                    dcContainer = new ArrayList<SimpleLiteral>();
+                }
+                this.dcContainer.add(o);
+            }
+
+            public void setMix(Mix o){
+                if (nisoContainer == null) {
+                    nisoContainer = new ArrayList<Mix>();
+                }
+                this.nisoContainer.add(o);
+            }
+
+
+            /**
+             * Dublin core format class
+             */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
                 "rights",
