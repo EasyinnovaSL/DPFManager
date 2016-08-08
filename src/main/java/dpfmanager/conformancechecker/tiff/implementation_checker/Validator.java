@@ -24,6 +24,8 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -239,6 +241,37 @@ public class Validator {
             } else if (checkop.startsWith("<")) {
               String field2 = checkop.substring("<".length()).trim();
               ok = n < Integer.parseInt(field2);
+            }
+          }
+        } else if (clausule.startsWith("date(")) {
+          // Check datetime format
+          String dateTimeField = clausule.substring(clausule.indexOf("(") + 1);
+          dateTimeField = dateTimeField.substring(0, dateTimeField.indexOf(")"));
+
+          RuleElement field = new RuleElement(dateTimeField, node, model);
+          if (!field.valid) ok = false;
+          else {
+            List<TiffNode> childs = field.getChildren();
+            for (TiffNode nod : childs) {
+              ok = false;
+              String value = nod.getValue();
+              if (value.length() == 19) {
+                if (value.split(" ").length == 2 && value.split(":").length == 5) {
+                  String sdate = value.split(" ")[0];
+                  String stime = value.split(" ")[1];
+                  try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd");
+                    sdf.setLenient(false);
+                    java.util.Date date = sdf.parse(sdate);
+                    sdf = new SimpleDateFormat("HH:mm:ss");
+                    sdf.setLenient(false);
+                    java.util.Date time = sdf.parse(stime);
+                    ok = true;
+                  } catch (Exception ex) {
+
+                  }
+                }
+              }
             }
           }
         } else if (clausule.contains("==") || clausule.contains(">") || clausule.contains("<") || clausule.contains("!=")) {

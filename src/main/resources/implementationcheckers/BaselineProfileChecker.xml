@@ -406,6 +406,18 @@
    <assert test="{tag[name=PageNumber](0) &lt; tag[name=PageNumber](1)}">Incoherent page number</assert>
    <reference>Section 12, page 55</reference>
   </rule>
+  <rule context="ifd" level="warning">
+   <assert test="{!tags.tag[name=FreeOffsets]}">Tag FreeOffsets not recommended</assert>
+   <reference>Section 8, page 33</reference>
+  </rule>
+  <rule context="ifd" level="warning">
+   <assert test="{!tags.tag[name=FreeByteCounts]}">Tag FreeByteCounts not recommended</assert>
+   <reference>Section 8, page 33</reference>
+  </rule>
+  <rule context="ifd">
+   <assert test="{date(tags.tag[name=DateTime])}">Incorrect format for DateTime</assert>
+   <reference></reference>
+  </rule>
  </rules>
  
  <rules description="tagtype-check">
@@ -1315,8 +1327,8 @@
  </rules>
  
  <rules description="tagcardinality-check">
-  <rule context="*">
-   <assert test="{cardinality!=0}">Tag cardinality cannot be zero</assert>
+  <rule context="*" level="warning">
+   <assert test="{cardinality!=0}">Tag cardinality should not be zero</assert>
   </rule>
   <rule context="tag[id=40960]">
    <assert test="{cardinality==4}">Tag cardinality is not valid</assert>

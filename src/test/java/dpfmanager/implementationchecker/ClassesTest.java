@@ -93,5 +93,11 @@ public class ClassesTest extends TestCase {
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_pointzero.tif", -1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_reuse.tif", -1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_width.tif", -1);
+
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO date.tif", 1);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO date2.tif", 1);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO date3.tif", 2);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO date4.tif", 3);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO date5.tif", 1);
   }
 }

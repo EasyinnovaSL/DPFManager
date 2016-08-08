@@ -72,7 +72,7 @@
 
 .label-info{
     -fx-text-fill: #cccccc;
-    -fx-font-size: 13;
+    -fx-font-size: 14;
     -fx-label-padding: 0;
     -fx-padding: 0;
     -fx-font-weight: bold;
@@ -121,7 +121,7 @@
 .main-button {
     -fx-background-image: url('../images/button.png');
     -fx-text-fill: WHITE;
-    -fx-font-size: 22px;
+    -fx-font-size: 16;
     -fx-font-weight: bold;
     -fx-background-color: transparent;
     -fx-min-width: 230;
