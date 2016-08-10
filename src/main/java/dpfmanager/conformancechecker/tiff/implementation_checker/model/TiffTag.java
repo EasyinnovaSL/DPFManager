@@ -16,6 +16,7 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
   String name;
   int cardinality;
   String type;
+  boolean asci7;
   int offset;
   String value;
   boolean duplicatedNuls;
@@ -38,6 +39,15 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  @XmlAttribute
+  public boolean getAsci7() {
+    return asci7;
+  }
+
+  public void setAsci7(boolean asci7) {
+    this.asci7 = asci7;
   }
 
   @XmlAttribute
@@ -149,6 +159,7 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("offset", offset + ""));
     childs.add(new TiffSingleNode("name", name));
     childs.add(new TiffSingleNode("type", type));
+    childs.add(new TiffSingleNode("asci7", asci7 + ""));
     childs.add(new TiffSingleNode("value", value));
     childs.add(new TiffSingleNode("duplicatedNuls", duplicatedNuls + ""));
     childs.add(new TiffSingleNode("lastByte", lastByte + ""));

@@ -13,9 +13,11 @@ import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.jsoup.Connection;
 
+import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -106,17 +108,21 @@ public class TiffImplementationChecker {
     boolean correctYcbcr = true;
     HashSet tagIds = new HashSet<>();
     for (TagValue tv : ifd.getTags().getTags()) {
-      if (tv.getId() <= prevTagId) {
-        correctTagOrdering = false;
+      try {
+        if (tv.getId() <= prevTagId) {
+          correctTagOrdering = false;
+        }
+        if (tagIds.contains(tv.getId())) {
+          duplicatedTags = true;
+        } else {
+          tagIds.add(tv.getId());
+        }
+        prevTagId = tv.getId();
+        tags.add(CreateTiffTag(tv));
+        usedOffsetsSizes.put(tv.getReadOffset(), tv.getReadlength());
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (tagIds.contains(tv.getId())) {
-        duplicatedTags = true;
-      } else {
-        tagIds.add(tv.getId());
-      }
-      prevTagId = tv.getId();
-      tags.add(CreateTiffTag(tv));
-      usedOffsetsSizes.put(tv.getReadOffset(), tv.getReadlength());
     }
     TiffTags tiffTags = new TiffTags();
     tiffTags.setTags(tags);
@@ -519,6 +525,21 @@ public class TiffImplementationChecker {
     tt.setName(tv.getName());
     tt.setCardinality(tv.getCardinality());
     tt.setType(com.easyinnova.tiff.model.TiffTags.getTagTypeName(tv.getType()));
+    try {
+      if (tt.getType().equals("ASCII")) {
+        boolean ascii7ok = true;
+          for (abstractTiffType a : tv.getValue()) {
+            boolean isSet = (a.toByte() & (1 << 8)) != 0;
+            if (isSet) {
+              ascii7ok = false;
+              break;
+            }
+          }
+        tt.setAsci7(ascii7ok);
+      }
+    } catch (Exception ex) {
+
+    }
     tt.setOffset(tv.getReadOffset());
     if (usedOffsetsSizes.get(tv.getReadOffset()) != null) {
       tt.setUsedOffset(true);

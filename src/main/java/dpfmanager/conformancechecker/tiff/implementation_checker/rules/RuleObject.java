@@ -12,6 +12,7 @@ public class RuleObject {
   String context;
   String reference;
   String level;
+  String id;
   AssertObject assertion;
   List<DiagnosticObject> diagnostics = null;
 
@@ -48,6 +49,15 @@ public class RuleObject {
 
   public String getLevel() {
     return level;
+  }
+
+  @XmlAttribute
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getId() {
+    return id;
   }
 
   @XmlElement(name = "assert")
