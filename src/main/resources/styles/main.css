@@ -1,11 +1,11 @@
-@font-face {
+/*@font-face {
     font-family: Roboto;
     src: url('file:src/main/resources/fonts/Roboto-Regular.ttf');
 }
 @font-face {
     font-family: 'Roboto-Bold';
     src: url('file:src/main/resources/fonts/Roboto-Bold.ttf');
-}
+}*/
 
 /*Backgrounds*/
 
@@ -100,12 +100,12 @@
 .mainTitle{
     -fx-text-fill: #33ccff;
     -fx-font-size: 16;
-    -fx-font-family: Roboto;
+    /*-fx-font-family: Roboto;*/
 }
 
 .config-title{
     -fx-font-size: 16;
-    -fx-font-family: Roboto;
+    /*-fx-font-family: Roboto;*/
     -fx-text-fill: #cccccc;
 }
 

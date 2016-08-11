@@ -278,12 +278,14 @@ public class Validator {
           // Check field values
           String operation = clausule.contains("==") ? "==" : (clausule.contains(">") ? ">" : clausule.contains("!=") ? "!=" : "<");
           RuleElement op1 = new RuleElement(clausule.substring(0, clausule.indexOf(operation)), node, model);
-          if (!op1.valid) ok = false;
+          if (!op1.valid)
+            ok = false;
           else {
             String value = op1.getValue();
             if (value == null) return ok;
             RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
-            if (!op2.valid) ok = false;
+            if (!op2.valid)
+              ok = false;
             else {
               String value2 = op2.getValue();
               if (value.contains("/"))
