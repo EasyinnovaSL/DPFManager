@@ -1,14 +1,4 @@
-/*@font-face {
-    font-family: Roboto;
-    src: url('file:src/main/resources/fonts/Roboto-Regular.ttf');
-}
-@font-face {
-    font-family: 'Roboto-Bold';
-    src: url('file:src/main/resources/fonts/Roboto-Bold.ttf');
-}*/
-
 /*Backgrounds*/
-
 .background-main {
     -fx-background-color: #333333;
     -fx-border-width: 0;
