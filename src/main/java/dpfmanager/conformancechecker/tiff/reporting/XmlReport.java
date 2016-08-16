@@ -699,7 +699,7 @@ public class XmlReport {
       for (ReportTag tag : getTags(ir)) {
         try {
           if (tag.tv.getName().equals("Compression")) continue;
-          String tagname = tag.tv.getName();
+          String tagname = tag.tv.getName().replace(" ", "");
           if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
           infoElement = doc.createElement(tagname);
           String val = tag.tv.toString().replaceAll("\\p{C}", "?");;

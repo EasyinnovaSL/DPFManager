@@ -12,20 +12,20 @@
    <diagnostic id="d2" lang="es">Tiene que existir una única cabecera</diagnostic>
    <reference>Section 2, page 13</reference>
   </rule>
+  <rule id="bl-h-4" context="header" level="critical">
+   <assert test="{magicNumber}">Magic Number must be defined</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
+  <rule id="bl-h-5" context="header" level="critical">
+   <assert test="{magicNumber==42}">Tiff signature is not correct (Magic Number must be 42)</assert>
+   <reference>Section 2, page 13</reference>
+  </rule>
   <rule id="bl-h-2" context="header" level="critical">
    <assert test="{byteOrder}">ByteOrder must be defined</assert>
    <reference>Section 2, page 13</reference>
   </rule>
   <rule id="bl-h-3" context="header" level="critical">
    <assert test="{byteOrder=='BIG_ENDIAN'}||{byteOrder=='LITTLE_ENDIAN'}">ByteOrder must be BIG_ENDIAN or LITTLE_ENDIAN</assert>
-   <reference>Section 2, page 13</reference>
-  </rule>
-  <rule id="bl-h-4" context="header">
-   <assert test="{magicNumber}">Magic Number must be defined</assert>
-   <reference>Section 2, page 13</reference>
-  </rule>
-  <rule id="bl-h-5" context="header">
-   <assert test="{magicNumber==42}">Magic Number must be 42</assert>
    <reference>Section 2, page 13</reference>
   </rule>
  </rules>
