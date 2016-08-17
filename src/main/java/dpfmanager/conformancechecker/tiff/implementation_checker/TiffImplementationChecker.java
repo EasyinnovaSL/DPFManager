@@ -126,6 +126,7 @@ public class TiffImplementationChecker {
     }
     TiffTags tiffTags = new TiffTags();
     tiffTags.setTags(tags);
+    tiffTags.setTagsCount(tags.size());
     tiffIfd.setTags(tiffTags);
     tiffIfd.setTagOrdering(correctTagOrdering ? 1 : 0);
     tiffIfd.setDuplicateTags(duplicatedTags ? 1 : 0);

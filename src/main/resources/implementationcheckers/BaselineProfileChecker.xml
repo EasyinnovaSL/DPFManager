@@ -54,31 +54,35 @@
  </rules>
  
  <rules description="ifd-structure-check">
-  <rule id="bl-ifd-1" context="tiffValidationObject">
+  <rule id="bl-ifd-1" context="tags" level="critical">
+   <assert test="{tagsCount &gt; 0}">IFDs must have at least one entry</assert>
+   <reference>Section 2, page 14</reference>
+  </rule>
+  <rule id="bl-ifd-2" context="tiffValidationObject">
    <assert test="{count(ifds) == 1}">The file must have IFDs</assert>
    <reference>Section 2, page 14</reference>
   </rule>
-  <rule id="bl-ifd-2" context="ifds">
+  <rule id="bl-ifd-3" context="ifds">
    <assert test="{circularReference == 0}">Circular reference</assert>
    <reference>Section 7, page 26</reference>
   </rule>
-  <rule id="bl-ifd-3" context="ifds">
+  <rule id="bl-ifd-4" context="ifds">
    <assert test="{count(ifd) > 0}">At least 1 IFD must exist</assert>
    <reference>Section 2, page 14</reference>
   </rule>
-  <rule id="bl-ifd-4" context="ifd">
+  <rule id="bl-ifd-5" context="ifd">
    <assert test="{tagOrdering == 1}">Tags must be in strict ascending order</assert>
    <reference>Section 2, page 15</reference>
   </rule>
-  <rule id="bl-ifd-5" context="ifd">
+  <rule id="bl-ifd-6" context="ifd">
    <assert test="{duplicateTags == 0}">Tags cannot be duplicated</assert>
    <reference>Section 2, page 15</reference>
   </rule>
-  <rule id="bl-ifd-6" context="tags">
+  <rule id="bl-ifd-7" context="tags">
    <assert test="{count(tag[name=PhotometricInterpretation]) == 1}">Each IFD must have a Photometric Interpretation</assert>
    <reference>Section 8, page 37</reference>
   </rule>
-  <rule id="bl-ifd-7" context="tags">
+  <rule id="bl-ifd-8" context="tags">
    <assert test="{tag[name=PhotometricInterpretation] &gt; -1} &amp;&amp; {tag[name=PhotometricInterpretation] &lt; 11}">Photometric Interpretation value must be between 0 and 10</assert>
    <reference>Section 8, page 27</reference>
   </rule>
