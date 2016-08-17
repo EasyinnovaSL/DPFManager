@@ -1934,6 +1934,18 @@
    <assert test="{tags.tag[name=Decode].cardinality == 2*tags.tag[name=Decode]}">Decode count must be 2*Bits per Sample</assert>
    <reference></reference>
   </rule>
+  <rule id="bl-ca-196" context="ifd[class=image]">
+   <assert test="{tags.tag[name=GrayResponseCurve].cardinality == 2^tags.tag[name=BitsPerSample]}">Tag cardinality is not valid</assert>
+   <reference>Section 8, page 33</reference>
+  </rule>
+  <rule id="bl-ca-197" context="ifd[class=image]">
+   <assert test="{tags.tag[name=ColorMap].cardinality == 3*2^tags.tag[name=BitsPerSample]}">Tag cardinality is not valid</assert>
+   <reference>Section 8, page 29</reference>
+  </rule>
+  <rule id="bl-ca-198" context="ifd[class=image]">
+   <assert test="{tags.tag[name=DotRange].cardinality &gt; 1}">Tag cardinality is not valid</assert>
+   <reference>Section 16, page 71</reference>
+  </rule>
  </rules>
 
 </implementationCheckerObject>

@@ -16,6 +16,7 @@ public class RuleElement {
   TiffNode model;
   public boolean valid;
   String multiplier;
+  String elevator;
 
   public RuleElement(String field, TiffNode nodeBase, TiffNode model) {
     valid = true;
@@ -26,6 +27,10 @@ public class RuleElement {
     if (fieldName.contains("*")) {
       multiplier = fieldName.substring(0, fieldName.indexOf("*"));
       fieldName = fieldName.substring(fieldName.indexOf("*")+1);
+    }
+    if (fieldName.contains("^")) {
+      elevator = fieldName.substring(0, fieldName.indexOf("^"));
+      fieldName = fieldName.substring(fieldName.indexOf("^")+1);
     }
     if (!fieldName.startsWith("$")) {
       while (fieldName.contains(".") || fieldName.contains("[") || fieldName.contains("(")) {
@@ -104,8 +109,11 @@ public class RuleElement {
 
   String operateMultiplier(String val) {
     String value = val;
+    if (elevator != null) {
+      value = (Math.pow(Integer.parseInt(elevator), Integer.parseInt(val))) + "";
+    }
     if (multiplier != null) {
-      value = (Integer.parseInt(val) * Integer.parseInt(multiplier)) + "";
+      value = (Integer.parseInt(value) * Integer.parseInt(multiplier)) + "";
     }
     return value;
   }
