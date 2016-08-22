@@ -572,8 +572,8 @@ public class MetsReport {
         if(ifd.getMetadata() != null && ir.getTiffModel().getMetadata().contains("Flash")){
           TypeOfFlashType flashType = new TypeOfFlashType();
           flashType.setUse("Manager");
-          String hexFlash = Integer.toHexString(Integer.parseInt(ir.getTiffModel().getMetadata().get("Flash").toString()));
-          hexFlash = String.format("%04x", hexFlash); //FIXME
+          Integer hexFlashInt = Integer.parseInt(ir.getTiffModel().getMetadata().get("Flash").toString());
+          String hexFlash = String.format("%04X", hexFlashInt);
           flashType.setValue(FlashType.fromValue(hexFlash));
           imageData.setFlash(flashType);
         }
