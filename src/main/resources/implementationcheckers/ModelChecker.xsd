@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="tiffValidationObject" type="tiffValidationObjectType"/>
+    
+    <xsd:complexType name="tiffValidationObjectType">
+        <xsd:sequence>
+            <xsd:element name="header" type="headerType"/>
+            <xsd:element name="ifds"  type="ifdsType"/>
+            <xsd:element name="size"  type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="headerType">
+        <xsd:sequence>
+            <xsd:element name="byteOrder" type="xsd:string"/>
+            <xsd:element name="magicNumber" type="xsd:integer"/>
+            <xsd:element name="offset" type="xsd:integer"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ifdsType">
+        <xsd:sequence>
+            <xsd:element name="ifd" type="ifdType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ifdType">
+        <xsd:sequence>
+            <xsd:element name="correctExtraSamples">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:minInclusive value="1"/>
+                        <xsd:maxInclusive value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="correctStrips">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:minInclusive value="1"/>
+                        <xsd:maxInclusive value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="correctTiles">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:minInclusive value="1"/>
+                        <xsd:maxInclusive value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="duplicateTags">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:integer">
+                        <xsd:minInclusive value="0"/>
+                        <xsd:maxInclusive value="0"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="equalBitsPerSampleValues">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:minInclusive value="1"/>
+                        <xsd:maxInclusive value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="onlyNecessaryExtraSamples">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:minInclusive value="1"/>
+                        <xsd:maxInclusive value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="sppEqualsBps">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:minInclusive value="1"/>
+                        <xsd:maxInclusive value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="tagOrdering">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:minInclusive value="1"/>
+                        <xsd:maxInclusive value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="tags"  type="tagsType"/>
+            <xsd:element name="validBitsPerSample">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:positiveInteger">
+                        <xsd:minInclusive value="1"/>
+                        <xsd:maxInclusive value="1"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="n" type="xsd:integer"/>
+        <xsd:attribute name="strips" type="xsd:integer"/>
+        <xsd:attribute name="tiles" type="xsd:integer"/>
+        <xsd:attribute name="type" type="xsd:string"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="tagsType">
+        <xsd:sequence>
+            <xsd:element name="tag" type="tagType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="tagType">
+        <xsd:sequence>
+            <xsd:element name="cardinality" type="xsd:integer"/>
+            <xsd:element name="exif" type="ifdType" minOccurs="0"/>
+            <xsd:element name="iptc" type="iptcType" minOccurs="0"/>
+            <xsd:element name="offset" type="xsd:integer"/>
+            <xsd:element name="type" type="xsd:string"/>
+            <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:integer"/>
+        <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="iptcType">
+        <xsd:sequence>
+            <xsd:element name="entry" type="entryType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="entryType">
+        <xsd:sequence>
+            <xsd:element name="key" type="xsd:string"/>
+            <xsd:element name="value" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
