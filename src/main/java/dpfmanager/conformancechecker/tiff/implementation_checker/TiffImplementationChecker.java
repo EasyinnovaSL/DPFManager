@@ -501,6 +501,7 @@ public class TiffImplementationChecker {
       tags.add(CreateTiffTag(tvv));
     }
     TiffTags tiffTags = new TiffTags();
+    tiffTags.setTagsCount(tags.size());
     tiffTags.setTags(tags);
     ifd.setTags(tiffTags);
     ifd.setTagOrdering(correctTagOrdering ? 1 : 0);
