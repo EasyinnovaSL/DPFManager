@@ -6,8 +6,13 @@ import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.PDFParams;
 
+import com.easyinnova.tiff.model.Metadata;
+import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
+import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.XMP;
+import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -21,6 +26,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -170,6 +176,73 @@ public class PdfReport extends Report {
       pdfParams = writeText(pdfParams, "Value", pos_x + 200, font, font_size);
       for (ReportTag tag : getTags(ir)) {
         if (tag.expert) continue;
+        /*if (tag.tv.getId() == 700) {
+          // XMP
+          for (abstractTiffType to : tag.tv.getValue()) {
+            XMP xmp = (XMP)to;
+            try {
+              Metadata metadata = xmp.createMetadata();
+              for (String key : metadata.keySet()) {
+                pdfParams.y -= 18;
+                pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
+                pdfParams = writeText(pdfParams, "", pos_x + 40, font, font_size);
+                pdfParams = writeText(pdfParams, key, pos_x + 80, font, font_size);
+                pdfParams = writeText(pdfParams, metadata.get(key).toString().trim(), pos_x + 200, font, font_size);
+              }
+              int nh = 1;
+              for (Hashtable<String, String> kv : xmp.getHistory()) {
+                for (String key : kv.keySet()) {
+                  pdfParams.y -= 18;
+                  pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
+                  pdfParams = writeText(pdfParams, nh + "", pos_x + 40, font, font_size);
+                  pdfParams = writeText(pdfParams, key, pos_x + 80, font, font_size);
+                  pdfParams = writeText(pdfParams, kv.get(key).toString().trim(), pos_x + 200, font, font_size);
+                }
+                nh++;
+              }
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          }
+          continue;
+        }
+        if (tag.tv.getId() == 33723) {
+          // IPTC
+          for (abstractTiffType to : tag.tv.getValue()) {
+            IPTC iptc = (IPTC)to;
+            try {
+              Metadata metadata = iptc.createMetadata();
+              for (String key : metadata.keySet()) {
+                pdfParams.y -= 18;
+                pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
+                pdfParams = writeText(pdfParams, "", pos_x + 40, font, font_size);
+                pdfParams = writeText(pdfParams, key, pos_x + 80, font, font_size);
+                pdfParams = writeText(pdfParams, metadata.get(key).toString().trim(), pos_x + 200, font, font_size);
+              }
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          }
+          continue;
+        }
+        if (tag.tv.getId() == 34665) {
+          // EXIF
+          for (abstractTiffType to : tag.tv.getValue()) {
+            IFD exif = (IFD)to;
+            try {
+              for (TagValue tv : exif.getTags().getTags()) {
+                pdfParams.y -= 18;
+                pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
+                pdfParams = writeText(pdfParams, "", pos_x + 40, font, font_size);
+                pdfParams = writeText(pdfParams, tv.getName(), pos_x + 80, font, font_size);
+                pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + 200, font, font_size);
+              }
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          }
+          continue;
+        }*/
         String sDif = "";
         if (tag.dif < 0) sDif = "(-)";
         else if (tag.dif > 0) sDif = "(+)";
