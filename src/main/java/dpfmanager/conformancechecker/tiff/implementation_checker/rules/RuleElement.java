@@ -110,10 +110,10 @@ public class RuleElement {
   String operateMultiplier(String val) {
     String value = val;
     if (elevator != null) {
-      value = (Math.pow(Integer.parseInt(elevator), Integer.parseInt(val))) + "";
+      value = (Math.pow(Double.parseDouble(elevator), Double.parseDouble(val))) + "";
     }
     if (multiplier != null) {
-      value = (Integer.parseInt(value) * Integer.parseInt(multiplier)) + "";
+      value = (Double.parseDouble(value) * Integer.parseInt(multiplier)) + "";
     }
     return value;
   }
