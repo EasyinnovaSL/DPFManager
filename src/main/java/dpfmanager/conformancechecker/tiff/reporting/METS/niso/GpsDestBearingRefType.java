@@ -41,5 +41,13 @@ public enum GpsDestBearingRefType {
     public static GpsDestBearingRefType fromValue(String v) {
         return valueOf(v);
     }
+    public static boolean verifyTag(String v) {
+        try{
+            valueOf(v);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
 
 }

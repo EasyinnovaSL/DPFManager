@@ -36,15 +36,15 @@ import javax.xml.bind.annotation.XmlType;
 public enum GrayResponseUnitType {
 
     @XmlEnumValue("Number represents tenths of a unit")
-    NUMBER_REPRESENTS_TENTHS_OF_A_UNIT("Number represents tenths of a unit"),
+    NUMBER_REPRESENTS_TENTHS_OF_A_UNIT("1"),
     @XmlEnumValue("Number represents hundredths of a unit")
-    NUMBER_REPRESENTS_HUNDREDTHS_OF_A_UNIT("Number represents hundredths of a unit"),
+    NUMBER_REPRESENTS_HUNDREDTHS_OF_A_UNIT("2"),
     @XmlEnumValue("Number represents thousandths of a unit")
-    NUMBER_REPRESENTS_THOUSANDTHS_OF_A_UNIT("Number represents thousandths of a unit"),
+    NUMBER_REPRESENTS_THOUSANDTHS_OF_A_UNIT("3"),
     @XmlEnumValue("Number represents ten-thousandths of a unit")
-    NUMBER_REPRESENTS_TEN_THOUSANDTHS_OF_A_UNIT("Number represents ten-thousandths of a unit"),
+    NUMBER_REPRESENTS_TEN_THOUSANDTHS_OF_A_UNIT("4"),
     @XmlEnumValue("Number represents hundred-thousandths of a unit")
-    NUMBER_REPRESENTS_HUNDRED_THOUSANDTHS_OF_A_UNIT("Number represents hundred-thousandths of a unit");
+    NUMBER_REPRESENTS_HUNDRED_THOUSANDTHS_OF_A_UNIT("5");
     private final String value;
 
     GrayResponseUnitType(String v) {
@@ -62,6 +62,14 @@ public enum GrayResponseUnitType {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+    public static boolean verifyTag(String v) {
+        for (GrayResponseUnitType c: GrayResponseUnitType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

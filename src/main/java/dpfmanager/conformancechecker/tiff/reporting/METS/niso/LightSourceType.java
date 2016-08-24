@@ -112,4 +112,13 @@ public enum LightSourceType {
         throw new IllegalArgumentException(v);
     }
 
+    public static boolean verifyTag(String v) {
+        for (LightSourceType c: LightSourceType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -75,5 +75,13 @@ public enum ExposureProgramType {
         }
         throw new IllegalArgumentException(v);
     }
+    public static  boolean verifyTag(String v) {
+        for (ExposureProgramType c: ExposureProgramType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

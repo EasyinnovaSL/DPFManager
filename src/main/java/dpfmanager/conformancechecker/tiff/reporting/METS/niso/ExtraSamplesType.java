@@ -35,13 +35,13 @@ import javax.xml.bind.annotation.XmlType;
 public enum ExtraSamplesType {
 
     @XmlEnumValue("unspecified data")
-    UNSPECIFIED_DATA("unspecified data"),
+    UNSPECIFIED_DATA("0"),
     @XmlEnumValue("associated alpha data (with pre-multiplied color)")
-    ASSOCIATED_ALPHA_DATA_WITH_PRE_MULTIPLIED_COLOR("associated alpha data (with pre-multiplied color)"),
+    ASSOCIATED_ALPHA_DATA_WITH_PRE_MULTIPLIED_COLOR("1"),
     @XmlEnumValue("unassociated alpha data")
-    UNASSOCIATED_ALPHA_DATA("unassociated alpha data"),
+    UNASSOCIATED_ALPHA_DATA("2"),
     @XmlEnumValue("range or depth data")
-    RANGE_OR_DEPTH_DATA("range or depth data");
+    RANGE_OR_DEPTH_DATA("3");
     private final String value;
 
     ExtraSamplesType(String v) {
@@ -59,6 +59,15 @@ public enum ExtraSamplesType {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+
+    public static boolean verifyTag(String v) {
+        for (ExtraSamplesType c: ExtraSamplesType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

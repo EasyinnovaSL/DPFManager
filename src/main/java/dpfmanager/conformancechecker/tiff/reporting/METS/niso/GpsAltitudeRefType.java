@@ -54,5 +54,13 @@ public enum GpsAltitudeRefType {
         }
         throw new IllegalArgumentException(v);
     }
+    public static boolean verifyTag(String v) {
+        for (GpsAltitudeRefType c: GpsAltitudeRefType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

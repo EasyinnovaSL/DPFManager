@@ -70,5 +70,13 @@ public enum MeteringModeType {
         }
         throw new IllegalArgumentException(v);
     }
+    public static boolean verifyTag(String v) {
+        for (MeteringModeType c: MeteringModeType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

@@ -54,5 +54,13 @@ public enum SourceDimensionUnitType {
         }
         throw new IllegalArgumentException(v);
     }
+    public static boolean verifyTag(String v) {
+        for (SourceDimensionUnitType c: SourceDimensionUnitType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

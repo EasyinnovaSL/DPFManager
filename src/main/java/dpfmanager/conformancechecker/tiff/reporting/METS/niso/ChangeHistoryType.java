@@ -105,6 +105,13 @@ public class ChangeHistoryType {
         return this.imageProcessing;
     }
 
+    public void setImageProcessing(ImageProcessing i) {
+        if (imageProcessing == null) {
+            imageProcessing = new ArrayList<ImageProcessing>();
+        }
+        this.imageProcessing.add(i);
+    }
+
     /**
      * Gets the value of the previousImageMetadata property.
      * 
@@ -321,6 +328,13 @@ public class ChangeHistoryType {
             return this.processingSoftware;
         }
 
+        public void setProcessingSoftware(ProcessingSoftware p) {
+            if (processingSoftware == null) {
+                processingSoftware = new ArrayList<ProcessingSoftware>();
+            }
+            this.processingSoftware.add(p);
+        }
+
         /**
          * Gets the value of the processingActions property.
          * 
@@ -348,6 +362,13 @@ public class ChangeHistoryType {
                 processingActions = new ArrayList<StringType>();
             }
             return this.processingActions;
+        }
+
+        public void setProcessingActions(StringType s) {
+            if (processingActions == null) {
+                processingActions = new ArrayList<StringType>();
+            }
+            this.processingActions.add(s);
         }
 
 

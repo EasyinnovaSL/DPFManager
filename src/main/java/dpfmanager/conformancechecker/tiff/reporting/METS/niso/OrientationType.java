@@ -40,23 +40,23 @@ import javax.xml.bind.annotation.XmlType;
 public enum OrientationType {
 
     @XmlEnumValue("normal*")
-    NORMAL("normal*"),
+    NORMAL("1"),
     @XmlEnumValue("normal, image flipped")
-    NORMAL_IMAGE_FLIPPED("normal, image flipped"),
+    NORMAL_IMAGE_FLIPPED("2"),
     @XmlEnumValue("normal, rotated 180\u00b0")
-    NORMAL_ROTATED_180("normal, rotated 180\u00b0"),
+    NORMAL_ROTATED_180("3"),
     @XmlEnumValue("normal, image flipped, rotated 180\u00b0")
-    NORMAL_IMAGE_FLIPPED_ROTATED_180("normal, image flipped, rotated 180\u00b0"),
+    NORMAL_IMAGE_FLIPPED_ROTATED_180("4"),
     @XmlEnumValue("normal, image flipped, rotated cw 90\u00b0")
-    NORMAL_IMAGE_FLIPPED_ROTATED_CW_90("normal, image flipped, rotated cw 90\u00b0"),
+    NORMAL_IMAGE_FLIPPED_ROTATED_CW_90("5"),
     @XmlEnumValue("normal, rotated ccw 90\u00b0")
-    NORMAL_ROTATED_CCW_90("normal, rotated ccw 90\u00b0"),
+    NORMAL_ROTATED_CCW_90("6"),
     @XmlEnumValue("normal, image flipped, rotated ccw 90\u00b0")
-    NORMAL_IMAGE_FLIPPED_ROTATED_CCW_90("normal, image flipped, rotated ccw 90\u00b0"),
+    NORMAL_IMAGE_FLIPPED_ROTATED_CCW_90("7"),
     @XmlEnumValue("normal, rotated cw 90\u00b0")
-    NORMAL_ROTATED_CW_90("normal, rotated cw 90\u00b0"),
+    NORMAL_ROTATED_CW_90("8"),
     @XmlEnumValue("unknown")
-    UNKNOWN("unknown");
+    UNKNOWN("9");
     private final String value;
 
     OrientationType(String v) {
@@ -71,9 +71,21 @@ public enum OrientationType {
         for (OrientationType c: OrientationType.values()) {
             if (c.value.equals(v)) {
                 return c;
+            }else if (c.value.equals("9")){
+                return c;
             }
         }
         throw new IllegalArgumentException(v);
+    }
+    public static boolean verifyTag(String v) {
+        for (OrientationType c: OrientationType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }else if (c.value.equals("9")){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

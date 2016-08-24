@@ -32,9 +32,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ByteOrderType {
 
-    @XmlEnumValue("big endian")
+    @XmlEnumValue("Big endian")
     BIG_ENDIAN("BIG_ENDIAN"),
-    @XmlEnumValue("little endian")
+    @XmlEnumValue("Little endian")
     LITTLE_ENDIAN("LITTLE_ENDIAN");
     private final String value;
 
@@ -53,6 +53,14 @@ public enum ByteOrderType {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+    public static boolean verifyTag(String v) {
+        for (ByteOrderType c: ByteOrderType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

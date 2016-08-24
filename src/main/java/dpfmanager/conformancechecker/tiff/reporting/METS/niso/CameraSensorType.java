@@ -70,5 +70,13 @@ public enum CameraSensorType {
         }
         throw new IllegalArgumentException(v);
     }
+    public static boolean verifyTag(String v) {
+        for (CameraSensorType c: CameraSensorType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

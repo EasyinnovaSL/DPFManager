@@ -38,19 +38,19 @@ import javax.xml.bind.annotation.XmlType;
 public enum SensingMethodType {
 
     @XmlEnumValue("Not defined")
-    NOT_DEFINED("Not defined"),
+    NOT_DEFINED("1"),
     @XmlEnumValue("One-chip color area sensor")
-    ONE_CHIP_COLOR_AREA_SENSOR("One-chip color area sensor"),
+    ONE_CHIP_COLOR_AREA_SENSOR("2"),
     @XmlEnumValue("Two-chip color area sensor")
-    TWO_CHIP_COLOR_AREA_SENSOR("Two-chip color area sensor"),
+    TWO_CHIP_COLOR_AREA_SENSOR("3"),
     @XmlEnumValue("Three-chip color area sensor")
-    THREE_CHIP_COLOR_AREA_SENSOR("Three-chip color area sensor"),
+    THREE_CHIP_COLOR_AREA_SENSOR("4"),
     @XmlEnumValue("Color sequential area sensor")
-    COLOR_SEQUENTIAL_AREA_SENSOR("Color sequential area sensor"),
+    COLOR_SEQUENTIAL_AREA_SENSOR("5"),
     @XmlEnumValue("Trilinear sensor")
-    TRILINEAR_SENSOR("Trilinear sensor"),
+    TRILINEAR_SENSOR("7"),
     @XmlEnumValue("Color sequential linear sensor")
-    COLOR_SEQUENTIAL_LINEAR_SENSOR("Color sequential linear sensor");
+    COLOR_SEQUENTIAL_LINEAR_SENSOR("8");
     private final String value;
 
     SensingMethodType(String v) {
@@ -68,6 +68,14 @@ public enum SensingMethodType {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+    public static boolean verifyTag(String v) {
+        for (SensingMethodType c: SensingMethodType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -43,5 +43,13 @@ public enum GpsSpeedRefType {
     public static GpsSpeedRefType fromValue(String v) {
         return valueOf(v);
     }
+    public static boolean verifyTag(String v) {
+        try{
+            valueOf(v);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
 
 }

@@ -425,6 +425,13 @@ public class ImageAssessmentMetadataType {
             return this.extraSamples;
         }
 
+        public void setExtraSamples(TypeOfExtraSamplesType t) {
+            if (extraSamples == null) {
+                extraSamples = new ArrayList<TypeOfExtraSamplesType>();
+            }
+            extraSamples.add(t);
+        }
+
         /**
          * Gets the value of the colormap property.
          * 
@@ -502,6 +509,13 @@ public class ImageAssessmentMetadataType {
             return this.whitePoint;
         }
 
+        public void setWhitePoint(WhitePoint w) {
+            if (whitePoint == null) {
+                whitePoint = new ArrayList<WhitePoint>();
+            }
+            this.whitePoint.add(w);
+        }
+
         /**
          * Gets the value of the primaryChromaticities property.
          * 
@@ -529,6 +543,13 @@ public class ImageAssessmentMetadataType {
                 primaryChromaticities = new ArrayList<PrimaryChromaticities>();
             }
             return this.primaryChromaticities;
+        }
+
+        public void setPrimaryChromaticities(PrimaryChromaticities p) {
+            if (primaryChromaticities == null) {
+                primaryChromaticities = new ArrayList<PrimaryChromaticities>();
+            }
+            this.primaryChromaticities.add(p);
         }
 
 
@@ -589,6 +610,13 @@ public class ImageAssessmentMetadataType {
                     bitsPerSampleValue = new ArrayList<PositiveIntegerType>();
                 }
                 return this.bitsPerSampleValue;
+            }
+
+            public void setBitsPerSampleValue(PositiveIntegerType p) {
+                if (bitsPerSampleValue == null) {
+                    bitsPerSampleValue = new ArrayList<PositiveIntegerType>();
+                }
+                bitsPerSampleValue.add(p);
             }
 
             /**
@@ -756,6 +784,13 @@ public class ImageAssessmentMetadataType {
                     grayResponseCurve = new ArrayList<NonNegativeIntegerType>();
                 }
                 return this.grayResponseCurve;
+            }
+
+            public void setGrayResponseCurve(NonNegativeIntegerType n) {
+                if (grayResponseCurve == null) {
+                    grayResponseCurve = new ArrayList<NonNegativeIntegerType>();
+                }
+                this.grayResponseCurve.add(n);
             }
 
             /**

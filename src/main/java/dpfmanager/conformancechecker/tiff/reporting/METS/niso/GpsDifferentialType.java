@@ -54,5 +54,13 @@ public enum GpsDifferentialType {
         }
         throw new IllegalArgumentException(v);
     }
+    public static boolean verifyTag(String v) {
+        for (GpsDifferentialType c: GpsDifferentialType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

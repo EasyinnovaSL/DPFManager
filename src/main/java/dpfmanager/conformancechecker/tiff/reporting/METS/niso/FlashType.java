@@ -115,4 +115,13 @@ public enum FlashType {
         throw new IllegalArgumentException(v);
     }
 
+    public static boolean verifyTag(String v) {
+        for (FlashType c: FlashType.values()) {
+            if (c.value.equals(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
