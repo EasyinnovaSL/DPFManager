@@ -142,6 +142,8 @@ public class IndividualReport implements Comparable {
 
   private String conformanceCheckerReportHtml = null;
 
+  private String conformanceCheckerReportMets = null;
+
   /**
    * Extra check information
    */
@@ -210,12 +212,20 @@ public class IndividualReport implements Comparable {
     conformanceCheckerReportHtml = report;
   }
 
+  public void setConformanceCheckerReportMets(String report) {
+    conformanceCheckerReportMets = report;
+  }
+
   public String getConformanceCheckerReport() {
     return conformanceCheckerReport;
   }
 
   public String getConformanceCheckerReportHtml() {
     return conformanceCheckerReportHtml;
+  }
+
+  public String getConformanceCheckerReportMets() {
+    return conformanceCheckerReportMets;
   }
 
   public boolean containsData() {
