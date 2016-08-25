@@ -30,29 +30,34 @@ import org.jacpfx.rcp.context.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 08/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_4,
     viewLocation = "/fxml/config/subconfig4.fxml",
+    resourceBundleLocation = "bundles.language",
     scope = Scope.SINGLETON)
 public class Wizard4Fragment {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @FXML
   private VBox autoFixesBox;
-
   @FXML
   private VBox fixesBox;
 
   private Map<String, CheckBox> autoFixesMap;
+  private Map<String, String> translateToKey;
   private ConfigModel model;
 
   public Wizard4Fragment() {
     initAutoFixes();
+    translateToKey = new HashMap<>();
   }
 
   public void clear() {
@@ -79,7 +84,7 @@ public class Wizard4Fragment {
   }
 
   public ArrayList<Fix> readFixesFromGui(VBox fixesBox) {
-    ArrayList<Fix> fixes = new ArrayList<Fix>();
+    ArrayList<Fix> fixes = new ArrayList<>();
     boolean wrong_format = false;
     for (Node n : fixesBox.getChildren()) {
       HBox hbox = (HBox) n;
@@ -90,7 +95,7 @@ public class Wizard4Fragment {
       } else {
         ComboBox comboBox = (ComboBox) hbox.getChildren().get(0);
         if (comboBox.getValue() != null) {
-          action = comboBox.getValue().toString();
+          action = translateToKey.get(comboBox.getValue().toString());
         } else {
           wrong_format = true;
         }
@@ -172,10 +177,18 @@ public class Wizard4Fragment {
     comboBox.setId("comboBoxAction");
     comboBox.getStyleClass().addAll("combo-box-white", "dpf-bar");
     for (String fix : getModel().getFixes()) {
-      comboBox.getItems().add(fix);
+      comboBox.getItems().add(bundle.getString(fix));
+      if (!translateToKey.containsKey(bundle.getString(fix))) {
+        translateToKey.put(bundle.getString(fix), fix);
+      }
     }
     if (action != null) {
-      comboBox.setValue(action);
+      if (!bundle.containsKey(action)){
+        // Old format
+        comboBox.setValue(action);
+      } else {
+        comboBox.setValue(bundle.getString(action));
+      }
     }
 
     // Add remove button
@@ -235,7 +248,7 @@ public class Wizard4Fragment {
     }
 
     // Value combo box or text field
-    if (item.equals("Add Tag")) {
+    if (item.equals("addTag") || item.equals("Add Tag")) {
       TextField value = new TextField();
       value.setId("textField");
       value.getStyleClass().add("txtFix");

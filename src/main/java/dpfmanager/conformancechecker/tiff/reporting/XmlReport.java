@@ -16,6 +16,7 @@ import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
+import com.easyinnova.tiff.model.types.Rational;
 
 import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Document;
@@ -173,8 +174,10 @@ public class XmlReport {
       elchild.appendChild(elchild2);
 
       elchild2 = doc.createElement("value");
-      if (t.getCardinality() == 1 || t.toString().length() < 100)
-        elchild2.setTextContent(t.toString());
+      if (t.getCardinality() == 1 || t.toString().length() < 100) {
+        String val = t.toString().replaceAll("\\p{C}", "?");
+        elchild2.setTextContent(val);
+      }
       else
         elchild2.setTextContent("Array[" + t.getCardinality() + "]");
       elchild.appendChild(elchild2);
@@ -545,14 +548,35 @@ public class XmlReport {
           report.appendChild(infoElement);
         }
 
-        String eqxy = "1";
+        String eqxy = "True";
         if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))) {
-          if (!ifd.getTag("XResolution").toString().equals(ifd.getTag("YResolution").toString())) eqxy = "0";
+          if (!ifd.getTag("XResolution").toString().equals(ifd.getTag("YResolution").toString())) eqxy = "False";
         }
-
         infoElement = doc.createElement("EqualXYResolution");
         infoElement.setTextContent(eqxy);
         infoElement.setAttribute("EqualXYResolution", eqxy);
+        report.appendChild(infoElement);
+
+        String dpi = "";
+        if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))) {
+          try {
+            int xres = 1;
+            int yres = 1;
+            Rational ratx = (Rational)ifd.getTag("XResolution").getValue().get(0);
+            Rational raty = (Rational)ifd.getTag("YResolution").getValue().get(0);
+            xres = (int)ratx.getFloatValue();
+            yres = (int)raty.getFloatValue();
+            if (xres % 2 != 0 || yres % 2 != 0)
+              dpi = "Uneven";
+            else
+              dpi = "Even";
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+        infoElement = doc.createElement("DPI");
+        infoElement.setTextContent(dpi);
+        infoElement.setAttribute("DPI", dpi);
         report.appendChild(infoElement);
 
         String extra = "0";
@@ -639,9 +663,9 @@ public class XmlReport {
                 }
               }
               boolean isBlank = (double)nblanks / (ww*hh) > percent_blank_pixels;
-              value = "0";
+              value = "False";
               if (isBlank) {
-                value = "1";
+                value = "True";
                 numBlankPages++;
               }
               infoElement = doc.createElement("BlankPage");
@@ -675,11 +699,13 @@ public class XmlReport {
       for (ReportTag tag : getTags(ir)) {
         try {
           if (tag.tv.getName().equals("Compression")) continue;
-          String tagname = tag.tv.getName();
+          String tagname = tag.tv.getName().replace(" ", "");
           if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
           infoElement = doc.createElement(tagname);
-          infoElement.setTextContent(tag.tv.toString());
-          infoElement.setAttribute(tagname, tag.tv.toString());
+          String val = tag.tv.toString().replaceAll("\\p{C}", "?");;
+
+          infoElement.setTextContent(val);
+          infoElement.setAttribute(tagname, val);
           infoElement.setAttribute("id", tag.tv.getId() + "");
           infoElement.setAttribute("type", tag.dif + "");
           report.appendChild(infoElement);

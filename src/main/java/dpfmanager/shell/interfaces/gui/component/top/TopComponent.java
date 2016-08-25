@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 @View(id = GuiConfig.COMPONENT_TOP,
     name = "TopPane",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_TOP)
 public class TopComponent extends DpfSimpleView {
 
@@ -31,6 +32,8 @@ public class TopComponent extends DpfSimpleView {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
@@ -43,6 +46,7 @@ public class TopComponent extends DpfSimpleView {
 
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
+    context.getManagedFragmentHandler(TopFragment.class).getController().setBundle(bundle);
     flowPane = (FlowPane) context.getManagedFragmentHandler(TopFragment.class).getFragmentNode();
   }
 

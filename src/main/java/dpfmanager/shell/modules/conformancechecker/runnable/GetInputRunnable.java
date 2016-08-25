@@ -105,7 +105,7 @@ public class GetInputRunnable extends DpfRunnable {
       }
       zipFile.close();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception during unzip", e));
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("unzipException"), e));
     }
   }
 
@@ -127,7 +127,7 @@ public class GetInputRunnable extends DpfRunnable {
       }
       return;
     } catch (Exception ex) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Error in URL " + url));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorUrl").replace("%1",url)));
     }
   }
 

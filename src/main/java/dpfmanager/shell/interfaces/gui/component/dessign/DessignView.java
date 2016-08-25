@@ -9,34 +9,52 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.workbench.DpfCloseEvent;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
 
+import org.controlsfx.control.CheckTreeView;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -45,12 +63,17 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_DESIGN,
     viewLocation = "/fxml/dessign.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_DESIGN)
 public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
+  @FXML
+  private HBox treeViewHBox;
   @FXML
   private ComboBox comboChoice;
   @FXML
@@ -61,10 +84,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   private TextField inputText;
   @FXML
   private CheckBox recursiveCheck;
+  @FXML
+  private Button reloadButton;
 
   private VBox vBoxConfig;
   private ToggleGroup group;
   private RadioButton selectedButton;
+  private CheckTreeView<String> checkTreeView;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -102,6 +128,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     // Set model and controller
     setModel(new DessignModel());
     setController(new DessignController());
+    getController().setResourcebundle(bundle);
 
     // Add input types
     if (comboChoice.getItems().size() < 2) {
@@ -109,11 +136,49 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       comboChoice.setPrefWidth(10.0);
       comboChoice.setMaxWidth(10.0);
       comboChoice.setMinWidth(10.0);
-      comboChoice.getItems().add("File");
-      comboChoice.getItems().add("Folder");
-      comboChoice.setValue("File");
+      comboChoice.getItems().add(bundle.getString("comboFile"));
+      comboChoice.getItems().add(bundle.getString("comboFolder"));
+      comboChoice.getItems().add(bundle.getString("comboTreeview"));
+      comboChoice.setValue(bundle.getString("comboFile"));
     }
     NodeUtil.hideNode(recursiveCheck);
+
+    // Add TreeView
+    addTreeView();
+    NodeUtil.hideNode(treeViewHBox);
+    NodeUtil.hideNode(reloadButton);
+  }
+
+  private void addTreeView() {
+    // Root node (my computer)
+    CheckBoxTreeItem<String> rootNode = new CheckBoxTreeItem<>(getHostName(), new ImageView(new Image("images/computer.png")));
+    checkTreeView = new CheckTreeView<>(rootNode);
+    rootNode.addEventHandler(TreeItem.<Object>branchExpandedEvent(), new ExpandEventHandler(checkTreeView));
+    rootNode.addEventHandler(TreeItem.<Object>branchCollapsedEvent(), new CollapseEventHandler());
+
+    // Root items
+    Iterable<Path> rootDirectories = FileSystems.getDefault().getRootDirectories();
+    for (Path name : rootDirectories) {
+      if (Files.isDirectory(name)) {
+        FilePathTreeItem treeNode = new FilePathTreeItem(name);
+        rootNode.getChildren().add(treeNode);
+      }
+    }
+    rootNode.setExpanded(true);
+
+    // Add data and add to gui
+    treeViewHBox.getChildren().clear();
+    treeViewHBox.getChildren().add(checkTreeView);
+    HBox.setHgrow(checkTreeView, Priority.ALWAYS);
+  }
+
+  private String getHostName() {
+    String hostName = bundle.getString("myComputer");
+    try {
+      hostName = InetAddress.getLocalHost().getHostName();
+    } catch (UnknownHostException x) {
+    }
+    return hostName;
   }
 
   private void addConfigFiles() {
@@ -131,7 +196,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
-          addConfigFile(fileEntry.getName(), fileEntry.getName().equalsIgnoreCase(previous));
+          addConfigFile(fileEntry.getName(), fileEntry, fileEntry.getName().equalsIgnoreCase(previous));
         }
       }
     }
@@ -139,12 +204,16 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     configScroll.setContent(vBoxConfig);
   }
 
-  public void addConfigFile(String text, boolean selected) {
+  public void addConfigFile(String text, File file, boolean selected) {
     RadioButton radio = new RadioButton();
     radio.setId("radioConfig" + vBoxConfig.getChildren().size());
     radio.setText(text);
     radio.setToggleGroup(group);
     radio.setSelected(selected);
+    String description = readDescription(file);
+    if (description != null && !description.isEmpty()) {
+      radio.setTooltip(new Tooltip(description));
+    }
     radio.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -152,6 +221,30 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       }
     });
     vBoxConfig.getChildren().add(radio);
+    if (selected) {
+      selectedButton = radio;
+    }
+  }
+
+  private String readDescription(File file) {
+    try {
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(file);
+      NodeList nList = doc.getDocumentElement().getChildNodes();
+      for (int i = 0; i < nList.getLength(); i++) {
+        org.w3c.dom.Node node = nList.item(i);
+        if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+          Element elem = (Element) node;
+          if (elem.getTagName().equals("description")) {
+            return elem.getTextContent();
+          }
+        }
+      }
+    } catch (Exception e) {
+      return null;
+    }
+    return null;
   }
 
   public void deleteSelectedConfig() {
@@ -176,12 +269,23 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @FXML
   protected void onChangeInputType(ActionEvent event) throws Exception {
-    if (comboChoice.getValue() == "File") {
-      inputText.setText("Select a file");
+    if (comboChoice.getValue() == bundle.getString("comboFile")) {
+      inputText.setText(bundle.getString("selectFile"));
+      NodeUtil.showNode(inputText);
       NodeUtil.hideNode(recursiveCheck);
-    } else if (comboChoice.getValue() == "Folder") {
-      inputText.setText("Select a folder");
+      NodeUtil.hideNode(treeViewHBox);
+      NodeUtil.hideNode(reloadButton);
+    } else if (comboChoice.getValue() == bundle.getString("comboFolder")) {
+      inputText.setText(bundle.getString("selectFolder"));
+      NodeUtil.showNode(inputText);
       NodeUtil.showNode(recursiveCheck);
+      NodeUtil.hideNode(treeViewHBox);
+      NodeUtil.hideNode(reloadButton);
+    } else if (comboChoice.getValue() == bundle.getString("comboTreeview")) {
+      NodeUtil.hideNode(inputText);
+      NodeUtil.hideNode(recursiveCheck);
+      NodeUtil.showNode(treeViewHBox);
+      NodeUtil.showNode(reloadButton);
     }
     if (!GuiWorkbench.isTestMode()) {
       getController().selectInputAction();
@@ -189,16 +293,21 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   }
 
   @FXML
+  protected void reloadTreeView(ActionEvent event) throws Exception {
+    addTreeView();
+  }
+
+  @FXML
   protected void showFileInfo(ActionEvent event) throws Exception {
-    String header = "The path to the files to check";
-    String content = "This can be either a single file or a folder. Only the files with a valid TIF file extension will be processed.";
+    String header = bundle.getString("filesPopHeader");
+    String content = bundle.getString("filesPopContent");
     getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, header, content));
   }
 
   @FXML
   protected void showConfigInfo(ActionEvent event) throws Exception {
-    String header = "Configuration files define the options to check the files (ISO, report format and policy rules)";
-    String content = "You can either create a new configuration file, import a new one from disk, or edit/delete one from the list";
+    String header = bundle.getString("configPopHeader");
+    String content = bundle.getString("configPopContent");
     getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, header, content));
   }
 
@@ -224,18 +333,41 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   protected void deleteButtonClicked(ActionEvent event) throws Exception {
     RadioButton radio = getSelectedConfig();
     if (radio != null) {
-      AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, "Are you sure to delete the configuration file '" + radio.getText() + "'?", "The physical file in disk will be also removed");
-      am.setTitle("Delete configuration file");
+      AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("deleteConfirmation").replace("%1", radio.getText()), bundle.getString("deleteInfo"));
+      am.setTitle(bundle.getString("deleteTitle"));
       getContext().send(BasicConfig.MODULE_MESSAGE, am);
     } else {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please select a configuration file"));
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertConfigFile")));
     }
   }
 
+  public List<String> getTreeSelectedItems() {
+    if (treeViewHBox.isVisible()) {
+      int index = 0;
+      List<String> selected = new ArrayList<>();
+      TreeItem<String> item = checkTreeView.getTreeItem(index);
+      while (item != null) {
+        if (item instanceof FilePathTreeItem) {
+          FilePathTreeItem fpItem = (FilePathTreeItem) item;
+          if (!fpItem.isDirectory() && fpItem.isFullSelected()) {
+            if (!selected.contains(fpItem.getParentPath())) {
+              selected.add(fpItem.getFullPath());
+            }
+          } else if (fpItem.isFullSelected()) {
+            selected.add(fpItem.getFullPath());
+          }
+        }
+        item = checkTreeView.getTreeItem(++index);
+      }
+      return selected;
+    } else {
+      return null;
+    }
+  }
 
   public RadioButton getSelectedConfig() {
     RadioButton radio = (RadioButton) group.getSelectedToggle();
-    if (radio == null){
+    if (radio == null) {
       return selectedButton;
     }
     return radio;

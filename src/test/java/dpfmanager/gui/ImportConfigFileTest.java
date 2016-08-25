@@ -85,14 +85,13 @@ public class ImportConfigFileTest extends ApplicationTest {
 
     //Test step buttons
     clickOnAndReload("#step3");
-    clickOnAndReload("#step2");
+    clickOnAndReload("#step5");
     clickOnAndReload("#step4");
-    clickOnAndReload("#step6");
-    clickOnAndReload("#step3");
+    clickOnAndReload("#step2");
     clickOnAndReload("#step1");
 
     //Go to summary and compare
-    clickOnAndReload("#step6");
+    clickOnAndReload("#step5");
     FxAssert.verifyThat("#labIsos", NodeMatchers.hasText("Tiff/EP, Tiff/IT-1"));
     FxAssert.verifyThat("#labRules", NodeMatchers.hasText("ImageHeight < 1000"));
     FxAssert.verifyThat("#labReports", NodeMatchers.hasText("HTML, PDF"));

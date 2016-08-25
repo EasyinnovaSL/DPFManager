@@ -8,10 +8,11 @@ import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
 import org.apache.logging.log4j.Level;
-import org.sqlite.SQLiteConfig;
-import org.sqlite.SQLiteOpenMode;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,6 +22,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,12 +31,13 @@ import java.util.concurrent.TimeUnit;
 public class DatabaseConnection {
 
   private Connection globalConnection;
-  private SQLiteConfig dbConfig;
   private String dbUrl;
 
   private DpfContext context;
   private Long lastUpdate;
   private Long initTime;
+
+  private ResourceBundle bundle;
 
   public DatabaseConnection(DpfContext c) {
     context = c;
@@ -46,19 +49,28 @@ public class DatabaseConnection {
    * Init function
    */
   public void init() {
+    bundle = DPFManagerProperties.getBundle();
     String filename = getDatabaseFile();
     try {
-      Class.forName("org.sqlite.JDBC");
-      dbUrl = "jdbc:sqlite:" + filename;
-      dbConfig = new SQLiteConfig();
-      dbConfig.setBusyTimeout("30000");
-      dbConfig.setOpenMode(SQLiteOpenMode.READWRITE);
-      dbConfig.setLockingMode(SQLiteConfig.LockingMode.NORMAL);
+      checkLockFile();
+      Class.forName("org.h2.Driver");
+      dbUrl = "jdbc:h2:" + filename + ";AUTO_SERVER=TRUE";
       globalConnection = connect();
       createFirstTable();
     } catch (Exception e) {
-      e.printStackTrace();
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot connect to database (" + filename + ")."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB2").replace("%1", filename)));
+    }
+  }
+
+  private void checkLockFile() throws Exception {
+    File lockFile = new File(getDatabaseLockFile());
+    if (lockFile.exists()) {
+      BasicFileAttributes attr = Files.readAttributes(Paths.get(getDatabaseLockFile()), BasicFileAttributes.class);
+      Long fileMilis = attr.creationTime().toMillis();
+      Long currentMilis = System.currentTimeMillis();
+      if (currentMilis - fileMilis > (60 * 1000)) {
+        lockFile.delete();
+      }
     }
   }
 
@@ -68,9 +80,9 @@ public class DatabaseConnection {
   public Connection connect() {
     Connection connection = null;
     try {
-      connection = DriverManager.getConnection(dbUrl, dbConfig.toProperties());
+      connection = DriverManager.getConnection(dbUrl);
     } catch (SQLException e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot connect to database."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
     }
     return connection;
   }
@@ -82,7 +94,7 @@ public class DatabaseConnection {
     try {
       globalConnection.close();
     } catch (SQLException e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot close the database."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotCloseDB")));
     }
   }
 
@@ -92,6 +104,9 @@ public class DatabaseConnection {
   public boolean deleteJob(Jobs job) {
     // Jobs older than 2 days (DpFManagerConstants.JOB_LIFE_HOURS)
     Long current = System.currentTimeMillis();
+    if (checkDate(job.getLastUpdate())) {
+      return true;
+    }
     if (checkDate(job.getInit())) {
       return true;
     }
@@ -153,13 +168,28 @@ public class DatabaseConnection {
     Jobs job = new Jobs();
     try {
       Statement stmt = globalConnection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE+" WHERE "+Jobs.ID+" = "+ id);
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.ID + " = " + id);
       while (rs.next()) {
         job.parseResultSet(rs);
       }
       stmt.close();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
+    }
+    return job;
+  }
+
+  public Jobs getJob(String hash) {
+    Jobs job = new Jobs();
+    try {
+      Statement stmt = globalConnection.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.HASH + " LIKE '" + hash + "'");
+      while (rs.next()) {
+        job.parseResultSet(rs);
+      }
+      stmt.close();
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
     }
     return job;
   }
@@ -190,12 +220,12 @@ public class DatabaseConnection {
         }
         stmt.close();
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error obtaining program pid."));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetPid")));
       } finally {
         releaseConnection();
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
     }
     return maxPid;
   }
@@ -205,39 +235,40 @@ public class DatabaseConnection {
       try {
         PreparedStatement pstmt = globalConnection.prepareStatement(Jobs.insertJobSql);
         pstmt.setLong(1, job.getId());
-        pstmt.setInt(2, job.getState());
-        pstmt.setInt(3, job.getTotalFiles());
-        pstmt.setInt(4, job.getProcessedFiles());
+        pstmt.setString(2, job.getHash());
+        pstmt.setInt(3, job.getState());
+        pstmt.setInt(4, job.getTotalFiles());
+        pstmt.setInt(5, job.getProcessedFiles());
         if (job.getInit() != null) {
-          pstmt.setLong(5, job.getInit());
-        } else {
-          pstmt.setNull(5, 0);
-        }
-        if (job.getFinish() != null) {
-          pstmt.setLong(6, job.getFinish());
+          pstmt.setLong(6, job.getInit());
         } else {
           pstmt.setNull(6, 0);
         }
-        pstmt.setString(7, job.getInput());
-        pstmt.setString(8, job.getOrigin());
-        pstmt.setLong(9, job.getPid());
-        pstmt.setString(10, job.getOutput());
-        if (job.getTime() != null) {
-          pstmt.setLong(11, job.getTime());
+        if (job.getFinish() != null) {
+          pstmt.setLong(7, job.getFinish());
         } else {
-          pstmt.setNull(11, 0);
+          pstmt.setNull(7, 0);
         }
-        pstmt.setLong(12, job.getLastUpdate());
+        pstmt.setString(8, job.getInput());
+        pstmt.setString(9, job.getOrigin());
+        pstmt.setLong(10, job.getPid());
+        pstmt.setString(11, job.getOutput());
+        if (job.getTime() != null) {
+          pstmt.setLong(12, job.getTime());
+        } else {
+          pstmt.setNull(12, 0);
+        }
+        pstmt.setLong(13, job.getLastUpdate());
         pstmt.executeUpdate();
         pstmt.close();
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error creating new job."));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorCreateJob")));
       } finally {
         releaseConnection();
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
     }
   }
 
@@ -263,12 +294,12 @@ public class DatabaseConnection {
         globalConnection.setAutoCommit(true);
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error updating job."));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorUpdateJob")));
       } finally {
         releaseConnection();
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
     }
   }
 
@@ -284,7 +315,7 @@ public class DatabaseConnection {
       }
       stmt.close();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error getting jobs."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
     }
     return jobs;
   }
@@ -298,12 +329,12 @@ public class DatabaseConnection {
         stmt.close();
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error deleting job."));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorDeleteJob")));
       } finally {
         releaseConnection();
       }
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Database timeout!"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("dbTimeout")));
     }
   }
 
@@ -350,23 +381,25 @@ public class DatabaseConnection {
    * Private DB functions
    */
   synchronized private void createFirstTable() throws Exception {
-    Statement stmt = globalConnection.createStatement();
+    if (globalConnection != null) {
+      Statement stmt = globalConnection.createStatement();
 
-    // Check need delete table
-    if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
-      stmt.execute(Jobs.delIndexIdSql);
-      stmt.execute(Jobs.delIndexPidSql);
-      stmt.execute(Jobs.deleteSql);
-      DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
+      // Check need delete table
+      if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
+        stmt.execute(Jobs.delIndexIdSql);
+        stmt.execute(Jobs.delIndexPidSql);
+        stmt.execute(Jobs.deleteSql);
+        DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
+      }
+
+      // Create tables
+      stmt.execute(Jobs.createSql);
+      stmt.execute(Jobs.indexIdSql);
+      stmt.execute(Jobs.indexPidSql);
+
+      // Close statement
+      stmt.close();
     }
-
-    // Create table
-    stmt.execute(Jobs.createSql);
-    stmt.execute(Jobs.indexIdSql);
-    stmt.execute(Jobs.indexPidSql);
-
-    // Close statement
-    stmt.close();
   }
 
   private void insertTestJob() {
@@ -388,7 +421,7 @@ public class DatabaseConnection {
   }
 
   private String getDatabaseFile() {
-    return DPFManagerProperties.getDataDir() + "/dpfmanager.db";
+    return DPFManagerProperties.getDataDir() + "/dpfmanager.h2";
   }
 
   private String getDatabaseLockFile() {

@@ -3,19 +3,15 @@ package dpfmanager.shell.interfaces.gui.component.config;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard1Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard2Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard4Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard5Fragment;
-import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard6Fragment;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard3Fragment;
-import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -23,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -30,11 +27,8 @@ import org.apache.logging.log4j.Level;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
-import org.jacpfx.api.message.Message;
-import org.jacpfx.rcp.component.FXComponent;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,18 +41,27 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_CONFIG,
     viewLocation = "/fxml/config.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_CONFIG)
 public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   @FXML
-  private HBox hboxSave;
+  private GridPane gridSave;
+  @FXML
+  private HBox hboxName;
+  @FXML
+  private HBox hboxDescription;
   @FXML
   private Button continueButton;
   @FXML
   private TextField saveNameInput;
+  @FXML
+  private TextField saveDescInput;
   @FXML
   private ImageView configArrow;
   @FXML
@@ -69,7 +72,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   private VBox wizard;
 
   @FXML
-  private Button step1, step2, step3, step4, step5, step6;
+  private Button step1, step2, step3, step4, step5;
 
   private List<Node> includedNodes;
   private List<Button> stepsButtons;
@@ -99,6 +102,11 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     if (message != null && message.isTypeOf(ConfigMessage.class)) {
       getController().clearAllSteps();
       gotoConfig(1);
+      if (!isEdit) {
+        saveDescInput.clear();
+      } else {
+        saveDescInput.setText(getModel().getConfiguration().getDescription());
+      }
     }
     return null;
   }
@@ -108,8 +116,10 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     // Set model and controller
     setModel(new ConfigModel());
     setController(new ConfigController());
+    getController().setResourcebundle(bundle);
+    getModel().setResourcebundle(bundle);
 
-    stepsButtons = Arrays.asList(step1, step2, step3, step4, step5 ,step6);
+    stepsButtons = Arrays.asList(step1, step2, step3, step4, step5);
 
     initAllFragments();
   }
@@ -127,7 +137,6 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     getController().setFragment3(getContext().getManagedFragmentHandler(Wizard3Fragment.class));
     getController().setFragment4(getContext().getManagedFragmentHandler(Wizard4Fragment.class));
     getController().setFragment5(getContext().getManagedFragmentHandler(Wizard5Fragment.class));
-    getController().setFragment6(getContext().getManagedFragmentHandler(Wizard6Fragment.class));
 
     wizard.getChildren().clear();
     wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard1Fragment.class).getFragmentNode());
@@ -135,7 +144,6 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard3Fragment.class).getFragmentNode());
     wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard4Fragment.class).getFragmentNode());
     wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard5Fragment.class).getFragmentNode());
-    wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard6Fragment.class).getFragmentNode());
 
     includedNodes =  wizard.getChildren();
   }
@@ -144,7 +152,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   protected void doContinue(){
     int lastBlue = 1, i = 1;
     boolean found = false;
-    while (!found && i < 7) {
+    while (!found && i < 6) {
       if (getStepButton(i).getStyleClass().contains("blue-but")) {
         lastBlue = i;
       } else {
@@ -180,17 +188,12 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     gotoConfig(5);
   }
 
-  @FXML
-  protected void gotoConfig6(){
-    gotoConfig(6);
-  }
-
   /** Main goto step wizard */
   public void gotoConfig(int x) {
     getController().saveSettings(getModel().getConfigStep());
     getModel().setConfigStep(x);
     getController().loadSettings(x);
-    if (x < 7) {
+    if (x < 6) {
       showSubConfig(x);
       setStepsBlue(x);
       setConfigArrowTranslate(x);
@@ -202,7 +205,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   }
 
   public void showSubConfig(int x) {
-    if (x < 1 || x > 6) {
+    if (x < 1 || x > 5) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested show sub config out of bounds!"));
       return;
     }
@@ -216,12 +219,12 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   }
 
   public void setStepsBlue(int x) {
-    if (x < 1 || x > 6) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested step button out of bounds!"));
+    if (x < 1 || x > 5) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("stepOutOfBounds")));
       return;
     }
 
-    for (int i = 1; i < 7; i++) {
+    for (int i = 1; i < 6; i++) {
       stepsButtons.get(i - 1).getStyleClass().remove("blue-but");
       stepsButtons.get(i - 1).getStyleClass().remove("grey-but");
       if (i <= x) {
@@ -243,22 +246,19 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   public void changeStepTitle(int x){
     switch (x){
       case 1:
-        stepTitle.setText("IMPLEMENTATION CHECKER");
+        stepTitle.setText(bundle.getString("configIC"));
         break;
       case 2:
-        stepTitle.setText("POLICY CHECKER");
+        stepTitle.setText(bundle.getString("configPC"));
         break;
       case 3:
-        stepTitle.setText("REPORT");
+        stepTitle.setText(bundle.getString("configReport"));
         break;
       case 4:
-        stepTitle.setText("METADATA FIXER");
+        stepTitle.setText(bundle.getString("configMF"));
         break;
       case 5:
-        stepTitle.setText("PERIODICAL CHECKS");
-        break;
-      case 6:
-        stepTitle.setText("CONFIGURATION SUMMARY");
+        stepTitle.setText(bundle.getString("configCS"));
         break;
     }
 
@@ -267,24 +267,25 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   }
 
   public void setContinueButton(int x){
-    if (x == 6) {
+    if (x == 5) {
+      NodeUtil.showNode(gridSave);
       if (isEdit) {
-        NodeUtil.hideNode(hboxSave);
+        NodeUtil.hideNode(hboxName);
       } else {
-        NodeUtil.showNode(hboxSave);
+        NodeUtil.showNode(hboxName);
       }
-      continueButton.setText("Save configuration");
+      continueButton.setText(bundle.getString("configSave"));
     } else {
-      NodeUtil.hideNode(hboxSave);
-      continueButton.setText("Continue");
+      NodeUtil.hideNode(gridSave);
+      continueButton.setText(bundle.getString("configContinue"));
     }
   }
 
   /* Elements Getters */
 
   public Button getStepButton(int x) {
-    if (x < 1 || x > 6) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested step button out of bounds!"));
+    if (x < 1 || x > 5) {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("stepOutOfBounds")));
       return null;
     }
     return stepsButtons.get(x - 1);
@@ -292,6 +293,10 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public String getSaveFilename(){
     return saveNameInput.getText();
+  }
+
+  public String getDescription(){
+    return saveDescInput.getText();
   }
 
   @Override

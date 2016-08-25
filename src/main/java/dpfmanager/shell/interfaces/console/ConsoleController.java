@@ -9,6 +9,9 @@ import dpfmanager.shell.modules.client.messages.RequestMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.modules.periodic.core.PeriodicCheck;
+import dpfmanager.shell.modules.periodic.core.Periodicity;
+import dpfmanager.shell.modules.periodic.messages.PeriodicMessage;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
@@ -24,9 +27,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -58,10 +66,12 @@ public class ConsoleController {
   private Configuration config;
   private boolean explicitFormats;
   private boolean explicitOutput;
+  private ResourceBundle bundle;
 
-  public ConsoleController(ConsoleContext c) {
+  public ConsoleController(ConsoleContext c, ResourceBundle r) {
     setDefault();
     context = c;
+    bundle = r;
     tmpFiles = new ArrayList<>();
   }
 
@@ -83,7 +93,33 @@ public class ConsoleController {
    * Main run function
    */
   public void run() {
-    if (!parameters.containsKey("-url")) {
+    if (parameters.containsKey("-listperiodic")){
+      // List periodicals checks
+      context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.READ));
+    } else if (parameters.containsKey("-addperiodic")){
+      // Add periodical check
+      PeriodicCheck info = parsePeriodicParameters(null);
+      if (info != null){
+        context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.SAVE, info));
+      } else {
+        printOut(bundle.getString("noSuchInfo"));
+        displayHelp();
+      }
+    } else if (parameters.containsKey("-editperiodic")){
+      // Edit periodical check
+      String uuid = parameters.get("-editperiodic");
+      PeriodicCheck info = parsePeriodicParameters(uuid);
+      if (info != null){
+        context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.EDIT, info));
+      } else {
+        printOut(bundle.getString("noSuchInfo"));
+        displayHelp();
+      }
+    } else if (parameters.containsKey("-removeperiodic")){
+      // Remove periodical check
+      String uuid = parameters.get("-removeperiodic");
+      context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, uuid));
+    } else if (!parameters.containsKey("-url")) {
       // Normal mode
       readConformanceChecker();
       parseConfig();
@@ -96,6 +132,124 @@ public class ConsoleController {
       parseConfig();
       parseFolders();
       context.send(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.CHECK, files, tmpFiles, config));
+    }
+  }
+
+  private PeriodicCheck parsePeriodicParameters(String uuid){
+    PeriodicCheck check = new PeriodicCheck();
+    if (uuid != null){
+      check.setUuid(uuid);
+    }
+
+    // Input
+    String input = "";
+    for (String file : files){
+      if (!input.isEmpty()){
+        input += ";";
+      }
+      input += file;
+    }
+    if (input.isEmpty()){
+      return null;
+    }
+    check.setInput(input);
+
+    // Configuration
+    String configuration = "";
+    if (parameters.containsKey("-configuration")){
+      configuration = getOnlyNameIfPossible(parameters.get("-configuration"));
+    } else {
+      printOut(bundle.getString("specifyConfiguration"));
+      return null;
+    }
+    check.setConfiguration(configuration);
+
+    // Time
+    Periodicity periodicity = new Periodicity();
+    String time = "00:00"; // Default value
+    if (parameters.containsKey("-time") && isValidTime(parameters.get("-time"))){
+      time = parameters.get("-time");
+    }
+    periodicity.setTime(LocalTime.parse(time));
+
+    // Periodicity
+    Periodicity.Mode mode;
+    if (parameters.containsKey("-periodicity") && parseMode(parameters.get("-periodicity")) != null){
+      mode = parseMode(parameters.get("-periodicity"));
+    } else {
+      printOut(bundle.getString("specifyPeriodicity"));
+      return null;
+    }
+    periodicity.setMode(mode);
+    if (mode.equals(Periodicity.Mode.WEEKLY)){
+      String days = parameters.get("-extra");
+      List<Integer> list = parseWeekDays(days);
+      if (list == null || list.isEmpty()){
+        printOut(bundle.getString("daysOfWeekError"));
+        return null;
+      }
+      periodicity.setDaysOfWeek(list);
+    } else if (mode.equals(Periodicity.Mode.MONTHLY)){
+      Integer day = Integer.parseInt(parameters.get("-extra"));
+      if (day < 1 || day > 28){
+        printOut(bundle.getString("dayOfMonthError"));
+        return null;
+      }
+      periodicity.setDayOfMonth(day);
+    }
+    check.setPeriodicity(periodicity);
+
+    return check;
+  }
+
+  // Return the name if the configuration is into configs folder
+  private String getOnlyNameIfPossible(String configuration){
+    File configFile = new File(configuration);
+    File configDir = new File(DPFManagerProperties.getConfigDir());
+    if (configFile.getParentFile().equals(configDir)){
+      return configFile.getName().replace(".dpf","");
+    } else {
+      return configuration;
+    }
+  }
+
+  private List<Integer> parseWeekDays(String days){
+    List<Integer> list = new ArrayList<>();
+    for (String day : days.split(",")){
+      Integer dayInt = Integer.parseInt(day);
+      if (dayInt < 1 || dayInt > 7){
+        return null;
+      }
+      list.add(dayInt);
+    }
+    return list;
+  }
+
+  private Periodicity.Mode parseMode(String mode){
+    switch (mode){
+      case "D":
+        return Periodicity.Mode.DAILY;
+      case "W":
+        return Periodicity.Mode.WEEKLY;
+      case "M":
+        return Periodicity.Mode.MONTHLY;
+      case "d":
+        return Periodicity.Mode.DAILY;
+      case "w":
+        return Periodicity.Mode.WEEKLY;
+      case "m":
+        return Periodicity.Mode.MONTHLY;
+    }
+    return null;
+  }
+
+  private boolean isValidTime(String time){
+    try {
+      SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+      sdf.parse(time);
+      return true;
+    } catch (ParseException ex) {
+      return false;
     }
   }
 
@@ -182,11 +336,11 @@ public class ConsoleController {
       if (name != null && name.getLength() > 0) {
         NodeList subList = name.item(0).getChildNodes();
         if (subList != null && subList.getLength() > 0) {
-          printOut("Conformance checker: " + subList.item(0).getNodeValue());
+          printOut(bundle.getString("confCheck").replace("%1", subList.item(0).getNodeValue()));
         }
       }
 
-      printOut("Extensions: ");
+      printOut(bundle.getString("extensions"));
       NodeList extensions = doc.getElementsByTagName("extension");
       String extensionsStr = "";
       if (extensions != null && extensions.getLength() > 0) {
@@ -215,12 +369,12 @@ public class ConsoleController {
               desc = nodes.item(j).getTextContent();
             }
           }
-          printOut("Standard: " + stdName + " (" + desc + ")");
+          printOut(bundle.getString("standard").replace("%1",stdName).replace("%2",desc));
         }
       }
       printOut("");
     } catch (Exception e) {
-      printOut("Failed communication with conformance checker: " + e.getMessage());
+      printOut(bundle.getString("failedCC").replace("%1", e.getMessage()));
     }
   }
 
@@ -243,30 +397,33 @@ public class ConsoleController {
    */
   public void displayHelp() {
     printOut("");
-    printOut("Usage: dpfmanager [options] source1 [source2 ... sourceN]");
-    printOut("(the sources can be single TIF files, directories, zip files or URLs)");
-    printOut("Options:");
-    printOut("    -help: Displays this help message");
-    printOut("    -v: Shows application version number");
-    printOut("    -gui: Launches graphical user interface");
-    printOut("    -configuration <filename>: Selects a configuration file");
-    printOut("    -o <path>: Specifies the output folder (overriding the one specified in the config file).");
-    printOut("    -reportformat '[xml, json, pdf, html]': Specifies the report format (overriding the one in the config file). Default is 'xml,html'.");
-    printOut("    -r[depth]: Check directories recursively. If no depth is given (-r) then it is fully-recursive. Default is '-r1'");
-    printOut("    -s: Silent execution (do not open the report at the end)");
-    printOut("    -t[N]: Specify maximum number of threads used for checking. By default, SO chooses.");
-    printOut("    -url <url:port>: Connect to a remote conformance checker.");
-    printOut("    -job <job_id>: Get job state.");
-    printOut("    -server [-p <port_number>]: Init server on the given port (default port is randomly chosen).");
-    printOut("    -w: Wait for a remote check to finish. Default is false.");
+    printOut(bundle.getString("help1"));
+    printOut(bundle.getString("help2"));
+    printOut("");
+    printOptions("helpO", 6);
+    printOut("");
+    printOptions("helpC", 7);
+    printOut("");
+    printOptions("helpR", 4);
+    printOut("");
+    printOptions("helpP", 6);
+    printOut("        " + bundle.getString("helpP61"));
+    printOut("        " + bundle.getString("helpP62"));
+    printOut("    "+bundle.getString("helpP7"));
+  }
+
+  public void printOptions(String prefix, int max) {
+    printOut(bundle.getString(prefix+"1"));
+    for (int i = 2; i<=max; i++){
+      printOut("    "+bundle.getString(prefix+i));
+    }
   }
 
   /**
    * Shows program version.
    */
   public void displayVersion() {
-    String sversion = DPFManagerProperties.getVersion();
-    printOut("DPF Manager version " + sversion);
+    printOut(bundle.getString("dpfVersion").replace("%1",DPFManagerProperties.getVersion()));
   }
 
   /**
@@ -324,6 +481,6 @@ public class ConsoleController {
   }
 
   private void printException(Exception ex) {
-    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception has occurred!", ex));
+    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
   }
 }

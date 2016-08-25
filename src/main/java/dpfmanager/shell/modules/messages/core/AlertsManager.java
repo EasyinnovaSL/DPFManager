@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.messages.core;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -13,14 +14,12 @@ import javafx.scene.layout.Priority;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 24/03/2016.
  */
 public class AlertsManager {
-
-  private static final String YES = "Yes";
-  private static final String NO = "No";
 
   public static Alert createSimpleAlert(AlertMessage am) {
     Alert alert = new Alert(parseType(am.getType()));
@@ -31,11 +30,14 @@ public class AlertsManager {
     return alert;
   }
 
-  public static Alert createAskAlert() {
+  public static Alert createAskAlert(String header, String content) {
+    ResourceBundle bundle = DPFManagerProperties.getBundle();
+    String YES = bundle.getString("yes");
+    String NO = bundle.getString("no");
     Alert alert = new Alert(Alert.AlertType.WARNING);
-    alert.setTitle("Close requested");
-    alert.setHeaderText("There are running file checks");
-    alert.setContentText("Are you sure you want to close and cancel them?");
+    alert.setTitle(bundle.getString("askAlertClose"));
+    alert.setHeaderText(header);
+    alert.setContentText(content);
     ButtonType buttonNo = new ButtonType(NO, ButtonData.NO);
     ButtonType buttonYes = new ButtonType(YES, ButtonData.YES);
     alert.getButtonTypes().setAll(buttonNo, buttonYes);
@@ -43,6 +45,9 @@ public class AlertsManager {
   }
 
   public static Alert createConfirmationAlert(AlertMessage am) {
+    ResourceBundle bundle = DPFManagerProperties.getBundle();
+    String YES = bundle.getString("yes");
+    String NO = bundle.getString("no");
     Alert alert = new Alert(parseType(am.getType()));
     alert.setTitle(am.getTitle());
     alert.setHeaderText(am.getHeader());
@@ -61,7 +66,7 @@ public class AlertsManager {
 
     if (!am.isOutOfMemory()) {
       String exceptionText = getExceptionText(am.getException());
-      Label label = new Label("The exception stacktrace was:");
+      Label label = new Label(DPFManagerProperties.getBundle().getString("exAlertStacktrace"));
 
       TextArea textArea = new TextArea(exceptionText);
       textArea.setEditable(false);

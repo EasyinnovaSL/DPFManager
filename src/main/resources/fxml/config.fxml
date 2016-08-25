@@ -8,11 +8,16 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
 
 <AnchorPane id="pane-config" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
@@ -23,7 +28,12 @@
                     <Insets bottom="60.0" top="40.0" />
                 </VBox.margin>
             </ImageView>
-            <Label styleClass="mainTitle" text="NEW CONFIGURATION" />
+            <Label text="%configTitle">
+            <styleClass>
+               <String fx:value="mainTitle" />
+               <String fx:value="translate" />
+               <String fx:value="trad-configTitle" />
+            </styleClass></Label>
             <HBox alignment="TOP_CENTER" maxHeight="20.0" minHeight="20.0" prefHeight="20.0">
                 <Button fx:id="step1" mnemonicParsing="false" onAction="#gotoConfig1" styleClass="config-but">
                     <HBox.margin>
@@ -49,11 +59,6 @@
                     </HBox.margin>
                 </Button>
                 <Button fx:id="step5" mnemonicParsing="false" onAction="#gotoConfig5" styleClass="config-but">
-                    <HBox.margin>
-                        <Insets right="35.0" />
-                    </HBox.margin>
-                </Button>
-                <Button fx:id="step6" mnemonicParsing="false" onAction="#gotoConfig6" styleClass="config-but">
                 </Button>
                 <VBox.margin>
                     <Insets bottom="12.0" top="10.0" />
@@ -72,7 +77,7 @@
                         <Insets right="10" />
                     </HBox.margin>
                 </ImageView>
-                <Label fx:id="stepTitle" styleClass="config-title" text="IMPLEMENTATION CHECKER" />
+                <Label fx:id="stepTitle" styleClass="config-title" text="%configIC" />
                 <VBox.margin>
                     <Insets bottom="5.0" top="5.0" />
                 </VBox.margin>
@@ -90,7 +95,6 @@
             <!--<fx:include fx:id="included3" source="config/subconfig3.fxml" />-->
             <!--<fx:include fx:id="included4" source="config/subconfig4.fxml" />-->
             <!--<fx:include fx:id="included5" source="config/subconfig5.fxml" />-->
-            <!--<fx:include fx:id="included6" source="config/subconfig6.fxml" />-->
 
             <ImageView focusTraversable="true" preserveRatio="true">
                 <image> <Image url="@../images/lineBottom.png" /></image>
@@ -98,24 +102,55 @@
                     <Insets bottom="10.0" left="65.0" right="65.0" top="30.0" />
                 </VBox.margin>
             </ImageView>
-         <HBox fx:id="hboxSave" alignment="CENTER">
+         <GridPane fx:id="gridSave">
+           <columnConstraints>
+             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+           </columnConstraints>
+           <rowConstraints>
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+           </rowConstraints>
             <children>
-               <Label styleClass="label-info" text="Config name:">
-                  <HBox.margin>
-                     <Insets right="5.0" />
-                  </HBox.margin>
-               </Label>
-               <TextField fx:id="saveNameInput" maxWidth="200.0">
-                  <HBox.margin>
-                     <Insets />
-                  </HBox.margin>
-               </TextField>
+                   <HBox fx:id="hboxName" alignment="CENTER_LEFT">
+                       <children>
+                           <Label styleClass="label-info" text="%configName">
+                               <HBox.margin>
+                                   <Insets right="5.0" />
+                               </HBox.margin>
+                           </Label>
+                           <TextField fx:id="saveNameInput" maxWidth="200.0">
+                               <HBox.margin>
+                                   <Insets />
+                               </HBox.margin>
+                           </TextField>
+                       </children>
+                  <GridPane.margin>
+                     <Insets left="200.0" />
+                  </GridPane.margin>
+                   </HBox>
+                   <HBox fx:id="hboxDescription" alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                       <children>
+                           <Label styleClass="label-info" text="%configDescription">
+                               <HBox.margin>
+                                   <Insets right="5.0" />
+                               </HBox.margin>
+                           </Label>
+                           <TextField fx:id="saveDescInput" HBox.hgrow="ALWAYS">
+                               <HBox.margin>
+                                   <Insets />
+                               </HBox.margin>
+                           </TextField>
+                       </children>
+                  <GridPane.margin>
+                     <Insets right="65.0" />
+                  </GridPane.margin>
+                   </HBox>
             </children>
             <VBox.margin>
-               <Insets bottom="10.0" />
+               <Insets bottom="20.0" />
             </VBox.margin>
-         </HBox>
-            <Button fx:id="continueButton" mnemonicParsing="false" onAction="#doContinue" styleClass="main-button" text="Continue">
+         </GridPane>
+            <Button fx:id="continueButton" mnemonicParsing="false" onAction="#doContinue" styleClass="main-button" text="%configContinue">
                 <VBox.margin>
                     <Insets bottom="30.0" />
                 </VBox.margin>

@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -45,9 +46,12 @@ public class ClientService extends DpfService {
   @Resource(name = "parameters")
   private Map<String, String> parameters;
 
+  private ResourceBundle bundle;
+
   @PostConstruct
   public void init() {
     // No context yet
+    bundle = DPFManagerProperties.getBundle();
   }
 
   @Override
@@ -69,7 +73,7 @@ public class ClientService extends DpfService {
   private void askForJob(String id) {
     HttpClient client = new HttpClient(context, parameters.get("-url"));
     if (client.isError()) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in url: " + parameters.get("-url")));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("urlError").replace("%1",parameters.get("-url"))));
       return;
     }
     client.setId(id);
@@ -79,7 +83,7 @@ public class ClientService extends DpfService {
   private void newCheckRequest(List<String> files, List<String> tmpFiles, Configuration config) {
     HttpClient client = new HttpClient(context, parameters.get("-url"));
     if (client.isError()) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error in url: " + parameters.get("-url")));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("urlError").replace("%1",parameters.get("-url"))));
       return;
     }
 
@@ -102,13 +106,14 @@ public class ClientService extends DpfService {
       Path tmpPath = Files.createTempFile("config", "dpf");
       File dest = tmpPath.toFile();
       if (dest == null) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot create the temporary configuration file"));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorTmpFile")));
         return;
       }
       config.SaveFile(dest.getAbsolutePath());
       client.addConfig(dest);
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot create the temporary configuration file"));
+      e.printStackTrace();
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorTmpFile")));
       return;
     }
 
@@ -132,12 +137,12 @@ public class ClientService extends DpfService {
     String message = "";
     boolean error = false;
     if (map.get("status").equalsIgnoreCase("Running")) {
-      message = "This job is still running. Processeed " + map.get("processed") + " of " + map.get("total") + ".";
+      message = bundle.getString("jobRunning").replace("%1",map.get("processed")).replace("%2", map.get("total"));
     } else if (map.get("status").equalsIgnoreCase("Finished")) {
       downloadFile(map.get("path"));
       return;
     } else if (map.get("status").equalsIgnoreCase("NotFound")) {
-      message = "Cannot find a job with id: " + map.get("id");
+      message = bundle.getString("jobNotFound").replace("%1",map.get("id"));
       error = true;
     }
 
@@ -153,13 +158,13 @@ public class ClientService extends DpfService {
   public void parseCheckResponse(Map<String, String> map) {
     if (map.containsKey("error")) {
       // Error ocurred in server
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, map.get("error")));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, map.get("myerror")));
     } else {
       // Everything OK
       if (parameters.containsKey("-w")) {
         context.sendAfter(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.ASK, map.get("id")), 1);
       } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Started job with id: " + map.get("id")));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("jobStarted").replace("%1",map.get("id"))));
         DPFManagerProperties.setFinished(true);
       }
     }
@@ -172,7 +177,7 @@ public class ClientService extends DpfService {
     try {
       client.send();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Error sending the request to the server"));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorSendingRequest")));
     }
   }
 
@@ -187,7 +192,7 @@ public class ClientService extends DpfService {
       unZipReport(downloaded);
       downloaded.delete();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot download the report."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotDownload")));
     }
   }
 
@@ -203,9 +208,9 @@ public class ClientService extends DpfService {
 
     // Unzip
     if (!unzipFileIntoDirectory(file, new File(output))) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Cannot unzip the report."));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotUnzip")));
     } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Report downloaded at: " + output));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("reportDownloaded").replace("%1",output)));
       DPFManagerProperties.setFinished(true);
     }
   }

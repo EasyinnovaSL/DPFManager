@@ -5,11 +5,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.database.core.DatabaseService;
-import dpfmanager.shell.modules.database.messages.DatabaseMessage;
-import dpfmanager.shell.modules.threading.core.ThreadingService;
-import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
-import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
-import dpfmanager.shell.modules.threading.messages.RunnableMessage;
+import dpfmanager.shell.modules.database.messages.JobsMessage;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.Component;
@@ -36,8 +32,8 @@ public class DatabaseModule extends DpfModule {
 
   @Override
   public void handleMessage(DpfMessage dpfMessage) {
-    if (dpfMessage.isTypeOf(DatabaseMessage.class)){
-      service.handleDatabaseMessage(dpfMessage.getTypedMessage(DatabaseMessage.class));
+    if (dpfMessage.isTypeOf(JobsMessage.class)){
+      service.handleJobsMessage(dpfMessage.getTypedMessage(JobsMessage.class));
     }
   }
 

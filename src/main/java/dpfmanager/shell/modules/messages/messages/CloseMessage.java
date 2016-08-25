@@ -7,10 +7,29 @@ import dpfmanager.shell.core.messages.DpfMessage;
  */
 public class CloseMessage extends DpfMessage {
 
+  public enum Type {
+    THREADING, PERIODICAL
+  }
+
+  private Type type;
   private boolean ask;
 
-  public CloseMessage(boolean a){
+  public CloseMessage(Type t){
+    type = t;
+  }
+
+  public CloseMessage(Type t, boolean a){
+    // Threading && Periodical
+    type = t;
     ask = a;
+  }
+
+  public boolean isThreading() {
+    return type.equals(Type.THREADING);
+  }
+
+  public boolean isPeriodical() {
+    return type.equals(Type.PERIODICAL);
   }
 
   public boolean isAsk() {

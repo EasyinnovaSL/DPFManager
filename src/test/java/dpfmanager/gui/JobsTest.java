@@ -68,8 +68,9 @@ public class JobsTest extends ApplicationTest {
     System.out.println("Running pause jobs test...");
 
     // Init new check
+    waitUntilExists("#butDessign");
     clickOnAndReloadTop("#butDessign", "#pane-design");
-    clickOnAndReloadBot("#taskButInConsole");
+    clickOnAndReloadBot("#taskBut");
     GuiWorkbench.setTestParam("import", inputConfigPath);
     clickOnScroll("#importButton");
     clickOnScroll("No");

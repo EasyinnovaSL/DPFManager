@@ -188,34 +188,41 @@ public class GlobalReport {
    * Generate the full report information.
    */
   public void generate() {
+    List<IndividualReport> toDelete = new ArrayList<>();
     nreportsPcOk = 0;
     Collections.sort(reports);
     for (IndividualReport ir : reports) {
-      if (ir.hasEpValidation()) {
-        if (ir.getEPErrors().size() == 0) nreportsEpOk++;
-        hasEp = true;
-      }
-      if (ir.hasItValidation(0)) {
-        if (ir.getITErrors(0).size() == 0) nreportsIt0Ok++;
-        hasIt0 = true;
-      }
-      if (ir.hasItValidation(1)) {
-        if (ir.getITErrors(1).size() == 0) nreportsIt1Ok++;
-        hasIt1 = true;
-      }
-      if (ir.hasItValidation(2)) {
-        if (ir.getITErrors(2).size() == 0) nreportsIt2Ok++;
-        hasIt2 = true;
-      }
-      if (ir.hasBlValidation()) {
-        if (ir.getBaselineErrors().size() == 0) nreportsBlOk++;
-        hasBl = true;
-      }
-      if (ir.hasPcValidation()) {
-        if (ir.getPCErrors().size() == 0) nreportsPcOk++;
-        hasPc = true;
+      if (ir.isError()){
+        toDelete.add(ir);
+      } else {
+        if (ir.hasEpValidation()) {
+          if (ir.getEPErrors().size() == 0) nreportsEpOk++;
+          hasEp = true;
+        }
+        if (ir.hasItValidation(0)) {
+          if (ir.getITErrors(0).size() == 0) nreportsIt0Ok++;
+          hasIt0 = true;
+        }
+        if (ir.hasItValidation(1)) {
+          if (ir.getITErrors(1).size() == 0) nreportsIt1Ok++;
+          hasIt1 = true;
+        }
+        if (ir.hasItValidation(2)) {
+          if (ir.getITErrors(2).size() == 0) nreportsIt2Ok++;
+          hasIt2 = true;
+        }
+        if (ir.hasBlValidation()) {
+          if (ir.getBaselineErrors().size() == 0) nreportsBlOk++;
+          hasBl = true;
+        }
+        if (ir.hasPcValidation()) {
+          if (ir.getPCErrors().size() == 0) nreportsPcOk++;
+          hasPc = true;
+        }
       }
     }
+    // Delete reports with error
+    reports.removeAll(toDelete);
   }
 
   /**

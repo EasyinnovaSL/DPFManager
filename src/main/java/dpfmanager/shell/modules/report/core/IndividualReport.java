@@ -153,6 +153,15 @@ public class IndividualReport implements Comparable {
 
   private long uuid;
 
+  private boolean error;
+
+  /**
+   * Error constructor
+   */
+  public IndividualReport(boolean e) {
+    error = e;
+  }
+
   /**
    * Constructor + generate.
    *
@@ -165,6 +174,10 @@ public class IndividualReport implements Comparable {
     filepath = path;
     this.reportFilename = reportFilename;
     containsData = false;
+  }
+
+  public boolean isError() {
+    return error;
   }
 
   public void setInternalReportFolder(String internal){

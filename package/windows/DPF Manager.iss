@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{0D5B5F16-9992-49DC-AD65-D66FE249CE67}
 AppName=DPF Manager
-AppVersion=2.2
+AppVersion=2.3
 AppVerName=DPF Manager {#SetupSetting("AppVersion")}
 AppPublisher=DPF Manager
 AppComments=DPF Manager
@@ -87,4 +87,4 @@ end;
 
 
 
-
+

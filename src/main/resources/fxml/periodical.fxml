@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView focusTraversable="true" preserveRatio="true" styleClass="main-logo">
+                <image>
+                    <Image url="@../images/logo.png" />
+                </image>
+                <VBox.margin>
+                    <Insets bottom="60.0" top="40.0" />
+                </VBox.margin>
+            </ImageView>
+            <Label styleClass="mainTitle" text="%periodicalTitle" />
+            <ImageView focusTraversable="true" preserveRatio="true">
+                <image>
+                    <Image url="@../images/lineTop.png" />
+                </image>
+                <VBox.margin>
+                    <Insets bottom="20.0" left="65.0" right="65.0" top="10.0" />
+                </VBox.margin>
+            </ImageView>
+            <GridPane maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                    <Label styleClass="periodicHeader" text="%headerInput" />
+                    <Label styleClass="periodicHeader" text="%headerConfig" GridPane.columnIndex="1" />
+                    <Label styleClass="periodicHeader" text="%headerPeriod" GridPane.columnIndex="2" />
+                </children>
+                <VBox.margin>
+                    <Insets bottom="5.0" left="5.0" right="5.0" />
+                </VBox.margin>
+            </GridPane>
+            <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
+         <ScrollPane hbarPolicy="NEVER" maxHeight="350.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
+            <content>
+                  <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
+            </content>
+            <VBox.margin>
+               <Insets bottom="10.0" />
+            </VBox.margin>
+            <styleClass>
+               <String fx:value="periodical-scroll" />
+               <String fx:value="dpf-bar" />
+            </styleClass>
+         </ScrollPane>
+         <HBox maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+            <children>
+                  <Button fx:id="newButton" mnemonicParsing="false" onAction="#newButtonClicked" styleClass="button-trans-periodic" text="%addButton" />
+            </children>
+            <VBox.margin>
+               <Insets bottom="30.0" />
+            </VBox.margin>
+         </HBox>
+        </VBox>
+    </children>
+</AnchorPane>

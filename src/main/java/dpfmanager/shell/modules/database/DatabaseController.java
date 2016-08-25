@@ -5,7 +5,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.database.core.DatabaseService;
-import dpfmanager.shell.modules.database.messages.DatabaseMessage;
+import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.server.messages.PostMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,8 @@ public class DatabaseController extends DpfSpringController {
 
   @Override
   synchronized public void handleMessage(DpfMessage dpfMessage) {
-    if (dpfMessage.isTypeOf(DatabaseMessage.class)){
-      service.handleDatabaseMessage(dpfMessage.getTypedMessage(DatabaseMessage.class));
+    if (dpfMessage.isTypeOf(JobsMessage.class)){
+      service.handleJobsMessage(dpfMessage.getTypedMessage(JobsMessage.class));
     }
   }
 
@@ -37,8 +37,10 @@ public class DatabaseController extends DpfSpringController {
   public Object handleMessageWithResponse(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(PostMessage.class)){
       PostMessage pm = dpfMessage.getTypedMessage(PostMessage.class);
-      if (pm.isAsk()){
+      if (pm.isAsk() && pm.getHash() == null){
         return service.getJobStatus(pm.getId());
+      } else if (pm.isAsk()){
+        return service.getJobStatusByHash(pm.getHash());
       }
     }
     return null;

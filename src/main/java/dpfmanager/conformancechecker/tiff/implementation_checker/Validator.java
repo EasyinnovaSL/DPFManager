@@ -24,6 +24,8 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -131,7 +133,7 @@ public class Validator {
         List<TiffNode> objects = model.getObjectsFromContext(context, true);
         for (TiffNode node : objects) {
           boolean ok = checkRule(rule, node);
-          if (!ok && rule.getCritical() == 1) {
+          if (!ok && rule.isCritical()) {
             bbreak = true;
             break;
           }
@@ -214,6 +216,8 @@ public class Validator {
 
       // Analyze clausules
       for (String clausule : clausules.getClausules()) {
+        if (clausule.contains("*"))
+          clausule = clausule;
         if (clausule.startsWith("count(")) {
           // Child count
           String countField = clausule.substring(clausule.indexOf("(") + 1);
@@ -239,16 +243,49 @@ public class Validator {
               ok = n < Integer.parseInt(field2);
             }
           }
+        } else if (clausule.startsWith("date(")) {
+          // Check datetime format
+          String dateTimeField = clausule.substring(clausule.indexOf("(") + 1);
+          dateTimeField = dateTimeField.substring(0, dateTimeField.indexOf(")"));
+
+          RuleElement field = new RuleElement(dateTimeField, node, model);
+          if (!field.valid) ok = false;
+          else {
+            List<TiffNode> childs = field.getChildren();
+            for (TiffNode nod : childs) {
+              ok = false;
+              String value = nod.getValue();
+              if (value.length() == 19) {
+                if (value.split(" ").length == 2 && value.split(":").length == 5) {
+                  String sdate = value.split(" ")[0];
+                  String stime = value.split(" ")[1];
+                  try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd");
+                    sdf.setLenient(false);
+                    java.util.Date date = sdf.parse(sdate);
+                    sdf = new SimpleDateFormat("HH:mm:ss");
+                    sdf.setLenient(false);
+                    java.util.Date time = sdf.parse(stime);
+                    ok = true;
+                  } catch (Exception ex) {
+
+                  }
+                }
+              }
+            }
+          }
         } else if (clausule.contains("==") || clausule.contains(">") || clausule.contains("<") || clausule.contains("!=")) {
           // Check field values
           String operation = clausule.contains("==") ? "==" : (clausule.contains(">") ? ">" : clausule.contains("!=") ? "!=" : "<");
           RuleElement op1 = new RuleElement(clausule.substring(0, clausule.indexOf(operation)), node, model);
-          if (!op1.valid) ok = false;
+          if (!op1.valid)
+            ok = false;
           else {
             String value = op1.getValue();
             if (value == null) return ok;
             RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
-            if (!op2.valid) ok = false;
+            if (!op2.valid)
+              ok = false;
             else {
               String value2 = op2.getValue();
               if (value.contains("/"))
@@ -301,6 +338,10 @@ public class Validator {
 
     if (ok) {
       RuleResult rr = new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString());
+      result.add(rr);
+    } else if (rule.isWarning()) {
+      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+      rr.setWarning(true);
       result.add(rr);
     } else {
       RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());

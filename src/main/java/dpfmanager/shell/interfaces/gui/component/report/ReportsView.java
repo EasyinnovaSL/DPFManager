@@ -35,6 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
@@ -53,13 +54,18 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_REPORTS,
     viewLocation = "/fxml/summary.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_REPORTS)
 public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
   @Resource
   private Context context;
+  @Resource
+  private ResourceBundle bundle;
 
   // View elements
+  @FXML
+  private VBox reportsVbox;
   @FXML
   private Button loadMore;
   @FXML
@@ -95,10 +101,10 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public Node handleMessageOnFX(DpfMessage message) {
     if (message != null && message.isTypeOf(ReportsMessage.class)) {
       ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
-      if (rMessage.isReload()){
+      if (rMessage.isReload()) {
         showLoading();
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
-      } else if (rMessage.isRead()){
+      } else if (rMessage.isRead()) {
         addData();
         hideLoading();
       }
@@ -111,70 +117,70 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     // Init MVC
     setModel(new ReportsModel());
     setController(new ReportsController());
+    getModel().setResourcebundle(bundle);
     addHeaders();
   }
 
   private void addHeaders() {
-    TableColumn colDate = new TableColumn("Date");
+    TableColumn colDate = new TableColumn(bundle.getString("colDate"));
     setMinMaxWidth(colDate, 85);
     colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
-    TableColumn colTime = new TableColumn("Time");
+    TableColumn colTime = new TableColumn(bundle.getString("colTime"));
     setMinMaxWidth(colTime, 75);
     colTime.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("time")
     );
 
-    TableColumn colN = new TableColumn("#Files");
-    setMinMaxWidth(colN, 50);
+    TableColumn colN = new TableColumn(bundle.getString("colN"));
+    setMinMaxWidth(colN, 70);
     colN.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("nfiles")
     );
 
-    TableColumn colFile = new TableColumn("Input");
-    setMinMaxWidth(colFile, 200);
+    TableColumn colFile = new TableColumn(bundle.getString("colFile"));
+    setMinMaxWidth(colFile, 160);
     colFile.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("input")
     );
 
-    TableColumn colErrors = new TableColumn("Errors");
+    TableColumn colErrors = new TableColumn(bundle.getString("colErrors"));
     setMinMaxWidth(colErrors, 65);
     colErrors.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("errors")
     );
 
-    TableColumn colWarnings = new TableColumn("Warnings");
-    setMinMaxWidth(colWarnings, 65);
+    TableColumn colWarnings = new TableColumn(bundle.getString("colWarnings"));
+    setMinMaxWidth(colWarnings, 85);
     colWarnings.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("warnings")
     );
 
-    TableColumn colPassed = new TableColumn("Passed");
+    TableColumn colPassed = new TableColumn(bundle.getString("colPassed"));
     setMinMaxWidth(colPassed, 65);
     colPassed.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("passed")
     );
 
-    colScore = new TableColumn("Score");
+    colScore = new TableColumn(bundle.getString("colScore"));
     setMinMaxWidth(colScore, 75);
     colScore.setCellValueFactory(
         new PropertyValueFactory<ReportRow, String>("score")
     );
 
-    colFormats = new TableColumn("Formats");
+    colFormats = new TableColumn(bundle.getString("colFormats"));
     setMinMaxWidth(colFormats, 150);
     colFormats.setCellValueFactory(
         new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
     );
 
-    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
+    tabReports.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     tabReports.setPrefWidth(840.0);
+    tabReports.setFixedCellSize(28.0);
+    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
     tabReports.setCursor(Cursor.DEFAULT);
     tabReports.setEditable(false);
-    // Fixed size
-    tabReports.setFixedCellSize(28.0);
     tabReports.setMaxHeight(470.0);
-//    tabReports.setMinHeight(100.0);
 
     // Change column colors
     changeColumnTextColor(colDate, Color.LIGHTGRAY);
@@ -187,7 +193,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     changeColumnTextColor(colScore, Color.LIGHTGRAY);
   }
 
-  private void setMinMaxWidth(TableColumn column, int width){
+  private void setMinMaxWidth(TableColumn column, int width) {
     column.setMinWidth(width);
     column.setPrefWidth(width);
     column.setMaxWidth(width);
@@ -216,7 +222,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     addFormatIcons();
   }
 
-  private void resizeTable(){
+  private void resizeTable() {
     double height = tabReports.getFixedCellSize() * tabReports.getItems().size() + tabReports.getFixedCellSize();
     if (height > 470) {
       height = 470.0;
@@ -314,7 +320,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
                   public void handle(MouseEvent event) {
                     ArrayMessage am = new ArrayMessage();
                     am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-                    am.add(GuiConfig.PERSPECTIVE_SHOW+"."+GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
+                    am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
                     getContext().send(GuiConfig.PERSPECTIVE_SHOW, am);
                   }
                 });
@@ -341,7 +347,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     });
   }
 
-  private void showLoading(){
+  private void showLoading() {
     indicator.setProgress(-1.0);
     NodeUtil.showNode(indicator);
     NodeUtil.hideNode(tabReports);
@@ -349,7 +355,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     NodeUtil.hideNode(loadMore);
   }
 
-  private void hideLoading(){
+  private void hideLoading() {
     NodeUtil.hideNode(indicator);
     NodeUtil.showNode(tabReports);
 

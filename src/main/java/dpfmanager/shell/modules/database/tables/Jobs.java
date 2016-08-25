@@ -17,6 +17,7 @@ public class Jobs {
 
   // Fields
   public static String ID = "id";
+  public static String HASH = "hash";
   public static String STATE = "state";
   public static String TOTAL_FILES = "totalFiles";
   public static String PROCESSED_FILES = "processedFiles";
@@ -35,18 +36,19 @@ public class Jobs {
 
   // Create SQL query
   public static String createSql = "CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-      "    " + ID + " INTEGER NOT NULL PRIMARY KEY," +
+      "    " + ID + " BIGINT NOT NULL PRIMARY KEY," +
+      "    " + HASH + " VARCHAR(255)," +
       "    " + STATE + " INTEGER," +
       "    " + TOTAL_FILES + " INTEGER," +
       "    " + PROCESSED_FILES + " INTEGER," +
-      "    " + INIT + " DATE," +
-      "    " + FINISH + " DATE," +
+      "    " + INIT + " BIGINT," +
+      "    " + FINISH + " BIGINT," +
       "    " + INPUT + " VARCHAR(255)," +
-      "    " + ORIGIN + " VARCHAR(3)," +
+      "    " + ORIGIN + " VARCHAR(10)," +
       "    " + PID + " INTEGER NOT NULL," +
       "    " + OUTPUT + " VARCHAR(255)," +
-      "    " + TIME + " DATE," +
-      "    " + LAST_UPDATE + " DATE" +
+      "    " + TIME + " BIGINT," +
+      "    " + LAST_UPDATE + " BIGINT" +
       ");";
 
   // Index SQl querys
@@ -59,7 +61,7 @@ public class Jobs {
   public static String delIndexPidSql = "DROP INDEX IF EXISTS " + INDEX_PID + ";";
 
   // Insert SQL query
-  public static String insertJobSql = "INSERT INTO jobs(" + ID + "," + STATE + "," + TOTAL_FILES + "," + PROCESSED_FILES + "," + INIT + "," + FINISH + "," + INPUT + "," + ORIGIN + "," + PID + "," + OUTPUT + "," + TIME + "," + LAST_UPDATE + ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?);";
+  public static String insertJobSql = "INSERT INTO " + TABLE + "(" + ID + "," + HASH + "," + STATE + "," + TOTAL_FILES + "," + PROCESSED_FILES + "," + INIT + "," + FINISH + "," + INPUT + "," + ORIGIN + "," + PID + "," + OUTPUT + "," + TIME + "," + LAST_UPDATE + ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 
   /**
@@ -67,6 +69,7 @@ public class Jobs {
    */
 
   private Long id;
+  private String hash;
   private Integer state;
   private Integer totalFiles;
   private Integer processedFiles;
@@ -85,6 +88,7 @@ public class Jobs {
 
   public void parseResultSet(ResultSet rs) throws SQLException {
     id = rs.getLong(ID);
+    hash = rs.getString(HASH);
     state = rs.getInt(STATE);
     totalFiles = rs.getInt(TOTAL_FILES);
     processedFiles = rs.getInt(PROCESSED_FILES);
@@ -104,6 +108,10 @@ public class Jobs {
 
   public Long getId() {
     return id;
+  }
+
+  public String getHash() {
+    return hash;
   }
 
   public Integer getState() {
@@ -166,6 +174,10 @@ public class Jobs {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public void setHash(String hash) {
+    this.hash = hash;
   }
 
   public void setState(Integer state) {

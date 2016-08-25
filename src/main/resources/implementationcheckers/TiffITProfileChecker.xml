@@ -8,992 +8,992 @@
     <include>BaselineProfileChecker.xml</include>
     
     <rules description="common">
-        <rule context="ifd[class=image]">
+        <rule id="it-1" context="ifd[class=image]">
             <assert test="{filetype=='ct'} || {filetype=='lw'} || {filetype=='hc'} || {filetype=='mp'} || {filetype=='bp'} || {filetype=='bl'} || {filetype=='sd'} || {filetype=='fp'}">Undefined file type</assert>
             <reference>Page 52</reference>
         </rule>
     </rules>
 
     <rules description="CT-common-it-rules">
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-2" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=ImageLength]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-3" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=ImageLength].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-4" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=ImageWidth]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-5" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=ImageWidth].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-6" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-7" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == tags.tag[name=SamplesPerPixel]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-8" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == 3}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-9" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=BitsPerSample] == 8} || {tags.tag[name=BitsPerSample] == 16}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-10" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == 3}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-11" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=BitsPerSample] == 8} || {tags.tag[name=BitsPerSample] == 16}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-12" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-13" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=SamplesPerPixel] == 3}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-14" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-15" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=SamplesPerPixel] == 3}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
     </rules>
     
     <rules description="CT-restricted-tags">
-        <rule context="ifd[filetype=ct,imgtype=norgblab]">
+        <rule id="it-16" context="ifd[filetype=ct,imgtype=norgblab]">
             <assert test="{tags.tag[name=BitsPerSample] == 8} || {tags.tag[name=BitsPerSample] == 16}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-17" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-18" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-19" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] == 8}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-20" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-21" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-22" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] == 8}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-23" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-24" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-25" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=PhotometricInterpretation] == 2} || {tags.tag[name=PhotometricInterpretation] == 5} || {tags.tag[name=PhotometricInterpretation] == 6} || {tags.tag[name=PhotometricInterpretation] == 8}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-26" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=PhotometricInterpretation] != 6} || {tags.tag[name=Compression] == 7}">YCbCr shall be used only when compression has the value 7</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-27" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=PlanarConfiguration]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-28" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=PlanarConfiguration].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct]">
+        <rule id="it-29" context="ifd[filetype=ct]">
             <assert test="{tags.tag[name=PlanarConfiguration] == 1} || {tags.tag[name=PlanarConfiguration] == 2} || {tags.tag[name=PlanarConfiguration] == 32768}">Incorrect tag value</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-30" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-31" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-32" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=rgb]">
+        <rule id="it-33" context="ifd[filetype=ct,imgtype=rgb]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-34" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-35" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-36" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=lab]">
+        <rule id="it-37" context="ifd[filetype=ct,imgtype=lab]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=norgblab]">
+        <rule id="it-38" context="ifd[filetype=ct,imgtype=norgblab]">
             <assert test="{tags.tag[name=SamplesPerPixel]}">Tag is required</assert>
             <reference>Page 24</reference>
         </rule>
-        <rule context="ifd[filetype=ct,imgtype=norgblab]">
+        <rule id="it-39" context="ifd[filetype=ct,imgtype=norgblab]">
             <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 24</reference>
         </rule>
     </rules>
 
     <rules description="LW-common-it-rules">
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-40" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=ImageLength]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-41" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=ImageLength].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-42" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=ImageWidth]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-43" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=ImageWidth].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-44" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=SamplesPerPixel]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-45" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-46" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Incorrect tag value</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-47" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-48" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-49" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=Compression] == 32896}">Incorrect tag value</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-50" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-51" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-52" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Incorrect tag value</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-53" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=StripOffsets]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-54" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=StripOffsets].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-55" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=StripBYTECount]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-56" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=StripBYTECount].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-57" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-58" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-59" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-60" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-61" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=ColorTable]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
     </rules>
     
     <rules description="LW-restricted-tags">
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-62" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-63" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 31</reference>
         </rule>
-        <rule context="ifd[filetype=lw]">
+        <rule id="it-64" context="ifd[filetype=lw]">
             <assert test="{tags.tag[name=BitsPerSample] == 4}">Incorrect tag value</assert>
             <reference>Page 31</reference>
         </rule>
     </rules>
 
     <rules description="HC-common-it-rules">
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-65" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=ImageLength]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-66" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=ImageLength].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-67" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=ImageWidth]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-68" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=ImageWidth].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-69" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-70" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == tags.tag[name=SampesPerPixel]}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-71" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-72" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-73" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=Compression] == 32897}">Incorrect tag value</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-74" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-75" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-76" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Incorrect tag value</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-77" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=StripOffsets]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-78" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=StripOffsets].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-79" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=StripBYTECount]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-80" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=StripBYTECount].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-81" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-82" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-83" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-84" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-85" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=PlanarConfiguration]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-86" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=PlanarConfiguration].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-87" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=PlanarConfiguration] == 1}">Incorrect tag value</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-88" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=TransparencyIndicator]}">Tag is required</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-89" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=TransparencyIndicator].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 34</reference>
         </rule>
-        <rule context="ifd[filetype=hc]">
+        <rule id="it-90" context="ifd[filetype=hc]">
             <assert test="{tags.tag[name=TransparencyIndicator] == 0} || {tags.tag[name=TransparencyIndicator] == 1}">Incorrect tag value</assert>
             <reference>Page 34</reference>
         </rule>
     </rules>
 
     <rules description="MP-common-it-rules">
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-91" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=ImageLength]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-92" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=ImageLength].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-93" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=ImageWidth]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-94" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=ImageWidth].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-95" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=StripOffsets]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-96" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=StripOffsets].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-97" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=StripBYTECount]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-98" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=StripBYTECount].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-99" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-100" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-101" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-102" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-103" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=ImageColorIndicator]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-104" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=ImageColorIndicator].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-105" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=ImageColorIndicator] == 0} || {tags.tag[name=ImageColorIndicator] == 1}">Incorrect tag value</assert>
             <reference>Page 36</reference>
         </rule>
     </rules>
     
     <rules description="MP-restricted-tags">
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-106" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-107" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-108" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=BitsPerSample] == 8}">Incorrect tag value</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-109" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-110" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-111" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] == 8} || {tags.tag[name=Compression] == 32895}">Incorrect tag value</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-112" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-113" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-114" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-115" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 36</reference>
         </rule>
-        <rule context="ifd[filetype=mp]">
+        <rule id="it-116" context="ifd[filetype=mp]">
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 4} || {tags.tag[name=Orientation] == 5} || {tags.tag[name=Orientation] == 8}">Incorrect tag value</assert>
             <reference>Page 36</reference>
         </rule>
     </rules>
 
     <rules description="BP-common-it-rules">
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-117" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=ImageLength]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-118" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=ImageLength].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-119" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=ImageWidth]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-120" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=ImageWidth].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-121" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-122" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-123" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=BitsPerSample] == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-124" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=StripOffsets]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-125" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=StripOffsets].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-126" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=SamplesPerPixel]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-127" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-128" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-129" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=StripBYTECount]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-130" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=StripBYTECount].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-131" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-132" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-133" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-134" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-135" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=ImageColorIndicator]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-136" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=ImageColorIndicator].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-137" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=ImageColorIndicator] == 0} || {tags.tag[name=ImageColorIndicator] == 1} || {tags.tag[name=ImageColorIndicator] == 2}">Incorrect tag value</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-138" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=BackgroundColorIndicator]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-139" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=BackgroundColorIndicator].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-140" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=BackgroundColorIndicator] == 0} || {tags.tag[name=BackgroundColorIndicator] == 1} || {tags.tag[name=BackgroundColorIndicator] == 2}">Incorrect tag value</assert>
             <reference>Page 38</reference>
         </rule>
     </rules>
 
     <rules description="BP-restricted-tags">
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-141" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-142" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-143" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 4} || {tags.tag[name=Compression] == 8}">Incorrect tag value</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-144" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-145" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-146" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-147" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 38</reference>
         </rule>
-        <rule context="ifd[filetype=bp]">
+        <rule id="it-148" context="ifd[filetype=bp]">
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 4} || {tags.tag[name=Orientation] == 5} || {tags.tag[name=Orientation] == 8}">Incorrect tag value</assert>
             <reference>Page 38</reference>
         </rule>
     </rules>
 
     <rules description="BL-common-it-rules">
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-149" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=ImageLength]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-150" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=ImageLength].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-151" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=ImageWidth]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-152" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=ImageWidth].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-153" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-154" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-155" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=BitsPerSample] == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-156" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-157" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-158" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=Compression] == 32898}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-159" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=StripOffsets]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-160" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=StripOffsets].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-161" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=SamplesPerPixel]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-162" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-163" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-164" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=StripBYTECount]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-165" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=StripBYTECount].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-166" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-167" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-168" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-169" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-170" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=ImageColorIndicator]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-171" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=ImageColorIndicator].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-172" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=ImageColorIndicator] == 0} || {tags.tag[name=ImageColorIndicator] == 1} || {tags.tag[name=ImageColorIndicator] == 2}">Incorrect tag value</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-173" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=BackgroundColorIndicator]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-174" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=BackgroundColorIndicator].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-175" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=BackgroundColorIndicator] == 0} || {tags.tag[name=BackgroundColorIndicator] == 1} || {tags.tag[name=BackgroundColorIndicator] == 2}">Incorrect tag value</assert>
             <reference>Page 41</reference>
         </rule>
     </rules>
 
     <rules description="BL-restricted-tags">
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-176" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-177" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-178" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=PhotometricInterpretation] == 0} || {tags.tag[name=PhotometricInterpretation] == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-179" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-180" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
-        <rule context="ifd[filetype=bl]">
+        <rule id="it-181" context="ifd[filetype=bl]">
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 4} || {tags.tag[name=Orientation] == 5} || {tags.tag[name=Orientation] == 8}">Incorrect tag cardinality</assert>
             <reference>Page 41</reference>
         </rule>
     </rules>
 
     <rules description="SD-common-it-rules">
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-182" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=ImageLength]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-183" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=ImageLength].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-184" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=ImageWidth]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-185" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=ImageWidth].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-186" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-187" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=BitsPerSample].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-188" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=BitsPerSample] == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-189" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-190" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-191" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 4} || {tags.tag[name=Compression] == 8}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-192" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-193" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-194" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-195" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=StripOffsets]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-196" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=StripOffsets].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-197" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=StripBYTECount]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-198" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=StripBYTECount].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-199" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-200" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-201" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-202" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-203" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=PlanarConfiguration]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-204" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=PlanarConfiguration].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-205" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=PlanarConfiguration] == 2}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-206" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=InkSet]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-207" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=InkSet].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-208" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=InkSet] == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-209" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=BackgroundColorIndicator]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-210" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=BackgroundColorIndicator].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-211" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=BackgroundColorIndicator] == 0} || {tags.tag[name=BackgroundColorIndicator] == 1} || {tags.tag[name=BackgroundColorIndicator] == 2}">Incorrect tag value</assert>
             <reference>Page 43</reference>
         </rule>
     </rules>
 
     <rules description="SD-restricted-tags">
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-212" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-213" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
-        <rule context="ifd[filetype=sd]">
+        <rule id="it-214" context="ifd[filetype=sd]">
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 4} || {tags.tag[name=Orientation] == 5} || {tags.tag[name=Orientation] == 8}">Incorrect tag cardinality</assert>
             <reference>Page 43</reference>
         </rule>
     </rules>
 
     <rules description="FP-common-it-rules">
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-215" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=NewSubfileType]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-216" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=NewSubfileType].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-217" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=ImageLength]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-218" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=ImageLength].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-219" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=ImageWidth]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-220" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=ImageWidth].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-221" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=ImageDescription]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-222" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=ImageDescription].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-223" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=StripOffsets]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-224" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=StripOffsets].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-225" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=StripBYTECount]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-226" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=StripBYTECount].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-227" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-228" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-229" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-230" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-231" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=PlanarConfiguration]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-232" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=PlanarConfiguration].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-233" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=PlanarConfiguration] == 2}">Incorrect tag value</assert>
             <reference>Page 48</reference>
         </rule>
     </rules>
 
     <rules description="FP-restricted-tags">
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-234" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-235" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>
-        <rule context="ifd[filetype=fp]">
+        <rule id="it-236" context="ifd[filetype=fp]">
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 4} || {tags.tag[name=Orientation] == 5} || {tags.tag[name=Orientation] == 8}">Incorrect tag cardinality</assert>
             <reference>Page 48</reference>
         </rule>

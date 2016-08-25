@@ -1,8 +1,28 @@
-ISO	Baseline
-ISO	Tiff/IT
-FORMAT	HTML
-FORMAT	XML
-FORMAT	JSON
-FORMAT	PDF
-RULE	ImageHeight,<,1000
-FIX	Artist,Add Tag,EasyTest
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+   <version>1</version>
+   <isos>
+      <iso>Baseline</iso>
+      <iso>Tiff/IT</iso>
+   </isos>
+   <formats>
+      <format>HTML</format>
+      <format>XML</format>
+      <format>JSON</format>
+      <format>PDF</format>
+   </formats>
+   <rules>
+      <rule>
+         <tag>ImageHeight</tag>
+         <operator>&lt;</operator>
+         <value>1000</value>
+      </rule>
+   </rules>
+   <fixes>
+      <fix>
+         <tag>Artist</tag>
+         <operator>Add Tag</operator>
+         <value>EasyTest</value>
+      </fix>
+   </fixes>
+</configuration>

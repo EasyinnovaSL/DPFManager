@@ -6,6 +6,7 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
@@ -17,6 +18,7 @@ import org.jacpfx.rcp.componentLayout.PerspectiveLayout;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -42,7 +44,6 @@ public class DessignPerspective extends DpfAbstractPerspective {
   @Resource
   public Context context;
 
-  private BorderPane borderPane;
   private StackPane topPane;
 
   @Override

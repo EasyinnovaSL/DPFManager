@@ -54,7 +54,7 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
       editingConfig = false;
       config = new Configuration();
       config.initDefault();
-      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Cannot read config file.", "Starting new config instead."));
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("readConfigFail"), getBundle().getString("startingNew")));
     }
   }
 
@@ -90,8 +90,8 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
 
   public ArrayList<String> getFixes() {
     ArrayList<String> fixes = new ArrayList<>();
-    fixes.add("Remove Tag");
-    fixes.add("Add Tag");
+    fixes.add("removeTag");
+    fixes.add("addTag");
     return fixes;
   }
 

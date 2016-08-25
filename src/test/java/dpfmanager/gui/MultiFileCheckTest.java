@@ -52,7 +52,7 @@ public class MultiFileCheckTest extends ApplicationTest {
 
     //Wait for the checks
     waitForCheckFiles(1);
-    clickOnAndReloadBot("#taskButInConsole");
+    clickOnAndReloadBot("#taskBut");
 
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");

@@ -4,13 +4,19 @@ import dpfmanager.shell.core.app.MainGuiApp;
 
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
+
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 15/02/2016.
@@ -180,6 +186,18 @@ public class DPFManagerProperties {
       dataFile.mkdirs();
     }
     return dataDir;
+  }
+
+  public static String getLanguage() {
+    return getPropertiesValue("language", Locale.ENGLISH.toString());
+  }
+
+  public static void setLanguage(String lang) {
+    setPropertiesValue("language", lang);
+  }
+
+  public static ResourceBundle getBundle(){
+    return ResourceBundle.getBundle("bundles.language");
   }
 
   /**

@@ -6,7 +6,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
-import dpfmanager.shell.modules.database.messages.DatabaseMessage;
+import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.server.messages.StatusMessage;
 
@@ -52,7 +52,11 @@ public class DatabaseService extends DpfService {
     connection.cleanJobs();
   }
 
-  public void handleDatabaseMessage(DatabaseMessage dm) {
+  /**
+   * Jobs
+   */
+
+  public void handleJobsMessage(JobsMessage dm) {
     if (dm.isNew()) {
       createJob(dm);
     } else if (dm.isInit()) {
@@ -74,7 +78,7 @@ public class DatabaseService extends DpfService {
     }
   }
 
-  public void createJob(DatabaseMessage dm) {
+  public void createJob(JobsMessage dm) {
     // Get origin
     String origin = "GUI";
     if (!context.isGui()) {
@@ -91,41 +95,41 @@ public class DatabaseService extends DpfService {
     getJobs();
   }
 
-  public void initJob(DatabaseMessage dm) {
+  public void initJob(JobsMessage dm) {
     cache.initJob(dm.getUuid(), dm.getTotal(), dm.getOutput());
     forceSyncDatabase();
   }
 
-  public void startJob(DatabaseMessage dm) {
+  public void startJob(JobsMessage dm) {
     cache.startJob(dm.getUuid());
     forceSyncDatabase();
   }
 
-  public void updateJob(DatabaseMessage dm) {
+  public void updateJob(JobsMessage dm) {
     cache.incressProcessed(dm.getUuid());
     syncDatabase();
   }
 
-  public void finishJob(DatabaseMessage dm) {
+  public void finishJob(JobsMessage dm) {
     cache.finishJob(dm.getUuid());
     forceSyncDatabase();
-    cache.clear(dm.getUuid());
+    cache.clearJob(dm.getUuid());
   }
 
-  public void resumeJob(DatabaseMessage dm) {
+  public void resumeJob(JobsMessage dm) {
     cache.resumeJob(dm.getUuid());
     forceSyncDatabase();
   }
 
-  public void cancelJob(DatabaseMessage dm) {
+  public void cancelJob(JobsMessage dm) {
     if (cache.containsJob(dm.getUuid())) {
       cache.cancelJob(dm.getUuid());
       forceSyncDatabase();
-      cache.clear(dm.getUuid());
+      cache.clearJob(dm.getUuid());
     }
   }
 
-  public void pauseJob(DatabaseMessage dm) {
+  public void pauseJob(JobsMessage dm) {
     if (cache.containsJob(dm.getUuid())) {
       cache.pauseJob(dm.getUuid());
       forceSyncDatabase();
@@ -135,9 +139,20 @@ public class DatabaseService extends DpfService {
   public StatusMessage getJobStatus(Long id) {
     Jobs job = connection.getJob(id);
     StatusMessage.Status status = StatusMessage.Status.RUNNING;
-    if (job.getState() == 2){
+    if (job.getState() == 2) {
       status = StatusMessage.Status.FINISHED;
-    } else if (job.getState() == -1){
+    } else if (job.getState() == -1) {
+      status = StatusMessage.Status.NOTFOUND;
+    }
+    return new StatusMessage(status, job.getOutput(), job.getProcessedFiles(), job.getTotalFiles());
+  }
+
+  public StatusMessage getJobStatusByHash(String hash) {
+    Jobs job = connection.getJob(hash);
+    StatusMessage.Status status = StatusMessage.Status.RUNNING;
+    if (job.getState() == 2) {
+      status = StatusMessage.Status.FINISHED;
+    } else if (job.getState() == -1) {
       status = StatusMessage.Status.NOTFOUND;
     }
     return new StatusMessage(status, job.getOutput(), job.getProcessedFiles(), job.getTotalFiles());
@@ -148,6 +163,9 @@ public class DatabaseService extends DpfService {
     context.sendGui(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(jobs, pid));
   }
 
+  /**
+   * Sync functions
+   */
   private void syncDatabase() {
     if (System.currentTimeMillis() - connection.getLastUpdate() > DpFManagerConstants.UPDATE_INTERVAL) {
       forceSyncDatabase();

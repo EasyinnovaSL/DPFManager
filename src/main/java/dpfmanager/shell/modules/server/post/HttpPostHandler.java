@@ -21,6 +21,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.server.messages.PostMessage;
 import dpfmanager.shell.modules.server.messages.StatusMessage;
 import io.netty.buffer.ByteBuf;
@@ -41,9 +42,6 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.LastHttpContent;
-import io.netty.handler.codec.http.cookie.Cookie;
-import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
 import io.netty.handler.codec.http.multipart.DiskAttribute;
@@ -59,7 +57,9 @@ import io.netty.util.CharsetUtil;
 
 import com.google.gson.Gson;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.net.util.Base64;
 import org.apache.tools.zip.ZipEntry;
 
 import java.io.File;
@@ -67,11 +67,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.ResourceBundle;
 import java.util.zip.ZipOutputStream;
 
 public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
@@ -79,6 +77,7 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
   private final HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
 
   private DpfContext context;
+  private ResourceBundle bundle;
 
   private HttpRequest request;
   private HttpData partialContent;
@@ -103,6 +102,7 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
 
   public HttpPostHandler(DpfContext context) {
     this.context = context;
+    bundle = DPFManagerProperties.getBundle();
   }
 
   @Override
@@ -116,7 +116,7 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
   public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
     if (msg instanceof HttpRequest) {
       HttpRequest request = this.request = (HttpRequest) msg;
-      if (request.method().equals(HttpMethod.POST)) {
+      if (request.method().equals(HttpMethod.POST) || request.method().equals(HttpMethod.OPTIONS)) {
         // Start new POST request
         init();
         decoder = new HttpPostRequestDecoder(factory, request);
@@ -200,20 +200,51 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
     Map<String, String> map = new HashMap<>();
     map.put("type", "CHECK");
     map.put("id", uuid.toString());
+    map.put("input", getName(filepath));
     if (configpath == null) {
       // Error miss config file
-      map.put("error", "Missing config file (name = config)");
+      map.put("myerror", bundle.getString("missingConfig"));
     } else if (filepath == null) {
       // Error miss file to check
-      map.put("error", "Missing file to check");
+      map.put("myerror", bundle.getString("missingFile"));
     }
     responseContent.append(new Gson().toJson(map));
     writeResponse(ctx.channel());
 
     // OK start the check
-    if (!map.containsKey("error")) {
+    if (!map.containsKey("myerror")) {
       context.send(BasicConfig.MODULE_SERVER, new PostMessage(PostMessage.Type.POST, uuid, filepath, configpath));
+    } else {
+      deleteTmpFolder(uuid);
     }
+  }
+
+  private void deleteTmpFolder(Long uuid) {
+    try {
+      File folder = new File(DPFManagerProperties.getServerDir() + "/" + uuid);
+      if (folder.exists() && folder.isDirectory()) {
+        FileUtils.deleteDirectory(folder);
+      }
+    } catch (Exception e) {
+      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in remove server folder", e));
+    }
+  }
+
+  private String getName(String path){
+    String ret = "";
+    if (path != null) {
+      if (path.contains(";")) {
+        // List files
+        String[] paths = path.split(";");
+        for (String newPath : paths){
+          ret = ret + newPath.substring(newPath.lastIndexOf("\\") + 1, newPath.length()) + ", ";
+        }
+        ret = ret.substring(0, ret.length()-1);
+      } else {
+        ret = path.substring(path.lastIndexOf("\\") + 1, path.length());
+      }
+    }
+    return ret;
   }
 
   /**
@@ -250,7 +281,7 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
   private void compressDirectoryToZipfile(String rootDir, String sourceDir, ZipOutputStream out) throws IOException, FileNotFoundException {
     for (File file : new File(sourceDir).listFiles()) {
       if (file.isDirectory()) {
-        compressDirectoryToZipfile(rootDir, sourceDir + file.getName() + File.separator, out);
+        compressDirectoryToZipfile(rootDir, sourceDir + file.getName() + "/", out);
       } else {
         ZipEntry entry = new ZipEntry(sourceDir.replace(rootDir, "") + file.getName());
         out.putNextEntry(entry);
@@ -297,6 +328,13 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
     String name = attribute.getName();
     if (name.equals("id")) {
       id = Long.parseLong(attribute.getValue());
+    } else if (name.equals("config")){
+      destFolder = createNewDirectory(uuid);
+      String encoded = attribute.getValue();
+      String decoded = new String(Base64.decodeBase64(encoded), "UTF-8");
+      File dest = new File(destFolder.getAbsolutePath() + "/config.dpf");
+      configpath = dest.getAbsolutePath();
+      FileUtils.writeStringToFile(dest, decoded);
     }
   }
 
@@ -311,21 +349,21 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
       } else {
         // Save file to check
         File dest = new File(destFolder.getAbsolutePath() + "/" + fileUpload.getFilename());
-        filepath = dest.getAbsolutePath();
+        if (filepath == null){
+          filepath = dest.getAbsolutePath();
+        } else {
+          filepath = filepath + ";" + dest.getAbsolutePath();
+        }
         fileUpload.renameTo(dest);
       }
     }
   }
 
   private File createNewDirectory(Long uuid) {
-    if (destFolder != null) {
-      return destFolder;
-    }
-
     String serverDir = DPFManagerProperties.getServerDir();
     File folder = new File(serverDir + "/" + uuid);
     if (folder.exists()) {
-      return null;
+      return folder;
     }
     folder.mkdirs();
     return folder;
@@ -353,19 +391,9 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
       response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, buf.readableBytes());
     }
 
-    Set<Cookie> cookies;
-    String value = request.headers().get(HttpHeaderNames.COOKIE);
-    if (value == null) {
-      cookies = Collections.emptySet();
-    } else {
-      cookies = ServerCookieDecoder.STRICT.decode(value);
-    }
-    if (!cookies.isEmpty()) {
-      // Reset the cookies if necessary.
-      for (Cookie cookie : cookies) {
-        response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
-      }
-    }
+    // Extra headers
+    response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+
     // Write the response.
     ChannelFuture future = channel.writeAndFlush(response);
     // Close the connection after the write operation is done if necessary.

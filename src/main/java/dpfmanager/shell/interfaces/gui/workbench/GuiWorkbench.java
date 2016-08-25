@@ -47,7 +47,8 @@ import java.util.Map;
         GuiConfig.PERSPECTIVE_REPORTS,
         GuiConfig.PERSPECTIVE_ABOUT,
         GuiConfig.PERSPECTIVE_CONFIG,
-        GuiConfig.PERSPECTIVE_SHOW
+        GuiConfig.PERSPECTIVE_SHOW,
+        GuiConfig.PERSPECTIVE_PERIODICAL
     }
 )
 public class GuiWorkbench implements FXWorkbench {
@@ -79,7 +80,7 @@ public class GuiWorkbench implements FXWorkbench {
       @Override
       public void handle(WindowEvent event) {
         if (!(event instanceof DpfCloseEvent)) {
-          context.send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_THREADING, new CloseMessage(true));
+          context.send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_THREADING, new CloseMessage(CloseMessage.Type.THREADING));
           event.consume();
         } else {
           closeHandler.handle(event);

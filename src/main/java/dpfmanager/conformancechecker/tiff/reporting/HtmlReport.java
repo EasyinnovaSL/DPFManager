@@ -4,8 +4,14 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResul
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import com.easyinnova.tiff.model.Metadata;
+import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.TiffObject;
 import com.easyinnova.tiff.model.types.IFD;
+import com.easyinnova.tiff.model.types.XMP;
+import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -330,14 +336,74 @@ public class HtmlReport extends Report {
     // Tags list
     rows = "";
     for (ReportTag tag : getTags(ir)) {
+      if (tag.tv.getId() == 700) {
+        // XMP
+        for (abstractTiffType to : tag.tv.getValue()) {
+          XMP xmp = (XMP)to;
+          try {
+            Metadata metadata = xmp.createMetadata();
+            for (String key : metadata.keySet()) {
+              row = "<tr class='xmp xmp" + (tag.index+1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+              row = row.replace("##ICON##", "<i class=\"icon-" + key.toLowerCase() + "\"></i>");
+              row = row.replace("##ID##", "");
+              row = row.replace("##KEY##", key);
+              row = row.replace("##VALUE##", metadata.get(key).toString().trim());
+              rows += row;
+            }
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+        continue;
+      }
+      if (tag.tv.getId() == 33723) {
+        // IPTC
+        for (abstractTiffType to : tag.tv.getValue()) {
+          IPTC iptc = (IPTC)to;
+          try {
+            Metadata metadata = iptc.createMetadata();
+            for (String key : metadata.keySet()) {
+              row = "<tr class='iptc iptc" + (tag.index+1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+              row = row.replace("##ICON##", "<i class=\"icon-" + key.toLowerCase() + "\"></i>");
+              row = row.replace("##ID##", "");
+              row = row.replace("##KEY##", key);
+              row = row.replace("##VALUE##", metadata.get(key).toString().trim());
+              rows += row;
+            }
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+        continue;
+      }
+      if (tag.tv.getId() == 34665) {
+        // EXIF
+        for (abstractTiffType to : tag.tv.getValue()) {
+          IFD exif = (IFD)to;
+          try {
+            for (TagValue tv : exif.getTags().getTags()) {
+              row = "<tr class='exif exif" + (tag.index+1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+              row = row.replace("##ICON##", "<i class=\"icon-" + tv.getName().toLowerCase() + "\"></i>");
+              row = row.replace("##ID##", "");
+              row = row.replace("##KEY##", tv.getName());
+              row = row.replace("##VALUE##", tv.getDescriptiveValue());
+              rows += row;
+            }
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+        continue;
+      }
       String seeTr = "";
       if (tag.index > 0) seeTr = " hide";
       String expert = "";
       if (tag.expert) expert = " expert";
-      row = "<tr class='ifd ifd" + tag.index + seeTr + expert + "'><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+      row = "<tr class='ifd ifd" + tag.index + seeTr + expert + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
       String sDif = "";
       if (tag.dif < 0) sDif = "<i class=\"fa fa-times\"></i>";
       else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";
+      row = row.replace("##ICON##", "<i class=\"icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", tag.tv.getName());
       row = row.replace("##VALUE##", tag.tv.getDescriptiveValue());
@@ -362,14 +428,12 @@ public class HtmlReport extends Report {
       String aIni = "";
       String aBody = " " + ifd.toString() + typ;
       String aEnd = "";
-      if (hasIFDList) {
-        String bold = "";
-        if (index == 0) {
-          bold = "bold";
-        }
-        aIni = "<a id='liifd" + index + "' href='javascript:void(0)' onclick='showIfd(" + index + ")' class='liifdlist " + bold + "'>";
-        aEnd = "</a>";
+      String bold = "";
+      if (index == 0) {
+        bold = "bold";
       }
+      aIni = "<a id='liifd" + index + "' href='javascript:void(0)' onclick='showIfd(" + index + ")' class='liifdlist " + bold + "'>";
+      aEnd = "</a>";
       ul += "<li><i class=\"fa fa-file-o\"></i>" + aIni + aBody + aEnd;
       index++;
       if (ifd.getsubIFD() != null) {
@@ -379,13 +443,13 @@ public class HtmlReport extends Report {
         ul += "<ul><li><i class=\"fa fa-file-o\"></i> SubIFD" + typ + "</li></ul>";
       }
       if (ifd.containsTagId(34665)) {
-        ul += "<ul><li><i class=\"fa fa-file-o\"></i> EXIF</li></ul>";
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick='showExif(" + index + ")' class='lixmplist'>EXIF</a></li></ul>";
       }
       if (ifd.containsTagId(700)) {
-        ul += "<ul><li><i class=\"fa fa-file-o\"></i> XMP</li></ul>";
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick='showXmp(" + index + ")' class='liexiflist'>XMP</a></li></ul>";
       }
       if (ifd.containsTagId(33723)) {
-        ul += "<ul><li><i class=\"fa fa-file-o\"></i> IPTC</li></ul>";
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick='showIptc(" + index + ")' class='liiptclist'>IPTC</a></li></ul>";
       }
       if (index == 1) {
         if (ir.getTiffModel().getIccProfile() != null) {

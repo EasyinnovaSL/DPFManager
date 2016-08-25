@@ -2,6 +2,8 @@ package dpfmanager.shell.core.mvc;
 
 import org.jacpfx.rcp.context.Context;
 
+import java.util.ResourceBundle;
+
 /**
  * Created by Adrià Llorens on 07/03/2016.
  */
@@ -10,6 +12,8 @@ public class DpfModel<V extends ViewInterface<?, C>, C extends ControllerInterfa
   private V view;
 
   private Context context;
+
+  private ResourceBundle bundle;
 
   public DpfModel(){
   }
@@ -35,6 +39,14 @@ public class DpfModel<V extends ViewInterface<?, C>, C extends ControllerInterfa
   @Override
   public Context getContext() {
     return context;
+  }
+
+  public void setResourcebundle(ResourceBundle bundle){
+    this.bundle = bundle;
+  }
+
+  public ResourceBundle getBundle() {
+    return bundle;
   }
 
 }

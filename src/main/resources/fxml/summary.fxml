@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -9,6 +14,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+
 <AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -20,7 +26,7 @@
                     <Insets bottom="60.0" top="40.0" />
                 </VBox.margin>
             </ImageView>
-            <Label styleClass="mainTitle" text="REPORTS" />
+            <Label styleClass="mainTitle" text="%reportsTitle" />
             <ImageView focusTraversable="true" preserveRatio="true">
                 <image>
                     <Image url="@../images/lineTop.png" />
@@ -42,11 +48,11 @@
                <Insets top="20.0" />
             </VBox.margin>
          </ProgressIndicator>
-            <Label fx:id="labelEmpty" styleClass="label-info" text="No reports found.">
+            <Label fx:id="labelEmpty" styleClass="label-info" text="%noReports">
             <VBox.margin>
                <Insets top="15.0" />
             </VBox.margin></Label>
-            <Button fx:id="loadMore" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" prefWidth="125.0" styleClass="secondary-button" text="Load more..." textFill="WHITE">
+            <Button fx:id="loadMore" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" prefWidth="125.0" styleClass="secondary-button" text="%loadMore" textFill="WHITE">
                 <VBox.margin>
                     <Insets bottom="40.0" top="10.0" />
                 </VBox.margin>

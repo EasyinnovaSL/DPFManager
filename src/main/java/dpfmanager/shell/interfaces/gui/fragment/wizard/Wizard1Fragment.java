@@ -15,6 +15,7 @@ import org.jacpfx.rcp.context.Context;
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_1,
     viewLocation = "/fxml/config/subconfig1.fxml",
+    resourceBundleLocation = "bundles.language",
     scope = Scope.SINGLETON)
 public class Wizard1Fragment {
 

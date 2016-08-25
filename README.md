@@ -9,8 +9,8 @@ Licensing
 ---------
 The DPF Manager is dual-licensed:
 
- - [GPLv3+](LICENSE.GPL "GNU General Public License, version 3")
- - [MPLv2+](LICENSE.MPL "Mozilla Public License, version 2.0")
+ - [GPLv3+](http://www.gnu.org/licenses/gpl-3.0.en.html "GNU General Public License, version 3")
+ - [MPLv2+](https://www.mozilla.org/en-US/MPL/2.0/ "Mozilla Public License, version 2.0")
 
 CI Status
 ---------
@@ -31,7 +31,7 @@ You can run the DPF Manager in two modes, GUI and CLI. To start the software in 
 
 For using the CLI in non-windows operating systems use the terminal and enter the following command which will explain the available parameters.
 
-    dpfmanager -help
+    dpf_manager -help
 
 For Windows operating systems use the CLI executable named dpf-manager-console.exe instead. 
 

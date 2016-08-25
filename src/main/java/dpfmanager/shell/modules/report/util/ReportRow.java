@@ -17,6 +17,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Created by easy on 17/09/2015.
@@ -35,18 +41,18 @@ public class ReportRow {
   /**
    * Instantiates a new Report row.
    *
-   * @param date     the date
+   * @param sdate     the date
    * @param nFiles   the n files
-   * @param time     the time
+   * @param stime     the time
    * @param input    the input
    * @param errors   the errors
    * @param warnings the warnings
    * @param passed   the passed
    * @param score    the score
    */
-  public ReportRow(String date, String time, String input, String nFiles, String errors, String warnings, String passed, String score) {
-    this.date = new SimpleStringProperty(date);
-    this.time = new SimpleStringProperty(time);
+  public ReportRow(String sdate, String stime, String input, String nFiles, String errors, String warnings, String passed, String score) {
+    this.date = new SimpleStringProperty(parseDate2Locale(sdate));
+    this.time = new SimpleStringProperty(stime);
     this.input = new SimpleStringProperty(input);
     this.nfiles = new SimpleStringProperty(nFiles);
     this.errors = new SimpleStringProperty(errors);
@@ -54,6 +60,19 @@ public class ReportRow {
     this.passed = new SimpleStringProperty(passed);
     this.score = new SimpleStringProperty(score);
     this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
+  }
+
+  private String parseDate2Locale(String sdate){
+    try{
+      // Convert to date
+      SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+      Date date = df.parse(sdate);
+      // Locale date
+      DateFormat locDf = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+      sdate = locDf.format(date);
+    } catch (Exception e){
+    }
+    return sdate;
   }
 
   /**
@@ -263,7 +282,7 @@ public class ReportRow {
    * @param file      the file
    * @return the report row
    */
-  public static ReportRow createRowFromXml(String reportDay, File file) {
+  public static ReportRow createRowFromXml(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       File parent = new File(file.getParent());
@@ -316,7 +335,7 @@ public class ReportRow {
         score = passed * 100 / n;
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
       return row;
     } catch (Exception e) {
       return null;
@@ -341,7 +360,7 @@ public class ReportRow {
    * @param file      the file
    * @return the report row
    */
-  public static ReportRow createRowFromHtml(String reportDay, File file) {
+  public static ReportRow createRowFromHtml(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       File parent = new File(file.getParent() + "/html");
@@ -416,7 +435,7 @@ public class ReportRow {
         }
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
       return row;
     } catch (Exception e) {
       return null;
@@ -430,7 +449,7 @@ public class ReportRow {
    * @param file      the file
    * @return the report row
    */
-  public static ReportRow createRowFromJson(String reportDay, File file) {
+  public static ReportRow createRowFromJson(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       File parent = new File(file.getParent());
@@ -481,7 +500,7 @@ public class ReportRow {
       }
 
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
       return row;
     } catch (Exception e) {
       return null;
@@ -495,7 +514,7 @@ public class ReportRow {
    * @param file      the file
    * @return the report row
    */
-  public static ReportRow createRowFromPdf(String reportDay, File file) {
+  public static ReportRow createRowFromPdf(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       String n = "?";
@@ -503,7 +522,7 @@ public class ReportRow {
       String stime = getStime(file.getPath());
       String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".pdf");
 
-      ReportRow row = new ReportRow(sdate, stime, input, n, errors + " errors", warnings + " warnings", passed + " passed", score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1",errors), bundle.getString("warnings").replace("%1",warnings), bundle.getString("passed").replace("%1",passed), score + "%");
       return row;
     } catch (Exception e) {
       return null;
@@ -539,17 +558,9 @@ public class ReportRow {
 
   private static String getStime(String path) {
     try {
-      String stime = "";
-      Path pfile = Paths.get(path);
-      BasicFileAttributes attr = Files.readAttributes(pfile, BasicFileAttributes.class);
-      stime = attr.creationTime().toString();
-      stime = stime.substring(stime.indexOf("T") + 1);
-      int index = stime.indexOf(".");
-      if (index == -1) {
-        index = stime.indexOf("Z");
-      }
-      stime = stime.substring(0, index);
-      return stime;
+      BasicFileAttributes attr = Files.readAttributes(Paths.get(path), BasicFileAttributes.class);
+      DateFormat locDf = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault());
+      return locDf.format(attr.creationTime().toMillis());
     } catch (Exception e) {
       return "";
     }

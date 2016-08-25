@@ -1,3 +1,5 @@
 #! /bin/bash
-ln -s /opt/DPFManager/DPFManager /usr/bin/dpf-manager
+if [ ! -f /usr/bin/dpf-manager ]; then
+    ln -s /opt/DPFManager/DPFManager /usr/bin/dpf-manager
+fi
 

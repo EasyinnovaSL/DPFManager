@@ -10,7 +10,6 @@ import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard2Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard3Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard4Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard5Fragment;
-import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard6Fragment;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -29,7 +28,6 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
   private ManagedFragmentHandler<Wizard3Fragment> fragment3;
   private ManagedFragmentHandler<Wizard4Fragment> fragment4;
   private ManagedFragmentHandler<Wizard5Fragment> fragment5;
-  private ManagedFragmentHandler<Wizard6Fragment> fragment6;
 
   public void clearAllSteps() {
     fragment1.getController().clear();
@@ -37,11 +35,14 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     fragment3.getController().clear();
     fragment4.getController().clear();
     fragment5.getController().clear();
-    fragment6.getController().clear();
     getView().clear();
   }
 
   public void saveConfig() {
+    // Save description
+    String description = getView().getDescription();
+    getModel().getConfiguration().setDescription(description);
+    // Save to file
     File file = null;
     String path = getModel().getPath();
     if (path != null) {
@@ -57,17 +58,17 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
         String name = getView().getSaveFilename();
         if (name.isEmpty()) {
           // Empty input
-          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please, enter the filename."));
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("enterFilename")));
         } else {
           name = checkInput(name);
           if (name == null) {
             // Alert incorrect name format
-            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "Please, enter only the filename, not a path."));
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("noEnterPath")));
           } else {
             file = new File(DPFManagerProperties.getConfigDir() + "/" + name);
             if (file.exists()) {
               // Alert name exists
-              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, "There is already a file with this name."));
+              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("enterDuplicate")));
               file = null;
             }
           }
@@ -80,7 +81,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
         getModel().saveConfig(file.getAbsolutePath());
         getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
       } catch (Exception ex) {
-        getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception ocurred!", ex));
+        getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(getBundle().getString("exception"), ex));
       }
     }
   }
@@ -130,8 +131,8 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
       case 4:
         fragment4.getController().loadFixes(getModel().getConfiguration());
         break;
-      case 6:
-        fragment6.getController().loadSummary(getModel().getConfiguration());
+      case 5:
+        fragment5.getController().loadSummary(getModel().getConfiguration());
         break;
     }
   }
@@ -158,10 +159,6 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
 
   public void setFragment5(ManagedFragmentHandler<Wizard5Fragment> fragment5) {
     this.fragment5 = fragment5;
-  }
-
-  public void setFragment6(ManagedFragmentHandler<Wizard6Fragment> fragment6) {
-    this.fragment6 = fragment6;
   }
 
 }

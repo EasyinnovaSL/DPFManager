@@ -15,7 +15,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -43,22 +45,46 @@ public class ConsoleLauncher {
   private ConsoleContext context;
 
   /**
+   * The resource bundle
+   */
+  private ResourceBundle bundle;
+
+  /**
    * The parsed args
    */
   private Map<String, String> parameters;
 
   public ConsoleLauncher(String[] args) {
     DPFManagerProperties.setFinished(false);
+    // Program input
+    params = new ArrayList(Arrays.asList(args));
+    // Update locale
+    updateLanguage();
     // Load spring context
     AppContext.loadContext("DpfSpringConsole.xml");
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
     parameters.put("mode", "CMD");
     //Load DpfContext
     context = new ConsoleContext(AppContext.getApplicationContext());
-    // Program input
-    params = new ArrayList(Arrays.asList(args));
     // The main controller
-    controller = new ConsoleController(context);
+    controller = new ConsoleController(context,bundle);
+  }
+
+  /**
+   * Update the app language.
+   */
+  private void updateLanguage(){
+    // Check if language is specified
+    if (params.contains("-l")){
+      int langIndex = params.indexOf("-l") +1;
+      String language = params.get(langIndex);
+      Locale newLocale = new Locale(language);
+      if (newLocale != null){
+        DPFManagerProperties.setLanguage(language);
+      }
+    }
+    Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
+    bundle = DPFManagerProperties.getBundle();
   }
 
   /**
@@ -77,14 +103,14 @@ public class ConsoleLauncher {
           File tmp = new File(outputFolder);
           if (!tmp.exists()) {
             if (!tmp.mkdirs()) {
-              printOut("Cannot create the output folder.");
+              printOut(bundle.getString("cannotOutput"));
               outputFolder = null;
             }
           } else if (!tmp.isDirectory()) {
-            printOut("The output path must be a directory.");
+            printOut(bundle.getString("outputMustDirectory"));
             outputFolder = null;
           } else if (tmp.listFiles().length > 0) {
-            printOut("The output folder must be empty.");
+            printOut(bundle.getString("outputMustEmpty"));
             outputFolder = null;
           }
           if (outputFolder != null) {
@@ -95,7 +121,7 @@ public class ConsoleLauncher {
             argsError = true;
           }
         } else {
-          printOut("You must specify the output folder after '-o' option.");
+          printOut(bundle.getString("outputSpecify"));
           argsError = true;
         }
       } else if (arg.equals("-s")) {
@@ -114,17 +140,18 @@ public class ConsoleLauncher {
           try {
             config.ReadFile(xmlConfig);
             if (config.getFormats().size() == 0) {
-              printOut("No report format was specified in the config file.");
+              printOut(bundle.getString("missingReportFormat"));
               argsError = true;
             } else {
               controller.setConfig(config);
+              parameters.put("-configuration",xmlConfig);
             }
           } catch (Exception ex) {
-            printOut("Incorrect configuration file '" + xmlConfig + "'");
+            printOut(bundle.getString("incorrectConfigFile").replace("%1",xmlConfig));
             argsError = true;
           }
         } else {
-          printOut("You must specify the configuration file after '-configuration' option.");
+          printOut(bundle.getString("specifyConfig"));
           argsError = true;
         }
       } else if (arg.equals("-help")) {
@@ -142,13 +169,13 @@ public class ConsoleLauncher {
           controller.setPdf(formats.contains("pdf"));
           String result = formats.replace("xml", "").replace("json", "").replace("html", "").replace("pdf", "").replace(",", "").replace("'", "");
           if (result.length() > 0) {
-            printOut("Incorrect report formats.");
+            printOut(bundle.getString("incorrectReportFormat"));
             argsError = true;
           } else {
             controller.setExplicitFormats(true);
           }
         } else {
-          printOut("You must specify the formats after '-reportformat' option.");
+          printOut(bundle.getString("specifyFormat"));
           argsError = true;
         }
       } else if (arg.equals("-job")) {
@@ -156,7 +183,7 @@ public class ConsoleLauncher {
           String jobId = params.get(++idx);
           parameters.put("-job",jobId);
         } else {
-          printOut("You must specify the job id '-job' option.");
+          printOut(bundle.getString("specifyJob"));
           argsError = true;
         }
       } else if (arg.equals("-url")) {
@@ -167,12 +194,82 @@ public class ConsoleLauncher {
           }
           parameters.put("-url",url);
         } else {
-          printOut("You must specify the url after '-url' option.");
+          printOut(bundle.getString("specifyUrl"));
           argsError = true;
+        }
+      } else if (arg.equals("-l")) {
+        // nothing, checked before
+      } else if (arg.equals("-listperiodic")) {
+        if (parameters.containsKey("-addperiodic") || parameters.containsKey("-editperiodic") || parameters.containsKey("-removeperiodic")){
+          printOut(bundle.getString("onlyOnePeriodicAction"));
+          argsError = true;
+        } else {
+          parameters.put("-listperiodic", "");
+        }
+      } else if (arg.equals("-addperiodic")) {
+        if (parameters.containsKey("-listperiodic") || parameters.containsKey("-editperiodic") || parameters.containsKey("-removeperiodic")){
+          printOut(bundle.getString("onlyOnePeriodicAction"));
+          argsError = true;
+        } else {
+          parameters.put("-addperiodic", "");
+        }
+      } else if (arg.equals("-editperiodic")) {
+        if (parameters.containsKey("-listperiodic") || parameters.containsKey("-addperiodic") || parameters.containsKey("-removeperiodic")){
+          printOut(bundle.getString("onlyOnePeriodicAction"));
+          argsError = true;
+        } else {
+          if (idx + 1 < params.size()) {
+            String uuid = params.get(++idx);
+            parameters.put("-editperiodic", uuid);
+          } else {
+            printOut(bundle.getString("specifyPeriodicId"));
+            argsError = true;
+          }
+        }
+      } else if (arg.equals("-removeperiodic")) {
+        if (parameters.containsKey("-listperiodic") || parameters.containsKey("-editperiodic") || parameters.containsKey("-addperiodic")){
+          printOut(bundle.getString("onlyOnePeriodicAction"));
+          argsError = true;
+        } else {
+          if (idx + 1 < params.size()) {
+            String uuid = params.get(++idx);
+            parameters.put("-removeperiodic", uuid);
+          } else {
+            printOut(bundle.getString("specifyPeriodicId"));
+            argsError = true;
+          }
+        }
+      } else if (arg.equals("-time")) {
+        if (idx + 1 < params.size()) {
+          String time = params.get(++idx);
+          parameters.put("-time", time);
+        } else {
+          printOut(bundle.getString("specifyTime"));
+          argsError = true;
+        }
+      } else if (arg.equals("-periodicity")) {
+        // mode
+        String mode = "";
+        if (idx + 1 < params.size()) {
+          mode = params.get(++idx);
+          parameters.put("-periodicity", mode);
+        } else {
+          printOut(bundle.getString("specifyPeriodicityMode"));
+          argsError = true;
+        }
+        // extra info (weekly & monthly)
+        if (mode.equals("weekly") || mode.equals("monthly")){
+          if (idx + 1 < params.size()) {
+            String extra = params.get(++idx);
+            parameters.put("-extra", extra);
+          } else {
+            printOut(bundle.getString("specifyPeriodicityExtra"));
+            argsError = true;
+          }
         }
       } else if (arg.startsWith("-")) {
         // unknown option
-        printOut("Unknown option: " + arg);
+        printOut(bundle.getString("unknownOption").replace("%1",arg));
         argsError = true;
       } else {
         // File or directory to process
@@ -187,12 +284,12 @@ public class ConsoleLauncher {
 
     // Job needs url
     if (parameters.containsKey("-job") && !parameters.containsKey("-url")){
-      printOut("You need to specify the url.");
+      printOut(bundle.getString("jobNeedUrl"));
       argsError = true;
     }
 
-    if (files.size() == 0 && !parameters.containsKey("-job")) {
-      printOut("No files specified.");
+    if (files.size() == 0 && !parameters.containsKey("-job") && !parameters.containsKey("-listperiodic") && !parameters.containsKey("-removeperiodic")) {
+      printOut(bundle.getString("noFilesSpecified"));
       argsError = true;
     }
     if (argsError || params.size() == 0) {
@@ -226,7 +323,7 @@ public class ConsoleLauncher {
   }
 
   private void printException(Exception ex) {
-    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("An exception has occurred!", ex));
+    context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
   }
 
   /**

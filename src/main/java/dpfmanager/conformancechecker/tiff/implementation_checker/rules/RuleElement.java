@@ -1,6 +1,7 @@
 package dpfmanager.conformancechecker.tiff.implementation_checker.rules;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffNode;
+import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffTag;
 
 import java.util.List;
 
@@ -9,10 +10,13 @@ import java.util.List;
  */
 public class RuleElement {
   String fieldName;
+  String index;
   Filter filter;
   TiffNode node;
   TiffNode model;
   public boolean valid;
+  String multiplier;
+  String elevator;
 
   public RuleElement(String field, TiffNode nodeBase, TiffNode model) {
     valid = true;
@@ -20,11 +24,20 @@ public class RuleElement {
     this.model = model;
     filter = null;
     fieldName = field;
+    if (fieldName.contains("*")) {
+      multiplier = fieldName.substring(0, fieldName.indexOf("*"));
+      fieldName = fieldName.substring(fieldName.indexOf("*")+1);
+    }
+    if (fieldName.contains("^")) {
+      elevator = fieldName.substring(0, fieldName.indexOf("^"));
+      fieldName = fieldName.substring(fieldName.indexOf("^")+1);
+    }
     if (!fieldName.startsWith("$")) {
-      while (fieldName.contains(".") || fieldName.contains("[")) {
+      while (fieldName.contains(".") || fieldName.contains("[") || fieldName.contains("(")) {
         int indexDot = fieldName.indexOf(".");
         int indexCla = fieldName.indexOf("[");
-        if (indexDot > -1 && (indexCla == -1 || indexDot < indexCla)) {
+        int indexPar = fieldName.indexOf("(");
+        if (indexDot > -1 && (indexCla == -1 || indexDot < indexCla) && (indexPar == -1 || indexDot < indexPar)) {
           String parent = fieldName.substring(0, indexDot);
           if (parent.length() > 0) {
             if (node != null)
@@ -36,7 +49,7 @@ public class RuleElement {
             }
           }
           fieldName = fieldName.substring(indexDot + 1);
-        } else {
+        } else if (indexCla > -1 && (indexPar == -1 || indexCla < indexPar)) {
           String filter = fieldName.substring(indexCla + 1);
           String remaining = filter.substring(filter.indexOf("]") + 1).trim();
           filter = filter.substring(0, filter.indexOf("]")).trim();
@@ -55,6 +68,11 @@ public class RuleElement {
             this.filter = null;
             fieldName = remaining;
           }
+        } else {
+          String filter = fieldName.substring(indexPar + 1);
+          String remaining = filter.substring(filter.indexOf(")") + 1).trim();
+          index = filter.substring(0, filter.indexOf(")")).trim();
+          fieldName = remaining;
         }
       }
     }
@@ -89,6 +107,17 @@ public class RuleElement {
     return node.getChildren(getName(), filter);
   }
 
+  String operateMultiplier(String val) {
+    String value = val;
+    if (elevator != null) {
+      value = (Math.pow(Integer.parseInt(elevator), Integer.parseInt(val))) + "";
+    }
+    if (multiplier != null) {
+      value = (Integer.parseInt(value) * Integer.parseInt(multiplier)) + "";
+    }
+    return value;
+  }
+
   public String getValue() {
     if (fieldName.startsWith("$") && fieldName.endsWith("$")) {
       String val = fieldName.replace("$", "");
@@ -104,16 +133,16 @@ public class RuleElement {
         if (node == null) return null;
       }
       val = node.getValue();
-      return val;
-    }
-    if (fieldName.startsWith("'") && fieldName.endsWith("'")) {
+      return operateMultiplier(val);
+    } else if (fieldName.startsWith("'") && fieldName.endsWith("'")) {
       String val = fieldName.substring(1);
       val = val.substring(0, val.length() - 1);
-      return val;
+      return operateMultiplier(val);
     }
+
     try {
       int ival = Integer.parseInt(fieldName);
-      return ival + "";
+      return operateMultiplier(ival + "");
     } catch (Exception ex) {
 
     }
@@ -121,6 +150,11 @@ public class RuleElement {
       return fieldName;
 
     if (node == null) return null;
+    if (index != null) {
+      TiffTag ttag = ((TiffTag)node);
+      String tagvalue = ttag.getValue().replace("[", "").replace("]", "");
+      return tagvalue.split(",")[Integer.parseInt(index)];
+    }
     if (!node.hasChild(getName(), filter)) return null;
     String op1value = node.getChild(getName(), filter).getValue();
     String value = operate(op1value);
@@ -143,6 +177,6 @@ public class RuleElement {
     } else {
       value = "";
     }
-    return value;
+    return operateMultiplier(value);
   }
 }
