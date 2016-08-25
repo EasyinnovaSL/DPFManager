@@ -33,9 +33,9 @@ import javax.xml.bind.annotation.XmlType;
 public enum SourceDimensionUnitType {
 
     @XmlEnumValue("in.")
-    IN("in."),
+    IN("1"),
     @XmlEnumValue("mm")
-    MM("mm");
+    MM("2");
     private final String value;
 
     SourceDimensionUnitType(String v) {
