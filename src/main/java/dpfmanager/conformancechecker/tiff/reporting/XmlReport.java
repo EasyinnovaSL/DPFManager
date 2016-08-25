@@ -11,12 +11,16 @@ import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.ImageStrips;
+import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.Strip;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
+import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.Rational;
+import com.easyinnova.tiff.model.types.XMP;
+import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Document;
@@ -44,6 +48,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -699,6 +704,106 @@ public class XmlReport {
       for (ReportTag tag : getTags(ir)) {
         try {
           if (tag.tv.getName().equals("Compression")) continue;
+
+          /*if (tag.tv.getId() == 700) {
+            // XMP
+            String tagname = tag.tv.getName().replace(" ", "");
+            if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
+            infoElement = doc.createElement(tagname);
+            infoElement.setAttribute("id", tag.tv.getId() + "");
+            infoElement.setAttribute("type", tag.dif + "");
+
+            for (abstractTiffType to : tag.tv.getValue()) {
+              XMP xmp = (XMP)to;
+              try {
+                Metadata metadata = xmp.createMetadata();
+                for (String key : metadata.keySet()) {
+                  Element childElement = doc.createElement(key);
+                  String val = metadata.get(key).toString().trim().toString().replaceAll("\\p{C}", "?");;
+
+                  childElement.setTextContent(val);
+                  childElement.setAttribute(tagname, val);
+                  infoElement.appendChild(childElement);
+                }
+                Element historyElement = doc.createElement("xmpHistory");
+                for (Hashtable<String, String> kv : xmp.getHistory()) {
+                  for (String key : kv.keySet()) {
+                    Element childElement = doc.createElement(key);
+                    String val = kv.get(key).toString().trim().replaceAll("\\p{C}", "?");;
+
+                    childElement.setTextContent(val);
+                    childElement.setAttribute(tagname, val);
+                    historyElement.appendChild(childElement);
+                  }
+                }
+                infoElement.appendChild(historyElement);
+              } catch (Exception ex) {
+                ex.printStackTrace();
+              }
+            }
+            report.appendChild(infoElement);
+
+            continue;
+          }
+          if (tag.tv.getId() == 33723) {
+            // IPTC
+            String tagname = tag.tv.getName().replace(" ", "");
+            if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
+            infoElement = doc.createElement(tagname);
+            infoElement.setAttribute("id", tag.tv.getId() + "");
+            infoElement.setAttribute("type", tag.dif + "");
+
+            for (abstractTiffType to : tag.tv.getValue()) {
+              IPTC iptc = (IPTC)to;
+              try {
+                Metadata metadata = iptc.createMetadata();
+                for (String key : metadata.keySet()) {
+                  Element childElement = doc.createElement(key);
+                  String val = metadata.get(key).toString().trim().toString().replaceAll("\\p{C}", "?");;
+
+                  childElement.setTextContent(val);
+                  childElement.setAttribute(tagname, val);
+                  infoElement.appendChild(childElement);
+                }
+              } catch (Exception ex) {
+                ex.printStackTrace();
+              }
+            }
+            report.appendChild(infoElement);
+
+            continue;
+          }
+          if (tag.tv.getId() == 34665) {
+            // EXIF
+            String tagname = tag.tv.getName().replace(" ", "");
+            if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
+            infoElement = doc.createElement(tagname);
+            infoElement.setAttribute("id", tag.tv.getId() + "");
+            infoElement.setAttribute("type", tag.dif + "");
+
+            for (abstractTiffType to : tag.tv.getValue()) {
+              IFD exif = (IFD)to;
+              try {
+                for (TagValue tv : exif.getTags().getTags()) {
+                  String name = tv.getName().replace(" ", "");
+                  if (name.equals(tv.getId() + "")) name = "Undefined" + name;
+                  Element childElement = doc.createElement(name);
+                  String val = tv.getDescriptiveValue().toString().replaceAll("\\p{C}", "?");;
+
+                  childElement.setTextContent(val);
+                  childElement.setAttribute(tagname, val);
+                  childElement.setAttribute("id", tv.getId() + "");
+                  infoElement.appendChild(childElement);
+                }
+              } catch (Exception ex) {
+                ex.printStackTrace();
+              }
+            }
+            report.appendChild(infoElement);
+
+            continue;
+          }*/
+
           String tagname = tag.tv.getName().replace(" ", "");
           if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
           infoElement = doc.createElement(tagname);

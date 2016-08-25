@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -349,6 +350,18 @@ public class HtmlReport extends Report {
               row = row.replace("##KEY##", key);
               row = row.replace("##VALUE##", metadata.get(key).toString().trim());
               rows += row;
+            }
+            int nh = 1;
+            for (Hashtable<String, String> kv : xmp.getHistory()) {
+              for (String key : kv.keySet()) {
+                row = "<tr class='xmp xmp" + (tag.index + 1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+                row = row.replace("##ICON##", "<i class=\"icon-xmphist\"></i>");
+                row = row.replace("##ID##", nh + "");
+                row = row.replace("##KEY##", key);
+                row = row.replace("##VALUE##", kv.get(key).toString().trim());
+                rows += row;
+              }
+              nh++;
             }
           } catch (Exception ex) {
             ex.printStackTrace();
