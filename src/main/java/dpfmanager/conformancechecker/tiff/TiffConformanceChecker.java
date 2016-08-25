@@ -566,7 +566,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
           //Mets report
           MetsReport metsReport = new MetsReport();
-          output = metsReport.parseIndividual(ir, config.getRules());
+          output = metsReport.parseIndividual(ir, config);
           ir.setConformanceCheckerReportMets(output);
 
           Fixes fixes = config.getFixes();
@@ -659,7 +659,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
             //Make due report in METS
             MetsReport metsReportFixed = new MetsReport();
-            output = metsReport.parseIndividual(ir2, config.getRules());
+            output = metsReport.parseIndividual(ir2, config);
             ir.setConformanceCheckerReportMets(output);
 
 
