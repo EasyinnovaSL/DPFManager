@@ -289,6 +289,13 @@ public class Event {
         return this.eventOutcomeInformation;
     }
 
+    public void setEventOutcomeInformation(EventOutcomeInformation s) {
+        if (eventOutcomeInformation == null) {
+            eventOutcomeInformation = new ArrayList<EventOutcomeInformation>();
+        }
+        this.eventOutcomeInformation.add(s);
+    }
+
     /**
      * Gets the value of the linkingAgentIdentifier property.
      * 

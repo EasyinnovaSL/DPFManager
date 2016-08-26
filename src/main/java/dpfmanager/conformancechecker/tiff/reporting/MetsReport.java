@@ -5,6 +5,7 @@ import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.METS.niso.*;
 import dpfmanager.conformancechecker.tiff.reporting.METS.premis.Event;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 
@@ -83,26 +84,30 @@ public class MetsReport {
     //getting tiff info
     TiffDocument tiffDocument = ir.getTiffModel();
     Metadata metadata = tiffDocument.getMetadata();
-    if(metadata.get("title") != null){
-      literal.setTitle(metadata.get("title").toString());
-    }
-    if(metadata.get("creator") != null){
-      literal.setCreator(metadata.get("creator").toString());
-    }
-    if(metadata.get("Description") != null){
-      literal.setDescription(metadata.get("Description").toString());
-    }
-    if(metadata.get("dateTime") != null){
-      literal.setDate(metadata.get("dateTime").toString());
-    }
-    if(metadata.get("Copyright") != null){
-      literal.setRights(metadata.get("Copyright").toString());
-    }
+    if (metadata != null) {
+      if (metadata.get("title") != null) {
+        literal.setTitle(metadata.get("title").toString());
+      }
+      if (metadata.get("creator") != null) {
+        literal.setCreator(metadata.get("creator").toString());
+      }
+      if (metadata.get("Description") != null) {
+        literal.setDescription(metadata.get("Description").toString());
+      }
+      if (metadata.get("dateTime") != null) {
+        literal.setDate(metadata.get("dateTime").toString());
+      }
+      if (metadata.get("Copyright") != null) {
+        literal.setRights(metadata.get("Copyright").toString());
+      }
 
-    xmlData.setLiteral(literal);
-    mdwrap.setXmlData(xmlData);
+      xmlData.setLiteral(literal);
+      mdwrap.setXmlData(xmlData);
 
-    return mdwrap;
+      return mdwrap;
+    }else{
+      return null;
+    }
   }
 
   /**
@@ -974,8 +979,15 @@ public class MetsReport {
       premisObject.setEventDetail(config);
       Event.LinkingAgentIdentifier linkingAgentIdentifier = new Event.LinkingAgentIdentifier();
       linkingAgentIdentifier.setLinkingAgentIdentifierType("Software");
-      linkingAgentIdentifier.setLinkingAgentIdentifierValue("DPF Manager"); //TODO how to define it?
+      linkingAgentIdentifier.setLinkingAgentIdentifierValue("DPF Manager " + DPFManagerProperties.getVersion());
       premisObject.setLinkingAgentIdentifier(linkingAgentIdentifier);
+      Event.EventOutcomeInformation eventOutcomeInformation = new Event.EventOutcomeInformation();
+      eventOutcomeInformation.setEventOutcome("Report output");
+      Event.EventOutcomeInformation.EventOutcomeDetail eventOutcomeDetail = new Event.EventOutcomeInformation.EventOutcomeDetail();
+      eventOutcomeDetail.setAny(null);
+      eventOutcomeInformation.setEventOutcomeDetail(eventOutcomeDetail);
+      premisObject.setEventOutcomeInformation(eventOutcomeInformation);
+
 
       xmlData.setEvent(premisObject);
       mdwrap.setXmlData(xmlData);
@@ -1396,19 +1408,21 @@ public class MetsReport {
       TiffDocument tiffDocument = ir.getTiffModel();
 
       IFD ifd = tiffDocument.getFirstIFD();
-      DivType divHdr = new DivType();
-      divHdr.setID("Hdr" + ifd.hashCode());
-      divHdr.setTYPE("Header");
-      structMap.setDiv(divHdr);
-      int startIfd = 8;
-      while (ifd != null) {
-        DivType div = extractDivsFromIFD(ifd, file, startIfd);
-        startIfd = ifd.getNextOffset();
-        divHdr.setDiv(div);
-        ifd = ifd.getNextIFD();
+      if (ifd != null) {
+        DivType divHdr = new DivType();
+        divHdr.setID("Hdr" + ifd.hashCode());
+        divHdr.setTYPE("Header");
+        structMap.setDiv(divHdr);
+        int startIfd = 8;
+        while (ifd != null) {
+          DivType div = extractDivsFromIFD(ifd, file, startIfd);
+          startIfd = ifd.getNextOffset();
+          divHdr.setDiv(div);
+          ifd = ifd.getNextIFD();
+        }
+        structMap.setDiv(divHdr);
+        mets.setStructMap(structMap);
       }
-      structMap.setDiv(divHdr);
-      mets.setStructMap(structMap);
     }
     return mets;
 
