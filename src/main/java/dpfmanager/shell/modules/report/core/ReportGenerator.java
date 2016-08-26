@@ -553,7 +553,8 @@ public class ReportGenerator {
     ir.setReportPath(reportName);
 
     writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());
-    writeProcomputedIndividual(metsFileStr, ir.getConformanceCheckerReportMets());
+    String mets = ir.getConformanceCheckerReportMets();
+    if (mets != null && config.getFormats().contains("XML")) writeProcomputedIndividual(metsFileStr, mets);
 
     if (config.getFormats().contains("JSON")) {
       reportJson.xmlToJson(ir.getConformanceCheckerReport(), jsonFileStr, this);
@@ -591,7 +592,8 @@ public class ReportGenerator {
 
       try {
         writeProcomputedIndividual(xmlFileStr, ir2.getConformanceCheckerReport());
-        writeProcomputedIndividual(metsFileStr, ir2.getConformanceCheckerReportMets());
+        mets = ir2.getConformanceCheckerReportMets();
+        if (mets != null && config.getFormats().contains("XML")) writeProcomputedIndividual(metsFileStr, mets);
 
         if (config.getFormats().contains("JSON")) {
           reportJson.xmlToJson(ir2.getConformanceCheckerReport(), jsonFileStr, this);

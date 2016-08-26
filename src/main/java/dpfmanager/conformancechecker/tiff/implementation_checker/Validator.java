@@ -121,7 +121,7 @@ public class Validator {
     return rules;
   }
 
-  void validate(TiffValidationObject model, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  void validate(TiffValidationObject model, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
 
     ImplementationCheckerObject rules = getRules(rulesFile);
@@ -133,7 +133,7 @@ public class Validator {
         List<TiffNode> objects = model.getObjectsFromContext(context, true);
         for (TiffNode node : objects) {
           boolean ok = checkRule(rule, node);
-          if (!ok && rule.isCritical()) {
+          if (!ok && (rule.isCritical() || fastBreak)) {
             bbreak = true;
             break;
           }
@@ -148,58 +148,58 @@ public class Validator {
     }
   }
 
-  void validate(String content, String rulesFile) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  void validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     StringReader reader = new StringReader(content);
     model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
 
-    validate(model, rulesFile);
+    validate(model, rulesFile, fastBreak);
   }
 
   public void validateBaseline(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     this.model = model;
-    validate(model, "implementationcheckers/BaselineProfileChecker.xml");
+    validate(model, "implementationcheckers/BaselineProfileChecker.xml", false);
   }
 
-  public void validateTiffEP(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public void validateTiffEP(TiffValidationObject model, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     this.model = model;
-    validate(model, "implementationcheckers/TiffEPProfileChecker.xml");
+    validate(model, "implementationcheckers/TiffEPProfileChecker.xml", fastBreak);
   }
 
-  public void validateTiffIT(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public void validateTiffIT(TiffValidationObject model, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     this.model = model;
-    validate(model, "implementationcheckers/TiffITProfileChecker.xml");
+    validate(model, "implementationcheckers/TiffITProfileChecker.xml", fastBreak);
   }
 
-  public void validateTiffITP1(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public void validateTiffITP1(TiffValidationObject model, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     this.model = model;
-    validate(model, "implementationcheckers/TiffITP1ProfileChecker.xml");
+    validate(model, "implementationcheckers/TiffITP1ProfileChecker.xml", fastBreak);
   }
 
-  public void validateTiffITP2(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public void validateTiffITP2(TiffValidationObject model, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     this.model = model;
-    validate(model, "implementationcheckers/TiffITP2ProfileChecker.xml");
+    validate(model, "implementationcheckers/TiffITP2ProfileChecker.xml", fastBreak);
   }
 
   public void validateBaseline(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/BaselineProfileChecker.xml");
+    validate(path, "implementationcheckers/BaselineProfileChecker.xml", false);
   }
 
-  public void validateTiffEP(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/TiffEPProfileChecker.xml");
+  public void validateTiffEP(String path, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    validate(path, "implementationcheckers/TiffEPProfileChecker.xml", fastBreak);
   }
 
-  public void validateTiffIT(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/TiffITProfileChecker.xml");
+  public void validateTiffIT(String path, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    validate(path, "implementationcheckers/TiffITProfileChecker.xml", fastBreak);
   }
 
-  public void validateTiffITP1(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/TiffITP1ProfileChecker.xml");
+  public void validateTiffITP1(String path, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    validate(path, "implementationcheckers/TiffITP1ProfileChecker.xml", fastBreak);
   }
 
-  public void validateTiffITP2(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/TiffITP2ProfileChecker.xml");
+  public void validateTiffITP2(String path, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    validate(path, "implementationcheckers/TiffITP2ProfileChecker.xml", fastBreak);
   }
 
   boolean checkRule(RuleObject rule, TiffNode node) {

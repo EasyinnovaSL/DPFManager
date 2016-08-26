@@ -33,11 +33,11 @@ public class TiffITCheckerTest extends TestCase {
 
     Validator v = new Validator();
     if (profile == 0)
-      v.validateTiffIT(content);
+      v.validateTiffIT(content, false);
     else if (profile == 1)
-      v.validateTiffITP1(content);
+      v.validateTiffITP1(content, false);
     else
-      v.validateTiffITP2(content);
+      v.validateTiffITP2(content, false);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getTiffITValidation(profile);
@@ -58,11 +58,11 @@ public class TiffITCheckerTest extends TestCase {
 
     Validator v = new Validator();
     if (profile == 0)
-      v.validateTiffIT(content);
+      v.validateTiffIT(content, false);
     else if (profile == 1)
-      v.validateTiffITP1(content);
+      v.validateTiffITP1(content, false);
     else
-      v.validateTiffITP2(content);
+      v.validateTiffITP2(content, false);
     List<RuleResult> results = v.getErrors();
 
     if (errors > 0)

@@ -31,7 +31,7 @@ public class TiffEPCheckerTest extends TestCase {
     String content = tiffValidation.getXml();
 
     Validator v = new Validator();
-    v.validateTiffEP(content);
+    v.validateTiffEP(content, false);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getTiffEPValidation();
@@ -57,7 +57,7 @@ public class TiffEPCheckerTest extends TestCase {
       String content =  tiffValidation.getXml();
 
       Validator v = new Validator();
-      v.validateTiffEP(content);
+      v.validateTiffEP(content, false);
 
       if (errors > -1) {
         assertEquals(v.getErrors().size(), tr.getTiffEPValidation().getErrors().size());

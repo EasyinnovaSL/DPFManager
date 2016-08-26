@@ -34,7 +34,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     String path = getPath();
     File directori = new File(path);
-    assertEquals(7, directori.list().length);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+
+    assertEquals(7, n);
   }
 
   @Test
@@ -54,7 +59,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     String path = getPath();
     File directori = new File(path);
-    assertEquals(2, directori.list().length);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+
+    assertEquals(2, n);
 
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
@@ -79,7 +89,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     String path = getPath();
     File directori = new File(path);
-    assertEquals(2, directori.list().length);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+
+    assertEquals(2, n);
 
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
@@ -104,7 +119,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     String path = getPath();
     File directori = new File(path);
-    assertEquals(7, directori.list().length);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+
+    assertEquals(7, n);
 
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();

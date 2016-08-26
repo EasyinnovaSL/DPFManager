@@ -471,17 +471,17 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return validation;
   }
 
-  public static Validator getEPValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+  public static Validator getEPValidation(String content, boolean fastBreak) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = new Validator(Logger);
-    validation.validateTiffEP(content);
+    validation.validateTiffEP(content, fastBreak);
     return validation;
   }
 
-  public static Validator getITValidation(int profile, String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+  public static Validator getITValidation(int profile, String content, boolean fastBreak) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     Validator validation = new Validator(Logger);
-    if (profile == 0) validation.validateTiffIT(content);
-    else if (profile == 1) validation.validateTiffITP1(content);
-    else validation.validateTiffITP2(content);
+    if (profile == 0) validation.validateTiffIT(content, fastBreak);
+    else if (profile == 1) validation.validateTiffITP1(content, fastBreak);
+    else validation.validateTiffITP2(content, fastBreak);
     return validation;
   }
 
@@ -526,19 +526,19 @@ public class TiffConformanceChecker extends ConformanceChecker {
           }
           Validator epValidation = null;
           if (checkEP) {
-            epValidation = getEPValidation(content);
+            epValidation = getEPValidation(content, false);
           }
           Validator it0Validation = null;
           Validator it1Validation = null;
           Validator it2Validation = null;
           if (checkIT) {
-            it0Validation = getITValidation(0, content);
+            it0Validation = getITValidation(0, content, false);
           }
           if (checkIT1) {
-            it1Validation = getITValidation(1, content);
+            it1Validation = getITValidation(1, content, false);
           }
           if (checkIT2) {
-            it2Validation = getITValidation(2, content);
+            it2Validation = getITValidation(2, content, false);
           }
           //Logger.println("Creating report");
 
@@ -626,13 +626,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
             Validator baselineValfixed = null;
             if (ir.checkBL) baselineValfixed = TiffConformanceChecker.getBaselineValidation(contentfixed);
             Validator epValidationfixed = null;
-            if (ir.checkEP) epValidationfixed = TiffConformanceChecker.getEPValidation(contentfixed);
+            if (ir.checkEP) epValidationfixed = TiffConformanceChecker.getEPValidation(contentfixed, false);
             Validator it0Validationfixed = null;
-            if (ir.checkIT0) it0Validationfixed = TiffConformanceChecker.getITValidation(0, contentfixed);
+            if (ir.checkIT0) it0Validationfixed = TiffConformanceChecker.getITValidation(0, contentfixed, false);
             Validator it1Validationfixed = null;
-            if (ir.checkIT1) it1Validationfixed = TiffConformanceChecker.getITValidation(1, contentfixed);
+            if (ir.checkIT1) it1Validationfixed = TiffConformanceChecker.getITValidation(1, contentfixed, false);
             Validator it2Validationfixed = null;
-            if (ir.checkIT2) it2Validationfixed = TiffConformanceChecker.getITValidation(2, contentfixed);
+            if (ir.checkIT2) it2Validationfixed = TiffConformanceChecker.getITValidation(2, contentfixed, false);
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");
             name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
@@ -658,10 +658,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ir2.setCompareReport(ir);
 
             //Make due report in METS
-            MetsReport metsReportFixed = new MetsReport();
             output = metsReport.parseIndividual(ir2, config);
-            ir.setConformanceCheckerReportMets(output);
-
+            ir2.setConformanceCheckerReportMets(output);
 
             if (config.getFormats().contains("HTML")) {
               HtmlReport htmlReport = new HtmlReport();

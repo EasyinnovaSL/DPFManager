@@ -286,7 +286,7 @@ public class ReportRow {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       File parent = new File(file.getParent());
-      int n = countFiles(parent, ".xml") - 1 - countFiles(parent, "_fixed.xml");
+      int n = countFiles(parent, ".xml") - 1 - countFiles(parent, "_fixed.xml") - countFiles(parent, "mets.xml");
       String xml = readFullFile(file.getPath(), Charset.defaultCharset());
       String stime = getStime(file.getPath());
       int passed = 0, errors = 0, warnings = 0, score = 0;

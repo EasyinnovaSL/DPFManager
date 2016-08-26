@@ -76,7 +76,11 @@ public class ReportGeneratorTest extends CommandLineTest {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(4, directori.list().length);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+    assertEquals(4, n);
   }
 
   @Test
@@ -96,7 +100,11 @@ public class ReportGeneratorTest extends CommandLineTest {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(7, directori.list().length);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+    assertEquals(7, n);
   }
 
   @Test
@@ -115,7 +123,12 @@ public class ReportGeneratorTest extends CommandLineTest {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(9, directori.list().length);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+
+    assertEquals(9, n);
   }
 
   @Test
@@ -134,7 +147,12 @@ public class ReportGeneratorTest extends CommandLineTest {
     String path = getPath();
 
     File directori = new File(path);
-    assertEquals(7, directori.list().length);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+
+    assertEquals(7, n);
   }
 
   @Test
@@ -155,7 +173,12 @@ public class ReportGeneratorTest extends CommandLineTest {
       String path = getPath();
 
       File directori = new File(path);
-      assertEquals(4, directori.list().length);
+      int n=0;
+      for (String file : directori.list()) {
+        if (!file.contains("Mets")) n++;
+      }
+
+      assertEquals(4, n);
 
       // Check tiff to jpg
       String jpgPath = path+"html/img/1-Bilevel.tif.jpg";
@@ -185,7 +208,12 @@ public class ReportGeneratorTest extends CommandLineTest {
       String path = getPath();
 
       File directori = new File(path);
-      assertEquals(4, directori.list().length);
+      int n=0;
+      for (String file : directori.list()) {
+        if (!file.contains("Mets")) n++;
+      }
+
+      assertEquals(4, n);
 
       // Check tiff to jpg
       String jpgPath = path+"html/img/1-Bilevel.tif.jpg";
@@ -225,7 +253,12 @@ public class ReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int filesExpect = (formats.split(",").length) * 2;
 
-    assertEquals(directori.list().length, filesExpect);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains("Mets")) n++;
+    }
+
+    assertEquals(filesExpect, n);
 
     String extension = "";
     boolean isXML = false;

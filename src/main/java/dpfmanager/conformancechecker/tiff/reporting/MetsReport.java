@@ -1389,7 +1389,10 @@ public class MetsReport {
 
     } catch (JAXBException e) {
       e.printStackTrace();
-      return "";
+      return null;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
     }
 
   }
