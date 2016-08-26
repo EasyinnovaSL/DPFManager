@@ -4,6 +4,7 @@ import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.METS.niso.*;
+import dpfmanager.conformancechecker.tiff.reporting.METS.premis.Event;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 
@@ -946,6 +947,48 @@ public class MetsReport {
 
   }
 
+  private MdSecType.MdWrap constructDigiProvMdWrap(IndividualReport ir, Configuration config){
+
+    MdSecType.MdWrap mdwrap = new MdSecType.MdWrap();
+    MdSecType.MdWrap.XmlData xmlData = new MdSecType.MdWrap.XmlData();
+    mdwrap.setID("W" + mdwrap.hashCode());
+    mdwrap.setMDTYPE("PREMIS");
+    mdwrap.setMIMETYPE("text/xml");
+    try{
+
+      Date today = new Date();
+      GregorianCalendar gregory = new GregorianCalendar();
+      gregory.setTime(today);
+      XMLGregorianCalendar calendar = DatatypeFactory.newInstance()
+          .newXMLGregorianCalendar(
+              gregory);
+      mdwrap.setCREATED(calendar);
+
+      Event premisObject = new Event();
+      Event.EventIdentifier eventIdentifier= new Event.EventIdentifier();
+      eventIdentifier.setEventIdentifierType("Validation");
+      eventIdentifier.setEventIdentifierValue("Input_validation"); //TODO how to define it?
+      premisObject.setEventIdentifier(eventIdentifier);
+      premisObject.setEventType("Validation");
+      premisObject.setEventDateTime(today.toString());
+      premisObject.setEventDetail(config);
+      Event.LinkingAgentIdentifier linkingAgentIdentifier = new Event.LinkingAgentIdentifier();
+      linkingAgentIdentifier.setLinkingAgentIdentifierType("Software");
+      linkingAgentIdentifier.setLinkingAgentIdentifierValue("DPF Manager"); //TODO how to define it?
+      premisObject.setLinkingAgentIdentifier(linkingAgentIdentifier);
+
+      xmlData.setEvent(premisObject);
+      mdwrap.setXmlData(xmlData);
+      return mdwrap;
+
+    }catch (DatatypeConfigurationException e){
+
+      e.printStackTrace();
+      return mdwrap;
+    }
+
+  }
+
   /**
    * This method construct TechMdWrap from AmdSec of Mets.  This section includes technical metadata under NISO stardard
    * Info: numbers in method comments reference NISO Z39.87-2006 chapters
@@ -1326,6 +1369,13 @@ public class MetsReport {
       techMD.setID("T" + techMD.hashCode());
       techMD.setMdWrap(constructTechMdWrap(ir));
       amdsec.setTechMD(techMD);
+
+      MdSecType digiprovMD = new MdSecType();
+      digiprovMD.setID("D" + digiprovMD.hashCode());
+      digiprovMD.setMdWrap(constructDigiProvMdWrap(ir,config));
+      amdsec.setDigiprovMD(digiprovMD);
+
+
       mets.setAmdSec(amdsec);
 
       //mets File Sec

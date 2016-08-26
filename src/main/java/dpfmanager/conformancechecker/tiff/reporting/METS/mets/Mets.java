@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "mets")
+@XmlType(name = "")
 @XmlRootElement(name = "mets")
 public class Mets
     extends MetsType

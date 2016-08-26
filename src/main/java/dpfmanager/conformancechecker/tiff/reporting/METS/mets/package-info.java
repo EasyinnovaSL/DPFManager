@@ -5,5 +5,15 @@
 // Generado el: 2016.06.16 a las 10:17:25 AM CEST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.loc.gov/METS/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(
+    elementFormDefault = XmlNsForm.QUALIFIED,
+    xmlns={
+        @XmlNs(prefix="mets", namespaceURI="http://www.loc.gov/METS/"),
+        @XmlNs(prefix="niso", namespaceURI="http://www.loc.gov/mix/v20"),
+        @XmlNs(prefix="premis", namespaceURI="http://www.loc.gov/standards/premis/v1")
+    }
+)
+//@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.loc.gov/METS/", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package dpfmanager.conformancechecker.tiff.reporting.METS.mets;
+
+import javax.xml.bind.annotation.*;
