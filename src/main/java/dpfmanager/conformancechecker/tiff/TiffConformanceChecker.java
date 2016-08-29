@@ -488,6 +488,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   private String addXmlReportToPremisSection (String xmlReport, String metsReport){
 
+      //FIXME revisar el procediment, cal afegir el contingut del report xml com un node al mets report
+    //FIXME el node del mets és el premis:eventOutcomeDetail, aquí dins s'ha de colocar el report
 //    try {
 //      DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 //      domFactory.setNamespaceAware(true);
@@ -685,6 +687,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ir2.setCompareReport(ir);
 
             //Make due report in METS
+            //FIXME cal revisar xq aixo dóna null
             MetsReport metsReportFixed = new MetsReport();
             output = metsReport.parseIndividual(ir2, config);
             ir.setConformanceCheckerReportMets(output);
