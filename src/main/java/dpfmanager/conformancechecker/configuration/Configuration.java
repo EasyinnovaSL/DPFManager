@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,6 +27,10 @@ import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -37,6 +42,19 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * Created by easy on 06/10/2015.
  */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "isos",
+    "rules",
+    "formats",
+    "fixes",
+    "output",
+    "description",
+    "version",
+    "bundle"
+})
+@XmlRootElement(name = "configuration")
 public class Configuration {
   private ArrayList<String> isos;
   private Rules rules;
@@ -264,6 +282,31 @@ public class Configuration {
     StreamResult result = new StreamResult(f);
     transformer.transform(source, result);
   }
+
+  public StreamResult configurationToDocument (){
+    try{
+      String filename = "configurationToString.xml";
+      SaveFile(filename);
+      File fXmlFile = new File(filename);
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(fXmlFile);
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+      StreamResult result = new StreamResult(new StringWriter());
+      DOMSource source = new DOMSource(doc);
+      transformer.transform(source, result);
+
+      fXmlFile.delete();
+      return result;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
 
   private InputStream getInputStream(String filename) throws Exception {
     InputStream sc = null;

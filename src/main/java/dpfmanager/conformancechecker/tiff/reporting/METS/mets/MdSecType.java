@@ -10,6 +10,7 @@ package dpfmanager.conformancechecker.tiff.reporting.METS.mets;
 
 
 import dpfmanager.conformancechecker.tiff.reporting.METS.niso.Mix;
+import dpfmanager.conformancechecker.tiff.reporting.METS.premis.Event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1265,12 +1266,14 @@ public class MdSecType {
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
             "dcContainer",
-            "nisoContainer"
+            "nisoContainer",
+            "premisContainer"
         })
         public static class XmlData {
 
             protected List<SimpleLiteral> dcContainer; //to contain Dublin core metadata
             protected List<Mix> nisoContainer; //to contain NISO metadata
+            protected List<Event> premisContainer; //to contain PREMIS metadata
 
             /**
              * Gets the value of the any property.
@@ -1309,6 +1312,13 @@ public class MdSecType {
                 return this.nisoContainer;
             }
 
+            public List<Event> getEvent() {
+                if (premisContainer == null) {
+                    premisContainer = new ArrayList<Event>();
+                }
+                return this.premisContainer;
+            }
+
             public void setLiteral(SimpleLiteral o){
                 if (dcContainer == null) {
                     dcContainer = new ArrayList<SimpleLiteral>();
@@ -1321,6 +1331,13 @@ public class MdSecType {
                     nisoContainer = new ArrayList<Mix>();
                 }
                 this.nisoContainer.add(o);
+            }
+
+            public void setEvent(Event e){
+                if (premisContainer == null) {
+                    premisContainer = new ArrayList<Event>();
+                }
+                this.premisContainer.add(e);
             }
 
 

@@ -83,6 +83,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -485,6 +486,32 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return validation;
   }
 
+  private String addXmlReportToPremisSection (String xmlReport, String metsReport){
+
+      //FIXME revisar el procediment, cal afegir el contingut del report xml com un node al mets report
+    //FIXME el node del mets és el premis:eventOutcomeDetail, aquí dins s'ha de colocar el report
+//    try {
+//      DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+//      domFactory.setNamespaceAware(true);
+//      DocumentBuilder builder = domFactory.newDocumentBuilder();
+//      Document docMets = builder.parse(new InputSource(new StringReader(metsReport)));
+//      Document docXML = builder.parse(new InputSource(new StringReader(xmlReport)));
+//
+//      Element outcomeDetail = (Element)docMets.getElementsByTagName("premis:eventOutcomeDetail").item(0);
+//      outcomeDetail.appendChild(docXML);
+//      //http://stackoverflow.com/questions/4613140/xml-to-append-xml-document-into-the-node-of-another-document
+//    } catch (ParserConfigurationException e) {
+//      e.printStackTrace();
+//    } catch (SAXException e) {
+//      e.printStackTrace();
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+
+
+    return "";
+  }
+
   /**
    * Process tiff file.
    *
@@ -566,7 +593,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
           //Mets report
           MetsReport metsReport = new MetsReport();
+          String xmlOutput = output;
           output = metsReport.parseIndividual(ir, config);
+          addXmlReportToPremisSection(xmlOutput,output);
           ir.setConformanceCheckerReportMets(output);
 
           Fixes fixes = config.getFixes();
@@ -658,6 +687,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ir2.setCompareReport(ir);
 
             //Make due report in METS
+            //FIXME cal revisar xq aixo dóna null
+            MetsReport metsReportFixed = new MetsReport();
             output = metsReport.parseIndividual(ir2, config);
             ir2.setConformanceCheckerReportMets(output);
 

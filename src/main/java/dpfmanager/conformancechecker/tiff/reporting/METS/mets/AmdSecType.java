@@ -203,6 +203,13 @@ public class AmdSecType {
         return this.digiprovMD;
     }
 
+    public void setDigiprovMD(MdSecType m) {
+        if (digiprovMD == null) {
+            digiprovMD = new ArrayList<MdSecType>();
+        }
+        this.digiprovMD.add(m);
+    }
+
     /**
      * Obtiene el valor de la propiedad id.
      * 
