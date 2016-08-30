@@ -23,12 +23,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="normal*"/>
  *     &lt;enumeration value="normal, image flipped"/>
- *     &lt;enumeration value="normal, rotated 180°"/>
- *     &lt;enumeration value="normal, image flipped, rotated 180°"/>
- *     &lt;enumeration value="normal, image flipped, rotated cw 90°"/>
- *     &lt;enumeration value="normal, rotated ccw 90°"/>
- *     &lt;enumeration value="normal, image flipped, rotated ccw 90°"/>
- *     &lt;enumeration value="normal, rotated cw 90°"/>
+ *     &lt;enumeration value="normal, rotated 180"/>
+ *     &lt;enumeration value="normal, image flipped, rotated 180"/>
+ *     &lt;enumeration value="normal, image flipped, rotated cw 90"/>
+ *     &lt;enumeration value="normal, rotated ccw 90"/>
+ *     &lt;enumeration value="normal, image flipped, rotated ccw 90"/>
+ *     &lt;enumeration value="normal, rotated cw 90"/>
  *     &lt;enumeration value="unknown"/>
  *   &lt;/restriction>
  * &lt;/simpleType>

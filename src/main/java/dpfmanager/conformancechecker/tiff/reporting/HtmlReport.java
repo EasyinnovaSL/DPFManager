@@ -352,16 +352,18 @@ public class HtmlReport extends Report {
               rows += row;
             }
             int nh = 1;
-            for (Hashtable<String, String> kv : xmp.getHistory()) {
-              for (String key : kv.keySet()) {
-                row = "<tr class='xmp xmp" + (tag.index + 1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
-                row = row.replace("##ICON##", "<i class=\"icon-xmphist\"></i>");
-                row = row.replace("##ID##", nh + "");
-                row = row.replace("##KEY##", key);
-                row = row.replace("##VALUE##", kv.get(key).toString().trim());
-                rows += row;
+            if (xmp.getHistory() != null) {
+              for (Hashtable<String, String> kv : xmp.getHistory()) {
+                for (String key : kv.keySet()) {
+                  row = "<tr class='xmp xmp" + (tag.index + 1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+                  row = row.replace("##ICON##", "<i class=\"icon-xmphist\"></i>");
+                  row = row.replace("##ID##", nh + "");
+                  row = row.replace("##KEY##", key);
+                  row = row.replace("##VALUE##", kv.get(key).toString().trim());
+                  rows += row;
+                }
+                nh++;
               }
-              nh++;
             }
           } catch (Exception ex) {
             ex.printStackTrace();

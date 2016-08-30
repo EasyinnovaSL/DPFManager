@@ -53,7 +53,6 @@ public class PeriodicalChecksTest extends CommandLineTest {
     Integer lastCount = getPeriodicalChecksCount(argsList);
     Assert.assertEquals(beforeCount, lastCount);
 
-
     // Put things back
     System.out.flush();
     System.setOut(old);

@@ -1129,34 +1129,36 @@ public class MetsReport {
           ChangeHistoryType changeHistoryType = new ChangeHistoryType();
           XMP xmp = (XMP)ifd.getTag("XMP").getValue().get(0);
           List<Hashtable<String,String>> xmpHistoryList = xmp.getHistory();
-          Iterator<Hashtable<String,String>> iteratorXmpHistory = xmpHistoryList.iterator();
-          while(iteratorXmpHistory.hasNext()){
-            ChangeHistoryType.ImageProcessing imageProcessing = new ChangeHistoryType.ImageProcessing();
-            Hashtable<String,String> xmpHistory = iteratorXmpHistory.next();
-            if(xmpHistory.containsKey("when")){
-              TypeOfDateType dateType = new TypeOfDateType();
-              dateType.setUse("Manager");
-              dateType.setValue(xmpHistory.get("when"));
-              imageProcessing.setDateTimeProcessed(dateType);
-            }
-            if(xmpHistory.containsKey("softwareAgent")){
-              ChangeHistoryType.ImageProcessing.ProcessingSoftware processingSoftware = new ChangeHistoryType.ImageProcessing.ProcessingSoftware();
-              StringType softwareName = new StringType();
-              softwareName.setUse("Manager");
-              softwareName.setValue(xmpHistory.get("softwareAgent"));
-              processingSoftware.setProcessingSoftwareName(softwareName);
-              imageProcessing.setProcessingSoftware(processingSoftware);
-            }
-            if(xmpHistory.containsKey("action")){
-              StringType action = new StringType();
-              action.setUse("Manager");
-              action.setValue(xmpHistory.get("action"));
-              imageProcessing.setProcessingActions(action);
-            }
+          if (xmpHistoryList != null) {
+            Iterator<Hashtable<String, String>> iteratorXmpHistory = xmpHistoryList.iterator();
+            while (iteratorXmpHistory.hasNext()) {
+              ChangeHistoryType.ImageProcessing imageProcessing = new ChangeHistoryType.ImageProcessing();
+              Hashtable<String, String> xmpHistory = iteratorXmpHistory.next();
+              if (xmpHistory.containsKey("when")) {
+                TypeOfDateType dateType = new TypeOfDateType();
+                dateType.setUse("Manager");
+                dateType.setValue(xmpHistory.get("when"));
+                imageProcessing.setDateTimeProcessed(dateType);
+              }
+              if (xmpHistory.containsKey("softwareAgent")) {
+                ChangeHistoryType.ImageProcessing.ProcessingSoftware processingSoftware = new ChangeHistoryType.ImageProcessing.ProcessingSoftware();
+                StringType softwareName = new StringType();
+                softwareName.setUse("Manager");
+                softwareName.setValue(xmpHistory.get("softwareAgent"));
+                processingSoftware.setProcessingSoftwareName(softwareName);
+                imageProcessing.setProcessingSoftware(processingSoftware);
+              }
+              if (xmpHistory.containsKey("action")) {
+                StringType action = new StringType();
+                action.setUse("Manager");
+                action.setValue(xmpHistory.get("action"));
+                imageProcessing.setProcessingActions(action);
+              }
 
-            changeHistoryType.setImageProcessing(imageProcessing);
+              changeHistoryType.setImageProcessing(imageProcessing);
+            }
+            mix.setChangeHistory(changeHistoryType);
           }
-          mix.setChangeHistory(changeHistoryType);
         }
 
 
@@ -1443,7 +1445,7 @@ public class MetsReport {
       JAXBContext context =  JAXBContext.newInstance(Mets.class);
 
       Marshaller m = context.createMarshaller();
-       //for pretty-print XML in JAXB
+      //for pretty-print XML in JAXB
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
       StringWriter sw = new StringWriter();
       m.marshal(mets, sw);
