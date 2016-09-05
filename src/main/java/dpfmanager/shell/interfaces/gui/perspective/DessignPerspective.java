@@ -5,10 +5,14 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -78,6 +82,15 @@ public class DessignPerspective extends DpfAbstractPerspective {
 
     // Define main pane
     borderPane = constructBorderPane(perspectiveLayout, topPane, mainPane);
+
+    // Escape character to quit
+    mainPane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+      @Override
+      public void handle(KeyEvent t) {
+        if(t.getCode()== KeyCode.ESCAPE)
+          ((Stage)topPane.getScene().getWindow()).close();//use any one object
+      }
+    });
   }
 
   @Override
