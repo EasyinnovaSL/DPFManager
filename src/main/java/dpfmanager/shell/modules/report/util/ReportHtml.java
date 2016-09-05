@@ -67,35 +67,35 @@ public class ReportHtml extends ReportGeneric {
       imageBody = StringUtils.replace(imageBody, "##INDEX##", "" + index);
       imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());
 
-      if (ir.hasEpValidation()) {
+      if (ir.checkEP && ir.hasEpValidation()) {
         imageBody = StringUtils.replace(imageBody, "##EP_ERR_N##", "" + ir.getEPErrors().size());
         imageBody = StringUtils.replace(imageBody, "##EP_WAR_N##", "" + ir.getEPWarnings().size());
       } else {
         imageBody = StringUtils.replace(imageBody, "##EP_CLASS##", "hide");
       }
 
-      if (ir.hasBlValidation()) {
+      if (ir.checkBL && ir.hasBlValidation()) {
         imageBody = StringUtils.replace(imageBody, "##BL_ERR_N##", "" + ir.getBaselineErrors().size());
         imageBody = StringUtils.replace(imageBody, "##BL_WAR_N##", "" + ir.getBaselineWarnings().size());
       } else {
         imageBody = StringUtils.replace(imageBody, "##BL_CLASS##", "hide");
       }
 
-      if (ir.hasItValidation(0)) {
+      if (ir.checkIT0 && ir.hasItValidation(0)) {
         imageBody = StringUtils.replace(imageBody, "##IT_ERR_N##", "" + ir.getITErrors(0).size());
         imageBody = StringUtils.replace(imageBody, "##IT_WAR_N##", "" + ir.getITWarnings(0).size());
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT_CLASS##", "hide");
       }
 
-      if (ir.hasItValidation(1)) {
+      if (ir.checkIT1 && ir.hasItValidation(1)) {
         imageBody = StringUtils.replace(imageBody, "##IT1_ERR_N##", "" + ir.getITErrors(1).size());
         imageBody = StringUtils.replace(imageBody, "##IT1_WAR_N##", "" + ir.getITWarnings(1).size());
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT1_CLASS##", "hide");
       }
 
-      if (ir.hasItValidation(2)) {
+      if (ir.checkIT2 && ir.hasItValidation(2)) {
         imageBody = StringUtils.replace(imageBody, "##IT2_ERR_N##", "" + ir.getITErrors(2).size());
         imageBody = StringUtils.replace(imageBody, "##IT2_WAR_N##", "" + ir.getITWarnings(2).size());
       } else {

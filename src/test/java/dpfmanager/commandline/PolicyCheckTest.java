@@ -67,10 +67,10 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), false);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to conformance checker</div>"), false);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), false);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
     int index = html.indexOf("<tr class=\"##ROW_PC##\">");
@@ -156,10 +156,10 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), false);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to conformance checker, BUT it has some warnings</div>"), true);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to TIFF Baseline, BUT it has some warnings</div>"), true);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
     int index = html.indexOf("<tr class=\"##ROW_PC##\">");
@@ -245,10 +245,10 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), false);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to conformance checker</div>"), false);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), false);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
     int index = html.indexOf("<tr class=\"##ROW_PC##\">");
@@ -334,10 +334,10 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), false);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to conformance checker</div>"), false);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to conformance checker</div>"), true);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), false);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
     int index = html.indexOf("<tr class=\"##ROW_PC##\">");
@@ -422,10 +422,10 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), false);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to conformance checker</div>"), true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to conformance checker, BUT it has some warnings</div>"), true);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
+    assertEquals(html.contains("<div style=\"display: none;\" class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to TIFF Baseline, BUT it has some warnings</div>"), true);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
     assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
     int index = html.indexOf("<tr class=\"##ROW_PC##\">");

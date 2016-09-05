@@ -385,10 +385,18 @@ public class IndividualReport implements Comparable {
   public int calculatePercent() {
     Double rest = 100.0;
     IndividualReport ir = this;
-    if (ir.hasEpValidation()) rest -= ir.getEPErrors().size() * 12.5;
-    if (ir.hasItValidation()) rest -= (ir.getITErrors(0).size() + ir.getITErrors(1).size() + ir.getITErrors(2).size()) * 12.5;
-    if (ir.hasBlValidation()) rest -= ir.getBaselineErrors().size() * 12.5;
-    if (ir.hasPcValidation()) rest -= ir.getPCErrors().size() * 12.5;
+    if (ir.checkEP && ir.hasEpValidation()) rest -= ir.getEPErrors().size() * 12.5;
+    if ((ir.checkIT0 || ir.checkIT1 || ir.checkIT2) && ir.hasItValidation()) {
+      int n0 = ir.getITErrors(0).size();
+      int n1 = ir.getITErrors(1).size();
+      int n2 = ir.getITErrors(2).size();
+      if (!ir.checkIT0) n0 = 0;
+      if (!ir.checkIT1) n1 = 0;
+      if (!ir.checkIT2) n2 = 0;
+      rest -= (n0 + n1 + n2) * 12.5;
+    }
+    if (ir.checkBL && ir.hasBlValidation()) rest -= ir.getBaselineErrors().size() * 12.5;
+    if (ir.checkPC && ir.hasPcValidation()) rest -= ir.getPCErrors().size() * 12.5;
     if (rest < 0.0) {
       rest = 0.0;
     }

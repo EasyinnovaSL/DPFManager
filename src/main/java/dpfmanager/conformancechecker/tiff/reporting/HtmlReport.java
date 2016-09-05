@@ -33,6 +33,30 @@ import java.util.List;
  * Created by easy on 05/05/2016.
  */
 public class HtmlReport extends Report {
+  String makeConformDiv(int nerrors, int nwarnings, String key, String html, boolean check, boolean forcecheck) {
+    String htmlBody = html;
+    if (check || (forcecheck && nerrors+nwarnings == 0)) {
+      if (nerrors > 0) {
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "none");
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "none");
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_ERR##", "block");
+      } else if (nwarnings > 0) {
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "none");
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "block");
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_ERR##", "none");
+      } else {
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "block");
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "none");
+        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_ERR##", "none");
+      }
+    } else {
+      htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "none");
+      htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "none");
+      htmlBody = StringUtils.replace(htmlBody, "##" + key + "_ERR##", "none");
+    }
+    return htmlBody;
+  }
+
   /**
    * Parse an individual report to HTML.
    *
@@ -65,19 +89,12 @@ public class HtmlReport extends Report {
     int pcErr = ir.getPCErrors().size(), pcWar = ir.getPCWarnings().size();
 
     // Global result
-    if (blErr + epErr + it0Err + it1Err + it2Err + pcErr > 0) {
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_OK##", "none");
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_WAR##", "none");
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_ERR##", "block");
-    } else if (blWar + epWar + it0War + it1War + it2War + pcWar > 0) {
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_OK##", "none");
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_WAR##", "block");
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_ERR##", "none");
-    } else {
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_OK##", "block");
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_WAR##", "none");
-      htmlBody = StringUtils.replace(htmlBody, "##ALL_ERR##", "none");
-    }
+    htmlBody = makeConformDiv(blErr, blWar, "C_BL", htmlBody, ir.checkBL, true);
+    htmlBody = makeConformDiv(epErr, epWar, "C_EP", htmlBody, ir.checkEP, true);
+    htmlBody = makeConformDiv(it0Err, it0War, "C_IT0", htmlBody, ir.checkIT0, true);
+    htmlBody = makeConformDiv(it1Err, it1War, "C_IT1", htmlBody, ir.checkIT1, true);
+    htmlBody = makeConformDiv(it2Err, it2War, "C_IT2", htmlBody, ir.checkIT2, true);
+    htmlBody = makeConformDiv(pcErr, pcWar, "C_PC", htmlBody, ir.checkPC, false);
 
     if (mode == 1) {
       htmlBody = StringUtils.replace(htmlBody, "##CL_LINKR2##", "show");
@@ -107,7 +124,7 @@ public class HtmlReport extends Report {
     dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCWarnings().size(), ir.getPCWarnings().size()) : "";
     htmlBody = StringUtils.replace(htmlBody, "##F_PC_WAR##", "" + ir.getPCWarnings().size() + dif);
 
-    if (ir.hasBlValidation()) {
+    if (ir.checkBL && ir.hasBlValidation()) {
       htmlBody = StringUtils.replace(htmlBody, "##F_BL_ERR_CLASS##", ir.getBaselineErrors().size() > 0 ? "error" : "info");
       htmlBody = StringUtils.replace(htmlBody, "##F_BL_WAR_CLASS##", ir.getBaselineWarnings().size() > 0 ? "warning" : "info");
       dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNBlErr(), blErr) : "";
@@ -119,7 +136,7 @@ public class HtmlReport extends Report {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_BL##", "hide");
     }
 
-    if (ir.hasEpValidation()) {
+    if (ir.checkEP && ir.hasEpValidation()) {
       htmlBody = StringUtils.replace(htmlBody, "##F_EP_ERR_CLASS##", ir.getEPErrors().size() > 0 ? "error" : "info");
       htmlBody = StringUtils.replace(htmlBody, "##F_EP_WAR_CLASS##", ir.getEPWarnings().size() > 0 ? "warning" : "info");
       dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpErr(), epErr) : "";
@@ -131,7 +148,7 @@ public class HtmlReport extends Report {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_EP##", "hide");
     }
 
-    if (ir.hasItValidation(0)) {
+    if (ir.checkIT0 && ir.hasItValidation(0)) {
       htmlBody = StringUtils.replace(htmlBody, "##F_IT_ERR_CLASS##", ir.getITErrors(0).size() > 0 ? "error" : "info");
       htmlBody = StringUtils.replace(htmlBody, "##F_IT_WAR_CLASS##", ir.getITWarnings(0).size() > 0 ? "warning" : "info");
       dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(0), it0Err) : "";
@@ -143,7 +160,7 @@ public class HtmlReport extends Report {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_IT##", "hide");
     }
 
-    if (ir.hasItValidation(1)) {
+    if (ir.checkIT1 && ir.hasItValidation(1)) {
       htmlBody = StringUtils.replace(htmlBody, "##F_IT1_ERR_CLASS##", ir.getITErrors(1).size() > 0 ? "error" : "info");
       htmlBody = StringUtils.replace(htmlBody, "##F_IT1_WAR_CLASS##", ir.getITWarnings(1).size() > 0 ? "warning" : "info");
       dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(1), it1Err) : "";
@@ -155,7 +172,7 @@ public class HtmlReport extends Report {
       htmlBody = StringUtils.replace(htmlBody, "##ROW_IT1##", "hide");
     }
 
-    if (ir.hasItValidation(2)) {
+    if (ir.checkIT2 && ir.hasItValidation(2)) {
       htmlBody = StringUtils.replace(htmlBody, "##F_IT2_ERR_CLASS##", ir.getITErrors(2).size() > 0 ? "error" : "info");
       htmlBody = StringUtils.replace(htmlBody, "##F_IT2_WAR_CLASS##", ir.getITWarnings(2).size() > 0 ? "warning" : "info");
       dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(2), it2Err) : "";

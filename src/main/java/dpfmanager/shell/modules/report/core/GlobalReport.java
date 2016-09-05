@@ -197,27 +197,27 @@ public class GlobalReport {
       } else {
         if (ir.hasEpValidation()) {
           if (ir.getEPErrors().size() == 0) nreportsEpOk++;
-          hasEp = true;
+          if (ir.checkEP) hasEp = true;
         }
         if (ir.hasItValidation(0)) {
           if (ir.getITErrors(0).size() == 0) nreportsIt0Ok++;
-          hasIt0 = true;
+          if (ir.checkIT0) hasIt0 = true;
         }
         if (ir.hasItValidation(1)) {
           if (ir.getITErrors(1).size() == 0) nreportsIt1Ok++;
-          hasIt1 = true;
+          if (ir.checkIT1) hasIt1 = true;
         }
         if (ir.hasItValidation(2)) {
           if (ir.getITErrors(2).size() == 0) nreportsIt2Ok++;
-          hasIt2 = true;
+          if (ir.checkIT2) hasIt2 = true;
         }
         if (ir.hasBlValidation()) {
           if (ir.getBaselineErrors().size() == 0) nreportsBlOk++;
-          hasBl = true;
+          if (ir.checkBL) hasBl = true;
         }
         if (ir.hasPcValidation()) {
           if (ir.getPCErrors().size() == 0) nreportsPcOk++;
-          hasPc = true;
+          if (ir.checkPC) hasPc = true;
         }
       }
     }
@@ -243,22 +243,22 @@ public class GlobalReport {
     int n = 0;
     for (IndividualReport ir : reports) {
       boolean ok = true;
-      if (ir.hasEpValidation()) {
+      if (ir.checkEP && ir.hasEpValidation()) {
         if (ir.getEPErrors().size() > 0) ok = false;
       }
-      if (ir.hasItValidation(0)) {
+      if (ir.checkIT0 && ir.hasItValidation(0)) {
         if (ir.getITErrors(0).size() > 0) ok = false;
       }
-      if (ir.hasItValidation(1)) {
+      if (ir.checkIT1 && ir.hasItValidation(1)) {
         if (ir.getITErrors(1).size() > 0) ok = false;
       }
-      if (ir.hasItValidation(2)) {
+      if (ir.checkIT2 && ir.hasItValidation(2)) {
         if (ir.getITErrors(2).size() > 0) ok = false;
       }
-      if (ir.hasBlValidation()) {
+      if (ir.checkBL && ir.hasBlValidation()) {
         if (ir.getBaselineErrors().size() > 0) ok = false;
       }
-      if (ir.hasPcValidation()) {
+      if (ir.checkPC && ir.hasPcValidation()) {
         if (ir.getPCErrors().size() > 0) ok = false;
       }
       if (ok) n++;

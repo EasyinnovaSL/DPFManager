@@ -5,6 +5,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResul
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
@@ -822,82 +823,97 @@ public class XmlReport {
       // implementation checker
       List<RuleResult> errorsTotal = new ArrayList<RuleResult>();
       List<RuleResult> warningsTotal = new ArrayList<RuleResult>();
-      if (ir.getBaselineErrors() != null) errorsTotal.addAll(ir.getBaselineErrors());
-      if (ir.getEPErrors() != null) errorsTotal.addAll(ir.getEPErrors());
-      if (ir.getITErrors(0) != null) errorsTotal.addAll(ir.getITErrors(0));
-      if (ir.getITErrors(1) != null) errorsTotal.addAll(ir.getITErrors(1));
-      if (ir.getITErrors(2) != null) errorsTotal.addAll(ir.getITErrors(2));
-      if (ir.getBaselineWarnings() != null) warningsTotal.addAll(ir.getBaselineWarnings());
-      if (ir.getEPWarnings() != null) warningsTotal.addAll(ir.getEPWarnings());
-      if (ir.getITWarnings(0) != null) warningsTotal.addAll(ir.getITWarnings(0));
-      if (ir.getITWarnings(1) != null) warningsTotal.addAll(ir.getITWarnings(1));
-      if (ir.getITWarnings(2) != null) warningsTotal.addAll(ir.getITWarnings(2));
+      if (ir.checkBL && ir.getBaselineErrors() != null) errorsTotal.addAll(ir.getBaselineErrors());
+      if (ir.checkEP && ir.getEPErrors() != null) errorsTotal.addAll(ir.getEPErrors());
+      if (ir.checkIT0 && ir.getITErrors(0) != null) errorsTotal.addAll(ir.getITErrors(0));
+      if (ir.checkIT1 && ir.getITErrors(1) != null) errorsTotal.addAll(ir.getITErrors(1));
+      if (ir.checkIT2 && ir.getITErrors(2) != null) errorsTotal.addAll(ir.getITErrors(2));
+      if (ir.checkBL && ir.getBaselineWarnings() != null) warningsTotal.addAll(ir.getBaselineWarnings());
+      if (ir.checkEP && ir.getEPWarnings() != null) warningsTotal.addAll(ir.getEPWarnings());
+      if (ir.checkIT0 && ir.getITWarnings(0) != null) warningsTotal.addAll(ir.getITWarnings(0));
+      if (ir.checkIT1 && ir.getITWarnings(1) != null) warningsTotal.addAll(ir.getITWarnings(1));
+      if (ir.checkIT2 && ir.getITWarnings(2) != null) warningsTotal.addAll(ir.getITWarnings(2));
 
       Element implementationCheckerElement = doc.createElement("implementation_checker");
-      implementationCheckerElement.setAttribute("version", "2.1");
+      implementationCheckerElement.setAttribute("version", DPFManagerProperties.getVersion());
       implementationCheckerElement.setAttribute("ref", "DPF Manager");
       implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
       implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
+      implementationCheckerElement.setAttribute("conformsBL", (ir.getBaselineErrors() != null && ir.getBaselineErrors().size() == 0) + "");
+      implementationCheckerElement.setAttribute("conformsEP", (ir.getEPErrors() != null && ir.getEPErrors().size() == 0) + "");
+      implementationCheckerElement.setAttribute("conformsIT", (ir.getITErrors(0) != null && ir.getITErrors(0).size() == 0) + "");
+      implementationCheckerElement.setAttribute("conformsIT1", (ir.getITErrors(1) != null && ir.getITErrors(1).size() == 0) + "");
+      implementationCheckerElement.setAttribute("conformsIT2", (ir.getITErrors(2) != null && ir.getITErrors(2).size() == 0) + "");
       report.appendChild(implementationCheckerElement);
 
       // Baseline
-      List<RuleResult> errors = ir.getBaselineErrors();
-      List<RuleResult> warnings = ir.getBaselineWarnings();
-      if (errors != null && warnings != null) {
-        Element results = doc.createElement("implementation_check");
-        Element name = doc.createElement("name");
-        name.setTextContent("Baseline 6.0");
-        results.appendChild(name);
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
+      if (ir.checkBL) {
+        List<RuleResult> errors = ir.getBaselineErrors();
+        List<RuleResult> warnings = ir.getBaselineWarnings();
+        if (errors != null && warnings != null) {
+          Element results = doc.createElement("implementation_check");
+          Element name = doc.createElement("name");
+          name.setTextContent("Baseline 6.0");
+          results.appendChild(name);
+          addErrorsWarnings(doc, results, errors, warnings);
+          implementationCheckerElement.appendChild(results);
+        }
       }
 
       // TiffEP
-      errors = ir.getEPErrors();
-      warnings = ir.getEPWarnings();
-      if (errors != null && warnings != null) {
-        Element results = doc.createElement("implementation_check");
-        Element name = doc.createElement("name");
-        name.setTextContent("Tiff/EP");
-        results.appendChild(name);
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
+      if (ir.checkEP) {
+        List<RuleResult> errors = ir.getEPErrors();
+        List<RuleResult> warnings = ir.getEPWarnings();
+        if (errors != null && warnings != null) {
+          Element results = doc.createElement("implementation_check");
+          Element name = doc.createElement("name");
+          name.setTextContent("Tiff/EP");
+          results.appendChild(name);
+          addErrorsWarnings(doc, results, errors, warnings);
+          implementationCheckerElement.appendChild(results);
+        }
       }
 
       // TiffIT
-      errors = ir.getITErrors(0);
-      warnings = ir.getITWarnings(0);
-      if (errors != null && warnings != null) {
-        Element results = doc.createElement("implementation_check");
-        Element name = doc.createElement("name");
-        name.setTextContent("Tiff-IT");
-        results.appendChild(name);
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
+      if (ir.checkIT0) {
+        List<RuleResult> errors = ir.getITErrors(0);
+        List<RuleResult> warnings = ir.getITWarnings(0);
+        if (errors != null && warnings != null) {
+          Element results = doc.createElement("implementation_check");
+          Element name = doc.createElement("name");
+          name.setTextContent("Tiff-IT");
+          results.appendChild(name);
+          addErrorsWarnings(doc, results, errors, warnings);
+          implementationCheckerElement.appendChild(results);
+        }
       }
 
       // TiffIT-1
-      errors = ir.getITErrors(1);
-      warnings = ir.getITWarnings(1);
-      if (errors != null && warnings != null) {
-        Element results = doc.createElement("implementation_check");
-        Element name = doc.createElement("name");
-        name.setTextContent("Tiff-IT P1");
-        results.appendChild(name);
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
+      if (ir.checkIT1) {
+        List<RuleResult> errors = ir.getITErrors(1);
+        List<RuleResult> warnings = ir.getITWarnings(1);
+        if (errors != null && warnings != null) {
+          Element results = doc.createElement("implementation_check");
+          Element name = doc.createElement("name");
+          name.setTextContent("Tiff-IT P1");
+          results.appendChild(name);
+          addErrorsWarnings(doc, results, errors, warnings);
+          implementationCheckerElement.appendChild(results);
+        }
       }
 
       // TiffIT-2
-      errors = ir.getITErrors(2);
-      warnings = ir.getITWarnings(2);
-      if (errors != null && warnings != null) {
-        Element results = doc.createElement("implementation_check");
-        Element name = doc.createElement("name");
-        name.setTextContent("Tiff-IT P2");
-        results.appendChild(name);
-        addErrorsWarnings(doc, results, errors, warnings);
-        implementationCheckerElement.appendChild(results);
+      if (ir.checkIT2) {
+        List<RuleResult> errors = ir.getITErrors(2);
+        List<RuleResult> warnings = ir.getITWarnings(2);
+        if (errors != null && warnings != null) {
+          Element results = doc.createElement("implementation_check");
+          Element name = doc.createElement("name");
+          name.setTextContent("Tiff-IT P2");
+          results.appendChild(name);
+          addErrorsWarnings(doc, results, errors, warnings);
+          implementationCheckerElement.appendChild(results);
+        }
       }
 
       // Total

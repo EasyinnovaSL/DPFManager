@@ -14,6 +14,7 @@ import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
@@ -39,6 +40,23 @@ public class PdfReport extends Report {
    * The Init posy.
    */
   int init_posy = 800;
+
+  PDFParams makeConformSection(int nerrors, int nwarnings, String key, PDFParams pdfParams0, boolean check, boolean forcecheck, int pos_x, int image_width, int font_size, PDFont font) throws Exception {
+    PDFParams pdfParams = pdfParams0;
+    if (check || (forcecheck && nerrors+nwarnings == 0)) {
+      if (nerrors > 0) {
+        pdfParams = writeText(pdfParams, "This file does NOT conform to " + key, pos_x + image_width + 10, font, font_size, Color.red);
+      } else if (nwarnings > 0) {
+        pdfParams = writeText(pdfParams, "This file conforms to " + key + ", BUT it has some warnings", pos_x + image_width + 1, font, font_size, Color.orange);
+      } else {
+        pdfParams = writeText(pdfParams, "This file conforms to " + key, pos_x + image_width + 1, font, font_size, Color.green);
+      }
+      pdfParams.y -= 20;
+    } else {
+
+    }
+    return pdfParams;
+  }
 
   /**
    * Parse an individual report to PDF.
@@ -100,16 +118,14 @@ public class PdfReport extends Report {
       // Image alert
       pdfParams.y -= 30;
       font_size = 9;
-      if (blErr + epErr + it0Err + it1Err + it2Err + pcErr > 0) {
-        pdfParams = writeText(pdfParams, "This file does NOT conform to conformance checker", pos_x + image_width + 10, font, font_size, Color.red);
-      } else if (blWar + epWar + it0War + it1War + it2War + pcWar > 0) {
-        pdfParams = writeText(pdfParams, "This file conforms to conformance checker, BUT it has some warnings", pos_x + image_width + 1, font, font_size, Color.orange);
-      } else {
-        pdfParams = writeText(pdfParams, "This file conforms to conformance checker", pos_x + image_width + 1, font, font_size, Color.green);
-      }
+      pdfParams = makeConformSection(blErr, blWar, "TIFF Baseline", pdfParams, ir.checkEP, true, pos_x, image_width, font_size, font);
+      pdfParams = makeConformSection(epErr, epWar, "TIFF/EP", pdfParams, ir.checkEP, true, pos_x, image_width, font_size, font);
+      pdfParams = makeConformSection(it0Err, it0War, "TIFF/IT", pdfParams, ir.checkIT0, true, pos_x, image_width, font_size, font);
+      pdfParams = makeConformSection(it1Err, it1War, "TIFF/IT1", pdfParams, ir.checkIT1, true, pos_x, image_width, font_size, font);
+      pdfParams = makeConformSection(it2Err, it2War, "TIFF/IT2", pdfParams, ir.checkIT2, true, pos_x, image_width, font_size, font);
+      pdfParams = makeConformSection(pcErr, pcWar, "Policy checker", pdfParams, ir.checkPC, false, pos_x, image_width, font_size, font);
 
       // Summary table
-      pdfParams.y -= 20;
       font_size = 8;
       pdfParams = writeText(pdfParams, "Errors", pos_x + image_width + 140, font, font_size);
       pdfParams = writeText(pdfParams, "Warnings", pos_x + image_width + 180, font, font_size);
@@ -124,7 +140,7 @@ public class PdfReport extends Report {
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNBlWar(), blWar) : "";
         pdfParams = writeText(pdfParams, blWar + dif, pos_x + image_width + 200, font, font_size, blWar > 0 ? Color.orange : Color.black);
       }
-      if (ir.hasEpValidation()) {
+      if (ir.checkEP && ir.hasEpValidation()) {
         pdfParams.y -= 20;
         pdfParams = writeText(pdfParams, "Tiff/Ep", pos_x + image_width + 10, font, font_size);
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpErr(), epErr) : "";
@@ -132,7 +148,7 @@ public class PdfReport extends Report {
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNEpWar(), epWar) : "";
         pdfParams = writeText(pdfParams, epWar + dif, pos_x + image_width + 200, font, font_size, epWar > 0 ? Color.orange : Color.black);
       }
-      if (ir.hasItValidation(0)) {
+      if (ir.checkIT0 && ir.hasItValidation(0)) {
         pdfParams.y -= 20;
         pdfParams = writeText(pdfParams, "Tiff/It", pos_x + image_width + 10, font, font_size);
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(0), it0Err) : "";
@@ -140,7 +156,7 @@ public class PdfReport extends Report {
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(0), it0War) : "";
         pdfParams = writeText(pdfParams, it0War + dif, pos_x + image_width + 200, font, font_size, it0War > 0 ? Color.orange : Color.black);
       }
-      if (ir.hasItValidation(0)) {
+      if (ir.checkIT1 && ir.hasItValidation(0)) {
         pdfParams.y -= 20;
         pdfParams = writeText(pdfParams, "Tiff/It-P1", pos_x + image_width + 10, font, font_size);
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(1), it1Err) : "";
@@ -148,7 +164,7 @@ public class PdfReport extends Report {
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(1), it1War) : "";
         pdfParams = writeText(pdfParams, it1War + dif, pos_x + image_width + 200, font, font_size, it1War > 0 ? Color.orange : Color.black);
       }
-      if (ir.hasItValidation(0)) {
+      if (ir.checkIT2 && ir.hasItValidation(0)) {
         pdfParams.y -= 20;
         pdfParams = writeText(pdfParams, "Tiff/It-P2", pos_x + image_width + 10, font, font_size);
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItErr(2), it2Err) : "";
@@ -156,12 +172,14 @@ public class PdfReport extends Report {
         dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNItWar(2), it2War) : "";
         pdfParams = writeText(pdfParams, it2War + dif, pos_x + image_width + 200, font, font_size, it2War > 0 ? Color.orange : Color.black);
       }
-      pdfParams.y -= 20;
-      pdfParams = writeText(pdfParams, "Policy checker", pos_x + image_width + 10, font, font_size);
-      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCErrors().size(), pcErr) : "";
-      pdfParams = writeText(pdfParams, pcErr + dif, pos_x + image_width + 150, font, font_size, pcErr > 0 ? Color.red : Color.black);
-      dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCWarnings().size(), pcWar) : "";
-      pdfParams = writeText(pdfParams, pcWar + dif, pos_x + image_width + 200, font, font_size, pcWar > 0 ? Color.orange : Color.black);
+      if (ir.checkPC) {
+        pdfParams.y -= 20;
+        pdfParams = writeText(pdfParams, "Policy checker", pos_x + image_width + 10, font, font_size);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCErrors().size(), pcErr) : "";
+        pdfParams = writeText(pdfParams, pcErr + dif, pos_x + image_width + 150, font, font_size, pcErr > 0 ? Color.red : Color.black);
+        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getPCWarnings().size(), pcWar) : "";
+        pdfParams = writeText(pdfParams, pcWar + dif, pos_x + image_width + 200, font, font_size, pcWar > 0 ? Color.orange : Color.black);
+      }
 
       // Tags
       font_size = 10;

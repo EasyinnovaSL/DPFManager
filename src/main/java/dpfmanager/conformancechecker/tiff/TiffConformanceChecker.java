@@ -548,25 +548,20 @@ public class TiffConformanceChecker extends ConformanceChecker {
           //Logger.println("Validating Tiff");
           String content = getValidationXmlString(tr);
           Validator baselineVal = null;
-          if (checkBL) {
+          //if (checkBL)
             baselineVal = getBaselineValidation(content);
-          }
           Validator epValidation = null;
-          if (checkEP) {
-            epValidation = getEPValidation(content, false);
-          }
+          //if (checkEP)
+            epValidation = getEPValidation(content, !checkEP);
           Validator it0Validation = null;
           Validator it1Validation = null;
           Validator it2Validation = null;
-          if (checkIT) {
-            it0Validation = getITValidation(0, content, false);
-          }
-          if (checkIT1) {
-            it1Validation = getITValidation(1, content, false);
-          }
-          if (checkIT2) {
-            it2Validation = getITValidation(2, content, false);
-          }
+          //if (checkIT)
+            it0Validation = getITValidation(0, content, !checkIT);
+          //if (checkIT1)
+            it1Validation = getITValidation(1, content, !checkIT1);
+          //if (checkIT2)
+            it2Validation = getITValidation(2, content, !checkIT2);
           //Logger.println("Creating report");
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
@@ -653,15 +648,20 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
             String contentfixed = TiffConformanceChecker.getValidationXmlString(tr);
             Validator baselineValfixed = null;
-            if (ir.checkBL) baselineValfixed = TiffConformanceChecker.getBaselineValidation(contentfixed);
+            //if (ir.checkBL)
+              baselineValfixed = TiffConformanceChecker.getBaselineValidation(contentfixed);
             Validator epValidationfixed = null;
-            if (ir.checkEP) epValidationfixed = TiffConformanceChecker.getEPValidation(contentfixed, false);
+            //if (ir.checkEP)
+              epValidationfixed = TiffConformanceChecker.getEPValidation(contentfixed, !ir.checkEP);
             Validator it0Validationfixed = null;
-            if (ir.checkIT0) it0Validationfixed = TiffConformanceChecker.getITValidation(0, contentfixed, false);
+            //if (ir.checkIT0)
+              it0Validationfixed = TiffConformanceChecker.getITValidation(0, contentfixed, !ir.checkIT0);
             Validator it1Validationfixed = null;
-            if (ir.checkIT1) it1Validationfixed = TiffConformanceChecker.getITValidation(1, contentfixed, false);
+            //if (ir.checkIT1)
+              it1Validationfixed = TiffConformanceChecker.getITValidation(1, contentfixed, !ir.checkIT1);
             Validator it2Validationfixed = null;
-            if (ir.checkIT2) it2Validationfixed = TiffConformanceChecker.getITValidation(2, contentfixed, false);
+            //if (ir.checkIT2)
+              it2Validationfixed = TiffConformanceChecker.getITValidation(2, contentfixed, !ir.checkIT2);
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");
             name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
