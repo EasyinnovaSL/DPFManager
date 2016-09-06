@@ -4,14 +4,18 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.UiMessage;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
@@ -86,6 +90,12 @@ public class TopFragment extends FlowPane {
 
     group = new PersistentButtonToggleGroup();
     group.getToggles().addAll(showDessign, showReports, showPeriodical, showAbout);
+
+    /*VBox vb = new VBox();
+    vb.setPadding(new Insets(10, 50, 50, 50));
+    vb.setSpacing(10);
+    ImageView logo = new ImageView(new Image("@../images/logo_mini.png"));
+    vb.getChildren().add(logo);*/
 
     this.getChildren().addAll(showDessign, createSeparator(), showReports, createSeparator(), showPeriodical, createSeparator(), showAbout);
     this.getStyleClass().add("top-pane");

@@ -23,9 +23,9 @@
     <children>
         <VBox id="dessignVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <ImageView focusTraversable="true" preserveRatio="true" styleClass="main-logo">
-                <image> <Image url="@../images/logo.png" /></image>
+                <image> <Image url="@../images/logo2.png" /></image>
                 <VBox.margin>
-                    <Insets bottom="60.0" top="40.0" />
+                    <Insets bottom="20.0" top="10.0" />
                 </VBox.margin>
             </ImageView>
             <Label text="%configTitle">
