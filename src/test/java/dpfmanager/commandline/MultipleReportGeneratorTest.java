@@ -23,7 +23,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     String[] args = new String[4];
     args[0] = "src/test/resources/Small/";
-    args[1] = "-reportformat";
+    args[1] = "--reportformat";
     args[2] = "xml";
     args[3] = "-s";
 
@@ -48,7 +48,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     String[] args = new String[4];
     args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
-    args[1] = "-reportformat";
+    args[1] = "--reportformat";
     args[2] = "pdf";
     args[3] = "-s";
 
@@ -78,7 +78,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     String[] args = new String[4];
     args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
-    args[1] = "-reportformat";
+    args[1] = "--reportformat";
     args[2] = "pdf";
     args[3] = "-s";
 
@@ -108,7 +108,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     String[] args = new String[4];
     args[0] = "src/test/resources/Small/";
-    args[1] = "-reportformat";
+    args[1] = "--reportformat";
     args[2] = "pdf";
     args[3] = "-s";
 
