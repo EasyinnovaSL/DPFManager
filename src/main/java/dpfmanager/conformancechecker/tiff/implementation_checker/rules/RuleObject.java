@@ -13,6 +13,7 @@ public class RuleObject {
   String reference;
   String level;
   String id;
+  String description;
   AssertObject assertion;
   List<DiagnosticObject> diagnostics = null;
 
@@ -40,6 +41,14 @@ public class RuleObject {
 
   public String getReference() {
     return reference;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getDescription() {
+    return description;
   }
 
   @XmlAttribute
