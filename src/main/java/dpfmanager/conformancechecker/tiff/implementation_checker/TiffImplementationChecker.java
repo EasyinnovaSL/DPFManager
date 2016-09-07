@@ -15,8 +15,6 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
-import org.jsoup.Connection;
-
 import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Dictionary;
