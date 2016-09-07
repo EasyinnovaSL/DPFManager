@@ -31,7 +31,7 @@ You can run the DPF Manager in two modes, GUI and CLI. To start the software in 
 
 For using the CLI in non-windows operating systems use the terminal and enter the following command which will explain the available parameters.
 
-    dpf_manager -help
+    dpf_manager -h
 
 For Windows operating systems use the CLI executable named dpf-manager-console.exe instead. 
 

@@ -32,7 +32,7 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     String[] args = new String[4];
     args[0] = "src/test/resources/Small/Bilevel.tif";
     args[1] = "-s";
-    args[2] = "-reportformat";
+    args[2] = "-f";
     args[3] = "'html,json,xml'";
 
     MainConsoleApp.main(args);

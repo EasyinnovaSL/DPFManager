@@ -97,7 +97,7 @@ public class ConsoleLauncher {
     ArrayList<String> files = new ArrayList<>();
     while (idx < params.size() && !argsError) {
       String arg = params.get(idx);
-      if (arg.equals("-o")) {
+      if (arg.equals("-o") || arg.equals("--output")) {
         if (idx + 1 < params.size()) {
           String outputFolder = params.get(++idx);
           File tmp = new File(outputFolder);
@@ -154,13 +154,13 @@ public class ConsoleLauncher {
           printOut(bundle.getString("specifyConfig"));
           argsError = true;
         }
-      } else if (arg.equals("-help")) {
+      } else if (arg.equals("-h") || arg.equals("--help")) {
         controller.displayHelp();
         exit();
-      } else if (arg.equals("-v")) {
+      } else if (arg.equals("-v") || arg.equals("--version")) {
         controller.displayVersion();
         exit();
-      } else if (arg.equals("-reportformat")) {
+      } else if (arg.equals("-f") || arg.equals("--reportformat")) {
         if (idx + 1 < params.size()) {
           String formats = params.get(++idx);
           controller.setXml(formats.contains("xml"));
@@ -197,7 +197,7 @@ public class ConsoleLauncher {
           printOut(bundle.getString("specifyUrl"));
           argsError = true;
         }
-      } else if (arg.equals("-l")) {
+      } else if (arg.equals("-l") || arg.equals("--language")) {
         // nothing, checked before
       } else if (arg.equals("-listperiodic")) {
         if (parameters.containsKey("-addperiodic") || parameters.containsKey("-editperiodic") || parameters.containsKey("-removeperiodic")){

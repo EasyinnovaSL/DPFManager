@@ -27,7 +27,7 @@ public class DeleteFileTest extends CommandLineTest {
 
     String[] args = new String[4];
     args[0] = name;
-    args[1] = "-reportformat";
+    args[1] = "--reportformat";
     args[2] = "xml";
     args[3] = "-s";
 
@@ -51,7 +51,7 @@ public class DeleteFileTest extends CommandLineTest {
 
     String[] args = new String[4];
     args[0] = name;
-    args[1] = "-reportformat";
+    args[1] = "--reportformat";
     args[2] = "json";
     args[3] = "-s";
 
@@ -75,7 +75,7 @@ public class DeleteFileTest extends CommandLineTest {
 
     String[] args = new String[4];
     args[0] = name;
-    args[1] = "-reportformat";
+    args[1] = "--reportformat";
     args[2] = "html";
     args[3] = "-s";
 
@@ -99,7 +99,7 @@ public class DeleteFileTest extends CommandLineTest {
 
     String[] args = new String[4];
     args[0] = name;
-    args[1] = "-reportformat";
+    args[1] = "--reportformat";
     args[2] = "xml";
     args[3] = "-s";
 
