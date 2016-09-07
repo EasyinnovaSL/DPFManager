@@ -8,8 +8,6 @@ import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import com.google.gson.stream.JsonReader;
 
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,6 +15,8 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -153,20 +153,32 @@ public class StatisticsGeneratorTest extends CommandLineTest {
   }
 
   private void assertHTML(String html, int files) throws Exception {
-    File htmlFile = new File(html);
-    org.jsoup.nodes.Document doc = Jsoup.parse(htmlFile, "UTF-8");
+    byte[] encoded = Files.readAllBytes(Paths.get(html));
+    String content = new String(encoded);
 
-    String info = "pie-global";
-    String filesTotal = "h3";
-
-    Elements fileNum = doc.getElementsByAttributeValue("id", info);
-    Elements fileTotal = doc.getElementsByTag(filesTotal);
-
+    String subs = content.substring(content.indexOf("<h3>"));
+    subs = subs.substring(subs.indexOf(">")+1);
+    subs = subs.substring(0, subs.indexOf("<"));
     if (files == 1) {
-      assertEquals(fileTotal.text(), files + " file processed");
+      assertEquals(subs, files + " file processed");
     } else {
-      assertEquals(fileTotal.text(), files + " files processed");
+      assertEquals(subs, files + " files processed");
     }
-    assertEquals(fileNum.get(0).parent().text(), "0 passed " + files + " failed Global score 0%");
+
+    subs = content.substring(content.indexOf("id=\"pie-global\""));
+    subs = subs.substring(subs.indexOf("pie-info"));
+    subs = subs.substring(subs.indexOf(">")+1);
+    subs = subs.substring(subs.indexOf(">")+1);
+    String field1 = subs.substring(0, subs.indexOf("<"));
+    subs = subs.substring(subs.indexOf("<div"));
+    subs = subs.substring(subs.indexOf(">")+1);
+    String field2 = subs.substring(0, subs.indexOf("<"));
+    subs = subs.substring(subs.indexOf("<div"));
+    subs = subs.substring(subs.indexOf(">")+1);
+    String field3 = subs.substring(0, subs.indexOf("<"));
+
+    assertEquals("0 passed", field1);
+    assertEquals(files + " failed", field2);
+    assertEquals("Global score 0%", field3);
   }
 }

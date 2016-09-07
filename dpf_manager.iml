@@ -65,22 +65,6 @@
     <orderEntry type="library" name="Maven: xerces:xercesImpl:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: xalan:xalan:2.7.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.5" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.code.editor.fx:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.e4.core.di.annotations:1.4.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.code.editor:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.text:3.5.400" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:com.ibm.icu.base:54.1.1" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.core.di:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.jdt.annotation:2.0.100" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.text:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.equinox.common:3.7.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.text.ui:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.ui.controls:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.ui.panes:2.0.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.ui.animation:2.0.0" level="project" />
-    <orderEntry type="library" name="Maven: at.bestsolution.eclipse:org.eclipse.fx.core:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.8.2" level="project" />
     <orderEntry type="library" name="Maven: com.easyinnova:tifflibrary4java:1.5.2" level="project" />
     <orderEntry type="library" name="Maven: junit:junit-dep:4.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:1.8.10" level="project" />
