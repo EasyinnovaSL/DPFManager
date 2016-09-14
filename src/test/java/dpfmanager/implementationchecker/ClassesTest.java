@@ -140,7 +140,7 @@ public class ClassesTest extends TestCase {
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "Circular E.tif", "Circular", 1);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO order.tif", "ascending", 1);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO repeat.tif", "duplicated", 2);
-    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO photo.tif", "photometric", 1);
+    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO photo.tif", "Photometric", 1);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO photoval.tif", "Photometric Interpretation value", 1);
   }
 }
