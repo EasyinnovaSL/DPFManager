@@ -107,11 +107,11 @@ public class ImplementationCheckerTest extends TestCase {
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD tree" + separator + "Old school E.tif", 6);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD tree" + separator + "Recommended list.tif", 4);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Insane tag count E.tif", -1);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Circular E.tif", 5);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Circular short E.tif", 3);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Circular E.tif", 1);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Circular short E.tif", 1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Duplicate tag E.tif", 4);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Unsorted tags E.tif", 3);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Beyond EOF E.tif", 3);
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Beyond EOF E.tif", 1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "IFD struct" + separator + "Premature EOF E.tif", -1);
   }
 }

@@ -18,6 +18,11 @@
    <description>Magic number exists</description>
    <reference>Section 2, page 13</reference>
   </rule>
+  <rule id="bl-h-3" context="header" level="critical">
+   <assert test="{byteOrder=='BIG_ENDIAN'}||{byteOrder=='LITTLE_ENDIAN'}">ByteOrder must be BIG_ENDIAN or LITTLE_ENDIAN</assert>
+   <description>Byteorder either Big Endian or Little endian</description>
+   <reference>Section 2, page 13</reference>
+  </rule>
   <rule id="bl-h-5" context="header" level="critical">
    <assert test="{magicNumber==42}">Tiff signature is not correct (Magic Number must be 42)</assert>
    <description>Magic number equal to 42</description>
@@ -28,11 +33,6 @@
    <description>Defined Byteorder</description>
    <reference>Section 2, page 13</reference>
   </rule>
-  <rule id="bl-h-3" context="header" level="critical">
-   <assert test="{byteOrder=='BIG_ENDIAN'}||{byteOrder=='LITTLE_ENDIAN'}">ByteOrder must be BIG_ENDIAN or LITTLE_ENDIAN</assert>
-   <description>Byteorder either Big Endian or Little endian</description>
-   <reference>Section 2, page 13</reference>
-  </rule>
  </rules>
 
  <rules description="global-rules">
@@ -41,14 +41,14 @@
    <description>Word alignment</description>
    <reference>Section 2, page 13</reference>
   </rule>
+  <rule id="bl-g-3" context="*" level="critical">
+   <assert test="{offset &lt; $tiffValidationObject.size$}">Bad offset position, probably corrupted file.</assert>
+   <description>Offset pointing to a position out of the file</description>
+   <reference>Section 2, page 13</reference>
+  </rule>
   <rule id="bl-g-2" context="*">
    <assert test="{offset &gt; 7}||{offset == 0}">Bad offset position</assert>
    <description>Offset pointing outside the header</description>
-   <reference>Section 2, page 13</reference>
-  </rule>
-  <rule id="bl-g-3" context="*">
-   <assert test="{offset &lt; $tiffValidationObject.size$}">Bad offset position</assert>
-   <description>Offset pointing to a position out of the file</description>
    <reference>Section 2, page 13</reference>
   </rule>
   <rule id="bl-g-4" context="*">
@@ -74,7 +74,7 @@
    <description>At least one IFD</description>
    <reference>Section 2, page 14</reference>
   </rule>
-  <rule id="bl-ifd-3" context="ifds">
+  <rule id="bl-ifd-3" context="ifds" level="critical">
    <assert test="{circularReference == 0}">Circular reference</assert>
    <description>Next IFD offset not pointing to a previous one</description>
    <reference>Section 7, page 26</reference>
@@ -85,13 +85,13 @@
    <reference>Section 2, page 14</reference>
   </rule>
   <rule id="bl-ifd-5" context="ifd">
-   <assert test="{tagOrdering == 1}">Tags must be in strict ascending order</assert>
-   <description>Tags ordered in ascending order</description>
+   <assert test="{duplicateTags == 0}">Tags cannot be duplicated</assert>
+   <description>Tags not repeated</description>
    <reference>Section 2, page 15</reference>
   </rule>
   <rule id="bl-ifd-6" context="ifd">
-   <assert test="{duplicateTags == 0}">Tags cannot be duplicated</assert>
-   <description>Tags not repeated</description>
+   <assert test="{tagOrdering == 1}">Tags must be in strict ascending order</assert>
+   <description>Tags ordered in ascending order</description>
    <reference>Section 2, page 15</reference>
   </rule>
   <rule id="bl-ifd-7" context="tags">
@@ -529,10 +529,17 @@
   <rule id="bl-tg-24" context="tag[type=ASCII]">
    <assert test="{duplicatedNuls==false}">String contains multiple nulls</assert>
    <description>Check ascii strings are valid</description>
+   <reference>Section 2, page 15</reference>
   </rule>
   <rule id="bl-tg-25" context="tag[type=ASCII]">
    <assert test="{lastByte==0}">String does not end with null</assert>
    <description>Check ascii strings are well terminated</description>
+   <reference>Section 2, page 15</reference>
+  </rule>
+  <rule id="bl-tg-26" context="ifd[class=image]" level="warning">
+   <assert test="{count(tags.tag[privateTag=private]) &lt; 11}">If more than 10 private tags are used, a container should be used</assert>
+   <description>If you need more than 10 tags, we suggest that you reserve a single private tag and use it as a container</description>
+   <reference>Section 0, page 9</reference>
   </rule>
  </rules>
  

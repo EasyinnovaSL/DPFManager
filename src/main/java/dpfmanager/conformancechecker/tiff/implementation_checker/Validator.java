@@ -129,6 +129,9 @@ public class Validator {
     boolean bbreak = false;
     for (RulesObject ruleSet : rules.getRules()) {
       for (RuleObject rule : ruleSet.getRules()) {
+        if (rule.getId().equals("bl-tg-26"))
+          rule.toString();
+
         String context = rule.getContext();
         List<TiffNode> objects = model.getObjectsFromContext(context, true);
         for (TiffNode node : objects) {
