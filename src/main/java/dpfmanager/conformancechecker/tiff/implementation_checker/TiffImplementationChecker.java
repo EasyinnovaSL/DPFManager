@@ -513,7 +513,11 @@ public class TiffImplementationChecker {
       int size = usedOffsetsSizes.get(usedOffset);
       if (offset >= usedOffset && offset < usedOffset + size)
         return true;
-      if (offset + length >= usedOffset && offset + length < usedOffset + size)
+      if (offset + length > usedOffset && offset + length < usedOffset + size)
+        return true;
+      if (usedOffset >= offset && usedOffset < offset + length)
+        return true;
+      if (usedOffset + size > offset && usedOffset + size < offset + length)
         return true;
     }
     return false;
@@ -522,6 +526,7 @@ public class TiffImplementationChecker {
   public TiffTag CreateTiffTag(TagValue tv) {
     TiffTag tt = new TiffTag();
     tt.setId(tv.getId());
+    if (tv.getId() > 32767) tt.setPrivateTag("private");
     tt.setName(tv.getName());
     tt.setCardinality(tv.getCardinality());
     tt.setType(com.easyinnova.tiff.model.TiffTags.getTagTypeName(tv.getType()));
