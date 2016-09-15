@@ -377,6 +377,13 @@ public class XmlReport {
         msg = doc.createElement("ruleValue");
         msg.setTextContent(value.getRule().getAssertionField().getValue());
         error.appendChild(msg);
+
+        if (value.getReference() != null) {
+          // ISO reference
+          msg = doc.createElement("iso_reference");
+          msg.setTextContent(value.getReference());
+          error.appendChild(msg);
+        }
       }
 
       results.appendChild(error);
@@ -420,6 +427,13 @@ public class XmlReport {
         msg = doc.createElement("ruleValue");
         msg.setTextContent(value.getRule().getAssertionField().getValue());
         warning.appendChild(msg);
+
+        if (value.getReference() != null) {
+          // ISO reference
+          msg = doc.createElement("iso_reference");
+          msg.setTextContent(value.getReference());
+          warning.appendChild(msg);
+        }
       }
 
       results.appendChild(warning);

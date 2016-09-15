@@ -265,19 +265,23 @@ public class MetsReport {
         //reference Black and White
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("ReferenceBlackWhite"))) {
           BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite referenceBlackWhite = new BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite();
-          Rational headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(0);
-          Rational footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(1);
-          BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite.Component component = createComponentFromReferences(headroom, footroom);
-          referenceBlackWhite.setComponent(component);
-          headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(2);
-          footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(3);
-          component = createComponentFromReferences(headroom, footroom);
-          referenceBlackWhite.setComponent(component);
-          headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(4);
-          footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(5);
-          component = createComponentFromReferences(headroom, footroom);
-          referenceBlackWhite.setComponent(component);
-          photometricInterpretation.setReferenceBlackWhite(referenceBlackWhite);
+          try {
+            Rational headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(0);
+            Rational footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(1);
+            BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite.Component component = createComponentFromReferences(headroom, footroom);
+            referenceBlackWhite.setComponent(component);
+            headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(2);
+            footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(3);
+            component = createComponentFromReferences(headroom, footroom);
+            referenceBlackWhite.setComponent(component);
+            headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(4);
+            footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(5);
+            component = createComponentFromReferences(headroom, footroom);
+            referenceBlackWhite.setComponent(component);
+            photometricInterpretation.setReferenceBlackWhite(referenceBlackWhite);
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
         }
       }
 
@@ -713,8 +717,12 @@ public class MetsReport {
       if (ir.getTiffModel().getMetadata().contains("CFAPattern")) {
         IntegerType cfaPattern = new IntegerType();
         cfaPattern.setUse("Manager");
-        cfaPattern.setValue(new BigInteger(ir.getTiffModel().getMetadata().get("CFAPattern").toString()));
-        imageData.setCfaPattern(cfaPattern);
+        try {
+          cfaPattern.setValue(new BigInteger(ir.getTiffModel().getMetadata().get("CFAPattern").toString().replace("[", "").replace("]", "").replace(",", "")));
+          imageData.setCfaPattern(cfaPattern);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
       }
     }
     return imageData;

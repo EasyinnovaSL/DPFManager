@@ -2,7 +2,7 @@
 <implementationCheckerObject>
  
  <title>Tiff EP Implementation Checker</title>
-
+ <iso>TIFF/EP</iso>
  <description>ISO 12234-2:2001(E)</description>
  
  <include>BaselineProfileChecker.xml</include>

@@ -2,7 +2,7 @@
 <implementationCheckerObject>
  
  <title>Tiff Baseline Implementation Checker</title>
-
+ <iso>TIFF Baseline 6</iso>
  <description>Tiff Revision 6.0 Final - June 3, 1992</description>
  
  <rules description="header-check">
