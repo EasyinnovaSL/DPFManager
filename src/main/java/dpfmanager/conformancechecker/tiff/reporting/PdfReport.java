@@ -384,18 +384,23 @@ public class PdfReport extends Report {
 
     pdfParams = writeText(pdfParams, type + " Conformance", pos_x, font, font_size);
     font_size = 8;
+    int marg1 = 30;
+    int marg2 = 75;
+    int marg3 = 240;
     if ((errors != null && errors.size() > 0) || (warnings != null && warnings.size() > 0)) {
       pdfParams.y -= 20;
       pdfParams = writeText(pdfParams, "Type", pos_x, font, font_size);
-      pdfParams = writeText(pdfParams, "Location", pos_x + 50, font, font_size);
-      pdfParams = writeText(pdfParams, "Description", pos_x + 100, font, font_size);
+      pdfParams = writeText(pdfParams, "Location", pos_x + marg1, font, font_size);
+      pdfParams = writeText(pdfParams, "Reference", pos_x + marg2, font, font_size);
+      pdfParams = writeText(pdfParams, "Description", pos_x + marg3, font, font_size);
     }
     if (errors != null) {
       for (RuleResult val : errors) {
         pdfParams.y -= 20;
         pdfParams = writeText(pdfParams, "Error", pos_x, font, font_size, Color.red);
-        pdfParams = writeText(pdfParams, val.getLocation(), pos_x + 50, font, font_size);
-        pdfParams = writeText(pdfParams, val.getDescription(), pos_x + 100, font, font_size);
+        pdfParams = writeText(pdfParams, val.getLocation(), pos_x + marg1, font, font_size);
+        if (val.getReference() != null) pdfParams = writeText(pdfParams, val.getReference(), pos_x + marg2, font, font_size);
+        pdfParams = writeText(pdfParams, val.getDescription(), pos_x + marg3, font, font_size);
         total++;
       }
     }
@@ -403,8 +408,9 @@ public class PdfReport extends Report {
       for (RuleResult val : warnings) {
         pdfParams.y -= 20;
         pdfParams = writeText(pdfParams, "Warning", pos_x, font, font_size, Color.orange);
-        pdfParams = writeText(pdfParams, val.getLocation(), pos_x + 50, font, font_size);
-        pdfParams = writeText(pdfParams, val.getDescription(), pos_x + 100, font, font_size);
+        pdfParams = writeText(pdfParams, val.getLocation(), pos_x + marg1, font, font_size);
+        if (val.getReference() != null) pdfParams = writeText(pdfParams, val.getReference(), pos_x + marg2, font, font_size);
+        pdfParams = writeText(pdfParams, val.getDescription(), pos_x + marg3, font, font_size);
         total++;
       }
     }

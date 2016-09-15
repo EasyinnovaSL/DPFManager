@@ -14,6 +14,7 @@ public class RuleObject {
   String level;
   String id;
   String description;
+  String iso;
   AssertObject assertion;
   List<DiagnosticObject> diagnostics = null;
 
@@ -41,6 +42,14 @@ public class RuleObject {
 
   public String getReference() {
     return reference;
+  }
+
+  public void setIso(String iso) {
+    this.iso = iso;
+  }
+
+  public String getIso() {
+    return iso;
   }
 
   public void setDescription(String description) {

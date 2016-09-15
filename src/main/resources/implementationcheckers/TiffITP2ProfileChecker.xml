@@ -2,7 +2,7 @@
 <implementationCheckerObject>
     
     <title>Tiff IT Implementation Checker</title>
-    
+    <iso>TIFF/IT-P2</iso>
     <description>ISO 12639:2004(E)</description>
     
     <include>BaselineProfileChecker.xml</include>
