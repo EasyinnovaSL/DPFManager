@@ -205,7 +205,6 @@ li {
 .CustomTable3 td{
 	padding: 5px;
 	padding-right: 10px;
-	word-break: break-all;
 }.CustomTable3 td:first-child{
 	padding-left: 25px;
 }
@@ -290,6 +289,9 @@ h4 i{
 .bot80{ margin-bottom: 80px; }
 .bot90{ margin-bottom: 90px; }
 .bot100{ margin-bottom: 100px; }
+
+.left15{ margin-left: 15px; }
+.fullw{width:100%;}
 
 @media (max-width: 991px) {
 	.top10-sm{ margin-top: 10px; }
