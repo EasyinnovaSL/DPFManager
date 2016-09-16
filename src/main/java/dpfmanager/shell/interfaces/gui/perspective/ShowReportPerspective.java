@@ -78,8 +78,11 @@ public class ShowReportPerspective extends DpfAbstractPerspective {
     mainPane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent t) {
-        if(t.getCode()== KeyCode.ESCAPE)
-          ((Stage)topPane.getScene().getWindow()).close();//use any one object
+        if(t.getCode()== KeyCode.ESCAPE) {
+          ((Stage) topPane.getScene().getWindow()).close();//use any one object
+        } else if(t.getCode()== KeyCode.F1) {
+          context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
+        }
       }
     });
   }

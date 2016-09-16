@@ -4,6 +4,7 @@ import dpfmanager.shell.core.adapter.DpfAbstractPerspective;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
@@ -80,8 +81,11 @@ public class PeriodicalPerspective extends DpfAbstractPerspective {
     mainPane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent t) {
-        if(t.getCode()== KeyCode.ESCAPE)
-          ((Stage)topPane.getScene().getWindow()).close();//use any one object
+        if(t.getCode()== KeyCode.ESCAPE) {
+          ((Stage) topPane.getScene().getWindow()).close();//use any one object
+        } else if(t.getCode()== KeyCode.F1) {
+          context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
+        }
       }
     });
   }
