@@ -37,6 +37,7 @@ public class ReportRow {
   private final SimpleStringProperty passed;
   private final SimpleStringProperty score;
   private final SimpleMapProperty<String, String> formats;
+  private final SimpleStringProperty delete;
 
   /**
    * Instantiates a new Report row.
@@ -50,7 +51,7 @@ public class ReportRow {
    * @param passed   the passed
    * @param score    the score
    */
-  public ReportRow(String sdate, String stime, String input, String nFiles, String errors, String warnings, String passed, String score) {
+  public ReportRow(String sdate, String stime, String input, String nFiles, String errors, String warnings, String passed, String score, String deletePath) {
     this.date = new SimpleStringProperty(parseDate2Locale(sdate));
     this.time = new SimpleStringProperty(stime);
     this.input = new SimpleStringProperty(input);
@@ -60,6 +61,7 @@ public class ReportRow {
     this.passed = new SimpleStringProperty(passed);
     this.score = new SimpleStringProperty(score);
     this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
+    this.delete = new SimpleStringProperty(deletePath);
   }
 
   private String parseDate2Locale(String sdate){
@@ -248,6 +250,24 @@ public class ReportRow {
     this.formats.put(format, filepath);
   }
 
+  /**
+   * Gets date.
+   *
+   * @return the date
+   */
+  public String getDelete() {
+    return delete.get();
+  }
+
+  /**
+   * Sets date.
+   *
+   * @param delete the delete file
+   */
+  public void setDelete(String delete) {
+    date.set(delete);
+  }
+
   private static int countFiles(File folder, String extension) {
     String[] files = folder.list(new FilenameFilter() {
       @Override
@@ -335,18 +355,7 @@ public class ReportRow {
         score = passed * 100 / n;
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
-      return row;
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
-  public static ReportRow createEmptyRow(String reportDay) {
-    try {
-      String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
-
-      ReportRow row = new ReportRow(sdate, "?", "?", "?", "? errors", "? warnings", "? passed", "? %");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -435,7 +444,7 @@ public class ReportRow {
         }
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -500,7 +509,7 @@ public class ReportRow {
       }
 
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -522,7 +531,7 @@ public class ReportRow {
       String stime = getStime(file.getPath());
       String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".pdf");
 
-      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1",errors), bundle.getString("warnings").replace("%1",warnings), bundle.getString("passed").replace("%1",passed), score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1",errors), bundle.getString("warnings").replace("%1",warnings), bundle.getString("passed").replace("%1",passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
