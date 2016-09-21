@@ -9,6 +9,9 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.conformancechecker.ConformanceCheckerModule;
+import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerModel;
+import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.scene.control.Alert;
@@ -136,6 +139,15 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(getBundle().getString("dpfConfigFiles"), "*.dpf");
       fileChooser.getExtensionFilters().add(extFilter);
       file = fileChooser.showOpenDialog(GuiWorkbench.getMyStage());
+    }
+
+    if (file != null) {
+      // Check valid config
+      ConformanceCheckerModel ccm = new ConformanceCheckerModel();
+      if (!ccm.readConfig(file.getPath())) {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
+        file = null;
+      }
     }
 
     if (file != null) {
