@@ -9,6 +9,7 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.report.util.ReportRow;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -39,12 +40,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
+import org.apache.commons.io.FileUtils;
+import org.controlsfx.control.PropertySheet;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -77,6 +83,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
   private TableColumn<ReportRow, String> colScore;
   private TableColumn colFormats;
+  private TableColumn colDelete;
 
   private int prefWidth = 840;
   private int prefHeight = 470;
@@ -123,7 +130,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
   private void addHeaders() {
     TableColumn colDate = new TableColumn(bundle.getString("colDate"));
-    setMinMaxWidth(colDate, 85);
+    setMinMaxWidth(colDate, 75);
     colDate.setCellValueFactory(new PropertyValueFactory<ReportRow, String>("date"));
 
     TableColumn colTime = new TableColumn(bundle.getString("colTime"));
@@ -174,10 +181,14 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
     );
 
+    colDelete = new TableColumn(bundle.getString("colDelete"));
+    setMinMaxWidth(colDelete, 30);
+    colDelete.setCellValueFactory( new PropertyValueFactory<>( "delete" ) );
+
     tabReports.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     tabReports.setPrefWidth(840.0);
     tabReports.setFixedCellSize(28.0);
-    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
+    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats, colDelete);
     tabReports.setCursor(Cursor.DEFAULT);
     tabReports.setEditable(false);
     tabReports.setMaxHeight(470.0);
@@ -220,6 +231,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
     addChartScore();
     addFormatIcons();
+    addDeleteIcon();
   }
 
   private void resizeTable() {
@@ -343,6 +355,67 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
           }
         };
         return cell;
+      }
+    });
+  }
+
+  public void addDeleteIcon() {
+    colDelete.setCellFactory(new Callback<TableColumn<ReportRow, String>, TableCell<ReportRow, String>>() {
+      @Override
+      public TableCell<ReportRow, String> call(TableColumn<ReportRow, String> param) {
+        TableCell<ReportRow, String> cell = new TableCell<ReportRow, String>() {
+          @Override
+          public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+
+            HBox box = new HBox();
+            box.setSpacing(3);
+            box.setAlignment(Pos.CENTER_LEFT);
+
+            ImageView icon = new ImageView();
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            icon.setImage(new Image("images/delete.png"));
+            icon.setCursor(Cursor.HAND);
+            icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
+              @Override
+              public void handle(MouseEvent event) {
+                // Delete report
+                File file = new File(item);
+                File dir = new File(file.getParent());
+                try {
+                  FileUtils.deleteDirectory(dir);
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+
+                final ObservableList items = getTableView().getItems();
+                if( items != null && items.size() > 0) {
+                  Object item = items.get(getTableRow().getIndex());
+                  items.remove(item);
+                }
+              }
+            });
+
+            box.getChildren().add(icon);
+            setGraphic(box);
+          }
+        };
+        return cell;
+      }
+    });
+  }
+
+  void refreshTable(TableView tableView) {
+    final ObservableList items = tableView.getItems();
+    if( items == null || items.size() == 0) return;
+
+    Object item = tableView.getItems().get(0);
+    items.remove(item);
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        items.add(0, item);
       }
     });
   }
