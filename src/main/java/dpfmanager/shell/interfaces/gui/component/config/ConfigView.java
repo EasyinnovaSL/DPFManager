@@ -113,6 +113,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
+    
     // Set model and controller
     setModel(new ConfigModel());
     setController(new ConfigController());
