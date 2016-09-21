@@ -88,6 +88,15 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
     return conformance.getConformanceCheckerFields();
   }
 
+  public String getFieldToolTip(String field) {
+    for (Field f : conformance.getConformanceCheckerFields()) {
+      if (f.getName().equals(field)) {
+        return f.getDescription();
+      }
+    }
+    return field;
+  }
+
   public ArrayList<String> getFixes() {
     ArrayList<String> fixes = new ArrayList<>();
     fixes.add("removeTag");

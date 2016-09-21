@@ -18,7 +18,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -160,6 +162,25 @@ public class Wizard2Fragment {
     if (tag != null) {
       comboBox.setValue(tag);
     }
+    comboBox.setCellFactory(param -> {
+      return new ListCell<String>() {
+
+        @Override
+        public void updateItem(String item, boolean empty) {
+          super.updateItem(item, empty);
+
+          if (item != null) {
+            setText(item);
+            String toolTipText = getModel().getFieldToolTip(item);
+            Tooltip tt = new Tooltip(toolTipText);
+            setTooltip(tt);
+          } else {
+            setText(null);
+            setTooltip(null);
+          }
+        }
+      };
+    });
 
     // Add remove button
     Button remove = new Button();
