@@ -175,21 +175,21 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.appendChild(field);
       addElement(doc, field, "name", "PixelDensity");
       addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Pixel Density in pixels per centimeter");
+      addElement(doc, field, "description", "Pixels per centimeter");
       addElement(doc, field, "operators", ">,<,=");
       // Number of images
       field = doc.createElement("field");
       fields.appendChild(field);
       addElement(doc, field, "name", "NumberImages");
       addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Number of images");
+      addElement(doc, field, "description", "Number of images in the TIFF");
       addElement(doc, field, "operators", ">,<,=");
       // BitDepth
       field = doc.createElement("field");
       fields.appendChild(field);
       addElement(doc, field, "name", "BitDepth");
       addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Bit Depth");
+      addElement(doc, field, "description", "Number of bits per pixel component");
       addElement(doc, field, "operators", ">,<,=");
       addElement(doc, field, "values", "1,2,4,8,16,32,64");
       // DPI
@@ -205,7 +205,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.appendChild(field);
       addElement(doc, field, "name", "ExtraChannels");
       addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Extra Channels");
+      addElement(doc, field, "description", "Extra pixel components");
       addElement(doc, field, "operators", ">,<,=");
       // XY Resolution
       field = doc.createElement("field");
@@ -220,7 +220,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.appendChild(field);
       addElement(doc, field, "name", "BlankPage");
       addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Blank Page");
+      addElement(doc, field, "description", "Page devoid of content (completely white)");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", "False,True");
       // NumberBlankPage
@@ -235,7 +235,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.appendChild(field);
       addElement(doc, field, "name", "Compression");
       addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Compression");
+      addElement(doc, field, "description", "Compression scheme");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", compressionName(1) + "," + compressionName(2) + "," + compressionName(32773) + "," + compressionName(3) + "," + compressionName(4) + "," + compressionName(5) + "," + compressionName(6) + "," + compressionName(7) + "," + compressionName(8) + "," + compressionName(9) + "," + compressionName(10) + "");
       // Photometric
@@ -243,7 +243,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.appendChild(field);
       addElement(doc, field, "name", "Photometric");
       addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Photometric Interpretation");
+      addElement(doc, field, "description", "Color space of the image data");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", photometricName(1) + "," + photometricName(2) + "," + photometricName(3) + "," + photometricName(4) + "," + photometricName(5) + "," + photometricName(6) + "," + photometricName(10) + "");
       // Planar
@@ -251,7 +251,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.appendChild(field);
       addElement(doc, field, "name", "Planar");
       addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Planar Configuration");
+      addElement(doc, field, "description", "How the pixels components are stored");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", planarName(1) + "," + planarName(2));
       // Byteorder
@@ -267,7 +267,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.appendChild(field);
       addElement(doc, field, "name", "IccProfileClass");
       addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "IccProfileClass");
+      addElement(doc, field, "description", "Class of the device ICC Profile");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", IccProfile.ProfileClass.Abstract + "," + IccProfile.ProfileClass.Input + "," + IccProfile.ProfileClass.Display + "," + IccProfile.ProfileClass.Output + "," + IccProfile.ProfileClass.DeviceLink + "," + IccProfile.ProfileClass.ColorSpace + "," + IccProfile.ProfileClass.NamedColor + "," + IccProfile.ProfileClass.Unknown);
 
