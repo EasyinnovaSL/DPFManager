@@ -11,6 +11,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
@@ -19,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+import javafx.stage.Stage;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
@@ -101,6 +104,18 @@ public class TopFragment extends FlowPane {
     this.getStyleClass().add("top-pane");
     this.getStyleClass().add("background-main");
     this.setAlignment(Pos.TOP_CENTER);
+
+    // Escape character to quit
+    this.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+      @Override
+      public void handle(KeyEvent t) {
+        if (t.getCode() == KeyCode.ESCAPE) {
+          ((Stage) showDessign.getScene().getWindow()).close();//use any one object
+        } else if (t.getCode() == KeyCode.F1) {
+          context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
+        }
+      }
+    });
   }
 
   public void setBundle(ResourceBundle bundle) {

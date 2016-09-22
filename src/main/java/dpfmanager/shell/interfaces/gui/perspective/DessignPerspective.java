@@ -9,6 +9,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -87,8 +89,11 @@ public class DessignPerspective extends DpfAbstractPerspective {
     mainPane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent t) {
-        if(t.getCode()== KeyCode.ESCAPE)
-          ((Stage)topPane.getScene().getWindow()).close();//use any one object
+        if(t.getCode()== KeyCode.ESCAPE) {
+          ((Stage) topPane.getScene().getWindow()).close();//use any one object
+        } else if(t.getCode()== KeyCode.F1) {
+          context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
+        }
       }
     });
   }
