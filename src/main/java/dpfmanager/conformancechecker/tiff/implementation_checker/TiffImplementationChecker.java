@@ -137,6 +137,7 @@ public class TiffImplementationChecker {
     // Strips check
     if (ifd.hasStrips()) {
       int pixelSize = 0;
+      
       for (int i = 0; i < metadata.get("BitsPerSample").getCardinality(); i++) {
         pixelSize += metadata.get("BitsPerSample").getValue().get(i).toInt();
       }
