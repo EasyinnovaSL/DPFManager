@@ -570,7 +570,9 @@ public class ReportGenerator {
     }
     if (config.getFormats().contains("PDF")) {
       try {
-        ir.getPDF().save(pdfFileStr);
+        if (ir.getPDF() != null) {
+          ir.getPDF().save(pdfFileStr);
+        }
       } catch (IOException e) {
         context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
       } catch (COSVisitorException e) {

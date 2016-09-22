@@ -96,6 +96,12 @@ public class Validator {
       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
       rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
 
+      for (RulesObject ro : rules.getRules()) {
+        for (RuleObject rule : ro.getRules()) {
+          rule.setIso(rules.getIso());
+        }
+      }
+
       if (rules.getIncludes() != null) {
         for (IncludeObject inc : rules.getIncludes()) {
           JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObject.class);
@@ -103,11 +109,19 @@ public class Validator {
           ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
 
           if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
-            rules.getRules().addAll(0, rulesIncluded.getRules());
+            for (RulesObject ro : rulesIncluded.getRules()) {
+              rules.getRules().add(ro);
+              for (RuleObject rule : ro.getRules()) {
+                rule.setIso(rulesIncluded.getIso());
+              }
+            }
           } else {
             for (RulesObject ro : rulesIncluded.getRules()) {
               if (ro.getDescription().equals(inc.getSubsection())) {
                 rules.getRules().add(ro);
+                for (RuleObject rule : ro.getRules()) {
+                  rule.setIso(rulesIncluded.getIso());
+                }
               }
             }
           }
@@ -129,6 +143,9 @@ public class Validator {
     boolean bbreak = false;
     for (RulesObject ruleSet : rules.getRules()) {
       for (RuleObject rule : ruleSet.getRules()) {
+        if (rule.getId().equals("bl-tg-26"))
+          rule.toString();
+
         String context = rule.getContext();
         List<TiffNode> objects = model.getObjectsFromContext(context, true);
         for (TiffNode node : objects) {

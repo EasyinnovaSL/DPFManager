@@ -19,6 +19,7 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
   boolean asci7;
   int offset;
   String value;
+  String privateTag;
   boolean duplicatedNuls;
   boolean usedOffset;
   boolean offsetOverlap;
@@ -39,6 +40,15 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  @XmlAttribute
+  public String getPrivateTag() {
+    return privateTag;
+  }
+
+  public void setPrivateTag(String privateTag) {
+    this.privateTag = privateTag;
   }
 
   @XmlAttribute
@@ -160,6 +170,7 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("name", name));
     childs.add(new TiffSingleNode("type", type));
     childs.add(new TiffSingleNode("asci7", asci7 + ""));
+    childs.add(new TiffSingleNode("privateTag", privateTag + ""));
     childs.add(new TiffSingleNode("value", value));
     childs.add(new TiffSingleNode("duplicatedNuls", duplicatedNuls + ""));
     childs.add(new TiffSingleNode("lastByte", lastByte + ""));

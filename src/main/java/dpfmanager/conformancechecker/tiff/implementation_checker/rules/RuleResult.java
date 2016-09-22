@@ -64,6 +64,17 @@ public class RuleResult {
     return node.getContext();
   }
 
+  public String getReference() {
+    if (rule != null) {
+      if (rule.getReference() != null) {
+        if (rule.getReference().length() > 0) {
+          return rule.getIso() + ": " + rule.getReference();
+        }
+      }
+    }
+    return null;
+  }
+
   public String getLocation() {
     if (location != null) return location;
     if (getNode().getLocation() != null) return getNode().getLocation();

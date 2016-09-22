@@ -206,8 +206,9 @@ public class HtmlReport extends Report {
     if (ir.checkEP) {
       if (ir.getEPErrors() != null) {
         for (RuleResult val : ir.getEPErrors()) {
-          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -215,8 +216,9 @@ public class HtmlReport extends Report {
 
       if (ir.getEPWarnings() != null) {
         for (RuleResult val : ir.getEPWarnings()) {
-          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -232,8 +234,9 @@ public class HtmlReport extends Report {
     if (ir.checkBL) {
       if (ir.getBaselineErrors() != null) {
         for (RuleResult val : ir.getBaselineErrors()) {
-          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -241,8 +244,9 @@ public class HtmlReport extends Report {
 
       if (ir.getBaselineWarnings() != null) {
         for (RuleResult val : ir.getBaselineWarnings()) {
-          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -258,8 +262,9 @@ public class HtmlReport extends Report {
     if (ir.checkIT0) {
       if (ir.getITErrors(0) != null) {
         for (RuleResult val : ir.getITErrors(0)) {
-          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -267,8 +272,9 @@ public class HtmlReport extends Report {
 
       if (ir.getITWarnings(0) != null) {
         for (RuleResult val : ir.getITWarnings(0)) {
-          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -284,8 +290,9 @@ public class HtmlReport extends Report {
     if (ir.checkIT1) {
       if (ir.getITErrors(1) != null) {
         for (RuleResult val : ir.getITErrors(1)) {
-          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -293,8 +300,9 @@ public class HtmlReport extends Report {
 
       if (ir.getITWarnings(1) != null) {
         for (RuleResult val : ir.getITWarnings(1)) {
-          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -310,8 +318,9 @@ public class HtmlReport extends Report {
     if (ir.checkIT2) {
       if (ir.getITErrors(2) != null) {
         for (RuleResult val : ir.getITErrors(2)) {
-          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
@@ -319,8 +328,9 @@ public class HtmlReport extends Report {
 
       if (ir.getITWarnings(2) != null) {
         for (RuleResult val : ir.getITWarnings(2)) {
-          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##TEXT##</td></tr>";
+          row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
           rows += row;
         }
