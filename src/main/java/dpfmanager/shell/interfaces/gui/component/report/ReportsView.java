@@ -182,7 +182,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     );
 
     colDelete = new TableColumn(bundle.getString("colDelete"));
-    setMinMaxWidth(colDelete, 30);
+    setMinMaxWidth(colDelete, 0);
     colDelete.setCellValueFactory( new PropertyValueFactory<>( "delete" ) );
 
     tabReports.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
