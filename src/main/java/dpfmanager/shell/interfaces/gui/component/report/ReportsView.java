@@ -188,7 +188,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     tabReports.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     tabReports.setPrefWidth(840.0);
     tabReports.setFixedCellSize(28.0);
-    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats, colDelete);
+    tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
+    //tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats, colDelete);
     tabReports.setCursor(Cursor.DEFAULT);
     tabReports.setEditable(false);
     tabReports.setMaxHeight(470.0);
