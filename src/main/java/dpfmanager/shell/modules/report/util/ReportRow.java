@@ -486,7 +486,7 @@ public class ReportRow {
       String json = readFullFile(file.getPath(), Charset.defaultCharset());
       JsonObject jObjRoot = new JsonParser().parse(json).getAsJsonObject();
       String stime = getStime(file.getPath());
-      String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".json");
+      String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".json");
       JsonObject jObj = jObjRoot.getAsJsonObject("globalreport");
 
       // Passed
@@ -512,7 +512,7 @@ public class ReportRow {
       // Warnings
       if (jObj.has("individualreports")) {
         try {
-          JsonArray jArray = jObj.get("individualreports").getAsJsonArray();
+          JsonArray jArray = ((JsonObject)jObj.get("individualreports")).get("report").getAsJsonArray().getAsJsonArray();
           for (JsonElement element : jArray) {
             if (element.toString().contains("\"warning\"")) {
               warnings++;
