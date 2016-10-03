@@ -43,6 +43,7 @@ import org.reflections.scanners.SubTypesScanner;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -128,12 +129,13 @@ public class BarFragment {
     }
 
     if (array.isEmpty()) {
-      // Load through reflections
-      Reflections reflections = new Reflections("", new ResourcesScanner());
-      Set<String> resources = reflections.getResources(Pattern.compile(".*\\.properties"));
-      for (String resource : resources) {
-        if (resource.contains("bundles/language_") && !resource.endsWith("language.properties")){
-          array.add(resource.replace("bundles/language_","").replace(".properties",""));
+      // Load from file
+      File folder = new File("src/main/resources/bundles");
+      File[] listOfFiles = folder.listFiles();
+      for (File file : listOfFiles) {
+        String resource = file.getName();
+        if (!resource.endsWith("language.properties")) {
+          array.add(resource.replace("language_", "").replace(".properties", ""));
         }
       }
     }
