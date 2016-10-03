@@ -19,7 +19,6 @@
 
 package dpfmanager.shell.interfaces.gui.fragment;
 
-import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
@@ -34,21 +33,19 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 
-import com.google.common.reflect.ClassPath;
-
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -114,7 +111,7 @@ public class BarFragment {
     return word.substring(0, 1).toUpperCase() + word.substring(1);
   }
 
-  private List<String> loadLanguages() {
+  private List<String> loadLanguages(){
     List<String> array = new ArrayList<>();
     try {
       // Load from jar
@@ -131,41 +128,14 @@ public class BarFragment {
     }
 
     if (array.isEmpty()) {
-      try {
-        String path = "DPF Manager-jfx.jar";
-        if (new File(path).exists()) {
-          ZipInputStream zip = new ZipInputStream(new FileInputStream(path));
-          for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-            if (!entry.isDirectory()) {
-              if (entry.getName().contains("bundles/language_") && !entry.getName().endsWith("language.properties")) {
-                array.add(entry.getName().replace("bundles/language_", "").replace(".properties", ""));
-              }
-            }
-          }
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-
-    // Load through reflections
-    if (array.isEmpty()) {
-      File folder = new File("src/main/resources/bundles");
-      File[] listOfFiles = folder.listFiles();
-      for (File file : listOfFiles) {
-        String resource = file.getName();
-        if (!resource.endsWith("language.properties")) {
-          array.add(resource.replace("language_", "").replace(".properties", ""));
-        }
-      }
-
-      /*Reflections reflections = new Reflections("", new ResourcesScanner());
+      // Load through reflections
+      Reflections reflections = new Reflections("", new ResourcesScanner());
       Set<String> resources = reflections.getResources(Pattern.compile(".*\\.properties"));
       for (String resource : resources) {
-        if (resource.contains("bundles/language_") && !resource.endsWith("language.properties")) {
-          array.add(resource.replace("bundles/language_", "").replace(".properties", ""));
+        if (resource.contains("bundles/language_") && !resource.endsWith("language.properties")){
+          array.add(resource.replace("bundles/language_","").replace(".properties",""));
         }
-      }*/
+      }
     }
 
     // Add default, english
