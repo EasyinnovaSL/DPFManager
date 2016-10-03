@@ -484,9 +484,10 @@ public class ReportRow {
       int n = countFiles(parent, ".json") - 1 - countFiles(parent, "_fixed.json");
       int passed = 0, errors = 0, warnings = 0, score = 0;
       String json = readFullFile(file.getPath(), Charset.defaultCharset());
-      JsonObject jObj = new JsonParser().parse(json).getAsJsonObject();
+      JsonObject jObjRoot = new JsonParser().parse(json).getAsJsonObject();
       String stime = getStime(file.getPath());
       String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".json");
+      JsonObject jObj = jObjRoot.getAsJsonObject("globalreport");
 
       // Passed
       if (jObj.has("stats")) {
