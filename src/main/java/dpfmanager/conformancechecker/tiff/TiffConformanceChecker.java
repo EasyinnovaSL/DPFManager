@@ -56,8 +56,6 @@ import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
 import org.apache.logging.log4j.Level;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
