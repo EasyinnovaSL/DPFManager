@@ -57,7 +57,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
+
+import com.sun.javafx.scene.control.skin.TableHeaderRow;
 
 import org.apache.commons.io.FileUtils;
 import org.controlsfx.control.PropertySheet;
@@ -71,6 +74,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -195,7 +199,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     );
 
     colFormats = new TableColumn(bundle.getString("colFormats"));
-    setMinMaxWidth(colFormats, 150);
+    setMinMaxWidth(colFormats, 120);
     colFormats.setCellValueFactory(
         new PropertyValueFactory<ReportRow, ObservableMap<String, String>>("formats")
     );
@@ -203,12 +207,15 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     colDelete = new TableColumn(bundle.getString("colDelete"));
     setMinMaxWidth(colDelete, 30);
     colDelete.setVisible(true);
-    colDelete.setCellValueFactory( new PropertyValueFactory<>( "delete" ) );
+    colDelete.setCellValueFactory(new PropertyValueFactory<>("delete"));
 
-    tabReports.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    tabReports.skinProperty().addListener((obs, oldSkin, newSkin) -> {
+      TableHeaderRow header = (TableHeaderRow) tabReports.lookup("TableHeaderRow");
+      header.reorderingProperty().addListener((o, oldVal, newVal) -> header.setReordering(false));
+    });
+
     tabReports.setPrefWidth(840.0);
     tabReports.setFixedCellSize(28.0);
-    //tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats);
     tabReports.getColumns().addAll(colDate, colTime, colN, colFile, colErrors, colWarnings, colPassed, colScore, colFormats, colDelete);
     tabReports.setCursor(Cursor.DEFAULT);
     tabReports.setEditable(false);
@@ -229,6 +236,9 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     column.setMinWidth(width);
     column.setPrefWidth(width);
     column.setMaxWidth(width);
+    column.setResizable(false);
+    column.setSortable(false);
+    column.setEditable(false);
   }
 
   private void readData() {
