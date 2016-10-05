@@ -123,7 +123,7 @@ public class InteroperabilityService extends DpfService {
 
   public void edit(String name, String path) {
     Conformance conformance = getConformanceByName(name);
-    if (conformance != null) {
+    if (validateConformance(conformance, name, false)) {
       File tmp = new File(path);
       if (tmp.exists() && tmp.isFile()) {
         conformance.setPath(path);
@@ -135,32 +135,26 @@ public class InteroperabilityService extends DpfService {
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidPath").replace("%1", path)));
       }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceNotFound").replace("%1", name)));
     }
   }
 
   public void remove(String name) {
     Conformance conformance = getConformanceByName(name);
-    if (conformance != null) {
+    if (validateConformance(conformance, name, false)) {
       conformances.remove(conformance);
       if (writeChanges()) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceRemoved").replace("%1", name)));
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
       }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceNotFound").replace("%1", name)));
     }
   }
 
   public void list(String name) {
     Conformance conformance = getConformanceByName(name);
-    if (conformance != null) {
+    if (validateConformance(conformance, name, true)) {
       String xml = conformance.toString();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, xml));
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceNotFound").replace("%1", name)));
     }
   }
 
@@ -170,7 +164,7 @@ public class InteroperabilityService extends DpfService {
 
   public void setParameters(String name, String params) {
     Conformance conformance = getConformanceByName(name);
-    if (conformance != null) {
+    if (validateConformance(conformance, name, false)) {
       if (validateParameters(params)) {
         conformance.setParameters(params);
         if (writeChanges()) {
@@ -181,14 +175,12 @@ public class InteroperabilityService extends DpfService {
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceParamsError")));
       }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceNotFound").replace("%1", name)));
     }
   }
 
   public void setConfiguration(String name, String config) {
     Conformance conformance = getConformanceByName(name);
-    if (conformance != null) {
+    if (validateConformance(conformance, name, true)) {
       File tmp = new File(config);
       if (tmp.exists() && tmp.isFile()) {
         conformance.setConfiguration(config);
@@ -207,21 +199,19 @@ public class InteroperabilityService extends DpfService {
 
   public void setExtensions(String name, List<String> extensions) {
     Conformance conformance = getConformanceByName(name);
-    if (conformance != null) {
+    if (validateConformance(conformance, name, false)) {
       conformance.setExtensions(extensions);
       if (writeChanges()) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceConfigure").replace("%1", name)));
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
       }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceNotFound").replace("%1", name)));
     }
   }
 
   public void setEnabled(String name, boolean enabled) {
     Conformance conformance = getConformanceByName(name);
-    if (conformance != null) {
+    if (validateConformance(conformance, name, true)) {
       if (validateEnable(conformance, enabled)) {
         conformance.setEnabled(enabled);
         if (writeChanges()) {
@@ -236,14 +226,23 @@ public class InteroperabilityService extends DpfService {
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceCannotEnable")));
       }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceNotFound").replace("%1", name)));
     }
   }
 
   /**
    * Validacions
    */
+  private boolean validateConformance(Conformance conformance, String name, boolean acceptedBuiltIn){
+    if (conformance == null){
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceNotFound").replace("%1", name)));
+      return false;
+    } else if (conformance.getPath().equals("built-in") && !acceptedBuiltIn){
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("builtInNotAccepted")));
+      return false;
+    }
+    return true;
+  }
+
   private boolean validateParameters(String params) {
     return params.contains("%config%") && params.contains("%input%");
   }
@@ -352,10 +351,12 @@ public class InteroperabilityService extends DpfService {
     try {
       String path = DPFManagerProperties.getConformancesConfig();
       File fXmlFile = new File(path);
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      Document doc = dBuilder.parse(fXmlFile);
-      conformances.addAll(readConformanceCheckers(doc));
+      if (fXmlFile.exists()) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(fXmlFile);
+        conformances.addAll(readConformanceCheckers(doc));
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -366,7 +367,7 @@ public class InteroperabilityService extends DpfService {
    */
   private void loadFromBuiltIn() {
     try {
-      String xml = IOUtils.toString(getClass().getResourceAsStream("/internalCheckers/BuiltIn.xml"));
+      String xml = DPFManagerProperties.getBuiltInDefinition();
       boolean needWrite = false;
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

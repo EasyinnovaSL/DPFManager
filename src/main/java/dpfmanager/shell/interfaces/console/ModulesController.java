@@ -90,7 +90,7 @@ public class ModulesController {
   private List<InteroperabilityMessage> actions;
 
   /**
-   * The actions list
+   * The errors flag
    */
   private boolean argsError;
 

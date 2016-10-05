@@ -6,9 +6,9 @@
         <conformanceChecker>
             <name>Tiff</name>
             <location>built-in</location>
-            <parameters>-configuration %config% %input%</parameters>
+            <parameters></parameters>
             <state>enabled</state>
-            <defaultConfiguration>baseline.dpf</defaultConfiguration>
+            <defaultConfiguration></defaultConfiguration>
             <extensions>
                 <extension>tif</extension>
                 <extension>tiff</extension>
