@@ -207,6 +207,10 @@ public class DPFManagerProperties {
     return dataDir;
   }
 
+  public static String getConformancesConfig() {
+    return getDataDir() + "/conformances.conf";
+  }
+
   public static String getLanguage() {
     return getPropertiesValue("language", Locale.ENGLISH.toString());
   }

@@ -36,8 +36,9 @@ public class BasicConfig {
   public static final String MODULE_DATABASE = "m005";
   public static final String MODULE_TIMER = "m006";
   public static final String MODULE_SERVER = "m007";
-  public static final String MODULE_CLIENT= "m008";
-  public static final String MODULE_PERIODICAL= "m009";
+  public static final String MODULE_CLIENT = "m008";
+  public static final String MODULE_PERIODICAL = "m009";
+  public static final String MODULE_INTEROPERABILITY = "m010";
 
   /**
    * Services Components
@@ -50,6 +51,7 @@ public class BasicConfig {
   public static final String SERVICE_TIMER = "s006";
   public static final String SERVICE_SERVER = "s007";
   public static final String SERVICE_CLIENT = "s008";
-  public static final String SERVICE_PERIODIC= "s009";
+  public static final String SERVICE_PERIODIC = "s009";
+  public static final String SERVICE_INTEROPERABILITY = "s010";
 
 }
