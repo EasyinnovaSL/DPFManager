@@ -190,11 +190,11 @@
 			<version>2.15.2</version>
 		</dependency>
 
-		<dependency>
+		<!--<dependency>
 			<groupId>xom</groupId>
 			<artifactId>xom</artifactId>
 			<version>1.2.5</version>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -214,7 +214,14 @@
 			<version>1.8.10</version>
 		</dependency>
 
-        <dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections-maven</artifactId>
 			<version>0.9.8</version>
