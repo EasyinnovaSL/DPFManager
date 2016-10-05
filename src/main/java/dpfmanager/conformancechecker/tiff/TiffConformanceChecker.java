@@ -44,6 +44,8 @@ import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import com.google.common.reflect.ClassPath;
+
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -54,8 +56,6 @@ import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
 import org.apache.logging.log4j.Level;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -431,11 +431,15 @@ public class TiffConformanceChecker extends ConformanceChecker {
     if (classes == null) {
       Logger.println("Loading autofixes through reflection");
       try {
-        Reflections reflections = new Reflections(TiffConformanceChecker.getAutofixesClassPath(), new SubTypesScanner(false));
-        Set<Class<? extends Object>> classesSet = reflections.getSubTypesOf(Object.class);
+        //Reflections reflections = new Reflections(TiffConformanceChecker.getAutofixesClassPath(), new SubTypesScanner(false));
+        //Set<Class<? extends Object>> classesSet = reflections.getSubTypesOf(Object.class);
+
+        Class cls = Class.forName("dpfmanager.conformancechecker.tiff.TiffConformanceChecker");
+        ClassLoader cll = cls.getClassLoader();
+        Set<ClassPath.ClassInfo> classesInPackage = ClassPath.from(cll).getTopLevelClassesRecursive(TiffConformanceChecker.getAutofixesClassPath());
 
         classes = new ArrayList<String>();
-        for (Class<?> cl : classesSet) {
+        for (ClassPath.ClassInfo cl : classesInPackage) {
           if (!cl.toString().endsWith(".autofix")) {
             classes.add(cl.toString().substring(cl.toString().lastIndexOf(".") + 1));
           }

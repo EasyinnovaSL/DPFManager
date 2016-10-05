@@ -34,7 +34,6 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
-import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashSet;
