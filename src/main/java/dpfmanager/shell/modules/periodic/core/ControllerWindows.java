@@ -150,6 +150,7 @@ public class ControllerWindows extends Controller {
 
       // Parse input & configuration
       String arguments = doc.getDocumentElement().getElementsByTagName("Arguments").item(0).getTextContent();
+      arguments = arguments.substring(arguments.substring(1).indexOf("\"") + 3, arguments.length());
       String input = getInputFromArguments(arguments);
       String configuration = getConfigurationFromArguments(arguments);
 
@@ -192,6 +193,45 @@ public class ControllerWindows extends Controller {
     }
     return null;
   }
+
+  private String parseArguments(String arguments){
+    return arguments.substring(arguments.substring(1).indexOf("\"")+3, arguments.length());
+  }
+
+//  @Override
+//  protected String getConfigurationFromArguments(String arguments){
+//    String[] files = arguments.split("\"");
+//    String file = files[3];
+//    if (!file.replaceAll(" ", "").isEmpty()) {
+//      return file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".dpf"));
+//    }
+//    return "";
+//  }
+//
+//  @Override
+//  protected String getInputFromArguments(String arguments){
+//    String input = "";
+//    String withouVBS = arguments.substring(arguments.substring(1).indexOf("\"")+3, arguments.length());
+//    String aux = withouVBS.substring(18); // Skip -s -configuration
+//    String[] files = aux.split("\"");
+//    boolean first = true;
+//    for (String file : files) {
+//      if (!file.replaceAll(" ", "").isEmpty()) {
+//        if (first) {
+//          // Configuration
+//          first = false;
+//        } else {
+//          // Input
+//          if (input.isEmpty()) {
+//            input = file;
+//          } else {
+//            input += ";" + file;
+//          }
+//        }
+//      }
+//    }
+//    return input;
+//  }
 
   /**
    * Windows VBS file
