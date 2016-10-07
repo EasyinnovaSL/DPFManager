@@ -205,7 +205,7 @@
 		<dependency>
 		  <groupId>com.easyinnova</groupId>
 		  <artifactId>tifflibrary4java</artifactId>
-		  <version>1.5.2</version>
+		  <version>1.6</version>
 		</dependency>
 
 		<dependency>
@@ -432,6 +432,32 @@
 						</plugin>
 					</reportPlugins>
 				</configuration>
+			</plugin>
+
+			<!-- Download dependencies source -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+					<execution>
+						<id>sources-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<!-- use copy-dependencies instead if you don't want to explode
+                              the sources -->
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<classifier>sources</classifier>
+							<failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+							<outputDirectory>${project.build.directory}/sources/src/main/java</outputDirectory>
+							<excludeArtifactIds>xercesImpl,jsr305,ant-launcher,dom4j,cvsclient,classworlds,plexus-i18n,velocity-tools,ant,velocity,json-lib</excludeArtifactIds>
+							<includes>**/*.java</includes>
+							<excludes>**/*Test.java, **/test/**/*.java</excludes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

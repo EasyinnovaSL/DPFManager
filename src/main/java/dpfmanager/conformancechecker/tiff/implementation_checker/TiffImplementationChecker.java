@@ -96,6 +96,9 @@ public class TiffImplementationChecker {
     TiffIfds ifds = new TiffIfds();
     ifds.setCircularReference(circularReference);
     ifds.setIfds(ifdsList);
+    for (TiffIfd ifdNode : ifdsList) {
+      ifdNode.setParent(ifds.getContext());
+    }
     tiffValidate.setIfds(ifds);
 
     return tiffValidate;
@@ -589,8 +592,9 @@ public class TiffImplementationChecker {
       tt.setExif(ifd);
     } else if (tv.getId() == 330) {
       // SubIFD
-      TiffIfd ifd = createIfdNode(tv, "subifd");
-      tt.setSubIfd(ifd);
+      TiffIfd ifd = CreateIFDValidation((IFD)tv.getValue().get(0), 0);
+      //TiffIfd ifd = createIfdNode(tv, "image");
+      tt.setIfd(ifd);
     } else if (tv.getId() == 400) {
       // GlobalParametersIFD
       TiffIfd ifd = createIfdNode(tv, "globalparameters");
