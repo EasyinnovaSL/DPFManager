@@ -143,6 +143,8 @@ public class ControllerWindows extends Controller {
 
   public PeriodicCheck parseXmlString(String xmlTask, String uuid) {
     try {
+      boolean preIssue250 = true;
+
       InputStream is = IOUtils.toInputStream(xmlTask, "UTF-16");
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -150,6 +152,10 @@ public class ControllerWindows extends Controller {
 
       // Parse input & configuration
       String arguments = doc.getDocumentElement().getElementsByTagName("Arguments").item(0).getTextContent();
+      if (arguments.startsWith("\"")) {
+        preIssue250 = false;
+        arguments = arguments.substring(arguments.substring(1).indexOf("\"") + 3, arguments.length());
+      }
       String input = getInputFromArguments(arguments);
       String configuration = getConfigurationFromArguments(arguments);
 
@@ -186,12 +192,56 @@ public class ControllerWindows extends Controller {
       periodicity.setTime(LocalTime.parse(time));
 
       is.close();
-      return new PeriodicCheck(uuid, input, configuration, periodicity);
+
+      PeriodicCheck pc = new PeriodicCheck(uuid, input, configuration, periodicity);
+      if (preIssue250){
+        editPeriodicalCheck(pc);
+      }
+      return pc;
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
   }
+
+  private String parseArguments(String arguments){
+    return arguments.substring(arguments.substring(1).indexOf("\"")+3, arguments.length());
+  }
+
+//  @Override
+//  protected String getConfigurationFromArguments(String arguments){
+//    String[] files = arguments.split("\"");
+//    String file = files[3];
+//    if (!file.replaceAll(" ", "").isEmpty()) {
+//      return file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".dpf"));
+//    }
+//    return "";
+//  }
+//
+//  @Override
+//  protected String getInputFromArguments(String arguments){
+//    String input = "";
+//    String withouVBS = arguments.substring(arguments.substring(1).indexOf("\"")+3, arguments.length());
+//    String aux = withouVBS.substring(18); // Skip -s -configuration
+//    String[] files = aux.split("\"");
+//    boolean first = true;
+//    for (String file : files) {
+//      if (!file.replaceAll(" ", "").isEmpty()) {
+//        if (first) {
+//          // Configuration
+//          first = false;
+//        } else {
+//          // Input
+//          if (input.isEmpty()) {
+//            input = file;
+//          } else {
+//            input += ";" + file;
+//          }
+//        }
+//      }
+//    }
+//    return input;
+//  }
 
   /**
    * Windows VBS file
