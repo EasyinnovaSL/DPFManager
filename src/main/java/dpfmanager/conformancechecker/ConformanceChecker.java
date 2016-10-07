@@ -26,7 +26,7 @@ import dpfmanager.shell.modules.report.core.IndividualReport;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Victor Muñoz on 10/02/2016.
@@ -35,11 +35,11 @@ public abstract class ConformanceChecker {
 
   public static DpfLogger Logger = initDefault();
 
-  abstract public ArrayList<String> getConformanceCheckerExtensions();
+  abstract public List<String> getConformanceCheckerExtensions();
 
-  abstract public ArrayList<String> getConformanceCheckerStandards();
+  abstract public List<String> getConformanceCheckerStandards();
 
-  abstract public ArrayList<Field> getConformanceCheckerFields();
+  abstract public List<Field> getConformanceCheckerFields();
 
   abstract public boolean acceptsFile(String filename);
 

@@ -66,6 +66,16 @@ public class Conformance {
     return parameters;
   }
 
+  public List<String> getParametersList() {
+    List<String> params = new ArrayList<>();
+    for (String arg : parameters.split(" ")){
+      if (!arg.isEmpty()){
+        params.add(arg);
+      }
+    }
+    return params;
+  }
+
   public void setParameters(String parameters) {
     this.parameters = parameters;
   }
@@ -96,6 +106,10 @@ public class Conformance {
 
   public void addExtension(String ext){
     extensions.add(ext);
+  }
+
+  public boolean isBuiltIn(){
+    return path.equals("built-in");
   }
 
   /**

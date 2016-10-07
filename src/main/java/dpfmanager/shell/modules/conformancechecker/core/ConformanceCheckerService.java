@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.conformancechecker.core;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
@@ -28,13 +29,16 @@ import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
 import dpfmanager.shell.modules.conformancechecker.runnable.ProcessInputRunnable;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
+import dpfmanager.shell.modules.interoperability.core.InteroperabilityService;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +61,9 @@ public class ConformanceCheckerService extends DpfService {
 
   @Resource(name = "parameters")
   private Map<String, String> parameters;
+
+  @Autowired
+  private InteroperabilityService interService;
 
   /** The list of checks waiting for process input*/
   private Map<Long,ProcessInputParameters> filesToCheck;
@@ -170,7 +177,8 @@ public class ConformanceCheckerService extends DpfService {
     // Process each input of the list
     int idReport = 1;
     for (final String filename : files) {
-      ConformanceRunnable run = new ConformanceRunnable();
+      List<ConformanceChecker> conformances = interService.getConformanceCheckers();
+      ConformanceRunnable run = new ConformanceRunnable(conformances);
       run.setParameters(filename, idReport, internalReportFolder, config, uuid);
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
       idReport++;

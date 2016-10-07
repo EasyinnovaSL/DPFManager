@@ -52,8 +52,10 @@ public class ProcessInput {
 
   private DpfContext context;
   private ResourceBundle bundle;
+  private List<ConformanceChecker> conformanceCheckers;
 
-  public ProcessInput() {
+  public ProcessInput(List<ConformanceChecker> list) {
+    conformanceCheckers = list;
     bundle = DPFManagerProperties.getBundle();
   }
 
@@ -70,41 +72,7 @@ public class ProcessInput {
    * Get the list of conformance checkers available to use.
    */
   private List<ConformanceChecker> getConformanceCheckers() {
-    TiffConformanceChecker tiffcc = new TiffConformanceChecker();
-    ArrayList<ConformanceChecker> l = new ArrayList<>();
-    l.add(tiffcc);
-
-    String path = "package/resources/plugins/video/MediaConch.exe";
-    if (!new File(path).exists()) path = "plugins/video/MediaConch.exe";
-    if (!new File(path).exists()) path = "../plugins/video/MediaConch.exe";
-    if (new File(path).exists()) {
-      ArrayList<String> params = new ArrayList<>();
-      params.add("-mc");
-      params.add("-fx");
-      ArrayList<String> standards = new ArrayList<>();
-      standards.add("MOV");
-      ArrayList<String> extensions = new ArrayList<>();
-      extensions.add("MOV");
-      ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
-      l.add(ext);
-    }
-
-    path = "package/resources/plugins/pdf/verapdf.bat";
-    if (!new File(path).exists()) path = "plugins/pdf/verapdf.bat";
-    if (!new File(path).exists()) path = "../plugins/pdf/verapdf.bat";
-    if (new File(path).exists()) {
-      ArrayList<String> params = new ArrayList<>();
-      params.add("--format");
-      params.add("xml");
-      ArrayList<String> standards = new ArrayList<>();
-      standards.add("PDF");
-      ArrayList<String> extensions = new ArrayList<>();
-      extensions.add("PDF");
-      ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
-      l.add(ext);
-    }
-
-    return l;
+    return conformanceCheckers;
   }
 
   /**

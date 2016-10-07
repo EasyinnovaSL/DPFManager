@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.conformancechecker.runnable;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -42,9 +43,9 @@ public class ConformanceRunnable extends DpfRunnable {
   private int id;
   private long uuid;
 
-  public ConformanceRunnable(){
+  public ConformanceRunnable(List<ConformanceChecker> list){
     // No context yet
-    pi = new ProcessInput();
+    pi = new ProcessInput(list);
   }
 
   @Override

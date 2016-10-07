@@ -61,7 +61,8 @@ import java.util.Set;
         BasicConfig.MODULE_REPORT,
         BasicConfig.MODULE_THREADING,
         BasicConfig.MODULE_DATABASE,
-        BasicConfig.MODULE_TIMER
+        BasicConfig.MODULE_TIMER,
+        BasicConfig.MODULE_INTEROPERABILITY
     }
 )
 public class DessignPerspective extends DpfAbstractPerspective {
