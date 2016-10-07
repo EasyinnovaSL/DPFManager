@@ -65,7 +65,7 @@ public class ControllerWindows extends Controller {
       createIfNotExistsVBS();
       String params = buildCommandArguments(check);
       String exe = asString(getVBSPath());
-      String dpfCommand = exe + " " + params;
+      String dpfCommand = "wscript.exe " + exe + " " + params;
       String command = "";
       Periodicity periodicity = check.getPeriodicity();
       switch (periodicity.getMode()) {
