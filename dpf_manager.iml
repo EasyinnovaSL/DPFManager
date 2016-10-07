@@ -63,8 +63,9 @@
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.camel:camel-test:2.15.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.5" level="project" />
-    <orderEntry type="library" name="Maven: com.easyinnova:tifflibrary4java:1.5.2" level="project" />
+    <orderEntry type="library" name="Maven: com.easyinnova:tifflibrary4java:1.6" level="project" />
     <orderEntry type="library" name="Maven: junit:junit-dep:4.8.2" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.xmp:xmpcore:5.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:1.8.10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pdfbox:fontbox:1.8.10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pdfbox:jempbox:1.8.10" level="project" />

@@ -150,11 +150,23 @@
                <Insets bottom="20.0" />
             </VBox.margin>
          </GridPane>
-            <Button fx:id="continueButton" mnemonicParsing="false" onAction="#doContinue" styleClass="main-button" text="%configContinue">
+        <GridPane>
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" halignment="RIGHT" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#doBack" styleClass="main-button" text="%configBack" GridPane.columnIndex="0" >
                 <VBox.margin>
-                    <Insets bottom="30.0" />
+                    <Insets bottom="30.0" right="10.0" />
                 </VBox.margin>
             </Button>
+            <Button fx:id="continueButton" mnemonicParsing="false" onAction="#doContinue" styleClass="main-button" text="%configContinue" GridPane.columnIndex="2">
+                <VBox.margin>
+                    <Insets bottom="30.0" left="10.0" />
+                </VBox.margin>
+            </Button>
+        </GridPane>
         </VBox>
     </children>
 </AnchorPane>

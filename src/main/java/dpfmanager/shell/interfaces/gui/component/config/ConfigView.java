@@ -22,6 +22,7 @@ package dpfmanager.shell.interfaces.gui.component.config;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard1Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard2Fragment;
@@ -181,6 +182,11 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
       i++;
     }
     gotoConfig(lastBlue + 1);
+  }
+
+  @FXML
+  protected void doBack(){
+    getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
   }
 
   @FXML

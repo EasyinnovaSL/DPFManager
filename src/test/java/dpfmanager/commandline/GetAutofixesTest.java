@@ -19,7 +19,7 @@ public class GetAutofixesTest extends TestCase {
 
       int nAutofixes = classes.size();
 
-      assertEquals(1, nAutofixes);
+      assertEquals(2, nAutofixes);
     } catch (Exception ex) {
       ex.printStackTrace();
       assertEquals(1, 0);
