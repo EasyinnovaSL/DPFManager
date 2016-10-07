@@ -143,6 +143,8 @@ public class ControllerWindows extends Controller {
 
   public PeriodicCheck parseXmlString(String xmlTask, String uuid) {
     try {
+      boolean preIssue250 = true;
+
       InputStream is = IOUtils.toInputStream(xmlTask, "UTF-16");
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -150,7 +152,10 @@ public class ControllerWindows extends Controller {
 
       // Parse input & configuration
       String arguments = doc.getDocumentElement().getElementsByTagName("Arguments").item(0).getTextContent();
-      arguments = arguments.substring(arguments.substring(1).indexOf("\"") + 3, arguments.length());
+      if (arguments.startsWith("\"")) {
+        preIssue250 = false;
+        arguments = arguments.substring(arguments.substring(1).indexOf("\"") + 3, arguments.length());
+      }
       String input = getInputFromArguments(arguments);
       String configuration = getConfigurationFromArguments(arguments);
 
@@ -187,7 +192,12 @@ public class ControllerWindows extends Controller {
       periodicity.setTime(LocalTime.parse(time));
 
       is.close();
-      return new PeriodicCheck(uuid, input, configuration, periodicity);
+
+      PeriodicCheck pc = new PeriodicCheck(uuid, input, configuration, periodicity);
+      if (preIssue250){
+        editPeriodicalCheck(pc);
+      }
+      return pc;
     } catch (Exception e) {
       e.printStackTrace();
     }
