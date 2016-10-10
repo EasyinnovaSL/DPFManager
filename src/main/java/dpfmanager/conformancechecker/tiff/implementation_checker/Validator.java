@@ -185,12 +185,18 @@ public class Validator {
   }
 
   void validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
-    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-    StringReader reader = new StringReader(content);
-    model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
+    try {
+      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
+      Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+      StringReader reader = new StringReader(content);
+      model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
 
-    validate(model, rulesFile, fastBreak);
+      validate(model, rulesFile, fastBreak);
+    } catch (Exception ex) {
+      RuleResult rr = new RuleResult(false, null, null, "Fatal error in TIFF file");
+      result = new ValidationResult();
+      result.add(rr);
+    }
   }
 
   public void validateBaseline(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {

@@ -162,10 +162,10 @@ public class TiffImplementationChecker {
       for (int i = 0; i < metadata.get("BitsPerSample").getCardinality(); i++) {
         pixelSize += metadata.get("BitsPerSample").getValue().get(i).toInt();
       }
+      int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripBYTECount");
+      int nsc = metadata.get(id).getCardinality();
       if (metadata.get("Compression").getFirstNumericValue() == 1 && pixelSize >= 8) {
         int calculatedImageLength = 0;
-        int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripBYTECount");
-        int nsc = metadata.get(id).getCardinality();
         for (int i = 0; i < nsc; i++) {
           calculatedImageLength += metadata.get(id).getValue().get(i).toInt();
         }
@@ -174,6 +174,14 @@ public class TiffImplementationChecker {
           tiffIfd.setCorrectStrips(0);
         }
       }
+
+      //long rps = 1;
+      //if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("RowsPerStrip")))
+      //  rps = metadata.get("RowsPerStrip").getFirstNumericValue();
+      //long leng = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("ImageLength")).getFirstNumericValue();
+      //int nstrips = (int)Math.ceil((double)leng / rps);
+      //if (nstrips != nsc)
+      //  tiffIfd.setCorrectStrips(0);
     }
 
     // Tiles check

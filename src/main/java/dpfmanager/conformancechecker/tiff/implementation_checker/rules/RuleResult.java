@@ -80,6 +80,7 @@ public class RuleResult {
   }
 
   public String getContext() {
+    if (node == null) return "";
     return node.getContext();
   }
 
@@ -96,6 +97,7 @@ public class RuleResult {
 
   public String getLocation() {
     if (location != null) return location;
+    if (node == null) return "";
     if (getNode().getLocation() != null) return getNode().getLocation();
     return getContext();
   }
