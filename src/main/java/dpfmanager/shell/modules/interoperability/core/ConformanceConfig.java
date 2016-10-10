@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.interoperability.core;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
@@ -27,7 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * Created by Adrià Llorens on 04/10/2016.
  */
-public class Conformance {
+public class ConformanceConfig {
 
   private String name;
   private String path;
@@ -36,11 +37,11 @@ public class Conformance {
   private boolean enabled;
   private List<String> extensions;
 
-  public Conformance(){
+  public ConformanceConfig(){
     extensions = new ArrayList<>();
   }
 
-  public Conformance(String name, String path){
+  public ConformanceConfig(String name, String path){
     this.name = name;
     this.path = path;
     extensions = new ArrayList<>();

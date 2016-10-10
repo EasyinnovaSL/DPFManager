@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
@@ -41,11 +42,17 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by Adrià Llorens on 07/03/2016.
@@ -83,7 +90,10 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     }
 
     // Send to conformance checker module
-    String path = getFileByPath(radio.getText()).getAbsolutePath();
+    String path = "";
+    if (!radio.getText().equals(getBundle().getString("default"))) {
+      path = getFileByPath(radio.getText()).getAbsolutePath();
+    }
     int recursive = getView().getRecursive();
     ArrayMessage am = new ArrayMessage();
     am.add(GuiConfig.COMPONENT_BAR, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.TASKS));
@@ -133,11 +143,15 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   public void performEditConfigAction() {
     if (getView().getSelectedConfig() != null) {
       String text = getView().getSelectedConfig().getText();
-      String path = getFileByPath(text).getAbsolutePath();
-      ArrayMessage am = new ArrayMessage();
-      am.add(GuiConfig.PERSPECTIVE_CONFIG, new UiMessage());
-      am.add(GuiConfig.PERSPECTIVE_CONFIG + "." + GuiConfig.COMPONENT_CONFIG, new ConfigMessage(ConfigMessage.Type.EDIT, path));
-      getContext().send(GuiConfig.PERSPECTIVE_CONFIG, am);
+      if (!text.equals(getBundle().getString("default"))) {
+        String path = getFileByPath(text).getAbsolutePath();
+        ArrayMessage am = new ArrayMessage();
+        am.add(GuiConfig.PERSPECTIVE_CONFIG, new UiMessage());
+        am.add(GuiConfig.PERSPECTIVE_CONFIG + "." + GuiConfig.COMPONENT_CONFIG, new ConfigMessage(ConfigMessage.Type.EDIT, path));
+        getContext().send(GuiConfig.PERSPECTIVE_CONFIG, am);
+      } else {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertDefaultConfigEdit")));
+      }
     } else {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertConfigFile")));
     }
@@ -162,8 +176,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
 
     if (file != null) {
       // Check valid config
-      ConformanceCheckerModel ccm = new ConformanceCheckerModel();
-      if (!ccm.readConfig(file.getPath())) {
+      if (!readConfig(file.getPath())) {
         getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
         file = null;
       }
@@ -196,14 +209,27 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
         }
         if (error) {
           // Add source file
-          getView().addConfigFile(file.getAbsolutePath(), file, false);
+          String description = readDescription(file);
+          getView().addConfigFile(file.getAbsolutePath(), description, false);
           getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, getBundle().getString("errorCopyConfig")));
         } else if (needAdd) {
-          getView().addConfigFile(configFile.getName(), configFile, false);
+          String description = readDescription(configFile);
+          getView().addConfigFile(configFile.getName(), description, false);
         }
       } else {
-        getView().addConfigFile(file.getAbsolutePath(), file, false);
+        String description = readDescription(file);
+        getView().addConfigFile(file.getAbsolutePath(), description, false);
       }
+    }
+  }
+
+  private boolean readConfig(String path){
+    try {
+      Configuration config = new Configuration();
+      config.ReadFile(path);
+      return true;
+    } catch (Exception e) {
+      return false;
     }
   }
 
@@ -229,5 +255,26 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       file = new File(configDir + "/" + path);
     }
     return file;
+  }
+
+  public String readDescription(File file) {
+    try {
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(file);
+      NodeList nList = doc.getDocumentElement().getChildNodes();
+      for (int i = 0; i < nList.getLength(); i++) {
+        org.w3c.dom.Node node = nList.item(i);
+        if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+          Element elem = (Element) node;
+          if (elem.getTagName().equals("description")) {
+            return elem.getTextContent();
+          }
+        }
+      }
+      return null;
+    } catch (Exception e) {
+      return null;
+    }
   }
 }

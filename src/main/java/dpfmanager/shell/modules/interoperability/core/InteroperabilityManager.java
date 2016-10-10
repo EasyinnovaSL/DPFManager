@@ -1,11 +1,8 @@
 package dpfmanager.shell.modules.interoperability.core;
 
 import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
 
-import org.apache.logging.log4j.Level;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -45,7 +42,7 @@ public class InteroperabilityManager {
   /**
    * Saves the conformance checkers to file
    */
-  public boolean writeChanges(List<Conformance> conformances) {
+  public boolean writeChanges(List<ConformanceConfig> conformances) {
     try {
       String xmlFileOld = DPFManagerProperties.getConformancesConfig();
       String xmlFileNew = DPFManagerProperties.getConformancesConfig() + ".new";
@@ -73,7 +70,7 @@ public class InteroperabilityManager {
     return false;
   }
 
-  public Document getXML(List<Conformance> conformances) {
+  public Document getXML(List<ConformanceConfig> conformances) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -86,7 +83,7 @@ public class InteroperabilityManager {
       listElement.appendChild(conformanceCheckers);
 
       // Individual conformances
-      for (Conformance conformance : conformances) {
+      for (ConformanceConfig conformance : conformances) {
         Document conformanceDoc = conformance.toXML();
         if (conformanceDoc != null) {
           Node node = doc.importNode(conformanceDoc.getDocumentElement(), true);
@@ -103,7 +100,7 @@ public class InteroperabilityManager {
     return null;
   }
 
-  public String getString(List<Conformance> conformances) {
+  public String getString(List<ConformanceConfig> conformances) {
     try {
       // Get XML Document
       Document doc = getXML(conformances);
@@ -131,8 +128,8 @@ public class InteroperabilityManager {
   /**
    * Read the conformance checkers from configuration file
    */
-  public List<Conformance> loadFromFile() {
-    List<Conformance> conformances = new ArrayList<>();
+  public List<ConformanceConfig> loadFromFile() {
+    List<ConformanceConfig> conformances = new ArrayList<>();
     try {
       String path = DPFManagerProperties.getConformancesConfig();
       File fXmlFile = new File(path);
@@ -151,11 +148,10 @@ public class InteroperabilityManager {
   /**
    * Load the built in conformance checkers
    */
-  public List<Conformance> loadFromBuiltIn() {
-    List<Conformance> conformances = new ArrayList<>();
+  public List<ConformanceConfig> loadFromBuiltIn() {
+    List<ConformanceConfig> conformances = new ArrayList<>();
     try {
       String xml = DPFManagerProperties.getBuiltInDefinition();
-      boolean needWrite = false;
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
       Document doc = dBuilder.parse(new InputSource(new StringReader(xml)));
@@ -166,14 +162,14 @@ public class InteroperabilityManager {
     return conformances;
   }
 
-  private List<Conformance> readConformanceCheckers(Document doc) {
-    List<Conformance> conformances = new ArrayList<>();
+  private List<ConformanceConfig> readConformanceCheckers(Document doc) {
+    List<ConformanceConfig> conformances = new ArrayList<>();
     try {
       // Read the conformance checkers
       NodeList nList = doc.getDocumentElement().getElementsByTagName("conformanceChecker");
       for (int i = 0; i < nList.getLength(); i++) {
         Node conformanceNode = nList.item(i);
-        Conformance conformance = new Conformance();
+        ConformanceConfig conformance = new ConformanceConfig();
         conformance.fromXML(conformanceNode);
         conformances.add(conformance);
       }

@@ -44,7 +44,7 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
 
   public ConfigModel() {
     // init vars
-    conformance = new TiffConformanceChecker();
+    conformance = new TiffConformanceChecker(null, null);
     config = new Configuration();
     editingConfig = false;
     step = 0;

@@ -20,42 +20,28 @@
 package dpfmanager.shell.modules.interoperability.core;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.external.ExternalConformanceChecker;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.core.messages.DessignMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import java.io.File;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 /**
  * Created by Adrià Llorens on 20/04/2016.
@@ -65,9 +51,14 @@ import javax.xml.transform.stream.StreamResult;
 public class InteroperabilityService extends DpfService {
 
   /**
-   * The conformance checkers list
+   * The conformance checkers config list
    */
-  private List<Conformance> conformances;
+  private List<ConformanceConfig> conformances;
+
+  /**
+   * The available conformance checkers list
+   */
+  private List<ConformanceChecker> available;
 
   private InteroperabilityValidator validator;
 
@@ -80,6 +71,7 @@ public class InteroperabilityService extends DpfService {
     // No context yet
     bundle = DPFManagerProperties.getBundle();
     conformances = new ArrayList<>();
+    available = new ArrayList<>();
   }
 
   @Override
@@ -87,10 +79,12 @@ public class InteroperabilityService extends DpfService {
     validator = new InteroperabilityValidator(context, bundle);
     manager = new InteroperabilityManager(context, bundle);
     loadConformanceCheckers();
+    filterAvailableConformances();
+    context.sendGui(GuiConfig.PERSPECTIVE_DESSIGN + "." + GuiConfig.COMPONENT_DESIGN, new DessignMessage());
   }
 
-  private Conformance getConformanceByName(String name) {
-    for (Conformance conformance : conformances) {
+  private ConformanceConfig getConformanceByName(String name) {
+    for (ConformanceConfig conformance : conformances) {
       if (conformance.getName().equals(name)) {
         return conformance;
       }
@@ -107,7 +101,7 @@ public class InteroperabilityService extends DpfService {
     if (getConformanceByName(name) == null) {
       if (tmp.exists() && tmp.isFile()) {
         if (validator.validateParameters(parameters)) {
-          Conformance conformance = new Conformance(name, path);
+          ConformanceConfig conformance = new ConformanceConfig(name, path);
           conformance.setParameters(parameters);
           conformance.setConfiguration(configure);
           conformance.setExtensions(extensions);
@@ -130,7 +124,7 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void edit(String name, String path) {
-    Conformance conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceByName(name);
     if (validator.validateConformance(conformance, name, false)) {
       File tmp = new File(path);
       if (tmp.exists() && tmp.isFile()) {
@@ -147,7 +141,7 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void remove(String name) {
-    Conformance conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceByName(name);
     if (validator.validateConformance(conformance, name, false)) {
       conformances.remove(conformance);
       if (manager.writeChanges(conformances)) {
@@ -159,7 +153,7 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void list(String name) {
-    Conformance conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceByName(name);
     if (validator.validateConformance(conformance, name, true)) {
       String xml = conformance.toString();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, xml));
@@ -171,7 +165,7 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void setParameters(String name, String params) {
-    Conformance conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceByName(name);
     if (validator.validateConformance(conformance, name, false)) {
       if (validator.validateParameters(params)) {
         conformance.setParameters(params);
@@ -187,7 +181,7 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void setConfiguration(String name, String config) {
-    Conformance conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceByName(name);
     if (validator.validateConformance(conformance, name, true)) {
       File tmp = new File(config);
       if (tmp.exists() && tmp.isFile()) {
@@ -206,7 +200,7 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void setExtensions(String name, List<String> extensions) {
-    Conformance conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceByName(name);
     if (validator.validateConformance(conformance, name, false)) {
       conformance.setExtensions(extensions);
       if (manager.writeChanges(conformances)) {
@@ -218,7 +212,7 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void setEnabled(String name, boolean enabled) {
-    Conformance conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceByName(name);
     if (validator.validateConformance(conformance, name, true)) {
       if (validator.validateEnable(conformance, enabled)) {
         conformance.setEnabled(enabled);
@@ -237,52 +231,52 @@ public class InteroperabilityService extends DpfService {
     }
   }
 
-  public List<ConformanceChecker> getConformanceCheckers(){
-    List<ConformanceChecker> ccList = new ArrayList<>();
-    for (Conformance conformance : conformances){
+  private void filterAvailableConformances() {
+    for (ConformanceConfig conformance : conformances) {
       if (conformance.isEnabled()) {
-        if (conformance.isBuiltIn()) {
-          ccList.add(new TiffConformanceChecker());
-        } else {
-          File tmp = new File(conformance.getPath());
-          if (tmp.exists()) {
-            ExternalConformanceChecker ext = new ExternalConformanceChecker(conformance.getPath(), conformance.getParametersList(), new ArrayList<>(), conformance.getExtensions(), conformance.getConfiguration());
-            ccList.add(ext);
+        if (conformance.isBuiltIn() && validator.validateInitBuilt(conformance)) {
+          Configuration checkConfig = readCheckConfig(conformance.getConfiguration());
+          if (checkConfig != null){
+            available.add(new TiffConformanceChecker(conformance, checkConfig));
+            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("loadedCC").replace("%1", conformance.getName())));
+          } else {
+            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorLoadingBuiltCC")));
+            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("causeReadingCheckConfig")));
           }
+        } else if (validator.validateInitExternal(conformance)) {
+          ExternalConformanceChecker ext = new ExternalConformanceChecker(conformance);
+          available.add(ext);
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("loadedCC").replace("%1", conformance.getName())));
         }
       }
     }
-    return ccList;
+  }
 
-//    String path = "package/resources/plugins/video/MediaConch.exe";
-//    if (!new File(path).exists()) path = "plugins/video/MediaConch.exe";
-//    if (!new File(path).exists()) path = "../plugins/video/MediaConch.exe";
-//    if (new File(path).exists()) {
-//      ArrayList<String> params = new ArrayList<>();
-//      params.add("-mc");
-//      params.add("-fx");
-//      ArrayList<String> standards = new ArrayList<>();
-//      standards.add("MOV");
-//      ArrayList<String> extensions = new ArrayList<>();
-//      extensions.add("MOV");
-//      ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
-//      l.add(ext);
-//    }
-//
-//    path = "package/resources/plugins/pdf/verapdf.bat";
-//    if (!new File(path).exists()) path = "plugins/pdf/verapdf.bat";
-//    if (!new File(path).exists()) path = "../plugins/pdf/verapdf.bat";
-//    if (new File(path).exists()) {
-//      ArrayList<String> params = new ArrayList<>();
-//      params.add("--format");
-//      params.add("xml");
-//      ArrayList<String> standards = new ArrayList<>();
-//      standards.add("PDF");
-//      ArrayList<String> extensions = new ArrayList<>();
-//      extensions.add("PDF");
-//      ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
-//      l.add(ext);
-//    }
+  private Configuration readCheckConfig(String path){
+    try {
+      Configuration configuration = new Configuration();
+      if (!path.isEmpty()) {
+        configuration.ReadFileNew(path);
+      } else {
+        configuration.ReadFileNew(DPFManagerProperties.getDefaultBuiltInConfig());
+      }
+      return configuration;
+    } catch (Exception e){
+      return null;
+    }
+  }
+
+  public List<ConformanceChecker> getConformanceCheckers() {
+    return available;
+  }
+
+  public String getDescriptionFromDefault(){
+    for (ConformanceChecker cc : available){
+      if (cc.getConfig().isBuiltIn()){
+        return cc.getDefaultConfiguration().getDescription();
+      }
+    }
+    return null;
   }
 
   /**
@@ -291,15 +285,15 @@ public class InteroperabilityService extends DpfService {
   private void loadConformanceCheckers() {
     boolean needWrite = false;
     conformances.addAll(manager.loadFromFile());
-    List<Conformance> builtInCC = manager.loadFromBuiltIn();
-    for (Conformance conformance : builtInCC){
-      if (getConformanceByName(conformance.getName()) == null){
+    List<ConformanceConfig> builtInCC = manager.loadFromBuiltIn();
+    for (ConformanceConfig conformance : builtInCC) {
+      if (getConformanceByName(conformance.getName()) == null) {
         conformances.add(conformance);
         needWrite = true;
       }
     }
     // Write if needed
-    if (needWrite){
+    if (needWrite) {
       manager.writeChanges(conformances);
     }
   }

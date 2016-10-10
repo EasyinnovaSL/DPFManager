@@ -1,5 +1,5 @@
 /**
- * <h1>IndividualStatusMessage.java</h1> <p> This program is free software: you can redistribute it
+ * <h1>ConfigMessage.java</h1> <p> This program is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
@@ -17,46 +17,15 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.modules.threading.messages;
 
-import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.report.core.IndividualReport;
+package dpfmanager.shell.core.messages;
 
 /**
- * Created by Adrià Llorens on 08/04/2016.
+ * Created by Adrià Llorens on 07/03/2016.
  */
-public class IndividualStatusMessage extends DpfMessage {
+public class DessignMessage extends DpfMessage {
 
-  private IndividualReport individual;
-  private Configuration config;
-  private Long uuid;
-
-  public IndividualStatusMessage(IndividualReport ir, Configuration c) {
-    individual = ir;
-    config = c;
+  public DessignMessage(){
   }
 
-  public IndividualStatusMessage(IndividualReport ir, Configuration c, Long u) {
-    individual = ir;
-    config = c;
-    uuid = u;
-  }
-
-  public IndividualReport getIndividual() {
-    return individual;
-  }
-
-  public Long getUuid() {
-    if (uuid != null){
-      return uuid;
-    } else if (individual != null){
-      return individual.getUuid();
-    }
-    return uuid;
-  }
-
-  public Configuration getConfig() {
-    return config;
-  }
 }

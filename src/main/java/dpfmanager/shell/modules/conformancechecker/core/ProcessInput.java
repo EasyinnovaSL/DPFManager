@@ -142,10 +142,24 @@ public class ProcessInput {
         }
       } else {
         ir = new IndividualReport(true);
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("unacceptedFormat").replace("%1", filename)));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.WARN, bundle.getString("unacceptedFormat").replace("%1", filename)));
       }
     }
     return ir;
+  }
+
+  /**
+   * Gets the default configuration object from file type
+   *
+   * @param filename the filename
+   * @return the configuration for this file
+   */
+  public Configuration getDefaultConfigurationFromFile(String filename){
+    ConformanceChecker cc = getConformanceCheckerForFile(filename);
+    if (cc != null){
+      return cc.getDefaultConfiguration();
+    }
+    return null;
   }
 
   /**

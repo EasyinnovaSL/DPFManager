@@ -22,6 +22,7 @@ package dpfmanager.conformancechecker.external;
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
+import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
@@ -38,26 +39,24 @@ import java.util.List;
  * Created by easy on 31/03/2016.
  */
 public class ExternalConformanceChecker extends ConformanceChecker {
-  List<String> standards;
-  List<String> extensions;
-  String exePath;
-  List<String> params;
-  String configPath;
+  private List<String> standards;
+  private String exePath;
+  private List<String> params;
 
-  public ExternalConformanceChecker(String exePath, List<String> params, List<String> standards, List<String> extensions, String configPath) {
-    this.standards = standards;
-    this.extensions = extensions;
-    this.exePath = exePath;
-    this.params = params;
-    this.configPath = configPath;
+  public ExternalConformanceChecker(ConformanceConfig config) {
+    setConfig(config);
+    this.exePath = config.getPath();
+    this.params = config.getParametersList();
+    this.standards = new ArrayList<>();
   }
 
   public List<String> getConformanceCheckerStandards() {
     return standards;
   }
 
-  public List<String> getConformanceCheckerExtensions() {
-    return extensions;
+  @Override
+  public Configuration getDefaultConfiguration(){
+    return null;
   }
 
   public List<Field> getConformanceCheckerFields() {
@@ -73,7 +72,7 @@ public class ExternalConformanceChecker extends ConformanceChecker {
    */
   public boolean acceptsFile(String filename) {
     boolean isAccepted = false;
-    for (String extension : extensions) {
+    for (String extension : getConfig().getExtensions()) {
       if (filename.toLowerCase().endsWith(extension.toLowerCase())) {
         isAccepted = true;
       }
@@ -127,7 +126,7 @@ public class ExternalConformanceChecker extends ConformanceChecker {
       if (param.equals("%input%")){
         parsedParams.add(input);
       } else if (param.equals("%config%")){
-        parsedParams.add(configPath);
+        parsedParams.add(getDefaultConfigurationPath());
       } else {
         parsedParams.add(param);
       }

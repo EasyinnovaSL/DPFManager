@@ -64,8 +64,10 @@ public class ConformanceRunnable extends DpfRunnable {
   @Override
   public void runTask() {
     // Process the input and get a list of individual reports
-    IndividualReport ir;
-    ir = pi.processFile(filename, internalReportFolder, config, id);
+    if (config == null){
+      config = pi.getDefaultConfigurationFromFile(filename);
+    }
+    IndividualReport ir = pi.processFile(filename, internalReportFolder, config, id);
     if (ir != null && !ir.isError()) {
       ir.setIdReport(id);
       ir.setInternalReportFolder(internalReportFolder);
@@ -79,7 +81,7 @@ public class ConformanceRunnable extends DpfRunnable {
         ir.setInternalReportFolder(internalReportFolder);
         ir.setUuid(uuid);
       }
-      context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, uuid));
+      context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, config, uuid));
     }
   }
 

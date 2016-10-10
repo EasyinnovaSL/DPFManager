@@ -24,22 +24,26 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
+import dpfmanager.shell.core.messages.DessignMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.interoperability.core.InteroperabilityService;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -58,9 +62,11 @@ import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -106,10 +112,14 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   @FXML
   private Button reloadButton;
 
+  @Autowired
+  private InteroperabilityService interService;
+
   private VBox vBoxConfig;
   private ToggleGroup group;
   private RadioButton selectedButton;
   private CheckTreeView<String> checkTreeView;
+  private boolean first = true;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -130,7 +140,18 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       }
     } else if (message != null && message.isTypeOf(UiMessage.class)) {
       UiMessage uiMessage = message.getTypedMessage(UiMessage.class);
-      if (uiMessage.isReload()) {
+      if (uiMessage.isShow()) {
+        if (!first){
+          addConfigFiles();
+        } else {
+          first = false;
+          showLoadingConfig();
+        }
+      }
+    } else if (message != null && message.isTypeOf(DessignMessage.class)) {
+      if (first){
+        first = false;
+      } else {
         addConfigFiles();
       }
     }
@@ -211,11 +232,18 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     vBoxConfig.setId("vBoxConfig");
     vBoxConfig.setSpacing(3);
     vBoxConfig.setPadding(new Insets(5));
+    // Default one
+    String description = interService.getDescriptionFromDefault();
+    if (description != null) {
+      addConfigFile(bundle.getString("default"), description, bundle.getString("default").equalsIgnoreCase(previous));
+    }
+    // User configs
     File folder = new File(DPFManagerProperties.getConfigDir());
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
-          addConfigFile(fileEntry.getName(), fileEntry, fileEntry.getName().equalsIgnoreCase(previous));
+          description = getController().readDescription(fileEntry);
+          addConfigFile(fileEntry.getName(), description, fileEntry.getName().equalsIgnoreCase(previous));
         }
       }
     }
@@ -223,13 +251,12 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     configScroll.setContent(vBoxConfig);
   }
 
-  public void addConfigFile(String text, File file, boolean selected) {
+  public void addConfigFile(String text, String description, boolean selected) {
     RadioButton radio = new RadioButton();
     radio.setId("radioConfig" + vBoxConfig.getChildren().size());
     radio.setText(text);
     radio.setToggleGroup(group);
     radio.setSelected(selected);
-    String description = readDescription(file);
     if (description != null && !description.isEmpty()) {
       radio.setTooltip(new Tooltip(description));
     }
@@ -243,27 +270,6 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     if (selected) {
       selectedButton = radio;
     }
-  }
-
-  private String readDescription(File file) {
-    try {
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      Document doc = dBuilder.parse(file);
-      NodeList nList = doc.getDocumentElement().getChildNodes();
-      for (int i = 0; i < nList.getLength(); i++) {
-        org.w3c.dom.Node node = nList.item(i);
-        if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-          Element elem = (Element) node;
-          if (elem.getTagName().equals("description")) {
-            return elem.getTextContent();
-          }
-        }
-      }
-    } catch (Exception e) {
-      return null;
-    }
-    return null;
   }
 
   public void deleteSelectedConfig() {
@@ -352,9 +358,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   protected void deleteButtonClicked(ActionEvent event) throws Exception {
     RadioButton radio = getSelectedConfig();
     if (radio != null) {
-      AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("deleteConfirmation").replace("%1", radio.getText()), bundle.getString("deleteInfo"));
-      am.setTitle(bundle.getString("deleteTitle"));
-      getContext().send(BasicConfig.MODULE_MESSAGE, am);
+      if (!radio.getText().equals(bundle.getString("default"))) {
+        AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("deleteConfirmation").replace("%1", radio.getText()), bundle.getString("deleteInfo"));
+        am.setTitle(bundle.getString("deleteTitle"));
+        getContext().send(BasicConfig.MODULE_MESSAGE, am);
+      } else {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertDefaultConfigDelete")));
+      }
     } else {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertConfigFile")));
     }
@@ -382,6 +392,19 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     } else {
       return null;
     }
+  }
+
+  private void showLoadingConfig(){
+    ProgressIndicator pi = new ProgressIndicator();
+    pi.setPrefWidth(75);
+    pi.setPrefHeight(75);
+    pi.setProgress(-1);
+    vBoxConfig = new VBox();
+    vBoxConfig.setAlignment(Pos.TOP_CENTER);
+    vBoxConfig.setPrefWidth(configScroll.getWidth()-5);
+    vBoxConfig.getChildren().add(pi);
+    VBox.setMargin(pi, new Insets(10, 0, 0, 0));
+    configScroll.setContent(vBoxConfig);
   }
 
   public RadioButton getSelectedConfig() {

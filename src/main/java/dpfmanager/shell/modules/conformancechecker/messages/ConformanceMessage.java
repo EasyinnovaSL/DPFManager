@@ -36,18 +36,24 @@ public class ConformanceMessage extends DpfMessage {
   private Configuration config;
   private int recursive;
 
+  private boolean gui = false;
+  private boolean console = false;
+  private boolean server = false;
+
   public ConformanceMessage(String i, String p, int r) {
-    // With paths, Gui
+    // Gui
     input = i;
     path = p;
     recursive = r;
+    gui = true;
   }
 
   public ConformanceMessage(Long u, String i, String p) {
-    // With paths, Server
+    // Server
     input = i;
     path = p;
     uuid = u;
+    server = true;
   }
 
   public ConformanceMessage(List<String> f, Configuration c) {
@@ -56,6 +62,7 @@ public class ConformanceMessage extends DpfMessage {
     config = c;
     input = null;
     path = null;
+    console = true;
   }
 
   public boolean hasPaths() {
@@ -84,5 +91,17 @@ public class ConformanceMessage extends DpfMessage {
 
   public int getRecursive() {
     return recursive;
+  }
+
+  public boolean isGui() {
+    return gui;
+  }
+
+  public boolean isConsole() {
+    return console;
+  }
+
+  public boolean isServer() {
+    return server;
   }
 }

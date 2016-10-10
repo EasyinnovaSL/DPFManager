@@ -42,8 +42,6 @@ public class ConformanceCheckerModel extends DpfModel<DessignView, DessignContro
   private String txtFile;
 
   // User Interface
-  private ArrayList<String> extensions;
-  private ArrayList<String> isos;
   private ArrayList<Field> fields;
 
   // Check files configuration
@@ -57,10 +55,8 @@ public class ConformanceCheckerModel extends DpfModel<DessignView, DessignContro
   }
 
   public void LoadConformanceChecker() {
-    conformance = new TiffConformanceChecker();
+    conformance = new TiffConformanceChecker(null, null);
     fields = conformance.getConformanceCheckerFields();
-    extensions = conformance.getConformanceCheckerExtensions();
-    isos = conformance.getConformanceCheckerStandards();
   }
 
   /**
@@ -70,16 +66,6 @@ public class ConformanceCheckerModel extends DpfModel<DessignView, DessignContro
    */
   public ArrayList<Field> getFields() {
     return fields;
-  }
-
-  public boolean readConfig(String path) {
-    try {
-      config = new Configuration();
-      config.ReadFile(path);
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
   }
 
   public void setConfig(Configuration c){

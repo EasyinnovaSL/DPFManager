@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -229,13 +230,8 @@ public class DPFManagerProperties {
     return "";
   }
 
-  public static String getDefaultBuiltInConfig(){
-    try {
-      return IOUtils.toString(DPFManagerProperties.class.getResourceAsStream("/builtin/Configuration.xml"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return "";
+  public static InputStream getDefaultBuiltInConfig(){
+    return DPFManagerProperties.class.getResourceAsStream("/builtin/Configuration.xml");
   }
 
   /**

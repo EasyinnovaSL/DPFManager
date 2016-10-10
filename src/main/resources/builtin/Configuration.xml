@@ -6,8 +6,9 @@
     </isos>
     <formats>
         <format>HTML</format>
+        <format>XML</format>
     </formats>
     <rules/>
     <fixes/>
-    <description>Default configuration</description>
+    <description>Baseline HTML and XML</description>
 </configuration>

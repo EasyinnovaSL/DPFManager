@@ -21,6 +21,7 @@ package dpfmanager.conformancechecker;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
+import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
@@ -34,8 +35,9 @@ import java.util.List;
 public abstract class ConformanceChecker {
 
   public static DpfLogger Logger = initDefault();
+  private ConformanceConfig config;
 
-  abstract public List<String> getConformanceCheckerExtensions();
+//  abstract public List<String> getConformanceCheckerExtensions();
 
   abstract public List<String> getConformanceCheckerStandards();
 
@@ -43,8 +45,21 @@ public abstract class ConformanceChecker {
 
   abstract public boolean acceptsFile(String filename);
 
+  public abstract Configuration getDefaultConfiguration();
+
   abstract public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException;
 
+  public String getDefaultConfigurationPath(){
+    return config.getConfiguration();
+  }
+
+  public ConformanceConfig getConfig() {
+    return config;
+  }
+
+  public void setConfig(ConformanceConfig config) {
+    this.config = config;
+  }
 
   public static DpfLogger initDefault() {
     return new DpfLogger();

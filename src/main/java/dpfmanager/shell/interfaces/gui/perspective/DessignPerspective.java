@@ -57,12 +57,12 @@ import java.util.Set;
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
         BasicConfig.MODULE_MESSAGE,
+        BasicConfig.MODULE_INTEROPERABILITY,
         BasicConfig.MODULE_CONFORMANCE,
         BasicConfig.MODULE_REPORT,
         BasicConfig.MODULE_THREADING,
         BasicConfig.MODULE_DATABASE,
-        BasicConfig.MODULE_TIMER,
-        BasicConfig.MODULE_INTEROPERABILITY
+        BasicConfig.MODULE_TIMER
     }
 )
 public class DessignPerspective extends DpfAbstractPerspective {
@@ -130,6 +130,6 @@ public class DessignPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
-    getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.RELOAD));
+    getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.SHOW));
   }
 }

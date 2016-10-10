@@ -60,7 +60,7 @@ public class IndividualReportsRunnable extends DpfRunnable {
     generator.generateIndividualReport(outputfile, ir, config);
     // Notify individual report finished
     context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("individualReport").replace("%1", outputfile)));
-    context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir));
+    context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, config));
   }
 
 }
