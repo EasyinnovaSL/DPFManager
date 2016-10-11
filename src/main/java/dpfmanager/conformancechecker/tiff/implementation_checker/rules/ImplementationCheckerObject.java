@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ImplementationCheckerObject {
   String title;
   String description;
+  String version;
+  String author;
   String iso;
   List<IncludeObject> includes = null;
   List<RulesObject> rules = null;
@@ -30,6 +32,22 @@ public class ImplementationCheckerObject {
 
   public String getIso() {
     return iso;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setAuthor(String author) {
+    this.author = author;
+  }
+
+  public String getAuthor() {
+    return author;
   }
 
   @XmlElement(name = "include")
