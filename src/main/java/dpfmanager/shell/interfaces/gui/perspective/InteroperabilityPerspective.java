@@ -1,5 +1,5 @@
 /**
- * <h1>DessignPerspective.java</h1> <p> This program is free software: you can redistribute it
+ * <h1>PeriodicalPerspective.java</h1> <p> This program is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
@@ -26,12 +26,8 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -43,29 +39,23 @@ import org.jacpfx.rcp.componentLayout.PerspectiveLayout;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
  */
-@Perspective(id = GuiConfig.PERSPECTIVE_DESSIGN,
-    name = GuiConfig.PERSPECTIVE_DESSIGN,
+@Perspective(id = GuiConfig.PERSPECTIVE_INTEROPERABILITY,
+    name = GuiConfig.PERSPECTIVE_INTEROPERABILITY,
     active = false,
     components = {
         GuiConfig.COMPONENT_TOP,
-        GuiConfig.COMPONENT_DESIGN,
+        GuiConfig.COMPONENT_INTEROPERABILITY,
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
         BasicConfig.MODULE_MESSAGE,
-        BasicConfig.MODULE_INTEROPERABILITY,
-        BasicConfig.MODULE_CONFORMANCE,
-        BasicConfig.MODULE_REPORT,
-        BasicConfig.MODULE_THREADING,
-        BasicConfig.MODULE_DATABASE,
-        BasicConfig.MODULE_TIMER
+        BasicConfig.MODULE_INTEROPERABILITY
     }
 )
-public class DessignPerspective extends DpfAbstractPerspective {
+public class InteroperabilityPerspective extends DpfAbstractPerspective {
 
   @Resource
   public Context context;
@@ -98,7 +88,7 @@ public class DessignPerspective extends DpfAbstractPerspective {
     mainSplit = constructSplitPane(constructScrollPane(centerPane), bottomPane);
     mainPane = constructMainPane(mainSplit, bottomBar);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_TOP, topPane);
-    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_DESIGN, centerPane);
+    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_INTEROPERABILITY, centerPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_PANE, bottomPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_BAR, bottomBar);
 
@@ -113,11 +103,10 @@ public class DessignPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onReloadCustom() {
-    getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.RELOAD));
   }
 
   @Override
   public void onShowCustom() {
-    getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.SHOW));
+    getContext().send(GuiConfig.COMPONENT_INTEROPERABILITY, new UiMessage(UiMessage.Type.SHOW));
   }
 }

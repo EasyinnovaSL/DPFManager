@@ -20,6 +20,7 @@
 package dpfmanager.shell.modules.interoperability.messages;
 
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,37 +28,22 @@ import java.util.List;
 /**
  * Created by Adrià Llorens on 20/04/2016.
  */
-public class InteroperabilityMessage extends DpfMessage {
+public class InteroperabilityResponseMessage extends DpfMessage {
 
   public enum Type {
     ADD, EDIT, LIST, INFO, REMOVE, ENABLE, DISABLE, PARAMETERS, CONFIGURE, EXTENSIONS, OBJECTS
   }
 
   private Type type;
+  private List<ConformanceConfig> list;
 
-  private String name;
-
-  private String extra;
-
-  private String configure = "";
-
-  private String parameters = "";
-
-  private List<String> extensions = new ArrayList<>();
-
-  public InteroperabilityMessage(Type type) {
+  public InteroperabilityResponseMessage(Type type) {
     this.type = type;
   }
 
-  public InteroperabilityMessage(Type type, String name) {
+  public InteroperabilityResponseMessage(Type type, List<ConformanceConfig> list) {
     this.type = type;
-    this.name = name;
-  }
-
-  public InteroperabilityMessage(Type type, String name, String extra) {
-    this.type = type;
-    this.name = name;
-    this.extra = extra;
+    this.list = list;
   }
 
   public Type getType() {
@@ -108,35 +94,7 @@ public class InteroperabilityMessage extends DpfMessage {
     return type.equals(Type.PARAMETERS);
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public String getExtra() {
-    return extra;
-  }
-
-  public String getConfigure() {
-    return configure;
-  }
-
-  public void setConfigure(String configure) {
-    this.configure = configure;
-  }
-
-  public String getParameters() {
-    return parameters;
-  }
-
-  public void setParameters(String parameters) {
-    this.parameters = parameters;
-  }
-
-  public List<String> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(List<String> extensions) {
-    this.extensions = extensions;
+  public List<ConformanceConfig> getList() {
+    return list;
   }
 }

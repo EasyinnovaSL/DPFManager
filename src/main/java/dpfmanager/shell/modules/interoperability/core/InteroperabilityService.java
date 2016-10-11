@@ -164,6 +164,10 @@ public class InteroperabilityService extends DpfService {
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, manager.getString(conformances)));
   }
 
+  public List<ConformanceConfig> listObjects(){
+    return conformances;
+  }
+
   public void setParameters(String name, String params) {
     ConformanceConfig conformance = getConformanceByName(name);
     if (validator.validateConformance(conformance, name, false)) {

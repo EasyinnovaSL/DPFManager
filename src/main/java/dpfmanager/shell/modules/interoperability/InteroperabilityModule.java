@@ -21,12 +21,15 @@ package dpfmanager.shell.modules.interoperability;
 
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.database.core.DatabaseService;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
+import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 import dpfmanager.shell.modules.interoperability.core.InteroperabilityService;
 import dpfmanager.shell.modules.interoperability.messages.InteroperabilityMessage;
+import dpfmanager.shell.modules.interoperability.messages.InteroperabilityResponseMessage;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.Component;
@@ -35,6 +38,7 @@ import org.jacpfx.api.annotations.lifecycle.PreDestroy;
 import org.jacpfx.rcp.context.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -75,6 +79,9 @@ public class InteroperabilityModule extends DpfModule {
         service.setEnabled(im.getName(), true);
       } else if (im.isDisable()){
         service.setEnabled(im.getName(), false);
+      } else if (im.isObjects()){
+        List<ConformanceConfig> list = service.listObjects();
+        context.send(GuiConfig.COMPONENT_INTEROPERABILITY, new InteroperabilityResponseMessage(InteroperabilityResponseMessage.Type.OBJECTS, list));
       }
     }
   }
