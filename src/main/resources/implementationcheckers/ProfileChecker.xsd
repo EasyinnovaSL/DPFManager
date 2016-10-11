@@ -1,51 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.dpfmanager.org/ProfileChecker"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+    targetNamespace="http://www.dpfmanager.org/ProfileChecker" elementFormDefault="qualified"
+    vc:minVersion="1.0" vc:maxVersion="1.1">
+
     <xsd:element name="implementationCheckerObject" type="implementationCheckerObjectType"/>
-    
+
     <xsd:complexType name="implementationCheckerObjectType">
         <xsd:sequence>
-            <xsd:element name="title" type="xsd:string"/>
-            <xsd:element name="description" type="xsd:string"/>
-            <xsd:sequence>
-                <xsd:element name="rules" type="rulesType" maxOccurs="unbounded"/>
+            <xsd:element name="title" type="xsd:string" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="iso" type="xsd:string" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="description" type="xsd:string" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="version" type="xsd:string" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="author" type="xsd:string" maxOccurs="1" minOccurs="1"/>
+            <xsd:element maxOccurs="1" minOccurs="1" name="date" type="xsd:date"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="include" type="includeType"/>
+            <xsd:sequence maxOccurs="1" minOccurs="1">
+                <xsd:element name="rules" maxOccurs="unbounded" minOccurs="1">
+                    <xsd:complexType>
+                        <xsd:complexContent>
+                            <xsd:extension base="rulesType">
+                                <xsd:attribute name="id" type="xsd:string"/>
+                            </xsd:extension>
+                        </xsd:complexContent>
+                    </xsd:complexType>
+                </xsd:element>
             </xsd:sequence>
         </xsd:sequence>
     </xsd:complexType>
 
+    <xsd:complexType name="includeType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="1" name="policychecker"/>
+            <xsd:element minOccurs="0" name="excluderules" type="excludeRulesType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="excludeRulesType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" name="rule" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
     <xsd:complexType name="rulesType">
         <xsd:sequence>
+            <xsd:element name="title" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string"/>
             <xsd:element name="rule" type="ruleType" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
-        <xsd:attribute name="description" type="xsd:string"/>
     </xsd:complexType>
 
     <xsd:complexType name="ruleType">
         <xsd:sequence>
-            <xsd:element name="assert" type="assertType"/>
-            <xsd:element name="diagnostic" type="diagnosticType" minOccurs="0" maxOccurs="unbounded"/>
-            <xsd:element name="reference" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="title">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string"> </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="description">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string"> </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="reference" type="referenceType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="assert" type="assertType" maxOccurs="1" minOccurs="1"/>
         </xsd:sequence>
-        <xsd:attribute name="id" type="xsd:string"/>
-        <xsd:attribute name="context" type="xsd:string"/>
-        <xsd:attribute name="level" type="xsd:string"/>
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="context" type="xsd:string" use="required"/>
+        <xsd:attribute name="level" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="error"/>
+                    <xsd:enumeration value="critical"/>
+                    <xsd:enumeration value="warning"/>
+                    <xsd:enumeration value="info"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
     </xsd:complexType>
-    
+
+    <xsd:complexType name="referenceType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="document"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="section"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="paragraph" type="xsd:string"/>
+            <xsd:choice>
+                <xsd:element minOccurs="1" name="page" type="xsd:string"/>
+                <xsd:element maxOccurs="1" minOccurs="1" name="pages" type="xsd:string"/>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
     <xsd:complexType name="assertType">
         <xsd:simpleContent>
             <xsd:extension base="xsd:string">
                 <xsd:attribute name="test" type="xsd:string"/>
-                <xsd:attribute name="diagnostics" type="xsd:string"/>
             </xsd:extension>
         </xsd:simpleContent>
     </xsd:complexType>
 
-    <xsd:complexType name="diagnosticType">
-        <xsd:simpleContent>
-            <xsd:extension base="xsd:string">
-                <xsd:attribute name="id" type="xsd:string"/>
-                <xsd:attribute name="lang" type="xsd:string"/>
-            </xsd:extension>
-        </xsd:simpleContent>
-    </xsd:complexType>
-    
 </xsd:schema>
