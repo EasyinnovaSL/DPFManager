@@ -1,3 +1,22 @@
+/**
+ * <h1>ControllerWindows.java</h1> <p> This program is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
+ * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
+ * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
+ * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
+ *
+ * @author Adrià Llorens
+ * @version 1.0
+ * @since 23/7/2015
+ */
+
 package dpfmanager.shell.modules.periodic.core;
 
 import dpfmanager.shell.core.DPFManagerProperties;
@@ -46,7 +65,7 @@ public class ControllerWindows extends Controller {
       createIfNotExistsVBS();
       String params = buildCommandArguments(check);
       String exe = asString(getVBSPath());
-      String dpfCommand = exe + " " + params;
+      String dpfCommand = "wscript.exe " + exe + " " + params;
       String command = "";
       Periodicity periodicity = check.getPeriodicity();
       switch (periodicity.getMode()) {
@@ -124,6 +143,8 @@ public class ControllerWindows extends Controller {
 
   public PeriodicCheck parseXmlString(String xmlTask, String uuid) {
     try {
+      boolean preIssue250 = true;
+
       InputStream is = IOUtils.toInputStream(xmlTask, "UTF-16");
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -131,6 +152,10 @@ public class ControllerWindows extends Controller {
 
       // Parse input & configuration
       String arguments = doc.getDocumentElement().getElementsByTagName("Arguments").item(0).getTextContent();
+      if (arguments.startsWith("\"")) {
+        preIssue250 = false;
+        arguments = arguments.substring(arguments.substring(1).indexOf("\"") + 3, arguments.length());
+      }
       String input = getInputFromArguments(arguments);
       String configuration = getConfigurationFromArguments(arguments);
 
@@ -167,12 +192,56 @@ public class ControllerWindows extends Controller {
       periodicity.setTime(LocalTime.parse(time));
 
       is.close();
-      return new PeriodicCheck(uuid, input, configuration, periodicity);
+
+      PeriodicCheck pc = new PeriodicCheck(uuid, input, configuration, periodicity);
+      if (preIssue250){
+        editPeriodicalCheck(pc);
+      }
+      return pc;
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
   }
+
+  private String parseArguments(String arguments){
+    return arguments.substring(arguments.substring(1).indexOf("\"")+3, arguments.length());
+  }
+
+//  @Override
+//  protected String getConfigurationFromArguments(String arguments){
+//    String[] files = arguments.split("\"");
+//    String file = files[3];
+//    if (!file.replaceAll(" ", "").isEmpty()) {
+//      return file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".dpf"));
+//    }
+//    return "";
+//  }
+//
+//  @Override
+//  protected String getInputFromArguments(String arguments){
+//    String input = "";
+//    String withouVBS = arguments.substring(arguments.substring(1).indexOf("\"")+3, arguments.length());
+//    String aux = withouVBS.substring(18); // Skip -s -configuration
+//    String[] files = aux.split("\"");
+//    boolean first = true;
+//    for (String file : files) {
+//      if (!file.replaceAll(" ", "").isEmpty()) {
+//        if (first) {
+//          // Configuration
+//          first = false;
+//        } else {
+//          // Input
+//          if (input.isEmpty()) {
+//            input = file;
+//          } else {
+//            input += ";" + file;
+//          }
+//        }
+//      }
+//    }
+//    return input;
+//  }
 
   /**
    * Windows VBS file

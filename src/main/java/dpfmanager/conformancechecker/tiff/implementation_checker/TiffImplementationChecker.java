@@ -1,3 +1,22 @@
+/**
+ * <h1>TiffImplementationChecker.java</h1> <p> This program is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
+ * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
+ * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
+ * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
+ *
+ * @author Víctor Muñoz Solà
+ * @version 1.0
+ * @since 23/7/2015
+ */
+
 package dpfmanager.conformancechecker.tiff.implementation_checker;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffHeader;
@@ -15,7 +34,6 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
-import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -78,6 +96,9 @@ public class TiffImplementationChecker {
     TiffIfds ifds = new TiffIfds();
     ifds.setCircularReference(circularReference);
     ifds.setIfds(ifdsList);
+    for (TiffIfd ifdNode : ifdsList) {
+      ifdNode.setParent(ifds.getContext());
+    }
     tiffValidate.setIfds(ifds);
 
     return tiffValidate;
@@ -137,13 +158,14 @@ public class TiffImplementationChecker {
     // Strips check
     if (ifd.hasStrips()) {
       int pixelSize = 0;
+      
       for (int i = 0; i < metadata.get("BitsPerSample").getCardinality(); i++) {
         pixelSize += metadata.get("BitsPerSample").getValue().get(i).toInt();
       }
+      int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripBYTECount");
+      int nsc = metadata.get(id).getCardinality();
       if (metadata.get("Compression").getFirstNumericValue() == 1 && pixelSize >= 8) {
         int calculatedImageLength = 0;
-        int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripBYTECount");
-        int nsc = metadata.get(id).getCardinality();
         for (int i = 0; i < nsc; i++) {
           calculatedImageLength += metadata.get(id).getValue().get(i).toInt();
         }
@@ -152,6 +174,14 @@ public class TiffImplementationChecker {
           tiffIfd.setCorrectStrips(0);
         }
       }
+
+      //long rps = 1;
+      //if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("RowsPerStrip")))
+      //  rps = metadata.get("RowsPerStrip").getFirstNumericValue();
+      //long leng = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("ImageLength")).getFirstNumericValue();
+      //int nstrips = (int)Math.ceil((double)leng / rps);
+      //if (nstrips != nsc)
+      //  tiffIfd.setCorrectStrips(0);
     }
 
     // Tiles check
@@ -570,8 +600,9 @@ public class TiffImplementationChecker {
       tt.setExif(ifd);
     } else if (tv.getId() == 330) {
       // SubIFD
-      TiffIfd ifd = createIfdNode(tv, "subifd");
-      tt.setSubIfd(ifd);
+      TiffIfd ifd = CreateIFDValidation((IFD)tv.getValue().get(0), 0);
+      //TiffIfd ifd = createIfdNode(tv, "image");
+      tt.setIfd(ifd);
     } else if (tv.getId() == 400) {
       // GlobalParametersIFD
       TiffIfd ifd = createIfdNode(tv, "globalparameters");

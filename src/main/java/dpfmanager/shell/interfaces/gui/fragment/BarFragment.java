@@ -1,3 +1,22 @@
+/**
+ * <h1>BarFragment.java</h1> <p> This program is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
+ * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
+ * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
+ * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
+ *
+ * @author Adrià Llorens
+ * @version 1.0
+ * @since 23/7/2015
+ */
+
 package dpfmanager.shell.interfaces.gui.fragment;
 
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
@@ -18,12 +37,10 @@ import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -109,12 +126,13 @@ public class BarFragment {
     }
 
     if (array.isEmpty()) {
-      // Load through reflections
-      Reflections reflections = new Reflections("", new ResourcesScanner());
-      Set<String> resources = reflections.getResources(Pattern.compile(".*\\.properties"));
-      for (String resource : resources) {
-        if (resource.contains("bundles/language_") && !resource.endsWith("language.properties")){
-          array.add(resource.replace("bundles/language_","").replace(".properties",""));
+      // Load from file
+      File folder = new File("src/main/resources/bundles");
+      File[] listOfFiles = folder.listFiles();
+      for (File file : listOfFiles) {
+        String resource = file.getName();
+        if (!resource.endsWith("language.properties")) {
+          array.add(resource.replace("language_", "").replace(".properties", ""));
         }
       }
     }

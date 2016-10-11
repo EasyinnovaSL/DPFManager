@@ -1,3 +1,22 @@
+/**
+ * <h1>ReportRow.java</h1> <p> This program is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
+ * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
+ * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
+ * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
+ * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
+ *
+ * @author Adrià Llorens
+ * @version 1.0
+ * @since 23/7/2015
+ */
+
 package dpfmanager.shell.modules.report.util;
 
 import javafx.beans.property.SimpleMapProperty;
@@ -37,6 +56,7 @@ public class ReportRow {
   private final SimpleStringProperty passed;
   private final SimpleStringProperty score;
   private final SimpleMapProperty<String, String> formats;
+  private final SimpleStringProperty delete;
 
   /**
    * Instantiates a new Report row.
@@ -50,7 +70,7 @@ public class ReportRow {
    * @param passed   the passed
    * @param score    the score
    */
-  public ReportRow(String sdate, String stime, String input, String nFiles, String errors, String warnings, String passed, String score) {
+  public ReportRow(String sdate, String stime, String input, String nFiles, String errors, String warnings, String passed, String score, String deletePath) {
     this.date = new SimpleStringProperty(parseDate2Locale(sdate));
     this.time = new SimpleStringProperty(stime);
     this.input = new SimpleStringProperty(input);
@@ -60,6 +80,7 @@ public class ReportRow {
     this.passed = new SimpleStringProperty(passed);
     this.score = new SimpleStringProperty(score);
     this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
+    this.delete = new SimpleStringProperty(deletePath);
   }
 
   private String parseDate2Locale(String sdate){
@@ -248,6 +269,24 @@ public class ReportRow {
     this.formats.put(format, filepath);
   }
 
+  /**
+   * Gets date.
+   *
+   * @return the date
+   */
+  public String getDelete() {
+    return delete.get();
+  }
+
+  /**
+   * Sets date.
+   *
+   * @param delete the delete file
+   */
+  public void setDelete(String delete) {
+    date.set(delete);
+  }
+
   private static int countFiles(File folder, String extension) {
     String[] files = folder.list(new FilenameFilter() {
       @Override
@@ -335,18 +374,7 @@ public class ReportRow {
         score = passed * 100 / n;
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
-      return row;
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
-  public static ReportRow createEmptyRow(String reportDay) {
-    try {
-      String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
-
-      ReportRow row = new ReportRow(sdate, "?", "?", "?", "? errors", "? warnings", "? passed", "? %");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -435,7 +463,7 @@ public class ReportRow {
         }
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -456,9 +484,10 @@ public class ReportRow {
       int n = countFiles(parent, ".json") - 1 - countFiles(parent, "_fixed.json");
       int passed = 0, errors = 0, warnings = 0, score = 0;
       String json = readFullFile(file.getPath(), Charset.defaultCharset());
-      JsonObject jObj = new JsonParser().parse(json).getAsJsonObject();
+      JsonObject jObjRoot = new JsonParser().parse(json).getAsJsonObject();
       String stime = getStime(file.getPath());
-      String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".json");
+      String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".json");
+      JsonObject jObj = jObjRoot.getAsJsonObject("globalreport");
 
       // Passed
       if (jObj.has("stats")) {
@@ -483,7 +512,7 @@ public class ReportRow {
       // Warnings
       if (jObj.has("individualreports")) {
         try {
-          JsonArray jArray = jObj.get("individualreports").getAsJsonArray();
+          JsonArray jArray = ((JsonObject)jObj.get("individualreports")).get("report").getAsJsonArray().getAsJsonArray();
           for (JsonElement element : jArray) {
             if (element.toString().contains("\"warning\"")) {
               warnings++;
@@ -500,7 +529,7 @@ public class ReportRow {
       }
 
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -522,7 +551,7 @@ public class ReportRow {
       String stime = getStime(file.getPath());
       String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".pdf");
 
-      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1",errors), bundle.getString("warnings").replace("%1",warnings), bundle.getString("passed").replace("%1",passed), score + "%");
+      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1",errors), bundle.getString("warnings").replace("%1",warnings), bundle.getString("passed").replace("%1",passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
