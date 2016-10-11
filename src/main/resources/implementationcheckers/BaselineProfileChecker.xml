@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<implementationCheckerObject xmlns="http://www.dpfmanager.org/ProfileChecker"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.dpfmanager.org/ProfileChecker ProfileChecker.xsd">
+<implementationCheckerObject>
  
  <title>Baseline TIFF 6.0</title>
  <iso>TIFF 6.0 Specification. Part 1: Baseline TIFF</iso>
@@ -550,7 +548,7 @@ beyond the first one, so not all readers could render all the images in the file
   </rule>
  </rules>
  
- <rules>
+ <rules id="IFDR">
   <title>Validation rules for RGB Full color images</title>
   <description>
    In an RGB image, each pixel is made up of three components: red, green, and

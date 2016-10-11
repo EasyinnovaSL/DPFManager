@@ -34,6 +34,7 @@ public class ImplementationCheckerObject {
   String version;
   String author;
   String iso;
+  String date;
   List<IncludeObject> includes = null;
   List<RulesObject> rules = null;
 
@@ -43,6 +44,14 @@ public class ImplementationCheckerObject {
 
   public String getTitle() {
     return title;
+  }
+
+  public void setDate(String date) {
+    this.date = date;
+  }
+
+  public String getDate() {
+    return date;
   }
 
   public void setIso(String iso) {

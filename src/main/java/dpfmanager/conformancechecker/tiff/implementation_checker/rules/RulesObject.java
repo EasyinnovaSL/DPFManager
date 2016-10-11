@@ -30,13 +30,21 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class RulesObject {
   String description;
+  String title;
   List<RuleObject> rules = null;
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getTitle() {
+    return title;
+  }
 
   public void setDescription(String description) {
     this.description = description;
   }
 
-  @XmlAttribute
   public String getDescription() {
     return description;
   }
