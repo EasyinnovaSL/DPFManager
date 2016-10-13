@@ -86,6 +86,12 @@ public class MessagesModule extends DpfModule {
         if (cm.isAsk()){
           askForClosePeriodical();
         } else {
+          context.send(GuiConfig.PERSPECTIVE_INTEROPERABILITY + "." + GuiConfig.COMPONENT_INTEROPERABILITY, new CloseMessage(CloseMessage.Type.CONFORMANCES));
+        }
+      } else if (cm.isConformances()) {
+        if (cm.isAsk()){
+          askForCloseConformances();
+        } else {
           closeNow();
         }
       }
@@ -124,6 +130,20 @@ public class MessagesModule extends DpfModule {
       @Override
       public void run() {
         Alert alert = AlertsManager.createAskAlert(bundle.getString("askAlertPeriodical"), bundle.getString("askAlertPeriodicalContent"));
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get().getButtonData().equals(ButtonBar.ButtonData.YES)) {
+          closeNow();
+        }
+      }
+    });
+  }
+
+  private void askForCloseConformances() {
+    ResourceBundle bundle = DPFManagerProperties.getBundle();
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        Alert alert = AlertsManager.createAskAlert(bundle.getString("askAlertConformances"), bundle.getString("askAlertConformancesContent"));
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get().getButtonData().equals(ButtonBar.ButtonData.YES)) {
           closeNow();
@@ -178,7 +198,10 @@ public class MessagesModule extends DpfModule {
 
         // Show alert
         if (!am.getType().equals(AlertMessage.Type.CONFIRMATION)) {
-          alert.show();
+          alert.showAndWait();
+          if (am.getNext() != null){
+            context.send(am.getTarget(), am.getNext());
+          }
         } else {
           Optional<ButtonType> result = alert.showAndWait();
           am.setResult(result.get().getButtonData().equals(ButtonBar.ButtonData.YES));

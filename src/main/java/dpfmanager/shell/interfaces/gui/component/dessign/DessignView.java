@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
@@ -29,12 +30,15 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.fragment.ConformanceBoxFragment;
+import dpfmanager.shell.interfaces.gui.fragment.InteropFragment;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.interoperability.core.InteroperabilityService;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -43,6 +47,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -52,15 +57,18 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 import org.controlsfx.control.CheckTreeView;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
+import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
@@ -112,6 +120,11 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   @FXML
   private Button reloadButton;
 
+  @FXML
+  private Label availableLabel;
+  @FXML
+  private FlowPane flowPane;
+
   @Autowired
   private InteroperabilityService interService;
 
@@ -120,6 +133,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   private RadioButton selectedButton;
   private CheckTreeView<String> checkTreeView;
   private boolean first = true;
+  private boolean available;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -142,6 +156,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       UiMessage uiMessage = message.getTypedMessage(UiMessage.class);
       if (uiMessage.isShow()) {
         if (!first){
+          readAvailableConformances();
           addConfigFiles();
         } else {
           first = false;
@@ -152,6 +167,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       if (first){
         first = false;
       } else {
+        readAvailableConformances();
         addConfigFiles();
       }
     }
@@ -187,6 +203,12 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     addTreeView();
     NodeUtil.hideNode(treeViewHBox);
     NodeUtil.hideNode(reloadButton);
+
+    // Loading available conformances
+    available = false;
+    Label label = new Label(bundle.getString("loadingAvailableCC"));
+    label.getStyleClass().add("lightgrey");
+    flowPane.getChildren().add(label);
   }
 
   private void addTreeView() {
@@ -232,11 +254,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     vBoxConfig.setId("vBoxConfig");
     vBoxConfig.setSpacing(3);
     vBoxConfig.setPadding(new Insets(5));
+
     // Default one
     String description = interService.getDescriptionFromDefault();
     if (description != null) {
       addConfigFile(bundle.getString("default"), description, bundle.getString("default").equalsIgnoreCase(previous));
     }
+
     // User configs
     File folder = new File(DPFManagerProperties.getConfigDir());
     for (final File fileEntry : folder.listFiles()) {
@@ -276,6 +300,23 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     RadioButton rad = getSelectedConfig();
     group.getToggles().remove(rad);
     vBoxConfig.getChildren().remove(rad);
+  }
+
+  private void readAvailableConformances(){
+    available = false;
+    flowPane.getChildren().clear();
+    for (ConformanceChecker cc : interService.getConformanceCheckers()){
+      ManagedFragmentHandler<ConformanceBoxFragment> handler = getContext().getManagedFragmentHandler(ConformanceBoxFragment.class);
+      handler.getController().load(cc);
+      flowPane.getChildren().add(handler.getFragmentNode());
+      available = true;
+    }
+    if (!available){
+      Label label = new Label(bundle.getString("noAvailableCC"));
+      label.getStyleClass().addAll("label-exclamation");
+      label.setFont(new Font(14));
+      flowPane.getChildren().add(label);
+    }
   }
 
   /**
@@ -430,4 +471,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     return 1;
   }
 
+  public boolean isAvailable() {
+    return available;
+  }
 }

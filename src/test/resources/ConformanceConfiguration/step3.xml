@@ -4,6 +4,7 @@
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <ConformanceCheckers>
       <conformanceChecker>
+         <uuid>1</uuid>
          <name>Tiff</name>
          <location>built-in</location>
          <parameters/>
@@ -15,6 +16,7 @@
          </extensions>
       </conformanceChecker>
       <conformanceChecker>
+         <uuid>diferent</uuid>
          <name>RandomName789</name>
          <location>src/test/resources/Small/RGB.tif</location>
          <parameters>-configuration %config% %input%</parameters>

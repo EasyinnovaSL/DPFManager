@@ -41,8 +41,24 @@ public class InteroperabilityModel extends DpfModel<PeriodicalView, PeriodicalCo
     conformancesFragments = new ArrayList<>();
   }
 
-  public void addInteropFragment(ManagedFragmentHandler<InteropFragment> handler) {
+  public void addConformanceFragment(ManagedFragmentHandler<InteropFragment> handler) {
     conformancesFragments.add(handler);
   }
 
+  public void removeConformanceFragment(ManagedFragmentHandler<InteropFragment> handler) {
+    conformancesFragments.remove(handler);
+  }
+
+  public ManagedFragmentHandler<InteropFragment> getConformanceConfigByUuid(String uuid) {
+    for (ManagedFragmentHandler<InteropFragment> handler : conformancesFragments) {
+      if (handler.getController().getUuid().equals(uuid)) {
+        return handler;
+      }
+    }
+    return null;
+  }
+
+  public List<ManagedFragmentHandler<InteropFragment>> getConformancesFragments() {
+    return conformancesFragments;
+  }
 }

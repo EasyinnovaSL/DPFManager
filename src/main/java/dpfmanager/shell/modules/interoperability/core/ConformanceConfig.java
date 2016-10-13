@@ -1,16 +1,10 @@
 package dpfmanager.shell.modules.interoperability.core;
 
-import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.modules.report.core.IndividualReport;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +24,7 @@ import javax.xml.transform.stream.StreamResult;
  */
 public class ConformanceConfig {
 
+  private String uuid;
   private String name;
   private String path;
   private String parameters;
@@ -37,14 +32,39 @@ public class ConformanceConfig {
   private boolean enabled;
   private List<String> extensions;
 
-  public ConformanceConfig(){
+  public ConformanceConfig() {
+    extensions = new ArrayList<>();
+    uuid = "";
+  }
+
+  public ConformanceConfig(ConformanceConfig copy) {
+    uuid = copy.uuid;
+    copy(copy);
+  }
+
+  public ConformanceConfig(String n, String p) {
+    Long lUuid = System.currentTimeMillis();
+    uuid = lUuid.toString();
+    name = n;
+    path = p;
     extensions = new ArrayList<>();
   }
 
-  public ConformanceConfig(String name, String path){
-    this.name = name;
-    this.path = path;
-    extensions = new ArrayList<>();
+  public void copy(ConformanceConfig copy){
+    name = copy.getName();
+    path = copy.getPath();
+    parameters = copy.getParameters();
+    configuration = copy.getConfiguration();
+    enabled = copy.isEnabled();
+    extensions = copy.getExtensions();
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public String getUuid() {
+    return uuid;
   }
 
   public String getName() {
@@ -69,8 +89,8 @@ public class ConformanceConfig {
 
   public List<String> getParametersList() {
     List<String> params = new ArrayList<>();
-    for (String arg : parameters.split(" ")){
-      if (!arg.isEmpty()){
+    for (String arg : parameters.split(" ")) {
+      if (!arg.isEmpty()) {
         params.add(arg);
       }
     }
@@ -105,24 +125,40 @@ public class ConformanceConfig {
     this.extensions = extensions;
   }
 
-  public void addExtension(String ext){
+  public void addExtension(String ext) {
     extensions.add(ext);
   }
 
-  public boolean isBuiltIn(){
+  public boolean isBuiltIn() {
     return path.equals("built-in");
+  }
+
+  public String getPrettyExtensions() {
+    String result = "";
+    for (String ext : extensions) {
+      result += ext + ", ";
+    }
+    if (!result.isEmpty()) {
+      result = result.substring(0, result.length() - 2);
+    }
+    return result;
   }
 
   /**
    * Parse the configuration into XML
    */
-  public Document toXML(){
+  public Document toXML() {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
       Document doc = docBuilder.newDocument();
       Element conformanceChecker = doc.createElement("conformanceChecker");
       doc.appendChild(conformanceChecker);
+
+      // Uuid
+      Element elUuid = doc.createElement("uuid");
+      elUuid.setTextContent(uuid);
+      conformanceChecker.appendChild(elUuid);
 
       // Name
       Element elName = doc.createElement("name");
@@ -155,7 +191,7 @@ public class ConformanceConfig {
 
       // Extensions
       Element elExtensions = doc.createElement("extensions");
-      for (String ext : extensions){
+      for (String ext : extensions) {
         Element elExt = doc.createElement("extension");
         elExt.setTextContent(ext);
         elExtensions.appendChild(elExt);
@@ -175,8 +211,8 @@ public class ConformanceConfig {
    * Parse the configuration into XML
    */
   @Override
-  public String toString(){
-    try{
+  public String toString() {
+    try {
       // Get XML Document
       Document doc = getXMLFullDocument();
       if (doc != null) {
@@ -202,18 +238,18 @@ public class ConformanceConfig {
 
   }
 
-  private Document getXMLFullDocument(){
+  private Document getXMLFullDocument() {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
       Document doc = docBuilder.newDocument();
-      Element rootElement = doc.createElementNS("http://www.preforma-project/interoperability","tns:ConformanceCheckerInfo");
+      Element rootElement = doc.createElementNS("http://www.preforma-project/interoperability", "tns:ConformanceCheckerInfo");
       rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
       rootElement.setAttribute("xmlns:schemaLocation", "http://www.preforma-project/interoperability preformainteroperability.xsd");
       doc.appendChild(rootElement);
 
       Document conformanceDoc = toXML();
-      if (conformanceDoc != null){
+      if (conformanceDoc != null) {
         Node node = doc.importNode(conformanceDoc.getDocumentElement(), true);
         rootElement.appendChild(node);
       }
@@ -230,7 +266,7 @@ public class ConformanceConfig {
   /**
    * Parse the configuration from XML
    */
-  public void fromXML(Node conformanceNode){
+  public void fromXML(Node conformanceNode) {
     if (conformanceNode.getNodeType() == Node.ELEMENT_NODE) {
       NodeList attribs = conformanceNode.getChildNodes();
       for (int j = 0; j < attribs.getLength(); j++) {
@@ -238,6 +274,9 @@ public class ConformanceConfig {
         if (attribNode.getNodeType() == Node.ELEMENT_NODE) {
           Element attribElem = (Element) attribNode;
           switch (attribElem.getTagName()) {
+            case "uuid":
+              setUuid(attribElem.getTextContent());
+              break;
             case "name":
               setName(attribElem.getTextContent());
               break;

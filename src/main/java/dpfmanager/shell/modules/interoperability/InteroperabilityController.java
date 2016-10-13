@@ -52,7 +52,7 @@ public class InteroperabilityController extends DpfSpringController {
     if (dpfMessage.isTypeOf(InteroperabilityMessage.class)){
       InteroperabilityMessage im = dpfMessage.getTypedMessage(InteroperabilityMessage.class);
       if (im.isAdd()){
-        service.add(im.getName(), im.getExtra(), im.getParameters(), im.getConfigure(), im.getExtensions());
+        service.add(im.getName(), im.getExtra(), im.getParameters(), im.getConfigure(), im.getExtensions(), im.isEnabled());
       } else if (im.isEdit()){
         service.edit(im.getName(), im.getExtra());
       }  else if (im.isRemove()){

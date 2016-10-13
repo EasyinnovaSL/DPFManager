@@ -60,7 +60,7 @@ public class InteroperabilityModule extends DpfModule {
     if (dpfMessage.isTypeOf(InteroperabilityMessage.class)){
       InteroperabilityMessage im = dpfMessage.getTypedMessage(InteroperabilityMessage.class);
       if (im.isAdd()){
-        service.add(im.getName(), im.getExtra(), im.getParameters(), im.getConfigure(), im.getExtensions());
+        service.add(im.getName(), im.getExtra(), im.getParameters(), im.getConfigure(), im.getExtensions(), im.isEnabled());
       } else if (im.isEdit()){
         service.edit(im.getName(), im.getExtra());
       }  else if (im.isRemove()){
@@ -82,6 +82,8 @@ public class InteroperabilityModule extends DpfModule {
       } else if (im.isObjects()){
         List<ConformanceConfig> list = service.listObjects();
         context.send(GuiConfig.COMPONENT_INTEROPERABILITY, new InteroperabilityResponseMessage(InteroperabilityResponseMessage.Type.OBJECTS, list));
+      } else if (im.isGuiEdit()){
+        service.guiedit(im.getConfig());
       }
     }
   }

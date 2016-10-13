@@ -10,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by easy on 08/02/2016.
@@ -62,9 +64,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
      */
     expected = new File("src/test/resources/ConformanceConfiguration/step1.xml");
     current = new File(DPFManagerProperties.getConformancesConfig());
-    expectedStr = FileUtils.readFileToString(expected, "utf-8").replace("\r", "");
-    currentStr = FileUtils.readFileToString(current, "utf-8").replace("\r", "");
-    Assert.assertEquals("Config files differ!", expectedStr, currentStr);
+    compareFiles(expected, current, 1);
 
     /*
      * Remove
@@ -136,9 +136,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
      */
     expected = new File("src/test/resources/ConformanceConfiguration/step2.xml");
     current = new File(DPFManagerProperties.getConformancesConfig());
-    expectedStr = FileUtils.readFileToString(expected, "utf-8").replace("\r", "");
-    currentStr = FileUtils.readFileToString(current, "utf-8").replace("\r", "");
-    Assert.assertEquals("Config files differ!", expectedStr, currentStr);
+    compareFiles(expected, current, 1);
 
     /*
      * Bad try remove built-in
@@ -193,10 +191,27 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
      */
     expected = new File("src/test/resources/ConformanceConfiguration/step3.xml");
     current = new File(DPFManagerProperties.getConformancesConfig());
-    expectedStr = FileUtils.readFileToString(expected, "utf-8").replace("\r", "");
-    currentStr = FileUtils.readFileToString(current, "utf-8").replace("\r", "");
-    Assert.assertEquals("Config files differ!", expectedStr, currentStr);
+    compareFiles(expected, current, 1);
+  }
 
+  private void compareFiles(File expected, File current, int maxDifferLines) throws IOException {
+    List<String> expectedLines = FileUtils.readLines(expected);
+    List<String> currentLines = FileUtils.readLines(current);
+    if (expectedLines.size() == currentLines.size()) {
+      int count = 0;
+      for (int i = 0; i< expectedLines.size(); i++){
+        String expectedLine = expectedLines.get(i);
+        String currentLine = expectedLines.get(i);
+        if (!expectedLine.equals(currentLine)){
+          count++;
+        }
+        if (count > maxDifferLines){
+          Assert.assertEquals("Config files differ!", true, false);
+        }
+      }
+    } else {
+      Assert.assertEquals("Config files differ!", true, false);
+    }
   }
 
 }

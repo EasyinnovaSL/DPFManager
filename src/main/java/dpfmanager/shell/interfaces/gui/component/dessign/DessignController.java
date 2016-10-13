@@ -60,6 +60,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class DessignController extends DpfController<DessignModel, DessignView> {
 
   public void mainCheckFiles() {
+    if (!getView().isAvailable()){
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, getBundle().getString("alertConformances"), new UiMessage(UiMessage.Type.SHOW), GuiConfig.PERSPECTIVE_INTEROPERABILITY));
+      return;
+    }
+
     String input = "";
     List<String> treeSelected = getView().getTreeSelectedItems();
     if (treeSelected != null) {

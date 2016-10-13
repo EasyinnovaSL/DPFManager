@@ -1,6 +1,6 @@
 package dpfmanager.shell.modules.interoperability.core;
 
-import dpfmanager.conformancechecker.external.ExternalConformanceChecker;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
@@ -8,7 +8,6 @@ import dpfmanager.shell.modules.messages.messages.LogMessage;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -35,13 +34,59 @@ public class InteroperabilityValidator {
     return true;
   }
 
-  public boolean validateParameters(String params) {
-    return params.contains("%config%") && params.contains("%input%");
+  public boolean validateAll(ConformanceConfig conformance) {
+    if (conformance.isBuiltIn()){
+      return validateConfiguration(conformance.isBuiltIn(), conformance.getConfiguration());
+    } else {
+      return validateParameters(conformance.getParameters())
+          && validatePath(conformance.getPath())
+          && validateConfiguration(conformance.isBuiltIn(), conformance.getConfiguration());
+    }
   }
 
-  public boolean validateEnable(ConformanceConfig conformance, boolean enabled) {
-    if ((enabled && !conformance.getConfiguration().isEmpty() && !conformance.getParameters().isEmpty()) || !enabled) {
+  public boolean validateParameters(String params) {
+    if (params.contains("%config%") && params.contains("%input%")) {
       return true;
+    } else {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceParamsError")));
+      return false;
+    }
+  }
+
+  public boolean validatePath(String path) {
+    File tmp = new File(path);
+    if (tmp.exists() && tmp.isFile()) {
+      return true;
+    } else {
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidPath").replace("%1", path)));
+    }
+    return false;
+  }
+
+  public boolean validateConfiguration(boolean isBuiltIn, String config) {
+    if (isBuiltIn) {
+      // Internal
+      File inConfigs = new File(DPFManagerProperties.getConfigDir() + "/" + config + ".dpf");
+      File absolute = new File(config);
+      if (config.isEmpty()) {
+        // Default
+        return true;
+      } else if ((inConfigs.exists() && inConfigs.isFile()) || (absolute.exists() && absolute.isFile())) {
+        // In configs or absolute path
+        return true;
+      } else {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidConfig").replace("%1", config)));
+      }
+    } else {
+      // External
+      return true;
+      // TODO obligatory config file
+//      File tmp = new File(config);
+//      if (tmp.exists() && tmp.isFile()) {
+//        return true;
+//      } else {
+//        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidConfig").replace("%1", config)));
+//      }
     }
     return false;
   }
@@ -50,14 +95,19 @@ public class InteroperabilityValidator {
    * Validates a loaded built in conformance checker
    */
   public boolean validateInitBuilt(ConformanceConfig conformance) {
-    File config = new File(conformance.getConfiguration());
-    if (!conformance.getConfiguration().isEmpty() && (!config.exists() || !config.isFile())){
+    String path = conformance.getConfiguration();
+    if (!path.isEmpty() && !path.contains("/") && !path.contains("\\")) {
+      path = DPFManagerProperties.getConfigDir() + "/" + path + ".dpf";
+    }
+
+    File config = new File(path);
+    if (!conformance.getConfiguration().isEmpty() && (!config.exists() || !config.isFile())) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorLoadingBuiltCC")));
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("causeConfigPath")));
       return false;
     }
 
-    if (conformance.getExtensions().isEmpty()){
+    if (conformance.getExtensions().isEmpty()) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorLoadingBuiltCC")));
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("causeExtensions")));
       return false;
@@ -77,19 +127,19 @@ public class InteroperabilityValidator {
     }
 
     File config = new File(conformance.getConfiguration());
-    if (!conformance.getConfiguration().isEmpty() && (!config.exists() || !config.isFile())){
+    if (!conformance.getConfiguration().isEmpty() && (!config.exists() || !config.isFile())) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorLoadingCC").replace("%1", conformance.getName())));
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("causeConfigPath")));
       return false;
     }
 
-    if (!conformance.getParameters().contains("%input%") || !conformance.getParameters().contains("%config%")){
+    if (!conformance.getParameters().contains("%input%") || !conformance.getParameters().contains("%config%")) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorLoadingCC").replace("%1", conformance.getName())));
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("causeParameters")));
       return false;
     }
 
-    if (conformance.getExtensions().isEmpty()){
+    if (conformance.getExtensions().isEmpty()) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorLoadingCC").replace("%1", conformance.getName())));
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("causeExtensions")));
       return false;

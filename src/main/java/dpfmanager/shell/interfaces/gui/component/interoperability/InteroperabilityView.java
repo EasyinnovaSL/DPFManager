@@ -76,20 +76,40 @@ public class InteroperabilityView extends DpfView<InteroperabilityModel, Interop
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
+    if (message != null && message.isTypeOf(CloseMessage.class)) {
+      closeRequested();
+    }
   }
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
-    if (message != null && message.isTypeOf(UiMessage.class)) {
-      UiMessage uiMessage = message.getTypedMessage(UiMessage.class);
-      if (uiMessage.isShow()) {
-        context.send(BasicConfig.MODULE_INTEROPERABILITY, new InteroperabilityMessage(InteroperabilityMessage.Type.OBJECTS));
-      }
-    } else if (message != null && message.isTypeOf(InteroperabilityResponseMessage.class)){
+    if (message != null && message.isTypeOf(InteroperabilityResponseMessage.class)){
       InteroperabilityResponseMessage irm = (InteroperabilityResponseMessage) message;
       if (irm.isObjects()) {
         for (ConformanceConfig cc : irm.getList()){
           addConformanceConfig(cc);
+        }
+      } else if (irm.isRemove()) {
+        InteropFragment inf = getModel().getConformanceConfigByUuid(irm.getUuid()).getController();
+        if (irm.isOk()) {
+          deleteConformanceChecker(irm.getUuid());
+        } else {
+          inf.hideLoading();
+          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("errorRemovingCC").replace("%1", inf.getName())));
+        }
+      } else if (irm.isSave()) {
+        InteropFragment inf = getModel().getConformanceConfigByUuid(irm.getUuid()).getController();
+        if (irm.isOk()) {
+          inf.savedSuccess();
+        } else {
+          inf.savedFailed();
+          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("errorSavingCC").replace("%1", inf.getName()), bundle.getString("infoConsole")));
+        }
+      } else if (irm.isEnable()) {
+        InteropFragment inf = getModel().getConformanceConfigByUuid(irm.getUuid()).getController();
+        if (!irm.isOk()) {
+          inf.enableFailed();
+          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorEnableH").replace("%1", inf.getName()), bundle.getString("infoConsole")));
         }
       }
     }
@@ -102,21 +122,44 @@ public class InteroperabilityView extends DpfView<InteroperabilityModel, Interop
     setModel(new InteroperabilityModel());
     setController(new InteroperabilityController());
     getController().setResourcebundle(bundle);
+
+    // Read from configurations
+    context.send(BasicConfig.MODULE_INTEROPERABILITY, new InteroperabilityMessage(InteroperabilityMessage.Type.OBJECTS));
   }
 
   private void addConformanceConfig(ConformanceConfig cc){
     ManagedFragmentHandler<InteropFragment> handler = getContext().getManagedFragmentHandler(InteropFragment.class);
     handler.getController().init(cc);
-    getModel().addInteropFragment(handler);
+    getModel().addConformanceFragment(handler);
     mainVBox.getChildren().add(handler.getFragmentNode());
+  }
+
+  private void deleteConformanceChecker(String name){
+    ManagedFragmentHandler<InteropFragment> toDelete = getModel().getConformanceConfigByUuid(name);
+    if (toDelete != null) {
+      mainVBox.getChildren().remove(toDelete.getFragmentNode());
+      getModel().removeConformanceFragment(toDelete);
+    }
   }
 
   @FXML
   protected void newButtonClicked(ActionEvent event) throws Exception {
     ManagedFragmentHandler<InteropFragment> handler = getContext().getManagedFragmentHandler(InteropFragment.class);
-    handler.getController().init();
-    getModel().addInteropFragment(handler);
+    Long milis = System.currentTimeMillis();
+    handler.getController().init(milis.toString());
+    getModel().addConformanceFragment(handler);
     mainVBox.getChildren().add(handler.getFragmentNode());
+  }
+
+  private void closeRequested() {
+    boolean found = false;
+    for (ManagedFragmentHandler<InteropFragment> handler : getModel().getConformancesFragments()) {
+      if (!handler.getController().isSaved()) {
+        found = true;
+        break;
+      }
+    }
+    context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(CloseMessage.Type.CONFORMANCES, found));
   }
 
   @Override

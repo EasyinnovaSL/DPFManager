@@ -63,10 +63,16 @@ public class ConformanceRunnable extends DpfRunnable {
 
   @Override
   public void runTask() {
-    // Process the input and get a list of individual reports
+    // if config is null, get the default one
     if (config == null){
       config = pi.getDefaultConfigurationFromFile(filename);
     }
+    // If no default one, create one
+    if (config == null){
+      config = new Configuration();
+      config.addFormat("XML");
+    }
+    // Process the input and get a list of individual reports
     IndividualReport ir = pi.processFile(filename, internalReportFolder, config, id);
     if (ir != null && !ir.isError()) {
       ir.setIdReport(id);

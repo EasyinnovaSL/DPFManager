@@ -107,6 +107,5 @@ public class InteroperabilityPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
-    getContext().send(GuiConfig.COMPONENT_INTEROPERABILITY, new UiMessage(UiMessage.Type.SHOW));
   }
 }

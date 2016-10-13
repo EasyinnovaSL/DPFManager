@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -33,10 +34,12 @@ public class InteroperabilityManager {
 
   private DpfContext context;
   private ResourceBundle bundle;
+  private InteroperabilityValidator validator;
 
-  public InteroperabilityManager(DpfContext context, ResourceBundle bundle) {
+  public InteroperabilityManager(DpfContext context, ResourceBundle bundle, InteroperabilityValidator validator) {
     this.context = context;
     this.bundle = bundle;
+    this.validator = validator;
   }
 
   /**
@@ -44,6 +47,19 @@ public class InteroperabilityManager {
    */
   public boolean writeChanges(List<ConformanceConfig> conformances) {
     try {
+      // Sort
+      conformances.sort(new Comparator<ConformanceConfig>() {
+        @Override
+        public int compare(ConformanceConfig o1, ConformanceConfig o2) {
+          if (o1.isBuiltIn()){
+            return -1;
+          } else if (o2.isBuiltIn()){
+            return 1;
+          }
+          return o1.getName().compareTo(o2.getName());
+        }
+      });
+
       String xmlFileOld = DPFManagerProperties.getConformancesConfig();
       String xmlFileNew = DPFManagerProperties.getConformancesConfig() + ".new";
       Document doc = getXML(conformances);
@@ -137,7 +153,7 @@ public class InteroperabilityManager {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(fXmlFile);
-        conformances.addAll(readConformanceCheckers(doc));
+        conformances = readConformanceCheckers(doc);
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -155,7 +171,7 @@ public class InteroperabilityManager {
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
       Document doc = dBuilder.parse(new InputSource(new StringReader(xml)));
-      conformances =  readConformanceCheckers(doc);
+      conformances = readConformanceCheckers(doc);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -171,6 +187,9 @@ public class InteroperabilityManager {
         Node conformanceNode = nList.item(i);
         ConformanceConfig conformance = new ConformanceConfig();
         conformance.fromXML(conformanceNode);
+        if (!validator.validateAll(conformance)) {
+          conformance.setEnabled(false);
+        }
         conformances.add(conformance);
       }
     } catch (Exception e) {

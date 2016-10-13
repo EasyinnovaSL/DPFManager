@@ -128,7 +128,7 @@ public class TopFragment extends FlowPane {
     ImageView logo = new ImageView(new Image("@../images/logo_mini.png"));
     vb.getChildren().add(logo);*/
 
-    this.getChildren().addAll(showDessign, createSeparator(), showInterop, createSeparator(), showReports, createSeparator(), showPeriodical, createSeparator(), showAbout);
+    this.getChildren().addAll(showDessign, createSeparator(), showReports, createSeparator(), showPeriodical, createSeparator(), showInterop, createSeparator(), showAbout);
     this.getStyleClass().add("top-pane");
     this.getStyleClass().add("background-main");
     this.setAlignment(Pos.TOP_CENTER);

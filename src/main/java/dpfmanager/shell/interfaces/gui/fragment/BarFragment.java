@@ -19,7 +19,6 @@
 
 package dpfmanager.shell.interfaces.gui.fragment;
 
-import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
@@ -30,7 +29,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 
 import org.jacpfx.api.annotations.Resource;
@@ -39,12 +37,10 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +56,7 @@ import java.util.zip.ZipInputStream;
  * Created by Adrià Llorens on 03/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_BAR,
-    viewLocation = "/fxml/bottom-bar.fxml",
+    viewLocation = "/fxml/fragments/bottom-bar.fxml",
     resourceBundleLocation = "bundles.language",
     scope = Scope.SINGLETON)
 public class BarFragment {

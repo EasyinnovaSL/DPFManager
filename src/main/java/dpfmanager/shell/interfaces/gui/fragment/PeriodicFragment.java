@@ -59,7 +59,7 @@ import java.util.ResourceBundle;
  * Created by Adrià Llorens on 18/04/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_PERIODIC,
-    viewLocation = "/fxml/periodic.fxml",
+    viewLocation = "/fxml/fragments/periodic.fxml",
     resourceBundleLocation = "bundles.language",
     scope = Scope.PROTOTYPE)
 public class PeriodicFragment {
@@ -186,7 +186,7 @@ public class PeriodicFragment {
     showLoadingDelete();
     if (newCheck) {
       // Only from GUI
-      context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, getUuid(), true));
+    context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, getUuid(), true));
     } else {
       // Delete from OS tasks
       context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, getUuid()));

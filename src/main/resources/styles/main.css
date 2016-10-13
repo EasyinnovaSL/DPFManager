@@ -23,6 +23,9 @@
 .lightgrey{
     -fx-text-fill: lightgrey;
 }
+.cursive{
+    -fx-font-style: italic;
+}
 
 .main-logo{  }
 
@@ -145,6 +148,15 @@
     -fx-background-radius: 5;
     -fx-padding: 7 30 7 5;
 }
+.select-button-2 {
+    -fx-text-fill: WHITE;
+    -fx-font-weight: bold;
+    -fx-font-size: 13;
+    -fx-background-color: #33ccff;
+    -fx-border-width: 2;
+    -fx-background-radius: 5;
+    -fx-padding: 3;
+}
 #selectButton{
     -fx-padding: 7 30 7 14;
 }
@@ -163,6 +175,14 @@
 .button-trans:pressed {
     -fx-background-color: #9b9b9b;
 }
+
+.conformance-box{
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+}
+/*.conformance-box:pressed {*/
+    /*-fx-background-color: #9b9b9b;*/
+/*}*/
 
 .but-remove{
     -fx-text-fill: white;
@@ -349,7 +369,9 @@
 
 
 /* Combo Box Custom White */
-
+.combo-box-white {
+    -fx-text-overrun: center-ellipsis ;
+}
 .combo-box-white .list-cell {
     -fx-background: white;
     -fx-background-color: transparent;
@@ -358,6 +380,7 @@
     -fx-font-size: 15px;
     -fx-cell-size: 30px;
     -fx-border: 0;
+    -fx-text-overrun: center-ellipsis ;
 }
 .combo-box-white .combo-box-popup .list-view .list-cell:filled:hover {
     -fx-background-color: gray;
@@ -537,6 +560,12 @@
 .save-img:hover{
     -fx-background-image: url('../images/periodic/save-green.png');
 }
+.label-exclamation{
+    -fx-text-fill: red;
+    -fx-background-image: url('../images/icons/exclamation.png');
+    -fx-background-repeat: no-repeat;
+    -fx-padding: 0 0 0 25;
+}
 .button-trans-periodic{
     -fx-text-fill: #31C2F3;
     -fx-background-color: #333333;
@@ -651,6 +680,7 @@
 .checkreport{
     -fx-text-fill: white;
     -fx-font-size: 13;
+    -fx-cursor: hand;
 }
 
 .checkreport .box {

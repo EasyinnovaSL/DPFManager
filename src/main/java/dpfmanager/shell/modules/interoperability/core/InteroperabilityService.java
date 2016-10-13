@@ -29,13 +29,13 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.DessignMessage;
+import dpfmanager.shell.modules.interoperability.messages.InteroperabilityResponseMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
 import org.apache.logging.log4j.Level;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -77,15 +77,14 @@ public class InteroperabilityService extends DpfService {
   @Override
   protected void handleContext(DpfContext context) {
     validator = new InteroperabilityValidator(context, bundle);
-    manager = new InteroperabilityManager(context, bundle);
+    manager = new InteroperabilityManager(context, bundle, validator);
     loadConformanceCheckers();
-    filterAvailableConformances();
     context.sendGui(GuiConfig.PERSPECTIVE_DESSIGN + "." + GuiConfig.COMPONENT_DESIGN, new DessignMessage());
   }
 
-  private ConformanceConfig getConformanceByName(String name) {
+  private ConformanceConfig getConformanceById(String id) {
     for (ConformanceConfig conformance : conformances) {
-      if (conformance.getName().equals(name)) {
+      if (conformance.getUuid().equals(id) || conformance.getName().equals(id)) {
         return conformance;
       }
     }
@@ -96,27 +95,22 @@ public class InteroperabilityService extends DpfService {
    * Main functions
    */
 
-  public void add(String name, String path, String parameters, String configure, List<String> extensions) {
-    File tmp = new File(path);
-    if (getConformanceByName(name) == null) {
-      if (tmp.exists() && tmp.isFile()) {
-        if (validator.validateParameters(parameters)) {
-          ConformanceConfig conformance = new ConformanceConfig(name, path);
-          conformance.setParameters(parameters);
-          conformance.setConfiguration(configure);
-          conformance.setExtensions(extensions);
-          conformance.setEnabled(true);
-          conformances.add(conformance);
-          if (manager.writeChanges(conformances)) {
-            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceAdded").replace("%1", name).replace("%2", path)));
-          } else {
-            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
-          }
+  public void add(String name, String path, String parameters, String configure, List<String> extensions, boolean enable) {
+    if (getConformanceById(name) == null) {
+      if (validator.validatePath(path) && validator.validateParameters(parameters) && validator.validateConfiguration(false, configure)) {
+        ConformanceConfig conformance = new ConformanceConfig(name, path);
+        conformance.setParameters(parameters);
+        conformance.setConfiguration(configure);
+        conformance.setExtensions(extensions);
+        conformance.setEnabled(enable);
+        conformances.add(conformance);
+        if (manager.writeChanges(conformances)) {
+          // OK
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceAdded").replace("%1", name).replace("%2", path)));
+          return;
         } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceParamsError")));
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
         }
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidPath").replace("%1", path)));
       }
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidName").replace("%1", name)));
@@ -124,36 +118,60 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void edit(String name, String path) {
-    ConformanceConfig conformance = getConformanceByName(name);
-    if (validator.validateConformance(conformance, name, false)) {
-      File tmp = new File(path);
-      if (tmp.exists() && tmp.isFile()) {
-        conformance.setPath(path);
-        if (manager.writeChanges(conformances)) {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceEdited").replace("%1", name)));
-        } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
-        }
-      } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidPath").replace("%1", path)));
-      }
-    }
-  }
-
-  public void remove(String name) {
-    ConformanceConfig conformance = getConformanceByName(name);
-    if (validator.validateConformance(conformance, name, false)) {
-      conformances.remove(conformance);
+    ConformanceConfig conformance = getConformanceById(name);
+    if (validator.validateConformance(conformance, name, false) && validator.validatePath(path)) {
+      conformance.setPath(path);
       if (manager.writeChanges(conformances)) {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceRemoved").replace("%1", name)));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceEdited").replace("%1", name)));
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
       }
     }
   }
 
+  public void guiedit(ConformanceConfig newConfig) {
+    boolean error = false;
+    if (validator.validateAll(newConfig)) {
+      ConformanceConfig original = getConformanceById(newConfig.getUuid());
+      if (getConformanceById(newConfig.getUuid()) == null) {
+        // Add
+        conformances.add(newConfig);
+      } else if (getConformanceById(newConfig.getName()) == getConformanceById(newConfig.getUuid())){
+        // Edit
+        original.copy(newConfig);
+      } else {
+        // Repeated name
+        error = true;
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidName").replace("%1", newConfig.getName())));
+      }
+      if (!error && manager.writeChanges(conformances)) {
+        context.sendGui(GuiConfig.PERSPECTIVE_INTEROPERABILITY + "." + GuiConfig.COMPONENT_INTEROPERABILITY, new InteroperabilityResponseMessage(InteroperabilityResponseMessage.Type.SAVE, true, newConfig.getUuid()));
+        return;
+      }
+    }
+    // Notify KO
+    context.sendGui(GuiConfig.PERSPECTIVE_INTEROPERABILITY + "." + GuiConfig.COMPONENT_INTEROPERABILITY, new InteroperabilityResponseMessage(InteroperabilityResponseMessage.Type.SAVE, false, newConfig.getUuid()));
+  }
+
+  public void remove(String name) {
+    ConformanceConfig conformance = getConformanceById(name);
+    if (validator.validateConformance(conformance, name, false)) {
+      conformances.remove(conformance);
+      if (manager.writeChanges(conformances)) {
+        // OK
+        context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceRemoved").replace("%1", name)));
+        context.sendGui(GuiConfig.PERSPECTIVE_INTEROPERABILITY + "." + GuiConfig.COMPONENT_INTEROPERABILITY, new InteroperabilityResponseMessage(InteroperabilityResponseMessage.Type.REMOVE, true, name));
+        return;
+      } else {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
+      }
+    }
+    // Notify KO
+    context.sendGui(GuiConfig.PERSPECTIVE_INTEROPERABILITY + "." + GuiConfig.COMPONENT_INTEROPERABILITY, new InteroperabilityResponseMessage(InteroperabilityResponseMessage.Type.REMOVE, false, name));
+  }
+
   public void list(String name) {
-    ConformanceConfig conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceById(name);
     if (validator.validateConformance(conformance, name, true)) {
       String xml = conformance.toString();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, xml));
@@ -164,50 +182,42 @@ public class InteroperabilityService extends DpfService {
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, manager.getString(conformances)));
   }
 
-  public List<ConformanceConfig> listObjects(){
+  public List<ConformanceConfig> listObjects() {
     return conformances;
   }
 
   public void setParameters(String name, String params) {
-    ConformanceConfig conformance = getConformanceByName(name);
-    if (validator.validateConformance(conformance, name, false)) {
-      if (validator.validateParameters(params)) {
-        conformance.setParameters(params);
-        if (manager.writeChanges(conformances)) {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceParams").replace("%1", name)));
-        } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
-        }
+    ConformanceConfig conformance = getConformanceById(name);
+    if (validator.validateConformance(conformance, name, false) && validator.validateParameters(params)) {
+      conformance.setParameters(params);
+      if (manager.writeChanges(conformances)) {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceParams").replace("%1", name)));
       } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceParamsError")));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
       }
     }
   }
 
   public void setConfiguration(String name, String config) {
-    ConformanceConfig conformance = getConformanceByName(name);
-    if (validator.validateConformance(conformance, name, true)) {
-      File tmp = new File(config);
-      if (tmp.exists() && tmp.isFile()) {
-        conformance.setConfiguration(config);
-        if (manager.writeChanges(conformances)) {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceConfigure").replace("%1", name)));
-        } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
-        }
+    ConformanceConfig conformance = getConformanceById(name);
+    if (validator.validateConformance(conformance, name, true) && validator.validateConfiguration(conformance.isBuiltIn(), config)) {
+      conformance.setConfiguration(config);
+      if (manager.writeChanges(conformances)) {
+        // OK
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceConfigure").replace("%1", name)));
+        return;
       } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceInvalidConfig").replace("%1", config)));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
       }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceNotFound").replace("%1", name)));
     }
   }
 
   public void setExtensions(String name, List<String> extensions) {
-    ConformanceConfig conformance = getConformanceByName(name);
+    ConformanceConfig conformance = getConformanceById(name);
     if (validator.validateConformance(conformance, name, false)) {
       conformance.setExtensions(extensions);
       if (manager.writeChanges(conformances)) {
+        // OK
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceConfigure").replace("%1", name)));
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
@@ -216,67 +226,77 @@ public class InteroperabilityService extends DpfService {
   }
 
   public void setEnabled(String name, boolean enabled) {
-    ConformanceConfig conformance = getConformanceByName(name);
-    if (validator.validateConformance(conformance, name, true)) {
-      if (validator.validateEnable(conformance, enabled)) {
-        conformance.setEnabled(enabled);
-        if (manager.writeChanges(conformances)) {
-          if (enabled) {
-            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceEnabled").replace("%1", name)));
-          } else {
-            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceDisabled").replace("%1", name)));
-          }
+    ConformanceConfig conformance = getConformanceById(name);
+    if (validator.validateConformance(conformance, name, true) && validator.validateAll(conformance)) {
+      conformance.setEnabled(enabled);
+      if (manager.writeChanges(conformances)) {
+        if (enabled) {
+          context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceEnabled").replace("%1", name)));
+          return;
         } else {
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
+          context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceDisabled").replace("%1", name)));
+          return;
         }
       } else {
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceCannotEnable")));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("conformanceErrorWriting")));
       }
+    }
+    // Notify KO
+    if (conformance != null) {
+      context.sendGui(GuiConfig.PERSPECTIVE_INTEROPERABILITY + "." + GuiConfig.COMPONENT_INTEROPERABILITY, new InteroperabilityResponseMessage(InteroperabilityResponseMessage.Type.ENABLE, false, conformance.getUuid()));
     }
   }
 
   private void filterAvailableConformances() {
+    available.clear();
     for (ConformanceConfig conformance : conformances) {
       if (conformance.isEnabled()) {
         if (conformance.isBuiltIn() && validator.validateInitBuilt(conformance)) {
           Configuration checkConfig = readCheckConfig(conformance.getConfiguration());
-          if (checkConfig != null){
+          if (checkConfig != null) {
             available.add(new TiffConformanceChecker(conformance, checkConfig));
-            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("loadedCC").replace("%1", conformance.getName())));
           } else {
             context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorLoadingBuiltCC")));
             context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("causeReadingCheckConfig")));
           }
-        } else if (validator.validateInitExternal(conformance)) {
+        } else if (!conformance.isBuiltIn() && validator.validateInitExternal(conformance)) {
           ExternalConformanceChecker ext = new ExternalConformanceChecker(conformance);
           available.add(ext);
-          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("loadedCC").replace("%1", conformance.getName())));
         }
       }
     }
   }
 
-  private Configuration readCheckConfig(String path){
+  private Configuration readCheckConfig(String path) {
     try {
       Configuration configuration = new Configuration();
       if (!path.isEmpty()) {
-        configuration.ReadFileNew(path);
+        if (!path.contains("/") && !path.contains("\\")) {
+          // Read from configurations folder
+          String pathAux = DPFManagerProperties.getConfigDir() + "/" + path + ".dpf";
+          configuration.ReadFileNew(pathAux);
+        } else {
+          // Read from specified file
+          configuration.ReadFileNew(path);
+        }
       } else {
+        // Read from jar (default default configuration)
         configuration.ReadFileNew(DPFManagerProperties.getDefaultBuiltInConfig());
       }
       return configuration;
-    } catch (Exception e){
+    } catch (Exception e) {
       return null;
     }
   }
 
   public List<ConformanceChecker> getConformanceCheckers() {
+    filterAvailableConformances();
     return available;
   }
 
-  public String getDescriptionFromDefault(){
-    for (ConformanceChecker cc : available){
-      if (cc.getConfig().isBuiltIn()){
+  public String getDescriptionFromDefault() {
+    for (ConformanceChecker cc : available) {
+      if (cc.getConfig().isBuiltIn()) {
         return cc.getDefaultConfiguration().getDescription();
       }
     }
@@ -291,7 +311,7 @@ public class InteroperabilityService extends DpfService {
     conformances.addAll(manager.loadFromFile());
     List<ConformanceConfig> builtInCC = manager.loadFromBuiltIn();
     for (ConformanceConfig conformance : builtInCC) {
-      if (getConformanceByName(conformance.getName()) == null) {
+      if (getConformanceById(conformance.getUuid()) == null) {
         conformances.add(conformance);
         needWrite = true;
       }

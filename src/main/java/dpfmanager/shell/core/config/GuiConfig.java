@@ -69,4 +69,5 @@ public class GuiConfig {
     public static final String FRAGMENT_TASK = "f009";
     public static final String FRAGMENT_PERIODIC = "f010";
     public static final String FRAGMENT_INTEROP = "f011";
+    public static final String FRAGMENT_CCBOX = "f012";
 }

@@ -20,6 +20,7 @@
 package dpfmanager.shell.modules.interoperability.messages;
 
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +31,12 @@ import java.util.List;
 public class InteroperabilityMessage extends DpfMessage {
 
   public enum Type {
-    ADD, EDIT, LIST, INFO, REMOVE, ENABLE, DISABLE, PARAMETERS, CONFIGURE, EXTENSIONS, OBJECTS
+    ADD, EDIT, LIST, INFO, REMOVE, ENABLE, DISABLE, PARAMETERS, CONFIGURE, EXTENSIONS, OBJECTS, GUIEDIT
   }
 
   private Type type;
+
+  private ConformanceConfig config;
 
   private String name;
 
@@ -43,10 +46,17 @@ public class InteroperabilityMessage extends DpfMessage {
 
   private String parameters = "";
 
+  private boolean enabled = true;
+
   private List<String> extensions = new ArrayList<>();
 
   public InteroperabilityMessage(Type type) {
     this.type = type;
+  }
+
+  public InteroperabilityMessage(Type type, ConformanceConfig config) {
+    this.type = type;
+    this.config = config;
   }
 
   public InteroperabilityMessage(Type type, String name) {
@@ -58,6 +68,16 @@ public class InteroperabilityMessage extends DpfMessage {
     this.type = type;
     this.name = name;
     this.extra = extra;
+  }
+
+  public InteroperabilityMessage(Type type, String name, String extra, String parameters, String configure, List<String> extensions, boolean enabled) {
+    this.type = type;
+    this.name = name;
+    this.extra = extra;
+    this.parameters = parameters;
+    this.configure = configure;
+    this.extensions = extensions;
+    this.enabled = enabled;
   }
 
   public Type getType() {
@@ -94,6 +114,10 @@ public class InteroperabilityMessage extends DpfMessage {
 
   public boolean isObjects(){
     return type.equals(Type.OBJECTS);
+  }
+
+  public boolean isGuiEdit(){
+    return type.equals(Type.GUIEDIT);
   }
 
   public boolean isConfigure(){
@@ -138,5 +162,17 @@ public class InteroperabilityMessage extends DpfMessage {
 
   public void setExtensions(List<String> extensions) {
     this.extensions = extensions;
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public ConformanceConfig getConfig() {
+    return config;
   }
 }
