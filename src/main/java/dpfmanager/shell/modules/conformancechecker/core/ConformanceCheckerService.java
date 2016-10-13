@@ -159,8 +159,9 @@ public class ConformanceCheckerService extends DpfService {
   private String ProcessFiles(Long uuid, List<String> files, Configuration config, String internalReportFolder) {
     // Process each input of the list
     int idReport = 1;
+    List<ConformanceChecker> list = interService.getConformanceCheckers();
     for (final String filename : files) {
-      ConformanceRunnable run = new ConformanceRunnable(interService.getConformanceCheckers());
+      ConformanceRunnable run = new ConformanceRunnable(list);
       run.setParameters(filename, idReport, internalReportFolder, config, uuid);
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
       idReport++;

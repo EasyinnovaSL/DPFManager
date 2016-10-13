@@ -79,6 +79,7 @@ public class InteroperabilityService extends DpfService {
     validator = new InteroperabilityValidator(context, bundle);
     manager = new InteroperabilityManager(context, bundle, validator);
     loadConformanceCheckers();
+    filterAvailableConformances();
     context.sendGui(GuiConfig.PERSPECTIVE_DESSIGN + "." + GuiConfig.COMPONENT_DESIGN, new DessignMessage());
   }
 
