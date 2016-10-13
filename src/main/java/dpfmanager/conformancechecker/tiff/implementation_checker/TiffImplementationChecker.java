@@ -34,7 +34,6 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
-import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -97,6 +96,9 @@ public class TiffImplementationChecker {
     TiffIfds ifds = new TiffIfds();
     ifds.setCircularReference(circularReference);
     ifds.setIfds(ifdsList);
+    for (TiffIfd ifdNode : ifdsList) {
+      ifdNode.setParent(ifds.getContext());
+    }
     tiffValidate.setIfds(ifds);
 
     return tiffValidate;
@@ -160,10 +162,10 @@ public class TiffImplementationChecker {
       for (int i = 0; i < metadata.get("BitsPerSample").getCardinality(); i++) {
         pixelSize += metadata.get("BitsPerSample").getValue().get(i).toInt();
       }
+      int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripBYTECount");
+      int nsc = metadata.get(id).getCardinality();
       if (metadata.get("Compression").getFirstNumericValue() == 1 && pixelSize >= 8) {
         int calculatedImageLength = 0;
-        int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripBYTECount");
-        int nsc = metadata.get(id).getCardinality();
         for (int i = 0; i < nsc; i++) {
           calculatedImageLength += metadata.get(id).getValue().get(i).toInt();
         }
@@ -172,6 +174,14 @@ public class TiffImplementationChecker {
           tiffIfd.setCorrectStrips(0);
         }
       }
+
+      //long rps = 1;
+      //if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("RowsPerStrip")))
+      //  rps = metadata.get("RowsPerStrip").getFirstNumericValue();
+      //long leng = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("ImageLength")).getFirstNumericValue();
+      //int nstrips = (int)Math.ceil((double)leng / rps);
+      //if (nstrips != nsc)
+      //  tiffIfd.setCorrectStrips(0);
     }
 
     // Tiles check
@@ -590,8 +600,9 @@ public class TiffImplementationChecker {
       tt.setExif(ifd);
     } else if (tv.getId() == 330) {
       // SubIFD
-      TiffIfd ifd = createIfdNode(tv, "subifd");
-      tt.setSubIfd(ifd);
+      TiffIfd ifd = CreateIFDValidation((IFD)tv.getValue().get(0), 0);
+      //TiffIfd ifd = createIfdNode(tv, "image");
+      tt.setIfd(ifd);
     } else if (tv.getId() == 400) {
       // GlobalParametersIFD
       TiffIfd ifd = createIfdNode(tv, "globalparameters");

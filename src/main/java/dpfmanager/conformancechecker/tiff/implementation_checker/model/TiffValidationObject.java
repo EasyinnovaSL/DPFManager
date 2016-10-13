@@ -77,6 +77,8 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
   public List<TiffNode> getObjectsFromContext(String context, boolean subchilds) {
     String key = context;
     if (subchilds) key += "1"; else key += "0";
+    if (key.equals("ifds.ifd[class=image]1"))
+      key.toString();
     if (hashObjects != null && hashObjects.containsKey(key)) return hashObjects.get(key);
 
     List<TiffNode> objects = new ArrayList<>();

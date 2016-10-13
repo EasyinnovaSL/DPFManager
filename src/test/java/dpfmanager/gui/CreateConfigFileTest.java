@@ -158,7 +158,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     ComboBox comboBoxAction = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxAction");
     ComboBox comboBoxFix = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxOp");
     Assert.assertEquals("ComboBox Action inside 'Add Fix' failed", 2, comboBoxAction.getItems().size());
-    Assert.assertEquals("ComboBox Field inside 'Add Fix' failed", 3, comboBoxFix.getItems().size());
+    Assert.assertEquals("ComboBox Field inside 'Add Fix' failed", 7, comboBoxFix.getItems().size());
 
     uniqueId++;
   }

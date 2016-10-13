@@ -128,6 +128,10 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
     fields.add("ImageDescription");
     fields.add("Copyright");
     fields.add("Artist");
+    fields.add("DateTime");
+    fields.add("Software");
+    fields.add("Make");
+    fields.add("Model");
     return fields;
   }
 

@@ -1,13 +1,13 @@
 /**
- * <h1>BarFragment.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>BarFragment.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -35,8 +35,6 @@ import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,8 +45,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -79,7 +75,7 @@ public class BarFragment {
   private boolean firsttime = true;
   private boolean consoleVisible = false;
   private boolean tasksVisible = false;
-  private Map<String,String> languages;
+  private Map<String, String> languages;
 
   // Main functions
 
@@ -94,7 +90,7 @@ public class BarFragment {
   private void initLanguages() {
     languages = new HashMap<>();
     List<String> strLocales = loadLanguages();
-    for (String strLocale : strLocales){
+    for (String strLocale : strLocales) {
       Locale loc = new Locale(strLocale);
       languages.put(loc.getDisplayLanguage().toLowerCase(), strLocale);
       comboBox.getItems().add(upperFirstLetter(loc.getDisplayLanguage()));
@@ -103,11 +99,11 @@ public class BarFragment {
     comboBox.setValue(upperFirstLetter(Locale.getDefault().getDisplayName()));
   }
 
-  private String upperFirstLetter(String word){
+  private String upperFirstLetter(String word) {
     return word.substring(0, 1).toUpperCase() + word.substring(1);
   }
 
-  private List<String> loadLanguages(){
+  private List<String> loadLanguages() {
     List<String> array = new ArrayList<>();
     try {
       // Load from jar
@@ -124,12 +120,13 @@ public class BarFragment {
     }
 
     if (array.isEmpty()) {
-      // Load through reflections
-      Reflections reflections = new Reflections("", new ResourcesScanner());
-      Set<String> resources = reflections.getResources(Pattern.compile(".*\\.properties"));
-      for (String resource : resources) {
-        if (resource.contains("bundles/language_") && !resource.endsWith("language.properties")){
-          array.add(resource.replace("bundles/language_","").replace(".properties",""));
+      // Load from file
+      File folder = new File("src/main/resources/bundles");
+      File[] listOfFiles = folder.listFiles();
+      for (File file : listOfFiles) {
+        String resource = file.getName();
+        if (!resource.endsWith("language.properties")) {
+          array.add(resource.replace("language_", "").replace(".properties", ""));
         }
       }
     }

@@ -29,6 +29,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
+import org.json.JSONObject;
+import org.json.XML;
 
 import java.io.File;
 
@@ -46,32 +48,14 @@ public class ReportJson extends ReportGeneric {
    * @param jsonFilename the json filename
    */
   public void xmlToJson(String xml, String jsonFilename, ReportGenerator generator) {
-    CamelContext context = new DefaultCamelContext();
-    XmlJsonDataFormat xmlJsonFormat = new XmlJsonDataFormat();
-    xmlJsonFormat.setEncoding("UTF-8");
-
     // Convert to JSON
-    boolean error = false;
     try {
-      context.addRoutes(new RouteBuilder() {
-        public void configure() {
-          from("direct:marshal").marshal(xmlJsonFormat).to("file:" + jsonFilename);
-        }
-      });
-      ProducerTemplate template = context.createProducerTemplate();
-      context.start();
-      template.sendBody("direct:marshal", xml);
-      context.stop();
-    } catch (Exception e) {
-      error = true;
-      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
-    }
-
-    // Move the converted string to the correct file
-    if (!error) {
-      String json = getJsonString(jsonFilename, generator);
+      JSONObject soapDatainJsonObject = XML.toJSONObject(xml);
+      String json = soapDatainJsonObject.toString();
       generator.deleteFileOrFolder(new File(jsonFilename));
       generator.writeToFile(jsonFilename, json);
+    } catch (Exception e) {
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
     }
   }
 

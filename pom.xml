@@ -161,7 +161,13 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
+
 		<dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
@@ -191,12 +197,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>xom</groupId>
-			<artifactId>xom</artifactId>
-			<version>1.2.5</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.5</version>
@@ -205,7 +205,7 @@
 		<dependency>
 		  <groupId>com.easyinnova</groupId>
 		  <artifactId>tifflibrary4java</artifactId>
-		  <version>1.5.2</version>
+		  <version>1.6</version>
 		</dependency>
 
 		<dependency>
@@ -214,10 +214,10 @@
 			<version>1.8.10</version>
 		</dependency>
 
-        <dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections-maven</artifactId>
-			<version>0.9.8</version>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.8.2</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
@@ -432,6 +432,32 @@
 						</plugin>
 					</reportPlugins>
 				</configuration>
+			</plugin>
+
+			<!-- Download dependencies source -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+					<execution>
+						<id>sources-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<!-- use copy-dependencies instead if you don't want to explode
+                              the sources -->
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<classifier>sources</classifier>
+							<failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+							<outputDirectory>${project.build.directory}/sources/src/main/java</outputDirectory>
+							<excludeArtifactIds>xercesImpl,jsr305,ant-launcher,dom4j,cvsclient,classworlds,plexus-i18n,velocity-tools,ant,velocity,json-lib</excludeArtifactIds>
+							<includes>**/*.java</includes>
+							<excludes>**/*Test.java, **/test/**/*.java</excludes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

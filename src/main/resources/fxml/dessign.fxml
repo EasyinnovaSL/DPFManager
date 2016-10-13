@@ -60,7 +60,7 @@
                 <children>
                     <VBox HBox.hgrow="ALWAYS">
                         <children>
-                            <TextField fx:id="inputText" maxHeight="41.0" minHeight="41.0" text="%inputText">
+                            <TextField fx:id="inputText" maxHeight="41.0" minHeight="41.0" onDragDropped="#onDragDroppedInput" onDragEntered="#onDragEnteredInput" onDragExited="#onDragExitedInput" onDragOver="#onDragOverInput" text="%inputText">
                                 <cursor>
                                     <Cursor fx:constant="TEXT" />
                                 </cursor>

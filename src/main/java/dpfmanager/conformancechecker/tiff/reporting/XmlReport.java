@@ -373,15 +373,17 @@ public class XmlReport {
       msg.setTextContent(value.getDescription());
       error.appendChild(msg);
 
-      // context
-      msg = doc.createElement("context");
-      msg.setTextContent(value.getContext());
-      error.appendChild(msg);
+      if (value.getNode() != null) {
+        // context
+        msg = doc.createElement("context");
+        msg.setTextContent(value.getContext());
+        error.appendChild(msg);
 
-      // location
-      msg = doc.createElement("location");
-      msg.setTextContent(value.getLocation());
-      error.appendChild(msg);
+        // location
+        msg = doc.createElement("location");
+        msg.setTextContent(value.getLocation());
+        error.appendChild(msg);
+      }
 
       // rule
       if (value.getRule() != null) {

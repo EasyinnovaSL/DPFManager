@@ -44,7 +44,7 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
   boolean offsetOverlap;
   int lastByte;
   TiffIfd exif;
-  TiffIfd subifd;
+  TiffIfd ifd;
   TiffIfd globalparameters;
   Hashtable<String, String> iptc;
 
@@ -157,12 +157,12 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     return exif;
   }
 
-  public void setSubIfd(TiffIfd subifd) {
-    this.subifd = subifd;
+  public void setIfd(TiffIfd subifd) {
+    this.ifd = subifd;
   }
 
-  public TiffIfd getSubIfd() {
-    return subifd;
+  public TiffIfd getIfd() {
+    return ifd;
   }
 
   public void setGlobalParameters(TiffIfd globalparameters) {
@@ -198,10 +198,10 @@ public class TiffTag extends TiffNode implements TiffNodeInterface {
     if (exif !=null) {
       childs.add(exif);
     }
-    if (subifd !=null) {
-      childs.add(subifd);
+    if (ifd !=null) {
+      childs.add(ifd);
       if (subchilds) {
-        childs.addAll(subifd.getChildren(subchilds));
+        childs.addAll(ifd.getChildren(subchilds));
       }
     }
     if (globalparameters !=null) {

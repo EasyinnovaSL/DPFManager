@@ -29,10 +29,19 @@ import java.util.List;
  */
 public class TiffNode implements TiffNodeInterface {
   private String location;
+  private String parent;
 
   public List<TiffNode> getChildren(boolean subchilds) {
     // To override
     return new ArrayList<>();
+  }
+
+  public String getParent() {
+    return parent;
+  }
+
+  public void setParent(String parent) {
+    this.parent = parent;
   }
 
   public String getContext() {
@@ -108,10 +117,14 @@ public class TiffNode implements TiffNodeInterface {
 
   public boolean contextMatch(String context) {
     if (context.equals("*")) return true;
-    if (!context.contains("[")) return getContext().equals(context);
+    String nodeContext = getContext();
+    if (parent != null && context.contains(".")) {
+      nodeContext = parent + "." + nodeContext;
+    }
+    if (!context.contains("[")) return nodeContext.equals(context);
     else {
       String contextBase = context.substring(0, context.indexOf("["));
-      if (getContext().equals(contextBase)) {
+      if (nodeContext.equals(contextBase)) {
         String sFilter = context.substring(context.indexOf("[") + 1);
         sFilter = sFilter.substring(0, sFilter.indexOf("]"));
         boolean matches = true;

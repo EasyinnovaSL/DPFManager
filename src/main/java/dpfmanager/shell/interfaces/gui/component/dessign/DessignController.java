@@ -32,7 +32,6 @@ import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import edu.emory.mathcs.backport.java.util.Arrays;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -158,14 +157,23 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     // Common extensions
     allExtensions.addAll(parseExtensions(DPFManagerProperties.getCommonExtensions()));
 
-    filters.add(new FileChooser.ExtensionFilter(getBundle().getString("acceptedFiles"),allExtensions));
+    filters.add(new FileChooser.ExtensionFilter(getBundle().getString("acceptedFiles"), allExtensions));
     filters.addAll(filtersCC);
     filters.add(new FileChooser.ExtensionFilter(getBundle().getString("compressedFiles"), parseExtensions(DPFManagerProperties.getCommonExtensions())));
 
     return filters;
   }
 
-  private List<String> parseExtensions(List<String> extensions){
+  public List<String> getAcceptedExetsniosn(){
+    List<String> extensions = new ArrayList<>();
+    for (ConformanceChecker cc : getView().getInterService().getConformanceCheckers(false)) {
+      extensions.addAll(cc.getConfig().getExtensions());
+    }
+    extensions.addAll(DPFManagerProperties.getCommonExtensions());
+    return extensions;
+  }
+
+  private List<String> parseExtensions(List<String> extensions) {
     List<String> newExtensions = new ArrayList<>();
     for (String ext : extensions) {
       newExtensions.add("*." + ext);
@@ -207,6 +215,10 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       file = fileChooser.showOpenDialog(GuiWorkbench.getMyStage());
     }
 
+    addConfigFile(file, true);
+  }
+
+  public void addConfigFile(File file, boolean ask) {
     if (file != null) {
       // Check valid config
       if (!readConfig(file.getPath())) {
@@ -215,7 +227,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       }
     }
 
-    if (file != null) {
+    if (file != null && ask) {
       DPFManagerProperties.setDefaultDirConfig(file.getParent());
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
       alert.setTitle(getBundle().getString("copyTitle"));
@@ -253,6 +265,8 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
         String description = readDescription(file);
         getView().addConfigFile(file.getAbsolutePath(), description, false);
       }
+    } else if (file != null && !ask) {
+      getView().addConfigFile(file.getAbsolutePath(), readDescription(file), false);
     }
   }
 
@@ -263,6 +277,16 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       return true;
     } catch (Exception e) {
       return false;
+    }
+  }
+
+  private String readDescription(String path) {
+    try {
+      Configuration config = new Configuration();
+      config.ReadFile(path);
+      return config.getDescription();
+    } catch (Exception e) {
+      return "";
     }
   }
 
