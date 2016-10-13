@@ -1,13 +1,13 @@
 /**
- * <h1>DessignController.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>DessignController.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
@@ -29,11 +30,9 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
-import dpfmanager.shell.modules.conformancechecker.ConformanceCheckerModule;
-import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerModel;
-import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -48,6 +47,7 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,7 +60,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class DessignController extends DpfController<DessignModel, DessignView> {
 
   public void mainCheckFiles() {
-    if (!getView().isAvailable()){
+    if (!getView().isAvailable()) {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, getBundle().getString("alertConformances"), new UiMessage(UiMessage.Type.SHOW), GuiConfig.PERSPECTIVE_INTEROPERABILITY));
       return;
     }
@@ -110,11 +110,11 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     String txtFile = null;
     ComboBox c = getView().getComboChoice();
     String configDir = DPFManagerProperties.getDefaultDirFile();
-    //getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(this.getClass(), Level.DEBUG, "Config dir: " + configDir));
     if (c.getValue().equals(getBundle().getString("comboFile"))) {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle(getBundle().getString("openFile"));
       fileChooser.setInitialDirectory(new File(configDir));
+      fileChooser.getExtensionFilters().addAll(generateExtensionsFilters());
       List<File> files = fileChooser.showOpenMultipleDialog(GuiWorkbench.getMyStage());
       if (files != null) {
         String sfiles = "";
@@ -143,6 +143,34 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     if (txtFile != null) {
       getView().getInputText().setText(txtFile);
     }
+  }
+
+  private List<FileChooser.ExtensionFilter> generateExtensionsFilters() {
+    List<FileChooser.ExtensionFilter> filtersCC = new ArrayList<>();
+    List<FileChooser.ExtensionFilter> filters = new ArrayList<>();
+    List<String> allExtensions = new ArrayList<>();
+
+    // Conformances extensions
+    for (ConformanceChecker cc : getView().getInterService().getConformanceCheckers(false)) {
+      allExtensions.addAll(parseExtensions(cc.getConfig().getExtensions()));
+      filtersCC.add(new FileChooser.ExtensionFilter(cc.getConfig().getName(), parseExtensions(cc.getConfig().getExtensions())));
+    }
+    // Common extensions
+    allExtensions.addAll(parseExtensions(DPFManagerProperties.getCommonExtensions()));
+
+    filters.add(new FileChooser.ExtensionFilter(getBundle().getString("acceptedFiles"),allExtensions));
+    filters.addAll(filtersCC);
+    filters.add(new FileChooser.ExtensionFilter(getBundle().getString("compressedFiles"), parseExtensions(DPFManagerProperties.getCommonExtensions())));
+
+    return filters;
+  }
+
+  private List<String> parseExtensions(List<String> extensions){
+    List<String> newExtensions = new ArrayList<>();
+    for (String ext : extensions) {
+      newExtensions.add("*." + ext);
+    }
+    return newExtensions;
   }
 
   public void performEditConfigAction() {
@@ -228,7 +256,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     }
   }
 
-  private boolean readConfig(String path){
+  private boolean readConfig(String path) {
     try {
       Configuration config = new Configuration();
       config.ReadFile(path);

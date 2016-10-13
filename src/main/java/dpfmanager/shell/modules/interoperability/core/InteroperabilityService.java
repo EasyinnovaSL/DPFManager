@@ -295,6 +295,13 @@ public class InteroperabilityService extends DpfService {
     return available;
   }
 
+  public List<ConformanceChecker> getConformanceCheckers(boolean filter) {
+    if (filter){
+      filterAvailableConformances();
+    }
+    return available;
+  }
+
   public String getDescriptionFromDefault() {
     for (ConformanceChecker cc : available) {
       if (cc.getConfig().isBuiltIn()) {

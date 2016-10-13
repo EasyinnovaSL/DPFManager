@@ -474,4 +474,8 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   public boolean isAvailable() {
     return available;
   }
+
+  public InteroperabilityService getInterService() {
+    return interService;
+  }
 }
