@@ -5,8 +5,7 @@
  
  <title>Baseline TIFF 6.0</title>
  <iso>TIFF 6.0 Specification. Part 1: Baseline TIFF</iso>
- <description>
-  Baseline TIFF (Part 1) is the core of TIFF, the essentials that all mainstream TIFF developers
+ <description>Baseline TIFF (Part 1) is the core of TIFF, the essentials that all mainstream TIFF developers
   should support in their products.
   
   Baseline TIFF image is capable of describing bilevel, grayscale, palette-color, and full-color RGB images.
@@ -18,13 +17,11 @@
 
  <rules id="IFH">
   <title>validation rules for the TIFF IFH</title>
-  <description>
-   A TIFF file begins with an 8-byte image file header(IFH), containing the following information:
+  <description>A TIFF file begins with an 8-byte image file header(IFH), containing the following information:
    
    Bytes 0-1: The byte order used within the file. Legal values are: “II” (4949.H) for little-endian and “MM” (4D4D.H) for big-endian.
    Bytes 2-3: An arbitrary but carefully chosen number (42) that further identifies the file as aTIFF file.
-   Bytes 4-7: The offset (in bytes) of the first IFD. The directory may be at any location in the file after the header but must begin on a word boundary.
-  </description>
+   Bytes 4-7: The offset (in bytes) of the first IFD. The directory may be at any location in the file after the header but must begin on a word boundary.</description>
   
   <rule id="IFH-0001" context="tiffValidationObject" level="critical">
    <title>TIFF file begins with an IFH</title>
@@ -89,13 +86,11 @@
  
  <rules id="IFD">
   <title>validation rules for the TIFF Image File Directory(IFD)</title>
-  <description>
-   An Image File Directory (IFD) consists of a 2-byte count of the number of directory
+  <description>An Image File Directory (IFD) consists of a 2-byte count of the number of directory
    entries (i.e., the number of fields), followed by a sequence of 12-byte field
    entries, followed by a 4-byte offset of the next IFD (or 0 if none).
    There must be at least 1 IFD in a TIFF file and each IFD must have at least one
-   entry.
-  </description>
+   entry.</description>
   
   <rule id="IFD-0001" context="ifds" level="error">
    <title>TIFF file must have at least one IFD</title>
@@ -214,16 +209,16 @@ beyond the first one, so not all readers could render all the images in the file
  </rules>
  
  <rules id="IFDE">
-  <title>validation rules for the TIFF Image File Directory Entry(IFD)</title>
-  <description>
-   Each 12-byte IFD entry has the following format:
+  <title>Validation rules for the TIFF Image File Directory Entry(IFD)</title>
+  <description>Each 12-byte IFD entry has the following format:
+
    Bytes 0-1 The Tag that identifies the field.
    Bytes 2-3 The field Type.
    Bytes 4-7 The number of values, Count of the indicated Type.
    Bytes 8-11 The Value Offset, the file offset (in bytes) of the Value for the field.
+
    The Value is expected to begin on a word boundary; the corresponding Value Offset will thus be an even number. 
-   This file offset may point anywhere in the file, even after the image data.
-  </description>
+   This file offset may point anywhere in the file, even after the image data.</description>
   <!--
   <rule id="IFDE-0001" context="" level="error">
    <title>invalid IFDE type</title>
@@ -252,36 +247,29 @@ beyond the first one, so not all readers could render all the images in the file
   -->
   <rule id="IDFE-0002" context="tag[type=ASCII]" level="error">
    <title>Valid ASCII characters</title>
-   <description>8-bit byte that contains a 7-bit ASCII code; the last byte
-    must be NUL (binary zero).</description>
+   <description>8-bit byte that contains a 7-bit ASCII code; the last byte must be NUL (binary zero).</description>
    <reference><section>Section 2: TIFF Structure</section><paragraph>7</paragraph><page>15</page></reference>
    <assert test="{asci7==true}">Only 7-bit ASCII codes are accepted</assert>
   </rule>
   
   <rule id="IDFE-0003" context="tag[type=ASCII]" level="error">
    <title>ASCII strings terminated with NUL (binary zero)</title>
-   <description>
-    Any ASCII field can contain multiple strings, each terminated with a NUL. A
-    single string is preferred whenever possible. The Count for multi-string fields is
-    the number of bytes in all the strings in that field plus their terminating NUL
-    bytes.
-   </description>
+   <description>Any ASCII field can contain multiple strings, each terminated with a NUL.
+    A single string is preferred whenever possible. The Count for multi-string fields is the number of bytes in all the strings in that field plus their terminating NUL bytes.</description>
    <reference><section>Section 2: TIFF Structure</section><paragraph>1</paragraph><page>16</page></reference>
    <assert test="{lastByte==0}">ASCII strings must terminate with NUL</assert>
   </rule>
   
   <rule id="IDFE-0004" context="tag[type=ASCII]" level="error">
    <title>Only one NUL is allowed between ASCII strings</title>
-   <description>Only one NUL is allowed between strings, so that the strings following the
-    first string will often begin on an odd byte.
-   </description>
+   <description>Only one NUL is allowed between strings, so that the strings following the first string will often begin on an odd byte.</description>
    <reference><section>Section 2: TIFF Structure</section><paragraph>1</paragraph><page>16</page></reference>
    <assert test="{duplicatedNuls==false}">Only one NUL is allowed between ASCII strings</assert>
   </rule>
  </rules>
  
  <rules id="IFDI">
-  <title>validation rules for an image IFD</title>
+  <title>Validation rules for an image IFD</title>
   <description>This section contains all the common rules for and image IFD </description>
   
   <rule id="IFDI-0001" context="tags" level="error">
@@ -317,7 +305,7 @@ beyond the first one, so not all readers could render all the images in the file
   
   <rule id="IFDI-0004" context="tags" level="error">
    <title>An image IFD must have a X Resolution value</title>
-   <description>An image Image File Directory(IFD) that contains and image data must have a X Resolution value</description>
+   <description>An  Image File Directory(IFD) that contains and image data must have a X Resolution value</description>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
    <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
@@ -327,7 +315,7 @@ beyond the first one, so not all readers could render all the images in the file
   
   <rule id="IFDI-0005" context="tags" level="error">
    <title>An image IFD must have a Y Resolution value</title>
-   <description>An image Image File Directory(IFD) that contains and image data must have a Y Resolution value</description>
+   <description>An  Image File Directory(IFD) that contains and image data must have a Y Resolution value</description>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
    <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
@@ -337,7 +325,7 @@ beyond the first one, so not all readers could render all the images in the file
   
   <rule id="IFDI-0006" context="ifd[class=Image]" level="error">
    <title>An image IFD should have a StripOffsets</title>
-   <description>An image Image File Directory(IFD) that contains and image data must have StripOffsets values</description>
+   <description>An Image File Directory(IFD) that contains and image data must have StripOffsets values</description>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
    <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
@@ -348,7 +336,7 @@ beyond the first one, so not all readers could render all the images in the file
   
   <rule id="IFDI-0007" context="ifd[class=Image]" level="error">
    <title>An image IFD should have a StripBYTECount</title>
-   <description>An image Image File Directory(IFD) that contains and image data must have StripBYTECount</description>
+   <description>An Image File Directory(IFD) that contains and image data must have StripBYTECount</description>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
    <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
@@ -390,11 +378,9 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="IFDB">
   <title>Validation rules for IFD Image Bilevel (Class B)</title>
-  <description>
-   A bilevel image contains two colors—black and white. TIFF allows an application to write out bilevel data in either a white-is-zero or black-is-zero format. 
+  <description>A bilevel image contains two colors—black and white. TIFF allows an application to write out bilevel data in either a white-is-zero or black-is-zero format.
    
-   Baseline TIFF bilevel images were called TIFF Class B images in earlier versions of the TIFF specification.
-  </description>
+   Baseline TIFF bilevel images were called TIFF Class B images in earlier versions of the TIFF specification.</description>
   
   <rule id="IFDB-0001" context="ifd[class=Bilevel]" level="error">
    <title>Valid Photometric Interpretation value</title>
@@ -431,8 +417,8 @@ beyond the first one, so not all readers could render all the images in the file
    -->
   <rule id="IFDB-0005" context="ifd[type=Bilevel]" level="warning">
    <title>Bilevel image display reversed</title>
-   <description>When in a Bilevel image 0 is imaged as black
-    and 2**BitsPerSample-1 is imaged as white. If Compression is 2 (CCITT Group 3 1-Dimensional Modified Huffman run-length encoding) the image should display and print reversed.</description>
+   <description>When in a Bilevel image 0 is imaged as black and 2**BitsPerSample-1 is imaged as white.
+    If Compression is 2 (CCITT Group 3 1-Dimensional Modified Huffman run-length encoding) the image should display and print reversed.</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
    <assert test="{tags.tag[name=Compresion] != 2} || {tags.tag[name=PhotometricInterpretation] == 0}">Bilevel images should not contain the tag ColorMap</assert>
   </rule>
@@ -442,8 +428,7 @@ beyond the first one, so not all readers could render all the images in the file
    <title>Validation rules for IFD Image Grayscale (Class G)</title>
    <description>Grayscale images are a generalization of bilevel images. Bilevel images can store only black and white image data, but grayscale images can also store shades of gray.
    
-   Baseline TIFF grayscale images were called TIFF Class G images in earlier versions of the TIFF specification.
-   </description>
+   Baseline TIFF grayscale images were called TIFF Class G images in earlier versions of the TIFF specification.</description>
    
    <rule id="IFDG-0001" context="ifd[class=Grayscale]" level="error">
     <title>Valid Photometric Interpretation value</title>
@@ -484,11 +469,9 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="IFDP">
   <title>Validation rules for IFD Image Palette Color</title>
-  <description>
-   Palette-color have one component per pixel, but the component value is used as an index into a full RGB-lookup table. 
+  <description>Palette-color have one component per pixel, but the component value is used as an index into a full RGB-lookup table.
   
-   Baseline TIFF palette-color images were called TIFF Class P images in earlier versions of the TIFF specification.
-  </description>
+   Baseline TIFF palette-color images were called TIFF Class P images in earlier versions of the TIFF specification.</description>
  
   <rule id="IFDP-0001" context="ifd[class=Palette]" level="error">
    <title>Valid Photometric Interpretation value</title>
@@ -525,11 +508,9 @@ beyond the first one, so not all readers could render all the images in the file
  
   <rule id="IFDP-0004" context="ifd[type=Palette]" level="error">
    <title>Color Map is required for palette color image</title>
-   <description>This field defines a Red-Green-Blue color map (often called a lookup table) for
-    palette color images.
-    In a TIFF ColorMap, all the Red values come first, followed by the Green values, then the Blue values. 
-    In the ColorMap, black is represented by 0,0,0 and white is represented by 65535, 65535, 65535.
-   </description>
+   <description>This field defines a Red-Green-Blue color map (often called a lookup table) for palette color images.
+
+    In a TIFF ColorMap, all the Red values come first, followed by the Green values, then the Blue values. In the ColorMap, black is represented by 0,0,0 and white is represented by 65535, 65535, 65535.</description>
    <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
    <assert test="{tags.tag[name=ColorMap]}">Color Map must be included in palette color images</assert>
   </rule>
@@ -543,8 +524,7 @@ beyond the first one, so not all readers could render all the images in the file
   
   <rule id="IFDP-0002" context="ifd[type=Palette]" level="error">
    <title>Valid compression for palette color image</title>
-   <description>In Baseline TIFF, palette color images can
-    either be stored as uncompressed data or compressed with the PackBits algorithm.</description>
+   <description>In Baseline TIFF, palette color images can either be stored as uncompressed data or compressed with the PackBits algorithm.</description>
    <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
    <assert test="{tags.tag[name=Compression] == 1 || tags.tag[name=Compression] == 32773}">Invalid Compression for palette color image</assert>
   </rule>
@@ -552,25 +532,16 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="IFDR">
   <title>Validation rules for RGB Full color images</title>
-  <description>
-   In an RGB image, each pixel is made up of three components: red, green, and
-   blue. There is no ColorMap.
-   To describe an RGB image, you need to add or change the following fields and
-   values. The other required fields are the same as those required for palette-color
-   images.
+  <description>In an RGB image, each pixel is made up of three components: red, green, and blue. There is no ColorMap.
+   To describe an RGB image, you need to add or change the following fields and values. The other required fields are the same as those required for palette-color images.
    
-   The BitsPerSample values listed above apply only to the main image data. If
-   ExtraSamples are present, the appropriate BitsPerSample values for those
-   samples must also be included.
+   The BitsPerSample values listed above apply only to the main image data. If ExtraSamples are present, the appropriate BitsPerSample values for those samples must also be included.
    
-   Baseline TIFF RGB images were called TIFF Class R images in earlier versions
-   of the TIFF specification.
-  </description>
+   Baseline TIFF RGB images were called TIFF Class R images in earlier versions of the TIFF specification.</description>
   
   <rule id="IFDR-0001" context="ifd[class=RGB]" level="error">
    <title>Valid Photometric Interpretation value</title>
-   <description>The Photometric Interpretation tag for RGB images must have a valid value.
-    2 = RGB.
+   <description>The Photometric Interpretation tag for RGB images must have a valid value. 2 = RGB.
    </description>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
    <assert test="{tag[name=PhotometricInterpretation] == 3}">Photometric Interpretation value must be 3</assert>
@@ -611,30 +582,25 @@ beyond the first one, so not all readers could render all the images in the file
   
   <rule id="IFDT-0001" context="ifd[type=Transparency]" level="error">
    <title>Valid Photometric Interpretation value</title>
-   <description>The Photometric Interpretation tag for Transparency mask must have a valid value.
-    4 = Transparency Mask.
+   <description>The Photometric Interpretation tag for Transparency mask must have a valid value. 4 = Transparency Mask.
     
-    This means that the image is used to define an irregularly shaped region of another
-    image in the same TIFF file. 
-   </description>
+    This means that the image is used to define an irregularly shaped region of another image in the same TIFF file.</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
    <assert test="{tags.tag[name=PhotometricInterpretation] == 4}">Photometric Interpretation value must be 4</assert>
   </rule>
   
   <rule id="IFDT-0002" context="ifd[type=Transparency]" level="error">
    <title>Valid BitsPerSample for Transparency Mask </title>
-   <description>Bits per Sample for Transparency Mask must be 1
-    SamplesPerPixel and BitsPerSample must be 1. The 1-bits define the interior of the region and
-    the 0-bits define the exterior of the region</description>
+   <description>For Transparency Mask SamplesPerPixel and BitsPerSample must be 1.
+    The 1-bits define the interior of the region and the 0-bits define the exterior of the region</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
    <assert test="{tags.tag[name=BitsPerSample] == 1}">Invalid Bits per Sample for Transparency Mask image</assert>
   </rule>
   
   <rule id="IFDT-0003" context="ifd[type=Transparency]" level="error">
    <title>valid SamplesPerPixel for Transparency Mask</title>
-   <description> SamplesPerPixel and BitsPerSample must be 1.
-    SamplesPerPixel and BitsPerSample must be 1. The 1-bits define the interior of the region and
-    the 0-bits define the exterior of the region</description>
+   <description>For Transparency Mask SamplesPerPixel and BitsPerSample must be 1.
+    The 1-bits define the interior of the region and the 0-bits define the exterior of the region</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
    <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid Samples per Pixel for Transparency Mask image</assert>
   </rule>
@@ -649,13 +615,11 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="OFFSET">
   <title>validation rules for TIFF Offsets</title>
-  <description>
-   No Duplicate Pointers. No data should be referenced from more than one place.
-   TIFF readers and editors are under no obligation to detect this condition and
-   handle it properly. This would not be a problem if TIFF files were read-only entities, but they are not. This warning covers both TIFF field value offsets and fields
-   that are defined as offsets, such as StripOffsets.
-   Point to real data. All strip offsets must reference valid locations. (It is not legal to
-   use an offset of 0 to mean something special.)</description>
+  <description>No Duplicate Pointers. No data should be referenced from more than one place.
+   TIFF readers and editors are under no obligation to detect this condition and handle it properly. This would not be a problem if TIFF files were read-only entities, but they are not.
+   This warning covers both TIFF field value offsets and fields that are defined as offsets, such as StripOffsets.
+
+   Point to real data. All strip offsets must reference valid locations. (It is not legal to use an offset of 0 to mean something special.)</description>
   
   <!-- //TODO: change rule context rows can have a diferent word aligment depeding on the type
   <rule id="OFFSET-0001" context="*" level="error">
@@ -696,15 +660,13 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-315">
   <title>Artist</title>
-  <description>
-   Person who created the image.
+  <description>Person who created the image.
    
    Tag = 315 (13B.H)
    Type = ASCII
    No default
    
-   Note: some older TIFF files used this tag for storing Copyright information.
-  </description>
+   Note: some older TIFF files used this tag for storing Copyright information.</description>
   
   <rule id="TAG-315-0001" context="tag[id=315]" level="error">
     <title>Artist tag valid Type</title>
@@ -723,15 +685,13 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-258">
   <title>BitsPerSample</title>
-  <description>
-   Number of bits per component. 
+  <description>Number of bits per component.
    This field allows a different number of bits per component for each component corresponding to a pixel.
    
    Tag = 258 (102.H)
    Type = SHORT
    N = SamplesPerPixel
-   Default = 1
-  </description>
+   Default = 1</description>
   
   <rule id="TAG-258-0001" context="tag[id=258]" level="error">
    <title>BitsPerSample valid Type</title>
@@ -765,16 +725,14 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-265">
   <title>CellLength</title>
-  <description>
-   The length of the dithering or halftoning matrix used to create a dithered or halftoned bilevel file.
+  <description>The length of the dithering or halftoning matrix used to create a dithered or halftoned bilevel file.
    
    Tag = 265 (109.H)
    Type = SHORT
    N = 1
    No default
    
-   This field should only be present if Threshholding = 2
-  </description>
+   This field should only be present if Threshholding = 2</description>
   <rule id="TAG-265-0001" context="tag[id=265]" level="error">
    <title>CellLength valid Type</title>
    <description>CellLength Tag type must be SHORT</description>
@@ -806,16 +764,14 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-264">
   <title>CellWidth</title>
-  <description>
-   The width of the dithering or halftoning matrix used to create a dithered or halftoned bilevel file.
+  <description>The width of the dithering or halftoning matrix used to create a dithered or halftoned bilevel file.
    
    Tag = 264 (109.H)
    Type = SHORT
    N = 1
    No default
    
-   This field should only be present if Threshholding = 2
-  </description>
+   This field should only be present if Threshholding = 2</description>
   <rule id="TAG-264-0001" context="tag[id=264]" level="error">
    <title>CellWidth valid Type</title>
    <description>CellWidth Tag type must be SHORT</description>
@@ -847,8 +803,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-320">
   <title>ColorMap</title>
-  <description>
-   A color map for palette color images. This field defines a Red-Green-Blue color map (often called a lookup table) for palette-color images. In a palette-color image, a pixel value is used to index into
+  <description>A color map for palette color images. This field defines a Red-Green-Blue color map (often called a lookup table) for palette-color images. In a palette-color image, a pixel value is used to index into
    an RGB lookup table.
    
    In a TIFF ColorMap, all the Red values come first, followed by the Green values, then the Blue values. The number of values for each color is 2**BitsPerSample.
@@ -859,9 +814,7 @@ beyond the first one, so not all readers could render all the images in the file
    Tag = 320 (140.H)
    Type = SHORT
    N = 3 * (2**BitsPerSample)
-   No default
-   
-  </description>
+   No default</description>
   
   <rule id="TAG-320-0001" context="tag[id=320]" level="error">
    <title>ColorMap valid Type</title>
@@ -887,8 +840,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-259">
   <title>Compression</title>
-  <description>
-   Compression scheme used on the image data.
+  <description>Compression scheme used on the image data.
    
    Tag = 259 (103.H)
    Type = SHORT
@@ -898,9 +850,7 @@ beyond the first one, so not all readers could render all the images in the file
    Currently defined values are:
    1 = No compression
    2 = CCITT Group 3 1-Dimensional Modified Huffman run-length encoding. this type of compression is defined only for bilevel images.
-   32773 = PackBits compression, a simple byte-oriented run-length scheme.
-   
-   </description>
+   32773 = PackBits compression, a simple byte-oriented run-length scheme.</description>
   
   <rule id="bl-ty-208" context="tag[id=259]" level="error">
    <title>Compression valid Type</title>
@@ -948,14 +898,12 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-33432">
   <title>Copyright</title>
-  <description>
-   Copyright notice of the person or organization that claims the copyright to the image. 
+  <description>Copyright notice of the person or organization that claims the copyright to the image.
    The complete copyright statement should be listed in this field including any dates and statements of claims.
    
    Tag = 33432 (8298.H)
    Type = ASCII
-   No default
-  </description>
+   No default</description>
   <rule id="TAG-33432-0001" context="tag[id=33432]" level="error">
    <title>Copyright tag valid Type</title>
    <description>Copyright Tag type must be ASCII</description>
@@ -966,8 +914,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-306">
   <title>DateTime</title>
-  <description>
-   Date and time of image creation.
+  <description>Date and time of image creation.
    
    Tag = 306 (132.H)
    Type = ASCII
@@ -975,8 +922,7 @@ beyond the first one, so not all readers could render all the images in the file
    No default
    
    The format is: “YYYY:MM:DD HH:MM:SS”, with hours like those on a 24-hour clock, and one space character between the date and the time. 
-   The length of the string, including the terminating NUL, is 20 bytes.
-  </description>
+   The length of the string, including the terminating NUL, is 20 bytes.</description>
    
   <rule id="TAG-306-0001" context="tag[id=306]" level="error">
     <title>DateTime tag valid Type</title>
@@ -1003,8 +949,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-338">
   <title>ExtraSamples</title>
-  <description>
-   Specifies that each pixel has m extra components whose interpretation is defined by one of the values listed below. 
+  <description>Specifies that each pixel has m extra components whose interpretation is defined by one of the values listed below.
    ExtraSamples is typically used to include non-color information, such as opacity, in an image. 
    
    Tag = 338 (152.H)
@@ -1015,8 +960,7 @@ beyond the first one, so not all readers could render all the images in the file
   Currently defined values are:
    0 = Unspecified data
    1 = Associated alpha data (with pre-multiplied color)
-   2 = Unassociated alpha data
-  </description>
+   2 = Unassociated alpha data</description>
   
   <rule id="TAG-338-0001" context="tag[id=338]" level="error">
    <title>ExtraSamples tag valid Type</title>
@@ -1028,8 +972,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-266">
   <title>FillOrder</title>
-  <description>
-   The logical order of bits within a byte.
+  <description>The logical order of bits within a byte.
    
    Tag = 266 (10A.H)
    Type = SHORT
@@ -1045,9 +988,7 @@ beyond the first one, so not all readers could render all the images in the file
    It is easy and inexpensive for writers to reverse bit order by using a 256-byte lookup table. 
    FillOrder = 2 should be used only when BitsPerSample = 1 and the data is either uncompressed or compressed using CCITT 1D or 2D compression, to
    avoid potentially ambigous situations.
-   Support for FillOrder=2 is not required in a Baseline TIFF compliant reader
-  
-  </description>
+   Support for FillOrder=2 is not required in a Baseline TIFF compliant reader</description>
   
   <rule id="TAG-266-0001" context="tag[id=266]" level="error">
    <title>FillOrder tag valid Type</title>
@@ -1093,13 +1034,12 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-289">
   <title>FreeByteCounts</title>
-  <description>
-  For each string of contiguous unused bytes in a TIFF file, the number of bytes in the string.
+  <description>For each string of contiguous unused bytes in a TIFF file, the number of bytes in the string.
+
   Tag = 289 (121.H)
   Type = LONG
   
-  Not recommended for general interchange.
-  </description>
+  Not recommended for general interchange.</description>
   
   <rule id="TAG-289-0001" context="tag[id=289]" level="error">
    <title>FreeByteCounts tag valid Type</title>
@@ -1119,14 +1059,12 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-289">
   <title>FreeOffsets</title>
-  <description>
-   For each string of contiguous unused bytes in a TIFF file, the byte offset of the string.
+  <description>For each string of contiguous unused bytes in a TIFF file, the byte offset of the string.
    
    Tag = 288 (120.H)
    Type = LONG
    
-   Not recommended for general interchange.
-  </description>
+   Not recommended for general interchange.</description>
   
   <rule id="TAG-289-0001" context="tag[id=288]" level="error">
    <title>FreeOffsets tag valid Type</title>
@@ -1145,8 +1083,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-291">
   <title>GrayResponseCurve</title>
-  <description>
-   For grayscale data, the optical density of each possible pixel value. The 0th value of GrayResponseCurve corresponds to the optical density of a pixel
+  <description>For grayscale data, the optical density of each possible pixel value. The 0th value of GrayResponseCurve corresponds to the optical density of a pixel
    having a value of 0, and so on.
    
    Tag = 291 (123.H)
@@ -1154,8 +1091,7 @@ beyond the first one, so not all readers could render all the images in the file
    N = 2**BitsPerSample
   
    This field may provide useful information for sophisticated applications, but it is
-   currently ignored by most TIFF readers.
-  </description>
+   currently ignored by most TIFF readers.</description>
   
   <rule id="TAG-291-0001" context="tag[id=291]" level="error">
    <title>GrayResponseCurve tag valid Type</title>
@@ -1189,8 +1125,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-290">
   <title>GrayResponseUnit</title>
-  <description>
-   The precision of the information contained in the GrayResponseCurve.
+  <description>The precision of the information contained in the GrayResponseCurve.
    Because optical density is specified in terms of fractional numbers, this field is necessary to interpret the stored integer information. 
    Optical densitometers typically measure densities within the range of 0.0 to 2.0.
    
@@ -1204,8 +1139,7 @@ beyond the first one, so not all readers could render all the images in the file
    2 = Number represents hundredths of a unit.
    3 = Number represents thousandths of a unit.
    4 = Number represents ten-thousandths of a unit.
-   5 = Number represents hundred-thousandths of a unit.
-  </description>
+   5 = Number represents hundred-thousandths of a unit.</description>
   
   <rule id="TAG-290-0001" context="tag[id=290]" level="error">
    <title>GrayResponseUnit tag valid Type</title>
@@ -1245,13 +1179,11 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-316">
   <title>HostComputer</title>
-  <description>
-   The computer and/or operating system in use at the time of image creation.
+  <description>The computer and/or operating system in use at the time of image creation.
    
    Tag = 316 (13C.H)
    Type = ASCII
-   No default
-  </description>
+   No default</description>
   
   <rule id="TAG-316-0001" context="tag[id=316]" level="error">
    <title>HostComputer tag valid Type</title>
@@ -1263,13 +1195,11 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-270">
   <title>ImageDescription</title>
-  <description>
-   A string that describes the subject of the image.
+  <description>A string that describes the subject of the image.
    
    Tag = 270 (10E.H)
    Type = ASCII
-   No default
-  </description>
+   No default</description>
   
   <rule id="TAG-270-0001" context="tag[id=270]" level="error">
    <title>ImageDescription tag valid Type</title>
@@ -1288,14 +1218,12 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-257">
   <title>ImageLength</title>
-  <description>
-   The number of rows of pixels in the image.
+  <description>The number of rows of pixels in the image.
    
    Tag = 257 (101.H)
    Type = SHORT or LONG
    N = 1
-   No default
-  </description>
+   No default</description>
   
   <rule id="bl-ty-199" context="tag[id=257]" level="error">
    <title>ImageLength tag valid Type</title>
@@ -1328,15 +1256,12 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-256">
   <title>ImageWidth</title>
-  <description>
-   The number of columns in the image, i.e., the number of pixels per row.
+  <description>The number of columns in the image, i.e., the number of pixels per row.
    
    Tag = 256 (100.H)
    Type = SHORT or LONG
    N = 1
-   No default
-   
-  </description>
+   No default</description>
   
   <rule id="TAG-256-0001" context="tag[id=256]" level="error">
    <title>ImageWidth tag valid Type</title>
@@ -1369,14 +1294,12 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-271">
   <title>Make</title>
-  <description>
-   Manufacturer of the scanner, video digitizer, or other type of equipment used to generate the image. 
+  <description>Manufacturer of the scanner, video digitizer, or other type of equipment used to generate the image.
    Synthetic images should not include this field.
  
    Tag = 271 (10F.H)
    Type = ASCII
-   No default
-  </description>
+   No default</description>
    
   <rule id="TAG-271-0001" context="tag[id=271]" level="error">
    <title>Make tag valid Type</title>
@@ -1388,8 +1311,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-281">
   <title>MaxSampleValue</title>
-  <description>
-   The maximum component value used.
+  <description>The maximum component value used.
    
    Tag = 281 (119.H)
    Type = SHORT
@@ -1397,8 +1319,7 @@ beyond the first one, so not all readers could render all the images in the file
    Default is 2**(BitsPerSample) - 1.
    
    This field is not to be used to affect the visual appearance of an image when it is displayed or printed. 
-   Nor should this field affect the interpretation of any other field; it is used only for statistical purposes.
-  </description>
+   Nor should this field affect the interpretation of any other field; it is used only for statistical purposes.</description>
   
   <rule id="TAG-281-0001" context="tag[id=281]" level="error">
    <title>MaxSampleValue tag valid Type</title>
@@ -1441,8 +1362,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-280">
   <title>MinSampleValue</title>
-  <description>
-   The minimum component value used.
+  <description>The minimum component value used.
    
    Tag = 280 (118.H)
    Type = SHORT
@@ -1450,8 +1370,7 @@ beyond the first one, so not all readers could render all the images in the file
    Default is 0.
    
    This field is not to be used to affect the visual appearance of an image when it is displayed or printed. 
-   Nor should this field affect the interpretation of any other field; it is used only for statistical purposes.
-  </description>
+   Nor should this field affect the interpretation of any other field; it is used only for statistical purposes.</description>
   
   <rule id="TAG-280-0001" context="tag[id=280]" level="error">
    <title>  MinSampleValue tag valid Type</title>
@@ -1494,13 +1413,11 @@ beyond the first one, so not all readers could render all the images in the file
 
  <rules id="TAG-272">
   <title>Model</title>
-  <description>
-   The model name or number of the scanner, video digitizer, or other type of equipment used to generate the image.
+  <description>The model name or number of the scanner, video digitizer, or other type of equipment used to generate the image.
    
    Tag = 272 (110.H)
    Type = ASCII
-   No default
-  </description>
+   No default</description>
   
   <rule id="TAG-272-0001" context="tag[id=272]" level="error">
    <title>Model tag valid Type</title>
@@ -1512,8 +1429,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-254">
   <title>NewSubfileType</title>
-  <description>
-   A general indication of the kind of data contained in this subfile.
+  <description>A general indication of the kind of data contained in this subfile.
    Replaces the old SubfileType field, due to limitations in the definition of that field. NewSubfileType is mainly useful when there are multiple subfiles in a single TIFF file.
    This field is made up of a set of 32 flag bits. Unused bits are expected to be 0. Bit 0 is the low-order bit.
    
@@ -1527,8 +1443,7 @@ beyond the first one, so not all readers could render all the images in the file
    Bit 1 is 1 if the image is a single page of a multi-page image (see the PageNumber field description); else the bit is 0.
    Bit 2 is 1 if the image defines a transparency mask for another image in this TIFF file. The PhotometricInterpretation value must be 4, designating a transparency mask.
    
-   These values are defined as bit flags because they are independent of each other.
-  </description>
+   These values are defined as bit flags because they are independent of each other.</description>
   
   <rule id="TAG-254-0001" context="tag[id=254]" level="error">
    <title>NewSubfileType tag valid Type</title>
@@ -1600,8 +1515,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-274">
   <title>Orientation</title>
-  <description>
-   The orientation of the image with respect to the rows and columns.
+  <description>The orientation of the image with respect to the rows and columns.
    Tag = 274 (112.H)
    Type = SHORT
    N = 1
@@ -1616,8 +1530,7 @@ beyond the first one, so not all readers could render all the images in the file
    7 = The 0th row represents the visual right-hand side of the image, and the 0th columnrepresents the visual bottom.
    8 = The 0th row represents the visual left-hand side of the image, and the 0th columnrepresents the visual bottom.
   
-   Support for orientations other than 1 is not a Baseline TIFF requirement.
-  </description>
+   Support for orientations other than 1 is not a Baseline TIFF requirement.</description>
   
   <rule id="TAG-274-0001" context="tag[id=274]" level="error">
    <title>Orientation tag valid Type</title>
@@ -1635,8 +1548,8 @@ beyond the first one, so not all readers could render all the images in the file
   
   <rule id="TAG-274-0003" context="tags" level="error">
     <title>Orientation tag valid value</title>
-    <description>
-     Orientation valid values are between 1 and 8.
+    <description>Orientation valid values are between 1 and 8.
+
      1 = The 0th row represents the visual top of the image, and the 0th column represents the visual left-hand side.
      2 = The 0th row represents the visual top of the image, and the 0th column representsthe visual right-hand side.
      3 = The 0th row represents the visual bottom of the image, and the 0th column representsthe visual right-hand side.
@@ -1645,8 +1558,7 @@ beyond the first one, so not all readers could render all the images in the file
      6 = The 0th row represents the visual right-hand side of the image, and the 0th column represents the visual top.
      7 = The 0th row represents the visual right-hand side of the image, and the 0th columnrepresents the visual bottom.
      8 = The 0th row represents the visual left-hand side of the image, and the 0th columnrepresents the visual bottom.
-     Default is 1.
-    </description>
+     Default is 1.</description>
     <reference><section>Section 8: Baseline Field Reference Guide</section><page>36</page></reference>
     <assert test="{tags.tag[name=Orientation] > 0} &amp;&amp; {tags.tag[name=Orientation] &lt; 9}">Orientation value is not valid, possible values are between 1 and 8</assert>
    </rule>
@@ -1675,8 +1587,8 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-262">
   <title>PhotometricInterpretation</title>
-  <description>
-   The color space of the image data.
+  <description>The color space of the image data.
+
    Tag = 262 (106.H)
    Type = SHORT
    N = 1
@@ -1690,8 +1602,7 @@ beyond the first one, so not all readers could render all the images in the file
    4 = Transparency Mask.
    
    There is no default for PhotometricInterpretation, and it is required. Do not rely
-   on applications defaulting to what you want.
-  </description>
+   on applications defaulting to what you want.</description>
   
   <rule id="TAG-262-0001" context="tag[id=262]" level="error">
    <title>PhotometricInterpretation tag valid Type</title>
@@ -1710,12 +1621,12 @@ beyond the first one, so not all readers could render all the images in the file
   <rule id="TAG-262-0003" context="ifd" level="error">
    <title>Valid Photometric Interpretation value</title>
    <description>The Photometric Interpretation tag must have a valid value.
+
     0 = WhiteIsZero. For bilevel and grayscale images: 0 is imaged as white.
     1 = BlackIsZero. For bilevel and grayscale images: 0 is imaged as black.
     2 = RGB. RGB value of (0,0,0) represents black, and (255,255,255) represents white, assuming 8-bit components. The components are stored in the indicated order: first Red, then Green, then Blue.
     3 = Palette color. In this model, a color is described with a single component. The value of the component is used as an index into the red, green and blue curves in the ColorMap field to retrieve an RGB triplet that defines the color. When PhotometricInterpretation=3 is used, ColorMap must be present and SamplesPerPixel must be 1.
-    4 = Transparency Mask. This means that the image is used to define an irregularly shaped region of another image in the same TIFF file. SamplesPerPixel and BitsPerSample must be 1. PackBits compression is recommended. The 1-bits define the interior of the region; the 0-bits define the exterior of the region.
-   </description>
+    4 = Transparency Mask. This means that the image is used to define an irregularly shaped region of another image in the same TIFF file. SamplesPerPixel and BitsPerSample must be 1. PackBits compression is recommended. The 1-bits define the interior of the region; the 0-bits define the exterior of the region.</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
    <assert test="{tag[name=PhotometricInterpretation] &gt; -1} &amp;&amp; {tag[name=PhotometricInterpretation] &lt; 5}">Photometric Interpretation value must be between 0 and 9</assert>
   </rule>
@@ -1730,8 +1641,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-284">
   <title>PlanarConfiguration</title>
-  <description>
-   How the components of each pixel are stored.
+  <description>How the components of each pixel are stored.
    
    Tag = 284 (11C.H)
    Type = SHORT
@@ -1743,8 +1653,7 @@ beyond the first one, so not all readers could render all the images in the file
    2 = Planar format. The components are stored in separate “component planes.” 
    
    PlanarConfiguration=2 is not currently in widespread use and it is not recommended for general interchange. It is used as an extension and Baseline TIFF readers are not required to support it.
-   If SamplesPerPixel is 1, PlanarConfiguration is irrelevant, and need not be included.
-  </description>
+   If SamplesPerPixel is 1, PlanarConfiguration is irrelevant, and need not be included.</description>
   <rule id="TAG-284-0001" context="tag[id=284]" level="error">
     <title>PlanarConfiguration tag valid Type</title>
     <description>PlanarConfiguration Tag type must be SHORT</description>
@@ -1802,8 +1711,7 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-296">
   <title>ResolutionUnit</title>
-  <description>
-   The unit of measurement for XResolution and YResolution.
+  <description>The unit of measurement for XResolution and YResolution.
    
    Tag = 296 (128.H)
    Type = SHORT
@@ -1813,8 +1721,7 @@ beyond the first one, so not all readers could render all the images in the file
    Currently defined values are:
    1 = No absolute unit of measurement. Used for images that may have a non-square aspect ratio, but no meaningful absolute dimensions.
    2 = Inch.
-   3 = Centimeter.
-  </description>
+   3 = Centimeter.</description>
   
   <rule id="TAG-296-0001" context="tag[id=296]" level="error">
    <title>ResolutionUnit tag valid Type</title>
@@ -1869,8 +1776,7 @@ beyond the first one, so not all readers could render all the images in the file
  
 <rules id="TAG-277">
  <title>SamplesPerPixel</title>
- <description>
-  The number of components per pixel.
+ <description>The number of components per pixel.
   
   Tag = 277 (115.H)
   Type = SHORT
@@ -1878,9 +1784,7 @@ beyond the first one, so not all readers could render all the images in the file
   Default = 1
   
   SamplesPerPixel is usually 1 for bilevel, grayscale, and palette-color images.
-  SamplesPerPixel is usually 3 for RGB images.
-  
- </description>
+  SamplesPerPixel is usually 3 for RGB images.</description>
 
  <rule id="TAG-277-0001" context="tag[id=277]" level="error">
   <title>SamplesPerPixel tag valid Type</title>
@@ -1907,12 +1811,11 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-305">
   <title>Software</title>
-  <description>
-   Name and version number of the software package(s) used to create the image.
+  <description>Name and version number of the software package(s) used to create the image.
    
    Tag = 305 (131.H)
    Type = ASCII
-  </description>
+   No default.</description>
   
   <rule id="TAG-305-0001" context="tag[id=305]" level="error">
    <title>Software tag valid Type</title>
@@ -1924,16 +1827,14 @@ beyond the first one, so not all readers could render all the images in the file
  
  <rules id="TAG-279">
   <title>StripByteCounts</title>
-  <description>
-   For each strip, the number of bytes in the strip after compression.
+  <description>For each strip, the number of bytes in the strip after compression.
    
    Tag = 279 (117.H)
    Type = SHORT or LONG
    N = StripsPerImage for PlanarConfiguration equal to 1 or SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2
    No default.
    
-   This tag is required for Baseline TIFF files.
-  </description>
+   This tag is required for Baseline TIFF files.</description>
   
   <rule id="TAG-279-0001" context="tag[id=279]" level="error">
    <title>StripByteCounts tag valid Type</title>
@@ -1961,9 +1862,7 @@ SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description
  
  <rules id="TAG-273">
   <title>StripOffsets</title>
-  <description>
-
-   For each strip, the byte offset of that strip.
+  <description>For each strip, the byte offset of that strip.
    
    Tag = 273 (111.H)
    Type = SHORT or LONG
@@ -1978,8 +1877,7 @@ SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description
    
    For maximum compatibility with operating systems such as MS-DOS and Windows, the StripOffsets array should be less than or equal to 64K bytes in length, and the strips themselves, in both compressed and uncompressed forms, should
    not be larger than 64K bytes.
-   No default. 
-  </description>
+   No default.</description>
   
   <rule id="TAG-273-0001" context="tag[id=279]" level="error">
    <title>StripOffsets tag valid Type</title>
@@ -2031,8 +1929,7 @@ not be larger than 64K bytes.
  
  <rules id="TAG-255">
   <title>SubfileType</title>
-  <description>
-   A general indication of the kind of data contained in this subfile.
+  <description>A general indication of the kind of data contained in this subfile.
    
    Tag = 255 (FF.H)
    Type = SHORT
@@ -2045,8 +1942,7 @@ not be larger than 64K bytes.
    3 = a single page of a multi-page image (see the PageNumber field description).
    
    Note that several image types may be found in a single TIFF file, with each subfile described by its own IFD.
-   This field is deprecated. The NewSubfileType field should be used instead.
-  </description>
+   This field is deprecated. The NewSubfileType field should be used instead.</description>
   
   <rule id="TAG-255-0001" context="tag[id=255]" level="error">
    <title>SubfileType tag valid Type</title>
@@ -2082,9 +1978,9 @@ not be larger than 64K bytes.
  
  <rules id="TAG-263">
   <title>Threshholding</title>
-  <description>
-   For black and white TIFF files that represent shades of gray, the technique used to
+  <description>For black and white TIFF files that represent shades of gray, the technique used to
    convert from gray to black and white pixels.
+
    Tag = 263 (107.H)
    Type = SHORT
    N = 1
@@ -2093,8 +1989,7 @@ not be larger than 64K bytes.
    Currently defined values are:
    1 = No dithering or halftoning has been applied to the image data.
    2 = An ordered dither or halftone technique has been applied to the image data.
-   3 = A randomized process such as error diffusion has been applied to the image data.
-  </description>
+   3 = A randomized process such as error diffusion has been applied to the image data.</description>
   
   <rule id="TAG-263-0001" context="tag[id=263]" level="error">
    <title>Threshholding tag valid Type</title>
@@ -2139,16 +2034,14 @@ not be larger than 64K bytes.
  
  <rules id="TAG-282">
   <title>XResolution</title>
-  <description>
-   The number of pixels per ResolutionUnit in the ImageWidth direction.
+  <description>The number of pixels per ResolutionUnit in the ImageWidth direction.
+
    Tag = 282 (11A.H)
    Type = RATIONAL
    N = 1
    No default
    
-   It is not mandatory that the image be actually displayed or printed at the size implied
-   by this parameter. It is up to the application to use this information as it wishes.
-  </description>
+   It is not mandatory that the image be actually displayed or printed at the size implied by this parameter. It is up to the application to use this information as it wishes.</description>
   
   <rule id="TAG-282-0001" context="tag[id=282]" level="error">
    <title>XResolution tag valid Type</title>
@@ -2183,17 +2076,14 @@ not be larger than 64K bytes.
  
  <rules id="TAG-283">
   <title>YResolution</title>
-  <description>
-   The number of pixels per ResolutionUnit in the ImageLength direction.
+  <description>The number of pixels per ResolutionUnit in the ImageLength direction.
    
    Tag = 283 (11B.H)
    Type = RATIONAL
    N = 1
    No default
    
-   It is not mandatory that the image be actually displayed or printed at the size implied
-   by this parameter. It is up to the application to use this information as it wishes.
-  </description>
+   It is not mandatory that the image be actually displayed or printed at the size implied by this parameter. It is up to the application to use this information as it wishes.</description>
   
   <rule id="TAG-283-0001" context="tag[id=283]" level="error">
    <title>YResolution tag valid Type</title>
