@@ -87,7 +87,7 @@ public class RuleResult {
   public String getReference() {
     if (rule != null) {
       if (rule.getReference() != null) {
-        if (rule.getReference().length() > 0) {
+        if (rule.getReference().getText().length() > 0) {
           return rule.getIso() + ": " + rule.getReference();
         }
       }

@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class RuleObject {
   String context;
-  String reference;
+  ReferenceObject reference;
   String level;
   String id;
   String description;
@@ -55,11 +55,11 @@ public class RuleObject {
     return diagnostics;
   }
 
-  public void setReference(String reference) {
+  public void setReference(ReferenceObject reference) {
     this.reference = reference;
   }
 
-  public String getReference() {
+  public ReferenceObject getReference() {
     return reference;
   }
 

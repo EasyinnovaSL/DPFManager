@@ -388,7 +388,7 @@ public class XmlReport {
       // rule
       if (value.getRule() != null) {
         msg = doc.createElement("ruleId");
-        msg.setTextContent(value.getRule().getReference());
+        msg.setTextContent(value.getRule().getReference().getText());
         error.appendChild(msg);
 
         msg = doc.createElement("ruleTest");
@@ -438,7 +438,7 @@ public class XmlReport {
       // rule
       if (value.getRule() != null) {
         msg = doc.createElement("ruleId");
-        msg.setTextContent(value.getRule().getReference());
+        msg.setTextContent(value.getRule().getReference().getText());
         warning.appendChild(msg);
 
         msg = doc.createElement("ruleTest");
