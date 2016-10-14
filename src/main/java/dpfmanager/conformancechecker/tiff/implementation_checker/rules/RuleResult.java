@@ -20,6 +20,7 @@
 package dpfmanager.conformancechecker.tiff.implementation_checker.rules;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffNode;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
 
 /**
  * Created by easy on 16/03/2016.
@@ -29,7 +30,7 @@ public class RuleResult {
   String location = null;
   boolean ok;
   TiffNode node;
-  RuleObject rule;
+  RuleType rule;
   boolean warning = false;
 
   public RuleResult() {
@@ -51,7 +52,7 @@ public class RuleResult {
     this.location = location;
   }
 
-  public RuleResult(boolean ok, TiffNode node, RuleObject rule, String message) {
+  public RuleResult(boolean ok, TiffNode node, RuleType rule, String message) {
     this.message = message;
     this.node = node;
     this.ok = ok;
@@ -87,8 +88,8 @@ public class RuleResult {
   public String getReference() {
     if (rule != null) {
       if (rule.getReference() != null) {
-        if (rule.getReference().getText().length() > 0) {
-          return rule.getIso() + ": " + rule.getReference();
+        if (rule.getReferenceText().length() > 0) {
+          return rule.getReferenceText();
         }
       }
     }
@@ -106,7 +107,7 @@ public class RuleResult {
     return message;
   }
 
-  public RuleObject getRule() {
+  public RuleType getRule() {
     return rule;
   }
 }

@@ -26,6 +26,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValid
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.Clausules;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleElement;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.AssertType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.IncludeType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
@@ -118,7 +119,7 @@ public class Validator {
 
       for (RulesType ro : rules.getRules()) {
         for (RuleType rule : ro.getRule()) {
-          rule.setIso(rules.getIso());
+          //rule.setIso(rules.getIso());
         }
       }
 
@@ -126,9 +127,22 @@ public class Validator {
         for (IncludeType inc : rules.getInclude()) {
           JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
           Unmarshaller jaxbUnmarshallerInc = jaxbContextInc.createUnmarshaller();
-          ImplementationCheckerObjectType rulesIncluded = (ImplementationCheckerObjectType) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
+          ImplementationCheckerObjectType rulesIncluded = (ImplementationCheckerObjectType) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getPolicychecker()));
 
-          if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
+          for (RulesType ro : rulesIncluded.getRules()) {
+            boolean excludedRules = false;
+            for (String id : inc.getExcluderules().getRule()) {
+              if (id.equals(ro.getDescription())) excludedRules = true;
+            }
+            if (!excludedRules) {
+              rules.getRules().add((ImplementationCheckerObjectType.Rules) ro);
+            }
+            for (RuleType rule : ro.getRule()) {
+              //rule.setIso(rulesIncluded.getIso());
+            }
+          }
+
+          /*if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
             for (RulesType ro : rulesIncluded.getRules()) {
               rules.getRules().add((ImplementationCheckerObjectType.Rules)ro);
               for (RuleType rule : ro.getRule()) {
@@ -144,7 +158,7 @@ public class Validator {
                 }
               }
             }
-          }
+          }*/
         }
       }
 
@@ -245,11 +259,11 @@ public class Validator {
     validate(path, "implementationcheckers/TiffITP2ProfileChecker.xml", fastBreak);
   }
 
-  boolean checkRule(RuleObject rule, TiffNode node) {
+  boolean checkRule(RuleType rule, TiffNode node) {
     boolean ok = true;
 
     try {
-      AssertObject test = rule.getAssertionField();
+      AssertType test = rule.getAssert();
       String expression = test.getTest();
 
       // Get clausules

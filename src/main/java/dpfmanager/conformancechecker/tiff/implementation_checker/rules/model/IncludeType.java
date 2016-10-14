@@ -47,24 +47,6 @@ public class IncludeType {
     protected Object policychecker;
     protected ExcludeRulesType excluderules;
 
-    String subsection;
-
-    @XmlValue
-    String value;
-
-    public void setSubsection(String subsection) {
-        this.subsection = subsection;
-    }
-
-    @XmlAttribute
-    public String getSubsection() {
-        return subsection;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
     /**
      * Gets the value of the policychecker property.
      * 

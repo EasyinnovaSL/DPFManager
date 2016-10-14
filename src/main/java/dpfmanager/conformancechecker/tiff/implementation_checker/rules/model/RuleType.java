@@ -90,14 +90,12 @@ public class RuleType {
     @XmlAttribute(name = "level", required = true)
     protected String level;
 
-    String iso;
-
-    public void setIso(String iso) {
-        this.iso = iso;
+    public boolean isCritical() {
+        return getLevel() != null && getLevel().equals("critical");
     }
 
-    public String getIso() {
-        return iso;
+    public boolean isWarning() {
+        return getLevel() != null && getLevel().equals("warning");
     }
 
     /**
@@ -175,6 +173,15 @@ public class RuleType {
             reference = new ArrayList<ReferenceType>();
         }
         return this.reference;
+    }
+
+    public String getReferenceText() {
+        String s = "";
+        for (ReferenceType ref : getReference()) {
+            if (s.length() > 0) s += "\n";
+            s += ref.getSection() + ". Page " + ref.getPage();
+        }
+        return s;
     }
 
     /**
