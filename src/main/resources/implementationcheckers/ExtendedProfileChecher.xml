@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<implementationCheckerObject xmlns="http://www.dpfmanager.org/ProfileChecker"
+                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                             xsi:schemaLocation="http://www.dpfmanager.org/ProfileChecker ProfileChecker.xsd">
 
+ <title>Baseline TIFF 6.0</title>
+ <iso>TIFF 6.0 Specification. Part 1: Baseline TIFF</iso>
+ <description>Baseline TIFF (Part 1) is the core of TIFF, the essentials that all mainstream TIFF developers
+  should support in their products.
 
+  Baseline TIFF image is capable of describing bilevel, grayscale, palette-color, and full-color RGB images.
+
+  Tiff Revision 6.0 Final - June 3, 1992</description>
+ <version>1.0.0</version>
+ <author>Easy Innova</author>
+ <date>2016-09-20</date>
+
+ <include>
+  <policychecker>./BaselineProfileChecker.xml</policychecker>
+  <excluderules>
+   <rule></rule>
+  </excluderules>
+ </include>
+ 
+ 
  
  <rules description="tiles-check">
   <rule id="bl-tl-1" context="ifd[tiles=1]">
@@ -2181,3 +2204,5 @@
    <reference>Section 16, page 71</reference>
   </rule>
  </rules>
+ 
+</implementationCheckerObject>
