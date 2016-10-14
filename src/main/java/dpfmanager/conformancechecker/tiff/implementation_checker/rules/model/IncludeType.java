@@ -10,8 +10,10 @@ package dpfmanager.conformancechecker.tiff.implementation_checker.rules.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 
 /**
@@ -44,6 +46,24 @@ public class IncludeType {
     @XmlElement(required = true)
     protected Object policychecker;
     protected ExcludeRulesType excluderules;
+
+    String subsection;
+
+    @XmlValue
+    String value;
+
+    public void setSubsection(String subsection) {
+        this.subsection = subsection;
+    }
+
+    @XmlAttribute
+    public String getSubsection() {
+        return subsection;
+    }
+
+    public String getValue() {
+        return value;
+    }
 
     /**
      * Gets the value of the policychecker property.

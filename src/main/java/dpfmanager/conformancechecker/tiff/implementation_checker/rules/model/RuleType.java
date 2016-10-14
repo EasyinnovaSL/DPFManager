@@ -90,6 +90,16 @@ public class RuleType {
     @XmlAttribute(name = "level", required = true)
     protected String level;
 
+    String iso;
+
+    public void setIso(String iso) {
+        this.iso = iso;
+    }
+
+    public String getIso() {
+        return iso;
+    }
+
     /**
      * Gets the value of the title property.
      * 

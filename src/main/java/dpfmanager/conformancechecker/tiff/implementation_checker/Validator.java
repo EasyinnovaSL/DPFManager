@@ -23,16 +23,16 @@ import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.DpfLogger;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffNode;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.AssertObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.Clausules;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.ImplementationCheckerObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.IncludeObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleElement;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RulesObject;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.IncludeType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import org.w3c.dom.DocumentType;
 import org.xml.sax.SAXException;
 
 import java.io.FileInputStream;
@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
@@ -63,7 +64,7 @@ public class Validator {
   private TiffValidationObject model;
   private ValidationResult result;
 
-  static HashMap<String, ImplementationCheckerObject> preLoadedValidatorsSingleton = new HashMap<>();
+  static HashMap<String, ImplementationCheckerObjectType> preLoadedValidatorsSingleton = new HashMap<>();
 
   public List<RuleResult> getErrors() {
     return result.getErrors();
@@ -107,38 +108,38 @@ public class Validator {
     return fis;
   }
 
-  synchronized ImplementationCheckerObject getRules(String rulesFile) throws JAXBException {
-    ImplementationCheckerObject rules = null;
+  synchronized ImplementationCheckerObjectType getRules(String rulesFile) throws JAXBException {
+    ImplementationCheckerObjectType rules = null;
 
     if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
-      JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
+      JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-      rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
+      rules = (ImplementationCheckerObjectType) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
 
-      for (RulesObject ro : rules.getRules()) {
-        for (RuleObject rule : ro.getRules()) {
+      for (RulesType ro : rules.getRules()) {
+        for (RuleType rule : ro.getRule()) {
           rule.setIso(rules.getIso());
         }
       }
 
-      if (rules.getIncludes() != null) {
-        for (IncludeObject inc : rules.getIncludes()) {
-          JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObject.class);
+      if (rules.getInclude() != null) {
+        for (IncludeType inc : rules.getInclude()) {
+          JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
           Unmarshaller jaxbUnmarshallerInc = jaxbContextInc.createUnmarshaller();
-          ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
+          ImplementationCheckerObjectType rulesIncluded = (ImplementationCheckerObjectType) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
 
           if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
-            for (RulesObject ro : rulesIncluded.getRules()) {
-              rules.getRules().add(ro);
-              for (RuleObject rule : ro.getRules()) {
+            for (RulesType ro : rulesIncluded.getRules()) {
+              rules.getRules().add((ImplementationCheckerObjectType.Rules)ro);
+              for (RuleType rule : ro.getRule()) {
                 rule.setIso(rulesIncluded.getIso());
               }
             }
           } else {
-            for (RulesObject ro : rulesIncluded.getRules()) {
+            for (RulesType ro : rulesIncluded.getRules()) {
               if (ro.getDescription().equals(inc.getSubsection())) {
-                rules.getRules().add(ro);
-                for (RuleObject rule : ro.getRules()) {
+                rules.getRules().add((ImplementationCheckerObjectType.Rules)ro);
+                for (RuleType rule : ro.getRule()) {
                   rule.setIso(rulesIncluded.getIso());
                 }
               }
@@ -157,11 +158,11 @@ public class Validator {
   void validate(TiffValidationObject model, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
 
-    ImplementationCheckerObject rules = getRules(rulesFile);
+    ImplementationCheckerObjectType rules = getRules(rulesFile);
 
     boolean bbreak = false;
-    for (RulesObject ruleSet : rules.getRules()) {
-      for (RuleObject rule : ruleSet.getRules()) {
+    for (RulesType ruleSet : rules.getRules()) {
+      for (RuleType rule : ruleSet.getRule()) {
         if (rule.getId().equals("ep-1"))
           rule.toString();
 
