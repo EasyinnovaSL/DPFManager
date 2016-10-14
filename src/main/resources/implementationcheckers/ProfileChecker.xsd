@@ -15,7 +15,7 @@
             <xsd:element name="version" type="xsd:string" maxOccurs="1" minOccurs="1"/>
             <xsd:element name="author" type="xsd:string" maxOccurs="1" minOccurs="1"/>
             <xsd:element maxOccurs="1" minOccurs="1" name="date" type="xsd:date"/>
-            <xsd:element maxOccurs="1" minOccurs="0" name="include" type="includeType"/>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="include" type="includeType"/>
             <xsd:sequence maxOccurs="1" minOccurs="1">
                 <xsd:element name="rules" maxOccurs="unbounded" minOccurs="1">
                     <xsd:complexType>
