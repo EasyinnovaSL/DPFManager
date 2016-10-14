@@ -1,6 +1,6 @@
 /**
- * <h1>IndividualReportsRunnable.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
+ * <h1>IndividualReportsRunnable.java</h1> <p> This program is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
  * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
@@ -22,7 +22,6 @@ package dpfmanager.shell.modules.report.runnable;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.modules.conformancechecker.core.ProcessInput;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -36,20 +35,17 @@ import org.apache.logging.log4j.Level;
  */
 public class IndividualReportsRunnable extends DpfRunnable {
 
-  private ProcessInput pi;
   private IndividualReport ir;
   private ReportGenerator generator;
   private Configuration config;
 
   public IndividualReportsRunnable(ReportGenerator g) {
     // No context yet
-    pi = new ProcessInput();
     generator = g;
   }
 
   @Override
   public void handleContext(DpfContext context) {
-    pi.setContext(context);
   }
 
   public void setParameters(IndividualReport i, Configuration c) {
@@ -63,8 +59,8 @@ public class IndividualReportsRunnable extends DpfRunnable {
     String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
     generator.generateIndividualReport(outputfile, ir, config);
     // Notify individual report finished
-    context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("individualReport").replace("%1",outputfile)));
-    context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir));
+    context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("individualReport").replace("%1", outputfile)));
+    context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, config));
   }
 
 }

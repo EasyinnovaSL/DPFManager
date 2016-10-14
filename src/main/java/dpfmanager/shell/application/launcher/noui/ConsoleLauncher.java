@@ -25,6 +25,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.interfaces.console.ConsoleController;
+import dpfmanager.shell.interfaces.console.ModulesController;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
@@ -110,6 +111,18 @@ public class ConsoleLauncher {
    * Launch.
    */
   public void launch() {
+    // Read the first parameter
+    if (params.size() > 0){
+      String first = params.get(0);
+      if (first.equals("modules")){
+        params.remove(0);
+        ModulesController controller = new ModulesController(context, bundle);
+        controller.parse(params);
+        controller.run();
+        return;
+      }
+    }
+
     // Reads the parameters
     int idx = 0;
     boolean argsError = false;

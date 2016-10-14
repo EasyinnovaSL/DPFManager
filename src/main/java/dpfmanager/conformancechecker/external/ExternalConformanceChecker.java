@@ -1,6 +1,6 @@
 /**
- * <h1>ExternalConformanceChecker.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
+ * <h1>ExternalConformanceChecker.java</h1> <p> This program is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
  * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
@@ -22,6 +22,7 @@ package dpfmanager.conformancechecker.external;
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
+import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
@@ -32,32 +33,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by easy on 31/03/2016.
  */
 public class ExternalConformanceChecker extends ConformanceChecker {
-  ArrayList<String> standards;
-  ArrayList<String> extensions;
-  String exePath;
-  ArrayList<String> params;
+  private List<String> standards;
+  private String exePath;
+  private List<String> params;
 
-  public ExternalConformanceChecker(String exePath, ArrayList<String> params, ArrayList<String> standards, ArrayList<String> extensions) {
-    this.standards = standards;
-    this.extensions = extensions;
-    this.exePath = exePath;
-    this.params = params;
+  public ExternalConformanceChecker(ConformanceConfig config) {
+    setConfig(config);
+    this.exePath = config.getPath();
+    this.params = config.getParametersList();
+    this.standards = new ArrayList<>();
   }
 
-  public ArrayList<String> getConformanceCheckerStandards() {
+  public List<String> getConformanceCheckerStandards() {
     return standards;
   }
 
-  public ArrayList<String> getConformanceCheckerExtensions() {
-    return extensions;
+  @Override
+  public Configuration getDefaultConfiguration(){
+    return null;
   }
 
-  public ArrayList<Field> getConformanceCheckerFields() {
+  public List<Field> getConformanceCheckerFields() {
     ArrayList<Field> fields = new ArrayList<Field>();
     return fields;
   }
@@ -70,7 +72,7 @@ public class ExternalConformanceChecker extends ConformanceChecker {
    */
   public boolean acceptsFile(String filename) {
     boolean isAccepted = false;
-    for (String extension : extensions) {
+    for (String extension : getConfig().getExtensions()) {
       if (filename.toLowerCase().endsWith(extension.toLowerCase())) {
         isAccepted = true;
       }
@@ -92,8 +94,8 @@ public class ExternalConformanceChecker extends ConformanceChecker {
     try {
       ArrayList<String> params = new ArrayList();
       params.add(exePath);
-      params.addAll(this.params);
-      params.add(pathToFile);
+      params.addAll(parseParams(pathToFile));
+
       Process process = new ProcessBuilder(params).start();
       InputStream is = process.getInputStream();
       InputStreamReader isr = new InputStreamReader(is);
@@ -116,6 +118,20 @@ public class ExternalConformanceChecker extends ConformanceChecker {
       e.printStackTrace();
     }
     return null;
+  }
+
+  private List<String> parseParams(String input){
+    List<String> parsedParams = new ArrayList<>();
+    for (String param : params){
+      if (param.equals("%input%")){
+        parsedParams.add(input);
+      } else if (param.equals("%config%")){
+        parsedParams.add(getDefaultConfigurationPath());
+      } else {
+        parsedParams.add(param);
+      }
+    }
+    return parsedParams;
   }
 
   @Override

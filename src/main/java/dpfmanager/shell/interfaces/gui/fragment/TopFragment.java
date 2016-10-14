@@ -66,6 +66,7 @@ public class TopFragment extends FlowPane {
   private ResourceBundle bundle;
 
   private ToggleButton showDessign;
+  private ToggleButton showInterop;
   private ToggleButton showReports;
   private ToggleButton showPeriodical;
   private ToggleButton showAbout;
@@ -77,6 +78,7 @@ public class TopFragment extends FlowPane {
   private Rectangle rectAbout;
 
   private String ButDessign = "butDessign";
+  private String ButInterop = "butInterop";
   private String ButReports = "butReports";
   private String ButPeriodical = "butPeriodical";
   private String ButAbout = "butAbout";
@@ -92,6 +94,13 @@ public class TopFragment extends FlowPane {
     showDessign.getStyleClass().addAll("top-button", "active");
     showDessign.setId(ButDessign);
     topButtons.add(showDessign);
+
+    showInterop = new ToggleButton("interop");
+    showInterop.getStyleClass().add("top-button");
+    showInterop.getStyleClass().add("top-button-center");
+    showInterop.setId(ButInterop);
+    topButtons.add(showInterop);
+
 
     showReports = new ToggleButton("reports");
     showReports.getStyleClass().add("top-button");
@@ -111,7 +120,7 @@ public class TopFragment extends FlowPane {
     topButtons.add(showAbout);
 
     group = new PersistentButtonToggleGroup();
-    group.getToggles().addAll(showDessign, showReports, showPeriodical, showAbout);
+    group.getToggles().addAll(showDessign, showInterop, showReports, showPeriodical, showAbout);
 
     /*VBox vb = new VBox();
     vb.setPadding(new Insets(10, 50, 50, 50));
@@ -119,7 +128,7 @@ public class TopFragment extends FlowPane {
     ImageView logo = new ImageView(new Image("@../images/logo_mini.png"));
     vb.getChildren().add(logo);*/
 
-    this.getChildren().addAll(showDessign, createSeparator(), showReports, createSeparator(), showPeriodical, createSeparator(), showAbout);
+    this.getChildren().addAll(showDessign, createSeparator(), showReports, createSeparator(), showPeriodical, createSeparator(), showInterop, createSeparator(), showAbout);
     this.getStyleClass().add("top-pane");
     this.getStyleClass().add("background-main");
     this.setAlignment(Pos.TOP_CENTER);
@@ -142,6 +151,7 @@ public class TopFragment extends FlowPane {
     showReports.setText(bundle.getString("reports"));
     showPeriodical.setText(bundle.getString("periodical"));
     showAbout.setText(bundle.getString("about"));
+    showInterop.setText(bundle.getString("interop"));
   }
 
   private StackPane createSeparator() {
@@ -194,6 +204,8 @@ public class TopFragment extends FlowPane {
       finalId = ButAbout;
     } else if (id.equals(GuiConfig.PERSPECTIVE_PERIODICAL)) {
       finalId = ButPeriodical;
+    } else if (id.equals(GuiConfig.PERSPECTIVE_INTEROPERABILITY)) {
+      finalId = ButInterop;
     }
     makeBlue(getToggleById(finalId));
   }
@@ -258,6 +270,9 @@ public class TopFragment extends FlowPane {
                     case "butDessign":
                       context.send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
                       break;
+                    case "butInterop":
+                      context.send(GuiConfig.PERSPECTIVE_INTEROPERABILITY, new UiMessage(UiMessage.Type.SHOW));
+                      break;
                     case "butReports":
                       context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
                       break;
@@ -294,6 +309,9 @@ public class TopFragment extends FlowPane {
                   switch (id) {
                     case "butDessign":
                       context.send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.RELOAD));
+                      break;
+                    case "butInterop":
+                      context.send(GuiConfig.PERSPECTIVE_INTEROPERABILITY, new UiMessage(UiMessage.Type.RELOAD));
                       break;
                     case "butReports":
                       context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));

@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.conformancechecker.runnable;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -42,9 +43,9 @@ public class ConformanceRunnable extends DpfRunnable {
   private int id;
   private long uuid;
 
-  public ConformanceRunnable(){
+  public ConformanceRunnable(List<ConformanceChecker> list){
     // No context yet
-    pi = new ProcessInput();
+    pi = new ProcessInput(list);
   }
 
   @Override
@@ -62,9 +63,17 @@ public class ConformanceRunnable extends DpfRunnable {
 
   @Override
   public void runTask() {
+    // if config is null, get the default one
+    if (config == null){
+      config = pi.getDefaultConfigurationFromFile(filename);
+    }
+    // If no default one, create one
+    if (config == null){
+      config = new Configuration();
+      config.addFormat("XML");
+    }
     // Process the input and get a list of individual reports
-    IndividualReport ir;
-    ir = pi.processFile(filename, internalReportFolder, config, id);
+    IndividualReport ir = pi.processFile(filename, internalReportFolder, config, id);
     if (ir != null && !ir.isError()) {
       ir.setIdReport(id);
       ir.setInternalReportFolder(internalReportFolder);
@@ -78,7 +87,7 @@ public class ConformanceRunnable extends DpfRunnable {
         ir.setInternalReportFolder(internalReportFolder);
         ir.setUuid(uuid);
       }
-      context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, uuid));
+      context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, config, uuid));
     }
   }
 

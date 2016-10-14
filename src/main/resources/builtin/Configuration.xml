@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <version>1</version>
+    <isos>
+        <iso>Baseline</iso>
+    </isos>
+    <formats>
+        <format>HTML</format>
+        <format>XML</format>
+    </formats>
+    <rules/>
+    <fixes/>
+    <description>Baseline HTML and XML</description>
+</configuration>

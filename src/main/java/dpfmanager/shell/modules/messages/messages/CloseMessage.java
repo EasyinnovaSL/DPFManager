@@ -27,7 +27,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 public class CloseMessage extends DpfMessage {
 
   public enum Type {
-    THREADING, PERIODICAL
+    THREADING, PERIODICAL, CONFORMANCES
   }
 
   private Type type;
@@ -49,6 +49,10 @@ public class CloseMessage extends DpfMessage {
 
   public boolean isPeriodical() {
     return type.equals(Type.PERIODICAL);
+  }
+
+  public boolean isConformances() {
+    return type.equals(Type.CONFORMANCES);
   }
 
   public boolean isAsk() {

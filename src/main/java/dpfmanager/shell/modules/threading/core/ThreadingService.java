@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.threading.core;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.adapter.DpfService;
@@ -253,9 +254,12 @@ public class ThreadingService extends DpfService {
     }
   }
 
-  public void finishIndividual(IndividualReport ir, Long uuid) {
+  public void finishIndividual(IndividualReport ir, Long uuid, Configuration config) {
     FileCheck fc = checks.get(uuid);
     if (fc != null) {
+      if (fc.getConfig() == null){
+        fc.setConfig(config);
+      }
       if (ir != null) {
         // Individual report finished
         fc.addIndividual(ir);
