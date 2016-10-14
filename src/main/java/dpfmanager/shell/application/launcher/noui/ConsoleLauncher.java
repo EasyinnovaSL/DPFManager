@@ -27,6 +27,7 @@ import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.interfaces.console.PeriodicalController;
 import dpfmanager.shell.interfaces.console.RemoteController;
 import dpfmanager.shell.interfaces.console.ServerController;
+import dpfmanager.shell.interfaces.console.ModulesController;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
@@ -117,6 +118,13 @@ public class ConsoleLauncher {
         params.remove(0);
         initServices();
         PeriodicalController controller = new PeriodicalController(context, bundle);
+        controller.parse(params);
+        controller.run();
+        return;
+      } else if (first.equals("modules")){
+        params.remove(0);
+        initServices();
+        ModulesController controller = new ModulesController(context, bundle);
         controller.parse(params);
         controller.run();
         return;

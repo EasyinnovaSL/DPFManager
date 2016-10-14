@@ -55,10 +55,10 @@ public class StatisticsGeneratorTest extends CommandLineTest {
   public void testStatistics2() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[4];
+    String[] args = new String[3];
     args[0] = "check";
-    args[2] = "src/test/resources/Small/";
-    args[3] = "-s";
+    args[1] = "src/test/resources/Small/";
+    args[2] = "-s";
 
     MainConsoleApp.main(args);
 

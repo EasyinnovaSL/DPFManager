@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Adrià Llorens on 12/04/2016.
@@ -26,6 +27,8 @@ public class CommandLineTest {
     DPFManagerProperties.setFeedback(false);
     // Last report
     lastReport = ReportGenerator.getLastReportPath();
+    // Backup conformance checkers configuration
+    backUpCC();
   }
 
   @After
@@ -33,7 +36,29 @@ public class CommandLineTest {
     // Set feedback
     DPFManagerProperties.setFeedback(feedback);
     // Delete all reports
-//    deleteReports();
+    deleteReports();
+    // Restore conformance checkers configuration
+    restoreCC();
+  }
+
+  private void backUpCC(){
+    File currentFile = new File(DPFManagerProperties.getConformancesConfig());
+    File backupFile = new File(DPFManagerProperties.getConformancesConfig()+".backup");
+    try {
+      if (currentFile.exists()) {
+        FileUtils.copyFile(currentFile, backupFile);
+        currentFile.delete();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void restoreCC(){
+    File currentFile = new File(DPFManagerProperties.getConformancesConfig());
+    File backupFile = new File(DPFManagerProperties.getConformancesConfig()+".backup");
+    currentFile.delete();
+    backupFile.renameTo(currentFile);
   }
 
   public void waitForFinishMultiThred(int maxTimeout) throws InterruptedException {

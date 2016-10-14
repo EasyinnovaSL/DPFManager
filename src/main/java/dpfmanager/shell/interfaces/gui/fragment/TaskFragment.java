@@ -27,10 +27,8 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
-import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
@@ -54,7 +52,7 @@ import java.util.Date;
  * Created by Adrià Llorens on 18/04/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_TASK,
-    viewLocation = "/fxml/task.fxml",
+    viewLocation = "/fxml/fragments/task.fxml",
     scope = Scope.PROTOTYPE)
 public class TaskFragment {
 

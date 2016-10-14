@@ -42,12 +42,24 @@ public class AlertMessage extends DpfMessage {
   private String header;
   private String content;
   private Boolean result = null;
+  private DpfMessage next;
+  private String target;
 
   public AlertMessage(Type t, String h){
     type = t;
     title = getDefaultTitle(type);
     header = h;
     content = null;
+    next = null;
+  }
+
+  public AlertMessage(Type t, String h, DpfMessage n, String ta){
+    type = t;
+    title = getDefaultTitle(type);
+    header = h;
+    content = null;
+    next = n;
+    target = ta;
   }
 
   public AlertMessage(Type t, String h, String c){
@@ -55,6 +67,7 @@ public class AlertMessage extends DpfMessage {
     title = getDefaultTitle(type);
     header = h;
     content = c;
+    next = null;
   }
 
   public void setTitle(String t){
@@ -103,4 +116,11 @@ public class AlertMessage extends DpfMessage {
     return content;
   }
 
+  public DpfMessage getNext() {
+    return next;
+  }
+
+  public String getTarget() {
+    return target;
+  }
 }

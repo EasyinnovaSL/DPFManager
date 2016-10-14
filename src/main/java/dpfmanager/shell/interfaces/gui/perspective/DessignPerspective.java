@@ -57,6 +57,7 @@ import java.util.Set;
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
         BasicConfig.MODULE_MESSAGE,
+        BasicConfig.MODULE_INTEROPERABILITY,
         BasicConfig.MODULE_CONFORMANCE,
         BasicConfig.MODULE_REPORT,
         BasicConfig.MODULE_THREADING,
@@ -103,18 +104,6 @@ public class DessignPerspective extends DpfAbstractPerspective {
 
     // Define main pane
     borderPane = constructBorderPane(perspectiveLayout, topPane, mainPane);
-
-    // Escape character to quit
-    mainPane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-      @Override
-      public void handle(KeyEvent t) {
-        if(t.getCode()== KeyCode.ESCAPE) {
-          ((Stage) topPane.getScene().getWindow()).close();//use any one object
-        } else if(t.getCode()== KeyCode.F1) {
-          context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
-        }
-      }
-    });
   }
 
   @Override
@@ -129,6 +118,6 @@ public class DessignPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
-    getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.RELOAD));
+    getContext().send(GuiConfig.COMPONENT_DESIGN, new UiMessage(UiMessage.Type.SHOW));
   }
 }

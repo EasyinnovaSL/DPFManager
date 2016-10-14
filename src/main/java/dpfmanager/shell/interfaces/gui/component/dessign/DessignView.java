@@ -1,13 +1,13 @@
 /**
- * <h1>DessignView.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>DessignView.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -19,27 +19,34 @@
 
 package dpfmanager.shell.interfaces.gui.component.dessign;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ConfigMessage;
+import dpfmanager.shell.core.messages.DessignMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.fragment.ConformanceBoxFragment;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.interoperability.core.InteroperabilityService;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -51,19 +58,20 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 import org.controlsfx.control.CheckTreeView;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
+import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -75,9 +83,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -110,10 +115,22 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   @FXML
   private Button reloadButton;
 
+  @FXML
+  private Label availableLabel;
+  @FXML
+  private FlowPane flowPane;
+  @FXML
+  private VBox vboxAvailable;
+
+  @Autowired
+  private InteroperabilityService interService;
+
   private VBox vBoxConfig;
   private ToggleGroup group;
   private RadioButton selectedButton;
   private CheckTreeView<String> checkTreeView;
+  private boolean first = true;
+  private boolean available;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -134,7 +151,20 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       }
     } else if (message != null && message.isTypeOf(UiMessage.class)) {
       UiMessage uiMessage = message.getTypedMessage(UiMessage.class);
-      if (uiMessage.isReload()) {
+      if (uiMessage.isShow()) {
+        if (!first) {
+          readAvailableConformances();
+          addConfigFiles();
+        } else {
+          first = false;
+          showLoadingConfig();
+        }
+      }
+    } else if (message != null && message.isTypeOf(DessignMessage.class)) {
+      if (first) {
+        first = false;
+      } else {
+        readAvailableConformances();
         addConfigFiles();
       }
     }
@@ -170,6 +200,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     addTreeView();
     NodeUtil.hideNode(treeViewHBox);
     NodeUtil.hideNode(reloadButton);
+
+    // Loading available conformances
+    available = false;
+    NodeUtil.hideNode(vboxAvailable);
+//    Label label = new Label(bundle.getString("loadingAvailableCC"));
+//    label.getStyleClass().add("lightgrey");
+//    flowPane.getChildren().add(label);
   }
 
   private void addTreeView() {
@@ -215,11 +252,20 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     vBoxConfig.setId("vBoxConfig");
     vBoxConfig.setSpacing(3);
     vBoxConfig.setPadding(new Insets(5));
+
+    // Default one
+    String description = interService.getDescriptionFromDefault();
+    if (description != null) {
+      addConfigFile(bundle.getString("default"), description, bundle.getString("default").equalsIgnoreCase(previous));
+    }
+
+    // User configs
     File folder = new File(DPFManagerProperties.getConfigDir());
     for (final File fileEntry : folder.listFiles()) {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".dpf")) {
-          addConfigFile(fileEntry.getName(), fileEntry, fileEntry.getName().equalsIgnoreCase(previous));
+          description = getController().readDescription(fileEntry);
+          addConfigFile(fileEntry.getName(), description, fileEntry.getName().equalsIgnoreCase(previous));
         }
       }
     }
@@ -239,13 +285,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       event.consume();
     });
     configScroll.setOnDragOver(event -> {
-      if (acceptedFiles(event.getDragboard(), Arrays.asList("dpf"))){
+      if (acceptedFiles(event.getDragboard(), Arrays.asList("dpf"), false)) {
         event.acceptTransferModes(TransferMode.MOVE);
       }
       event.consume();
     });
     configScroll.setOnDragEntered(event -> {
-      if (acceptedFiles(event.getDragboard(), Arrays.asList("dpf"))){
+      if (acceptedFiles(event.getDragboard(), Arrays.asList("dpf"), false)) {
         configScroll.getStyleClass().add("on-drag");
       }
       event.consume();
@@ -258,13 +304,12 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     configScroll.setContent(vBoxConfig);
   }
 
-  public void addConfigFile(String text, File file, boolean selected) {
+  public void addConfigFile(String text, String description, boolean selected) {
     RadioButton radio = new RadioButton();
     radio.setId("radioConfig" + vBoxConfig.getChildren().size());
     radio.setText(text);
     radio.setToggleGroup(group);
     radio.setSelected(selected);
-    String description = readDescription(file);
     if (description != null && !description.isEmpty()) {
       radio.setTooltip(new Tooltip(description));
     }
@@ -280,31 +325,37 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     }
   }
 
-  private String readDescription(File file) {
-    try {
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      Document doc = dBuilder.parse(file);
-      NodeList nList = doc.getDocumentElement().getChildNodes();
-      for (int i = 0; i < nList.getLength(); i++) {
-        org.w3c.dom.Node node = nList.item(i);
-        if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-          Element elem = (Element) node;
-          if (elem.getTagName().equals("description")) {
-            return elem.getTextContent();
-          }
-        }
-      }
-    } catch (Exception e) {
-      return null;
-    }
-    return null;
-  }
-
   public void deleteSelectedConfig() {
     RadioButton rad = getSelectedConfig();
     group.getToggles().remove(rad);
     vBoxConfig.getChildren().remove(rad);
+  }
+
+  private void readAvailableConformances() {
+    int intCount = 0, extCount = 0;
+    flowPane.getChildren().clear();
+    for (ConformanceChecker cc : interService.getConformanceCheckers()) {
+      ManagedFragmentHandler<ConformanceBoxFragment> handler = getContext().getManagedFragmentHandler(ConformanceBoxFragment.class);
+      handler.getController().load(cc);
+      flowPane.getChildren().add(handler.getFragmentNode());
+      if (cc.getConfig().isBuiltIn()){
+        intCount++;
+      } else {
+        extCount++;
+      }
+    }
+    available = (intCount + extCount) > 0;
+    if (!available) {
+      Label label = new Label(bundle.getString("noAvailableCC"));
+      label.getStyleClass().addAll("label-exclamation");
+      label.setFont(new Font(14));
+      flowPane.getChildren().add(label);
+      NodeUtil.showNode(vboxAvailable);
+    } else if (intCount > 0 && extCount == 0){
+      NodeUtil.hideNode(vboxAvailable);
+    } else {
+      NodeUtil.showNode(vboxAvailable);
+    }
   }
 
   /**
@@ -387,9 +438,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   protected void deleteButtonClicked(ActionEvent event) throws Exception {
     RadioButton radio = getSelectedConfig();
     if (radio != null) {
-      AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("deleteConfirmation").replace("%1", radio.getText()), bundle.getString("deleteInfo"));
-      am.setTitle(bundle.getString("deleteTitle"));
-      getContext().send(BasicConfig.MODULE_MESSAGE, am);
+      if (!radio.getText().equals(bundle.getString("default"))) {
+        AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("deleteConfirmation").replace("%1", radio.getText()), bundle.getString("deleteInfo"));
+        am.setTitle(bundle.getString("deleteTitle"));
+        getContext().send(BasicConfig.MODULE_MESSAGE, am);
+      } else {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertDefaultConfigDelete")));
+      }
     } else {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertConfigFile")));
     }
@@ -407,42 +462,53 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       success = true;
       String filePath = "";
       for (File file : db.getFiles()) {
-        if (!filePath.isEmpty()){
+        if (!filePath.isEmpty()) {
           filePath += ";";
         }
         filePath += file.getAbsolutePath();
       }
-      inputText.setText(filePath);
+      String currentText = inputText.getText();
+      if (!currentText.isEmpty() && !currentText.equals(bundle.getString("inputText"))) {
+        inputText.setText(currentText + ";" + filePath);
+      } else {
+        inputText.setText(filePath);
+      }
     }
     event.setDropCompleted(success);
     event.consume();
   }
+
   @FXML
   protected void onDragOverInput(DragEvent event) throws Exception {
     // Filter accepted files
-    if (acceptedFiles(event.getDragboard(), Arrays.asList("tif","tiff","zip","rar"))){
+    if (acceptedFiles(event.getDragboard(), getController().getAcceptedExetsniosn(), true)) {
       event.acceptTransferModes(TransferMode.MOVE);
     }
     event.consume();
   }
+
   @FXML
   protected void onDragEnteredInput(DragEvent event) throws Exception {
-    if (acceptedFiles(event.getDragboard(), Arrays.asList("tif","tiff","zip","rar"))){
+    if (acceptedFiles(event.getDragboard(), getController().getAcceptedExetsniosn(), true)) {
       inputText.getStyleClass().add("on-drag");
     }
     event.consume();
   }
+
   @FXML
   protected void onDragExitedInput(DragEvent event) throws Exception {
     inputText.getStyleClass().remove("on-drag");
     event.consume();
   }
 
-  public boolean acceptedFiles(Dragboard db, List<String> accepted){
+  public boolean acceptedFiles(Dragboard db, List<String> accepted, boolean folder) {
     if (db.hasFiles()) {
       for (File file : db.getFiles()) {
         String ext = getExtension(file.getName());
-        if(!accepted.contains(ext)){
+        if (file.isDirectory() && !folder) {
+          return false;
+        }
+        if (file.isFile() && !accepted.contains(ext)) {
           return false;
         }
       }
@@ -451,10 +517,10 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     return false;
   }
 
-  private String getExtension(String name){
+  private String getExtension(String name) {
     int i = name.lastIndexOf('.');
     if (i > 0) {
-      return name.substring(i+1).toLowerCase();
+      return name.substring(i + 1).toLowerCase();
     }
     return "";
   }
@@ -483,6 +549,19 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     }
   }
 
+  private void showLoadingConfig() {
+    ProgressIndicator pi = new ProgressIndicator();
+    pi.setPrefWidth(75);
+    pi.setPrefHeight(75);
+    pi.setProgress(-1);
+    vBoxConfig = new VBox();
+    vBoxConfig.setAlignment(Pos.TOP_CENTER);
+    vBoxConfig.setPrefWidth(configScroll.getWidth() - 5);
+    vBoxConfig.getChildren().add(pi);
+    VBox.setMargin(pi, new Insets(10, 0, 0, 0));
+    configScroll.setContent(vBoxConfig);
+  }
+
   public RadioButton getSelectedConfig() {
     RadioButton radio = (RadioButton) group.getSelectedToggle();
     if (radio == null) {
@@ -506,4 +585,11 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     return 1;
   }
 
+  public boolean isAvailable() {
+    return available;
+  }
+
+  public InteroperabilityService getInterService() {
+    return interService;
+  }
 }

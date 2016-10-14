@@ -403,10 +403,14 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
             box.setSpacing(3);
             box.setAlignment(Pos.CENTER_LEFT);
 
-            ImageView icon = new ImageView();
-            icon.setFitHeight(20);
-            icon.setFitWidth(20);
-            icon.setImage(new Image("images/delete.png"));
+            Button icon = new Button();
+            icon.setMinHeight(20);
+            icon.setPrefHeight(20);
+            icon.setMaxHeight(20);
+            icon.setMinWidth(20);
+            icon.setPrefWidth(20);
+            icon.setMaxWidth(20);
+            icon.getStyleClass().addAll("delete-img", "periodic-img");
             icon.setCursor(Cursor.HAND);
             icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
               @Override

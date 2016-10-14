@@ -21,6 +21,7 @@ package dpfmanager.shell.modules.conformancechecker;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.DpfLogger;
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
@@ -58,23 +59,20 @@ public class ConformanceCheckerController extends DpfSpringController {
   public void handleMessage(DpfMessage message) {
     if (message.isTypeOf(ConformanceMessage.class)) {
       ConformanceMessage cm = message.getTypedMessage(ConformanceMessage.class);
-      if (!cm.hasPaths()) {
+      if (cm.isConsole()) {
         // From console
-        Integer recursive = null;
+        Integer recursive = 1;
         if (parameters.containsKey("-r")){
           recursive = Integer.parseInt(parameters.get("-r"));
         }
-        service.setParameters(cm.getConfig(), recursive, null);
-        service.initMultiProcessInputRun(cm.getFiles());
-      } else {
+        service.initMultiProcessInputRun(cm.getFiles(), cm.getConfig(), recursive);
+      } else if (cm.isServer()){
         // From server
         String path = cm.getPath();
         String input = cm.getInput();
-        if (!service.readConfig(path)) {
-          // Error reading config file
-        } else {
-          service.setParameters(null, null, cm.getUuid());
-          service.initProcessInputRun(input);
+        Configuration config = service.readConfig(path);
+        if (config != null) {
+          service.initProcessInputRun(input, config, cm.getUuid());
         }
       }
     } else if (message.isTypeOf(ProcessInputMessage.class)){

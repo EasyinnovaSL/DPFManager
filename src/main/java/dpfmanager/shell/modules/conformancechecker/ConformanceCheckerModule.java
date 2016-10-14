@@ -21,6 +21,7 @@ package dpfmanager.shell.modules.conformancechecker;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.DpfLogger;
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
@@ -57,15 +58,18 @@ public class ConformanceCheckerModule extends DpfModule {
   public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(ConformanceMessage.class)) {
       ConformanceMessage cm = dpfMessage.getTypedMessage(ConformanceMessage.class);
-      if (cm.hasPaths()) {
+      if (cm.isGui()) {
         String path = cm.getPath();
         String input = cm.getInput();
-        if (!service.readConfig(path)) {
-          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
-        } else {
-          service.setParameters(null, cm.getRecursive(), null);
-          service.initProcessInputRun(input);
+        Configuration config = null;
+        if (!path.isEmpty()) {
+          config = service.readConfig(path);
+          if (config == null) {
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
+            return;
+          }
         }
+        service.initProcessInputRun(input, config, cm.getRecursive());
       }
     } else if (dpfMessage.isTypeOf(ProcessInputMessage.class)){
       service.tractProcessInputMessage(dpfMessage.getTypedMessage(ProcessInputMessage.class));

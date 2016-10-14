@@ -29,14 +29,17 @@ import dpfmanager.shell.modules.report.core.IndividualReport;
 public class IndividualStatusMessage extends DpfMessage {
 
   private IndividualReport individual;
+  private Configuration config;
   private Long uuid;
 
-  public IndividualStatusMessage(IndividualReport ir) {
+  public IndividualStatusMessage(IndividualReport ir, Configuration c) {
     individual = ir;
+    config = c;
   }
 
-  public IndividualStatusMessage(IndividualReport ir, Long u) {
+  public IndividualStatusMessage(IndividualReport ir, Configuration c, Long u) {
     individual = ir;
+    config = c;
     uuid = u;
   }
 
@@ -51,5 +54,9 @@ public class IndividualStatusMessage extends DpfMessage {
       return individual.getUuid();
     }
     return uuid;
+  }
+
+  public Configuration getConfig() {
+    return config;
   }
 }

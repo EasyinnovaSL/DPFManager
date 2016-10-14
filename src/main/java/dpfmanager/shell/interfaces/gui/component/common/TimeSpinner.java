@@ -17,7 +17,7 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.interfaces.gui.component.periodical;
+package dpfmanager.shell.interfaces.gui.component.common;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
