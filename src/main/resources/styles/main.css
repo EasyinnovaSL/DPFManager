@@ -753,3 +753,11 @@
 .report-icon{
     width: 5px!important;
 }
+
+/*Drag and drop*/
+.on-drag {
+    -fx-border-color: #31C2F3;
+    -fx-border-width: 3;
+    -fx-border-radius: 3;
+    -fx-border-insets: -2;
+}

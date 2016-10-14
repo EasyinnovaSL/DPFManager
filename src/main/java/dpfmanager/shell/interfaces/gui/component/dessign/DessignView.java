@@ -48,6 +48,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -69,6 +72,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -220,6 +224,37 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       }
     }
 
+    // Drag and drop
+    configScroll.setOnDragDropped(event -> {
+      // Files dropped
+      Dragboard db = event.getDragboard();
+      boolean success = false;
+      if (db.hasFiles()) {
+        success = true;
+        for (File file : db.getFiles()) {
+          getController().addConfigFile(file, false);
+        }
+      }
+      event.setDropCompleted(success);
+      event.consume();
+    });
+    configScroll.setOnDragOver(event -> {
+      if (acceptedFiles(event.getDragboard(), Arrays.asList("dpf"))){
+        event.acceptTransferModes(TransferMode.MOVE);
+      }
+      event.consume();
+    });
+    configScroll.setOnDragEntered(event -> {
+      if (acceptedFiles(event.getDragboard(), Arrays.asList("dpf"))){
+        configScroll.getStyleClass().add("on-drag");
+      }
+      event.consume();
+    });
+    configScroll.setOnDragExited(event -> {
+      configScroll.getStyleClass().remove("on-drag");
+      event.consume();
+    });
+
     configScroll.setContent(vBoxConfig);
   }
 
@@ -358,6 +393,70 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     } else {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertConfigFile")));
     }
+  }
+
+  /**
+   * Drag and drop input
+   */
+  @FXML
+  protected void onDragDroppedInput(DragEvent event) throws Exception {
+    // Files dropped
+    Dragboard db = event.getDragboard();
+    boolean success = false;
+    if (db.hasFiles()) {
+      success = true;
+      String filePath = "";
+      for (File file : db.getFiles()) {
+        if (!filePath.isEmpty()){
+          filePath += ";";
+        }
+        filePath += file.getAbsolutePath();
+      }
+      inputText.setText(filePath);
+    }
+    event.setDropCompleted(success);
+    event.consume();
+  }
+  @FXML
+  protected void onDragOverInput(DragEvent event) throws Exception {
+    // Filter accepted files
+    if (acceptedFiles(event.getDragboard(), Arrays.asList("tif","tiff","zip","rar"))){
+      event.acceptTransferModes(TransferMode.MOVE);
+    }
+    event.consume();
+  }
+  @FXML
+  protected void onDragEnteredInput(DragEvent event) throws Exception {
+    if (acceptedFiles(event.getDragboard(), Arrays.asList("tif","tiff","zip","rar"))){
+      inputText.getStyleClass().add("on-drag");
+    }
+    event.consume();
+  }
+  @FXML
+  protected void onDragExitedInput(DragEvent event) throws Exception {
+    inputText.getStyleClass().remove("on-drag");
+    event.consume();
+  }
+
+  public boolean acceptedFiles(Dragboard db, List<String> accepted){
+    if (db.hasFiles()) {
+      for (File file : db.getFiles()) {
+        String ext = getExtension(file.getName());
+        if(!accepted.contains(ext)){
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private String getExtension(String name){
+    int i = name.lastIndexOf('.');
+    if (i > 0) {
+      return name.substring(i+1).toLowerCase();
+    }
+    return "";
   }
 
   public List<String> getTreeSelectedItems() {

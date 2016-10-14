@@ -160,6 +160,10 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       file = fileChooser.showOpenDialog(GuiWorkbench.getMyStage());
     }
 
+    addConfigFile(file, true);
+  }
+
+  public void addConfigFile(File file, boolean ask){
     if (file != null) {
       // Check valid config
       ConformanceCheckerModel ccm = new ConformanceCheckerModel();
@@ -169,7 +173,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       }
     }
 
-    if (file != null) {
+    if (file != null && ask) {
       DPFManagerProperties.setDefaultDirConfig(file.getParent());
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
       alert.setTitle(getBundle().getString("copyTitle"));
@@ -204,6 +208,8 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       } else {
         getView().addConfigFile(file.getAbsolutePath(), file, false);
       }
+    } else if (file != null && !ask){
+      getView().addConfigFile(file.getAbsolutePath(), file, false);
     }
   }
 
