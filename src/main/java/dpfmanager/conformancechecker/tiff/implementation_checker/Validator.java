@@ -23,6 +23,7 @@ import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.DpfLogger;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffNode;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.Clausule;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.Clausules;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleElement;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
@@ -71,8 +72,12 @@ public class Validator {
     return result.getErrors();
   }
 
+  public List<RuleResult> getWarningsAndInfos() {
+    return result.getWarnings(true);
+  }
+
   public List<RuleResult> getWarnings() {
-    return result.getWarnings();
+    return result.getWarnings(false);
   }
 
   public Validator() {
@@ -127,15 +132,15 @@ public class Validator {
         for (IncludeType inc : rules.getInclude()) {
           JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
           Unmarshaller jaxbUnmarshallerInc = jaxbContextInc.createUnmarshaller();
-          ImplementationCheckerObjectType rulesIncluded = (ImplementationCheckerObjectType) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getPolicychecker()));
+          ImplementationCheckerObjectType rulesIncluded = (ImplementationCheckerObjectType) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getImplementation()));
 
           for (RulesType ro : rulesIncluded.getRules()) {
             boolean excludedRules = false;
-            for (String id : inc.getExcluderules().getRule()) {
-              if (id.equals(ro.getDescription())) excludedRules = true;
-            }
+            //for (String id : inc.getExclude().getRule()) {
+            //  if (id.equals(ro.getDescription())) excludedRules = true;
+            //}
             if (!excludedRules) {
-              rules.getRules().add((ImplementationCheckerObjectType.Rules) ro);
+              rules.getRules().add(ro);
             }
             for (RuleType rule : ro.getRule()) {
               //rule.setIso(rulesIncluded.getIso());
@@ -177,13 +182,15 @@ public class Validator {
     boolean bbreak = false;
     for (RulesType ruleSet : rules.getRules()) {
       for (RuleType rule : ruleSet.getRule()) {
-        if (rule.getId().equals("ep-1"))
+        if (rule.getId().equals("TAG-279-0002"))
           rule.toString();
 
         String context = rule.getContext();
         List<TiffNode> objects = model.getObjectsFromContext(context, true);
         for (TiffNode node : objects) {
           boolean ok = checkRule(rule, node);
+          if (!ok)
+            ok = ok;
           if (!ok && (rule.isCritical() || fastBreak)) {
             bbreak = true;
             break;
@@ -272,14 +279,13 @@ public class Validator {
         ConformanceChecker.Logger.println("Error on rule " + rule.toString());
 
       // Analyze clausules
-      for (String clausule : clausules.getClausules()) {
-        if (clausule.contains("*"))
-          clausule = clausule;
-        if (clausule.startsWith("count(")) {
+      for (int ic = 0; ic < clausules.getClausules().size(); ic++) {
+        Clausule clausule = clausules.getClausules().get(ic);
+        if (clausule.value.startsWith("count(")) {
           // Child count
-          String countField = clausule.substring(clausule.indexOf("(") + 1);
+          String countField = clausule.value.substring(clausule.value.indexOf("(") + 1);
           countField = countField.substring(0, countField.indexOf(")"));
-          String checkop = clausule.substring(clausule.indexOf(")") + 1).trim();
+          String checkop = clausule.value.substring(clausule.value.indexOf(")") + 1).trim();
 
           RuleElement field = new RuleElement(countField, node, model);
           if (!field.valid) ok = false;
@@ -300,9 +306,9 @@ public class Validator {
               ok = n < Integer.parseInt(field2);
             }
           }
-        } else if (clausule.startsWith("date(")) {
+        } else if (clausule.value.startsWith("date(")) {
           // Check datetime format
-          String dateTimeField = clausule.substring(clausule.indexOf("(") + 1);
+          String dateTimeField = clausule.value.substring(clausule.value.indexOf("(") + 1);
           dateTimeField = dateTimeField.substring(0, dateTimeField.indexOf(")"));
 
           RuleElement field = new RuleElement(dateTimeField, node, model);
@@ -331,20 +337,22 @@ public class Validator {
               }
             }
           }
-        } else if (clausule.contains("==") || clausule.contains(">") || clausule.contains("<") || clausule.contains("!=")) {
+        } else if (clausule.value.contains("==") || clausule.value.contains(">") || clausule.value.contains("<") || clausule.value.contains("!=")) {
           // Check field values
-          String operation = clausule.contains("==") ? "==" : (clausule.contains(">") ? ">" : clausule.contains("!=") ? "!=" : "<");
-          RuleElement op1 = new RuleElement(clausule.substring(0, clausule.indexOf(operation)), node, model);
+          String operation = clausule.value.contains("==") ? "==" : (clausule.value.contains(">") ? ">" : clausule.value.contains("!=") ? "!=" : "<");
+          RuleElement op1 = new RuleElement(clausule.value.substring(0, clausule.value.indexOf(operation)), node, model);
           if (!op1.valid)
             ok = false;
           else {
             String value = op1.getValue();
             if (value == null) return ok;
-            RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
+            RuleElement op2 = new RuleElement(clausule.value.substring(clausule.value.indexOf(operation) + operation.length()).trim(), node, model);
             if (!op2.valid)
               ok = false;
             else {
               String value2 = op2.getValue();
+              if (value2 == null)
+                value2.toString();
               if (value.contains("/"))
                 value = Double.parseDouble(value.split("/")[0]) / Double.parseDouble(value.split("/")[1]) + "";
               if (value2.contains("/"))
@@ -363,16 +371,16 @@ public class Validator {
             }
           }
         } else {
-          if (clausule.startsWith("!")) {
+          if (clausule.value.startsWith("!")) {
             // Check field does not exist
-            RuleElement elem = new RuleElement(clausule.substring(1), node, model);
+            RuleElement elem = new RuleElement(clausule.value.substring(1), node, model);
             if (!elem.valid) ok = false;
             else {
               ok = elem.getChildren().size() == 0;
             }
           } else {
             // Check field exists
-            RuleElement elem = new RuleElement(clausule, node, model);
+            RuleElement elem = new RuleElement(clausule.value, node, model);
             if (!elem.valid) ok = false;
             else {
               List<TiffNode> childs = elem.getChildren();
@@ -383,26 +391,37 @@ public class Validator {
         }
 
         // Lazy evaluation
-        if (clausules.getOperator() != Clausules.Operator.NULL && clausules.getOperator() == Clausules.Operator.OR && ok)
-          break;
-        if (clausules.getOperator() == Clausules.Operator.NULL || clausules.getOperator() == Clausules.Operator.AND && !ok)
-          break;
+        Clausules.Operator nextClausuleOperator = null;
+        if (ic+1 < clausules.getClausules().size())
+          nextClausuleOperator = clausules.getClausules().get(ic+1).operator;
+        if (nextClausuleOperator != null) {
+          if (nextClausuleOperator == Clausules.Operator.OR && ok)
+            break;
+          if (nextClausuleOperator == Clausules.Operator.AND && !ok)
+            break;
+        }
       }
     } catch (Exception ex) {
       ex.printStackTrace();
       ok = false;
     }
 
-    if (ok) {
-      RuleResult rr = new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString());
-      result.add(rr);
-    } else if (rule.isWarning()) {
-      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+    if (ok && rule.isWarning()) {
+      RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
       rr.setWarning(true);
       result.add(rr);
-    } else {
-      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+    } else if (ok && rule.isInfo()) {
+      RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+      rr.setInfo(true);
       result.add(rr);
+    } else if (ok) {
+      RuleResult rr = new RuleResult(true, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+      result.add(rr);
+    } else {
+      if (!rule.isWarning() && !rule.isInfo()) {
+        RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+        result.add(rr);
+      }
     }
 
     return ok;

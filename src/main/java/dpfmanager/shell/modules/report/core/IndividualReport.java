@@ -35,7 +35,6 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.types.IFD;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -420,23 +419,23 @@ public class IndividualReport implements Comparable {
     // errors & warnings
     if (validation != null) {
       errorsBl = validation.getErrors();
-      warningsBl = validation.getWarnings();
+      warningsBl = validation.getWarningsAndInfos();
     }
     if (epValidation != null) {
       errorsEp = epValidation.getErrors();
-      warningsEp = epValidation.getWarnings();
+      warningsEp = epValidation.getWarningsAndInfos();
     }
     if (it0Validation != null) {
       errorsIt0 = it0Validation.getErrors();
-      warningsIt0 = it0Validation.getWarnings();
+      warningsIt0 = it0Validation.getWarningsAndInfos();
     }
     if (it1Validation != null) {
       errorsIt1 = it1Validation.getErrors();
-      warningsIt1 = it1Validation.getWarnings();
+      warningsIt1 = it1Validation.getWarningsAndInfos();
     }
     if (it2Validation != null) {
       errorsIt2 = it2Validation.getErrors();
-      warningsIt2 = it2Validation.getWarnings();
+      warningsIt2 = it2Validation.getWarningsAndInfos();
     }
     if (pcValidation != null) {
       processPcValidation();

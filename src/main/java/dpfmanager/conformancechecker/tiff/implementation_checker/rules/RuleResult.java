@@ -32,6 +32,7 @@ public class RuleResult {
   TiffNode node;
   RuleType rule;
   boolean warning = false;
+  boolean info = false;
 
   public RuleResult() {
   }
@@ -42,6 +43,14 @@ public class RuleResult {
 
   public void setWarning(boolean warning) {
     this.warning = warning;
+  }
+
+  public boolean getInfo() {
+    return info;
+  }
+
+  public void setInfo(boolean info) {
+    this.info = info;
   }
 
   public boolean getWarning() {
@@ -87,7 +96,7 @@ public class RuleResult {
 
   public String getReference() {
     if (rule != null) {
-      if (rule.getReference() != null) {
+      if (rule.getReferenceText() != null) {
         if (rule.getReferenceText().length() > 0) {
           return rule.getReferenceText();
         }
