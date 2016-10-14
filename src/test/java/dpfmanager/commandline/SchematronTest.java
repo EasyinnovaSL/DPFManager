@@ -32,9 +32,10 @@ public class SchematronTest extends CommandLineTest {
   public void testSchematron1() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
-    args[1] = "-s";
+    String[] args = new String[3];
+    args[0] = "check";
+    args[1] = "src/test/resources/Small/Bilevel.tif";
+    args[2] = "-s";
 
     MainConsoleApp.main(args);
 
@@ -71,9 +72,10 @@ public class SchematronTest extends CommandLineTest {
   public void testSchematron2() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
-    args[1] = "-s";
+    String[] args = new String[3];
+    args[0] = "check";
+    args[1] = "src/test/resources/Small/Bilevel.tif";
+    args[2] = "-s";
 
     MainConsoleApp.main(args);
 
@@ -139,9 +141,10 @@ public class SchematronTest extends CommandLineTest {
   public void testReport() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
-    args[1] = "-s";
+    String[] args = new String[3];
+    args[0] = "check";
+    args[1] = "src/test/resources/Small/Bilevel.tif";
+    args[2] = "-s";
 
     MainConsoleApp.main(args);
 

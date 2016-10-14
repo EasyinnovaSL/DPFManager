@@ -93,7 +93,7 @@ public class RemoteController {
         }
       }
       // -o --output
-      if (arg.equals("-o") || arg.equals("--output")) {
+      else if (arg.equals("-o") || arg.equals("--output")) {
         if (idx + 1 < params.size()) {
           String outputFolder = params.get(++idx);
           argsError = !common.parseOutput(outputFolder);

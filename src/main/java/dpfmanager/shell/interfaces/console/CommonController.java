@@ -65,6 +65,8 @@ public class CommonController {
     context = c;
     bundle = b;
     files = new ArrayList<>();
+    xml = true;
+    html = true;
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
   }
 

@@ -153,6 +153,9 @@ public class ConsoleLauncher {
         params.remove(0);
         updateLanguage(params);
         return;
+      } else {
+        printOut(bundle.getString("unknownCommand").replace("%1", first));
+        displayHelp();
       }
     }
   }

@@ -125,9 +125,10 @@ public class CheckController {
       else if (arg.equals("-r") || arg.equals("--recursive")) {
         if (idx + 1 < params.size()) {
           Integer max = Integer.MAX_VALUE;
-          String recursive = params.get(++idx);
+          String recursive = params.get(idx+1);
           if (isNumeric(recursive)) {
             max = Integer.parseInt(recursive);
+            idx++;
           }
           common.putParameter("-r", max.toString());
         } else {

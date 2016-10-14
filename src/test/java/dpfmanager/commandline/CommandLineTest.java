@@ -33,7 +33,7 @@ public class CommandLineTest {
     // Set feedback
     DPFManagerProperties.setFeedback(feedback);
     // Delete all reports
-    deleteReports();
+//    deleteReports();
   }
 
   public void waitForFinishMultiThred(int maxTimeout) throws InterruptedException {

@@ -16,7 +16,7 @@ public class ServerThread extends Thread {
   @Override
   public void run() {
     String[] args = new String[3];
-    args[0] = "-server";
+    args[0] = "server";
     args[1] = "-p";
     args[2] = port.toString();
 

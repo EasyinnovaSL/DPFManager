@@ -36,19 +36,21 @@ public class InteractiveRemoteTest extends ServerTest {
     // Start check
     printOut("Running interactive remote test...");
 
-    String[] argsCheck = new String[3];
-    argsCheck[0] = "-url";
-    argsCheck[1] = "127.0.0.1:9000";
-    argsCheck[2] = "src/test/resources/Small/Bilevel.tif";
+    String[] argsCheck = new String[4];
+    argsCheck[0] = "remote";
+    argsCheck[1] = "-u";
+    argsCheck[2] = "127.0.0.1:9000";
+    argsCheck[3] = "src/test/resources/Small/Bilevel.tif";
     String job = getOutputJob(argsCheck,"");
 
     while (job != null) {
       sleep(1000);
-      String[] argsJob = new String[4];
-      argsJob[0] = "-url";
-      argsJob[1] = "127.0.0.1:9000";
-      argsJob[2] = "-job";
-      argsJob[3] = job;
+      String[] argsJob = new String[5];
+      argsJob[0] = "remote";
+      argsJob[1] = "--url";
+      argsJob[2] = "127.0.0.1:9000";
+      argsJob[3] = "--job";
+      argsJob[4] = job;
       job = getOutputJob(argsJob, job);
     }
 
