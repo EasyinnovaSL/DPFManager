@@ -40,13 +40,14 @@ public class FixerTest extends CommandLineTest {
     idx = 1;
     while (new File(path).exists()) path = "temp/output" + idx++;
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "--configuration";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -102,13 +103,14 @@ public class FixerTest extends CommandLineTest {
     idx = 1;
     while (new File(path).exists()) path = "temp/output" + idx++;
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "--configuration";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -162,13 +164,14 @@ public class FixerTest extends CommandLineTest {
     idx = 1;
     while (new File(path).exists()) path = "temp/output" + idx++;
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -224,13 +227,14 @@ public class FixerTest extends CommandLineTest {
     idx = 1;
     while (new File(path).exists()) path = "temp/output" + idx++;
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 

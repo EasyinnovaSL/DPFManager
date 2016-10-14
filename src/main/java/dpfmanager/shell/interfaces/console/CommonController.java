@@ -66,7 +66,6 @@ public class CommonController {
     bundle = b;
     files = new ArrayList<>();
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
-    parameters.put("mode", "CMD");
   }
 
   public void parseFiles(String arg){

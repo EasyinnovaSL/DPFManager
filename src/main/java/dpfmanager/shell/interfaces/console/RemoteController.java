@@ -96,7 +96,7 @@ public class RemoteController {
       if (arg.equals("-o") || arg.equals("--output")) {
         if (idx + 1 < params.size()) {
           String outputFolder = params.get(++idx);
-          argsError = common.parseOutput(outputFolder);
+          argsError = !common.parseOutput(outputFolder);
           if (!argsError) {
             common.putParameter("-o", outputFolder);
           }
@@ -108,7 +108,7 @@ public class RemoteController {
       else if (arg.equals("-c") || arg.equals("--configuration")) {
         if (idx + 1 < params.size()) {
           String xmlConfig = params.get(++idx);
-          argsError = common.parseConfiguration(xmlConfig);
+          argsError = !common.parseConfiguration(xmlConfig);
           if (!argsError) {
             common.putParameter("-configuration", xmlConfig);
           }
@@ -119,7 +119,7 @@ public class RemoteController {
       // -f --format
       else if (arg.equals("-f") || arg.equals("--format")) {
         if (idx + 1 < params.size()) {
-          argsError = common.parseFormats(params.get(++idx));
+          argsError = !common.parseFormats(params.get(++idx));
         } else {
           printOutErr(bundle.getString("specifyFormat"));
         }
@@ -129,12 +129,12 @@ public class RemoteController {
         common.putParameter("-w", "true");
       }
       // -h --help
-      else if (arg.equals("-`h") || arg.equals("--help")) {
-        // TODO
+      else if (arg.equals("-h") || arg.equals("--help")) {
+        displayHelp();
       }
       // Unrecognised option
       else if (arg.startsWith("-")) {
-        printOutErr(bundle.getString("unrecognizedOption").replace("%1", arg));
+        printOutErr(bundle.getString("unknownOption").replace("%1", arg));
       }
       // File or directory to process
       else {
@@ -165,7 +165,6 @@ public class RemoteController {
   public void run() {
     if (argsError) {
       displayHelp();
-      return;
     }
 
     if (common.containsParameter("-job")) {
@@ -182,7 +181,23 @@ public class RemoteController {
    * Displays help
    */
   private void displayHelp() {
-    printOut("HELP!"); // TODO
+    printOut("");
+    printOut(bundle.getString("helpR0"));
+    printOut(bundle.getString("helpSources"));
+    printOut("");
+    printOut(bundle.getString("helpOptions"));
+    printOptions("helpR", 7);
+    exit();
+  }
+
+  public void printOptions(String prefix, int max) {
+    for (int i = 1; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.lastIndexOf(":") + 1);
+      String post = msg.substring(msg.lastIndexOf(":") + 1);
+      String line = String.format("%-38s%s", pre, post);
+      printOut("    " + line);
+    }
   }
 
   /**
@@ -203,5 +218,13 @@ public class RemoteController {
 
   private void printException(Exception ex) {
     context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
+  }
+
+  /**
+   * Exit application
+   */
+  public void exit() {
+    AppContext.close();
+    System.exit(0);
   }
 }

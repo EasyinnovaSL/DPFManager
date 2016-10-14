@@ -93,7 +93,7 @@ public class CheckController {
       if (arg.equals("-o") || arg.equals("--output")) {
         if (idx + 1 < params.size()) {
           String outputFolder = params.get(++idx);
-          argsError = common.parseOutput(outputFolder);
+          argsError = !common.parseOutput(outputFolder);
           if (!argsError){
             common.putParameter("-o", outputFolder);
           }
@@ -105,7 +105,7 @@ public class CheckController {
       else if (arg.equals("-c") || arg.equals("--configuration")) {
         if (idx + 1 < params.size()) {
           String xmlConfig = params.get(++idx);
-          argsError = common.parseConfiguration(xmlConfig);
+          argsError = !common.parseConfiguration(xmlConfig);
           if (!argsError){
             common.putParameter("-configuration", xmlConfig);
           }
@@ -116,7 +116,7 @@ public class CheckController {
       // -f --format
       else if (arg.equals("-f") || arg.equals("--format")) {
         if (idx + 1 < params.size()) {
-          argsError = common.parseFormats(params.get(++idx));
+          argsError = !common.parseFormats(params.get(++idx));
         } else {
           printOutErr(bundle.getString("specifyFormat"));
         }
@@ -139,12 +139,12 @@ public class CheckController {
         common.putParameter("-s", "true");
       }
       // -h --help
-      else if (arg.equals("-`h") || arg.equals("--help")) {
-        // TODO
+      else if (arg.equals("-h") || arg.equals("--help")) {
+        displayHelp();
       }
       // Unrecognised option
       else if (arg.startsWith("-")) {
-        printOutErr(bundle.getString("unrecognizedOption").replace("%1", arg));
+        printOutErr(bundle.getString("unknownOption").replace("%1", arg));
       }
       // File or directory to process
       else {
@@ -264,25 +264,21 @@ public class CheckController {
    */
   public void displayHelp() {
     printOut("");
-    printOut(bundle.getString("help1"));
-    printOut(bundle.getString("help2"));
+    printOut(bundle.getString("helpC0"));
+    printOut(bundle.getString("helpSources"));
     printOut("");
-    printOptions("helpO", 6);
-    printOut("");
+    printOut(bundle.getString("helpOptions"));
     printOptions("helpC", 7);
-    printOut("");
-    printOptions("helpR", 4);
-    printOut("");
-    printOptions("helpP", 6);
-    printOut("        " + bundle.getString("helpP61"));
-    printOut("        " + bundle.getString("helpP62"));
-    printOut("    "+bundle.getString("helpP7"));
+    exit();
   }
 
   public void printOptions(String prefix, int max) {
-    printOut(bundle.getString(prefix+"1"));
-    for (int i = 2; i<=max; i++){
-      printOut("    "+bundle.getString(prefix+i));
+    for (int i = 1; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.indexOf(":") + 1);
+      String post = msg.substring(msg.indexOf(":") + 1);
+      String line = String.format("%-38s%s", pre, post);
+      printOut("    " + line);
     }
   }
 
@@ -304,5 +300,13 @@ public class CheckController {
 
   private void printException(Exception ex) {
     context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
+  }
+
+  /**
+   * Exit application
+   */
+  public void exit() {
+    AppContext.close();
+    System.exit(0);
   }
 }

@@ -19,7 +19,6 @@
 
 package dpfmanager.shell.interfaces.console;
 
-import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -29,11 +28,8 @@ import dpfmanager.shell.modules.periodic.messages.PeriodicMessage;
 
 import org.apache.logging.log4j.Level;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -78,8 +74,8 @@ public class PeriodicalController {
       // -a --add
       if (arg.equals("-a") || arg.equals("--add")) {
         List<String> coreModules =
-        Arrays.asList("-listperiodic","-editperiodic","-removeperiodic");
-        if (common.containsParameters(Arrays.asList("-listperiodic","-editperiodic","-removeperiodic"))){
+            Arrays.asList("-listperiodic", "-editperiodic", "-removeperiodic");
+        if (common.containsParameters(Arrays.asList("-listperiodic", "-editperiodic", "-removeperiodic"))) {
           printOutErr(bundle.getString("onlyOnePeriodicAction"));
         } else {
           common.putParameter("-addperiodic", "");
@@ -87,7 +83,7 @@ public class PeriodicalController {
       }
       // -e --edit
       else if (arg.equals("-e") || arg.equals("--edit")) {
-        if (common.containsParameters(Arrays.asList("-listperiodic","-addperiodic","-removeperiodic"))) {
+        if (common.containsParameters(Arrays.asList("-listperiodic", "-addperiodic", "-removeperiodic"))) {
           printOutErr(bundle.getString("onlyOnePeriodicAction"));
         } else {
           if (idx + 1 < params.size()) {
@@ -100,7 +96,7 @@ public class PeriodicalController {
       }
       // -r --remove
       else if (arg.equals("-r") || arg.equals("--remove")) {
-        if (common.containsParameters(Arrays.asList("-listperiodic","-editperiodic","-addperiodic"))) {
+        if (common.containsParameters(Arrays.asList("-listperiodic", "-editperiodic", "-addperiodic"))) {
           printOutErr(bundle.getString("onlyOnePeriodicAction"));
         } else {
           if (idx + 1 < params.size()) {
@@ -113,7 +109,7 @@ public class PeriodicalController {
       }
       // -l --list
       else if (arg.equals("-l") || arg.equals("--list")) {
-        if (common.containsParameters(Arrays.asList("-addperiodic","-editperiodic","-removeperiodic"))) {
+        if (common.containsParameters(Arrays.asList("-addperiodic", "-editperiodic", "-removeperiodic"))) {
           printOutErr(bundle.getString("onlyOnePeriodicAction"));
         } else {
           common.putParameter("-listperiodic", "");
@@ -132,8 +128,8 @@ public class PeriodicalController {
       else if (arg.equals("--configure")) {
         if (idx + 1 < params.size()) {
           String xmlConfig = params.get(++idx);
-          argsError = common.parseConfiguration(xmlConfig);
-          if (!argsError){
+          argsError = !common.parseConfiguration(xmlConfig);
+          if (!argsError) {
             common.putParameter("-configuration", xmlConfig);
           }
         } else {
@@ -160,12 +156,12 @@ public class PeriodicalController {
         }
       }
       // -h --help
-      else if (arg.equals("-`h") || arg.equals("--help")) {
-        // TODO
+      else if (arg.equals("-h") || arg.equals("--help")) {
+        displayHelp();
       }
       // Unrecognised option
       else if (arg.startsWith("-")) {
-        printOutErr(bundle.getString("unrecognizedOption").replace("%1", arg));
+        printOutErr(bundle.getString("unknownOption").replace("%1", arg));
       }
       // File or directory to process
       else {
@@ -227,8 +223,30 @@ public class PeriodicalController {
   /**
    * Displays help
    */
-  private void displayHelp() {
-    printOut("HELP!"); // TODO
+  public void displayHelp() {
+    printOut("");
+    printOut(bundle.getString("helpP0"));
+    printOut(bundle.getString("helpSources"));
+    printOut("");
+    printOut(bundle.getString("helpOptions"));
+    printOptions("helpP", 6);
+    printOptions("helpP6", 1, 2, 40);
+    printOptions("helpP", 7, 8, 37);
+    exit();
+  }
+
+  public void printOptions(String prefix, int max) {
+    printOptions(prefix, 1, max, 37);
+  }
+
+  public void printOptions(String prefix, int min, int max, int spaces) {
+    for (int i = min; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.lastIndexOf(":") + 1);
+      String post = msg.substring(msg.lastIndexOf(":") + 1);
+      String line = String.format("%-"+spaces+"s%s", pre, post);
+      printOut("    " + line);
+    }
   }
 
   /**
@@ -249,5 +267,13 @@ public class PeriodicalController {
 
   private void printException(Exception ex) {
     context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
+  }
+
+  /**
+   * Exit application
+   */
+  public void exit() {
+    AppContext.close();
+    System.exit(0);
   }
 }

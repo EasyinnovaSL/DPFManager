@@ -25,11 +25,12 @@ public class DeleteFileTest extends CommandLineTest {
     String name = "tt"+n+".tif";
     Files.copy(new File("src/test/resources/Small/Bilevel.tif").toPath(), new File(name).toPath());
 
-    String[] args = new String[4];
-    args[0] = name;
-    args[1] = "--reportformat";
-    args[2] = "xml";
-    args[3] = "-s";
+    String[] args = new String[5];
+    args[0] = "check";
+    args[1] = name;
+    args[2] = "--format";
+    args[3] = "xml";
+    args[4] = "-s";
 
     MainConsoleApp.main(args);
 
@@ -49,11 +50,12 @@ public class DeleteFileTest extends CommandLineTest {
     String name = "tt"+n+".tif";
     Files.copy(new File("src/test/resources/Small/Bilevel.tif").toPath(), new File(name).toPath());
 
-    String[] args = new String[4];
-    args[0] = name;
-    args[1] = "--reportformat";
+    String[] args = new String[5];
+    args[0] = "check";
+    args[1] = "-f";
     args[2] = "json";
     args[3] = "-s";
+    args[4] = name;
 
     MainConsoleApp.main(args);
 
@@ -73,11 +75,12 @@ public class DeleteFileTest extends CommandLineTest {
     String name = "tt"+n+".tif";
     Files.copy(new File("src/test/resources/Small/Bilevel.tif").toPath(), new File(name).toPath());
 
-    String[] args = new String[4];
-    args[0] = name;
-    args[1] = "--reportformat";
+    String[] args = new String[5];
+    args[0] = "check";
+    args[1] = "--format";
     args[2] = "html";
     args[3] = "-s";
+    args[4] = name;
 
     MainConsoleApp.main(args);
 
@@ -97,11 +100,12 @@ public class DeleteFileTest extends CommandLineTest {
     String name = "tt"+n+".tif";
     Files.copy(new File("src/test/resources/Small/Bilevel.tif").toPath(), new File(name).toPath());
 
-    String[] args = new String[4];
-    args[0] = name;
-    args[1] = "--reportformat";
+    String[] args = new String[5];
+    args[0] = "check";
+    args[1] = "--format";
     args[2] = "xml";
     args[3] = "-s";
+    args[4] = name;
 
     MainConsoleApp.main(args);
 
@@ -139,11 +143,12 @@ public class DeleteFileTest extends CommandLineTest {
     String name = "tt"+n+".tif";
     Files.copy(new File("src/test/resources/Small/Bilevel.tif").toPath(), new File(name).toPath());
 
-    String[] args = new String[4];
-    args[0] = name;
+    String[] args = new String[5];
+    args[0] = "check";
     args[1] = "-s";
-    args[2] = "-configuration";
+    args[2] = "--configuration";
     args[3] = configfile;
+    args[4] = name;
 
     MainConsoleApp.main(args);
 
@@ -183,11 +188,12 @@ public class DeleteFileTest extends CommandLineTest {
     String name = "tt"+n+".tif";
     Files.copy(new File("src/test/resources/Small/Bilevel.tif").toPath(), new File(name).toPath());
 
-    String[] args = new String[4];
-    args[0] = name;
+    String[] args = new String[5];
+    args[0] = "check";
     args[1] = "-s";
-    args[2] = "-configuration";
+    args[2] = "--configuration";
     args[3] = configfile;
+    args[4] = name;
 
     MainConsoleApp.main(args);
 
@@ -230,11 +236,12 @@ public class DeleteFileTest extends CommandLineTest {
     String name = "tt"+n+".tif";
     Files.copy(new File("src/test/resources/Small/Bilevel.tif").toPath(), new File(name).toPath());
 
-    String[] args = new String[4];
-    args[0] = name;
+    String[] args = new String[5];
+    args[0] = "check";
     args[1] = "-s";
-    args[2] = "-configuration";
+    args[2] = "-c";
     args[3] = configfile;
+    args[4] = name;
 
     MainConsoleApp.main(args);
 
