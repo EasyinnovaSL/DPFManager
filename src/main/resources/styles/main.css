@@ -561,7 +561,7 @@
     -fx-background-image: url('../images/periodic/save-green.png');
 }
 .label-exclamation{
-    -fx-text-fill: red;
+    -fx-text-fill: #ff6000;
     -fx-background-image: url('../images/icons/exclamation.png');
     -fx-background-repeat: no-repeat;
     -fx-padding: 0 0 0 25;
