@@ -27,6 +27,8 @@ public class Filter {
   String value;
 
   public Filter(String filter) {
+    if (filter.indexOf("=") == -1)
+      filter.toString();
     attribute = filter.substring(0, filter.indexOf("=")).trim();
     value = filter.substring(filter.indexOf("=") + 1).trim();
   }

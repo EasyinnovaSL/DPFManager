@@ -93,13 +93,19 @@ public class ClassesTest extends TestCase {
   public void testValidExamples() {
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_OK.tif", 0);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_OK_2.tif", 0);
-    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_OK_3.tif", 0);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_OK_channels.tif", 0);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_OK_sampleformat.tif", 0);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_OK_sampleformat2.tif", 0);
 
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_resolution.tif", 0);
     assertNumberOfWarnings("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_resolution.tif", 1);
+  }
+
+  /**
+   * Valid examples set.
+   */
+  public void testValidExamplesExtended() {
+    assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_OK_3.tif", 2);
   }
 
   /**
@@ -111,7 +117,6 @@ public class ClassesTest extends TestCase {
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_direntries.tif", -1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_magic.tif", -1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_overlap.tif", -1);
-    //assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_overlap2.tif", -1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_pointzero.tif", -1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_reuse.tif", -1);
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_width.tif", -1);
@@ -129,15 +134,15 @@ public class ClassesTest extends TestCase {
    * Invalid examples set.
    */
   public void testInvalidExamples2() {
-    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_byteorder.tif", "ByteOrder", 1);
-    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_magic.tif", "Magic Number", 1);
-    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO alignment.tif", "Bad alignment", 1);
+    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_byteorder.tif", "Byte Order", 1);
+    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_magic.tif", "signature", 1);
+    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO alignment.tif", "Bad word alignment", 1);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO offset out.tif", "corrupted file", 1);
-    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_reuse.tif", "Offset already used", 1);
-    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_overlap.tif", "Overlap", 1);
+    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_reuse.tif", "Duplicate pointer", 1);
+    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_overlap.tif", "Data already referenced", 1);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO ntags.tif", "entry", 1);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO no ifds.tif", "least", 1);
-    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "Circular E.tif", "Circular", 1);
+    assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "Circular E.tif", "circular", 1);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO order.tif", "ascending", 1);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO repeat.tif", "duplicated", 2);
     assertErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO photo.tif", "Photometric", 1);

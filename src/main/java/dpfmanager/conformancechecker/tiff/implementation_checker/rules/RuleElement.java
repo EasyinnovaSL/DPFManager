@@ -184,6 +184,7 @@ public class RuleElement {
         try {
           int inum = Integer.parseInt(value.substring(0, value.indexOf("/")));
           int iden = Integer.parseInt(value.substring(value.indexOf("/") + 1));
+          if (inum == 0 && iden == 0) return "0";
           return (inum / (float) iden) + "";
         } catch (Exception ex) {
 

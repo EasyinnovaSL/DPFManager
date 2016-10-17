@@ -69,35 +69,35 @@ public class ReportHtml extends ReportGeneric {
 
       if (ir.checkEP && ir.hasEpValidation()) {
         imageBody = StringUtils.replace(imageBody, "##EP_ERR_N##", "" + ir.getEPErrors().size());
-        imageBody = StringUtils.replace(imageBody, "##EP_WAR_N##", "" + ir.getEPWarnings().size());
+        imageBody = StringUtils.replace(imageBody, "##EP_WAR_N##", "" + ir.getNEpWar());
       } else {
         imageBody = StringUtils.replace(imageBody, "##EP_CLASS##", "hide");
       }
 
       if (ir.checkBL && ir.hasBlValidation()) {
         imageBody = StringUtils.replace(imageBody, "##BL_ERR_N##", "" + ir.getBaselineErrors().size());
-        imageBody = StringUtils.replace(imageBody, "##BL_WAR_N##", "" + ir.getBaselineWarnings().size());
+        imageBody = StringUtils.replace(imageBody, "##BL_WAR_N##", "" + ir.getNBlWar());
       } else {
         imageBody = StringUtils.replace(imageBody, "##BL_CLASS##", "hide");
       }
 
       if (ir.checkIT0 && ir.hasItValidation(0)) {
         imageBody = StringUtils.replace(imageBody, "##IT_ERR_N##", "" + ir.getITErrors(0).size());
-        imageBody = StringUtils.replace(imageBody, "##IT_WAR_N##", "" + ir.getITWarnings(0).size());
+        imageBody = StringUtils.replace(imageBody, "##IT_WAR_N##", "" + ir.getNItWar(0));
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT_CLASS##", "hide");
       }
 
       if (ir.checkIT1 && ir.hasItValidation(1)) {
         imageBody = StringUtils.replace(imageBody, "##IT1_ERR_N##", "" + ir.getITErrors(1).size());
-        imageBody = StringUtils.replace(imageBody, "##IT1_WAR_N##", "" + ir.getITWarnings(1).size());
+        imageBody = StringUtils.replace(imageBody, "##IT1_WAR_N##", "" + ir.getNItWar(1));
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT1_CLASS##", "hide");
       }
 
       if (ir.checkIT2 && ir.hasItValidation(2)) {
         imageBody = StringUtils.replace(imageBody, "##IT2_ERR_N##", "" + ir.getITErrors(2).size());
-        imageBody = StringUtils.replace(imageBody, "##IT2_WAR_N##", "" + ir.getITWarnings(2).size());
+        imageBody = StringUtils.replace(imageBody, "##IT2_WAR_N##", "" + ir.getNItWar(2));
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT2_CLASS##", "hide");
       }
@@ -115,7 +115,7 @@ public class ReportHtml extends ReportGeneric {
       } else {
         imageBody = StringUtils.replace(imageBody, "##BL_ERR_C##", "");
       }
-      if (ir.getBaselineWarnings().size() > 0) {
+      if (ir.getNBlWar() > 0) {
         imageBody = StringUtils.replace(imageBody, "##BL_WAR_C##", "warning");
       } else {
         imageBody = StringUtils.replace(imageBody, "##BL_WAR_C##", "");
@@ -125,7 +125,7 @@ public class ReportHtml extends ReportGeneric {
       } else {
         imageBody = StringUtils.replace(imageBody, "##EP_ERR_C##", "");
       }
-      if (ir.getEPWarnings().size() > 0) {
+      if (ir.getNEpWar() > 0) {
         imageBody = StringUtils.replace(imageBody, "##EP_WAR_C##", "warning");
       } else {
         imageBody = StringUtils.replace(imageBody, "##EP_WAR_C##", "");
@@ -135,7 +135,7 @@ public class ReportHtml extends ReportGeneric {
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT_ERR_C##", "");
       }
-      if (ir.getITWarnings(0).size() > 0) {
+      if (ir.getNItWar(0) > 0) {
         imageBody = StringUtils.replace(imageBody, "##IT_WAR_C##", "warning");
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT_WAR_C##", "");
@@ -145,7 +145,7 @@ public class ReportHtml extends ReportGeneric {
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT1_ERR_C##", "");
       }
-      if (ir.getITWarnings(1).size() > 0) {
+      if (ir.getNItWar(1) > 0) {
         imageBody = StringUtils.replace(imageBody, "##IT1_WAR_C##", "warning");
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT1_WAR_C##", "");
@@ -155,7 +155,7 @@ public class ReportHtml extends ReportGeneric {
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT2_ERR_C##", "");
       }
-      if (ir.getITWarnings(2).size() > 0) {
+      if (ir.getNItWar(2) > 0) {
         imageBody = StringUtils.replace(imageBody, "##IT2_WAR_C##", "warning");
       } else {
         imageBody = StringUtils.replace(imageBody, "##IT2_WAR_C##", "");
@@ -180,7 +180,7 @@ public class ReportHtml extends ReportGeneric {
         imageBody = StringUtils.replace(imageBody, "##CLASS##", "error");
         imageBody = StringUtils.replace(imageBody, "##RESULT##", "Failed");
       }
-      if (ir.getEPWarnings().size() > 0) {
+      if (ir.getNEpWar() > 0) {
         imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "inline-block");
       } else {
         imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "none");

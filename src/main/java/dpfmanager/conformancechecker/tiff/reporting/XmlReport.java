@@ -365,7 +365,7 @@ public class XmlReport {
 
       // level
       Element level = doc.createElement("level");
-      level.setTextContent("critical");
+      level.setTextContent("error");
       error.appendChild(level);
 
       // msg
@@ -412,53 +412,65 @@ public class XmlReport {
 
     // warnings
     for (int i = 0; i < warnings.size(); i++) {
-      RuleResult value = warnings.get(i);
-      Element warning = doc.createElement("rule_result");
-
-      // level
-      Element level = doc.createElement("level");
-      level.setTextContent("warning");
-      warning.appendChild(level);
-
-      // msg
-      Element msg = doc.createElement("message");
-      msg.setTextContent(value.getDescription());
-      warning.appendChild(msg);
-
-      // context
-      msg = doc.createElement("context");
-      msg.setTextContent(value.getContext());
-      warning.appendChild(msg);
-
-      // location
-      msg = doc.createElement("location");
-      msg.setTextContent(value.getLocation());
-      warning.appendChild(msg);
-
-      // rule
-      if (value.getRule() != null) {
-        msg = doc.createElement("ruleId");
-        msg.setTextContent(value.getRule().getReferenceText());
-        warning.appendChild(msg);
-
-        msg = doc.createElement("ruleTest");
-        msg.setTextContent(value.getRule().getAssert().getTest());
-        warning.appendChild(msg);
-
-        msg = doc.createElement("ruleValue");
-        msg.setTextContent(value.getRule().getAssert().getValue());
-        warning.appendChild(msg);
-
-        if (value.getReference() != null) {
-          // ISO reference
-          msg = doc.createElement("iso_reference");
-          msg.setTextContent(value.getReference());
-          warning.appendChild(msg);
-        }
-      }
-
-      results.appendChild(warning);
+      RuleResult warning = warnings.get(i);
+      if (!warning.getWarning()) continue;
+      addWarning(warning, doc, results);
     }
+
+    // infos
+    for (int i = 0; i < warnings.size(); i++) {
+      RuleResult warning = warnings.get(i);
+      if (!warning.getInfo()) continue;
+      addWarning(warning, doc, results);
+    }
+  }
+
+  private void addWarning(RuleResult value, Document doc, Element results) {
+    Element warning = doc.createElement("rule_result");
+
+    // level
+    Element level = doc.createElement("level");
+    level.setTextContent("warning");
+    warning.appendChild(level);
+
+    // msg
+    Element msg = doc.createElement("message");
+    msg.setTextContent(value.getDescription());
+    warning.appendChild(msg);
+
+    // context
+    msg = doc.createElement("context");
+    msg.setTextContent(value.getContext());
+    warning.appendChild(msg);
+
+    // location
+    msg = doc.createElement("location");
+    msg.setTextContent(value.getLocation());
+    warning.appendChild(msg);
+
+    // rule
+    if (value.getRule() != null) {
+      msg = doc.createElement("ruleId");
+      msg.setTextContent(value.getRule().getReferenceText());
+      warning.appendChild(msg);
+
+      msg = doc.createElement("ruleTest");
+      msg.setTextContent(value.getRule().getAssert().getTest());
+      warning.appendChild(msg);
+
+      msg = doc.createElement("ruleValue");
+      msg.setTextContent(value.getRule().getAssert().getValue());
+      warning.appendChild(msg);
+
+      if (value.getReference() != null) {
+        // ISO reference
+        msg = doc.createElement("iso_reference");
+        msg.setTextContent(value.getReference());
+        warning.appendChild(msg);
+      }
+    }
+
+    results.appendChild(warning);
   }
 
   private ImageReader getTiffImageReader() {

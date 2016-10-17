@@ -202,31 +202,31 @@ public class ReportPDF extends ReportGeneric {
           pdfParams.y -= 10;
           pdfParams = writeText(pdfParams, "Baseline", pos_x + image_width + 10, font, font_size, Color.black);
           pdfParams = writeText(pdfParams, ir.getBaselineErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getBaselineErrors().size() > 0 ? Color.red : Color.black);
-          pdfParams = writeText(pdfParams, ir.getBaselineWarnings().size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getBaselineWarnings().size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getNBlErr() + " warnings", pos_x + image_width + 120, font, font_size, ir.getNBlErr() > 0 ? Color.red : Color.black);
         }
         if (ir.checkEP && ir.hasEpValidation()) {
           pdfParams.y -= 10;
           pdfParams = writeText(pdfParams, "Tiff/EP", pos_x + image_width + 10, font, font_size, Color.black);
           pdfParams = writeText(pdfParams, ir.getEPErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getEPErrors().size() > 0 ? Color.red : Color.black);
-          pdfParams = writeText(pdfParams, ir.getEPWarnings().size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getEPWarnings().size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getNEpWar() + " warnings", pos_x + image_width + 120, font, font_size, ir.getNEpWar() > 0 ? Color.red : Color.black);
         }
         if (ir.checkIT0 && ir.hasItValidation(0)) {
           pdfParams.y -= 10;
           pdfParams = writeText(pdfParams, "Tiff/IT", pos_x + image_width + 10, font, font_size, Color.black);
           pdfParams = writeText(pdfParams, ir.getITErrors(0).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(0).size() > 0 ? Color.red : Color.black);
-          pdfParams = writeText(pdfParams, ir.getITWarnings(0).size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getITWarnings(0).size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getNItWar(0) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(0) > 0 ? Color.red : Color.black);
         }
         if (ir.checkIT1 && ir.hasItValidation(1)) {
           pdfParams.y -= 10;
           pdfParams = writeText(pdfParams, "Tiff/IT-1", pos_x + image_width + 10, font, font_size, Color.black);
           pdfParams = writeText(pdfParams, ir.getITErrors(1).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(1).size() > 0 ? Color.red : Color.black);
-          pdfParams = writeText(pdfParams, ir.getITWarnings(1).size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getITWarnings(1).size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getNItWar(1) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(1) > 0 ? Color.red : Color.black);
         }
         if (ir.checkIT2 && ir.hasItValidation(2)) {
           pdfParams.y -= 10;
           pdfParams = writeText(pdfParams, "Tiff/IT-2", pos_x + image_width + 10, font, font_size, Color.black);
           pdfParams = writeText(pdfParams, ir.getITErrors(2).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(2).size() > 0 ? Color.red : Color.black);
-          pdfParams = writeText(pdfParams, ir.getITWarnings(2).size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getITWarnings(2).size() > 0 ? Color.red : Color.black);
+          pdfParams = writeText(pdfParams, ir.getNItWar(2) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(2) > 0 ? Color.red : Color.black);
         }
         if (ir.checkPC) {
           pdfParams.y -= 10;

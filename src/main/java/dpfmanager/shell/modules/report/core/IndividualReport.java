@@ -643,7 +643,14 @@ public class IndividualReport implements Comparable {
    * @return the n ep war
    */
   public int getNEpWar() {
-    return getEPWarnings() == null ? 0 : getEPWarnings().size();
+    int n = 0;
+    if (getEPWarnings() != null) {
+      for (RuleResult rr : getEPWarnings()) {
+        if (rr.getWarning())
+          n++;
+      }
+    }
+    return n;
   }
 
   /**
@@ -652,7 +659,14 @@ public class IndividualReport implements Comparable {
    * @return the n bl war
    */
   public int getNBlWar() {
-    return getBaselineWarnings() == null ? 0 : getBaselineWarnings().size();
+    int n = 0;
+    if (getBaselineWarnings() != null) {
+      for (RuleResult rr : getBaselineWarnings()) {
+        if (rr.getWarning())
+          n++;
+      }
+    }
+    return n;
   }
 
   /**
@@ -661,7 +675,14 @@ public class IndividualReport implements Comparable {
    * @return the n it war
    */
   public int getNItWar(int profile) {
-    return getITWarnings(profile) == null ? 0 : getITWarnings(profile).size();
+    int n = 0;
+    if (getITWarnings(profile) != null) {
+      for (RuleResult rr : getITWarnings(profile)) {
+        if (rr.getWarning())
+          n++;
+      }
+    }
+    return n;
   }
 
   @Override

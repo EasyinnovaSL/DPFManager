@@ -425,8 +425,18 @@ public class PdfReport extends Report {
     }
     if (warnings != null) {
       for (RuleResult val : warnings) {
+        if (!val.getWarning()) continue;
         pdfParams.y -= 20;
         pdfParams = writeText(pdfParams, "Warning", pos_x, font, font_size, Color.orange);
+        pdfParams = writeText(pdfParams, val.getLocation(), pos_x + marg1, font, font_size);
+        if (val.getReference() != null) pdfParams = writeText(pdfParams, val.getReference(), pos_x + marg2, font, font_size);
+        pdfParams = writeText(pdfParams, val.getDescription(), pos_x + marg3, font, font_size);
+        total++;
+      }
+      for (RuleResult val : warnings) {
+        if (!val.getInfo()) continue;
+        pdfParams.y -= 20;
+        pdfParams = writeText(pdfParams, "Info", pos_x, font, font_size, Color.gray);
         pdfParams = writeText(pdfParams, val.getLocation(), pos_x + marg1, font, font_size);
         if (val.getReference() != null) pdfParams = writeText(pdfParams, val.getReference(), pos_x + marg2, font, font_size);
         pdfParams = writeText(pdfParams, val.getDescription(), pos_x + marg3, font, font_size);

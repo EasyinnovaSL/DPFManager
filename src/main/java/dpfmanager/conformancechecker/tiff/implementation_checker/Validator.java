@@ -47,6 +47,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -180,23 +181,32 @@ public class Validator {
     ImplementationCheckerObjectType rules = getRules(rulesFile);
 
     boolean bbreak = false;
+    List<RuleType> ordRules = new ArrayList<RuleType>();
     for (RulesType ruleSet : rules.getRules()) {
       for (RuleType rule : ruleSet.getRule()) {
-        if (rule.getId().equals("TAG-279-0002"))
-          rule.toString();
+        if (rule.isCritical())
+          ordRules.add(rule);
+      }
+    }
+    for (RulesType ruleSet : rules.getRules()) {
+      for (RuleType rule : ruleSet.getRule()) {
+        if (!rule.isCritical())
+          ordRules.add(rule);
+      }
+    }
 
-        String context = rule.getContext();
-        List<TiffNode> objects = model.getObjectsFromContext(context, true);
-        for (TiffNode node : objects) {
-          boolean ok = checkRule(rule, node);
-          if (!ok)
-            ok = ok;
-          if (!ok && (rule.isCritical() || fastBreak)) {
-            bbreak = true;
-            break;
-          }
-        }
-        if (bbreak) {
+    for (RuleType rule : ordRules) {
+      if (rule.getId().equals("TAG-282-0005"))
+        rule.toString();
+
+      String context = rule.getContext();
+      List<TiffNode> objects = model.getObjectsFromContext(context, true);
+      for (TiffNode node : objects) {
+        boolean ok = checkRule(rule, node);
+        if (!ok)
+          ok = ok;
+        if (!ok && (rule.isCritical() || fastBreak)) {
+          bbreak = true;
           break;
         }
       }
@@ -352,7 +362,7 @@ public class Validator {
             else {
               String value2 = op2.getValue();
               if (value2 == null)
-                value2.toString();
+                op2.getValue();
               if (value.contains("/"))
                 value = Double.parseDouble(value.split("/")[0]) / Double.parseDouble(value.split("/")[1]) + "";
               if (value2.contains("/"))

@@ -333,7 +333,7 @@ public class TiffImplementationChecker {
           tiffIfd.setType("RGB");
           break;
         case 3:
-          tiffIfd.setType("Pallete");
+          tiffIfd.setType("Palette");
           break;
         case 4:
           tiffIfd.setType("Transparency");
