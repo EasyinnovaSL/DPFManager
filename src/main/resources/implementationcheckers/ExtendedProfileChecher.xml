@@ -91,11 +91,11 @@ The features described in this part were either contained in earlier versions of
    <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
   </rule>
   
-  <rule id="TAG-292-0003" context="ifd[]" level="">
-   <title></title>
-   <description></description>
-   <reference></reference>
-   <assert></assert>
+  <rule id="TAG-292-0003" context="ifd[class=image]" level="error">
+   <title>T4Options only valid with CCIT compresion</title>
+   <description>T4Options should only be used in with CCIT compresion</description>
+   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <assert test="{tags.tag[name=Compression] == 3} &amp; &amp; {tags.tag[name=T4Options]}"></assert>
   </rule>
  </rules>
  
