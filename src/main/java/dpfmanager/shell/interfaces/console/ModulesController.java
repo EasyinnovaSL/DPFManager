@@ -212,7 +212,7 @@ public class ModulesController {
             // Name + parameters
             String name = conf1;
             String paramsAux = params.get(++idx);
-            actions.add(new InteroperabilityMessage(InteroperabilityMessage.Type.CONFIGURE, name, paramsAux));
+            actions.add(new InteroperabilityMessage(InteroperabilityMessage.Type.PARAMETERS, name, paramsAux));
           } else {
             // Only parameters
             if (lastAdd != null){

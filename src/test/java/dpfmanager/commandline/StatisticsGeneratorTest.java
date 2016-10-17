@@ -33,7 +33,7 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     args[0] = "check";
     args[1] = "-s";
     args[2] = "-f";
-    args[3] = "'html,json,xml'";
+    args[3] = "html,json,xml";
     args[4] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
