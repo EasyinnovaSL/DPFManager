@@ -24,18 +24,20 @@ public class PeriodicalChecksTest extends CommandLineTest {
     PrintStream ps = new PrintStream(baos);
     System.setOut(ps);
 
-    String[] argsAdd = new String[8];
-    argsAdd[0] = "-addperiodic";
-    argsAdd[1] = "-periodicity";
-    argsAdd[2] = "D";
-    argsAdd[3] = "-time";
-    argsAdd[4] = "09:30";
-    argsAdd[5] = "-configuration";
-    argsAdd[6] = "src/test/resources/ConfigFiles/SimpleHtml.dpf";
-    argsAdd[7] = "src/test/resources/Small/Bilevel.tif";
+    String[] argsAdd = new String[9];
+    argsAdd[0] = "periodic";
+    argsAdd[1] = "--add";
+    argsAdd[2] = "--periodicity";
+    argsAdd[3] = "D";
+    argsAdd[4] = "--time";
+    argsAdd[5] = "09:30";
+    argsAdd[6] = "--configure";
+    argsAdd[7] = "src/test/resources/ConfigFiles/SimpleHtml.dpf";
+    argsAdd[8] = "src/test/resources/Small/Bilevel.tif";
 
-    String[] argsList = new String[1];
-    argsList[0] = "-listperiodic";
+    String[] argsList = new String[2];
+    argsList[0] = "periodic";
+    argsList[1] = "-l";
 
     // Test Add periodical check
     Integer beforeCount = getPeriodicalChecksCount(argsList);
@@ -46,9 +48,10 @@ public class PeriodicalChecksTest extends CommandLineTest {
     Assert.assertEquals(expectedCount, afterCount);
 
     // Test remove periodical check
-    String[] argsRemove = new String[2];
-    argsRemove[0] = "-removeperiodic";
-    argsRemove[1] = pcId;
+    String[] argsRemove = new String[3];
+    argsRemove[0] = "periodic";
+    argsRemove[1] = "-r";
+    argsRemove[2] = pcId;
     removePeriodicalCheck(argsRemove);
     Integer lastCount = getPeriodicalChecksCount(argsList);
     Assert.assertEquals(beforeCount, lastCount);

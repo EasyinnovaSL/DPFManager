@@ -833,11 +833,12 @@ public class TiffConformanceChecker extends ConformanceChecker {
       bw.close();
 
       // Console parameters
-      String[] args = new String[4];
-      args[0] = "-configuration";
-      args[1] = config;
-      args[2] = "-s";
-      args[3] = input;
+      String[] args = new String[5];
+      args[0] = "check";
+      args[1] = "--configuration";
+      args[2] = config;
+      args[3] = "-s";
+      args[4] = input;
 
       // Run console app
       MainConsoleApp.main(args);
