@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml version="1.0" encoding="UTF-8"?>
 <implementationCheckerObject xmlns="http://www.dpfmanager.org/ProfileChecker"
                              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                              xsi:schemaLocation="http://www.dpfmanager.org/ProfileChecker ProfileChecker.xsd">
 
- <title>Baseline TIFF 6.0</title>
- <iso>TIFF 6.0 Specification. Part 1: Baseline TIFF</iso>
- <description>Baseline TIFF (Part 1) is the core of TIFF, the essentials that all mainstream TIFF developers
-  should support in their products.
+ <title>Extended TIFF 6.0</title>
+ <iso>TIFF 6.0 Specification. Part 2: Extended TIFF</iso>
+ <description>Extended TIFF (Part 2). TIFF Extensions are TIFF features that may not be supported by all TIFF readers. TIFF creators who use these features
+  will have to work closely with TIFF readers in their part of the industry to ensure successful interchange.
 
-  Baseline TIFF image is capable of describing bilevel, grayscale, palette-color, and full-color RGB images.
+The features described in this part were either contained in earlier versions of the specification, or have been approved by the TIFF Advisory Committee.
 
   Tiff Revision 6.0 Final - June 3, 1992</description>
  <version>1.0.0</version>
@@ -17,13 +16,88 @@
  <date>2016-09-20</date>
 
  <include>
-  <policychecker>./BaselineProfileChecker.xml</policychecker>
-  <excluderules>
-   <rule></rule>
-  </excluderules>
+  <implementation>./BaselineProfileChecker.xml</implementation>
+  <exclude>
+   <rule>IFDB-0002</rule>
+   
+  </exclude>
  </include>
  
+ <rules id="CCIT">
+  <title>CCITT Bilevel Encodings</title>
+  <description>The following rules are used when storing binary pixel arrays using one of the encodings adopted for raster-graphic interchange in numerous CCITT and ISO (International Organization for Standards) recommendations and standards.
+   These encodings are often spoken of as “Group III compression” and “Group IV compression” because their application in facsimile transmission is the most widely known. </description>
+  
+  <rule id="CCIT-0001" context="ifd[type=Bilevel]" level="error">
+   <title>Valid image compression</title>
+   <description>The compression tag for bilevel images must have a valid value.
+    1 = No compression.
+    2 = CCITT Group 3 1-Dimensional Modified Huffman run length encoding. 
+    3 = T4-encoding
+    4 = T6-encoding
+    32773 = PackBits compression, a simple byte-oriented run length scheme. </description>
+   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <assert test="{tag[name=Compression] &gt; 0} &amp;&amp; {tag[name=Compression] &lt; 5} || {tag[name=Compression] == 32773}">Invalid Compression for Bilevel image</assert>
+  </rule>
+  
+  <rule id="CCIT-0001" context="ifd[type=Bilevel]" level="error">
+   <title>Bilevel CCIT compression requires FillOrder Tag</title>
+   <description>TIFF FillOrder (tag 266) should always be explicitly specified. when CCIT compresion is used in Bilevel images
+   </description>
+   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <assert test="{tags.tag[name=Compression] != 2} || {count(tags.tag[name=FillOrder]) == 1}">Bilevel CCIT compression requires FillOrder Tag</assert>
+  </rule>
+  
+  
+  <rule id="CCIT-0001" context="ifd[type=Bilevel]" level="warning">
+   <title>Bilevel CCIT compression FillOrder should be 1.</title>
+   <description>FillOrder = 1 should be employed wherever possible in persistent material that is intended for interchange. This is the only reliable case for widespread interchange among computer systems, and it is important to explicitly confirm
+    the honoring of standard assumptions.
+    
+    FillOrder = 2 should occur only in highly-localized and preferably-transient material, as in a facsimile server supporting group 3 facsimile equipment.
+    The tag should be present as a safeguard against the CCITT encoding “leaking” into an unsuspecting application, allowing readers to detect and warn against the occurence.
+   </description>
+   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <assert test="{tag[name=Compression] == 2} &amp; &amp; {tag[name=FillOrder] == 2}"> FillOrder = 2 should occur only in highly-localized and preferably-transient material, as in a facsimile server supporting group 3 facsimile equipment.
+    The tag should be present as a safeguard against the CCITT encoding “leaking” into an unsuspecting application, allowing readers to detect and warn against the occurence.</assert>
+  </rule>
+  
+ </rules>
  
+ <rules id="TAG-292">
+  <title>T4Options</title>
+  <description>This field is made up of a set of 32 flag bits. Unused bits must be set to 0. Bit 0 is the low-order bit.
+   Bit 0 is 1 for 2-dimensional coding (otherwise 1-dimensional is assumed). For 2-D coding, if more than one strip is specified, each strip must begin with a 1-dimensionally coded line. 
+   That is, RowsPerStrip should be a multiple of “Parameter K,” as documented in the CCITT specification.
+   Bit 1 is 1 if uncompressed mode is used.
+   Bit 2 is 1 if fill bits have been added as necessary before EOL codes such that EOL always ends on a byte boundary, thus ensuring an EOL-sequence of 1 byte preceded by a zero nibble: xxxx-0000 0000-0001.
+   
+   Tag = 292 (124.H)
+   Type = LONG
+   N = 1
+   Default is 0 </description>
+  
+  <rule id="TAG-292-0001" context="tag[id=292]" level="error">
+   <title>T4Options tag valid Type</title>
+   <description>T4Options Tag type must be LONG</description>
+   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <assert test="{type=='LONG'}">T4Options Tag type is not valid, a SHORT type is expected</assert>
+  </rule>
+  
+  <rule id="TAG-292-0002" context="tag[id=292]" level="error">
+   <title>T4Options valid cardinality</title>
+   <description>The cardinality of the SubfileType tag must be 1</description>
+   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+  </rule>
+  
+  <rule id="TAG-292-0003" context="ifd[]" level="">
+   <title></title>
+   <description></description>
+   <reference></reference>
+   <assert></assert>
+  </rule>
+ </rules>
  
  <rules description="tiles-check">
   <rule id="bl-tl-1" context="ifd[tiles=1]">
@@ -1168,10 +1242,7 @@
    <assert test="{type=='SHORT'}">Tag type is not valid</assert>
    <description>Check valid type for tag</description>
   </rule>
-  <rule id="bl-ty-244" context="tag[id=292]">
-   <assert test="{type=='LONG'}">Tag type is not valid</assert>
-   <description>Check valid type for tag</description>
-  </rule>
+  
   <rule id="bl-ty-245" context="tag[id=50981]">
    <assert test="{type=='LONG'}">Tag type is not valid</assert>
    <description>Check valid type for tag</description>
@@ -1999,10 +2070,7 @@
    <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
    <description>Check valid cardinality for tag</description>
   </rule>
-  <rule id="bl-ca-152" context="tag[id=292]">
-   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
-   <description>Check valid cardinality for tag</description>
-  </rule>
+ 
   <rule id="bl-ca-153" context="tag[id=50981]">
    <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
    <description>Check valid cardinality for tag</description>

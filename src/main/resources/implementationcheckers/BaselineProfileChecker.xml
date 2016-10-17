@@ -386,8 +386,7 @@ beyond the first one, so not all readers could render all the images in the file
    <title>Valid Photometric Interpretation value</title>
    <description>The Photometric Interpretation tag for bilevel images must have a valid value.
     0 = WhiteIsZero. For bilevel and grayscale images: 0 is imaged as white.
-    1 = BlackIsZero. For bilevel and grayscale images: 0 is imaged as black.
-   </description>
+    1 = BlackIsZero. For bilevel and grayscale images: 0 is imaged as black.</description>
    <reference><section>Section 3: Bilevel Images</section><page>17</page></reference>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
    <assert test="{tag[name=PhotometricInterpretation] &gt; -1} &amp;&amp; {tag[name=PhotometricInterpretation] &lt; 2}">Photometric Interpretation value must be 0 or 1</assert>
@@ -402,7 +401,7 @@ beyond the first one, so not all readers could render all the images in the file
    </description>
    <reference><section>Section 3: Bilevel Images</section><page>17</page></reference>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
-   <assert test="{tag[name=Compression] &gt; 0} &amp;&amp; {tag[name=Compression] &lt; 2} || {tag[name=Compression] == 32773}">Invalid Compression for Bilevel image</assert>
+   <assert test="{tag[name=Compression] &gt; 0} &amp;&amp; {tag[name=Compression] &lt; 3} || {tag[name=Compression] == 32773}">Invalid Compression for Bilevel image</assert>
   </rule>
   <!--
    
@@ -420,7 +419,7 @@ beyond the first one, so not all readers could render all the images in the file
    <description>When in a Bilevel image 0 is imaged as black and 2**BitsPerSample-1 is imaged as white.
     If Compression is 2 (CCITT Group 3 1-Dimensional Modified Huffman run-length encoding) the image should display and print reversed.</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
-   <assert test="{tags.tag[name=Compresion] != 2} || {tags.tag[name=PhotometricInterpretation] == 0}">Bilevel images should not contain the tag ColorMap</assert>
+   <assert test="{tags.tag[name=Compresion] != 2} || {tags.tag[name=PhotometricInterpretation] == 0}">the image could be display and print reversed in some TIFF readers.</assert>
   </rule>
  </rules>
  
