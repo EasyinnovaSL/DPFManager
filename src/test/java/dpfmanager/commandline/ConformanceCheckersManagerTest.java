@@ -21,7 +21,6 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
   @Test
   public void testBasicOptions() throws Exception {
     String[] args;
-    String expectedStr, currentStr;
     File expected, current;
 
     /*

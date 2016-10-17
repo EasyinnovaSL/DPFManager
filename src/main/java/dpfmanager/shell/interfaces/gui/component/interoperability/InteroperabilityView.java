@@ -1,5 +1,5 @@
 /**
- * <h1>PeriodicalView.java</h1> <p> This program is free software: you can redistribute it
+ * <h1>InteroperabilityView.java</h1> <p> This program is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.

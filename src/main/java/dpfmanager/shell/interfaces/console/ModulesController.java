@@ -1,5 +1,5 @@
 /**
- * <h1>ConsoleController.java</h1> <p> This program is free software: you can redistribute it
+ * <h1>ModulesController.java</h1> <p> This program is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
@@ -14,7 +14,7 @@
  *
  * @author Adrià Llorens
  * @version 1.0
- * @since 23/7/2015
+ * @since 13/10/2016
  */
 
 package dpfmanager.shell.interfaces.console;
@@ -158,7 +158,7 @@ public class ModulesController {
       }
       // -h --help
       else if (arg.equals("-h") || arg.equals("--help")){
-        argsError = true;
+        displayHelp();
       }
       // --enable
       else if (arg.equals("--enable")){
@@ -288,11 +288,29 @@ public class ModulesController {
    * Displays help
    */
   private void displayHelp(){
-    printOut("HELP!"); // TODO
+    printOut("");
+    printOut(bundle.getString("helpM0"));
+    printOut("");
+    printOut(bundle.getString("helpOptions"));
+    printOptions("helpM", 11);
+    exit();
+  }
+
+  public void printOptions(String prefix, int max) {
+    for (int i = 1; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.indexOf(":") + 1);
+      String post = msg.substring(msg.indexOf(":") + 1);
+      String line = String.format("%-40s%s", pre, post);
+      printOut("    " + line);
+    }
   }
 
   private boolean isFinished(InteroperabilityMessage lastAdd){
-    return (!lastAdd.getConfigure().isEmpty() && !lastAdd.getParameters().isEmpty() && !lastAdd.getExtensions().isEmpty());
+    // No configuration
+    return (!lastAdd.getParameters().isEmpty() && !lastAdd.getExtensions().isEmpty());
+    // With configuration
+//    return (!lastAdd.getConfigure().isEmpty() && !lastAdd.getParameters().isEmpty() && !lastAdd.getExtensions().isEmpty());
   }
 
   /**
@@ -308,5 +326,13 @@ public class ModulesController {
 
   private void printException(Exception ex) {
     context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), ex));
+  }
+
+  /**
+   * Exit application
+   */
+  public void exit() {
+    AppContext.close();
+    System.exit(0);
   }
 }
