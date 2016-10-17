@@ -22,7 +22,10 @@
          <parameters>-configuration %config% %input%</parameters>
          <state>enabled</state>
          <defaultConfiguration>src/test/resources/ConfigFiles/SimpleJson.dpf</defaultConfiguration>
-         <extensions/>
+         <extensions>
+            <extension>jpg</extension>
+            <extension>gif</extension>
+         </extensions>
       </conformanceChecker>
    </ConformanceCheckers>
 </tns:ListOutput>
