@@ -96,15 +96,23 @@ public class ConsoleLauncher {
    */
   private void updateLanguage(List<String> params) {
     // First parameter must be language
+    boolean error = false;
     if (params.size() > 0) {
       String language = params.get(0);
       Locale newLocale = new Locale(language);
       if (newLocale != null) {
         DPFManagerProperties.setLanguage(language);
+      } else {
+        error = true;
       }
     }
     Locale.setDefault(new Locale(DPFManagerProperties.getLanguage()));
     bundle = DPFManagerProperties.getBundle();
+    if (!error){
+      printOut(bundle.getString("languageUpdated"));
+    } else {
+      printOut(bundle.getString("languageUpdatedKO"));
+    }
   }
 
   /**
