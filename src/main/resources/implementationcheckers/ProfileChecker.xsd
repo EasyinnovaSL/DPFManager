@@ -32,7 +32,7 @@
 
     <xsd:complexType name="includeType">
         <xsd:sequence>
-            <xsd:element maxOccurs="1" minOccurs="1" name="policychecker"/>
+            <xsd:element maxOccurs="1" minOccurs="1" name="policyChecker" type="xsd:string"/>
             <xsd:element minOccurs="0" name="excluderules" type="excludeRulesType"/>
         </xsd:sequence>
     </xsd:complexType>

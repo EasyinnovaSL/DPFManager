@@ -48,13 +48,13 @@ import javax.xml.bind.annotation.XmlValue;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "includeType", propOrder = {
-    "implementation",
+    "policyChecker",
     "exclude"
 })
 public class IncludeType {
 
     @XmlElement(required = true)
-    protected Object implementation;
+    protected String policyChecker;
     protected Object exclude;
 
     /**
@@ -65,20 +65,20 @@ public class IncludeType {
      *     {@link Object }
      *     
      */
-    public Object getImplementation() {
-        return implementation;
+    public Object getPolicyChecker() {
+        return policyChecker;
     }
 
     /**
      * Sets the value of the implementation property.
      * 
-     * @param value
+     * @param policyChecker
      *     allowed object is
      *     {@link Object }
      *     
      */
-    public void setImplementation(Object value) {
-        this.implementation = value;
+    public void setPolicyChecker(String policyChecker) {
+        this.policyChecker = policyChecker;
     }
 
     /**

@@ -36,7 +36,7 @@ public class TiffEPCheckerTest extends TestCase {
 
     ValidationResult validation = tr.getTiffEPValidation();
     assertEquals(0, validation.getErrors().size());
-    assertEquals(2, results.size());
+    assertEquals(4, results.size());
   }
 
   void assertNumberOfErrors(String filename, int errors) {

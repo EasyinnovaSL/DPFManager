@@ -125,7 +125,7 @@ public class Validator {
 
       for (RulesType ro : rules.getRules()) {
         for (RuleType rule : ro.getRule()) {
-          //rule.setIso(rules.getIso());
+          //rule.iso = rules.getIso();
         }
       }
 
@@ -133,7 +133,7 @@ public class Validator {
         for (IncludeType inc : rules.getInclude()) {
           JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
           Unmarshaller jaxbUnmarshallerInc = jaxbContextInc.createUnmarshaller();
-          ImplementationCheckerObjectType rulesIncluded = (ImplementationCheckerObjectType) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getImplementation()));
+          ImplementationCheckerObjectType rulesIncluded = (ImplementationCheckerObjectType) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getPolicyChecker()));
 
           for (RulesType ro : rulesIncluded.getRules()) {
             boolean excludedRules = false;
@@ -144,7 +144,7 @@ public class Validator {
               rules.getRules().add(ro);
             }
             for (RuleType rule : ro.getRule()) {
-              //rule.setIso(rulesIncluded.getIso());
+              //rule.iso = rulesIncluded.getIso();
             }
           }
 
@@ -196,7 +196,7 @@ public class Validator {
     }
 
     for (RuleType rule : ordRules) {
-      if (rule.getId().equals("TAG-282-0005"))
+      if (rule.getId().equals("it-1"))
         rule.toString();
 
       String context = rule.getContext();
