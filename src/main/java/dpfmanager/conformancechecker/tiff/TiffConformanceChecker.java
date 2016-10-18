@@ -30,6 +30,8 @@ import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.fixMetadataInconsistencies;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.makeBaselineCompliant;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
 import dpfmanager.conformancechecker.tiff.reporting.MetsReport;
@@ -462,6 +464,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
       Logger.println("Autofixes loaded manually");
       classes = new ArrayList<String>();
       classes.add(clearPrivateData.class.toString());
+      classes.add(makeBaselineCompliant.class.toString());
+      classes.add(fixMetadataInconsistencies.class.toString());
     }
 
     Logger.println("Found " + classes.size() + " classes:");

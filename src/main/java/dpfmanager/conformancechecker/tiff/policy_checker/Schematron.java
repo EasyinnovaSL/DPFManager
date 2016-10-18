@@ -63,7 +63,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * Created by easy on 21/09/2015.
  */
-public class Schematron extends CamelTestSupport {
+public class Schematron {
   /**
    * The Context.
    */
