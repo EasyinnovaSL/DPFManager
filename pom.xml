@@ -666,6 +666,9 @@
                             <appName>${project.name}</appName>
                             <additionalAppResources>${project.basedir}/package/resources
                             </additionalAppResources>
+                            <bundleArguments>
+                                <runtime />
+                            </bundleArguments>
                         </configuration>
                         <executions>
                             <execution>
