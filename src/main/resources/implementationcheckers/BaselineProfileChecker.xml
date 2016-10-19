@@ -452,7 +452,7 @@ beyond the first one, so not all readers could render all the images in the file
     <description>In Baseline TIFF, grayscale images can
      either be stored as uncompressed data or compressed with the PackBits algorithm</description>
     <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
-    <assert test="{tags.tag[name=Compression] == 1 || tags.tag[name=Compression] == 32773}">Invalid Compression for Grayscale image</assert>
+    <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 32773}">Invalid Compression for Grayscale image</assert>
    </rule>
    
    <rule id="IDFG-0002" context="ifd[type=Grayscale]" level="info">
@@ -533,7 +533,7 @@ beyond the first one, so not all readers could render all the images in the file
    <title>Valid compression for palette color image</title>
    <description>In Baseline TIFF, palette color images can either be stored as uncompressed data or compressed with the PackBits algorithm.</description>
    <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
-   <assert test="{tags.tag[name=Compression] == 1 || tags.tag[name=Compression] == 32773}">Invalid Compression for palette color image</assert>
+   <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 32773}">Invalid Compression for palette color image</assert>
   </rule>
  </rules>
  
