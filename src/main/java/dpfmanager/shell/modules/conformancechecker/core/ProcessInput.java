@@ -44,6 +44,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Victor Muñoz on 04/09/2015.
@@ -52,8 +53,10 @@ public class ProcessInput {
 
   private DpfContext context;
   private ResourceBundle bundle;
+  private List<ConformanceChecker> conformanceCheckers;
 
-  public ProcessInput() {
+  public ProcessInput(List<ConformanceChecker> list) {
+    conformanceCheckers = list;
     bundle = DPFManagerProperties.getBundle();
   }
 
@@ -70,55 +73,20 @@ public class ProcessInput {
    * Get the list of conformance checkers available to use.
    */
   private List<ConformanceChecker> getConformanceCheckers() {
-    TiffConformanceChecker tiffcc = new TiffConformanceChecker();
-    ArrayList<ConformanceChecker> l = new ArrayList<>();
-    l.add(tiffcc);
-
-    String path = "package/resources/plugins/video/MediaConch.exe";
-    if (!new File(path).exists()) path = "plugins/video/MediaConch.exe";
-    if (!new File(path).exists()) path = "../plugins/video/MediaConch.exe";
-    if (new File(path).exists()) {
-      ArrayList<String> params = new ArrayList<>();
-      params.add("-mc");
-      params.add("-fx");
-      ArrayList<String> standards = new ArrayList<>();
-      standards.add("MOV");
-      ArrayList<String> extensions = new ArrayList<>();
-      extensions.add("MOV");
-      ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
-      l.add(ext);
-    }
-
-    path = "package/resources/plugins/pdf/verapdf.bat";
-    if (!new File(path).exists()) path = "plugins/pdf/verapdf.bat";
-    if (!new File(path).exists()) path = "../plugins/pdf/verapdf.bat";
-    if (new File(path).exists()) {
-      ArrayList<String> params = new ArrayList<>();
-      params.add("--format");
-      params.add("xml");
-      ArrayList<String> standards = new ArrayList<>();
-      standards.add("PDF");
-      ArrayList<String> extensions = new ArrayList<>();
-      extensions.add("PDF");
-      ExternalConformanceChecker ext = new ExternalConformanceChecker(path, params, standards, extensions);
-      l.add(ext);
-    }
-
-    return l;
+    return conformanceCheckers;
   }
 
   /**
    * Get the appropiate conformance checker to run the given file.
    */
-  private ConformanceChecker getConformanceCheckerForFile(String filename) {
-    ConformanceChecker result = null;
+  private List<ConformanceChecker> getConformanceCheckersForFile(String filename) {
+    List<ConformanceChecker> result = new ArrayList<>();
     for (ConformanceChecker cc : getConformanceCheckers()) {
       if (cc.acceptsFile(filename)) {
-        result = cc;
-        break;
+        result.add(cc);
       }
     }
-    if (result != null) {
+    if (!result.isEmpty()) {
       context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("ccForFile").replace("%1",filename).replace("%2", result.toString())));
     } else {
       context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("ccNotFound").replace("%1",filename)));
@@ -139,8 +107,10 @@ public class ProcessInput {
     if (isUrl(filename)) {
       // URL
       try {
-        ConformanceChecker cc = getConformanceCheckerForFile(filename);
-        if (cc != null) {
+        List<ConformanceChecker> ccList = getConformanceCheckersForFile(filename);
+        if (!ccList.isEmpty()){
+          Integer index = ThreadLocalRandom.current().nextInt(0, ccList.size());
+          ConformanceChecker cc = ccList.get(index);
           // Download the file and store it in a temporary file
           InputStream input = new java.net.URL(filename).openStream();
           String filename2 = createTempFile(internalReportFolder, new File(filename).getName(), input);
@@ -165,8 +135,10 @@ public class ProcessInput {
       }
     } else {
       // File
-      ConformanceChecker cc = getConformanceCheckerForFile(filename);
-      if (cc != null) {
+      List<ConformanceChecker> ccList = getConformanceCheckersForFile(filename);
+      if (!ccList.isEmpty()){
+        Integer index = ThreadLocalRandom.current().nextInt(0, ccList.size());
+        ConformanceChecker cc = ccList.get(index);
         try {
           ir = cc.processFile(filename, filename, internalReportFolder, config, id);
         } catch (Exception ex) {
@@ -174,10 +146,26 @@ public class ProcessInput {
         }
       } else {
         ir = new IndividualReport(true);
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("unacceptedFormat").replace("%1", filename)));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.WARN, bundle.getString("unacceptedFormat").replace("%1", filename)));
       }
     }
     return ir;
+  }
+
+  /**
+   * Gets the default configuration object from file type
+   *
+   * @param filename the filename
+   * @return the configuration for this file
+   */
+  public Configuration getDefaultConfigurationFromFile(String filename){
+    List<ConformanceChecker> ccList = getConformanceCheckersForFile(filename);
+    if (!ccList.isEmpty()) {
+      Integer index = ThreadLocalRandom.current().nextInt(0, ccList.size());
+      ConformanceChecker cc = ccList.get(index);
+      return cc.getDefaultConfiguration();
+    }
+    return null;
   }
 
   /**

@@ -357,9 +357,22 @@ public class Configuration {
   }
 
   /**
-   * Read file new format (xml).
+   * Read file new format (xml). From input stream
    *
-   * @param filename the filename
+   * @param is the input stream
+   * @throws Exception the exception
+   */
+  public void ReadFileNew(InputStream is) throws Exception {
+    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    Document doc = dBuilder.parse(is);
+    ReadFileNew(doc);
+  }
+
+  /**
+   * Read file new format (xml). From path
+   *
+   * @param filename the file path
    * @throws Exception the exception
    */
   public void ReadFileNew(String filename) throws Exception {
@@ -367,7 +380,16 @@ public class Configuration {
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
     Document doc = dBuilder.parse(fXmlFile);
+    ReadFileNew(doc);
+  }
 
+  /**
+   * Read file new format (xml). From XML Document object
+   *
+   * @param doc the xml document object
+   * @throws Exception the exception
+   */
+  public void ReadFileNew(Document doc) throws Exception {
     // Read xml version, output and description
     NodeList nList = doc.getDocumentElement().getChildNodes();
     for (int i = 0; i < nList.getLength(); i++) {

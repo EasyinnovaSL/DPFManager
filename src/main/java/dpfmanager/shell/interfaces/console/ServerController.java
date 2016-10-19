@@ -14,17 +14,23 @@
  *
  * @author Adrià Llorens
  * @version 1.0
- * @since 23/7/2015
+ * @since 13/10/2016
  */
 
 package dpfmanager.shell.interfaces.console;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
+import dpfmanager.shell.modules.client.messages.RequestMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.modules.server.messages.ServerMessage;
 
 import org.apache.logging.log4j.Level;
+
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 11/04/2016.
@@ -36,14 +42,100 @@ public class ServerController {
    */
   private ConsoleContext context;
 
-  public ServerController(ConsoleContext c) {
+  /**
+   * The Dpf resourceBundle
+   */
+  private ResourceBundle bundle;
+
+  /**
+   * The parsed args
+   */
+  private Map<String, String> parameters;
+
+  /**
+   * The errors flag
+   */
+  private boolean argsError;
+
+  public ServerController(ConsoleContext c, ResourceBundle b) {
     context = c;
+    bundle = b;
+    parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
+    parameters.put("mode", "SERVER");
   }
 
   /**
-   * Main functions
+   * Main parse parameters function
    */
-  public void function() {
+  public void parse(List<String> params) {
+    int idx = 0;
+    while (idx < params.size() && !argsError) {
+      String arg = params.get(idx);
+      // -p --port
+      if (arg.equals("-p") || arg.equals("--port")) {
+        idx++;
+        if (idx < params.size()) {
+          String port = params.get(idx);
+          if (isNumeric(port)){
+            parameters.put("-p",port);
+          } else {
+            argsError = true;
+          }
+        } else {
+          argsError = true;
+        }
+      }
+      // -h --help
+      else if (arg.equals("-h") || arg.equals("--help")) {
+        displayHelp();
+      }
+      idx++;
+    }
+  }
+
+  private static boolean isNumeric(String str) {
+    try {
+      Integer.parseInt(str);
+    } catch (NumberFormatException nfe) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Main run function
+   */
+  public void run() {
+    // Start the server
+    if (!argsError) {
+      context.send(BasicConfig.MODULE_SERVER, new ServerMessage(ServerMessage.Type.START));
+    } else {
+      printOut(bundle.getString("paramError"));
+      displayHelp();
+    }
+  }
+
+  /**
+   * Displays help
+   */
+  private void displayHelp() {
+    printOut("");
+    printOut(bundle.getString("helpS0"));
+    printOut("");
+    printOut(bundle.getString("helpOptions"));
+    printOptions("helpS", 2);
+    exit();
+  }
+
+  public void printOptions(String prefix, int max) {
+    for (int i = 1; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.lastIndexOf(":") + 1);
+      String post = msg.substring(msg.lastIndexOf(":") + 1);
+      String line = String.format("%-27" +
+          "s%s", pre, post);
+      printOut("    " + line);
+    }
   }
 
   /**
@@ -55,6 +147,14 @@ public class ServerController {
 
   private void printErr(String message) {
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, message));
+  }
+
+  /**
+   * Exit application
+   */
+  public void exit() {
+    AppContext.close();
+    System.exit(0);
   }
 
 }

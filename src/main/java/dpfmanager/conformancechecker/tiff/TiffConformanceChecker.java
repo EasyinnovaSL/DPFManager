@@ -30,6 +30,7 @@ import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.makeBaselineCompliant;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
 import dpfmanager.conformancechecker.tiff.reporting.MetsReport;
@@ -39,6 +40,7 @@ import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
@@ -92,6 +94,14 @@ import javax.xml.transform.stream.StreamResult;
  * The Class TiffConformanceChecker.
  */
 public class TiffConformanceChecker extends ConformanceChecker {
+
+  private Configuration checkConfig;
+
+  public TiffConformanceChecker(ConformanceConfig config, Configuration checkConfig){
+    this.checkConfig = checkConfig;
+    setConfig(config);
+  }
+
   /**
    * Gets the conformance checker options.
    *
@@ -286,18 +296,18 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return output;
   }
 
-  public ArrayList<String> getConformanceCheckerExtensions() {
-    String xml = getConformanceCheckerOptions();
-    Document doc = convertStringToDocument(xml);
-
-    ArrayList<String> extensions = new ArrayList<String>();
-    NodeList nodelist = doc.getElementsByTagName("extension");
-    for (int i = 0; i < nodelist.getLength(); i++) {
-      Node node = nodelist.item(i);
-      extensions.add(node.getFirstChild().getNodeValue());
-    }
-    return extensions;
-  }
+//  public ArrayList<String> getConformanceCheckerExtensions() {
+//    String xml = getConformanceCheckerOptions();
+//    Document doc = convertStringToDocument(xml);
+//
+//    ArrayList<String> extensions = new ArrayList<String>();
+//    NodeList nodelist = doc.getElementsByTagName("extension");
+//    for (int i = 0; i < nodelist.getLength(); i++) {
+//      Node node = nodelist.item(i);
+//      extensions.add(node.getFirstChild().getNodeValue());
+//    }
+//    return extensions;
+//  }
 
   public ArrayList<String> getConformanceCheckerStandards() {
     String xml = getConformanceCheckerOptions();
@@ -453,6 +463,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       Logger.println("Autofixes loaded manually");
       classes = new ArrayList<String>();
       classes.add(clearPrivateData.class.toString());
+      classes.add(makeBaselineCompliant.class.toString());
     }
 
     Logger.println("Found " + classes.size() + " classes:");
@@ -528,6 +539,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
   public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
 //      Logger.println("Reading Tiff file");
+      if (config == null){
+        config = getDefaultConfiguration();
+      }
       TiffReader tr = new TiffReader();
       int result = tr.readFile(pathToFile);
       switch (result) {
@@ -740,6 +754,11 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return null;
   }
 
+  @Override
+  public Configuration getDefaultConfiguration(){
+    return checkConfig;
+  }
+
   /**
    * Gets pc validation.
    *
@@ -783,7 +802,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
    */
   public boolean acceptsFile(String filename) {
     boolean isTiff = false;
-    for (String extension : getConformanceCheckerExtensions()) {
+    for (String extension : getConfig().getExtensions()) {
       if (filename.toLowerCase().endsWith(extension.toLowerCase())) {
         isTiff = true;
       }
@@ -816,11 +835,12 @@ public class TiffConformanceChecker extends ConformanceChecker {
       bw.close();
 
       // Console parameters
-      String[] args = new String[4];
-      args[0] = "-configuration";
-      args[1] = config;
-      args[2] = "-s";
-      args[3] = input;
+      String[] args = new String[5];
+      args[0] = "check";
+      args[1] = "--configuration";
+      args[2] = config;
+      args[3] = "-s";
+      args[4] = input;
 
       // Run console app
       MainConsoleApp.main(args);

@@ -24,11 +24,14 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.modules.messages.messages.CloseMessage;
 import javafx.application.Application.Parameters;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -52,7 +55,8 @@ import java.util.Map;
         GuiConfig.PERSPECTIVE_ABOUT,
         GuiConfig.PERSPECTIVE_CONFIG,
         GuiConfig.PERSPECTIVE_SHOW,
-        GuiConfig.PERSPECTIVE_PERIODICAL
+        GuiConfig.PERSPECTIVE_PERIODICAL,
+        GuiConfig.PERSPECTIVE_INTEROPERABILITY
     }
 )
 public class GuiWorkbench implements FXWorkbench {
@@ -88,6 +92,22 @@ public class GuiWorkbench implements FXWorkbench {
           event.consume();
         } else {
           closeHandler.handle(event);
+        }
+      }
+    });
+
+    // Escape character to quit
+    thestage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+      @Override
+      public void handle(KeyEvent t) {
+        if (t.getCode() == KeyCode.H && t.isMetaDown()) {
+          if (thestage.isShowing()){
+            thestage.setIconified(true);
+          }
+        } if (t.getCode() == KeyCode.ESCAPE) {
+          context.send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_THREADING, new CloseMessage(CloseMessage.Type.THREADING));
+        } else if (t.getCode() == KeyCode.F1) {
+          context.send(GuiConfig.PERSPECTIVE_ABOUT, new UiMessage(UiMessage.Type.SHOW));
         }
       }
     });

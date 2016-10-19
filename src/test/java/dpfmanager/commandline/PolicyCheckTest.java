@@ -40,13 +40,14 @@ public class PolicyCheckTest extends CommandLineTest {
         "RULE\tImageWidth,>,10000\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -129,13 +130,14 @@ public class PolicyCheckTest extends CommandLineTest {
         "RULE\tImageWidth,<,1000,1\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -218,13 +220,14 @@ public class PolicyCheckTest extends CommandLineTest {
         "RULE\tCompression,=,JPEG;LZW\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -307,13 +310,14 @@ public class PolicyCheckTest extends CommandLineTest {
         "RULE\tCompression,=,OJPEG;None\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
-    args[2] = "-o";
-    args[3] = path;
-    args[4] = "-configuration";
-    args[5] = configfile;
+    args[2] = "src/test/resources/Small/Bilevel.tif";
+    args[3] = "-o";
+    args[4] = path;
+    args[5] = "--configuration";
+    args[6] = configfile;
 
     MainConsoleApp.main(args);
 
@@ -395,13 +399,14 @@ public class PolicyCheckTest extends CommandLineTest {
         "RULE\tBlankPage,=,False,1\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "--configuration";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 

@@ -25,11 +25,12 @@ public class FullRemoteTest extends ServerTest {
     // Start check
     System.out.println("Running full remote check...");
 
-    String[] args = new String[4];
-    args[0] = "-url";
-    args[1] = "127.0.0.1:9000";
-    args[2] = "-w";
-    args[3] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[5];
+    args[0] = "remote";
+    args[1] = "--url";
+    args[2] = "127.0.0.1:9000";
+    args[3] = "--wait";
+    args[4] = "src/test/resources/Small/Bilevel.tif";
     MainConsoleApp.main(args);
 
     waitForFinishMultiThred(45);

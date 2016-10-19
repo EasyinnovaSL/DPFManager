@@ -73,6 +73,10 @@ public class FileCheck {
     return config;
   }
 
+  public void setConfig(Configuration config) {
+    this.config = config;
+  }
+
   public String getInternal() {
     return internal;
   }

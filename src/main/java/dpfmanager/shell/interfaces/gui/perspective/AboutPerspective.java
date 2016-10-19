@@ -91,15 +91,6 @@ public class AboutPerspective extends DpfAbstractPerspective {
 
     // Define main pane
     borderPane = constructBorderPane(perspectiveLayout, topPane, mainPane);
-
-    // Escape character to quit
-    mainPane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-      @Override
-      public void handle(KeyEvent t) {
-        if(t.getCode()== KeyCode.ESCAPE)
-          ((Stage)topPane.getScene().getWindow()).close();//use any one object
-      }
-    });
   }
 
   @Override

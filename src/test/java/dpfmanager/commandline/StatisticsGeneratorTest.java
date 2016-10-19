@@ -29,11 +29,12 @@ public class StatisticsGeneratorTest extends CommandLineTest {
   public void testStatistics() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[4];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[5];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-f";
-    args[3] = "'html,json,xml'";
+    args[3] = "html,json,xml";
+    args[4] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -54,9 +55,10 @@ public class StatisticsGeneratorTest extends CommandLineTest {
   public void testStatistics2() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/Small/";
-    args[1] = "-s";
+    String[] args = new String[3];
+    args[0] = "check";
+    args[1] = "src/test/resources/Small/";
+    args[2] = "-s";
 
     MainConsoleApp.main(args);
 

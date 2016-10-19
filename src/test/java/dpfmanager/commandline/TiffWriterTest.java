@@ -29,9 +29,10 @@ public class TiffWriterTest extends CommandLineTest {
   public void testReports1() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/TestWriter";
-    args[1] = "-s";
+    String[] args = new String[3];
+    args[0] = "check";
+    args[1] = "src/test/resources/TestWriter";
+    args[2] = "-s";
 
     TiffReader tr = new TiffReader();
     tr.readFile("src" + separator + "test" + separator + "resources" + separator + "TestWriter" + separator + "Bilevel1.tif");

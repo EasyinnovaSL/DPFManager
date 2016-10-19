@@ -60,7 +60,7 @@ public class ThreadingController extends DpfSpringController {
   synchronized public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(IndividualStatusMessage.class)) {
       IndividualStatusMessage sm = dpfMessage.getTypedMessage(IndividualStatusMessage.class);
-      service.finishIndividual(sm.getIndividual(), sm.getUuid());
+      service.finishIndividual(sm.getIndividual(), sm.getUuid(), sm.getConfig());
     } else if (dpfMessage.isTypeOf(GlobalStatusMessage.class)) {
       GlobalStatusMessage gm = dpfMessage.getTypedMessage(GlobalStatusMessage.class);
       boolean silence = parameters.containsKey("-s") || parameters.get("mode").equals("SERVER");

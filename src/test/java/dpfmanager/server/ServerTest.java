@@ -12,7 +12,7 @@ public class ServerTest extends CommandLineTest {
   public void startServer() {
     server = new ServerThread(9000);
     server.start();
-    sleep(6000);
+    sleep(10000);
   }
 
   public void stopServer() {

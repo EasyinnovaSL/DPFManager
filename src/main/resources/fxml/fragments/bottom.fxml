@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="botAnchor" prefWidth="722.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <SplitPane fx:id="botSplit" dividerPositions="0.7" styleClass="background-main" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <items>
+
+                <AnchorPane fx:id="consoleAnchor">
+                    <TextArea fx:id="consoleArea" editable="false" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <styleClass>
+                     <String fx:value="console-area" />
+                     <String fx:value="dpf-bar" />
+                  </styleClass></TextArea>
+                </AnchorPane>
+                <AnchorPane fx:id="taskAnchor">
+                    <children>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <content>
+                                <VBox fx:id="taskVBox" alignment="TOP_CENTER" styleClass="background-tasks">
+
+                                </VBox>
+                            </content>
+                     <styleClass>
+                        <String fx:value="dpf-bar" />
+                        <String fx:value="background-tasks" />
+                     </styleClass>
+                        </ScrollPane>
+                    </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
+    </children>
+</AnchorPane>

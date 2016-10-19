@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.conformancechecker.core;
 
+import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
@@ -28,13 +29,16 @@ import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
 import dpfmanager.shell.modules.conformancechecker.runnable.ProcessInputRunnable;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
+import dpfmanager.shell.modules.interoperability.core.InteroperabilityService;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,73 +53,59 @@ import javax.annotation.Resource;
 @Scope("singleton")
 public class ConformanceCheckerService extends DpfService {
 
-  private ConformanceCheckerModel model;
-
-  private int recursive;
-  private boolean silence;
-  private Long uuid;
-
   @Resource(name = "parameters")
   private Map<String, String> parameters;
+
+  @Autowired
+  private InteroperabilityService interService;
 
   /** The list of checks waiting for process input*/
   private Map<Long,ProcessInputParameters> filesToCheck;
 
   @PostConstruct
   private void init() {
-    model = new ConformanceCheckerModel();
     filesToCheck = new HashMap<>();
-    setDefaultParameters();
   }
 
   @Override
   protected void handleContext(DpfContext context) {
   }
 
-  public boolean readConfig(String path) {
-    return getModel().readConfig(path);
-  }
-
-  public void setConfig(Configuration config) {
-    getModel().setConfig(config);
-  }
-
-  private void setDefaultParameters() {
-    recursive = 1;
-    silence = false;
-  }
-
-  public void setParameters(Configuration config, Integer r, Long u) {
-    if (config != null) {
-      getModel().setConfig(config);
-    }
-    if (r != null) {
-      recursive = r;
-    }
-    if (u != null){
-      uuid = u;
-    } else {
-      uuid = System.currentTimeMillis();
+  public Configuration readConfig(String path) {
+    try {
+      Configuration config = new Configuration();
+      config.ReadFile(path);
+      return config;
+    } catch (Exception e) {
+      return null;
     }
   }
 
   /** First check files method (from command line) */
-  public void initMultiProcessInputRun(List<String> files) {
+  public void initMultiProcessInputRun(List<String> files, Configuration config, int recursive) {
     String finalFiles = "";
     for (String filename : files) {
       finalFiles += filename + ";";
     }
     finalFiles = finalFiles.substring(0, finalFiles.length() - 1);
-    initProcessInputRun(finalFiles);
+    initProcessInputRunFinal(finalFiles, finalFiles, null, config, recursive, null);
   }
 
   /** First check files method (from gui) */
-  public void initProcessInputRun(String filename) {
-    initProcessInputRun(filename, filename, null);
+  public void initProcessInputRun(String filename, Configuration config, int recursive) {
+    initProcessInputRunFinal(filename, filename, null, config, recursive, null);
   }
 
-  public void initProcessInputRun(String filename, String inputStr, String internalReportFolder) {
-    ProcessInputRunnable pr = new ProcessInputRunnable(filename, inputStr, internalReportFolder, recursive, getModel().getConfig());
+  /** First check files method (from server) */
+  public void initProcessInputRun(String filename, Configuration config, Long uuid) {
+    initProcessInputRunFinal(filename, filename, null, config, 1, uuid);
+  }
+
+  public void initProcessInputRunFinal(String filename, String inputStr, String internalReportFolder, Configuration config, int recursive, Long uuid) {
+    if (uuid == null){
+      uuid = System.currentTimeMillis();
+    }
+    ProcessInputRunnable pr = new ProcessInputRunnable(filename, inputStr, internalReportFolder, recursive, config);
     context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.NEW, uuid, pr, inputStr));
   }
 
@@ -169,8 +159,9 @@ public class ConformanceCheckerService extends DpfService {
   private String ProcessFiles(Long uuid, List<String> files, Configuration config, String internalReportFolder) {
     // Process each input of the list
     int idReport = 1;
+    List<ConformanceChecker> list = interService.getConformanceCheckers();
     for (final String filename : files) {
-      ConformanceRunnable run = new ConformanceRunnable();
+      ConformanceRunnable run = new ConformanceRunnable(list);
       run.setParameters(filename, idReport, internalReportFolder, config, uuid);
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
       idReport++;
@@ -181,10 +172,6 @@ public class ConformanceCheckerService extends DpfService {
     }
 
     return internalReportFolder;
-  }
-
-  private ConformanceCheckerModel getModel() {
-    return model;
   }
 
 }
