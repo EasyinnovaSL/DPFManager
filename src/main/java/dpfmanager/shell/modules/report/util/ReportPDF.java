@@ -128,7 +128,7 @@ public class ReportPDF extends ReportGeneric {
 //      int graph_size = 40;
 //      BufferedImage image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
 //      Graphics2D g2d = image.createGraphics();
-//      Double doub = (double) gr.getAllReportsOk() / gr.getReportsCount();
+//      Double doub = (double) gr.getReportsOk() / gr.getReportsCount();
 //      double extent = 360d * doub;
 //      g2d.setColor(Color.green);
 //      g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
@@ -138,9 +138,9 @@ public class ReportPDF extends ReportGeneric {
 //      pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, graph_size, graph_size);
 //      pdfParams.y += graph_size - 10;
 //      font_size = 7;
-//      pdfParams = writeText(pdfParams, gr.getAllReportsOk() + " passed", pos_x + 50, font, font_size, Color.green);
+//      pdfParams = writeText(pdfParams, gr.getReportsOk() + " passed", pos_x + 50, font, font_size, Color.green);
 //      pdfParams.y -= 10;
-//      pdfParams = writeText(pdfParams, gr.getAllReportsKo() + " failed", pos_x + 50, font, font_size, Color.red);
+//      pdfParams = writeText(pdfParams, gr.getReportsKo() + " failed", pos_x + 50, font, font_size, Color.red);
 //      pdfParams.y -= 10;
 //      pdfParams = writeText(pdfParams, "Global score " + (doub * 100) + "%", pos_x + 50, font, font_size, Color.black);
 //
@@ -148,135 +148,138 @@ public class ReportPDF extends ReportGeneric {
 //      pos_x = 100;
 //      pdfParams.y -= 50;
 //      for (IndividualReport ir : gr.getIndividualReports()) {
-//        int image_height = 65;
-//        int image_width = 100;
+//          int image_height = 65;
+//          int image_width = 100;
 //
-//        // Draw image
-//        String imgPath = pdffile + "img.jpg";
-//        int ids = 0;
-//        while (new File(imgPath).exists()) imgPath = pdffile + "img" + ids++ + ".jpg";
-//        boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
-//        BufferedImage bimg;
-//        if (!check) {
-//          bimg = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
-//        } else {
-//          bimg = ImageIO.read(new File(imgPath));
-//        }
-//        image_width = image_height * bimg.getWidth() / bimg.getHeight();
-//        if (image_width > 100) {
-//          image_width = 100;
-//          image_height = image_width * bimg.getHeight() / bimg.getWidth();
-//        }
+//          // Draw image
+//          String imgPath = pdffile + "img.jpg";
+//          int ids = 0;
+//          while (new File(imgPath).exists()) imgPath = pdffile + "img" + ids++ + ".jpg";
+//          boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
+//          BufferedImage bimg;
+//          if (!check) {
+//            bimg = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
+//          } else {
+//            bimg = ImageIO.read(new File(imgPath));
+//          }
+//          image_width = image_height * bimg.getWidth() / bimg.getHeight();
+//          if (image_width > 100) {
+//            image_width = 100;
+//            image_height = image_width * bimg.getHeight() / bimg.getWidth();
+//          }
 //
-//        // Check if we need new page before draw image
-//        int maxHeight = getMaxHeight(ir, image_height);
-//        if (newPageNeeded(pdfParams.y - maxHeight)) {
-//          pdfParams.setContentStream(newPage(pdfParams.getContentStream(), pdfParams.getDocument()));
-//          pdfParams.y = init_posy;
-//        }
+//          // Check if we need new page before draw image
+//          int maxHeight = getMaxHeight(ir, image_height);
+//          if (newPageNeeded(pdfParams.y - maxHeight)) {
+//            pdfParams.setContentStream(newPage(pdfParams.getContentStream(), pdfParams.getDocument()));
+//            pdfParams.y = init_posy;
+//          }
 //
-//        int initialy = pdfParams.y;
-//        int initialx = 100;
+//          int initialy = pdfParams.y;
+//          int initialx = 100;
 //
-//        pdfParams.y -= maxHeight;
-//        int maxy = pdfParams.y;
+//          pdfParams.y -= maxHeight;
+//          int maxy = pdfParams.y;
 //
-//        ximage = new PDJpeg(pdfParams.getDocument(), bimg);
-//        pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
-//        if (check) new File(imgPath).delete();
+//          ximage = new PDJpeg(pdfParams.getDocument(), bimg);
+//          pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
+//          if (check) new File(imgPath).delete();
 //
-//        // Values
-//        image_width = initialx;
-//        pdfParams.y = initialy;
-//        if (maxHeight == 65){
+//          // Values
+//          image_width = initialx;
+//          pdfParams.y = initialy;
+//          if (maxHeight == 65) {
+//            pdfParams.y -= 10;
+//          }
+//          pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size, Color.gray);
+//          font_size = 6;
 //          pdfParams.y -= 10;
-//        }
-//        pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size, Color.gray);
-//        font_size = 6;
-//        pdfParams.y -= 10;
-//        pdfParams = writeText(pdfParams, "Conformance Checker", pos_x + image_width + 10, font, font_size, Color.black);
-//        pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, image_width + 150, pdfParams.y - 5);
-//        pdfParams.y -= 2;
+//          pdfParams = writeText(pdfParams, "Conformance Checker", pos_x + image_width + 10, font, font_size, Color.black);
+//          pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, image_width + 150, pdfParams.y - 5);
+//          pdfParams.y -= 2;
 //
-//        if (ir.hasBlValidation()) {
-//          pdfParams.y -= 10;
-//          pdfParams = writeText(pdfParams, "Baseline", pos_x + image_width + 10, font, font_size, Color.black);
-//          pdfParams = writeText(pdfParams, ir.getBaselineErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getBaselineErrors().size() > 0 ? Color.red : Color.black);
-//          pdfParams = writeText(pdfParams, ir.getNBlErr() + " warnings", pos_x + image_width + 120, font, font_size, ir.getNBlErr() > 0 ? Color.red : Color.black);
-//        }
-//        if (ir.checkEP && ir.hasEpValidation()) {
-//          pdfParams.y -= 10;
-//          pdfParams = writeText(pdfParams, "Tiff/EP", pos_x + image_width + 10, font, font_size, Color.black);
-//          pdfParams = writeText(pdfParams, ir.getEPErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getEPErrors().size() > 0 ? Color.red : Color.black);
-//          pdfParams = writeText(pdfParams, ir.getNEpWar() + " warnings", pos_x + image_width + 120, font, font_size, ir.getNEpWar() > 0 ? Color.red : Color.black);
-//        }
-//        if (ir.checkIT0 && ir.hasItValidation(0)) {
-//          pdfParams.y -= 10;
-//          pdfParams = writeText(pdfParams, "Tiff/IT", pos_x + image_width + 10, font, font_size, Color.black);
-//          pdfParams = writeText(pdfParams, ir.getITErrors(0).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(0).size() > 0 ? Color.red : Color.black);
-//          pdfParams = writeText(pdfParams, ir.getNItWar(0) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(0) > 0 ? Color.red : Color.black);
-//        }
-//        if (ir.checkIT1 && ir.hasItValidation(1)) {
-//          pdfParams.y -= 10;
-//          pdfParams = writeText(pdfParams, "Tiff/IT-1", pos_x + image_width + 10, font, font_size, Color.black);
-//          pdfParams = writeText(pdfParams, ir.getITErrors(1).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(1).size() > 0 ? Color.red : Color.black);
-//          pdfParams = writeText(pdfParams, ir.getNItWar(1) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(1) > 0 ? Color.red : Color.black);
-//        }
-//        if (ir.checkIT2 && ir.hasItValidation(2)) {
-//          pdfParams.y -= 10;
-//          pdfParams = writeText(pdfParams, "Tiff/IT-2", pos_x + image_width + 10, font, font_size, Color.black);
-//          pdfParams = writeText(pdfParams, ir.getITErrors(2).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(2).size() > 0 ? Color.red : Color.black);
-//          pdfParams = writeText(pdfParams, ir.getNItWar(2) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(2) > 0 ? Color.red : Color.black);
-//        }
-//        if (ir.checkPC) {
-//          pdfParams.y -= 10;
-//          pdfParams = writeText(pdfParams, "Policy checker", pos_x + image_width + 10, font, font_size, Color.black);
-//          pdfParams = writeText(pdfParams, ir.getPCErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getPCErrors().size() > 0 ? Color.red : Color.black);
-//          pdfParams = writeText(pdfParams, ir.getPCWarnings().size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getPCWarnings().size() > 0 ? Color.red : Color.black);
-//        }
-//        if (pdfParams.y < maxy) maxy = pdfParams.y;
+//          if (ir.hasBlValidation()) {
+//            pdfParams.y -= 10;
+//            pdfParams = writeText(pdfParams, "Baseline", pos_x + image_width + 10, font, font_size, Color.black);
+//            pdfParams = writeText(pdfParams, ir.getBaselineErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getBaselineErrors().size() > 0 ? Color.red : Color.black);
+//            pdfParams = writeText(pdfParams, ir.getNBlErr() + " warnings", pos_x + image_width + 120, font, font_size, ir.getNBlErr() > 0 ? Color.red : Color.black);
+//          }
+//          if (ir.checkEP && ir.hasEpValidation()) {
+//            pdfParams.y -= 10;
+//            pdfParams = writeText(pdfParams, "Tiff/EP", pos_x + image_width + 10, font, font_size, Color.black);
+//            pdfParams = writeText(pdfParams, ir.getEPErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getEPErrors().size() > 0 ? Color.red : Color.black);
+//            pdfParams = writeText(pdfParams, ir.getNEpWar() + " warnings", pos_x + image_width + 120, font, font_size, ir.getNEpWar() > 0 ? Color.red : Color.black);
+//          }
+//          if (ir.checkIT0 && ir.hasItValidation(0)) {
+//            pdfParams.y -= 10;
+//            pdfParams = writeText(pdfParams, "Tiff/IT", pos_x + image_width + 10, font, font_size, Color.black);
+//            pdfParams = writeText(pdfParams, ir.getITErrors(0).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(0).size() > 0 ? Color.red : Color.black);
+//            pdfParams = writeText(pdfParams, ir.getNItWar(0) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(0) > 0 ? Color.red : Color.black);
+//          }
+//          if (ir.checkIT1 && ir.hasItValidation(1)) {
+//            pdfParams.y -= 10;
+//            pdfParams = writeText(pdfParams, "Tiff/IT-1", pos_x + image_width + 10, font, font_size, Color.black);
+//            pdfParams = writeText(pdfParams, ir.getITErrors(1).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(1).size() > 0 ? Color.red : Color.black);
+//            pdfParams = writeText(pdfParams, ir.getNItWar(1) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(1) > 0 ? Color.red : Color.black);
+//          }
+//          if (ir.checkIT2 && ir.hasItValidation(2)) {
+//            pdfParams.y -= 10;
+//            pdfParams = writeText(pdfParams, "Tiff/IT-2", pos_x + image_width + 10, font, font_size, Color.black);
+//            pdfParams = writeText(pdfParams, ir.getITErrors(2).size() + " errors", pos_x + image_width + 70, font, font_size, ir.getITErrors(2).size() > 0 ? Color.red : Color.black);
+//            pdfParams = writeText(pdfParams, ir.getNItWar(2) + " warnings", pos_x + image_width + 120, font, font_size, ir.getNItWar(2) > 0 ? Color.red : Color.black);
+//          }
+//          if (ir.checkPC) {
+//            pdfParams.y -= 10;
+//            pdfParams = writeText(pdfParams, "Policy checker", pos_x + image_width + 10, font, font_size, Color.black);
+//            pdfParams = writeText(pdfParams, ir.getPCErrors().size() + " errors", pos_x + image_width + 70, font, font_size, ir.getPCErrors().size() > 0 ? Color.red : Color.black);
+//            pdfParams = writeText(pdfParams, ir.getPCWarnings().size() + " warnings", pos_x + image_width + 120, font, font_size, ir.getPCWarnings().size() > 0 ? Color.red : Color.black);
+//          }
+//          if (pdfParams.y < maxy) maxy = pdfParams.y;
 //
-//        // Chart
-//        pdfParams.y = initialy;
-//        pdfParams.y -= 10;
-//        pdfParams.y -= 10;
-//        graph_size = 25;
-//        image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
-//        g2d = image.createGraphics();
-//        doub = (double) ir.calculatePercent();
-//        extent = 360d * doub / 100.0;
-//        g2d.setColor(Color.gray);
-//        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
-//        g2d.setColor(Color.red);
-//        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
-//        ximage = new PDJpeg(pdfParams.getDocument(), image);
-//        pdfParams.getContentStream().drawXObject(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
-//        pdfParams.y += graph_size - 10;
-//        if (doub < 100) {
+//          // Chart
+//          pdfParams.y = initialy;
+//          pdfParams.y -= 10;
+//          pdfParams.y -= 10;
+//          graph_size = 25;
+//          image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
+//          g2d = image.createGraphics();
+//          doub = (double) ir.calculatePercent();
+//          extent = 360d * doub / 100.0;
+//          g2d.setColor(Color.gray);
+//          g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
+//          g2d.setColor(Color.red);
+//          g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
+//          ximage = new PDJpeg(pdfParams.getDocument(), image);
+//          pdfParams.getContentStream().drawXObject(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
+//          pdfParams.y += graph_size - 10;
+//          if (doub < 100) {
+//            pdfParams.y = pdfParams.y - 10 - graph_size / 2;
+//            pdfParams = writeText(pdfParams, "Failed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.red);
+//          }
 //          pdfParams.y = pdfParams.y - 10 - graph_size / 2;
-//          pdfParams = writeText(pdfParams, "Failed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.red);
-//        }
-//        pdfParams.y = pdfParams.y - 10 - graph_size / 2;
-//        pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
-//        if (pdfParams.y < maxy) maxy = pdfParams.y;
+//          pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
+//          if (pdfParams.y < maxy) maxy = pdfParams.y;
 //
-//        pdfParams.y = maxy - 10;
+//          pdfParams.y = maxy - 10;
 //      }
 //
 //      // Full individual reports
 //      ArrayList<PDDocument> toClose = new ArrayList<PDDocument>();
 //      for (IndividualReport ir : gr.getIndividualReports()) {
-//        if (!ir.containsData()) continue;
-//        PDDocument doc;
-//        if (ir.getPDF() != null)
-//          doc = ir.getPDF();
-//        else
-//          doc = PDDocument.load(ir.getPDFDocument());
-//        List<PDPage> l = doc.getDocumentCatalog().getAllPages();
-//        for (PDPage pag : l) {
-//          pdfParams.getDocument().addPage(pag);
-//        }
-//        toClose.add(doc);
+//
+//          if (!ir.containsData()) continue;
+//          PDDocument doc = null;
+//          if (ir.getPDF() != null)
+//            doc = ir.getPDF();
+//          else if (ir.getPDFDocument() != null)
+//            doc = PDDocument.load(ir.getPDFDocument());
+//          if (doc != null) {
+//            List<PDPage> l = doc.getDocumentCatalog().getAllPages();
+//            for (PDPage pag : l) {
+//              pdfParams.getDocument().addPage(pag);
+//            }
+//            toClose.add(doc);
+//          }
 //      }
 //
 //      pdfParams.getContentStream().close();
@@ -290,10 +293,10 @@ public class ReportPDF extends ReportGeneric {
 //    } catch (Exception tfe) {
 //      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", tfe));
 //    }
-//  }
-//
-//  private int getMaxHeight(IndividualReport ir, int image_height) {
-//    int height = 15;
+  }
+
+  private int getMaxHeight(IndividualReport ir, int image_height) {
+    int height = 15;
 //    if (ir.hasBlValidation()) {
 //      height += 10;
 //    }
@@ -315,7 +318,7 @@ public class ReportPDF extends ReportGeneric {
 //    if (image_height > height) {
 //      height = image_height;
 //    }
-//    return height;
+    return height;
   }
 
   /**

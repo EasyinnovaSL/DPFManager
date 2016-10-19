@@ -30,9 +30,6 @@ public class ImplementationCheckerLoader {
   public synchronized static ImplementationCheckerObjectType getRules(String rulesFile) {
     ImplementationCheckerObjectType rules = null;
     try {
-      if (!rulesFile.contains("/")) {
-        rulesFile = "implementationcheckers/" + rulesFile + ".xml";
-      }
       if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
         JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -52,34 +49,16 @@ public class ImplementationCheckerLoader {
 
             for (RulesType ro : rulesIncluded.getRules()) {
               boolean excludedRules = false;
-              //for (String id : inc.getExclude().getRule()) {
-              //  if (id.equals(ro.getDescription())) excludedRules = true;
-              //}
+              for (String id : inc.getExcluderules()) {
+                if (id.equals(ro.getId())) excludedRules = true;
+              }
               if (!excludedRules) {
                 rules.getRules().add(ro);
-              }
-              for (RuleType rule : ro.getRule()) {
-                //rule.iso = rulesIncluded.getIso();
-              }
-            }
-
-          /*if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
-            for (RulesType ro : rulesIncluded.getRules()) {
-              rules.getRules().add((ImplementationCheckerObjectType.Rules)ro);
-              for (RuleType rule : ro.getRule()) {
-                rule.setIso(rulesIncluded.getIso());
-              }
-            }
-          } else {
-            for (RulesType ro : rulesIncluded.getRules()) {
-              if (ro.getDescription().equals(inc.getSubsection())) {
-                rules.getRules().add((ImplementationCheckerObjectType.Rules)ro);
                 for (RuleType rule : ro.getRule()) {
-                  rule.setIso(rulesIncluded.getIso());
+                  //rule.iso = rulesIncluded.getIso();
                 }
               }
             }
-          }*/
           }
         }
 
@@ -87,7 +66,7 @@ public class ImplementationCheckerLoader {
       } else {
         rules = preLoadedValidatorsSingleton.get(rulesFile);
       }
-    } catch (JAXBException ex){
+    } catch(JAXBException ex){
 
     }
     return rules;

@@ -484,6 +484,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
   public static String getValidationXmlString(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     TiffDocument td = tr.getModel();
     TiffImplementationChecker tic = new TiffImplementationChecker();
+    tic.setITFields(true);
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
     return tiffValidation.getXml();
   }
