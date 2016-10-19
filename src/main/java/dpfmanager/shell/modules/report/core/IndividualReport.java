@@ -413,16 +413,20 @@ public class IndividualReport implements Comparable {
 
   public List<RuleResult> getAllErrors() {
     List<RuleResult> allErrors = new ArrayList<>();
-    for (List<RuleResult> values : errors.values()){
-      allErrors.addAll(values);
+    for (String key : errors.keySet()){
+      if (getIsosCheck().contains(key)){
+        allErrors.addAll(errors.get(key));
+      }
     }
     return allErrors;
   }
 
   public List<RuleResult> getAllWarnings() {
     List<RuleResult> allWarnings = new ArrayList<>();
-    for (List<RuleResult> values : warnings.values()){
-      allWarnings.addAll(values);
+    for (String key : warnings.keySet()){
+      if (getIsosCheck().contains(key)){
+        allWarnings.addAll(warnings.get(key));
+      }
     }
     return allWarnings;
   }

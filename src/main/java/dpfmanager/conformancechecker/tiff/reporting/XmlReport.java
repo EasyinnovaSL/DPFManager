@@ -862,10 +862,11 @@ public class XmlReport {
       implementationCheckerElement.setAttribute("ref", "DPF Manager");
       implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
       implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
+      for (String path : ImplementationCheckerLoader.getPathsList()){
+        String name = ImplementationCheckerLoader.getName(path);
+        implementationCheckerElement.setAttribute(name, (ir.getErrors(name).size() == 0) + "");
+      }
       for (String iso : ir.getIsosCheck()) {
-        if (!iso.equals(TiffConformanceChecker.POLICY_ISO)) {
-          implementationCheckerElement.setAttribute(iso, (ir.getErrors(iso).size() == 0) + "");
-        }
         ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(iso);
         List<RuleResult> errors = ir.getErrors(iso);
         List<RuleResult> warnings = ir.getWarnings(iso);

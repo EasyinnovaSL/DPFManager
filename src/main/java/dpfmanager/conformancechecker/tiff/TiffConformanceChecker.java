@@ -22,6 +22,7 @@ package dpfmanager.conformancechecker.tiff;
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
@@ -513,20 +514,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return "";
   }
 
-  private List<String> getInternalImplementationCheckers(){
-    List<String> list = new ArrayList<>();
-    list.add("implementationcheckers/BaselineProfileChecker.xml");
-    list.add("implementationcheckers/TiffEPProfileChecker.xml");
-    list.add("implementationcheckers/TiffITProfileChecker.xml");
-    list.add("implementationcheckers/TiffITP1ProfileChecker.xml");
-    list.add("implementationcheckers/TiffITP2ProfileChecker.xml");
-    return list;
-  }
-
-  private String getName(String path){
-    return path.substring(path.indexOf("/")+1, path.indexOf("."));
-  }
-
   /**
    * Process tiff file.
    *
@@ -555,11 +542,11 @@ public class TiffConformanceChecker extends ConformanceChecker {
           //Logger.println("Validating Tiff");
           String content = getValidationXmlString(tr);
           Map<String, Validator> validations = new HashMap<>();
-          for (String path : getInternalImplementationCheckers()){
-            boolean check = config.getIsos().contains(getName(path));
+          for (String path : ImplementationCheckerLoader.getPathsList()){
+            boolean check = config.getIsos().contains(ImplementationCheckerLoader.getName(path));
             Validator validation = new Validator(Logger);
-            validation.validate(content, path, check);
-            validations.put(getName(path), validation);
+            validation.validate(content, path, !check);
+            validations.put(ImplementationCheckerLoader.getName(path), validation);
           }
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
@@ -645,11 +632,11 @@ public class TiffConformanceChecker extends ConformanceChecker {
             //Logger.println("Validating Tiff");
             String contentfixed = TiffConformanceChecker.getValidationXmlString(tr);
             Map<String, Validator> validationsFixed = new HashMap<>();
-            for (String path : getInternalImplementationCheckers()){
-              boolean check = config.getIsos().contains(getName(path));
+            for (String path : ImplementationCheckerLoader.getPathsList()){
+              boolean check = config.getIsos().contains(ImplementationCheckerLoader.getName(path));
               Validator validation = new Validator(Logger);
               validation.validate(contentfixed, path, check);
-              validations.put(getName(path), validation);
+              validations.put(ImplementationCheckerLoader.getName(path), validation);
             }
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");

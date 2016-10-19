@@ -12,7 +12,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -107,5 +109,19 @@ public class ImplementationCheckerLoader {
     } catch (FileNotFoundException e) {
     }
     return fis;
+  }
+
+  public static List<String> getPathsList(){
+    List<String> list = new ArrayList<>();
+    list.add("implementationcheckers/BaselineProfileChecker.xml");
+    list.add("implementationcheckers/TiffEPProfileChecker.xml");
+    list.add("implementationcheckers/TiffITProfileChecker.xml");
+    list.add("implementationcheckers/TiffITP1ProfileChecker.xml");
+    list.add("implementationcheckers/TiffITP2ProfileChecker.xml");
+    return list;
+  }
+
+  public static String getName(String path){
+    return path.substring(path.indexOf("/")+1, path.indexOf("."));
   }
 }

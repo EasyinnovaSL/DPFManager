@@ -33,6 +33,7 @@ package dpfmanager.shell.modules.report.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +64,8 @@ public class GlobalReport {
    */
   public GlobalReport() {
     reports = new ArrayList<>();
+    nReportsOk = new HashMap<>();
+    isos = new ArrayList<>();
   }
 
   /**
