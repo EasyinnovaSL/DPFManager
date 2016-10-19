@@ -153,7 +153,7 @@ public class GlobalReport {
   public int getReportsOk(String iso) {
     int n = 0;
     for (IndividualReport ir : reports) {
-      if (ir.hasValidation(iso) && ir.getErrors(iso).size() > 0){
+      if (ir.hasValidation(iso) && ir.getErrors(iso).size() == 0){
         n++;
       }
     }

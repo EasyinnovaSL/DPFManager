@@ -122,6 +122,17 @@ public class ImplementationCheckerLoader {
   }
 
   public static String getName(String path){
-    return path.substring(path.indexOf("/")+1, path.indexOf("."));
+    if (path.contains("/") && path.contains(".")) {
+      return path.substring(path.indexOf("/") + 1, path.indexOf("."));
+    }
+    return path;
+  }
+
+  public static String getIsoName(String path){
+    ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(path);
+    if (icRules != null){
+      return icRules.getTitle();
+    }
+    return getName(path);
   }
 }

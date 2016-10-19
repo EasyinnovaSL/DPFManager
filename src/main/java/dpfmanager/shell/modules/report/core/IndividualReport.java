@@ -335,8 +335,10 @@ public class IndividualReport implements Comparable {
     Double rest = 100.0;
     IndividualReport ir = this;
 
-    for (String key : isosCheck) {
-      rest -= ir.getErrors(key).size() * 12.5;
+    if (isosCheck != null) {
+      for (String key : isosCheck) {
+        rest -= ir.getErrors(key).size() * 12.5;
+      }
     }
 
     if (rest < 0.0) {
@@ -399,7 +401,11 @@ public class IndividualReport implements Comparable {
    * @return the warnings count
    */
   public int getNWarnings(String key) {
-    return getWarnings(key).size();
+    int n = 0;
+    for (RuleResult rule :getWarnings(key)){
+      if (rule.getWarning()) n++;
+    }
+    return n;
   }
 
   /**

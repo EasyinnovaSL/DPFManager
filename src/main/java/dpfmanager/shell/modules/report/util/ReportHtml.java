@@ -68,19 +68,18 @@ public class ReportHtml extends ReportGeneric {
       imageBody = StringUtils.replace(imageBody, "##INDEX##", "" + index);
       imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());
 
-      String rowTmpl =  "<tr class=\"##CLASS##\">\n" +
-          "\t\t\t\t\t\t        <td>##NAME##</td>\n" +
-          "\t\t\t\t\t\t        <td class=\"##ERR_C##\">##ERR_N## errors</td>\n" +
-          "\t\t\t\t\t\t        <td class=\"##WAR_C##\">##WAR_N## warnings</td>\n" +
+      /**
+       * Errors / warnings resume
+       */
+      String rowTmpl =  "<tr>\n" +
+          "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
+          "\t\t\t\t\t\t        <td class=\"c2 ##ERR_C##\">##ERR_N## errors</td>\n" +
+          "\t\t\t\t\t\t        <td class=\"c2 ##WAR_C##\">##WAR_N## warnings</td>\n" +
           "\t\t\t\t\t\t        <td></td>\n" +
           "\t\t\t\t\t\t    </tr>";
       String rows = "";
       for (String iso : ir.getIsosCheck()){
-        ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(iso);
-        String name = iso;
-        if (icRules != null){
-          name = icRules.getTitle();
-        }
+        String name = ImplementationCheckerLoader.getIsoName(iso);
         String row = rowTmpl;
         if (ir.hasValidation(iso)) {
           int errorsCount = ir.getNErrors(iso);
@@ -104,21 +103,26 @@ public class ReportHtml extends ReportGeneric {
       imageBody = StringUtils.replace(imageBody, "##TABLE_RESUME_IMAGE##", rows);
       imageBody = StringUtils.replace(imageBody, "##HREF##", "html/" + encodeUrl(new File(ir.getReportPath()).getName() + ".html"));
 
-      // Percent Info
+      /**
+       * Percent info
+       */
       if (percent == 100) {
         imageBody = StringUtils.replace(imageBody, "##CLASS##", "success");
         imageBody = StringUtils.replace(imageBody, "##RESULT##", "Passed");
+        if (ir.getAllWarnings().size() > 0) {
+          imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "inline-block");
+        } else {
+          imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "none");
+        }
       } else {
         imageBody = StringUtils.replace(imageBody, "##CLASS##", "error");
         imageBody = StringUtils.replace(imageBody, "##RESULT##", "Failed");
-      }
-      if (ir.getAllWarnings().size() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "inline-block");
-      } else {
         imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "none");
       }
 
-      // Percent Chart
+      /**
+       * Percent chart
+       */
       int angle = percent * 360 / 100;
       int reverseAngle = 360 - angle;
       String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
@@ -146,11 +150,15 @@ public class ReportHtml extends ReportGeneric {
     htmlBody = StringUtils.replace(htmlBody, "##COUNT##", "" + scount);
     htmlBody = StringUtils.replace(htmlBody, "##OK##", "" + gr.getAllReportsOk());
 
-    String rowTmpl =  "<tr><td class=\"##TYPE## border-bot\">##OK##</td><td class=\"##TYPE## border-bot\">conforms to Policy Checker</td></tr>";
+    /**
+     * Conforms table
+     */
+    String rowTmpl =  "<tr><td class=\"##TYPE## border-bot\">##OK##</td><td class=\"##TYPE## border-bot\">conforms to ##NAME##</td></tr>";
     String rows = "";
     for (String iso : gr.getIsos()){
       String row = rowTmpl;
       row = StringUtils.replace(row, "##OK##", "" + gr.getReportsOk(iso));
+      row = StringUtils.replace(row, "##NAME##", ImplementationCheckerLoader.getIsoName(iso));
       row = StringUtils.replace(row, "##TYPE##", gr.getReportsOk(iso) == gr.getReportsCount() ? "success" : "error");
       rows += row;
     }
