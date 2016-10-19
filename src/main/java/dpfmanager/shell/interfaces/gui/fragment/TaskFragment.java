@@ -170,7 +170,7 @@ public class TaskFragment {
     NodeUtil.hideNode(resumePauseImage);
     NodeUtil.hideNode(cancelImage);
     if (!type.isEmpty()) {
-      taskImage.setImage(new Image("images/format_" + type + ".png"));
+      taskImage.setImage(new Image("images/formats/" + type + ".png"));
       timeLabel.setText(getReadableData(job.getFinish() - job.getInit()));
       NodeUtil.showNode(taskImage);
     } else {
