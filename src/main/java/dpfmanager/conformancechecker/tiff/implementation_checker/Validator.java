@@ -137,34 +137,16 @@ public class Validator {
 
           for (RulesType ro : rulesIncluded.getRules()) {
             boolean excludedRules = false;
-            //for (String id : inc.getExclude().getRule()) {
-            //  if (id.equals(ro.getDescription())) excludedRules = true;
-            //}
+            for (String id : inc.getExcluderules()) {
+              if (id.equals(ro.getId())) excludedRules = true;
+            }
             if (!excludedRules) {
               rules.getRules().add(ro);
-            }
-            for (RuleType rule : ro.getRule()) {
-              //rule.iso = rulesIncluded.getIso();
+              for (RuleType rule : ro.getRule()) {
+                //rule.iso = rulesIncluded.getIso();
+              }
             }
           }
-
-          /*if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
-            for (RulesType ro : rulesIncluded.getRules()) {
-              rules.getRules().add((ImplementationCheckerObjectType.Rules)ro);
-              for (RuleType rule : ro.getRule()) {
-                rule.setIso(rulesIncluded.getIso());
-              }
-            }
-          } else {
-            for (RulesType ro : rulesIncluded.getRules()) {
-              if (ro.getDescription().equals(inc.getSubsection())) {
-                rules.getRules().add((ImplementationCheckerObjectType.Rules)ro);
-                for (RuleType rule : ro.getRule()) {
-                  rule.setIso(rulesIncluded.getIso());
-                }
-              }
-            }
-          }*/
         }
       }
 

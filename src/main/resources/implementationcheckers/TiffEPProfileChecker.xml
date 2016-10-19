@@ -31,13 +31,13 @@
          <title></title>
 		 <description>The resolution X of the sub image (full resolution) must be greater than the main (thumbnail) image</description>
          <reference><section></section><page>6</page></reference>
-         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageLength] > tags.tag[name=ImageLength]}">Sub-ifd size must be greater than thumbnail IFD</assert>
+         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageLength] > tags.tag[name=ImageLength]}">Sub-ifd width must be greater than thumbnail IFD</assert>
      </rule>
      <rule id="ep-4" context="ifds.ifd[class=image]" level="error">
          <title></title>
 		 <description>The resolution Y of the sub image (full resolution) must be greater than the main (thumbnail) image</description>
          <reference><section></section><page>6</page></reference>
-         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageWidth] > tags.tag[name=ImageWidth]}">Sub-ifd size must be greater than thumbnail IFD</assert>
+         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageWidth] > tags.tag[name=ImageWidth]}">Sub-ifd height must be greater than thumbnail IFD</assert>
      </rule>
      <rule id="ep-5" context="ifds.ifd[class=image]" level="error">
          <title></title>

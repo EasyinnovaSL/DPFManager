@@ -409,7 +409,7 @@ beyond the first one, so not all readers could render all the images in the file
    </description>
    <reference><section>Section 3: Bilevel Images</section><page>17</page></reference>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
-   <assert test="{tags.tag[name=Compression] &gt; 0} &amp;&amp; {tags.tag[name=Compression] &lt; 2} || {tags.tag[name=Compression] == 32773}">Invalid Compression for Bilevel image</assert>
+   <assert test="{tags.tag[name=Compression] &gt; 0} &amp;&amp; {tags.tag[name=Compression] &lt; 3} || {tags.tag[name=Compression] == 32773}">Invalid Compression for Bilevel image</assert>
   </rule>
   <!--
    
@@ -527,13 +527,6 @@ beyond the first one, so not all readers could render all the images in the file
    <description>Palette color images should not contain a InkSet tag</description>
    <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
    <assert test="{tags.tag[name=InkSet]}">Palette color images should not contain tag InkSet</assert>
-  </rule>
-  
-  <rule id="IFDP-0002" context="ifd[type=Palette]" level="error">
-   <title>Valid compression for palette color image</title>
-   <description>In Baseline TIFF, palette color images can either be stored as uncompressed data or compressed with the PackBits algorithm.</description>
-   <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
-   <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 32773}">Invalid Compression for palette color image</assert>
   </rule>
  </rules>
  
@@ -880,7 +873,7 @@ beyond the first one, so not all readers could render all the images in the file
     32773 = PackBits compression, a simple byte-oriented run-length scheme
    </description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><pages>30-31</pages></reference>
-   <assert test="{tags.tag[name=Compression] &gt; 0} &amp;&amp; {tags.tag[name=Compression] &lt; 2} || {tags.tag[name=Compression] == 32773}">The Compression tag must have a valid value</assert>
+   <assert test="{tags.tag[name=Compression] &gt; 0} &amp;&amp; {tags.tag[name=Compression] &lt; 3} || {tags.tag[name=Compression] == 32773}">The Compression tag must have a valid value</assert>
   </rule>
   
   <rule id="bl-ca-187" context="ifd[class=image]" level="error">
