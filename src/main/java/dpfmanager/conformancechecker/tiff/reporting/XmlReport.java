@@ -414,23 +414,24 @@ public class XmlReport {
     for (int i = 0; i < warnings.size(); i++) {
       RuleResult warning = warnings.get(i);
       if (!warning.getWarning()) continue;
-      addWarning(warning, doc, results);
+      addWarning(warning, doc, results, true);
     }
 
     // infos
     for (int i = 0; i < warnings.size(); i++) {
       RuleResult warning = warnings.get(i);
       if (!warning.getInfo()) continue;
-      addWarning(warning, doc, results);
+      addWarning(warning, doc, results, false);
     }
   }
 
-  private void addWarning(RuleResult value, Document doc, Element results) {
+  private void addWarning(RuleResult value, Document doc, Element results, boolean bwarning) {
     Element warning = doc.createElement("rule_result");
 
     // level
     Element level = doc.createElement("level");
-    level.setTextContent("warning");
+    if (bwarning) level.setTextContent("warning");
+    else level.setTextContent("info");
     warning.appendChild(level);
 
     // msg
