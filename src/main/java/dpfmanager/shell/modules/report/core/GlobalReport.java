@@ -36,8 +36,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * The Class GlobalReport.
@@ -129,7 +127,7 @@ public class GlobalReport {
    *
    * @return nreportsok reports ok
    */
-  public int getReportsOk() {
+  public int getAllReportsOk() {
     int n = 0;
     for (IndividualReport ir : reports) {
       boolean ok = true;
@@ -148,8 +146,18 @@ public class GlobalReport {
    *
    * @return nreportsko reports ko
    */
-  public int getReportsKo() {
-    return getReportsCount() - getReportsOk();
+  public int getAllReportsKo() {
+    return getReportsCount() - getAllReportsOk();
+  }
+
+  public int getReportsOk(String iso) {
+    int n = 0;
+    for (IndividualReport ir : reports) {
+      if (ir.hasValidation(iso) && ir.getErrors(iso).size() > 0){
+        n++;
+      }
+    }
+    return n;
   }
 
   /**

@@ -128,7 +128,7 @@ public class ReportPDF extends ReportGeneric {
 //      int graph_size = 40;
 //      BufferedImage image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
 //      Graphics2D g2d = image.createGraphics();
-//      Double doub = (double) gr.getReportsOk() / gr.getReportsCount();
+//      Double doub = (double) gr.getAllReportsOk() / gr.getReportsCount();
 //      double extent = 360d * doub;
 //      g2d.setColor(Color.green);
 //      g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
@@ -138,9 +138,9 @@ public class ReportPDF extends ReportGeneric {
 //      pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, graph_size, graph_size);
 //      pdfParams.y += graph_size - 10;
 //      font_size = 7;
-//      pdfParams = writeText(pdfParams, gr.getReportsOk() + " passed", pos_x + 50, font, font_size, Color.green);
+//      pdfParams = writeText(pdfParams, gr.getAllReportsOk() + " passed", pos_x + 50, font, font_size, Color.green);
 //      pdfParams.y -= 10;
-//      pdfParams = writeText(pdfParams, gr.getReportsKo() + " failed", pos_x + 50, font, font_size, Color.red);
+//      pdfParams = writeText(pdfParams, gr.getAllReportsKo() + " failed", pos_x + 50, font, font_size, Color.red);
 //      pdfParams.y -= 10;
 //      pdfParams = writeText(pdfParams, "Global score " + (doub * 100) + "%", pos_x + 50, font, font_size, Color.black);
 //
