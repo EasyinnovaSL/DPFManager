@@ -45,6 +45,7 @@ import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 import com.google.common.reflect.ClassPath;
 
@@ -75,6 +76,9 @@ import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -96,6 +100,8 @@ import javax.xml.transform.stream.StreamResult;
 public class TiffConformanceChecker extends ConformanceChecker {
 
   private Configuration checkConfig;
+
+  public static String POLICY_ISO = "POLICY";
 
   public TiffConformanceChecker(ConformanceConfig config, Configuration checkConfig){
     this.checkConfig = checkConfig;
@@ -481,26 +487,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return tiffValidation.getXml();
   }
 
-  public static Validator getBaselineValidation(String content) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = new Validator(Logger);
-    validation.validateBaseline(content);
-    return validation;
-  }
-
-  public static Validator getEPValidation(String content, boolean fastBreak) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = new Validator(Logger);
-    validation.validateTiffEP(content, fastBreak);
-    return validation;
-  }
-
-  public static Validator getITValidation(int profile, String content, boolean fastBreak) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    Validator validation = new Validator(Logger);
-    if (profile == 0) validation.validateTiffIT(content, fastBreak);
-    else if (profile == 1) validation.validateTiffITP1(content, fastBreak);
-    else validation.validateTiffITP2(content, fastBreak);
-    return validation;
-  }
-
   private String addXmlReportToPremisSection (String xmlReport, String metsReport){
 
       //FIXME revisar el procediment, cal afegir el contingut del report xml com un node al mets report
@@ -525,6 +511,20 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
 
     return "";
+  }
+
+  private List<String> getInternalImplementationCheckers(){
+    List<String> list = new ArrayList<>();
+    list.add("implementationcheckers/BaselineProfileChecker.xml");
+    list.add("implementationcheckers/TiffEPProfileChecker.xml");
+    list.add("implementationcheckers/TiffITProfileChecker.xml");
+    list.add("implementationcheckers/TiffITP1ProfileChecker.xml");
+    list.add("implementationcheckers/TiffITP2ProfileChecker.xml");
+    return list;
+  }
+
+  private String getName(String path){
+    return path.substring(path.indexOf("/")+1, path.indexOf("."));
   }
 
   /**
@@ -553,44 +553,22 @@ public class TiffConformanceChecker extends ConformanceChecker {
           break;
         case 0:
           //Logger.println("Validating Tiff");
-          boolean checkBL = config.getIsos().contains("Baseline");
-          boolean checkEP = config.getIsos().contains("Tiff/EP");
-          boolean checkIT = config.getIsos().contains("Tiff/IT");
-          boolean checkIT1 = config.getIsos().contains("Tiff/IT-1");
-          boolean checkIT2 = config.getIsos().contains("Tiff/IT-2");
-          boolean checkPC = false;
-          if (config.getRules() != null) {
-            checkPC = config.getRules().getRules().size() > 0;
-          }
-
-          //Logger.println("Validating Tiff");
           String content = getValidationXmlString(tr);
-          Validator baselineVal = null;
-          //if (checkBL)
-            baselineVal = getBaselineValidation(content);
-          Validator epValidation = null;
-          //if (checkEP)
-            epValidation = getEPValidation(content, !checkEP);
-          Validator it0Validation = null;
-          Validator it1Validation = null;
-          Validator it2Validation = null;
-          //if (checkIT)
-            it0Validation = getITValidation(0, content, !checkIT);
-          //if (checkIT1)
-            it1Validation = getITValidation(1, content, !checkIT1);
-          //if (checkIT2)
-            it2Validation = getITValidation(2, content, !checkIT2);
-          //Logger.println("Creating report");
+          Map<String, Validator> validations = new HashMap<>();
+          for (String path : getInternalImplementationCheckers()){
+            boolean check = config.getIsos().contains(getName(path));
+            Validator validation = new Validator(Logger);
+            validation.validate(content, path, check);
+            validations.put(getName(path), validation);
+          }
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), baselineVal, epValidation, it0Validation, it1Validation, it2Validation);
-          ir.checkBL = checkBL;
-          ir.checkEP = checkEP;
-          ir.checkIT0 = checkIT;
-          ir.checkIT1 = checkIT1;
-          ir.checkIT2 = checkIT2;
-          ir.checkPC = checkPC;
+          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations);
+          ir.setIsosCheck(config.getIsos());
+          if (config.getRules() != null && config.getRules().getRules().size() > 0) {
+            ir.getIsosCheck().add(POLICY_ISO);
+          }
           //Logger.println("Internal report created");
 
           tr = null;
@@ -601,7 +579,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           String output = xmlReport.parseIndividual(ir, config.getRules());
           ir.setConformanceCheckerReport(output);
           if (config.getRules() != null && config.getRules().getRules() != null && config.getRules().getRules().size() > 0) {
-            ir.setPcValidation(getPcValidation(output));
+            ir.addValidation(POLICY_ISO,getPcValidation(output));
           }
 
           //Mets report
@@ -664,34 +642,22 @@ public class TiffConformanceChecker extends ConformanceChecker {
             tr.readFile(pathFixed);
             TiffDocument to = tr.getModel();
 
+            //Logger.println("Validating Tiff");
             String contentfixed = TiffConformanceChecker.getValidationXmlString(tr);
-            Validator baselineValfixed = null;
-            //if (ir.checkBL)
-              baselineValfixed = TiffConformanceChecker.getBaselineValidation(contentfixed);
-            Validator epValidationfixed = null;
-            //if (ir.checkEP)
-              epValidationfixed = TiffConformanceChecker.getEPValidation(contentfixed, !ir.checkEP);
-            Validator it0Validationfixed = null;
-            //if (ir.checkIT0)
-              it0Validationfixed = TiffConformanceChecker.getITValidation(0, contentfixed, !ir.checkIT0);
-            Validator it1Validationfixed = null;
-            //if (ir.checkIT1)
-              it1Validationfixed = TiffConformanceChecker.getITValidation(1, contentfixed, !ir.checkIT1);
-            Validator it2Validationfixed = null;
-            //if (ir.checkIT2)
-              it2Validationfixed = TiffConformanceChecker.getITValidation(2, contentfixed, !ir.checkIT2);
+            Map<String, Validator> validationsFixed = new HashMap<>();
+            for (String path : getInternalImplementationCheckers()){
+              boolean check = config.getIsos().contains(getName(path));
+              Validator validation = new Validator(Logger);
+              validation.validate(contentfixed, path, check);
+              validations.put(getName(path), validation);
+            }
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");
             name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, baselineValfixed, epValidationfixed, it0Validationfixed, it1Validationfixed, it2Validationfixed);
+            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, validationsFixed);
             int ind = reportFilename.lastIndexOf(".tif");
             ir2.setReportPath(reportFilename.substring(0, ind) + "_fixed.tif");
-            ir2.checkPC = ir.checkPC;
-            ir2.checkBL = ir.checkBL;
-            ir2.checkEP = ir.checkEP;
-            ir2.checkIT0 = ir.checkIT0;
-            ir2.checkIT1 = ir.checkIT1;
-            ir2.checkIT2 = ir.checkIT2;
+            ir2.setIsosCheck(ir.getIsosCheck());
 
             ir2.setFilePath(pathFixed);
             //context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
@@ -700,7 +666,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             //Make report
             output = xmlReport.parseIndividual(ir2, rules);
             ir2.setConformanceCheckerReport(output);
-            ir2.setPcValidation(getPcValidation(output));
+            ir2.addValidation(POLICY_ISO, getPcValidation(output));
             ir.setCompareReport(ir2);
             ir2.setCompareReport(ir);
 

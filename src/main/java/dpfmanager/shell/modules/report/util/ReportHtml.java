@@ -39,266 +39,266 @@ public class ReportHtml extends ReportGeneric {
    * @param gr         the global report.
    */
   public void parseGlobal(String outputfile, GlobalReport gr, ReportGenerator generator) {
-    String templatePath = "templates/global.html";
-    String imagePath = "templates/image.html";
-    String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
-
-    String imagesBody = "";
-    String pieFunctions = "";
-
-    // Parse individual Reports
-    int index = 0;
-    gr.computePcChecks();
-    for (IndividualReport ir : gr.getIndividualReports()) {
-      if (!ir.containsData()) continue;
-      String imageBody;
-      imageBody = generator.readFilefromResources(imagePath);
-      // Image
-      String imgPath = "html/img/" + new File(ir.getReportPath()).getName() + ".jpg";
-      boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
-      if (!check) {
-        imgPath = "html/img/noise.jpg";
-      }
-      imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", encodeUrl(imgPath));
-
-      // Basic
-      int percent = ir.calculatePercent();
-      imageBody = StringUtils.replace(imageBody, "##PERCENT##", "" + percent);
-      imageBody = StringUtils.replace(imageBody, "##INDEX##", "" + index);
-      imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());
-
-      if (ir.checkEP && ir.hasEpValidation()) {
-        imageBody = StringUtils.replace(imageBody, "##EP_ERR_N##", "" + ir.getEPErrors().size());
-        imageBody = StringUtils.replace(imageBody, "##EP_WAR_N##", "" + ir.getNEpWar());
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##EP_CLASS##", "hide");
-      }
-
-      if (ir.checkBL && ir.hasBlValidation()) {
-        imageBody = StringUtils.replace(imageBody, "##BL_ERR_N##", "" + ir.getBaselineErrors().size());
-        imageBody = StringUtils.replace(imageBody, "##BL_WAR_N##", "" + ir.getNBlWar());
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##BL_CLASS##", "hide");
-      }
-
-      if (ir.checkIT0 && ir.hasItValidation(0)) {
-        imageBody = StringUtils.replace(imageBody, "##IT_ERR_N##", "" + ir.getITErrors(0).size());
-        imageBody = StringUtils.replace(imageBody, "##IT_WAR_N##", "" + ir.getNItWar(0));
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT_CLASS##", "hide");
-      }
-
-      if (ir.checkIT1 && ir.hasItValidation(1)) {
-        imageBody = StringUtils.replace(imageBody, "##IT1_ERR_N##", "" + ir.getITErrors(1).size());
-        imageBody = StringUtils.replace(imageBody, "##IT1_WAR_N##", "" + ir.getNItWar(1));
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT1_CLASS##", "hide");
-      }
-
-      if (ir.checkIT2 && ir.hasItValidation(2)) {
-        imageBody = StringUtils.replace(imageBody, "##IT2_ERR_N##", "" + ir.getITErrors(2).size());
-        imageBody = StringUtils.replace(imageBody, "##IT2_WAR_N##", "" + ir.getNItWar(2));
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT2_CLASS##", "hide");
-      }
-
-      if (ir.checkPC) {
-        imageBody = StringUtils.replace(imageBody, "##PC_ERR_N##", "" + ir.getPCErrors().size());
-        imageBody = StringUtils.replace(imageBody, "##PC_WAR_N##", "" + ir.getPCWarnings().size());
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##PC_CLASS##", "hide");
-      }
-
-      imageBody = StringUtils.replace(imageBody, "##HREF##", "html/" + encodeUrl(new File(ir.getReportPath()).getName() + ".html"));
-      if (ir.getBaselineErrors().size() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##BL_ERR_C##", "error");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##BL_ERR_C##", "");
-      }
-      if (ir.getNBlWar() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##BL_WAR_C##", "warning");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##BL_WAR_C##", "");
-      }
-      if (ir.getEPErrors().size() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##EP_ERR_C##", "error");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##EP_ERR_C##", "");
-      }
-      if (ir.getNEpWar() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##EP_WAR_C##", "warning");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##EP_WAR_C##", "");
-      }
-      if (ir.getITErrors(0).size() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##IT_ERR_C##", "error");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT_ERR_C##", "");
-      }
-      if (ir.getNItWar(0) > 0) {
-        imageBody = StringUtils.replace(imageBody, "##IT_WAR_C##", "warning");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT_WAR_C##", "");
-      }
-      if (ir.getITErrors(1).size() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##IT1_ERR_C##", "error");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT1_ERR_C##", "");
-      }
-      if (ir.getNItWar(1) > 0) {
-        imageBody = StringUtils.replace(imageBody, "##IT1_WAR_C##", "warning");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT1_WAR_C##", "");
-      }
-      if (ir.getITErrors(2).size() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##IT2_ERR_C##", "error");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT2_ERR_C##", "");
-      }
-      if (ir.getNItWar(2) > 0) {
-        imageBody = StringUtils.replace(imageBody, "##IT2_WAR_C##", "warning");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##IT2_WAR_C##", "");
-      }
-
-      if (ir.getPCErrors().size() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##PC_ERR_C##", "error");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##PC_ERR_C##", "");
-      }
-      if (ir.getPCWarnings().size() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##PC_WAR_C##", "warning");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##PC_WAR_C##", "");
-      }
-
-      // Percent Info
-      if (percent == 100) {
-        imageBody = StringUtils.replace(imageBody, "##CLASS##", "success");
-        imageBody = StringUtils.replace(imageBody, "##RESULT##", "Passed");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##CLASS##", "error");
-        imageBody = StringUtils.replace(imageBody, "##RESULT##", "Failed");
-      }
-      if (ir.getNEpWar() > 0) {
-        imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "inline-block");
-      } else {
-        imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "none");
-      }
-
-      // Percent Chart
-      int angle = percent * 360 / 100;
-      int reverseAngle = 360 - angle;
-      String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
-      if (percent < 100) {
-        functionPie += ", '#CCCCCC', 'red'); ";
-      } else {
-        functionPie += ", '#66CC66', '#66CC66'); ";
-      }
-      pieFunctions += functionPie;
-
-      imagesBody += imageBody;
-      index++;
-    }
-
-    // Parse the sumary report numbers
-    String htmlBody;
-    htmlBody = generator.readFilefromResources(templatePath);
-    Double doub = 1.0 * gr.getReportsOk() / gr.getReportsCount() * 100.0;
-    int globalPercent = doub.intValue();
-    htmlBody = StringUtils.replace(htmlBody, "##IMAGES_LIST##", imagesBody);
-    htmlBody = StringUtils.replace(htmlBody, "##PERCENT##", "" + globalPercent);
-    String scount = gr.getReportsCount() + " ";
-    if (gr.getReportsCount() == 1) scount += "file";
-    else scount += "files";
-    htmlBody = StringUtils.replace(htmlBody, "##COUNT##", "" + scount);
-    htmlBody = StringUtils.replace(htmlBody, "##OK##", "" + gr.getReportsOk());
-
-    if (gr.getHasBl()) {
-      htmlBody = StringUtils.replace(htmlBody, "##BL_OK##", "" + gr.getReportsBl());
-      htmlBody = StringUtils.replace(htmlBody, "##BL_TYP##", gr.getReportsBl() == gr.getReportsCount() ? "success" : "error");
-    } else {
-      htmlBody = StringUtils.replace(htmlBody, "##ROW_BL##", "hide");
-    }
-
-    if (gr.getHasEp()) {
-      htmlBody = StringUtils.replace(htmlBody, "##EP_OK##", "" + gr.getReportsEp());
-      htmlBody = StringUtils.replace(htmlBody, "##EP_TYP##", gr.getReportsEp() == gr.getReportsCount() ? "success" : "error");
-    } else {
-      htmlBody = StringUtils.replace(htmlBody, "##ROW_EP##", "hide");
-    }
-
-    if (gr.getHasIt0()) {
-      htmlBody = StringUtils.replace(htmlBody, "##IT_OK##", "" + gr.getReportsIt0());
-      htmlBody = StringUtils.replace(htmlBody, "##IT_TYP##", gr.getReportsIt0() == gr.getReportsCount() ? "success" : "error");
-    } else {
-      htmlBody = StringUtils.replace(htmlBody, "##ROW_IT##", "hide");
-    }
-
-    if (gr.getHasIt1()) {
-      htmlBody = StringUtils.replace(htmlBody, "##IT1_OK##", "" + gr.getReportsIt1());
-      htmlBody = StringUtils.replace(htmlBody, "##IT1_TYP##", gr.getReportsIt1() == gr.getReportsCount() ? "success" : "error");
-    } else {
-      htmlBody = StringUtils.replace(htmlBody, "##ROW_IT1##", "hide");
-    }
-
-    if (gr.getHasIt2()) {
-      htmlBody = StringUtils.replace(htmlBody, "##IT2_OK##", "" + gr.getReportsIt2());
-      htmlBody = StringUtils.replace(htmlBody, "##IT2_TYP##", gr.getReportsIt2() == gr.getReportsCount() ? "success" : "error");
-    } else {
-      htmlBody = StringUtils.replace(htmlBody, "##ROW_IT2##", "hide");
-    }
-
-    if (gr.getHasPc()) {
-      htmlBody = StringUtils.replace(htmlBody, "##PC_OK##", "" + gr.getReportsPc());
-      htmlBody = StringUtils.replace(htmlBody, "##PC_TYP##", gr.getReportsPc() == gr.getReportsCount() ? "success" : "error");
-    } else {
-      htmlBody = StringUtils.replace(htmlBody, "##ROW_PC##", "hide");
-    }
-
-    htmlBody = StringUtils.replace(htmlBody, "##PC_OK##", "" + gr.getReportsPc());
-    htmlBody = StringUtils.replace(htmlBody, "##PC_TYP##", gr.getReportsPc() == gr.getReportsCount() ? "success" : "error");
-
-    htmlBody = StringUtils.replace(htmlBody, "##KO##", "" + gr.getReportsKo());
-    if (gr.getReportsOk() >= gr.getReportsKo()) {
-      htmlBody = StringUtils.replace(htmlBody, "##OK_C##", "success");
-      htmlBody = StringUtils.replace(htmlBody, "##KO_C##", "info-white");
-    } else {
-      htmlBody = StringUtils.replace(htmlBody, "##OK_C##", "info-white");
-      htmlBody = StringUtils.replace(htmlBody, "##KO_C##", "error");
-    }
-
-    // Chart
-    int angleG = globalPercent * 360 / 100;
-    int reverseAngleG = 360 - angleG;
-    String functionPie = "";
-    if (angleG > reverseAngleG) {
-      functionPie = "plotPie('pie-global', " + angleG + ", " + reverseAngleG;
-      if (gr.getReportsOk() >= gr.getReportsKo()) {
-        functionPie += ", '#66CC66', '#F2F2F2'); ";
-      } else {
-        functionPie += ", '#F2F2F2', 'red'); ";
-      }
-    } else {
-      functionPie = "plotPie('pie-global', " + reverseAngleG + ", " + angleG;
-      if (gr.getReportsOk() >= gr.getReportsKo()) {
-        functionPie += ", '#F2F2F2', '#66CC66'); ";
-      } else {
-        functionPie += ", 'red', '#F2F2F2'); ";
-      }
-    }
-    pieFunctions += functionPie;
-
-    // All charts calls
-    htmlBody = StringUtils.replace(htmlBody, "##PLOT##", pieFunctions);
-
-    // TO-DO
-    htmlBody = StringUtils.replace(htmlBody, "##OK_PC##", "0");
-    htmlBody = StringUtils.replace(htmlBody, "##OK_EP##", "0");
-    // END TO-DO
-
-    htmlBody = htmlBody.replaceAll("\\.\\./", "");
-    generator.writeToFile(outputfile, htmlBody);
+//    String templatePath = "templates/global.html";
+//    String imagePath = "templates/image.html";
+//    String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
+//
+//    String imagesBody = "";
+//    String pieFunctions = "";
+//
+//    // Parse individual Reports
+//    int index = 0;
+////    gr.computePcChecks();
+//    for (IndividualReport ir : gr.getIndividualReports()) {
+//      if (!ir.containsData()) continue;
+//      String imageBody;
+//      imageBody = generator.readFilefromResources(imagePath);
+//      // Image
+//      String imgPath = "html/img/" + new File(ir.getReportPath()).getName() + ".jpg";
+//      boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
+//      if (!check) {
+//        imgPath = "html/img/noise.jpg";
+//      }
+//      imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", encodeUrl(imgPath));
+//
+//      // Basic
+//      int percent = ir.calculatePercent();
+//      imageBody = StringUtils.replace(imageBody, "##PERCENT##", "" + percent);
+//      imageBody = StringUtils.replace(imageBody, "##INDEX##", "" + index);
+//      imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());
+//
+//      if (ir.checkEP && ir.hasEpValidation()) {
+//        imageBody = StringUtils.replace(imageBody, "##EP_ERR_N##", "" + ir.getEPErrors().size());
+//        imageBody = StringUtils.replace(imageBody, "##EP_WAR_N##", "" + ir.getNEpWar());
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##EP_CLASS##", "hide");
+//      }
+//
+//      if (ir.checkBL && ir.hasBlValidation()) {
+//        imageBody = StringUtils.replace(imageBody, "##BL_ERR_N##", "" + ir.getBaselineErrors().size());
+//        imageBody = StringUtils.replace(imageBody, "##BL_WAR_N##", "" + ir.getNBlWar());
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##BL_CLASS##", "hide");
+//      }
+//
+//      if (ir.checkIT0 && ir.hasItValidation(0)) {
+//        imageBody = StringUtils.replace(imageBody, "##IT_ERR_N##", "" + ir.getITErrors(0).size());
+//        imageBody = StringUtils.replace(imageBody, "##IT_WAR_N##", "" + ir.getNItWar(0));
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT_CLASS##", "hide");
+//      }
+//
+//      if (ir.checkIT1 && ir.hasItValidation(1)) {
+//        imageBody = StringUtils.replace(imageBody, "##IT1_ERR_N##", "" + ir.getITErrors(1).size());
+//        imageBody = StringUtils.replace(imageBody, "##IT1_WAR_N##", "" + ir.getNItWar(1));
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT1_CLASS##", "hide");
+//      }
+//
+//      if (ir.checkIT2 && ir.hasItValidation(2)) {
+//        imageBody = StringUtils.replace(imageBody, "##IT2_ERR_N##", "" + ir.getITErrors(2).size());
+//        imageBody = StringUtils.replace(imageBody, "##IT2_WAR_N##", "" + ir.getNItWar(2));
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT2_CLASS##", "hide");
+//      }
+//
+//      if (ir.checkPC) {
+//        imageBody = StringUtils.replace(imageBody, "##PC_ERR_N##", "" + ir.getPCErrors().size());
+//        imageBody = StringUtils.replace(imageBody, "##PC_WAR_N##", "" + ir.getPCWarnings().size());
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##PC_CLASS##", "hide");
+//      }
+//
+//      imageBody = StringUtils.replace(imageBody, "##HREF##", "html/" + encodeUrl(new File(ir.getReportPath()).getName() + ".html"));
+//      if (ir.getBaselineErrors().size() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##BL_ERR_C##", "error");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##BL_ERR_C##", "");
+//      }
+//      if (ir.getNBlWar() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##BL_WAR_C##", "warning");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##BL_WAR_C##", "");
+//      }
+//      if (ir.getEPErrors().size() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##EP_ERR_C##", "error");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##EP_ERR_C##", "");
+//      }
+//      if (ir.getNEpWar() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##EP_WAR_C##", "warning");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##EP_WAR_C##", "");
+//      }
+//      if (ir.getITErrors(0).size() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##IT_ERR_C##", "error");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT_ERR_C##", "");
+//      }
+//      if (ir.getNItWar(0) > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##IT_WAR_C##", "warning");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT_WAR_C##", "");
+//      }
+//      if (ir.getITErrors(1).size() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##IT1_ERR_C##", "error");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT1_ERR_C##", "");
+//      }
+//      if (ir.getNItWar(1) > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##IT1_WAR_C##", "warning");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT1_WAR_C##", "");
+//      }
+//      if (ir.getITErrors(2).size() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##IT2_ERR_C##", "error");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT2_ERR_C##", "");
+//      }
+//      if (ir.getNItWar(2) > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##IT2_WAR_C##", "warning");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##IT2_WAR_C##", "");
+//      }
+//
+//      if (ir.getPCErrors().size() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##PC_ERR_C##", "error");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##PC_ERR_C##", "");
+//      }
+//      if (ir.getPCWarnings().size() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##PC_WAR_C##", "warning");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##PC_WAR_C##", "");
+//      }
+//
+//      // Percent Info
+//      if (percent == 100) {
+//        imageBody = StringUtils.replace(imageBody, "##CLASS##", "success");
+//        imageBody = StringUtils.replace(imageBody, "##RESULT##", "Passed");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##CLASS##", "error");
+//        imageBody = StringUtils.replace(imageBody, "##RESULT##", "Failed");
+//      }
+//      if (ir.getNEpWar() > 0) {
+//        imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "inline-block");
+//      } else {
+//        imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "none");
+//      }
+//
+//      // Percent Chart
+//      int angle = percent * 360 / 100;
+//      int reverseAngle = 360 - angle;
+//      String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
+//      if (percent < 100) {
+//        functionPie += ", '#CCCCCC', 'red'); ";
+//      } else {
+//        functionPie += ", '#66CC66', '#66CC66'); ";
+//      }
+//      pieFunctions += functionPie;
+//
+//      imagesBody += imageBody;
+//      index++;
+//    }
+//
+//    // Parse the sumary report numbers
+//    String htmlBody;
+//    htmlBody = generator.readFilefromResources(templatePath);
+//    Double doub = 1.0 * gr.getReportsOk() / gr.getReportsCount() * 100.0;
+//    int globalPercent = doub.intValue();
+//    htmlBody = StringUtils.replace(htmlBody, "##IMAGES_LIST##", imagesBody);
+//    htmlBody = StringUtils.replace(htmlBody, "##PERCENT##", "" + globalPercent);
+//    String scount = gr.getReportsCount() + " ";
+//    if (gr.getReportsCount() == 1) scount += "file";
+//    else scount += "files";
+//    htmlBody = StringUtils.replace(htmlBody, "##COUNT##", "" + scount);
+//    htmlBody = StringUtils.replace(htmlBody, "##OK##", "" + gr.getReportsOk());
+//
+//    if (gr.getHasBl()) {
+//      htmlBody = StringUtils.replace(htmlBody, "##BL_OK##", "" + gr.getReportsBl());
+//      htmlBody = StringUtils.replace(htmlBody, "##BL_TYP##", gr.getReportsBl() == gr.getReportsCount() ? "success" : "error");
+//    } else {
+//      htmlBody = StringUtils.replace(htmlBody, "##ROW_BL##", "hide");
+//    }
+//
+//    if (gr.getHasEp()) {
+//      htmlBody = StringUtils.replace(htmlBody, "##EP_OK##", "" + gr.getReportsEp());
+//      htmlBody = StringUtils.replace(htmlBody, "##EP_TYP##", gr.getReportsEp() == gr.getReportsCount() ? "success" : "error");
+//    } else {
+//      htmlBody = StringUtils.replace(htmlBody, "##ROW_EP##", "hide");
+//    }
+//
+//    if (gr.getHasIt0()) {
+//      htmlBody = StringUtils.replace(htmlBody, "##IT_OK##", "" + gr.getReportsIt0());
+//      htmlBody = StringUtils.replace(htmlBody, "##IT_TYP##", gr.getReportsIt0() == gr.getReportsCount() ? "success" : "error");
+//    } else {
+//      htmlBody = StringUtils.replace(htmlBody, "##ROW_IT##", "hide");
+//    }
+//
+//    if (gr.getHasIt1()) {
+//      htmlBody = StringUtils.replace(htmlBody, "##IT1_OK##", "" + gr.getReportsIt1());
+//      htmlBody = StringUtils.replace(htmlBody, "##IT1_TYP##", gr.getReportsIt1() == gr.getReportsCount() ? "success" : "error");
+//    } else {
+//      htmlBody = StringUtils.replace(htmlBody, "##ROW_IT1##", "hide");
+//    }
+//
+//    if (gr.getHasIt2()) {
+//      htmlBody = StringUtils.replace(htmlBody, "##IT2_OK##", "" + gr.getReportsIt2());
+//      htmlBody = StringUtils.replace(htmlBody, "##IT2_TYP##", gr.getReportsIt2() == gr.getReportsCount() ? "success" : "error");
+//    } else {
+//      htmlBody = StringUtils.replace(htmlBody, "##ROW_IT2##", "hide");
+//    }
+//
+//    if (gr.getHasPc()) {
+//      htmlBody = StringUtils.replace(htmlBody, "##PC_OK##", "" + gr.getReportsPc());
+//      htmlBody = StringUtils.replace(htmlBody, "##PC_TYP##", gr.getReportsPc() == gr.getReportsCount() ? "success" : "error");
+//    } else {
+//      htmlBody = StringUtils.replace(htmlBody, "##ROW_PC##", "hide");
+//    }
+//
+//    htmlBody = StringUtils.replace(htmlBody, "##PC_OK##", "" + gr.getReportsPc());
+//    htmlBody = StringUtils.replace(htmlBody, "##PC_TYP##", gr.getReportsPc() == gr.getReportsCount() ? "success" : "error");
+//
+//    htmlBody = StringUtils.replace(htmlBody, "##KO##", "" + gr.getReportsKo());
+//    if (gr.getReportsOk() >= gr.getReportsKo()) {
+//      htmlBody = StringUtils.replace(htmlBody, "##OK_C##", "success");
+//      htmlBody = StringUtils.replace(htmlBody, "##KO_C##", "info-white");
+//    } else {
+//      htmlBody = StringUtils.replace(htmlBody, "##OK_C##", "info-white");
+//      htmlBody = StringUtils.replace(htmlBody, "##KO_C##", "error");
+//    }
+//
+//    // Chart
+//    int angleG = globalPercent * 360 / 100;
+//    int reverseAngleG = 360 - angleG;
+//    String functionPie = "";
+//    if (angleG > reverseAngleG) {
+//      functionPie = "plotPie('pie-global', " + angleG + ", " + reverseAngleG;
+//      if (gr.getReportsOk() >= gr.getReportsKo()) {
+//        functionPie += ", '#66CC66', '#F2F2F2'); ";
+//      } else {
+//        functionPie += ", '#F2F2F2', 'red'); ";
+//      }
+//    } else {
+//      functionPie = "plotPie('pie-global', " + reverseAngleG + ", " + angleG;
+//      if (gr.getReportsOk() >= gr.getReportsKo()) {
+//        functionPie += ", '#F2F2F2', '#66CC66'); ";
+//      } else {
+//        functionPie += ", 'red', '#F2F2F2'); ";
+//      }
+//    }
+//    pieFunctions += functionPie;
+//
+//    // All charts calls
+//    htmlBody = StringUtils.replace(htmlBody, "##PLOT##", pieFunctions);
+//
+//    // TO-DO
+//    htmlBody = StringUtils.replace(htmlBody, "##OK_PC##", "0");
+//    htmlBody = StringUtils.replace(htmlBody, "##OK_EP##", "0");
+//    // END TO-DO
+//
+//    htmlBody = htmlBody.replaceAll("\\.\\./", "");
+//    generator.writeToFile(outputfile, htmlBody);
   }
 
   private String encodeUrl(String str) {

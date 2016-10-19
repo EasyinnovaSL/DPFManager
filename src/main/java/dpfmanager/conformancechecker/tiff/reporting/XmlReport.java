@@ -1,13 +1,13 @@
 /**
- * <h1>XmlReport.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>XmlReport.java</h1> <p> This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -20,59 +20,45 @@
 package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.ReportHtml;
-import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
 import com.easyinnova.tiff.model.IfdTags;
-import com.easyinnova.tiff.model.ImageStrips;
-import com.easyinnova.tiff.model.Metadata;
-import com.easyinnova.tiff.model.Strip;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
-import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.Rational;
-import com.easyinnova.tiff.model.types.XMP;
-import com.easyinnova.tiff.model.types.abstractTiffType;
 
-import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import sun.awt.image.ImageDecoder;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -93,9 +79,9 @@ public class XmlReport {
   /**
    * Creates the ifd node.
    *
-   * @param doc the doc
-   * @param ir the ir
-   * @param ifd the ifd
+   * @param doc   the doc
+   * @param ir    the ir
+   * @param ifd   the ifd
    * @param index the index
    * @return the element
    */
@@ -149,7 +135,7 @@ public class XmlReport {
     // SubImage
     el = doc.createElement("hasSubIfd");
     if (ifd.getsubIFD() != null) {
-      typ="Thumbnail";
+      typ = "Thumbnail";
       if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = "Main image";
       el.setTextContent(typ);
     } else {
@@ -195,15 +181,14 @@ public class XmlReport {
       elchild.appendChild(elchild2);
 
       elchild2 = doc.createElement("id");
-      elchild2.setTextContent(t.getId()+"");
+      elchild2.setTextContent(t.getId() + "");
       elchild.appendChild(elchild2);
 
       elchild2 = doc.createElement("value");
       if (t.getCardinality() == 1 || t.toString().length() < 100) {
         String val = t.toString().replaceAll("\\p{C}", "?");
         elchild2.setTextContent(val);
-      }
-      else
+      } else
         elchild2.setTextContent("Array[" + t.getCardinality() + "]");
       elchild.appendChild(elchild2);
 
@@ -351,9 +336,9 @@ public class XmlReport {
   /**
    * Adds the errors warnings.
    *
-   * @param doc the doc
-   * @param results the results
-   * @param errors the errors
+   * @param doc      the doc
+   * @param results  the results
+   * @param errors   the errors
    * @param warnings the warnings
    */
   private void addErrorsWarnings(Document doc, Element results,
@@ -489,7 +474,7 @@ public class XmlReport {
    * Parse an individual report to XML format.
    *
    * @param doc the doc
-   * @param ir the individual report.
+   * @param ir  the individual report.
    * @return the element
    */
   private Element buildReportIndividual(Document doc, IndividualReport ir, Rules rules) {
@@ -524,7 +509,7 @@ public class XmlReport {
       Element infoElement;
       infoElement = doc.createElement("ByteOrder");
       String endianess = "none";
-      if (ir.getTiffModel().getEndianess() != null){
+      if (ir.getTiffModel().getEndianess() != null) {
         endianess = ir.getTiffModel().getEndianess().toString();
       }
       infoElement.setTextContent(endianess);
@@ -603,7 +588,8 @@ public class XmlReport {
 
         String eqxy = "True";
         if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))) {
-          if (!ifd.getTag("XResolution").toString().equals(ifd.getTag("YResolution").toString())) eqxy = "False";
+          if (!ifd.getTag("XResolution").toString().equals(ifd.getTag("YResolution").toString()))
+            eqxy = "False";
         }
         infoElement = doc.createElement("EqualXYResolution");
         infoElement.setTextContent(eqxy);
@@ -615,10 +601,10 @@ public class XmlReport {
           try {
             int xres = 1;
             int yres = 1;
-            Rational ratx = (Rational)ifd.getTag("XResolution").getValue().get(0);
-            Rational raty = (Rational)ifd.getTag("YResolution").getValue().get(0);
-            xres = (int)ratx.getFloatValue();
-            yres = (int)raty.getFloatValue();
+            Rational ratx = (Rational) ifd.getTag("XResolution").getValue().get(0);
+            Rational raty = (Rational) ifd.getTag("YResolution").getValue().get(0);
+            xres = (int) ratx.getFloatValue();
+            yres = (int) raty.getFloatValue();
             if (xres % 2 != 0 || yres % 2 != 0)
               dpi = "Uneven";
             else
@@ -670,8 +656,7 @@ public class XmlReport {
         report.appendChild(infoElement);
 
         String pixeldensity = "0";
-        if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("ResolutionUnit")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("XResolution")))
-        {
+        if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("ResolutionUnit")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("XResolution"))) {
           try {
             double ru = Double.parseDouble(ifd.getMetadata().get("ResolutionUnit").toString());
             String xres = ifd.getMetadata().get("XResolution").toString();
@@ -684,7 +669,7 @@ public class XmlReport {
             } else {
               ppi = xr / 0.3937;
             }
-            pixeldensity = ppi+"";
+            pixeldensity = ppi + "";
           } catch (Exception ex) {
             pixeldensity = "";
           }
@@ -715,7 +700,7 @@ public class XmlReport {
                   if (isBlank) nblanks++;
                 }
               }
-              boolean isBlank = (double)nblanks / (ww*hh) > percent_blank_pixels;
+              boolean isBlank = (double) nblanks / (ww * hh) > percent_blank_pixels;
               value = "False";
               if (isBlank) {
                 value = "True";
@@ -855,7 +840,8 @@ public class XmlReport {
           String tagname = tag.tv.getName().replace(" ", "");
           if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
           infoElement = doc.createElement(tagname);
-          String val = tag.tv.toString().replaceAll("\\p{C}", "?");;
+          String val = tag.tv.toString().replaceAll("\\p{C}", "?");
+          ;
 
           infoElement.setTextContent(val);
           infoElement.setAttribute(tagname, val);
@@ -867,101 +853,33 @@ public class XmlReport {
         }
       }
 
-      // implementation checker
-      List<RuleResult> errorsTotal = new ArrayList<RuleResult>();
-      List<RuleResult> warningsTotal = new ArrayList<RuleResult>();
-      if (ir.checkBL && ir.getBaselineErrors() != null) errorsTotal.addAll(ir.getBaselineErrors());
-      if (ir.checkEP && ir.getEPErrors() != null) errorsTotal.addAll(ir.getEPErrors());
-      if (ir.checkIT0 && ir.getITErrors(0) != null) errorsTotal.addAll(ir.getITErrors(0));
-      if (ir.checkIT1 && ir.getITErrors(1) != null) errorsTotal.addAll(ir.getITErrors(1));
-      if (ir.checkIT2 && ir.getITErrors(2) != null) errorsTotal.addAll(ir.getITErrors(2));
-      if (ir.checkBL && ir.getBaselineWarnings() != null) warningsTotal.addAll(ir.getBaselineWarnings());
-      if (ir.checkEP && ir.getEPWarnings() != null) warningsTotal.addAll(ir.getEPWarnings());
-      if (ir.checkIT0 && ir.getITWarnings(0) != null) warningsTotal.addAll(ir.getITWarnings(0));
-      if (ir.checkIT1 && ir.getITWarnings(1) != null) warningsTotal.addAll(ir.getITWarnings(1));
-      if (ir.checkIT2 && ir.getITWarnings(2) != null) warningsTotal.addAll(ir.getITWarnings(2));
+      // Implementation Checker
+      List<RuleResult> errorsTotal = ir.getAllErrors();
+      List<RuleResult> warningsTotal = ir.getAllWarnings();
 
       Element implementationCheckerElement = doc.createElement("implementation_checker");
       implementationCheckerElement.setAttribute("version", DPFManagerProperties.getVersion());
       implementationCheckerElement.setAttribute("ref", "DPF Manager");
       implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
       implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
-      implementationCheckerElement.setAttribute("conformsBL", (ir.getBaselineErrors() != null && ir.getBaselineErrors().size() == 0) + "");
-      implementationCheckerElement.setAttribute("conformsEP", (ir.getEPErrors() != null && ir.getEPErrors().size() == 0) + "");
-      implementationCheckerElement.setAttribute("conformsIT", (ir.getITErrors(0) != null && ir.getITErrors(0).size() == 0) + "");
-      implementationCheckerElement.setAttribute("conformsIT1", (ir.getITErrors(1) != null && ir.getITErrors(1).size() == 0) + "");
-      implementationCheckerElement.setAttribute("conformsIT2", (ir.getITErrors(2) != null && ir.getITErrors(2).size() == 0) + "");
+      for (String iso : ir.getIsosCheck()) {
+        if (!iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+          implementationCheckerElement.setAttribute(iso, (ir.getErrors(iso).size() == 0) + "");
+        }
+        ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(iso);
+        List<RuleResult> errors = ir.getErrors(iso);
+        List<RuleResult> warnings = ir.getWarnings(iso);
+        Element implementationCheck = doc.createElement("implementation_check");
+        Element name = doc.createElement("name");
+        name.setTextContent(iso);
+        if (icRules != null) {
+          name.setTextContent(icRules.getTitle());
+        }
+        implementationCheck.appendChild(name);
+        addErrorsWarnings(doc, implementationCheck, errors, warnings);
+        implementationCheckerElement.appendChild(implementationCheck);
+      }
       report.appendChild(implementationCheckerElement);
-
-      // Baseline
-      if (ir.checkBL) {
-        List<RuleResult> errors = ir.getBaselineErrors();
-        List<RuleResult> warnings = ir.getBaselineWarnings();
-        if (errors != null && warnings != null) {
-          Element results = doc.createElement("implementation_check");
-          Element name = doc.createElement("name");
-          name.setTextContent("Baseline 6.0");
-          results.appendChild(name);
-          addErrorsWarnings(doc, results, errors, warnings);
-          implementationCheckerElement.appendChild(results);
-        }
-      }
-
-      // TiffEP
-      if (ir.checkEP) {
-        List<RuleResult> errors = ir.getEPErrors();
-        List<RuleResult> warnings = ir.getEPWarnings();
-        if (errors != null && warnings != null) {
-          Element results = doc.createElement("implementation_check");
-          Element name = doc.createElement("name");
-          name.setTextContent("Tiff/EP");
-          results.appendChild(name);
-          addErrorsWarnings(doc, results, errors, warnings);
-          implementationCheckerElement.appendChild(results);
-        }
-      }
-
-      // TiffIT
-      if (ir.checkIT0) {
-        List<RuleResult> errors = ir.getITErrors(0);
-        List<RuleResult> warnings = ir.getITWarnings(0);
-        if (errors != null && warnings != null) {
-          Element results = doc.createElement("implementation_check");
-          Element name = doc.createElement("name");
-          name.setTextContent("Tiff-IT");
-          results.appendChild(name);
-          addErrorsWarnings(doc, results, errors, warnings);
-          implementationCheckerElement.appendChild(results);
-        }
-      }
-
-      // TiffIT-1
-      if (ir.checkIT1) {
-        List<RuleResult> errors = ir.getITErrors(1);
-        List<RuleResult> warnings = ir.getITWarnings(1);
-        if (errors != null && warnings != null) {
-          Element results = doc.createElement("implementation_check");
-          Element name = doc.createElement("name");
-          name.setTextContent("Tiff-IT P1");
-          results.appendChild(name);
-          addErrorsWarnings(doc, results, errors, warnings);
-          implementationCheckerElement.appendChild(results);
-        }
-      }
-
-      // TiffIT-2
-      if (ir.checkIT2) {
-        List<RuleResult> errors = ir.getITErrors(2);
-        List<RuleResult> warnings = ir.getITWarnings(2);
-        if (errors != null && warnings != null) {
-          Element results = doc.createElement("implementation_check");
-          Element name = doc.createElement("name");
-          name.setTextContent("Tiff-IT P2");
-          results.appendChild(name);
-          addErrorsWarnings(doc, results, errors, warnings);
-          implementationCheckerElement.appendChild(results);
-        }
-      }
 
       // Total
       Element results = doc.createElement("results");
@@ -989,8 +907,8 @@ public class XmlReport {
   /**
    * Parse an individual report to XML format.
    *
-   * @param ir      the individual report.
-   * @param rules   the policy checker.
+   * @param ir    the individual report.
+   * @param rules the policy checker.
    * @return the XML string generated.
    */
   public String parseIndividual(IndividualReport ir, Rules rules) {

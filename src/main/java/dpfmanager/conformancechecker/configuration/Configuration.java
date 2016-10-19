@@ -86,6 +86,36 @@ public class Configuration {
   private ResourceBundle bundle;
 
   /**
+   * Instantiates a new Configuration.
+   */
+  public Configuration() {
+    isos = new ArrayList<>();
+    rules = new Rules();
+    formats = new ArrayList<>();
+    fixes = new Fixes();
+    version = 0;
+    bundle = DPFManagerProperties.getBundle();
+  }
+
+  /**
+   * Instantiates a new Configuration with params
+   */
+  public Configuration(Rules rules, Fixes fixes, ArrayList<String> formats) {
+    isos = new ArrayList<>();
+    this.rules = rules;
+    this.formats = formats;
+    this.fixes = fixes;
+  }
+
+  /**
+   * Set the default values for a new configuration
+   */
+  public void initDefault() {
+    addISO("Baseline");
+    addFormat("HTML");
+  }
+
+  /**
    * Gets isos.
    *
    * @return the isos
@@ -131,36 +161,6 @@ public class Configuration {
    */
   public Rules getRules() {
     return rules;
-  }
-
-  /**
-   * Instantiates a new Configuration.
-   */
-  public Configuration() {
-    isos = new ArrayList<>();
-    rules = new Rules();
-    formats = new ArrayList<>();
-    fixes = new Fixes();
-    version = 0;
-    bundle = DPFManagerProperties.getBundle();
-  }
-
-  /**
-   * Instantiates a new Configuration with params
-   */
-  public Configuration(Rules rules, Fixes fixes, ArrayList<String> formats) {
-    isos = new ArrayList<>();
-    this.rules = rules;
-    this.formats = formats;
-    this.fixes = fixes;
-  }
-
-  /**
-   * Set the default values for a new configuration
-   */
-  public void initDefault() {
-    addISO("Baseline");
-    addFormat("HTML");
   }
 
   /**

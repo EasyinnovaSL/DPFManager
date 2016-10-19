@@ -69,7 +69,7 @@ public class InteroperabilityTest extends CommandLineTest {
       TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
 
       Validator v = new Validator();
-      v.validateBaseline(tiffValidation);
+      v.validate(tiffValidation, "implementationcheckers/BaselineProfileChecker.xml", false);
       int numberOfErrors = v.getErrors().size();
       assertEquals(0, numberOfErrors);
     } catch (ReadTagsIOException e) {
