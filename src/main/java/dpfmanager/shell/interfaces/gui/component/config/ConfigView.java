@@ -150,6 +150,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   }
 
   private void initAllFragments() {
+    getContext().getManagedFragmentHandler(Wizard1Fragment.class).getController().init();
     getContext().getManagedFragmentHandler(Wizard2Fragment.class).getController().setModel(getModel());
     getContext().getManagedFragmentHandler(Wizard4Fragment.class).getController().setModel(getModel());
 

@@ -20,14 +20,22 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.core.config.GuiConfig;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.layout.VBox;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adrià Llorens on 08/03/2016.
@@ -42,33 +50,75 @@ public class Wizard1Fragment {
   private Context context;
 
   @FXML
-  private CheckBox radProf1, radProf2, radProf3, radProf4, radProf5;
+  private VBox vboxRadios;
 
   public Wizard1Fragment() {
   }
 
+  public void init() {
+    List<String> paths = ImplementationCheckerLoader.getPathsList();
+    for (String path : paths){
+      addCheckBox(ImplementationCheckerLoader.getFileName(path), ImplementationCheckerLoader.getIsoName(path));
+    }
+  }
+
+  private void addCheckBox(String id, String name){
+    CheckBox chk = new CheckBox(name);
+    chk.setId(id);
+    chk.getStyleClass().add("checkreport");
+    vboxRadios.getChildren().add(chk);
+  }
+
   public void clear() {
-    radProf1.setSelected(false);
-    radProf2.setSelected(false);
-    radProf3.setSelected(false);
-    radProf4.setSelected(false);
-    radProf5.setSelected(false);
+    List<CheckBox> toDelete = new ArrayList<>();
+    for (Node node : vboxRadios.getChildren()){
+      CheckBox chk = (CheckBox) node;
+      chk.setSelected(false);
+      if (chk.getId().startsWith("external")){
+        toDelete.add(chk);
+      }
+    }
+    vboxRadios.getChildren().removeAll(toDelete);
   }
 
   public void saveIsos(Configuration config) {
     config.getIsos().clear();
-    if (radProf1.isSelected()) config.addISO("Baseline");
-    if (radProf2.isSelected()) config.addISO("Tiff/EP");
-    if (radProf3.isSelected()) config.addISO("Tiff/IT");
-    if (radProf4.isSelected()) config.addISO("Tiff/IT-1");
-    if (radProf5.isSelected()) config.addISO("Tiff/IT-2");
+    for (Node node : vboxRadios.getChildren()){
+      CheckBox chk = (CheckBox) node;
+      if (chk.isSelected()) {
+        if (chk.getId().startsWith("external")){
+          // Path
+          config.addISO(chk.getText());
+        } else {
+          // Internal
+          config.addISO(chk.getId());
+        }
+      }
+    }
   }
 
   public void loadIsos(Configuration config) {
-    radProf1.setSelected(config.getIsos().contains("Baseline"));
-    radProf2.setSelected(config.getIsos().contains("Tiff/EP"));
-    radProf3.setSelected(config.getIsos().contains("Tiff/IT"));
-    radProf4.setSelected(config.getIsos().contains("Tiff/IT-1"));
-    radProf5.setSelected(config.getIsos().contains("Tiff/IT-2"));
+    int c = 0;
+    for (String iso : config.getIsos()){
+      CheckBox chk = getCheckById(iso);
+      if (chk != null){
+        // Internal
+        chk.setSelected(true);
+      } else {
+        // Path
+        addCheckBox("external"+c, iso);
+        c++;
+      }
+    }
+  }
+
+  private CheckBox getCheckById(String id) {
+    for (Node node : vboxRadios.getChildren()){
+      CheckBox chk = (CheckBox) node;
+      if (chk.getId().equals(id)){
+        return chk;
+      }
+    }
+    return null;
   }
 }

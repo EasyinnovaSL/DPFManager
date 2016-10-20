@@ -329,7 +329,7 @@ public class XmlReport {
     showableTags.add("DateTimeOriginal");
     showableTags.add("Flash");
     showableTags.add("TIFFEPStandardID");*/
-    //if (tv.getName().equals(""+tv.getId())) return false;
+    //if (tv.getFileName().equals(""+tv.getId())) return false;
     return showableTags.contains(tv.getName());
   }
 
@@ -741,7 +741,7 @@ public class XmlReport {
 
           /*if (tag.tv.getId() == 700) {
             // XMP
-            String tagname = tag.tv.getName().replace(" ", "");
+            String tagname = tag.tv.getFileName().replace(" ", "");
             if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
             infoElement = doc.createElement(tagname);
             infoElement.setAttribute("id", tag.tv.getId() + "");
@@ -781,7 +781,7 @@ public class XmlReport {
           }
           if (tag.tv.getId() == 33723) {
             // IPTC
-            String tagname = tag.tv.getName().replace(" ", "");
+            String tagname = tag.tv.getFileName().replace(" ", "");
             if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
             infoElement = doc.createElement(tagname);
             infoElement.setAttribute("id", tag.tv.getId() + "");
@@ -809,7 +809,7 @@ public class XmlReport {
           }
           if (tag.tv.getId() == 34665) {
             // EXIF
-            String tagname = tag.tv.getName().replace(" ", "");
+            String tagname = tag.tv.getFileName().replace(" ", "");
             if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
             infoElement = doc.createElement(tagname);
             infoElement.setAttribute("id", tag.tv.getId() + "");
@@ -819,7 +819,7 @@ public class XmlReport {
               IFD exif = (IFD)to;
               try {
                 for (TagValue tv : exif.getTags().getTags()) {
-                  String name = tv.getName().replace(" ", "");
+                  String name = tv.getFileName().replace(" ", "");
                   if (name.equals(tv.getId() + "")) name = "Undefined" + name;
                   Element childElement = doc.createElement(name);
                   String val = tv.getDescriptiveValue().toString().replaceAll("\\p{C}", "?");;
@@ -864,7 +864,7 @@ public class XmlReport {
       implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
       implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
       for (String path : ImplementationCheckerLoader.getPathsList()){
-        String name = ImplementationCheckerLoader.getName(path);
+        String name = ImplementationCheckerLoader.getFileName(path);
         implementationCheckerElement.setAttribute(name, (ir.getErrors(name).size() == 0) + "");
       }
       for (String iso : ir.getIsosCheck()) {

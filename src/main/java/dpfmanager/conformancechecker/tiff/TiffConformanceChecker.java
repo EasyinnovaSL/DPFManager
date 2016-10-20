@@ -37,16 +37,11 @@ import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
 import dpfmanager.conformancechecker.tiff.reporting.MetsReport;
 import dpfmanager.conformancechecker.tiff.reporting.PdfReport;
 import dpfmanager.conformancechecker.tiff.reporting.XmlReport;
-import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
-import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
-import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 import com.google.common.reflect.ClassPath;
 
@@ -54,12 +49,10 @@ import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IccProfile;
 import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
-import org.apache.logging.log4j.Level;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -78,7 +71,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -90,7 +82,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -544,10 +535,10 @@ public class TiffConformanceChecker extends ConformanceChecker {
           String content = getValidationXmlString(tr);
           Map<String, Validator> validations = new HashMap<>();
           for (String path : ImplementationCheckerLoader.getPathsList()){
-            boolean check = config.getIsos().contains(ImplementationCheckerLoader.getName(path));
+            boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
             Validator validation = new Validator(Logger);
             validation.validate(content, path, !check);
-            validations.put(ImplementationCheckerLoader.getName(path), validation);
+            validations.put(ImplementationCheckerLoader.getFileName(path), validation);
           }
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
@@ -634,10 +625,10 @@ public class TiffConformanceChecker extends ConformanceChecker {
             String contentfixed = TiffConformanceChecker.getValidationXmlString(tr);
             Map<String, Validator> validationsFixed = new HashMap<>();
             for (String path : ImplementationCheckerLoader.getPathsList()){
-              boolean check = config.getIsos().contains(ImplementationCheckerLoader.getName(path));
+              boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
               Validator validation = new Validator(Logger);
               validation.validate(contentfixed, path, check);
-              validations.put(ImplementationCheckerLoader.getName(path), validation);
+              validations.put(ImplementationCheckerLoader.getFileName(path), validation);
             }
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");

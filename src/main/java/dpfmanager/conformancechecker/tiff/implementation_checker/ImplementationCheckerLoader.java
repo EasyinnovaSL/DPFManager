@@ -4,11 +4,12 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.Imp
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.IncludeType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,8 +28,12 @@ public class ImplementationCheckerLoader {
 
   static HashMap<String, ImplementationCheckerObjectType> preLoadedValidatorsSingleton = new HashMap<>();
 
+  public static String getDefaultIso() {
+    return "BaselineProfileChecker";
+  }
+
   public synchronized static ImplementationCheckerObjectType getRules(String rulesFile) {
-    if (!rulesFile.contains("/") && !rulesFile.contains(".")){
+    if (!rulesFile.contains("/") && !rulesFile.contains(".")) {
       rulesFile = "implementationcheckers/" + rulesFile + ".xml";
     }
 
@@ -70,8 +75,8 @@ public class ImplementationCheckerLoader {
       } else {
         rules = preLoadedValidatorsSingleton.get(rulesFile);
       }
-    } catch(JAXBException ex){
-
+    } catch (JAXBException ex) {
+      return null;
     }
     return rules;
   }
@@ -85,7 +90,7 @@ public class ImplementationCheckerLoader {
         fis = new FileInputStream(pathStr);
       } else {
         // Look in JAR
-        Class cls = ReportGenerator.class;
+        Class cls = ImplementationCheckerLoader.class;
         ClassLoader cLoader = cls.getClassLoader();
         fis = cLoader.getResourceAsStream(pathStr);
       }
@@ -94,28 +99,38 @@ public class ImplementationCheckerLoader {
     return fis;
   }
 
-  public static List<String> getPathsList(){
+  public static List<String> getPathsList() {
     List<String> list = new ArrayList<>();
-    list.add("implementationcheckers/BaselineProfileChecker.xml");
-    list.add("implementationcheckers/TiffEPProfileChecker.xml");
-    list.add("implementationcheckers/TiffITProfileChecker.xml");
-    list.add("implementationcheckers/TiffITP1ProfileChecker.xml");
-    list.add("implementationcheckers/TiffITP2ProfileChecker.xml");
+    String path = "implementationcheckers";
+    try {
+      Class cls = ImplementationCheckerLoader.class;
+      ClassLoader cLoader = cls.getClassLoader();
+      InputStream in = cLoader.getResourceAsStream(path);
+      BufferedReader br = new BufferedReader(new InputStreamReader(in));
+      String resource;
+      while ((resource = br.readLine()) != null) {
+        if (resource.endsWith(".xml")) {
+          list.add(path + "/" + resource);
+        }
+      }
+    } catch (Exception e) {
+
+    }
     return list;
   }
 
-  public static String getName(String path){
+  public static String getFileName(String path) {
     if (path.contains("/") && path.contains(".")) {
       return path.substring(path.indexOf("/") + 1, path.indexOf("."));
     }
     return path;
   }
 
-  public static String getIsoName(String path){
+  public static String getIsoName(String path) {
     ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(path);
-    if (icRules != null){
+    if (icRules != null) {
       return icRules.getTitle();
     }
-    return getName(path);
+    return getFileName(path);
   }
 }

@@ -19,6 +19,7 @@
 
 package dpfmanager.conformancechecker.configuration;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
@@ -111,7 +112,7 @@ public class Configuration {
    * Set the default values for a new configuration
    */
   public void initDefault() {
-    addISO("Baseline");
+    addISO(ImplementationCheckerLoader.getDefaultIso());
     addFormat("HTML");
   }
 
@@ -416,7 +417,16 @@ public class Configuration {
       Node node = isoList.item(i);
       if (node.getNodeType() == Node.ELEMENT_NODE) {
         Element elem = (Element) node;
-        isos.add(elem.getTextContent());
+        String iso = elem.getTextContent();
+        if (version == 1){
+          // Old iso format
+          if (parseOldToNewIso(iso) != null) {
+            isos.add(parseOldToNewIso(iso));
+          }
+        } else if (version == 2){
+          // New iso format
+          isos.add(elem.getTextContent());
+        }
       }
     }
 
@@ -496,6 +506,15 @@ public class Configuration {
         output = elem.getTextContent();
       }
     }
+  }
+
+  private String parseOldToNewIso(String old){
+    if (old.equals("Baseline")) return "BaselineProfileChecker";
+    if (old.equals("Tiff/EP")) return "TiffEPProfileChecker";
+    if (old.equals("Tiff/IT")) return "TiffITProfileChecker";
+    if (old.equals("Tiff/IT-1")) return "TiffITP1ProfileChecker";
+    if (old.equals("Tiff/IT-2")) return "TiffITP2ProfileChecker";
+    return null;
   }
 
   /**

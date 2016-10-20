@@ -228,7 +228,7 @@ public class PdfReport extends Report {
                 pdfParams.y -= 18;
                 pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
                 pdfParams = writeText(pdfParams, "", pos_x + 40, font, font_size);
-                pdfParams = writeText(pdfParams, tv.getName(), pos_x + 80, font, font_size);
+                pdfParams = writeText(pdfParams, tv.getFileName(), pos_x + 80, font, font_size);
                 pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + 200, font, font_size);
               }
             } catch (Exception ex) {
