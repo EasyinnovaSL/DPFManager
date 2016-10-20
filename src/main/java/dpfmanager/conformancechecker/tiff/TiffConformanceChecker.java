@@ -540,6 +540,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
             validation.validate(content, path, !check);
             validations.put(ImplementationCheckerLoader.getFileName(path), validation);
           }
+          for (String iso : config.getIsos()){
+            if (iso.endsWith(".xml")){
+              Validator validation = new Validator(Logger);
+              validation.validate(content, iso, false);
+              validations.put(iso, validation);
+            }
+          }
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);

@@ -58,12 +58,18 @@ public class GlobalReport {
   private List<String> isos;
 
   /**
+   * The isos checked
+   */
+  private List<String> isosChecked;
+
+  /**
    * Instantiates a new global report.
    */
   public GlobalReport() {
     reports = new ArrayList<>();
     nReportsOk = new HashMap<>();
     isos = new ArrayList<>();
+    isosChecked = new ArrayList<>();
   }
 
   /**
@@ -73,6 +79,15 @@ public class GlobalReport {
    */
   public List<String> getIsos() {
     return isos;
+  }
+
+  /**
+   * Gets isos.
+   *
+   * @return the isos
+   */
+  public List<String> getCheckedIsos() {
+    return isosChecked;
   }
 
 
@@ -95,7 +110,7 @@ public class GlobalReport {
       if (ir.isError()){
         toDelete.add(ir);
       } else {
-        for (String iso : ir.getIsosCheck()){
+        for (String iso : ir.getCheckedIsos()){
           if (ir.hasValidation(iso)){
             if (ir.getErrors(iso).size() == 0){
               if (nReportsOk.containsKey(iso)){
@@ -106,6 +121,7 @@ public class GlobalReport {
             }
             if (!isos.contains(iso)) isos.add(iso);
           }
+          if (!isosChecked.contains(iso)) isosChecked.add(iso);
         }
       }
     }
@@ -153,7 +169,7 @@ public class GlobalReport {
   public int getReportsOk(String iso) {
     int n = 0;
     for (IndividualReport ir : reports) {
-      if (ir.hasValidation(iso) && ir.getErrors(iso).size() == 0){
+      if (ir.getErrors(iso).size() == 0){
         n++;
       }
     }

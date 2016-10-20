@@ -177,6 +177,12 @@ public class IndividualReport implements Comparable {
     return isosCheck;
   }
 
+  public List<String> getCheckedIsos() {
+    List<String> checked = new ArrayList<>();
+    checked.addAll(errors.keySet());
+    return checked;
+  }
+
   public void setConformanceCheckerReport(String report) {
     conformanceCheckerReport = report;
   }
@@ -368,7 +374,7 @@ public class IndividualReport implements Comparable {
    * @return the boolean
    */
   public boolean hasValidation(String key) {
-    return errors.containsKey(key);
+    return isosCheck.contains(key);
   }
 
   /**
@@ -445,7 +451,7 @@ public class IndividualReport implements Comparable {
    */
   public int getNInfos(String key) {
     int n = 0;
-    for (RuleResult rule :getWarnings(key)){
+    for (RuleResult rule :getOnlyInfos(key)){
       if (rule.getInfo()) n++;
     }
     return n;
@@ -458,6 +464,14 @@ public class IndividualReport implements Comparable {
    */
   public int getNErrors(String key) {
     return getErrors(key).size();
+  }
+
+  public int getAllNWarnings() {
+    int n = 0;
+    for (String key : warnings.keySet()){
+      n += getNWarnings(key);
+    }
+    return n;
   }
 
   public List<RuleResult> getAllErrors() {

@@ -86,12 +86,14 @@ public class ReportPDF extends ReportGeneric {
       pdfParams.y -= 15;
       font_size = 8;
       Color col;
-      for (String iso : gr.getIsos()){
-        String name = ImplementationCheckerLoader.getIsoName(iso);
-        pdfParams.y -= 15;
-        col = gr.getReportsOk(iso) == gr.getReportsCount() ? Color.green : Color.red;
-        pdfParams = writeText(pdfParams, gr.getReportsOk(iso) + "", pos_x, font, font_size, col);
-        pdfParams = writeText(pdfParams, "conforms to " + name, pos_x + 30, font, font_size, col);
+      for (String iso : gr.getCheckedIsos()){
+        if (gr.getIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
+          String name = ImplementationCheckerLoader.getIsoName(iso);
+          pdfParams.y -= 15;
+          col = gr.getReportsOk(iso) == gr.getReportsCount() ? Color.green : Color.red;
+          pdfParams = writeText(pdfParams, gr.getReportsOk(iso) + "", pos_x, font, font_size, col);
+          pdfParams = writeText(pdfParams, "conforms to " + name, pos_x + 30, font, font_size, col);
+        }
       }
 
       // Pie chart
@@ -174,12 +176,14 @@ public class ReportPDF extends ReportGeneric {
           pdfParams.y -= 2;
 
           // Isos table
-          for (String iso : ir.getIsosCheck()){
-            String name = ImplementationCheckerLoader.getIsoName(iso);
-            pdfParams.y -= 10;
-            pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
-            pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + 110, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
-            pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + 140, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+          for (String iso : ir.getCheckedIsos()) {
+            if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+              String name = ImplementationCheckerLoader.getIsoName(iso);
+              pdfParams.y -= 10;
+              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
+              pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + 110, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
+              pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + 140, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+            }
           }
           if (pdfParams.y < maxy) maxy = pdfParams.y;
 

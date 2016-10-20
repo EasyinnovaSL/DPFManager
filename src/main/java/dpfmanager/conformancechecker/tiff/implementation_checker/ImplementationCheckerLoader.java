@@ -4,6 +4,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.Imp
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.IncludeType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
+import dpfmanager.shell.core.DPFManagerProperties;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -27,6 +28,9 @@ import javax.xml.bind.Unmarshaller;
 public class ImplementationCheckerLoader {
 
   static HashMap<String, ImplementationCheckerObjectType> preLoadedValidatorsSingleton = new HashMap<>();
+
+  private static List<String> isoNames;
+  private static List<String> isoPaths;
 
   public static String getDefaultIso() {
     return "BaselineProfileChecker";
@@ -84,10 +88,14 @@ public class ImplementationCheckerLoader {
   private static InputStream getFileFromResources(String pathStr) {
     InputStream fis = null;
     Path path = Paths.get(pathStr);
+    Path pathConfig = Paths.get(DPFManagerProperties.getIsosDir() + "/" + pathStr);
     try {
       if (Files.exists(path)) {
         // Look in current dir
         fis = new FileInputStream(pathStr);
+      } else if (Files.exists(pathConfig)) {
+        // Look in isos config
+        fis = new FileInputStream(DPFManagerProperties.getIsosDir() + "/" + pathStr);
       } else {
         // Look in JAR
         Class cls = ImplementationCheckerLoader.class;
@@ -100,23 +108,49 @@ public class ImplementationCheckerLoader {
   }
 
   public static List<String> getPathsList() {
-    List<String> list = new ArrayList<>();
-    String path = "implementationcheckers";
-    try {
-      Class cls = ImplementationCheckerLoader.class;
-      ClassLoader cLoader = cls.getClassLoader();
-      InputStream in = cLoader.getResourceAsStream(path);
-      BufferedReader br = new BufferedReader(new InputStreamReader(in));
-      String resource;
-      while ((resource = br.readLine()) != null) {
-        if (resource.endsWith(".xml")) {
-          list.add(path + "/" + resource);
+    if (isoPaths == null) {
+      List<String> list = new ArrayList<>();
+      String path = "implementationcheckers";
+      try {
+        Class cls = ImplementationCheckerLoader.class;
+        ClassLoader cLoader = cls.getClassLoader();
+        InputStream in = cLoader.getResourceAsStream(path);
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String resource;
+        while ((resource = br.readLine()) != null) {
+          if (resource.endsWith(".xml")) {
+            list.add(path + "/" + resource);
+          }
         }
-      }
-    } catch (Exception e) {
+      } catch (Exception e) {
 
+      }
+      isoPaths = list;
     }
-    return list;
+    return isoPaths;
+  }
+
+  public static List<String> getNamesList() {
+    if (isoNames == null) {
+      List<String> list = new ArrayList<>();
+      String path = "implementationcheckers";
+      try {
+        Class cls = ImplementationCheckerLoader.class;
+        ClassLoader cLoader = cls.getClassLoader();
+        InputStream in = cLoader.getResourceAsStream(path);
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String resource;
+        while ((resource = br.readLine()) != null) {
+          if (resource.endsWith(".xml")) {
+            list.add(resource.replace(".xml", ""));
+          }
+        }
+      } catch (Exception e) {
+
+      }
+      isoNames = list;
+    }
+    return isoNames;
   }
 
   public static String getFileName(String path) {

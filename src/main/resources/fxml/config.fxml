@@ -95,7 +95,11 @@
             <!--<fx:include fx:id="included3" source="config/subconfig3.fxml" />-->
             <!--<fx:include fx:id="included4" source="config/subconfig4.fxml" />-->
             <!--<fx:include fx:id="included5" source="config/subconfig5.fxml" />-->
-
+            <Label fx:id="labelW1" styleClass="label-info" text="%w1StandardsNote" wrapText="true">
+                <VBox.margin>
+                    <Insets left="80.0" right="80.0" top="15.0" />
+                </VBox.margin>
+            </Label>
             <ImageView focusTraversable="true" preserveRatio="true">
                 <image> <Image url="@../images/lineBottom.png" /></image>
                 <VBox.margin>
@@ -152,11 +156,11 @@
          </GridPane>
         <GridPane>
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" halignment="RIGHT" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="10.0" />
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
-            <Button fx:id="backButton" mnemonicParsing="false" onAction="#doBack" styleClass="main-button" text="%configBack" GridPane.columnIndex="0" >
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#doBack" styleClass="main-button" text="%configBack" GridPane.columnIndex="0">
                 <VBox.margin>
                     <Insets bottom="30.0" right="10.0" />
                 </VBox.margin>
@@ -166,6 +170,9 @@
                     <Insets bottom="30.0" left="10.0" />
                 </VBox.margin>
             </Button>
+            <rowConstraints>
+               <RowConstraints />
+            </rowConstraints>
         </GridPane>
         </VBox>
     </children>

@@ -98,26 +98,14 @@ public class HtmlReport extends Report {
     htmlBody = StringUtils.replace(htmlBody, "##IMG_PATH##", encodeUrl(imgPath));
 
     /**
-     * Basic info
+     * Basic info / divs conforms
      */
     htmlBody = StringUtils.replace(htmlBody, "##IMG_NAME##", ir.getFileName());
     htmlBody = StringUtils.replace(htmlBody, "##IMG_FILEPATH##", ir.getFilePath());
-    String tmplPassed = "<div class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to ##TITLE##</div>";
-    String tmplWarn = "<div class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to ##TITLE##, BUT it has some warnings</div>";
-    String tmplError = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to ##TITLE##</div>";
     String divs = "";
-    for (String iso : ir.getIsosCheck()){
-      String name = ImplementationCheckerLoader.getIsoName(iso);
-      if (ir.hasValidation(iso)) {
-        int err = ir.getNErrors(iso);
-        int war = ir.getNWarnings(iso);
-        if (err == 0 && war == 0){
-          divs += StringUtils.replace(tmplPassed, "##TITLE##", name);
-        } else if (err == 0 && war > 0){
-          divs += StringUtils.replace(tmplWarn, "##TITLE##", name);
-        } else {
-          divs += StringUtils.replace(tmplError, "##TITLE##", name);
-        }
+    for (String iso : ir.getCheckedIsos()){
+      if (ir.hasValidation(iso) || ir.getErrors(iso).isEmpty()){
+        divs += makeConformsText(ir, iso);
       }
     }
     htmlBody = StringUtils.replace(htmlBody, "##DIVS_CONFORMS##", divs);
@@ -140,10 +128,10 @@ public class HtmlReport extends Report {
         "    <td class=\"##WAR_CLASS##\">##WAR##</td>\n" +
         "    </tr>";
     String rows = "";
-    for (String iso : ir.getIsosCheck()){
-      String name = ImplementationCheckerLoader.getIsoName(iso);
-      String row = rowTmpl;
-      if (ir.hasValidation(iso)) {
+    for (String iso : ir.getCheckedIsos()){
+      if (ir.hasValidation(iso) || ir.getErrors(iso).isEmpty()) {
+        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String row = rowTmpl;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
         row = StringUtils.replace(row, "##TITLE##", name);
@@ -153,8 +141,8 @@ public class HtmlReport extends Report {
         row = StringUtils.replace(row, "##WAR##", "" + warningsCount + difWar);
         row = StringUtils.replace(row, "##ERR_CLASS##", errorsCount > 0 ? "error" : "info");
         row = StringUtils.replace(row, "##WAR_CLASS##", warningsCount > 0 ? "warning" : "info");
+        rows += row;
       }
-      rows += row;
     }
     htmlBody = StringUtils.replace(htmlBody, "##TABLE_RESUME_ERRORS##", rows);
 
@@ -180,9 +168,9 @@ public class HtmlReport extends Report {
         "\t\t\t\t\t</table>";
     rows = "";
     for (String iso : ir.getIsosCheck()){
-      String name = ImplementationCheckerLoader.getIsoName(iso);
-      String row = fullTmpl;
       if (ir.hasValidation(iso)) {
+        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String row = fullTmpl;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
         int infosCount = ir.getNInfos(iso);
@@ -202,8 +190,7 @@ public class HtmlReport extends Report {
             allRows += errRow;
           }
           // Warnings
-          for (RuleResult val : ir.getWarnings(iso)) {
-            if (!val.getRule().isWarning()) continue;
+          for (RuleResult val : ir.getOnlyWarnings(iso)) {
             String rowWar = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
             rowWar = rowWar.replace("##LOC##", val.getLocation());
             rowWar = rowWar.replace("##REF##", val.getReference() != null ? val.getReference() : "");
@@ -211,8 +198,7 @@ public class HtmlReport extends Report {
             allRows += rowWar;
           }
           // Infos
-          for (RuleResult val : ir.getWarnings(iso)) {
-            if (!val.getRule().isInfo()) continue;
+          for (RuleResult val : ir.getOnlyInfos(iso)) {
             String rowInfo = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
             rowInfo = rowInfo.replace("##LOC##", val.getLocation());
             rowInfo = rowInfo.replace("##REF##", val.getReference() != null ? val.getReference() : "");
@@ -223,8 +209,8 @@ public class HtmlReport extends Report {
         }
         row = StringUtils.replace(row, "##CONTENT##", content);
         row = StringUtils.replace(row, "##TITLE##", name);
+        rows += row;
       }
-      rows += row;
     }
     htmlBody = StringUtils.replace(htmlBody, "##DIVS_ERRORS##", rows);
 
@@ -386,6 +372,22 @@ public class HtmlReport extends Report {
     // Finish, write to html file
     htmlBody = StringUtils.replace(htmlBody, "\\.\\./html/", "");
     return htmlBody;
+  }
+
+  private String makeConformsText(IndividualReport ir, String iso){
+    String tmplPassed = "<div class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to ##TITLE##</div>";
+    String tmplWarn = "<div class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to ##TITLE##, BUT it has some warnings</div>";
+    String tmplError = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to ##TITLE##</div>";
+    String name = ImplementationCheckerLoader.getIsoName(iso);
+    int err = ir.getNErrors(iso);
+    int war = ir.getNWarnings(iso);
+    if (err == 0 && war == 0){
+      return StringUtils.replace(tmplPassed, "##TITLE##", name);
+    } else if (err == 0 && war > 0){
+      return StringUtils.replace(tmplWarn, "##TITLE##", name);
+    } else {
+      return StringUtils.replace(tmplError, "##TITLE##", name);
+    }
   }
 
   /**

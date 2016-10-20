@@ -20,6 +20,7 @@
 package dpfmanager.shell.modules.report.util;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
+import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
@@ -69,7 +70,7 @@ public class ReportHtml extends ReportGeneric {
       imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());
 
       /**
-       * Errors / warnings resume
+       * Errors / warnings resume (individual)
        */
       String rowTmpl =  "<tr>\n" +
           "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
@@ -78,10 +79,10 @@ public class ReportHtml extends ReportGeneric {
           "\t\t\t\t\t\t        <td></td>\n" +
           "\t\t\t\t\t\t    </tr>";
       String rows = "";
-      for (String iso : ir.getIsosCheck()){
-        String name = ImplementationCheckerLoader.getIsoName(iso);
-        String row = rowTmpl;
-        if (ir.hasValidation(iso)) {
+      for (String iso : ir.getCheckedIsos()){
+        if (ir.hasValidation(iso) || ir.getErrors(iso).isEmpty()) {
+          String name = ImplementationCheckerLoader.getIsoName(iso);
+          String row = rowTmpl;
           int errorsCount = ir.getNErrors(iso);
           int warningsCount = ir.getNWarnings(iso);
           row = StringUtils.replace(row, "##NAME##", name);
@@ -97,8 +98,8 @@ public class ReportHtml extends ReportGeneric {
           } else {
             row = StringUtils.replace(row, "##WAR_C##", "");
           }
+          rows += row;
         }
-        rows += row;
       }
       imageBody = StringUtils.replace(imageBody, "##TABLE_RESUME_IMAGE##", rows);
       imageBody = StringUtils.replace(imageBody, "##HREF##", "html/" + encodeUrl(new File(ir.getReportPath()).getName() + ".html"));
@@ -109,7 +110,7 @@ public class ReportHtml extends ReportGeneric {
       if (percent == 100) {
         imageBody = StringUtils.replace(imageBody, "##CLASS##", "success");
         imageBody = StringUtils.replace(imageBody, "##RESULT##", "Passed");
-        if (ir.getAllWarnings().size() > 0) {
+        if (ir.getAllNWarnings() > 0) {
           imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "inline-block");
         } else {
           imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "none");
@@ -151,16 +152,13 @@ public class ReportHtml extends ReportGeneric {
     htmlBody = StringUtils.replace(htmlBody, "##OK##", "" + gr.getAllReportsOk());
 
     /**
-     * Conforms table
+     * Conforms table (all)
      */
-    String rowTmpl =  "<tr><td class=\"##TYPE## border-bot\">##OK##</td><td class=\"##TYPE## border-bot\">conforms to ##NAME##</td></tr>";
     String rows = "";
-    for (String iso : gr.getIsos()){
-      String row = rowTmpl;
-      row = StringUtils.replace(row, "##OK##", "" + gr.getReportsOk(iso));
-      row = StringUtils.replace(row, "##NAME##", ImplementationCheckerLoader.getIsoName(iso));
-      row = StringUtils.replace(row, "##TYPE##", gr.getReportsOk(iso) == gr.getReportsCount() ? "success" : "error");
-      rows += row;
+    for (String iso : gr.getCheckedIsos()){
+      if (gr.getIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
+        rows += makeConformsRow(gr, iso, true);
+      }
     }
     htmlBody = StringUtils.replace(htmlBody, "##TABLE_RESUME##", rows);
 
@@ -204,6 +202,14 @@ public class ReportHtml extends ReportGeneric {
 
     htmlBody = htmlBody.replaceAll("\\.\\./", "");
     generator.writeToFile(outputfile, htmlBody);
+  }
+
+  private String makeConformsRow(GlobalReport gr, String iso, boolean force){
+    String row = "<tr><td class=\"##TYPE## border-bot\">##OK##</td><td class=\"##TYPE## border-bot\">conforms to ##NAME##</td></tr>";
+    row = StringUtils.replace(row, "##OK##", "" + gr.getReportsOk(iso));
+    row = StringUtils.replace(row, "##NAME##", ImplementationCheckerLoader.getIsoName(iso));
+    row = StringUtils.replace(row, "##TYPE##", gr.getReportsOk(iso) == gr.getReportsCount() ? "success" : "error");
+    return row;
   }
 
   private String encodeUrl(String str) {

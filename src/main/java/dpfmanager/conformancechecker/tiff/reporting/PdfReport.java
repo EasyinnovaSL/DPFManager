@@ -54,20 +54,16 @@ public class PdfReport extends Report {
    */
   int init_posy = 800;
 
-  PDFParams makeConformSection(int nerrors, int nwarnings, String key, PDFParams pdfParams0, boolean check, boolean forcecheck, int pos_x, int image_width, int font_size, PDFont font) throws Exception {
+  PDFParams makeConformSection(int nerrors, int nwarnings, String key, PDFParams pdfParams0, int pos_x, int image_width, int font_size, PDFont font) throws Exception {
     PDFParams pdfParams = pdfParams0;
-    if (check || (forcecheck && nerrors + nwarnings == 0)) {
-      if (nerrors > 0) {
-        pdfParams = writeText(pdfParams, "This file does NOT conform to " + key, pos_x + image_width + 10, font, font_size, Color.red);
-      } else if (nwarnings > 0) {
-        pdfParams = writeText(pdfParams, "This file conforms to " + key + ", BUT it has some warnings", pos_x + image_width + 10, font, font_size, Color.orange);
-      } else {
-        pdfParams = writeText(pdfParams, "This file conforms to " + key, pos_x + image_width + 10, font, font_size, Color.green);
-      }
-      pdfParams.y -= 20;
+    if (nerrors > 0) {
+      pdfParams = writeText(pdfParams, "This file does NOT conform to " + key, pos_x + image_width + 10, font, font_size, Color.red);
+    } else if (nwarnings > 0) {
+      pdfParams = writeText(pdfParams, "This file conforms to " + key + ", BUT it has some warnings", pos_x + image_width + 10, font, font_size, Color.orange);
     } else {
-
+      pdfParams = writeText(pdfParams, "This file conforms to " + key, pos_x + image_width + 10, font, font_size, Color.green);
     }
+    pdfParams.y -= 10;
     return pdfParams;
   }
 
@@ -78,13 +74,6 @@ public class PdfReport extends Report {
    */
   public void parseIndividual(IndividualReport ir) {
     try {
-//      int epErr = ir.getNEpErr(), epWar = ir.getNEpWar();
-//      int blErr = ir.getNBlErr(), blWar = ir.getNBlWar();
-//      int it0Err = ir.getNItErr(0), it0War = ir.getNItWar(0);
-//      int it1Err = ir.getNItErr(1), it2War = ir.getNItWar(1);
-//      int it2Err = ir.getNItErr(2), it1War = ir.getNItWar(2);
-//      int pcErr = ir.getPCErrors().size(), pcWar = ir.getPCWarnings().size();
-
       PDFParams pdfParams = new PDFParams();
       pdfParams.init(PDPage.PAGE_SIZE_A4);
       PDFont font = PDType1Font.HELVETICA_BOLD;
@@ -135,26 +124,31 @@ public class PdfReport extends Report {
       // Image alert
       pdfParams.y -= 30;
       font_size = 9;
-      for (String iso : ir.getIsosCheck()) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
-        pdfParams = makeConformSection(ir.getNErrors(iso), ir.getNWarnings(iso), name, pdfParams, true, true, pos_x, image_width, font_size, font);
+      for (String iso : ir.getCheckedIsos()) {
+        if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+          String name = ImplementationCheckerLoader.getIsoName(iso);
+          pdfParams = makeConformSection(ir.getNErrors(iso), ir.getNWarnings(iso), name, pdfParams, pos_x, image_width, font_size, font);
+        }
       }
+      pdfParams.y -= 10;
 
       // Summary table
       font_size = 8;
-      pdfParams = writeText(pdfParams, "Errors", pos_x + image_width + 140, font, font_size);
-      pdfParams = writeText(pdfParams, "Warnings", pos_x + image_width + 180, font, font_size);
+      pdfParams = writeText(pdfParams, "Errors", pos_x + image_width + 170, font, font_size);
+      pdfParams = writeText(pdfParams, "Warnings", pos_x + image_width + 210, font, font_size);
       String dif = "";
 
-      for (String iso : ir.getIsosCheck()) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
-        pdfParams.y -= 20;
-        pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y + 15, pos_x + image_width + 230, pdfParams.y + 15);
-        pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size);
-        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrors(iso), ir.getNErrors(iso)) : "";
-        pdfParams = writeText(pdfParams, ir.getNErrors(iso) + dif, pos_x + image_width + 150, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
-        dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarnings(iso), ir.getNWarnings(iso)) : "";
-        pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + dif, pos_x + image_width + 200, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+      for (String iso : ir.getCheckedIsos()) {
+        if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+          String name = ImplementationCheckerLoader.getIsoName(iso);
+          pdfParams.y -= 20;
+          pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y + 15, pos_x + image_width + 260, pdfParams.y + 15);
+          pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size);
+          dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrors(iso), ir.getNErrors(iso)) : "";
+          pdfParams = writeText(pdfParams, ir.getNErrors(iso) + dif, pos_x + image_width + 180, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
+          dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarnings(iso), ir.getNWarnings(iso)) : "";
+          pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + dif, pos_x + image_width + 230, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+        }
       }
 
       // Tags
