@@ -372,9 +372,9 @@ public class IndividualReport implements Comparable {
   }
 
   /**
-   * Get warnings list.
+   * Get warnings and infos list.
    *
-   * @return the errors
+   * @return the warnings and infos
    */
   public List<RuleResult> getWarnings(String key) {
     if (!warnings.containsKey(key)) {
@@ -396,14 +396,57 @@ public class IndividualReport implements Comparable {
   }
 
   /**
+   * Get warnings list.
+   *
+   * @return the warnings
+   */
+  public List<RuleResult> getOnlyWarnings(String key) {
+    List<RuleResult> result = new ArrayList<>();
+    for (RuleResult rule : getWarnings(key)){
+      if (rule.getWarning()){
+        result.add(rule);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Get infos list.
+   *
+   * @return the infos
+   */
+  public List<RuleResult> getOnlyInfos(String key) {
+    List<RuleResult> result = new ArrayList<>();
+    for (RuleResult rule : getWarnings(key)){
+      if (rule.getInfo()){
+        result.add(rule);
+      }
+    }
+    return result;
+  }
+
+  /**
    * Gets warnings count.
    *
    * @return the warnings count
    */
   public int getNWarnings(String key) {
     int n = 0;
-    for (RuleResult rule :getWarnings(key)){
+    for (RuleResult rule : getWarnings(key)){
       if (rule.getWarning()) n++;
+    }
+    return n;
+  }
+
+  /**
+   * Gets warnings count.
+   *
+   * @return the warnings count
+   */
+  public int getNInfos(String key) {
+    int n = 0;
+    for (RuleResult rule :getWarnings(key)){
+      if (rule.getInfo()) n++;
     }
     return n;
   }

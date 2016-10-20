@@ -28,6 +28,10 @@ public class ImplementationCheckerLoader {
   static HashMap<String, ImplementationCheckerObjectType> preLoadedValidatorsSingleton = new HashMap<>();
 
   public synchronized static ImplementationCheckerObjectType getRules(String rulesFile) {
+    if (!rulesFile.contains("/") && !rulesFile.contains(".")){
+      rulesFile = "implementationcheckers/" + rulesFile + ".xml";
+    }
+
     ImplementationCheckerObjectType rules = null;
     try {
       if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {

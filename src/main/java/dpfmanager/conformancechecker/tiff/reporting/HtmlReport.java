@@ -185,40 +185,42 @@ public class HtmlReport extends Report {
       if (ir.hasValidation(iso)) {
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
+        int infosCount = ir.getNInfos(iso);
         String content = "";
         if (errorsCount + warningsCount == 0){
           content += conformTmpl;
         }
-        content += errorsTmpl;
-        // Errors
-        String allRows = "";
-        for (RuleResult val : ir.getErrors(iso)) {
-          String errRow = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
-          errRow = errRow.replace("##LOC##", val.getLocation());
-          errRow = errRow.replace("##REF##", val.getReference() != null ? val.getReference() : "");
-          errRow = errRow.replace("##TEXT##", val.getDescription());
-          allRows += errRow;
+        if (errorsCount + warningsCount + infosCount > 0) {
+          content += errorsTmpl;
+          // Errors
+          String allRows = "";
+          for (RuleResult val : ir.getErrors(iso)) {
+            String errRow = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
+            errRow = errRow.replace("##LOC##", val.getLocation());
+            errRow = errRow.replace("##REF##", val.getReference() != null ? val.getReference() : "");
+            errRow = errRow.replace("##TEXT##", val.getDescription());
+            allRows += errRow;
+          }
+          // Warnings
+          for (RuleResult val : ir.getWarnings(iso)) {
+            if (!val.getRule().isWarning()) continue;
+            String rowWar = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
+            rowWar = rowWar.replace("##LOC##", val.getLocation());
+            rowWar = rowWar.replace("##REF##", val.getReference() != null ? val.getReference() : "");
+            rowWar = rowWar.replace("##TEXT##", val.getDescription());
+            allRows += rowWar;
+          }
+          // Infos
+          for (RuleResult val : ir.getWarnings(iso)) {
+            if (!val.getRule().isInfo()) continue;
+            String rowInfo = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
+            rowInfo = rowInfo.replace("##LOC##", val.getLocation());
+            rowInfo = rowInfo.replace("##REF##", val.getReference() != null ? val.getReference() : "");
+            rowInfo = rowInfo.replace("##TEXT##", val.getDescription());
+            allRows += rowInfo;
+          }
+          content = StringUtils.replace(content, "##ROWS##", allRows);
         }
-        // Warnings
-        for (RuleResult val : ir.getWarnings(iso)) {
-          if (!val.getRule().isWarning()) continue;
-          String rowWar = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
-          rowWar = rowWar.replace("##LOC##", val.getLocation());
-          rowWar = rowWar.replace("##REF##", val.getReference() != null ? val.getReference() : "");
-          rowWar = rowWar.replace("##TEXT##", val.getDescription());
-          allRows += rowWar;
-        }
-        // Infos
-        for (RuleResult val : ir.getWarnings(iso)) {
-          if (!val.getRule().isInfo()) continue;
-          String rowInfo = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
-          rowInfo = rowInfo.replace("##LOC##", val.getLocation());
-          rowInfo = rowInfo.replace("##REF##", val.getReference() != null ? val.getReference() : "");
-          rowInfo = rowInfo.replace("##TEXT##", val.getDescription());
-          allRows += rowInfo;
-        }
-        content = StringUtils.replace(content, "##ROWS##", allRows);
-
         row = StringUtils.replace(row, "##CONTENT##", content);
         row = StringUtils.replace(row, "##TITLE##", name);
       }
