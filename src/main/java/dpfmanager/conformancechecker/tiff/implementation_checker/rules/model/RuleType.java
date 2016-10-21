@@ -109,6 +109,10 @@ public class RuleType {
         return getLevel() != null && getLevel().equals("warning");
     }
 
+    public boolean isError() {
+        return getLevel() != null && getLevel().equals("error");
+    }
+
     public boolean isInfo() {
         return getLevel() != null && getLevel().equals("info");
     }
