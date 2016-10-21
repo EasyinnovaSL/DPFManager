@@ -564,7 +564,6 @@ beyond the first one, so not all readers could render all the images in the file
   </rule>
   
   <!--
-  
    <rule id="IFDB-0003" context="ifd[type=Palette]">
    <title>Valid bits per sample and samples per Pixel</title>
      <description>When No Extra Sample is defined then BitsPerSample must be 4 or 8 and SamplesPerPixel must be 3 for palette colo Images.</description>
@@ -1473,15 +1472,14 @@ beyond the first one, so not all readers could render all the images in the file
    <assert test="{!tags.tag[name=NewSubfileType]} || {tags.tag[name=NewSubfileType] &gt; 3}">NewSubfileType defines a transparency mask while PhotometricInterpretation defines another image type</assert>
   </rule>
   
-  <!--  per comprovar 
-  <rule id="TAG-254-0005" context="ifd[class=image]" level="error">
+  <!--<rule id="TAG-254-0005" context="ifd[class=image]" level="warning">
    <title>NewSubfileType not defined in a multi page TIFF</title>
    <description>NewSubfileType is not defined as a multipage in and IFD containg the PageNumber tag. 
    </description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>36</page></reference>
-   <assert test="{tags.tag[name=PageNumber]} &amp;&amp; {tags.tag[name=NewSubfileType] == 2}  || {tags.tag[name=NewSubfileType] == 3} || {tags.tag[name=NewSubfileType] == 6}  || {tags.tag[name=NewSubfileType] == 7}">NewSubfileType is not defined as a multipage in and IFD containg the PageNumber tag</assert>
-  </rule>
-  -->
+   <assert test="{tags.tag[name=PageNumber]} &amp;&amp; {!tags.tag[name=NewSubfileType} || {tags.tag[name=NewSubfileType] != 2} &amp;&amp; {tags.tag[name=NewSubfileType] != 3} &amp;&amp; {tags.tag[name=NewSubfileType] != 6} &amp;&amp; {tags.tag[name=NewSubfileType] != 7}">NewSubfileType is not defined as a multipage in and IFD containg the PageNumber tag</assert>
+  </rule>-->
+
   <rule id="TAG-254-0006" context="ifd[class=image]" level="warning">
    <title>NewSubfileType define a multipage TIFF without PageNumber</title>
    <description>NewSubfileType defines a multi page TIFF. each image in the file should have the PageNumber Tag.

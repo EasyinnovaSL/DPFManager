@@ -125,13 +125,14 @@ public class Validator {
     }
 
     for (RuleType rule : ordRules) {
-      if (rule.getId().equals("it-1"))
+      if (rule.getId().equals("TAG-254-0005"))
         rule.toString();
 
       String context = rule.getContext();
       List<TiffNode> objects = model.getObjectsFromContext(context, true);
       for (TiffNode node : objects) {
         boolean ok = checkRule(rule, node);
+        if (!ok && (rule.isWarning() || rule.isInfo())) ok = true;
         if (!ok)
           ok = ok;
         if (!ok && (rule.isCritical() || fastBreak)) {

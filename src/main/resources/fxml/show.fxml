@@ -19,5 +19,6 @@
             </styleClass></TextArea>
             <WebView fx:id="webView" styleClass="webView" VBox.vgrow="ALWAYS" />
         </VBox>
+      <ComboBox fx:id="comboIndividuals" onAction="#changeIndividual" prefWidth="150.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
     </children>
 </AnchorPane>
