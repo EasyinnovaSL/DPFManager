@@ -33,9 +33,9 @@ package dpfmanager.shell.modules.report.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
 
 /**
  * The Class GlobalReport.
@@ -48,132 +48,48 @@ public class GlobalReport {
   private List<IndividualReport> reports;
 
   /**
-   * Number of EP ok
+   * Number of reports ok
    */
-  int nreportsEpOk;
+  private Map<String, Integer> nReportsOk;
 
   /**
-   * Number of Baseline ok
+   * The isos to check
    */
-  int nreportsBlOk;
+  private List<String> isos;
 
   /**
-   * Number of IT ok
+   * The isos checked
    */
-  int nreportsIt0Ok;
-
-  /**
-   * Number of IT ok
-   */
-  int nreportsIt1Ok;
-
-  /**
-   * Number of IT ok
-   */
-  int nreportsIt2Ok;
-
-  /**
-   * Number of PC ok
-   */
-  int nreportsPcOk;
-
-  /**
-   * The Has ep.
-   */
-  boolean hasEp;
-  /**
-   * The Has it.
-   */
-  boolean hasIt0;
-  /**
-   * The Has it.
-   */
-  boolean hasIt1;
-  /**
-   * The Has it.
-   */
-  boolean hasIt2;
-  /**
-   * The Has bl.
-   */
-  boolean hasBl;
-  /**
-   * The Has pc.
-   */
-  boolean hasPc;
+  private List<String> isosChecked;
 
   /**
    * Instantiates a new global report.
    */
   public GlobalReport() {
     reports = new ArrayList<>();
-    nreportsEpOk = 0;
-    nreportsIt0Ok = 0;
-    nreportsIt1Ok = 0;
-    nreportsIt2Ok = 0;
-    nreportsBlOk = 0;
-    nreportsPcOk = 0;
-    hasEp = false;
-    hasIt0 = false;
-    hasIt1 = false;
-    hasIt2 = false;
-    hasBl = false;
-    hasPc = false;
+    nReportsOk = new HashMap<>();
+    isos = new ArrayList<>();
+    isosChecked = new ArrayList<>();
   }
 
   /**
-   * Gets has ep.
+   * Gets isos.
    *
-   * @return the has ep
+   * @return the isos
    */
-  public boolean getHasEp() {
-    return hasEp;
+  public List<String> getIsos() {
+    return isos;
   }
 
   /**
-   * Gets has it.
+   * Gets isos.
    *
-   * @return the has it
+   * @return the isos
    */
-  public boolean getHasIt0() {
-    return hasIt0;
+  public List<String> getCheckedIsos() {
+    return isosChecked;
   }
 
-  /**
-   * Gets has it.
-   *
-   * @return the has it
-   */
-  public boolean getHasIt1() {
-    return hasIt1;
-  }
-
-  /**
-   * Gets has it.
-   *
-   * @return the has it
-   */
-  public boolean getHasIt2() {
-    return hasIt2;
-  }
-
-  /**
-   * Gets has pc.
-   *
-   * @return the has pc
-   */
-  public boolean getHasPc() {
-    return hasPc;
-  }
-
-  /**
-   * Gets has bl.
-   *
-   * @return the has bl
-   */
-  public boolean getHasBl() {
-    return hasBl;
-  }
 
   /**
    * Add an individual report.
@@ -189,35 +105,23 @@ public class GlobalReport {
    */
   public void generate() {
     List<IndividualReport> toDelete = new ArrayList<>();
-    nreportsPcOk = 0;
     Collections.sort(reports);
     for (IndividualReport ir : reports) {
       if (ir.isError()){
         toDelete.add(ir);
       } else {
-        if (ir.hasEpValidation()) {
-          if (ir.getEPErrors().size() == 0) nreportsEpOk++;
-          if (ir.checkEP) hasEp = true;
-        }
-        if (ir.hasItValidation(0)) {
-          if (ir.getITErrors(0).size() == 0) nreportsIt0Ok++;
-          if (ir.checkIT0) hasIt0 = true;
-        }
-        if (ir.hasItValidation(1)) {
-          if (ir.getITErrors(1).size() == 0) nreportsIt1Ok++;
-          if (ir.checkIT1) hasIt1 = true;
-        }
-        if (ir.hasItValidation(2)) {
-          if (ir.getITErrors(2).size() == 0) nreportsIt2Ok++;
-          if (ir.checkIT2) hasIt2 = true;
-        }
-        if (ir.hasBlValidation()) {
-          if (ir.getBaselineErrors().size() == 0) nreportsBlOk++;
-          if (ir.checkBL) hasBl = true;
-        }
-        if (ir.hasPcValidation()) {
-          if (ir.getPCErrors().size() == 0) nreportsPcOk++;
-          if (ir.checkPC) hasPc = true;
+        for (String iso : ir.getCheckedIsos()){
+          if (ir.hasValidation(iso)){
+            if (ir.getErrors(iso).size() == 0){
+              if (nReportsOk.containsKey(iso)){
+                nReportsOk.put(iso, nReportsOk.get(iso)+1);
+              } else {
+                nReportsOk.put(iso, 1);
+              }
+            }
+            if (!isos.contains(iso)) isos.add(iso);
+          }
+          if (!isosChecked.contains(iso)) isosChecked.add(iso);
         }
       }
     }
@@ -239,27 +143,14 @@ public class GlobalReport {
    *
    * @return nreportsok reports ok
    */
-  public int getReportsOk() {
+  public int getAllReportsOk() {
     int n = 0;
     for (IndividualReport ir : reports) {
       boolean ok = true;
-      if (ir.checkEP && ir.hasEpValidation()) {
-        if (ir.getEPErrors().size() > 0) ok = false;
-      }
-      if (ir.checkIT0 && ir.hasItValidation(0)) {
-        if (ir.getITErrors(0).size() > 0) ok = false;
-      }
-      if (ir.checkIT1 && ir.hasItValidation(1)) {
-        if (ir.getITErrors(1).size() > 0) ok = false;
-      }
-      if (ir.checkIT2 && ir.hasItValidation(2)) {
-        if (ir.getITErrors(2).size() > 0) ok = false;
-      }
-      if (ir.checkBL && ir.hasBlValidation()) {
-        if (ir.getBaselineErrors().size() > 0) ok = false;
-      }
-      if (ir.checkPC && ir.hasPcValidation()) {
-        if (ir.getPCErrors().size() > 0) ok = false;
+      for (String iso : ir.getIsosCheck()){
+        if (ir.hasValidation(iso) && ir.getErrors(iso).size() > 0){
+          ok = false;
+        }
       }
       if (ok) n++;
     }
@@ -271,106 +162,18 @@ public class GlobalReport {
    *
    * @return nreportsko reports ko
    */
-  public int getReportsKo() {
-    return getReportsCount() - getReportsOk();
+  public int getAllReportsKo() {
+    return getReportsCount() - getAllReportsOk();
   }
 
-  /**
-   * Has bl boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasBl() {
-    return hasBl;
-  }
-
-  /**
-   * Has ep boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasEp() {
-    return hasEp;
-  }
-
-  /**
-   * Has it boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasIt0() {
-    return hasIt0;
-  }
-
-  /**
-   * Has it boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasIt1() {
-    return hasIt1;
-  }
-  /**
-   * Has it boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasIt2() {
-    return hasIt2;
-  }
-
-  /**
-   * Get the count of correct reports.
-   *
-   * @return nReportsOnlyBl reports bl
-   */
-  public int getReportsBl() {
-    return nreportsBlOk;
-  }
-
-  /**
-   * Get the count of reports with some error.
-   *
-   * @return nReportsOnlyEp reports ep
-   */
-  public int getReportsEp() {
-    return nreportsEpOk;
-  }
-
-  /**
-   * Get the count of reports with some error.
-   *
-   * @return nReportsOnlyIt reports it
-   */
-  public int getReportsIt0() {
-    return nreportsIt0Ok;
-  }
-
-  /**
-   * Get the count of reports with some error.
-   *
-   * @return nReportsOnlyIt reports it
-   */
-  public int getReportsIt1() {
-    return nreportsIt1Ok;
-  }
-
-  /**
-   * Get the count of reports with some error.
-   *
-   * @return nReportsOnlyIt reports it
-   */
-  public int getReportsIt2() {
-    return nreportsIt2Ok;
-  }
-
-  /**
-   * Get the count of reports with some error.
-   *
-   * @return nReportsOnlyIt reports pc
-   */
-  public int getReportsPc() {
-    return nreportsPcOk;
+  public int getReportsOk(String iso) {
+    int n = 0;
+    for (IndividualReport ir : reports) {
+      if (ir.getErrors(iso).size() == 0){
+        n++;
+      }
+    }
+    return n;
   }
 
   /**
@@ -382,16 +185,16 @@ public class GlobalReport {
     return reports;
   }
 
-  public void computePcChecks() {
-    hasPc = false;
-    nreportsPcOk = 0;
-    for (IndividualReport ir : getIndividualReports()) {
-      if (ir.hasPcValidation()) {
-        hasPc = true;
-        if (ir.getPCErrors().size() == 0) {
-          nreportsPcOk++;
-        }
-      }
-    }
-  }
+//  public void computePcChecks() {
+//    hasPc = false;
+//    nreportsPcOk = 0;
+//    for (IndividualReport ir : getIndividualReports()) {
+//      if (ir.hasPcValidation()) {
+//        hasPc = true;
+//        if (ir.getPCErrors().size() == 0) {
+//          nreportsPcOk++;
+//        }
+//      }
+//    }
+//  }
 }

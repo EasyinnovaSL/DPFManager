@@ -63,7 +63,7 @@ public class ValidationResult {
   public List<RuleResult> getErrors() {
     List<RuleResult> errors = new ArrayList<>();
     for (RuleResult res : result) {
-      if (!res.ok() && !res.getWarning()) {
+      if (!res.ok() && !res.getWarning() && !res.getInfo()) {
         errors.add(res);
       }
     }
@@ -75,10 +75,26 @@ public class ValidationResult {
    *
    * @return the warnings
    */
-  public List<RuleResult> getWarnings() {
+  public List<RuleResult> getWarnings(boolean infos) {
     List<RuleResult> errors = new ArrayList<>();
     for (RuleResult res : result) {
-      if (!res.ok() && res.getWarning()) {
+      if (!res.ok()) {
+        if (res.getWarning()) errors.add(res);
+        else if (infos && res.getInfo()) errors.add(res);
+      }
+    }
+    return errors;
+  }
+
+  /**
+   * Gets infos.
+   *
+   * @return the infos
+   */
+  public List<RuleResult> getInfos() {
+    List<RuleResult> errors = new ArrayList<>();
+    for (RuleResult res : result) {
+      if (!res.ok() && res.getInfo()) {
         errors.add(res);
       }
     }

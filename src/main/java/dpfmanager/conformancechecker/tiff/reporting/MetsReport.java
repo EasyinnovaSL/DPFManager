@@ -1303,23 +1303,24 @@ public class MetsReport {
       streamsStrings.add("image/tiff");
     }
 
+    IFD subIfd = ifd.getsubIFD();
     if (ifd.containsTagId(34665)){  //EXIF
       streamsStrings.add("application/octet-stream");
-    }if(isThumbail && ifd.getsubIFD().containsTagId(34665)){
+    }if(isThumbail && subIfd != null && subIfd.containsTagId(34665)){
       streamsStrings.add("application/octet-stream");
     }
     if (ifd.containsTagId(700)){ //XMP
       streamsStrings.add("application/xmpp+xml");
-    }if (isThumbail && ifd.getsubIFD().containsTagId(34665)) {
+    }if (isThumbail && subIfd != null && subIfd.containsTagId(34665)) {
       streamsStrings.add("application/xmpp+xml");
     }
     if (ifd.containsTagId(33723)){
       streamsStrings.add("text/vnd.IPTC.NITF");
-    }if (isThumbail && ifd.getsubIFD().containsTagId(34665)) { //IPTC
+    }if (isThumbail && subIfd != null && subIfd.containsTagId(34665)) { //IPTC
       streamsStrings.add("text/vnd.IPTC.NITF");
     }if (ifd.containsTagId(34675)){
       streamsStrings.add("vnd.iccprofile");
-    }if (isThumbail && ifd.getsubIFD().containsTagId(34665)) { //ICC
+    }if (isThumbail && subIfd != null && subIfd.containsTagId(34665)) { //ICC
       streamsStrings.add("vnd.iccprofile");
     }
 

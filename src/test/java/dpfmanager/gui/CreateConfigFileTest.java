@@ -77,9 +77,9 @@ public class CreateConfigFileTest extends ApplicationTest {
 
     // 2 - Deselect tiff baseline and Select Tiff/EP & TIFF/IT-P1
     // 1: Baseline   2: EP   3: IT   4: ITP1   5: IT-P2
-    clickOnScroll("#radProf1");
-    clickOnScroll("#radProf2");
-    clickOnScroll("#radProf4");
+    clickOnScroll("#BaselineProfileChecker");
+    clickOnScroll("#TiffEPProfileChecker");
+    clickOnScroll("#TiffITP1ProfileChecker");
     clickOnAndReload("#continueButton");
 
     // 3 - Add Rule
@@ -137,7 +137,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     //Check combobox items size
     ComboBox comboBoxTag = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxTag");
     ComboBox comboBoxOp = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxOp");
-    Assert.assertEquals("ComboBox Tag inside 'Add Rule' failed", 15, comboBoxTag.getItems().size());
+    Assert.assertEquals("ComboBox Tag inside 'Add Rule' failed", 16, comboBoxTag.getItems().size());
     Assert.assertEquals("ComboBox Operator inside 'Add Rule' failed", 3, comboBoxOp.getItems().size());
 
     uniqueId++;

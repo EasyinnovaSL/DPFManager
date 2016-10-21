@@ -2,6 +2,7 @@ package dpfmanager.commandline;
 
 import static junit.framework.TestCase.assertEquals;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -35,7 +36,6 @@ public class IsosTest extends CommandLineTest {
 
       PrintWriter bw = new PrintWriter(configfile);
       bw.write("ISO\tBaseline\n" +
-          "ISO\tBaseline\n" +
           "ISO\tTiff/EP\n" +
           "ISO\tTiff/IT\n" +
           "ISO\tTiff/IT-1\n" +
@@ -61,46 +61,24 @@ public class IsosTest extends CommandLineTest {
       File directori = new File(path);
       assertEquals(2, directori.list().length);
 
+      // Conforms table
       byte[] encoded = Files.readAllBytes(Paths.get(path + "/report.html"));
       String content = new String(encoded);
-      int i1 = content.indexOf("##ROW_BL##");
+      int i1 = content.indexOf("col-md-5 bot30-sm");
       assertEquals(true, i1 > -1);
-      String subs = content.substring(i1);
-      subs = subs.substring(0, subs.indexOf("</tr"));
-      int i2 = subs.indexOf("<td");
-      assertEquals(true, i2 > -1);
-      int i3 = subs.indexOf("<td", i2+1);
-      assertEquals(true, i3 > -1);
-      subs = subs.substring(i2);
-      subs = subs.substring(subs.indexOf(">")+1);
-      subs = subs.substring(0, subs.indexOf("<"));
-      assertEquals(true, subs.equals("1"));
+      assertEquals(true, i1 > -1);
+      String table = content.substring(i1);
+      table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+      String[] trs = table.split("</tr>");
 
-      i1 = content.indexOf("##ROW_EP##");
-      assertEquals(true, i1 > -1);
-      subs = content.substring(i1);
-      subs = subs.substring(0, subs.indexOf("</tr"));
-      i2 = subs.indexOf("<td");
-      assertEquals(true, i2 > -1);
-      i3 = subs.indexOf("<td", i2+1);
-      assertEquals(true, i3 > -1);
-      subs = subs.substring(i2);
-      subs = subs.substring(subs.indexOf(">")+1);
-      subs = subs.substring(0, subs.indexOf("<"));
-      assertEquals(true, subs.equals("0"));
-
-      i1 = content.indexOf("##ROW_IT##");
-      assertEquals(true, i1 > -1);
-      subs = content.substring(i1);
-      subs = subs.substring(0, subs.indexOf("</tr"));
-      i2 = subs.indexOf("<td");
-      assertEquals(true, i2 > -1);
-      i3 = subs.indexOf("<td", i2+1);
-      assertEquals(true, i3 > -1);
-      subs = subs.substring(i2);
-      subs = subs.substring(subs.indexOf(">")+1);
-      subs = subs.substring(0, subs.indexOf("<"));
-      assertEquals(true, subs.equals("0"));
+      // Olny conforms to baseline
+      for (String tr : trs){
+        if (tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker"))){
+          assertEquals(true, tr.contains(">1<"));
+        } else if (tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("TiffITProfileChecker")) || tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("TiffEPProfileChecker"))){
+          assertEquals(true, tr.contains(">0<"));
+        }
+      }
 
       FileUtils.deleteDirectory(new File("temp"));
     } catch (Exception ex) {

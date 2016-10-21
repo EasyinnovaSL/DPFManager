@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Adrià Llorens Martinez
  * @version 1.0
@@ -35,100 +23,58 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.types.IFD;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Class IndividualReport.
  */
 public class IndividualReport implements Comparable {
 
-  /** The file name. */
+  /**
+   * The file name.
+   */
   private String filename;
 
-  /** The file path. */
+  /**
+   * The file path.
+   */
   private String filepath;
 
-  /** The real file name. */
+  /**
+   * The real file name.
+   */
   private String reportFilename;
 
-  /** The file path. */
+  /**
+   * The file path.
+   */
   private String reportpath;
 
-  /** The baseline errors list. */
-  private List<RuleResult> errorsBl;
+  /**
+   * The errors list.
+   */
+  private Map<String, List<RuleResult>> errors;
 
-  /** The baseline warning list. */
-  private List<RuleResult> warningsBl;
+  /**
+   * The warnings list.
+   */
+  private Map<String, List<RuleResult>> warnings;
 
-  /** The Tiff EP errors list. */
-  private List<RuleResult> errorsEp;
+  /**
+   * The isos to check.
+   */
+  private List<String> isosCheck;
 
-  /** The Tiff EP warning list. */
-  private List<RuleResult> warningsEp;
-
-  /** The Tiff IT errors list. */
-  private List<RuleResult> errorsIt0;
-
-  /** The Tiff IT warning list. */
-  private List<RuleResult> warningsIt0;
-
-  /** The Tiff IT errors list. */
-  private List<RuleResult> errorsIt1;
-
-  /** The Tiff IT warning list. */
-  private List<RuleResult> warningsIt1;
-
-  /** The Tiff IT errors list. */
-  private List<RuleResult> errorsIt2;
-
-  /** The Tiff IT warning list. */
-  private List<RuleResult> warningsIt2;
-
-  /** The Tiff PC errors list. */
-  private List<RuleResult> errorsPc;
-
-  /** The Tiff PC warning list. */
-  private List<RuleResult> warningsPc;
-
-  /** The Tiff Document object. */
+  /**
+   * The Tiff Document object.
+   */
   private TiffDocument tiffModel;
-
-  /**
-   * Check Tiff/IT conformance.
-   */
-  public boolean checkIT0;
-
-  /**
-   * Check Tiff/IT conformance.
-   */
-  public boolean checkIT1;
-
-  /**
-   * Check Tiff/IT conformance.
-   */
-  public boolean checkIT2;
-
-  /**
-   * Check Tiff/EP conformance.
-   */
-  public boolean checkEP;
-
-  /**
-   * Check Baseline conformance.
-   */
-  public boolean checkBL;
-
-  private ArrayList<RuleResult> pcValidation;
-
-  /**
-   * Check Policy.
-   */
-  public boolean checkPC;
 
   private IndividualReport compareIr;
 
@@ -165,22 +111,41 @@ public class IndividualReport implements Comparable {
   /**
    * Constructor + generate.
    *
-   * @param name               the name
-   * @param path               the path
-   * @param reportFilename               the path
+   * @param name           the name
+   * @param path           the path
+   * @param reportFilename the path
    */
   public IndividualReport(String name, String path, String reportFilename) {
     filename = name;
     filepath = path;
     this.reportFilename = reportFilename;
     containsData = false;
+    errors = new HashMap<>();
+    warnings = new HashMap<>();
+  }
+
+  /**
+   * Constructor + generate.
+   *
+   * @param name      the name
+   * @param path      the path
+   * @param tiffModel the TIFF model
+   */
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, Validator> validators) {
+    filename = name;
+    filepath = path;
+    containsData = true;
+    reportFilename = rFilename;
+    errors = new HashMap<>();
+    warnings = new HashMap<>();
+    generate(tiffModel, validators);
   }
 
   public boolean isError() {
     return error;
   }
 
-  public void setInternalReportFolder(String internal){
+  public void setInternalReportFolder(String internal) {
     internalReportFodler = internal;
   }
 
@@ -202,6 +167,20 @@ public class IndividualReport implements Comparable {
 
   public void setUuid(long uuid) {
     this.uuid = uuid;
+  }
+
+  public void setIsosCheck(List<String> isosCheck) {
+    this.isosCheck = isosCheck;
+  }
+
+  public List<String> getIsosCheck() {
+    return isosCheck;
+  }
+
+  public List<String> getCheckedIsos() {
+    List<String> checked = new ArrayList<>();
+    checked.addAll(errors.keySet());
+    return checked;
   }
 
   public void setConformanceCheckerReport(String report) {
@@ -233,41 +212,17 @@ public class IndividualReport implements Comparable {
   }
 
   /**
-   * Constructor + generate.
-   *
-   * @param name               the name
-   * @param path               the path
-   * @param tiffModel          the TIFF model
-   * @param baselineValidation the baseline validation
-   * @param epValidation       the EP validation
-   * @param itValidation       the IT validation
-   */
-  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel,
-                          Validator baselineValidation, Validator epValidation, Validator itValidation, Validator it1Validation, Validator it2Validation) {
-    filename = name;
-    filepath = path;
-    containsData = true;
-    reportFilename = rFilename;
-    generate(tiffModel, baselineValidation, epValidation, itValidation, it1Validation, it2Validation);
-  }
-
-  /**
    * Sets pc validation.
    *
-   * @param pcValidation the pc validation
+   * @param validation the validation
    */
-  public void setPcValidation(ArrayList<RuleResult> pcValidation) {
-    this.pcValidation = pcValidation;
-    processPcValidation();
-  }
-
-  /**
-   * Gets pc validation.
-   *
-   * @return the pc validation
-   */
-  public List<RuleResult> getPcValidation() {
-    return pcValidation;
+  public void addValidation(String key, ArrayList<RuleResult> validation) {
+    List<RuleResult> errorsPc = new ArrayList<>();
+    List<RuleResult> warningsPc = new ArrayList<>();
+    for (RuleResult rr : validation) if (!rr.getWarning()) errorsPc.add(rr);
+    for (RuleResult rr : validation) if (rr.getWarning()) warningsPc.add(rr);
+    errors.put(key, errorsPc);
+    warnings.put(key, warningsPc);
   }
 
   /**
@@ -385,18 +340,13 @@ public class IndividualReport implements Comparable {
   public int calculatePercent() {
     Double rest = 100.0;
     IndividualReport ir = this;
-    if (ir.checkEP && ir.hasEpValidation()) rest -= ir.getEPErrors().size() * 12.5;
-    if ((ir.checkIT0 || ir.checkIT1 || ir.checkIT2) && ir.hasItValidation()) {
-      int n0 = ir.getITErrors(0).size();
-      int n1 = ir.getITErrors(1).size();
-      int n2 = ir.getITErrors(2).size();
-      if (!ir.checkIT0) n0 = 0;
-      if (!ir.checkIT1) n1 = 0;
-      if (!ir.checkIT2) n2 = 0;
-      rest -= (n0 + n1 + n2) * 12.5;
+
+    if (isosCheck != null) {
+      for (String key : isosCheck) {
+        rest -= ir.getErrors(key).size() * 12.5;
+      }
     }
-    if (ir.checkBL && ir.hasBlValidation()) rest -= ir.getBaselineErrors().size() * 12.5;
-    if (ir.checkPC && ir.hasPcValidation()) rest -= ir.getPCErrors().size() * 12.5;
+
     if (rest < 0.0) {
       rest = 0.0;
     }
@@ -406,48 +356,16 @@ public class IndividualReport implements Comparable {
   /**
    * Generate the report information.
    *
-   * @param tiffModel    the tiff model
-   * @param validation   the baseline validation
-   * @param epValidation the EP validation
-   * @param it0Validation the IT validation
-   * @param it1Validation the IT-1 validation
-   * @param it2Validation the IT-2 validation
+   * @param tiffModel   the tiff model
+   * @param validations the validations
    */
-  public void generate(TiffDocument tiffModel, Validator validation,
-                       Validator epValidation, Validator it0Validation, Validator it1Validation, Validator it2Validation) {
+  public void generate(TiffDocument tiffModel, Map<String, Validator> validations) {
     this.tiffModel = tiffModel;
 
-    // errors & warnings
-    if (validation != null) {
-      errorsBl = validation.getErrors();
-      warningsBl = validation.getWarnings();
+    for (String key : validations.keySet()) {
+      errors.put(key, validations.get(key).getErrors());
+      warnings.put(key, validations.get(key).getWarningsAndInfos());
     }
-    if (epValidation != null) {
-      errorsEp = epValidation.getErrors();
-      warningsEp = epValidation.getWarnings();
-    }
-    if (it0Validation != null) {
-      errorsIt0 = it0Validation.getErrors();
-      warningsIt0 = it0Validation.getWarnings();
-    }
-    if (it1Validation != null) {
-      errorsIt1 = it1Validation.getErrors();
-      warningsIt1 = it1Validation.getWarnings();
-    }
-    if (it2Validation != null) {
-      errorsIt2 = it2Validation.getErrors();
-      warningsIt2 = it2Validation.getWarnings();
-    }
-    if (pcValidation != null) {
-      processPcValidation();
-    }
-  }
-
-  void processPcValidation() {
-    errorsPc = new ArrayList<>();
-    warningsPc = new ArrayList<>();
-    for (RuleResult rr : pcValidation) if (!rr.getWarning()) errorsPc.add(rr);
-    for (RuleResult rr : pcValidation) if (rr.getWarning()) warningsPc.add(rr);
   }
 
   /**
@@ -455,46 +373,20 @@ public class IndividualReport implements Comparable {
    *
    * @return the boolean
    */
-  public boolean hasPcValidation(){
-    return errorsPc != null;
+  public boolean hasValidation(String key) {
+    return isosCheck.contains(key);
   }
 
   /**
-   * Has bl validation boolean.
+   * Get warnings and infos list.
    *
-   * @return the boolean
+   * @return the warnings and infos
    */
-  public boolean hasBlValidation(){
-    return errorsBl != null;
-  }
-
-  /**
-   * Has ep validation boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasEpValidation(){
-    return errorsEp != null;
-  }
-
-  /**
-   * Has it validation boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasItValidation(){
-    return errorsIt0 != null || errorsIt1 != null || errorsIt2 != null;
-  }
-
-  /**
-   * Has it validation boolean.
-   *
-   * @return the boolean
-   */
-  public boolean hasItValidation(int profile){
-    if (profile == 0) return errorsIt0 != null;
-    if (profile == 1) return errorsIt1 != null;
-    return errorsIt2 != null;
+  public List<RuleResult> getWarnings(String key) {
+    if (!warnings.containsKey(key)) {
+      return new ArrayList<>();
+    }
+    return warnings.get(key);
   }
 
   /**
@@ -502,9 +394,11 @@ public class IndividualReport implements Comparable {
    *
    * @return the errors
    */
-  public List<RuleResult> getBaselineErrors() {
-    if (errorsBl == null) return new ArrayList<RuleResult>();
-    return errorsBl;
+  public List<RuleResult> getErrors(String key) {
+    if (!errors.containsKey(key)) {
+      return new ArrayList<>();
+    }
+    return errors.get(key);
   }
 
   /**
@@ -512,85 +406,92 @@ public class IndividualReport implements Comparable {
    *
    * @return the warnings
    */
-  public List<RuleResult> getBaselineWarnings() {
-    if (warningsBl == null) return new ArrayList<RuleResult>();
-    return warningsBl;
-  }
-
-  /**
-   * Get EP errors list.
-   *
-   * @return the errors
-   */
-  public List<RuleResult> getEPErrors() {
-    if (errorsEp == null) return new ArrayList<RuleResult>();
-    return errorsEp;
-  }
-
-  /**
-   * Get EP warnings list.
-   *
-   * @return the warnings
-   */
-  public List<RuleResult> getEPWarnings() {
-    if (warningsEp == null) return new ArrayList<RuleResult>();
-    return warningsEp;
-  }
-
-  /**
-   * Get IT errors list.
-   *
-   * @return the errors
-   */
-  public List<RuleResult> getITErrors(int profile) {
-    if (profile == 0) {
-      if (errorsIt0 == null) return new ArrayList<RuleResult>();
-      return errorsIt0;
-    } else if (profile == 1) {
-      if (errorsIt1 == null) return new ArrayList<RuleResult>();
-      return errorsIt1;
-    } else {
-      if (errorsIt2 == null) return new ArrayList<RuleResult>();
-      return errorsIt2;
+  public List<RuleResult> getOnlyWarnings(String key) {
+    List<RuleResult> result = new ArrayList<>();
+    for (RuleResult rule : getWarnings(key)){
+      if (rule.getWarning()){
+        result.add(rule);
+      }
     }
+    return result;
   }
 
   /**
-   * Get IT warnings list.
+   * Get infos list.
    *
-   * @return the warnings
+   * @return the infos
    */
-  public List<RuleResult> getITWarnings(int profile) {
-    if (profile == 0) {
-      if (warningsIt0 == null) return new ArrayList<RuleResult>();
-      return warningsIt0;
-    } else if (profile == 1) {
-      if (warningsIt1 == null) return new ArrayList<RuleResult>();
-      return warningsIt1;
-    } else {
-      if (warningsIt2 == null) return new ArrayList<RuleResult>();
-      return warningsIt2;
+  public List<RuleResult> getOnlyInfos(String key) {
+    List<RuleResult> result = new ArrayList<>();
+    for (RuleResult rule : getWarnings(key)){
+      if (rule.getInfo()){
+        result.add(rule);
+      }
     }
+    return result;
   }
 
   /**
-   * Get PC errors list.
+   * Gets warnings count.
    *
-   * @return the errors
+   * @return the warnings count
    */
-  public List<RuleResult> getPCErrors() {
-    if (errorsPc == null) return new ArrayList<RuleResult>();
-    return errorsPc;
+  public int getNWarnings(String key) {
+    int n = 0;
+    for (RuleResult rule : getWarnings(key)){
+      if (rule.getWarning()) n++;
+    }
+    return n;
   }
 
   /**
-   * Get PC warnings list.
+   * Gets warnings count.
    *
-   * @return the warnings
+   * @return the warnings count
    */
-  public List<RuleResult> getPCWarnings() {
-    if (warningsPc == null) return new ArrayList<RuleResult>();
-    return warningsPc;
+  public int getNInfos(String key) {
+    int n = 0;
+    for (RuleResult rule :getOnlyInfos(key)){
+      if (rule.getInfo()) n++;
+    }
+    return n;
+  }
+
+  /**
+   * Gets errors count.
+   *
+   * @return the errors count
+   */
+  public int getNErrors(String key) {
+    return getErrors(key).size();
+  }
+
+  public int getAllNWarnings() {
+    int n = 0;
+    for (String key : warnings.keySet()){
+      n += getNWarnings(key);
+    }
+    return n;
+  }
+
+  public List<RuleResult> getAllErrors() {
+    List<RuleResult> allErrors = new ArrayList<>();
+    for (String key : errors.keySet()){
+      if (getIsosCheck().contains(key)){
+        allErrors.addAll(errors.get(key));
+      }
+    }
+    return allErrors;
+  }
+
+  public List<RuleResult> getAllWarnings() {
+    List<RuleResult> allWarnings = new ArrayList<>();
+    for (String key : warnings.keySet()){
+      if (getIsosCheck().contains(key)){
+        allWarnings.addAll(warnings.get(key));
+      }
+    }
+    return allWarnings;
   }
 
   /**
@@ -611,63 +512,9 @@ public class IndividualReport implements Comparable {
     tiffModel = model;
   }
 
-  /**
-   * Gets n ep err.
-   *
-   * @return the n ep err
-   */
-  public int getNEpErr() {
-    return getEPErrors() == null ? 0 : getEPErrors().size();
-  }
-
-  /**
-   * Gets n bl err.
-   *
-   * @return the n bl err
-   */
-  public int getNBlErr() {
-    return getBaselineErrors() == null ? 0 : getBaselineErrors().size();
-  }
-
-  /**
-   * Gets n it err.
-   *
-   * @return the n it err
-   */
-  public int getNItErr(int profile) {
-    return getITErrors(profile) == null ? 0 : getITErrors(profile).size();
-  }
-
-  /**
-   * Gets n ep war.
-   *
-   * @return the n ep war
-   */
-  public int getNEpWar() {
-    return getEPWarnings() == null ? 0 : getEPWarnings().size();
-  }
-
-  /**
-   * Gets n bl war.
-   *
-   * @return the n bl war
-   */
-  public int getNBlWar() {
-    return getBaselineWarnings() == null ? 0 : getBaselineWarnings().size();
-  }
-
-  /**
-   * Gets n it war.
-   *
-   * @return the n it war
-   */
-  public int getNItWar(int profile) {
-    return getITWarnings(profile) == null ? 0 : getITWarnings(profile).size();
-  }
-
   @Override
   public int compareTo(Object o) {
-    if (o instanceof IndividualReport){
+    if (o instanceof IndividualReport) {
       IndividualReport other = (IndividualReport) o;
       Integer thisPercent = calculatePercent();
       Integer otherPercent = other.calculatePercent();

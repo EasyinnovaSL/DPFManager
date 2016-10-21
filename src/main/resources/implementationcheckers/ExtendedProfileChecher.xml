@@ -1,0 +1,2208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<implementationCheckerObject xmlns="http://www.dpfmanager.org/ProfileChecker"
+                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                             xsi:schemaLocation="http://www.dpfmanager.org/ProfileChecker ProfileChecker.xsd">
+
+ <title>Baseline TIFF 6.0</title>
+ <iso>TIFF 6.0 Specification. Part 1: Baseline TIFF</iso>
+ <description>Baseline TIFF (Part 1) is the core of TIFF, the essentials that all mainstream TIFF developers
+  should support in their products.
+
+  Baseline TIFF image is capable of describing bilevel, grayscale, palette-color, and full-color RGB images.
+
+  Tiff Revision 6.0 Final - June 3, 1992</description>
+ <version>1.0.0</version>
+ <author>Easy Innova</author>
+ <date>2016-09-20</date>
+
+ <include>
+  <policychecker>./BaselineProfileChecker.xml</policychecker>
+  <excluderules>
+   <rule></rule>
+  </excluderules>
+ </include>
+ 
+ 
+ 
+ <rules description="tiles-check">
+  <rule id="bl-tl-1" context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileOffsets].cardinality == tags.tag[name=TileBYTECounts].cardinality}">Inconsistent tile lengths</assert>
+   <description>Check cardinality of TilesOffsets and TilesByteCount matches</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule id="bl-tl-2" context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileOffsets]}">Missing required field for tiles TileOffsets</assert>
+   <description>TileOffsets tag exists</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule id="bl-tl-3" context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileWidth]}">Missing required field for tiles TileWidth</assert>
+   <description>TileWidth tag exists</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule id="bl-tl-4" context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileLength]}">Missing required field for tiles TileLength</assert>
+   <description>TileLength tag exists</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule id="bl-tl-5" context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileWidth] &gt; 0}">Invalid value for field TileWidth</assert>
+   <description>TileWidth tag greater than zero</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule id="bl-tl-6" context="ifd[tiles=1]">
+   <assert test="{tags.tag[name=TileLength] &gt; 0}">Invalid value for field TileLength</assert>
+   <description>TileLength tag greater than zero</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule id="bl-tl-7" context="ifd[tiles=1]">
+   <assert test="{correctTiles == 1}">Insufficient tiles</assert>
+   <description>Check tiles sizes match image dimensions</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+ </rules>
+ 
+
+  
+  <!-- extended images -->
+  <rules>
+   <description></description>
+   
+ <rule id="bl-im-25" context="ifd[type=CMYK]">
+   <assert test="{tags.tag[name=BitsPerSample]}">Bits per Sample must exist for CMYK image</assert>
+   <description>CMYK images BitsPerSample check</description>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule id="bl-im-26" context="ifd[type=CMYK]">
+   <assert test="{tags.tag[name=SamplesPerPixel]}">Samples per Pixel must exist for CMYK image</assert>
+   <description>CMYK images SamplesPerPixel check</description>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule id="bl-im-27" context="ifd[type=CMYK]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">CMYK images should not contain tag ColorMap</assert>
+   <description>CMYK images ColorMap check</description>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule id="bl-im-28" context="ifd[type=CMYK]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrCoefficients]}">CMYK images should not contain tag YCbCrCoefficients</assert>
+   <description>CMYK images YCbCrCoefficients check</description>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule id="bl-im-29" context="ifd[type=CMYK]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrPositioning]}">CMYK images should not contain tag YCbCrPositioning</assert>
+   <description>CMYK images YCbCrPositioning check</description>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule id="bl-im-30" context="ifd[type=CMYK]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrSubSampling]}">CMYK images should not contain tag YCbCrSubSampling</assert>
+   <description>CMYK images YCbCrSubSampling check</description>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule id="bl-im-31" context="ifd[type=YCbCr]">
+   <assert test="{tags.tag[name=SamplesPerPixel] == 3}">Invalid Samples per Pixel for YCbCr image</assert>
+   <description>YCbCr images SamplesPerPixel check</description>
+   <reference>Section 21, page 89</reference>
+  </rule>
+  <rule id="bl-im-32" context="ifd[type=YCbCr]">
+   <assert test="{tags.tag[name=BitsPerSample] == 8}">Invalid Bits per Sample for YCbCr image</assert>
+   <description>YCbCr images BitsPerSample check</description>
+   <reference>Section 21, page 89</reference>
+  </rule>
+  <rule id="bl-im-33" context="ifd[type=YCbCr]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">YCbCr images should not contain tag ColorMap</assert>
+   <description>YCbCr images ColorMap check</description>
+   <reference>Section 21, page 94</reference>
+  </rule>
+  <rule id="bl-im-34" context="ifd[type=YCbCr]" level="warning">
+   <assert test="{!tags.tag[name=InkSet]}">YCbCr images should not contain tag InkSet</assert>
+   <description>YCbCr images InkSet check</description>
+   <reference>Section 21, page 94</reference>
+  </rule>
+  <rule id="bl-im-35" context="ifd[type=CIELab]">
+   <assert test="{tags.tag[name=BitsPerSample] == 8}">Invalid Bits per Sample for CIELab image</assert>
+   <description>CIELab images BitsPerSample check</description>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule id="bl-im-36" context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=ColorMap]}">CIELab images should not contain tag ColorMap</assert>
+   <description>CIELab images ColorMap check</description>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule id="bl-im-37" context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=InkSet]}">CIELab images should not contain tag InkSet</assert>
+   <description>CIELab images InkSet check</description>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule id="bl-im-38" context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrCoefficients]}">CIELab images should not contain tag YCbCrCoefficients</assert>
+   <description>CIELab images YCbCrCoefficients check</description>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule id="bl-im-39" context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrPositioning]}">CIELab images should not contain tag YCbCrPositioning</assert>
+   <description>CIELab images YCbCrPositioning check</description>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  <rule id="bl-im-40" context="ifd[type=CIELab]" level="warning">
+   <assert test="{!tags.tag[name=YCbCrSubSampling]}">CIELab images should not contain tag YCbCrSubSampling</assert>
+   <description>CIELab images YCbCrSubSampling check</description>
+   <reference>Section 23, page 110</reference>
+  </rule>
+  
+ </rules>
+ 
+ <rules description="tags-check">
+  
+ 
+  
+ 
+  
+  
+ 
+  <rule id="bl-tg-13" context="ifd[class=Image]">
+   <assert test="{strips == 0} || {tiles == 0}">Image must be in either Strips or Tiles</assert>
+   <description>Check image represented correctly in either strips or tiles</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule id="bl-tg-14" context="ifd[class=Image]">
+   <assert test="{strips == 1} || {tiles == 1}">Image cannot be in both Strips and Tiles</assert>
+   <description>Check image represented in only one of strips or tiles</description>
+   <reference>Section 15, page 66</reference>
+  </rule>
+  <rule id="bl-tg-15" context="ifd[class=Image]">
+   <assert test="{correctExtraSamples == 1}">Incorrect Extra Samples Count</assert>
+   <description>Check valid extra samples components</description>
+   <reference>Section 8, page 31</reference>
+  </rule>
+  
+  <rule id="bl-tg-16" context="ifd[class=Image]">
+   <assert test="{onlyNecessaryExtraSamples == 1}">Unnecessary Extra Samples</assert>
+   <description>Check not unused extra samples present</description>
+   <reference>Section 8, page 31</reference>
+  </rule>
+  <rule id="bl-tg-17" context="ifd[class=Image]">
+   <assert test="{validBitsPerSample == 1}">Invalid Bits per Sample</assert>
+   <description>Check valid Bits per Sample values</description>
+   <reference>Section 8, page 29</reference>
+  </rule>
+  
+  <rule id="bl-tg-19" context="tags" level="warning">
+   <assert test="{tag[name=PageNumber](0) &lt; tag[name=PageNumber](1)}">Incoherent page number</assert>
+   <description>Check valid value for Page Number tag</description>
+   <reference>Section 12, page 55</reference>
+  </rule>
+  
+ </rules>
+ 
+ <rules description="tagtype-check">
+  <rule id="bl-ty-1" context="tag[id=33723]">
+   <assert test="{type=='UNDEFINED'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-2" context="tag[id=34264]">
+   <assert test="{type=='DOUBLE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-3" context="tag[id=40960]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-4" context="tag[id=0]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-5" context="tag[id=512]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-6" context="tag[id=40961]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-7" context="tag[id=41985]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-8" context="tag[id=1]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-9" context="tag[id=513]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-10" context="tag[id=37377]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-11" context="tag[id=37378]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-12" context="tag[id=41986]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-13" context="tag[id=2]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-14" context="tag[id=514]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-15" context="tag[id=40962]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-16" context="tag[id=37379]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-17" context="tag[id=36867]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-18" context="tag[id=3]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-19" context="tag[id=515]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-20" context="tag[id=40963]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-21" context="tag[id=41987]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-22" context="tag[id=36868]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-23" context="tag[id=41988]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-24" context="tag[id=37380]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-25" context="tag[id=4]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-26" context="tag[id=40964]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-27" context="tag[id=41989]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-28" context="tag[id=5]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-29" context="tag[id=40965]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-30" context="tag[id=517]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-31" context="tag[id=37381]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-32" context="tag[id=6]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-33" context="tag[id=518]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-34" context="tag[id=41990]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-35" context="tag[id=37382]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-36" context="tag[id=41991]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-37" context="tag[id=7]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-38" context="tag[id=519]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-39" context="tag[id=37383]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-40" context="tag[id=41992]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-41" context="tag[id=8]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-42" context="tag[id=520]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-43" context="tag[id=37384]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-44" context="tag[id=37385]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-45" context="tag[id=9]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-46" context="tag[id=521]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-47" context="tag[id=41993]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-48" context="tag[id=37386]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-49" context="tag[id=10]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-50" context="tag[id=41994]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-51" context="tag[id=41995]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-52" context="tag[id=41483]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-53" context="tag[id=11]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-54" context="tag[id=12]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-55" context="tag[id=41484]">
+   <assert test="{type=='UNDE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-56" context="tag[id=41996]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-57" context="tag[id=13]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-58" context="tag[id=32781]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-59" context="tag[id=41486]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-60" context="tag[id=14]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-61" context="tag[id=41487]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-62" context="tag[id=15]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-63" context="tag[id=41488]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-64" context="tag[id=16]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-65" context="tag[id=17]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-66" context="tag[id=529]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-67" context="tag[id=50706]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-68" context="tag[id=18]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-69" context="tag[id=530]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-70" context="tag[id=50707]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-71" context="tag[id=19]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-72" context="tag[id=531]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-73" context="tag[id=20]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-74" context="tag[id=532]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-75" context="tag[id=37396]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-76" context="tag[id=41492]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-77" context="tag[id=50708]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-78" context="tag[id=41493]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-79" context="tag[id=21]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-80" context="tag[id=50709]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-81" context="tag[id=50710]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-82" context="tag[id=22]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-83" context="tag[id=37398]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-84" context="tag[id=50711]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-85" context="tag[id=23]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-86" context="tag[id=41495]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-87" context="tag[id=24]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-88" context="tag[id=50712]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-89" context="tag[id=50713]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-90" context="tag[id=25]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-91" context="tag[id=50714]">
+   <assert test="{type=='SHORT'} || {type=='BYTE'} || {type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-92" context="tag[id=26]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-93" context="tag[id=50715]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-94" context="tag[id=27]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-95" context="tag[id=50716]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-96" context="tag[id=28]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-97" context="tag[id=29]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-98" context="tag[id=50717]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-99" context="tag[id=50718]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-100" context="tag[id=30]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-101" context="tag[id=50719]">
+   <assert test="{type=='SHORT'} || {type=='LONG'} || {type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-102" context="tag[id=50720]">
+   <assert test="{type=='SHORT'} || {type=='LONG'} || {type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-103" context="tag[id=42016]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-104" context="tag[id=50721]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-105" context="tag[id=50722]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-106" context="tag[id=34850]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-107" context="tag[id=50723]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-108" context="tag[id=50724]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-109" context="tag[id=34852]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-110" context="tag[id=34853]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-111" context="tag[id=50725]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-112" context="tag[id=50726]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-113" context="tag[id=50727]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-114" context="tag[id=34855]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-115" context="tag[id=50728]">
+   <assert test="{type=='SHORT'} || {type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-116" context="tag[id=34856]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-117" context="tag[id=50729]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-118" context="tag[id=34857]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-119" context="tag[id=50730]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-120" context="tag[id=34858]">
+   <assert test="{type=='SSHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-121" context="tag[id=50731]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-122" context="tag[id=34859]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-123" context="tag[id=50732]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-124" context="tag[id=50733]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-125" context="tag[id=50734]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-126" context="tag[id=50735]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-127" context="tag[id=559]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-128" context="tag[id=50736]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-129" context="tag[id=50737]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-130" context="tag[id=50738]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-131" context="tag[id=50739]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-132" context="tag[id=50740]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-133" context="tag[id=50741]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-134" context="tag[id=34377]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-135" context="tag[id=50778]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-136" context="tag[id=50779]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-137" context="tag[id=50780]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-138" context="tag[id=34908]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-139" context="tag[id=34909]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-140" context="tag[id=50781]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-141" context="tag[id=34910]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-142" context="tag[id=50784]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-143" context="tag[id=37500]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-144" context="tag[id=33920]">
+   <assert test="{type=='DOUBLE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-145" context="tag[id=33922]">
+   <assert test="{type=='DOUBLE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-146" context="tag[id=37510]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-147" context="tag[id=50827]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-148" context="tag[id=50828]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-149" context="tag[id=50829]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-150" context="tag[id=33421]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-151" context="tag[id=50830]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-152" context="tag[id=50831]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-153" context="tag[id=50832]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-154" context="tag[id=37520]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-155" context="tag[id=50833]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-156" context="tag[id=37521]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-157" context="tag[id=50834]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-158" context="tag[id=37522]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-159" context="tag[id=33432]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-160" context="tag[id=33434]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-161" context="tag[id=33437]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-162" context="tag[id=32932]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-163" context="tag[id=700]">
+   <assert test="{type=='BYTE'} || {type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-164" context="tag[id=50879]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-165" context="tag[id=34016]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-166" context="tag[id=34017]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-167" context="tag[id=34018]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-168" context="tag[id=34019]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-169" context="tag[id=34020]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-170" context="tag[id=34021]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-171" context="tag[id=34022]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-172" context="tag[id=34023]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-173" context="tag[id=34024]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-174" context="tag[id=34025]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-175" context="tag[id=34026]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-176" context="tag[id=34027]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-177" context="tag[id=34028]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-178" context="tag[id=34029]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-179" context="tag[id=34030]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-180" context="tag[id=34031]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-181" context="tag[id=34032]">
+   <assert test="{type=='BYTE'} || {type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-182" context="tag[id=50931]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-183" context="tag[id=50932]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-184" context="tag[id=50933]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-185" context="tag[id=50934]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-186" context="tag[id=50935]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-187" context="tag[id=50936]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-188" context="tag[id=50937]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-189" context="tag[id=50938]">
+   <assert test="{type=='FLOAT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-190" context="tag[id=50939]">
+   <assert test="{type=='FLOAT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-191" context="tag[id=50940]">
+   <assert test="{type=='FLOAT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-192" context="tag[id=50941]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-193" context="tag[id=254]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-194" context="tag[id=50942]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-195" context="tag[id=255]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-196" context="tag[id=41728]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-197" context="tag[id=256]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-198" context="tag[id=37121]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-199" context="tag[id=257]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-200" context="tag[id=41729]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-201" context="tag[id=258]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-202" context="tag[id=41730]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-203" context="tag[id=37122]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-204" context="tag[id=259]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-205" context="tag[id=262]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-206" context="tag[id=263]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-207" context="tag[id=264]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-208" context="tag[id=265]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-209" context="tag[id=266]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-210" context="tag[id=269]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-211" context="tag[id=270]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-212" context="tag[id=33550]">
+   <assert test="{type=='DOUBLE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-213" context="tag[id=271]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-214" context="tag[id=272]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-215" context="tag[id=273]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-216" context="tag[id=274]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-217" context="tag[id=50964]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-218" context="tag[id=50965]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-219" context="tag[id=277]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-220" context="tag[id=50966]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-221" context="tag[id=278]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-222" context="tag[id=50967]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-223" context="tag[id=279]">
+   <assert test="{type=='LONG'} || {type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-224" context="tag[id=280]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-225" context="tag[id=50968]">
+   <assert test="{type=='ASCII'} || {type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-226" context="tag[id=281]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-227" context="tag[id=50969]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-228" context="tag[id=50970]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-229" context="tag[id=282]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-230" context="tag[id=50971]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-231" context="tag[id=283]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-232" context="tag[id=284]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-233" context="tag[id=50972]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-234" context="tag[id=50973]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-235" context="tag[id=285]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-236" context="tag[id=50974]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-237" context="tag[id=286]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-238" context="tag[id=50975]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-239" context="tag[id=287]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-240" context="tag[id=288]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-241" context="tag[id=289]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-242" context="tag[id=290]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-243" context="tag[id=291]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-244" context="tag[id=292]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-245" context="tag[id=50981]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-246" context="tag[id=293]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-247" context="tag[id=50982]">
+   <assert test="{type=='FLOAT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-248" context="tag[id=296]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-249" context="tag[id=297]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-250" context="tag[id=300]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-251" context="tag[id=301]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-252" context="tag[id=305]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-253" context="tag[id=306]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-254" context="tag[id=315]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-255" context="tag[id=316]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-256" context="tag[id=317]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-257" context="tag[id=318]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-258" context="tag[id=319]">
+   <assert test="{type=='RATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-259" context="tag[id=320]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-260" context="tag[id=321]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-261" context="tag[id=322]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-262" context="tag[id=323]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-263" context="tag[id=324]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-264" context="tag[id=325]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-265" context="tag[id=326]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-266" context="tag[id=327]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-267" context="tag[id=328]">
+   <assert test="{type=='SHORT'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-268" context="tag[id=330]">
+   <assert test="{type=='LONG'} || {type=='IFD'} || {type=='SUBIFD'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-269" context="tag[id=332]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-270" context="tag[id=333]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-271" context="tag[id=334]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-272" context="tag[id=336]">
+   <assert test="{type=='BYTE'} || {type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-273" context="tag[id=337]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-274" context="tag[id=338]">
+   <assert test="{type=='BYTE'} || {type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-275" context="tag[id=339]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-276" context="tag[id=340]">
+   <assert test="{type=='ANY'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-277" context="tag[id=341]">
+   <assert test="{type=='ANY'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-278" context="tag[id=342]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-279" context="tag[id=343]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-280" context="tag[id=344]">
+   <assert test="{type=='DWORD'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-281" context="tag[id=345]">
+   <assert test="{type=='DWORD'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-282" context="tag[id=346]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-283" context="tag[id=347]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-284" context="tag[id=37724]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-285" context="tag[id=351]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-286" context="tag[id=34665]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-287" context="tag[id=34675]">
+   <assert test="{type=='UNDEFINED'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-288" context="tag[id=400]">
+   <assert test="{type=='IFD'} || {type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-289" context="tag[id=401]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-290" context="tag[id=402]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-291" context="tag[id=403]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-292" context="tag[id=404]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-293" context="tag[id=405]">
+   <assert test="{type=='BYTE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-294" context="tag[id=34732]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-295" context="tag[id=34736]">
+   <assert test="{type=='DOUBLE'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-296" context="tag[id=433]">
+   <assert test="{type=='SRATIONAL'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-297" context="tag[id=34737]">
+   <assert test="{type=='ASCII'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-298" context="tag[id=434]">
+   <assert test="{type=='SHORT'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+  <rule id="bl-ty-299" context="tag[id=435]">
+   <assert test="{type=='LONG'}">Tag type is not valid</assert>
+   <description>Check valid type for tag</description>
+  </rule>
+ </rules>
+ 
+ <rules description="tagcardinality-check">
+  <rule id="bl-ca-1" context="*" level="warning">
+   <assert test="{cardinality!=0}">Tag cardinality should not be zero</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-2" context="tag[id=40960]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-3" context="tag[id=0]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-4" context="tag[id=512]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-5" context="tag[id=40961]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-6" context="tag[id=41985]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-7" context="tag[id=1]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-8" context="tag[id=513]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-9" context="tag[id=37377]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-10" context="tag[id=37378]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-11" context="tag[id=41986]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-12" context="tag[id=2]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-13" context="tag[id=514]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-14" context="tag[id=40962]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-15" context="tag[id=37379]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-16" context="tag[id=36867]">
+   <assert test="{cardinality==20}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-17" context="tag[id=3]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-18" context="tag[id=515]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-19" context="tag[id=40963]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-20" context="tag[id=41987]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-21" context="tag[id=36868]">
+   <assert test="{cardinality==20}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-22" context="tag[id=41988]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-23" context="tag[id=37380]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-24" context="tag[id=4]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-25" context="tag[id=40964]">
+   <assert test="{cardinality==13}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-26" context="tag[id=41989]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-27" context="tag[id=5]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-28" context="tag[id=40965]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-29" context="tag[id=37381]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-30" context="tag[id=6]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-31" context="tag[id=41990]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-32" context="tag[id=37382]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-33" context="tag[id=41991]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-34" context="tag[id=7]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-35" context="tag[id=37383]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-36" context="tag[id=41992]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-37" context="tag[id=37384]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-38" context="tag[id=37385]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-39" context="tag[id=9]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-40" context="tag[id=41993]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-41" context="tag[id=37386]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-42" context="tag[id=10]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-43" context="tag[id=41994]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-44" context="tag[id=41483]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-45" context="tag[id=11]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-46" context="tag[id=12]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-47" context="tag[id=41996]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-48" context="tag[id=13]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-49" context="tag[id=41486]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-50" context="tag[id=14]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-51" context="tag[id=41487]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-52" context="tag[id=15]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-53" context="tag[id=41488]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-54" context="tag[id=16]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-55" context="tag[id=17]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-56" context="tag[id=529]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-57" context="tag[id=50706]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-58" context="tag[id=530]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-59" context="tag[id=50707]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-60" context="tag[id=19]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-61" context="tag[id=531]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-62" context="tag[id=20]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-63" context="tag[id=532]">
+   <assert test="{cardinality==6}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-64" context="tag[id=37396]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-65" context="tag[id=41492]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-66" context="tag[id=41493]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-67" context="tag[id=21]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-68" context="tag[id=22]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-69" context="tag[id=37398]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-70" context="tag[id=50711]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-71" context="tag[id=23]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-72" context="tag[id=41495]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-73" context="tag[id=24]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-74" context="tag[id=50713]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-75" context="tag[id=25]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-76" context="tag[id=26]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-77" context="tag[id=29]">
+   <assert test="{cardinality==11}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-78" context="tag[id=50718]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-79" context="tag[id=30]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-80" context="tag[id=50719]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-81" context="tag[id=50720]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-82" context="tag[id=42016]">
+   <assert test="{cardinality==33}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-83" context="tag[id=34850]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-84" context="tag[id=34853]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-85" context="tag[id=50729]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-86" context="tag[id=34857]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-87" context="tag[id=50730]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-88" context="tag[id=50731]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-89" context="tag[id=34859]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-90" context="tag[id=50732]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-91" context="tag[id=50733]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-92" context="tag[id=50734]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-93" context="tag[id=50736]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-94" context="tag[id=50737]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-95" context="tag[id=50738]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-96" context="tag[id=50739]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-97" context="tag[id=50741]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-98" context="tag[id=50778]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-99" context="tag[id=50779]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-100" context="tag[id=50780]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-101" context="tag[id=34908]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-102" context="tag[id=50781]">
+   <assert test="{cardinality==16}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-103" context="tag[id=34910]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-104" context="tag[id=33920]">
+   <assert test="{cardinality==17}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-105" context="tag[id=50829]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-106" context="tag[id=33421]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-107" context="tag[id=33434]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-108" context="tag[id=33437]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-109" context="tag[id=50879]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-110" context="tag[id=34019]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-111" context="tag[id=34020]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-112" context="tag[id=34021]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-113" context="tag[id=34023]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-114" context="tag[id=34024]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-115" context="tag[id=34025]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-116" context="tag[id=34026]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-117" context="tag[id=34027]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-118" context="tag[id=34028]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-119" context="tag[id=34030]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-120" context="tag[id=34031]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-121" context="tag[id=50935]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-122" context="tag[id=50937]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-123" context="tag[id=50941]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-124" context="tag[id=254]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-125" context="tag[id=255]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-126" context="tag[id=41728]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-127" context="tag[id=256]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-128" context="tag[id=37121]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-129" context="tag[id=257]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-130" context="tag[id=41729]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-131" context="tag[id=37122]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-132" context="tag[id=259]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-133" context="tag[id=262]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-134" context="tag[id=263]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-135" context="tag[id=264]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-136" context="tag[id=265]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-137" context="tag[id=266]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-138" context="tag[id=33550]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-139" context="tag[id=274]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-140" context="tag[id=277]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-141" context="tag[id=278]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-142" context="tag[id=50969]">
+   <assert test="{cardinality==16}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-143" context="tag[id=50970]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-144" context="tag[id=282]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-145" context="tag[id=283]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-146" context="tag[id=284]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-147" context="tag[id=50972]">
+   <assert test="{cardinality==16}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-148" context="tag[id=50973]">
+   <assert test="{cardinality==16}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-149" context="tag[id=50974]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-150" context="tag[id=50975]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-151" context="tag[id=290]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-152" context="tag[id=292]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-153" context="tag[id=50981]">
+   <assert test="{cardinality==3}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-154" context="tag[id=293]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-155" context="tag[id=296]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-156" context="tag[id=297]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-157" context="tag[id=300]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-158" context="tag[id=306]">
+   <assert test="{cardinality==20}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-159" context="tag[id=317]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-160" context="tag[id=318]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-161" context="tag[id=319]">
+   <assert test="{cardinality==6}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-162" context="tag[id=321]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-163" context="tag[id=322]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-164" context="tag[id=323]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-165" context="tag[id=332]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-166" context="tag[id=334]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-167" context="tag[id=342]">
+   <assert test="{cardinality==6}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-168" context="tag[id=344]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-169" context="tag[id=345]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-170" context="tag[id=346]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-171" context="tag[id=351]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-172" context="tag[id=34665]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-173" context="tag[id=400]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-174" context="tag[id=401]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-175" context="tag[id=402]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-176" context="tag[id=403]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-177" context="tag[id=404]">
+   <assert test="{cardinality==4}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-178" context="tag[id=405]">
+   <assert test="{cardinality==1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-179" context="tag[id=34732]">
+   <assert test="{cardinality==2}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-180" context="tag[id=34264]">
+   <assert test="{cardinality==16}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+ </rules>
+
+ <rules description="cardinality-formulas">
+  <rule id="bl-ca-181" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGLosslessPredictors tag must match SamplesPerPixel value</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 22, page 107</reference>
+  </rule>
+  <rule id="bl-ca-182" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGPointTransforms tag must match SamplesPerPixel value</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 22, page 107</reference>
+  </rule>
+  <rule id="bl-ca-183" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGQTables tag must match SamplesPerPixel value</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 22, page 107</reference>
+  </rule>
+  <rule id="bl-ca-184" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGDCTables tag must match SamplesPerPixel value</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 22, page 107</reference>
+  </rule>
+  <rule id="bl-ca-185" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGACTables tag must match SamplesPerPixel value</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 22, page 107</reference>
+  </rule>
+  <rule id="bl-ca-186" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of WhiteLevel tag must match SamplesPerPixel value</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference></reference>
+  </rule>
+  <!-- moved to ifd image section
+  <rule id="bl-ca-187" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=BitsPerSample].cardinality == tags.tag[name=SamplesPerPixel]}">Samples per Pixel and Bits per Sample count do not match</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 8, page 29 and 39</reference>
+  </rule>-->
+  <rule id="bl-ca-188" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=MinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of MinSampleValue tag must match SamplesPerPixel value</assert>
+   <reference>Section 8, page 35</reference>
+  </rule>
+  <rule id="bl-ca-189" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=MaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of MaxSampleValue tag must match SamplesPerPixel value</assert>
+   <reference>Section 8, page 35</reference>
+  </rule>
+  <rule id="bl-ca-190" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMinSampleValue tag must match SamplesPerPixel value</assert>
+   <reference>Section 8, page 35</reference>
+  </rule>
+  <rule id="bl-ca-191" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMaxSampleValue tag must match SamplesPerPixel value</assert>
+   <reference>Section 8, page 35</reference>
+  </rule>
+  <rule id="bl-ca-192" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=ImageBaseColor].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of ImageBaseColor tag must match SamplesPerPixel value</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-193" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SampleFormat tag must match SamplesPerPixel value</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 19, page 80</reference>
+  </rule>
+  <rule id="bl-ca-194" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=CMYKEquivalent].cardinality == 4*tags.tag[name=SamplesPerPixel]}">CMYKEquivalent count must be 4*Bits per Sample</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 16, page 69</reference>
+  </rule>
+  <rule id="bl-ca-195" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=Decode].cardinality == 2*tags.tag[name=Decode]}">Decode count must be 2*Bits per Sample</assert>
+   <description>Check valid cardinality for tag</description>
+  </rule>
+  <rule id="bl-ca-196" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=GrayResponseCurve].cardinality == 2^tags.tag[name=BitsPerSample]}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 8, page 33</reference>
+  </rule>
+  <rule id="bl-ca-197" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=ColorMap].cardinality == 3*2^tags.tag[name=BitsPerSample]}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 8, page 29</reference>
+  </rule>
+  <rule id="bl-ca-198" context="ifd[class=Image]">
+   <assert test="{tags.tag[name=DotRange].cardinality &gt; 1}">Tag cardinality is not valid</assert>
+   <description>Check valid cardinality for tag</description>
+   <reference>Section 16, page 71</reference>
+  </rule>
+ </rules>
+ 
+</implementationCheckerObject>

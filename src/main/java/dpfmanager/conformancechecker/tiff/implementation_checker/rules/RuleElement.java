@@ -71,6 +71,8 @@ public class RuleElement {
         } else if (indexCla > -1 && (indexPar == -1 || indexCla < indexPar)) {
           String filter = fieldName.substring(indexCla + 1);
           String remaining = filter.substring(filter.indexOf("]") + 1).trim();
+          if (filter.indexOf("]") == -1)
+            filter.toString();
           filter = filter.substring(0, filter.indexOf("]")).trim();
           this.filter = new Filter(filter);
           String currentfield = fieldName.substring(0, indexCla).trim();
@@ -144,6 +146,8 @@ public class RuleElement {
       String[] parts = val.split("\\.");
       for (String nodeName : parts) {
         if (node == null) {
+          if (model == null)
+            model.toString();
           if (model.getContext().equals(nodeName))
             node = model;
         } else {
@@ -182,6 +186,7 @@ public class RuleElement {
         try {
           int inum = Integer.parseInt(value.substring(0, value.indexOf("/")));
           int iden = Integer.parseInt(value.substring(value.indexOf("/") + 1));
+          if (inum == 0 && iden == 0) return "0";
           return (inum / (float) iden) + "";
         } catch (Exception ex) {
 

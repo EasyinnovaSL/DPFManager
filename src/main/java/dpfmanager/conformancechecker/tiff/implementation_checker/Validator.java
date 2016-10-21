@@ -1,13 +1,13 @@
 /**
- * <h1>Validator.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>Validator.java</h1> <p> This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -23,14 +23,15 @@ import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.DpfLogger;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffNode;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.AssertObject;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.Clausule;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.Clausules;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.ImplementationCheckerObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.IncludeObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleElement;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleObject;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RulesObject;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.AssertType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.IncludeType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import org.xml.sax.SAXException;
@@ -43,8 +44,8 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -63,14 +64,18 @@ public class Validator {
   private TiffValidationObject model;
   private ValidationResult result;
 
-  static HashMap<String, ImplementationCheckerObject> preLoadedValidatorsSingleton = new HashMap<>();
+  static HashMap<String, ImplementationCheckerObjectType> preLoadedValidatorsSingleton = new HashMap<>();
 
   public List<RuleResult> getErrors() {
     return result.getErrors();
   }
 
+  public List<RuleResult> getWarningsAndInfos() {
+    return result.getWarnings(true);
+  }
+
   public List<RuleResult> getWarnings() {
-    return result.getWarnings();
+    return result.getWarnings(false);
   }
 
   public Validator() {
@@ -82,99 +87,56 @@ public class Validator {
   }
 
   /**
-   * Read filefrom resources string.
-   *
-   * @param pathStr the path str
-   * @return the string
+   * Main validate function
    */
-  public InputStream getFileFromResources(String pathStr) {
-    InputStream fis = null;
-    Path path = Paths.get(pathStr);
+  public void validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     try {
-      if (Files.exists(path)) {
-        // Look in current dir
-        fis = new FileInputStream(pathStr);
-      } else {
-        // Look in JAR
-        Class cls = ReportGenerator.class;
-        ClassLoader cLoader = cls.getClassLoader();
-        fis = cLoader.getResourceAsStream(pathStr);
-      }
-    } catch (FileNotFoundException e) {
-      printOut("File " + pathStr + " not found in dir.");
-    }
-
-    return fis;
-  }
-
-  synchronized ImplementationCheckerObject getRules(String rulesFile) throws JAXBException {
-    ImplementationCheckerObject rules = null;
-
-    if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
-      JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObject.class);
+      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-      rules = (ImplementationCheckerObject) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
+      StringReader reader = new StringReader(content);
 
-      for (RulesObject ro : rules.getRules()) {
-        for (RuleObject rule : ro.getRules()) {
-          rule.setIso(rules.getIso());
-        }
-      }
-
-      if (rules.getIncludes() != null) {
-        for (IncludeObject inc : rules.getIncludes()) {
-          JAXBContext jaxbContextInc = JAXBContext.newInstance(ImplementationCheckerObject.class);
-          Unmarshaller jaxbUnmarshallerInc = jaxbContextInc.createUnmarshaller();
-          ImplementationCheckerObject rulesIncluded = (ImplementationCheckerObject) jaxbUnmarshallerInc.unmarshal(getFileFromResources("implementationcheckers/" + inc.getValue()));
-
-          if (inc.getSubsection() == null || inc.getSubsection().length() == 0) {
-            for (RulesObject ro : rulesIncluded.getRules()) {
-              rules.getRules().add(ro);
-              for (RuleObject rule : ro.getRules()) {
-                rule.setIso(rulesIncluded.getIso());
-              }
-            }
-          } else {
-            for (RulesObject ro : rulesIncluded.getRules()) {
-              if (ro.getDescription().equals(inc.getSubsection())) {
-                rules.getRules().add(ro);
-                for (RuleObject rule : ro.getRules()) {
-                  rule.setIso(rulesIncluded.getIso());
-                }
-              }
-            }
-          }
-        }
-      }
-
-      preLoadedValidatorsSingleton.put(rulesFile, rules);
-    } else {
-      rules = preLoadedValidatorsSingleton.get(rulesFile);
+      validate((TiffValidationObject) jaxbUnmarshaller.unmarshal(reader), rulesFile, fastBreak);
+    } catch (Exception ex) {
+      RuleResult rr = new RuleResult(false, null, null, "Fatal error in TIFF file");
+      result = new ValidationResult();
+      result.add(rr);
     }
-    return rules;
   }
 
-  void validate(TiffValidationObject model, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public void validate(TiffValidationObject model, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
+    this.model = model;
 
-    ImplementationCheckerObject rules = getRules(rulesFile);
+    ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
 
     boolean bbreak = false;
-    for (RulesObject ruleSet : rules.getRules()) {
-      for (RuleObject rule : ruleSet.getRules()) {
-        if (rule.getId().equals("ep-1"))
-          rule.toString();
+    List<RuleType> ordRules = new ArrayList<RuleType>();
+    for (RulesType ruleSet : rules.getRules()) {
+      for (RuleType rule : ruleSet.getRule()) {
+        if (rule.isCritical())
+          ordRules.add(rule);
+      }
+    }
+    for (RulesType ruleSet : rules.getRules()) {
+      for (RuleType rule : ruleSet.getRule()) {
+        if (!rule.isCritical())
+          ordRules.add(rule);
+      }
+    }
 
-        String context = rule.getContext();
-        List<TiffNode> objects = model.getObjectsFromContext(context, true);
-        for (TiffNode node : objects) {
-          boolean ok = checkRule(rule, node);
-          if (!ok && (rule.isCritical() || fastBreak)) {
-            bbreak = true;
-            break;
-          }
-        }
-        if (bbreak) {
+    for (RuleType rule : ordRules) {
+      if (rule.getId().equals("TAG-254-0005"))
+        rule.toString();
+
+      String context = rule.getContext();
+      List<TiffNode> objects = model.getObjectsFromContext(context, true);
+      for (TiffNode node : objects) {
+        boolean ok = checkRule(rule, node);
+        if (!ok && (rule.isWarning() || rule.isInfo())) ok = true;
+        if (!ok)
+          ok = ok;
+        if (!ok && (rule.isCritical() || fastBreak)) {
+          bbreak = true;
           break;
         }
       }
@@ -184,71 +146,12 @@ public class Validator {
     }
   }
 
-  void validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    try {
-      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
-      Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-      StringReader reader = new StringReader(content);
-      model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
 
-      validate(model, rulesFile, fastBreak);
-    } catch (Exception ex) {
-      RuleResult rr = new RuleResult(false, null, null, "Fatal error in TIFF file");
-      result = new ValidationResult();
-      result.add(rr);
-    }
-  }
-
-  public void validateBaseline(TiffValidationObject model) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    this.model = model;
-    validate(model, "implementationcheckers/BaselineProfileChecker.xml", false);
-  }
-
-  public void validateTiffEP(TiffValidationObject model, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    this.model = model;
-    validate(model, "implementationcheckers/TiffEPProfileChecker.xml", fastBreak);
-  }
-
-  public void validateTiffIT(TiffValidationObject model, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    this.model = model;
-    validate(model, "implementationcheckers/TiffITProfileChecker.xml", fastBreak);
-  }
-
-  public void validateTiffITP1(TiffValidationObject model, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    this.model = model;
-    validate(model, "implementationcheckers/TiffITP1ProfileChecker.xml", fastBreak);
-  }
-
-  public void validateTiffITP2(TiffValidationObject model, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    this.model = model;
-    validate(model, "implementationcheckers/TiffITP2ProfileChecker.xml", fastBreak);
-  }
-
-  public void validateBaseline(String path) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/BaselineProfileChecker.xml", false);
-  }
-
-  public void validateTiffEP(String path, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/TiffEPProfileChecker.xml", fastBreak);
-  }
-
-  public void validateTiffIT(String path, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/TiffITProfileChecker.xml", fastBreak);
-  }
-
-  public void validateTiffITP1(String path, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/TiffITP1ProfileChecker.xml", fastBreak);
-  }
-
-  public void validateTiffITP2(String path, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
-    validate(path, "implementationcheckers/TiffITP2ProfileChecker.xml", fastBreak);
-  }
-
-  boolean checkRule(RuleObject rule, TiffNode node) {
+  boolean checkRule(RuleType rule, TiffNode node) {
     boolean ok = true;
 
     try {
-      AssertObject test = rule.getAssertionField();
+      AssertType test = rule.getAssert();
       String expression = test.getTest();
 
       // Get clausules
@@ -257,14 +160,13 @@ public class Validator {
         ConformanceChecker.Logger.println("Error on rule " + rule.toString());
 
       // Analyze clausules
-      for (String clausule : clausules.getClausules()) {
-        if (clausule.contains("*"))
-          clausule = clausule;
-        if (clausule.startsWith("count(")) {
+      for (int ic = 0; ic < clausules.getClausules().size(); ic++) {
+        Clausule clausule = clausules.getClausules().get(ic);
+        if (clausule.value.startsWith("count(")) {
           // Child count
-          String countField = clausule.substring(clausule.indexOf("(") + 1);
+          String countField = clausule.value.substring(clausule.value.indexOf("(") + 1);
           countField = countField.substring(0, countField.indexOf(")"));
-          String checkop = clausule.substring(clausule.indexOf(")") + 1).trim();
+          String checkop = clausule.value.substring(clausule.value.indexOf(")") + 1).trim();
 
           RuleElement field = new RuleElement(countField, node, model);
           if (!field.valid) ok = false;
@@ -285,9 +187,9 @@ public class Validator {
               ok = n < Integer.parseInt(field2);
             }
           }
-        } else if (clausule.startsWith("date(")) {
+        } else if (clausule.value.startsWith("date(")) {
           // Check datetime format
-          String dateTimeField = clausule.substring(clausule.indexOf("(") + 1);
+          String dateTimeField = clausule.value.substring(clausule.value.indexOf("(") + 1);
           dateTimeField = dateTimeField.substring(0, dateTimeField.indexOf(")"));
 
           RuleElement field = new RuleElement(dateTimeField, node, model);
@@ -316,20 +218,22 @@ public class Validator {
               }
             }
           }
-        } else if (clausule.contains("==") || clausule.contains(">") || clausule.contains("<") || clausule.contains("!=")) {
+        } else if (clausule.value.contains("==") || clausule.value.contains(">") || clausule.value.contains("<") || clausule.value.contains("!=")) {
           // Check field values
-          String operation = clausule.contains("==") ? "==" : (clausule.contains(">") ? ">" : clausule.contains("!=") ? "!=" : "<");
-          RuleElement op1 = new RuleElement(clausule.substring(0, clausule.indexOf(operation)), node, model);
+          String operation = clausule.value.contains("==") ? "==" : (clausule.value.contains(">") ? ">" : clausule.value.contains("!=") ? "!=" : "<");
+          RuleElement op1 = new RuleElement(clausule.value.substring(0, clausule.value.indexOf(operation)), node, model);
           if (!op1.valid)
             ok = false;
           else {
             String value = op1.getValue();
             if (value == null) return ok;
-            RuleElement op2 = new RuleElement(clausule.substring(clausule.indexOf(operation) + operation.length()).trim(), node, model);
+            RuleElement op2 = new RuleElement(clausule.value.substring(clausule.value.indexOf(operation) + operation.length()).trim(), node, model);
             if (!op2.valid)
               ok = false;
             else {
               String value2 = op2.getValue();
+              if (value2 == null)
+                op2.getValue();
               if (value.contains("/"))
                 value = Double.parseDouble(value.split("/")[0]) / Double.parseDouble(value.split("/")[1]) + "";
               if (value2.contains("/"))
@@ -348,16 +252,16 @@ public class Validator {
             }
           }
         } else {
-          if (clausule.startsWith("!")) {
+          if (clausule.value.startsWith("!")) {
             // Check field does not exist
-            RuleElement elem = new RuleElement(clausule.substring(1), node, model);
+            RuleElement elem = new RuleElement(clausule.value.substring(1), node, model);
             if (!elem.valid) ok = false;
             else {
               ok = elem.getChildren().size() == 0;
             }
           } else {
             // Check field exists
-            RuleElement elem = new RuleElement(clausule, node, model);
+            RuleElement elem = new RuleElement(clausule.value, node, model);
             if (!elem.valid) ok = false;
             else {
               List<TiffNode> childs = elem.getChildren();
@@ -368,26 +272,37 @@ public class Validator {
         }
 
         // Lazy evaluation
-        if (clausules.getOperator() != Clausules.Operator.NULL && clausules.getOperator() == Clausules.Operator.OR && ok)
-          break;
-        if (clausules.getOperator() == Clausules.Operator.NULL || clausules.getOperator() == Clausules.Operator.AND && !ok)
-          break;
+        Clausules.Operator nextClausuleOperator = null;
+        if (ic + 1 < clausules.getClausules().size())
+          nextClausuleOperator = clausules.getClausules().get(ic + 1).operator;
+        if (nextClausuleOperator != null) {
+          if (nextClausuleOperator == Clausules.Operator.OR && ok)
+            break;
+          if (nextClausuleOperator == Clausules.Operator.AND && !ok)
+            break;
+        }
       }
     } catch (Exception ex) {
       ex.printStackTrace();
       ok = false;
     }
 
-    if (ok) {
-      RuleResult rr = new RuleResult(true, node, rule, rule.toString() + " on node " + node.toString());
-      result.add(rr);
-    } else if (rule.isWarning()) {
-      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+    if (ok && rule.isWarning()) {
+      RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
       rr.setWarning(true);
       result.add(rr);
-    } else {
-      RuleResult rr = new RuleResult(false, node, rule, rule.toString() + " on node " + node.toString());
+    } else if (ok && rule.isInfo()) {
+      RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+      rr.setInfo(true);
       result.add(rr);
+    } else if (ok) {
+      RuleResult rr = new RuleResult(true, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+      result.add(rr);
+    } else {
+      if (!rule.isWarning() && !rule.isInfo()) {
+        RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+        result.add(rr);
+      }
     }
 
     return ok;
