@@ -454,7 +454,7 @@ public class ReportRow {
           String[] list = html.split("row hover-row");
           for (int i = 1; i < list.length; i++) {
             String sub = list[i];
-            if (sub.contains("class=\"warning\"")) {
+            if (sub.contains("class=\"c2 warning\"")) {
               warnings++;
             }
           }

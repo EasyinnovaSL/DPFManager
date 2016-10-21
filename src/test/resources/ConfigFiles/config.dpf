@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-   <version>1</version>
+   <version>2</version>
    <isos>
-      <iso>Tiff/EP</iso>
-      <iso>Tiff/IT-1</iso>
+      <iso>TiffEPProfileChecker</iso>
+      <iso>TiffITP1ProfileChecker</iso>
    </isos>
    <formats>
       <format>HTML</format>

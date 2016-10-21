@@ -30,7 +30,7 @@ public class ImplementationCheckerTest extends TestCase {
     String content = tiffValidation.getXml();
 
     Validator v = new Validator();
-    v.validateBaseline(content);
+    v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getBaselineValidation();
@@ -46,7 +46,7 @@ public class ImplementationCheckerTest extends TestCase {
     String content = tiffValidation.getXml();
 
     Validator v = new Validator();
-    v.validateBaseline(content);
+    v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getBaselineValidation();
@@ -66,7 +66,7 @@ public class ImplementationCheckerTest extends TestCase {
       String content = tiffValidation.getXml();
 
       Validator v = new Validator();
-      v.validateBaseline(content);
+      v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
 
       if (errors > -1) {
         assertEquals(errors, v.getErrors().size());

@@ -226,7 +226,7 @@ public class Report {
     showableTags.add("DateTimeOriginal");
     showableTags.add("Flash");
     showableTags.add("TIFFEPStandardID");*/
-    //if (tv.getName().equals(""+tv.getId())) return false;
+    //if (tv.getFileName().equals(""+tv.getId())) return false;
     return showableTags.contains(tv.getName());
   }
 

@@ -67,6 +67,6 @@ public class DpFManagerConstants {
   /**
    * The configuration xml version
    */
-  public static final int CONFIGURATION_VERSION = 1;
+  public static final int CONFIGURATION_VERSION = 2;
 
 }

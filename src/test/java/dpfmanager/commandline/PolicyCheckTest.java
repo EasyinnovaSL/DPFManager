@@ -2,6 +2,8 @@ package dpfmanager.commandline;
 
 import static junit.framework.TestCase.assertEquals;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 
@@ -68,42 +70,47 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), false);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
-    int index = html.indexOf("<tr class=\"##ROW_PC##\">");
-    String substring = html.substring(index, html.indexOf("</tr>", index));
-    assertEquals(substring.contains("<td>Policy Checker</td>"), true);
-    assertEquals(substring.contains("<td class=\"error\">1</td>"), true);
+    assertEquals(html.contains("This file conforms to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
+    assertEquals(html.contains("This file does NOT conform to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("This file conform to "+TiffConformanceChecker.POLICY_ISO), false);
+    assertEquals(html.contains("This file does NOT conform to "+TiffConformanceChecker.POLICY_ISO), true);
 
+    int index = html.indexOf("<table class=\"center-table CustomTable\">");
+    assertEquals(true, index > -1);
+    String table = html.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    String[] trs = table.split("</tr>");
+
+    // 1 Policy error
+    for (String tr : trs){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"error\">1</td>"));
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+        assertEquals(false, tr.contains("<td class=\"error\">1</td>"));
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      }
+    }
+
+    // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_PC##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_PC##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0<"), true);
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    assertEquals(true, index > -1);
+    table = htmlglobal.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    trs = table.split("</tr>");
 
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_BL##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_BL##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">1<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##BL_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##BL_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0 errors<"), true);
-    assertEquals(substring.contains(">0 warnings<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##PC_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##PC_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">1 errors<"), true);
-    assertEquals(substring.contains(">0 warnings<"), true);
+    for (String tr : trs){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+        assertEquals(true, tr.contains(">1 errors<"));
+        assertEquals(true, tr.contains(">0 warnings<"));
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+        assertEquals(true, tr.contains(">0 errors<"));
+        assertEquals(true, tr.contains(">0 warnings<"));
+      }
+    }
 
     FileUtils.deleteDirectory(new File(path));
-
     FileUtils.deleteDirectory(new File("temp"));
   }
 
@@ -158,42 +165,47 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to TIFF Baseline, BUT it has some warnings</div>"), true);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
-    int index = html.indexOf("<tr class=\"##ROW_PC##\">");
-    String substring = html.substring(index, html.indexOf("</tr>", index));
-    assertEquals(substring.contains("<td>Policy Checker</td>"), true);
-    assertEquals(substring.contains("<td class=\"error\">1</td>"), false);
+    assertEquals(html.contains("This file conforms to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
+    assertEquals(html.contains("This file does NOT conform to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("This file conforms to "+TiffConformanceChecker.POLICY_ISO+", BUT it has some warnings"), true);
+    assertEquals(html.contains("This file does NOT conform to "+TiffConformanceChecker.POLICY_ISO), false);
 
+    int index = html.indexOf("<table class=\"center-table CustomTable\">");
+    assertEquals(true, index > -1);
+    String table = html.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    String[] trs = table.split("</tr>");
+
+    // 1 Policy error
+    for (String tr : trs){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(true, tr.contains("<td class=\"warning\">1</td>"));
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      }
+    }
+
+    // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_PC##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_PC##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0<"), false);
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    assertEquals(true, index > -1);
+    table = htmlglobal.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    trs = table.split("</tr>");
 
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_BL##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_BL##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">1<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##BL_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##BL_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0 errors<"), true);
-    assertEquals(substring.contains(">0 warnings<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##PC_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##PC_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0 errors<"), true);
-    assertEquals(substring.contains(">1 warnings<"), true);
+    for (String tr : trs){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+        assertEquals(true, tr.contains(">0 errors<"));
+        assertEquals(true, tr.contains(">1 warnings<"));
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+        assertEquals(true, tr.contains(">0 errors<"));
+        assertEquals(true, tr.contains(">0 warnings<"));
+      }
+    }
 
     FileUtils.deleteDirectory(new File(path));
-
     FileUtils.deleteDirectory(new File("temp"));
   }
 
@@ -248,42 +260,47 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), false);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
-    int index = html.indexOf("<tr class=\"##ROW_PC##\">");
-    String substring = html.substring(index, html.indexOf("</tr>", index));
-    assertEquals(substring.contains("<td>Policy Checker</td>"), true);
-    assertEquals(substring.contains("<td class=\"error\">1</td>"), true);
+    assertEquals(html.contains("This file conforms to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
+    assertEquals(html.contains("This file does NOT conform to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("This file conforms to "+TiffConformanceChecker.POLICY_ISO), false);
+    assertEquals(html.contains("This file does NOT conform to "+TiffConformanceChecker.POLICY_ISO), true);
 
+    int index = html.indexOf("<table class=\"center-table CustomTable\">");
+    assertEquals(true, index > -1);
+    String table = html.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    String[] trs = table.split("</tr>");
+
+    // 1 Policy error
+    for (String tr : trs){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(true, tr.contains("<td class=\"error\">1</td>"));
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      }
+    }
+
+    // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_PC##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_PC##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0<"), true);
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    assertEquals(true, index > -1);
+    table = htmlglobal.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    trs = table.split("</tr>");
 
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_BL##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_BL##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">1<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##BL_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##BL_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0 errors<"), true);
-    assertEquals(substring.contains(">0 warnings<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##PC_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##PC_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">1 errors<"), true);
-    assertEquals(substring.contains(">0 warnings<"), true);
+    for (String tr : trs){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+        assertEquals(true, tr.contains(">1 errors<"));
+        assertEquals(true, tr.contains(">0 warnings<"));
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+        assertEquals(true, tr.contains(">0 errors<"));
+        assertEquals(true, tr.contains(">0 warnings<"));
+      }
+    }
 
     FileUtils.deleteDirectory(new File(path));
-
     FileUtils.deleteDirectory(new File("temp"));
   }
 
@@ -338,42 +355,46 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), false);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
-    int index = html.indexOf("<tr class=\"##ROW_PC##\">");
-    String substring = html.substring(index, html.indexOf("</tr>", index));
-    assertEquals(substring.contains("<td>Policy Checker</td>"), true);
-    assertEquals(substring.contains("<td class=\"info\">0</td>"), true);
+    assertEquals(html.contains("This file conforms to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
+    assertEquals(html.contains("This file does NOT conform to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("This file conforms to "+TiffConformanceChecker.POLICY_ISO), true);
+    assertEquals(html.contains("This file does NOT conform to "+TiffConformanceChecker.POLICY_ISO), false);
 
+    int index = html.indexOf("<table class=\"center-table CustomTable\">");
+    assertEquals(true, index > -1);
+    String table = html.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    String[] trs = table.split("</tr>");
+
+    // 1 Policy error
+    for (String tr : trs){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      }
+    }
+
+    // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_PC##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_PC##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">1<"), true);
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    assertEquals(true, index > -1);
+    table = htmlglobal.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    trs = table.split("</tr>");
 
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_BL##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_BL##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">1<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##BL_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##BL_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0 errors<"), true);
-    assertEquals(substring.contains(">0 warnings<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##PC_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##PC_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0 errors<"), true);
-    assertEquals(substring.contains(">0 warnings<"), true);
+    for (String tr : trs){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+        assertEquals(true, tr.contains(">0 errors<"));
+        assertEquals(true, tr.contains(">0 warnings<"));
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+        assertEquals(true, tr.contains(">0 errors<"));
+        assertEquals(true, tr.contains(">0 warnings<"));
+      }
+    }
 
     FileUtils.deleteDirectory(new File(path));
-
     FileUtils.deleteDirectory(new File("temp"));
   }
 
@@ -427,42 +448,47 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), false);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to TIFF Baseline</div>"), true);
-    assertEquals(html.contains("<div style=\"display: none;\" class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to TIFF Baseline, BUT it has some warnings</div>"), true);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: block;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), true);
-    assertEquals(html.contains("<span style=\"margin-left: 20px; display: none;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to Policy Checker</span>"), false);
-    int index = html.indexOf("<tr class=\"##ROW_PC##\">");
-    String substring = html.substring(index, html.indexOf("</tr>", index));
-    assertEquals(substring.contains("<td>Policy Checker</td>"), true);
-    assertEquals(substring.contains("<td class=\"error\">1</td>"), false);
+    assertEquals(html.contains("This file conforms to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
+    assertEquals(html.contains("This file does NOT conform to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("This file conforms to "+TiffConformanceChecker.POLICY_ISO+", BUT it has some warnings"), true);
+    assertEquals(html.contains("This file does NOT conform to "+TiffConformanceChecker.POLICY_ISO), false);
 
+    int index = html.indexOf("<table class=\"center-table CustomTable\">");
+    assertEquals(true, index > -1);
+    String table = html.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    String[] trs = table.split("</tr>");
+
+    // 1 Policy error
+    for (String tr : trs){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(true, tr.contains("<td class=\"warning\">1</td>"));
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      }
+    }
+
+    // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_PC##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_PC##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0<"), false);
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    assertEquals(true, index > -1);
+    table = htmlglobal.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    trs = table.split("</tr>");
 
-    assertEquals(htmlglobal.contains("<tr class=\"##ROW_BL##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##ROW_BL##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">1<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##BL_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##BL_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0 errors<"), true);
-    assertEquals(substring.contains(">0 warnings<"), true);
-
-    assertEquals(htmlglobal.contains("<tr class=\"##PC_CLASS##\">"), true);
-    index = htmlglobal.indexOf("<tr class=\"##PC_CLASS##\">");
-    substring = htmlglobal.substring(index, htmlglobal.indexOf("</tr>", index));
-    assertEquals(substring.contains(">0 errors<"), true);
-    assertEquals(substring.contains(">1 warnings<"), true);
+    for (String tr : trs){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+        assertEquals(true, tr.contains(">0 errors<"));
+        assertEquals(true, tr.contains(">1 warnings<"));
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+        assertEquals(true, tr.contains(">0 errors<"));
+        assertEquals(true, tr.contains(">0 warnings<"));
+      }
+    }
 
     FileUtils.deleteDirectory(new File(path));
-
     FileUtils.deleteDirectory(new File("temp"));
   }
 }

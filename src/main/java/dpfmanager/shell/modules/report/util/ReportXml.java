@@ -91,10 +91,10 @@ public class ReportXml extends ReportGeneric {
       el.setTextContent("" + gr.getReportsCount());
       stats.appendChild(el);
       el = doc.createElement("valid_files");
-      el.setTextContent("" + gr.getReportsOk());
+      el.setTextContent("" + gr.getAllReportsOk());
       stats.appendChild(el);
       el = doc.createElement("invalid_files");
-      el.setTextContent("" + gr.getReportsKo());
+      el.setTextContent("" + gr.getAllReportsKo());
       stats.appendChild(el);
 
       // write the content into xml file
