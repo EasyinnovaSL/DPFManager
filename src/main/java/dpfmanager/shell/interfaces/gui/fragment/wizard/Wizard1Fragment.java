@@ -27,11 +27,19 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
@@ -72,27 +80,104 @@ public class Wizard1Fragment {
   }
 
   public void init() {
+    List<String> errors = new ArrayList<>();
+
+    // Internal
     List<String> paths = ImplementationCheckerLoader.getPathsList();
     for (String path : paths) {
-      addCheckBox(ImplementationCheckerLoader.getFileName(path), ImplementationCheckerLoader.getIsoName(path), false);
+      if (ImplementationCheckerLoader.isValid(path)) {
+        addinternalCheckBox(path, false);
+      } else {
+        errors.add(path.substring(path.indexOf("/") + 1, path.length() - 4));
+      }
+    }
+
+    // User configs
+    File folder = new File(DPFManagerProperties.getIsosDir());
+    for (final File fileEntry : folder.listFiles()) {
+      if (fileEntry.isFile()) {
+        if (fileEntry.getName().toLowerCase().endsWith(".xml")) {
+          if (ImplementationCheckerLoader.isValid(fileEntry.getName())) {
+            addConfigCheckBox(fileEntry.getName(), false);
+          } else {
+            errors.add(fileEntry.getName());
+          }
+        }
+      }
+    }
+
+    // Inform errors
+    if (errors.size() == 1) {
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("w1errorReadingIso").replace("%1", errors.get(0))));
+    } else if (errors.size() > 1) {
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("w1errorReadingMultipleIso"), String.join(", ", errors)));
     }
   }
 
-  private void addCheckBox(String id, String name, boolean selected) {
+  private void addinternalCheckBox(String iso, boolean selected) {
+    addCheckBox(ImplementationCheckerLoader.getFileName(iso), ImplementationCheckerLoader.getIsoName(iso), false, false);
+  }
+
+  private void addExternalCheckBox(String path, boolean selected) {
+    addCheckBox(getNextId("external"), path, selected, true);
+  }
+
+  private void addConfigCheckBox(String name, boolean selected) {
+    addCheckBox("config" + name, ImplementationCheckerLoader.getIsoName(name), selected, true);
+  }
+
+  private void addCheckBox(String id, String name, boolean selected, boolean delete) {
+    HBox hbox = new HBox();
+    hbox.setAlignment(Pos.CENTER_LEFT);
+
     CheckBox chk = new CheckBox(name);
     chk.setId(id);
     chk.getStyleClass().add("checkreport");
     chk.setSelected(selected);
-    vboxRadios.getChildren().add(chk);
+    hbox.getChildren().add(chk);
+
+    if (delete) {
+      Button icon = new Button();
+      icon.getStyleClass().addAll("delete-img", "action-img-16");
+      icon.setCursor(Cursor.HAND);
+      icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+          if (chk.getId().startsWith("external")) {
+            // Only from gui
+            vboxRadios.getChildren().remove(hbox);
+          } else if (chk.getId().startsWith("config")) {
+            // From system
+            String name = chk.getId().replace("config", "");
+            File file = new File(DPFManagerProperties.getIsosDir() + "/" + name);
+            if (file.exists() && file.isFile()) {
+              file.delete();
+            }
+            vboxRadios.getChildren().remove(hbox);
+          }
+        }
+      });
+      hbox.getChildren().add(icon);
+      HBox.setMargin(icon, new Insets(0, 0, 0, 10));
+    }
+
+    vboxRadios.getChildren().add(hbox);
   }
 
   public void clear() {
-    List<CheckBox> toDelete = new ArrayList<>();
+    List<HBox> toDelete = new ArrayList<>();
     for (Node node : vboxRadios.getChildren()) {
-      CheckBox chk = (CheckBox) node;
-      chk.setSelected(false);
-      if (chk.getId().startsWith("external")) {
-        toDelete.add(chk);
+      HBox hbox = (HBox) node;
+      boolean delete = false;
+      for (Node hNode : hbox.getChildren()) {
+        if (hNode instanceof CheckBox) {
+          CheckBox chk = (CheckBox) hNode;
+          chk.setSelected(false);
+          delete = chk.getId().startsWith("external");
+        }
+      }
+      if (delete){
+        toDelete.add(hbox);
       }
     }
     vboxRadios.getChildren().removeAll(toDelete);
@@ -100,12 +185,14 @@ public class Wizard1Fragment {
 
   public void saveIsos(Configuration config) {
     config.getIsos().clear();
-    for (Node node : vboxRadios.getChildren()) {
-      CheckBox chk = (CheckBox) node;
+    for (CheckBox chk : getCheckBoxs()) {
       if (chk.isSelected()) {
         if (chk.getId().startsWith("external")) {
           // Path
           config.addISO(chk.getText());
+        } else if (chk.getId().startsWith("config")) {
+          // Config
+          config.addISO(chk.getId().replace("config", ""));
         } else {
           // Internal
           config.addISO(chk.getId());
@@ -123,24 +210,37 @@ public class Wizard1Fragment {
       } else {
         // External
         File file = new File(iso);
-        File fileConf = new File(DPFManagerProperties.getIsosDir()+ "/" + iso);
+        File fileConf = new File(DPFManagerProperties.getIsosDir() + "/" + iso);
         if (file.exists() && file.isFile()) {
-          addCheckBox(getNextId(), iso, true);
+          addExternalCheckBox(iso, true);
         } else if (fileConf.exists() && fileConf.isFile()) {
-          addCheckBox(getNextId(), fileConf.getName(), true);
+          CheckBox chk2 = getCheckById("config" + fileConf.getName());
+          if (chk2 != null) {
+            chk2.setSelected(true);
+          }
         }
       }
     }
   }
 
   private CheckBox getCheckById(String id) {
-    for (Node node : vboxRadios.getChildren()) {
-      CheckBox chk = (CheckBox) node;
+    for (CheckBox chk : getCheckBoxs()) {
       if (chk.getId().equals(id)) {
         return chk;
       }
     }
     return null;
+  }
+
+  private List<CheckBox> getCheckBoxs() {
+    List<CheckBox> boxs = new ArrayList<>();
+    for (Node node : vboxRadios.getChildren()) {
+      HBox hbox = (HBox) node;
+      if (hbox.getChildren().get(0) instanceof CheckBox){
+        boxs.add((CheckBox) hbox.getChildren().get(0));
+      }
+    }
+    return boxs;
   }
 
   @FXML
@@ -165,14 +265,14 @@ public class Wizard1Fragment {
   }
 
   public void addIsoFile(File file, boolean ask) {
-    if (file == null){
+    if (file == null) {
       return;
     }
 
     // Check valid config
     ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(file.getPath());
     if (rules == null) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("w1errorReadingIso")));
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("w1errorReadingIso").replace("%1", file.getPath())));
       return;
     }
 
@@ -202,21 +302,21 @@ public class Wizard1Fragment {
         }
         if (error) {
           // Add source file
-          addCheckBox(getNextId(), file.getAbsolutePath(), true);
+          addExternalCheckBox(file.getAbsolutePath(), true);
           context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, bundle.getString("w1errorCopyConfig")));
         } else if (needAdd) {
-          addCheckBox(getNextId(), file.getName(), true);
+          addConfigCheckBox(file.getName(), true);
         }
       } else {
-        addCheckBox(getNextId(), file.getAbsolutePath(), true);
+        addExternalCheckBox(file.getAbsolutePath(), true);
       }
     } else {
-      addCheckBox(getNextId(), file.getAbsolutePath(), true);
+      addExternalCheckBox(file.getAbsolutePath(), true);
     }
   }
 
-  private String getNextId(){
-    return "external" + (++count);
+  private String getNextId(String prefix) {
+    return prefix + (++count);
   }
 
 }
