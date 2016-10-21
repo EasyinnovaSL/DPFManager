@@ -235,7 +235,19 @@ public class HtmlReport extends Report {
 
       if (ir.getEPWarnings() != null) {
         for (RuleResult val : ir.getEPWarnings()) {
+          if (!val.getRule().isWarning()) continue;
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
+      }
+
+      if (ir.getEPWarnings() != null) {
+        for (RuleResult val : ir.getEPWarnings()) {
+          if (!val.getRule().isInfo()) continue;
+          row = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
@@ -263,7 +275,19 @@ public class HtmlReport extends Report {
 
       if (ir.getBaselineWarnings() != null) {
         for (RuleResult val : ir.getBaselineWarnings()) {
+          if (!val.getRule().isWarning()) continue;
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
+      }
+
+      if (ir.getBaselineWarnings() != null) {
+        for (RuleResult val : ir.getBaselineWarnings()) {
+          if (!val.getRule().isInfo()) continue;
+          row = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
@@ -291,7 +315,19 @@ public class HtmlReport extends Report {
 
       if (ir.getITWarnings(0) != null) {
         for (RuleResult val : ir.getITWarnings(0)) {
+          if (!val.getRule().isWarning()) continue;
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
+      }
+
+      if (ir.getITWarnings(0) != null) {
+        for (RuleResult val : ir.getITWarnings(0)) {
+          if (!val.getRule().isInfo()) continue;
+          row = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
@@ -319,7 +355,19 @@ public class HtmlReport extends Report {
 
       if (ir.getITWarnings(1) != null) {
         for (RuleResult val : ir.getITWarnings(1)) {
+          if (!val.getRule().isWarning()) continue;
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
+      }
+
+      if (ir.getITWarnings(1) != null) {
+        for (RuleResult val : ir.getITWarnings(1)) {
+          if (!val.getRule().isInfo()) continue;
+          row = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());
@@ -347,7 +395,19 @@ public class HtmlReport extends Report {
 
       if (ir.getITWarnings(2) != null) {
         for (RuleResult val : ir.getITWarnings(2)) {
+          if (!val.getRule().isWarning()) continue;
           row = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
+          row = row.replace("##LOC##", val.getLocation());
+          row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
+          row = row.replace("##TEXT##", val.getDescription());
+          rows += row;
+        }
+      }
+
+      if (ir.getITWarnings(2) != null) {
+        for (RuleResult val : ir.getITWarnings(2)) {
+          if (!val.getRule().isInfo()) continue;
+          row = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
           row = row.replace("##LOC##", val.getLocation());
           row = row.replace("##REF##", val.getReference() != null ? val.getReference() : "");
           row = row.replace("##TEXT##", val.getDescription());

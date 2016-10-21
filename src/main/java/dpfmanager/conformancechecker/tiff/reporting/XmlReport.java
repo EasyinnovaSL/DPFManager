@@ -388,15 +388,15 @@ public class XmlReport {
       // rule
       if (value.getRule() != null) {
         msg = doc.createElement("ruleId");
-        msg.setTextContent(value.getRule().getReference());
+        msg.setTextContent(value.getRule().getReferenceText());
         error.appendChild(msg);
 
         msg = doc.createElement("ruleTest");
-        msg.setTextContent(value.getRule().getAssertionField().getTest());
+        msg.setTextContent(value.getRule().getAssert().getTest());
         error.appendChild(msg);
 
         msg = doc.createElement("ruleValue");
-        msg.setTextContent(value.getRule().getAssertionField().getValue());
+        msg.setTextContent(value.getRule().getAssert().getValue());
         error.appendChild(msg);
 
         if (value.getReference() != null) {
@@ -438,15 +438,15 @@ public class XmlReport {
       // rule
       if (value.getRule() != null) {
         msg = doc.createElement("ruleId");
-        msg.setTextContent(value.getRule().getReference());
+        msg.setTextContent(value.getRule().getReferenceText());
         warning.appendChild(msg);
 
         msg = doc.createElement("ruleTest");
-        msg.setTextContent(value.getRule().getAssertionField().getTest());
+        msg.setTextContent(value.getRule().getAssert().getTest());
         warning.appendChild(msg);
 
         msg = doc.createElement("ruleValue");
-        msg.setTextContent(value.getRule().getAssertionField().getValue());
+        msg.setTextContent(value.getRule().getAssert().getValue());
         warning.appendChild(msg);
 
         if (value.getReference() != null) {

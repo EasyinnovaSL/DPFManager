@@ -71,6 +71,8 @@ public class RuleElement {
         } else if (indexCla > -1 && (indexPar == -1 || indexCla < indexPar)) {
           String filter = fieldName.substring(indexCla + 1);
           String remaining = filter.substring(filter.indexOf("]") + 1).trim();
+          if (filter.indexOf("]") == -1)
+            filter.toString();
           filter = filter.substring(0, filter.indexOf("]")).trim();
           this.filter = new Filter(filter);
           String currentfield = fieldName.substring(0, indexCla).trim();
