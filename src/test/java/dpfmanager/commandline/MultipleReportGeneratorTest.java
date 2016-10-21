@@ -37,7 +37,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains(".mets")) n++;
     }
 
     assertEquals(7, n);
@@ -125,7 +125,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains(".mets")) n++;
     }
 
     assertEquals(7, n);
