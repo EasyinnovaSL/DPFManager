@@ -549,7 +549,7 @@ public class ReportGenerator {
     String jsonFileStr = reportName + ".json";
     String htmlFileStr = reportName + ".html";
     String pdfFileStr = reportName + ".pdf";
-    String metsFileStr = reportName + "Mets.xml";
+    String metsFileStr = reportName + ".mets.xml";
     ir.setReportPath(reportName);
 
     writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());

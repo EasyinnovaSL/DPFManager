@@ -24,12 +24,15 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
+import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.logging.log4j.Level;
 
 import java.awt.*;
@@ -39,6 +42,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 /**
  * Created by Adrià Llorens on 17/03/2016.
@@ -56,12 +60,13 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
         getView().showWebView(path);
         break;
       case "xml":
-        getView().showTextArea(getContent(path));
+        showComboTextArea(path,"xml");
+        break;
+      case "mets":
+        showComboTextArea(path,"mets.xml");
         break;
       case "json":
-        String content = getContent(path);
-        content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
-        getView().showTextArea(content);
+        showComboTextArea(path, "json");
         break;
       case "pdf":
         try {
@@ -76,11 +81,94 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
     }
   }
 
-  private String getContent(String path) {
+  public void showComboTextArea(String folderPath, String extension){
+    int count = 0;
+
+    // Clear comboBox
+    getView().clearComboBox();
+
+    // Check if summary
+    File summary = new File(folderPath);
+    if (summary.isFile()){
+      getView().setCurrentReportParams(summary.getParent(), extension);
+      getView().addComboChild(summary.getName().replace("." + extension, ""), true);
+      count++;
+    }
+
+    // Add all individuals
+    File folder = new File(folderPath);
+    if (folder.isFile()){
+      folder = folder.getParentFile();
+    }
+    getView().setCurrentReportParams(folder.getPath(), extension);
+
+    IOFileFilter filter = customFilter(extension);
+    IOFileFilter filterDir = customFilterDir(folder.getPath());
+    Collection<File> childs = FileUtils.listFiles(folder, filter, filterDir);
+    for (File child : childs){
+      String onlyName = child.getName().replace("."+extension, "");
+      if (count == 0){
+        getView().addComboChild(onlyName, true);
+      } else {
+        getView().addComboChild(onlyName, false);
+      }
+      count++;
+    }
+
+    // Show nodes
+    getView().showTextArea();
+    if (count > 1){
+      getView().showComboBox();
+    }
+  }
+
+  public IOFileFilter customFilter(String extension){
+    return new IOFileFilter() {
+      @Override
+      public boolean accept(File file) {
+        if (file.isDirectory()){
+          return false;
+        }
+        if (file.getName().startsWith("summary")){
+          return false;
+        }
+        if (extension.equals("xml") && file.getName().endsWith(extension) && !file.getName().endsWith(".mets.xml")){
+          return true;
+        } else if (!extension.equals("xml")) {
+          return file.getName().endsWith(extension);
+        }
+        return false;
+      }
+
+      @Override
+      public boolean accept(File file, String s) {
+        return true;
+      }
+    };
+  }
+
+  public IOFileFilter customFilterDir(String path){
+    return new IOFileFilter() {
+      @Override
+      public boolean accept(File file) {
+        return true;
+      }
+
+      @Override
+      public boolean accept(File file, String s) {
+        return file.getPath().equals(path);
+      }
+    };
+  }
+
+  public String getContent(String path) {
     String content = "";
     try {
       byte[] encoded = Files.readAllBytes(Paths.get(path));
-      return new String(encoded);
+      content = new String(encoded);
+      if (path.endsWith("json")){
+        content = new GsonBuilder().setPrettyPrinting().create().toJson(new JsonParser().parse(content));
+      }
     } catch (IOException ex) {
       ex.printStackTrace();
     }
