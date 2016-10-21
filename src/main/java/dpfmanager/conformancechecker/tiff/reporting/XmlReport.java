@@ -633,6 +633,12 @@ public class XmlReport {
         infoElement.setAttribute("DPI", dpi);
         report.appendChild(infoElement);
 
+        infoElement = doc.createElement("FileSize");
+        long size = ir.getTiffModel().getSize();
+        infoElement.setTextContent(size + "");
+        infoElement.setAttribute("FileSize", size + "");
+        report.appendChild(infoElement);
+
         String extra = "0";
         if (ifd.getTags().containsTagId(TiffTags.getTagId("ExtraSamples")))
           extra = ifd.getTag("ExtraSamples").getCardinality() + "";

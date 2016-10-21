@@ -272,6 +272,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "description", "Byte Order (BigEndian, LittleEndian)");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", ByteOrder.BIG_ENDIAN.toString() + "," + ByteOrder.LITTLE_ENDIAN.toString());
+      // FileSize
+      field = doc.createElement("field");
+      fields.appendChild(field);
+      addElement(doc, field, "name", "FileSize");
+      addElement(doc, field, "type", "string");
+      addElement(doc, field, "description", "The file size in bytes");
+      addElement(doc, field, "operators", ">,<,=");
       // IccProfileClass
       field = doc.createElement("field");
       fields.appendChild(field);
