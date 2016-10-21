@@ -116,8 +116,8 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     if (nList != null && nList.getLength() > 0) {
       Element el = (Element) nList.item(0);
       assertEquals(files, getIntValue(el, "reports_count"));
-      assertEquals(0, getIntValue(el, "valid_files"));
-      assertEquals(files, getIntValue(el, "invalid_files"));
+      assertEquals(3, getIntValue(el, "valid_files"));
+      assertEquals(3, getIntValue(el, "invalid_files"));
     }
   }
 
@@ -137,9 +137,9 @@ public class StatisticsGeneratorTest extends CommandLineTest {
           if (valor.equalsIgnoreCase("reports_count")) {
             assertEquals(jsonReader.nextInt(), files);
           } else if (valor.equalsIgnoreCase("valid_files")) {
-            assertEquals(jsonReader.nextInt(), 0);
+            assertEquals(jsonReader.nextInt(), 3);
           } else if (valor.equalsIgnoreCase("invalid_files")) {
-            assertEquals(jsonReader.nextInt(), files);
+            assertEquals(jsonReader.nextInt(), 3);
           } else {
             jsonReader.skipValue();
           }
@@ -179,8 +179,8 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     subs = subs.substring(subs.indexOf(">")+1);
     String field3 = subs.substring(0, subs.indexOf("<"));
 
-    assertEquals("0 passed", field1);
-    assertEquals(files + " failed", field2);
-    assertEquals("Global score 0%", field3);
+    assertEquals( "3 passed", field1);
+    assertEquals("3 failed", field2);
+    assertEquals("Global score 50%", field3);
   }
 }

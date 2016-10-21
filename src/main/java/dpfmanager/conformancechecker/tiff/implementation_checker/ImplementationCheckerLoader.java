@@ -1,5 +1,6 @@
 package dpfmanager.conformancechecker.tiff.implementation_checker;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.IncludeType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
@@ -161,6 +162,9 @@ public class ImplementationCheckerLoader {
   }
 
   public static String getIsoName(String path) {
+    if (path.equals(TiffConformanceChecker.POLICY_ISO)){
+      return TiffConformanceChecker.POLICY_ISO;
+    }
     ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(path);
     if (icRules != null) {
       return icRules.getTitle();

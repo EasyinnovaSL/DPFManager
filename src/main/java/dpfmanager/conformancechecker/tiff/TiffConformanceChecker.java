@@ -93,7 +93,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   private Configuration checkConfig;
 
-  public static String POLICY_ISO = "POLICY";
+  public static String POLICY_ISO = "Policy checker";
 
   public TiffConformanceChecker(ConformanceConfig config, Configuration checkConfig){
     this.checkConfig = checkConfig;
@@ -552,19 +552,12 @@ public class TiffConformanceChecker extends ConformanceChecker {
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations);
           ir.setIsosCheck(config.getIsos());
-          if (config.getRules() != null && config.getRules().getRules().size() > 0) {
-            ir.getIsosCheck().add(POLICY_ISO);
-          }
-          //Logger.println("Internal report created");
-
-          tr = null;
-          //System.gc();
-
           Rules rules = config.getRules();
           XmlReport xmlReport = new XmlReport();
           String output = xmlReport.parseIndividual(ir, config.getRules());
           ir.setConformanceCheckerReport(output);
           if (config.getRules() != null && config.getRules().getRules() != null && config.getRules().getRules().size() > 0) {
+            ir.getIsosCheck().add(POLICY_ISO);
             ir.addValidation(POLICY_ISO,getPcValidation(output));
           }
 

@@ -540,7 +540,7 @@ public class Configuration {
             String field2 = line.substring(line.indexOf("\t") + 1);
             switch (field1) {
               case "ISO":
-                isos.add(field2);
+                isos.add(parseOldToNewIso(field2));
                 break;
               case "FORMAT":
                 formats.add(field2);

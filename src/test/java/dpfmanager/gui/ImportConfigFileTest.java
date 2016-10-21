@@ -1,5 +1,6 @@
 package dpfmanager.gui;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
@@ -92,7 +93,7 @@ public class ImportConfigFileTest extends ApplicationTest {
 
     //Go to summary and compare
     clickOnAndReload("#step5");
-    FxAssert.verifyThat("#labIsos", NodeMatchers.hasText("Tiff/EP, Tiff/IT-1"));
+    FxAssert.verifyThat("#labIsos", NodeMatchers.hasText(ImplementationCheckerLoader.getIsoName("TiffEPProfileChecker") + ", " + ImplementationCheckerLoader.getIsoName("TiffITP1ProfileChecker")));
     FxAssert.verifyThat("#labRules", NodeMatchers.hasText("ImageHeight < 1000"));
     FxAssert.verifyThat("#labReports", NodeMatchers.hasText("HTML, PDF"));
     FxAssert.verifyThat("#labFixes", NodeMatchers.hasText("Add Tag Artist 'EasyTest'"));

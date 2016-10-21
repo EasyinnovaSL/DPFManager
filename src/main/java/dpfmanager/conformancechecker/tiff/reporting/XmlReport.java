@@ -868,15 +868,12 @@ public class XmlReport {
         implementationCheckerElement.setAttribute(name, (ir.getErrors(name).size() == 0) + "");
       }
       for (String iso : ir.getIsosCheck()) {
-        ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(iso);
+        String title = ImplementationCheckerLoader.getIsoName(iso);
         List<RuleResult> errors = ir.getErrors(iso);
         List<RuleResult> warnings = ir.getWarnings(iso);
         Element implementationCheck = doc.createElement("implementation_check");
         Element name = doc.createElement("name");
-        name.setTextContent(iso);
-        if (icRules != null) {
-          name.setTextContent(icRules.getTitle());
-        }
+        name.setTextContent(title);
         implementationCheck.appendChild(name);
         addErrorsWarnings(doc, implementationCheck, errors, warnings);
         implementationCheckerElement.appendChild(implementationCheck);

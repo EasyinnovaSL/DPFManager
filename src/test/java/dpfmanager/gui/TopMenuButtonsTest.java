@@ -28,25 +28,34 @@ public class TopMenuButtonsTest extends ApplicationTest {
     // Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
 
-    // checker -- about
-    clickOnAndReloadTop("#butAbout","#pane-about");
-    FxAssert.verifyThat("#pane-about", NodeMatchers.isNotNull());
-    // about -- reports
-    clickOnAndReloadTop("#butReports","#pane-reports");
-    FxAssert.verifyThat("#pane-reports", NodeMatchers.isNotNull());
-    // reports -- checker
-    waitUntilExists("#butDessign");
-    clickOnAndReloadTop("#butDessign","#pane-design");
-    FxAssert.verifyThat("#pane-design", NodeMatchers.isNotNull());
-    // checker -- reports
-    clickOnAndReloadTop("#butReports","#pane-reports");
-    FxAssert.verifyThat("#pane-reports", NodeMatchers.isNotNull());
-    // reports -- about
-    clickOnAndReloadTop("#butAbout","#pane-about");
-    FxAssert.verifyThat("#pane-about", NodeMatchers.isNotNull());
-    // about -- checker
-    clickOnAndReloadTop("#butDessign","#pane-design");
-    FxAssert.verifyThat("#pane-design", NodeMatchers.isNotNull());
+    // About
+    goTo("#butAbout", "#pane-about");
+    // Reports
+    goTo("#butReports", "#pane-reports");
+    // File Check
+    goTo("#butDessign", "#pane-design");
+    // Conformance checkers
+    goTo("#butInterop", "#pane-interop");
+    // Periodical
+    goTo("#butPeriodical", "#pane-periodical");
+    // Reports
+    goTo("#butReports", "#pane-reports");
+    // Conformance checkers
+    goTo("#butInterop", "#pane-interop");
+    // File Check
+    goTo("#butDessign", "#pane-design");
+    // About
+    goTo("#butAbout", "#pane-about");
+    // Periodical
+    goTo("#butPeriodical", "#pane-periodical");
+    // File Check
+    goTo("#butDessign", "#pane-design");
+  }
+
+  private void goTo(String id, String pane){
+    waitUntilExists(id);
+    clickOnAndReloadTop(id, pane);
+    FxAssert.verifyThat(pane, NodeMatchers.isNotNull());
   }
 
 }

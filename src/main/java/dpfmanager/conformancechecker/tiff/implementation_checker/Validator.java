@@ -94,9 +94,8 @@ public class Validator {
       JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
       StringReader reader = new StringReader(content);
-      model = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
 
-      validate(model, rulesFile, fastBreak);
+      validate((TiffValidationObject) jaxbUnmarshaller.unmarshal(reader), rulesFile, fastBreak);
     } catch (Exception ex) {
       RuleResult rr = new RuleResult(false, null, null, "Fatal error in TIFF file");
       result = new ValidationResult();
@@ -106,6 +105,7 @@ public class Validator {
 
   public void validate(TiffValidationObject model, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
+    this.model = model;
 
     ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
 

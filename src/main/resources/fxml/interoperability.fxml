@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import java.lang.String?>
 
-<AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="pane-interop" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <ImageView focusTraversable="true" preserveRatio="true" styleClass="main-logo">

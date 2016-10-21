@@ -146,6 +146,8 @@ public class RuleElement {
       String[] parts = val.split("\\.");
       for (String nodeName : parts) {
         if (node == null) {
+          if (model == null)
+            model.toString();
           if (model.getContext().equals(nodeName))
             node = model;
         } else {
