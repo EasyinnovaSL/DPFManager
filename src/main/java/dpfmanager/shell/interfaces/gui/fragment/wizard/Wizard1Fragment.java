@@ -36,8 +36,10 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -134,6 +136,8 @@ public class Wizard1Fragment {
     chk.setId(id);
     chk.getStyleClass().add("checkreport");
     chk.setSelected(selected);
+    chk.setEllipsisString(" ... ");
+    chk.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
     hbox.getChildren().add(chk);
 
     if (delete) {
@@ -150,10 +154,10 @@ public class Wizard1Fragment {
             // From system
             String name = chk.getId().replace("config", "");
             File file = new File(DPFManagerProperties.getIsosDir() + "/" + name);
-            if (file.exists() && file.isFile()) {
+            if (file.exists() && file.isFile() && acceptDelete(file)) {
               file.delete();
+              vboxRadios.getChildren().remove(hbox);
             }
-            vboxRadios.getChildren().remove(hbox);
           }
         }
       });
@@ -162,6 +166,19 @@ public class Wizard1Fragment {
     }
 
     vboxRadios.getChildren().add(hbox);
+  }
+
+  private boolean acceptDelete(File file){
+    String YES = bundle.getString("yes");
+    String NO = bundle.getString("no");
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    alert.setTitle(bundle.getString("w1DeleteISO"));
+    alert.setHeaderText(bundle.getString("w1DeleteConfirmation").replace("%1", file.getName()));
+    alert.setContentText(bundle.getString("deleteInfo"));
+    ButtonType buttonYes = new ButtonType(YES, ButtonBar.ButtonData.YES);
+    ButtonType buttonNo = new ButtonType(NO, ButtonBar.ButtonData.NO);
+    alert.getButtonTypes().setAll(buttonNo, buttonYes);
+    return alert.showAndWait().get().equals(buttonYes);
   }
 
   public void clear() {
