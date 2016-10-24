@@ -25,6 +25,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.Imp
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.interfaces.gui.component.config.ConfigController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.collections.ObservableList;
@@ -40,6 +41,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.OverrunStyle;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -75,10 +77,16 @@ public class Wizard1Fragment {
   @FXML
   private VBox vboxRadios;
 
+  private ConfigController controller;
+
   private Integer count;
 
   public Wizard1Fragment() {
     count = 0;
+  }
+
+  public void setController(ConfigController controller) {
+    this.controller = controller;
   }
 
   public void init() {
@@ -88,7 +96,7 @@ public class Wizard1Fragment {
     List<String> paths = ImplementationCheckerLoader.getPathsList();
     for (String path : paths) {
       if (ImplementationCheckerLoader.isValid(path)) {
-        addinternalCheckBox(path, false);
+        addInternalCheckBox(path);
       } else {
         errors.add(path.substring(path.indexOf("/") + 1, path.length() - 4));
       }
@@ -100,7 +108,7 @@ public class Wizard1Fragment {
       if (fileEntry.isFile()) {
         if (fileEntry.getName().toLowerCase().endsWith(".xml")) {
           if (ImplementationCheckerLoader.isValid(fileEntry.getName())) {
-            addConfigCheckBox(fileEntry.getName(), false);
+            addConfigCheckBox(fileEntry, false);
           } else {
             errors.add(fileEntry.getName());
           }
@@ -116,19 +124,19 @@ public class Wizard1Fragment {
     }
   }
 
-  private void addinternalCheckBox(String iso, boolean selected) {
-    addCheckBox(ImplementationCheckerLoader.getFileName(iso), ImplementationCheckerLoader.getIsoName(iso), false, false);
+  private void addInternalCheckBox(String iso) {
+    addCheckBox(ImplementationCheckerLoader.getFileName(iso), ImplementationCheckerLoader.getIsoName(iso), bundle.getString("w6BuiltIn"),false, false);
   }
 
-  private void addExternalCheckBox(String path, boolean selected) {
-    addCheckBox(getNextId("external"), path, selected, true);
+  public void addExternalCheckBox(String path, boolean selected) {
+    addCheckBox(getNextId("external"), path, path, selected, true);
   }
 
-  private void addConfigCheckBox(String name, boolean selected) {
-    addCheckBox("config" + name, ImplementationCheckerLoader.getIsoName(name), selected, true);
+  public void addConfigCheckBox(File isoFile, boolean selected) {
+    addCheckBox("config" + isoFile.getName(), ImplementationCheckerLoader.getIsoName(isoFile.getName()), isoFile.getAbsolutePath(),selected, true);
   }
 
-  private void addCheckBox(String id, String name, boolean selected, boolean delete) {
+  private void addCheckBox(String id, String name, String path, boolean selected, boolean delete) {
     HBox hbox = new HBox();
     hbox.setAlignment(Pos.CENTER_LEFT);
 
@@ -138,8 +146,32 @@ public class Wizard1Fragment {
     chk.setSelected(selected);
     chk.setEllipsisString(" ... ");
     chk.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
+    chk.setTooltip(new Tooltip(path));
     hbox.getChildren().add(chk);
 
+    // EDIT
+    Button edit = new Button();
+    edit.getStyleClass().addAll("edit-img", "action-img-16");
+    edit.setCursor(Cursor.HAND);
+    edit.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        String iso = chk.getId();
+        String path = null;
+        if (iso.startsWith("external")) {
+          iso = chk.getText();
+          path = iso;
+        } else if (chk.getId().startsWith("config")) {
+          iso = chk.getId().replace("config","");
+          path = DPFManagerProperties.getIsosDir() + "/" + iso;
+        }
+        controller.editIso(iso, path);
+      }
+    });
+    hbox.getChildren().add(edit);
+    HBox.setMargin(edit, new Insets(0, 0, 0, 10));
+
+    // DELETE
     if (delete) {
       Button icon = new Button();
       icon.getStyleClass().addAll("delete-img", "action-img-16");
@@ -322,7 +354,7 @@ public class Wizard1Fragment {
           addExternalCheckBox(file.getAbsolutePath(), true);
           context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, bundle.getString("w1errorCopyConfig")));
         } else if (needAdd) {
-          addConfigCheckBox(file.getName(), true);
+          addConfigCheckBox(configFile, true);
         }
       } else {
         addExternalCheckBox(file.getAbsolutePath(), true);

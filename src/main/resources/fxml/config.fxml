@@ -95,7 +95,7 @@
             <!--<fx:include fx:id="included3" source="config/subconfig3.fxml" />-->
             <!--<fx:include fx:id="included4" source="config/subconfig4.fxml" />-->
             <!--<fx:include fx:id="included5" source="config/subconfig5.fxml" />-->
-            <Label fx:id="labelW1" styleClass="label-info" text="%w1StandardsNote" wrapText="true">
+            <Label fx:id="labelW1" minHeight="60.0" styleClass="label-info" text="%w1StandardsNote" textAlignment="JUSTIFY" wrapText="true" VBox.vgrow="ALWAYS">
                 <VBox.margin>
                     <Insets left="80.0" right="80.0" top="15.0" />
                 </VBox.margin>
@@ -173,6 +173,9 @@
             <rowConstraints>
                <RowConstraints />
             </rowConstraints>
+            <VBox.margin>
+               <Insets bottom="20.0" />
+            </VBox.margin>
         </GridPane>
         </VBox>
     </children>
