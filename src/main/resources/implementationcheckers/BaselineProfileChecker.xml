@@ -322,37 +322,6 @@ beyond the first one, so not all readers could render all the images in the file
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
    <assert test="{tag[name=YResolution]}">Image IFD must have tag Y Resolution</assert>
   </rule>
-  
-  <rule id="IFDI-0006" context="ifd[class=image]" level="error">
-   <title>An image IFD should have a StripOffsets</title>
-   <description>An Image File Directory(IFD) that contains and image data must have StripOffsets values</description>
-   <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
-   <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
-   <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
-   <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{tags.tag[name=StripOffsets]}">Image IFD must have the tag StripOffsets</assert>
-  </rule>
-  
-  <rule id="IFDI-0007" context="ifd[class=image]" level="error">
-   <title>An image IFD should have a StripBYTECount</title>
-   <description>An Image File Directory(IFD) that contains and image data must have StripBYTECount</description>
-   <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
-   <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
-   <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
-   <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
-   <assert test="{tags.tag[name=StripBYTECount]}">Image IFD must have the tag StripBYTECount</assert>
-  </rule>
-  
-  
-  <rule id="IFDI-0008" context="ifd[class=image]" level="error">
-   <title>Strips sizes match image dimensions</title>
-   <description>strips structure must match with the image width and height</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{correctStrips == 1}">image width and image height do not match with strips sizes</assert>
-  </rule>
   <!--
    
   <rule id="IFDI-0009" context="ifd[class=image]">
@@ -374,6 +343,52 @@ beyond the first one, so not all readers could render all the images in the file
   </rule>
   
   -->
+ </rules>
+ 
+ <rules id="STRIPS">
+  <title>Strips Images</title>
+  <description>Compressed or uncompressed image data can be stored almost anywhere in a
+   TIFF file. TIFF also supports breaking an image into separate strips for increased
+   editing flexibility and efficient I/O buffering. The location and size of each strip is
+   given by the following fields; StripOffsets, StripBYTECount, RowsPerStrip.
+  </description>
+    
+  <rule id="STRIPS-0001" context="ifd[class=image]" level="error">
+   <title>An image IFD should have a StripOffsets</title>
+   <description>An Image File Directory(IFD) that contains and image data must have StripOffsets values</description>
+   <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
+   <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
+   <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
+   <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
+   <assert test="{tiles == 1} || {tags.tag[name=StripOffsets]}">Image IFD must have the tag StripOffsets</assert>
+  </rule>
+  
+  <rule id="STRIPS-0002" context="ifd[class=image]" level="error">
+   <title>An image IFD should have a StripBYTECount</title>
+   <description>An Image File Directory(IFD) that contains and image data must have StripBYTECount</description>
+   <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
+   <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
+   <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
+   <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
+   <assert test="{tiles == 1} || tags.tag[name=StripBYTECount])}">Image IFD must have the tag StripBYTECount</assert>
+  </rule>
+  
+  <rule id="STRIPS-0003" context="ifd[class=image]" level="error">
+   <title>Strips sizes match image dimensions</title>
+   <description>strips structure must match with the image width and height</description>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
+   <assert test="{correctStrips == 1}">image width and image height do not match with strips sizes</assert>
+  </rule>
+  
+  <rule id="STRIPS-0004" context="ifd[strips=1]" level="error">
+   <title>Inconsistent Strip lenght</title>
+   <description>The cardianlity of striptOffsets and the cardinality of StripsBytesCount must be the same</description>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
+   <assert test="{tags.tag[name=StripOffsets].cardinality == tags.tag[name=StripBYTECount].cardinality}">Inconsistent strip lengths, The cardianlity of striptOffsets and StripsBytesCount must match</assert>
+  </rule>
  </rules>
  
  <rules id="IFDB">
@@ -498,7 +513,7 @@ beyond the first one, so not all readers could render all the images in the file
   </rule>
  
   <!--
-   <rule id="IFDB-0003" context="ifd[type=Palette]">
+   <rule id="IFDP-0004" context="ifd[type=Palette]">
    <title>Palette image SamplesPerPixel must be 1</title>
      <description>Palette image can not contain ExtraSamples SamplesPerPixel must be 1.</description>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
@@ -506,7 +521,7 @@ beyond the first one, so not all readers could render all the images in the file
   </rule>
    -->
  
-  <rule id="IFDP-0004" context="ifd[type=Palette]" level="error">
+  <rule id="IFDP-0005" context="ifd[type=Palette]" level="error">
    <title>Color Map is required for palette color image</title>
    <description>This field defines a Red-Green-Blue color map (often called a lookup table) for palette color images.
 
@@ -515,14 +530,7 @@ beyond the first one, so not all readers could render all the images in the file
    <assert test="{tags.tag[name=ColorMap]}">Color Map must be included in palette color images</assert>
   </rule>
   
-  <rule id="IFDP-0005" context="ifd[type=Palette]" level="warning">
-   <title>Palette color image with InkSet</title>
-   <description>Palette color images should not contain a InkSet tag</description>
-   <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
-   <assert test="{tags.tag[name=InkSet]}">Palette color images should not contain tag InkSet</assert>
-  </rule>
-  
-  <rule id="IFDP-0002" context="ifd[type=Palette]" level="error">
+  <rule id="IFDP-0006" context="ifd[type=Palette]" level="error">
    <title>Valid compression for palette color image</title>
    <description>In Baseline TIFF, palette color images can either be stored as uncompressed data or compressed with the PackBits algorithm.</description>
    <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
@@ -540,14 +548,14 @@ beyond the first one, so not all readers could render all the images in the file
    Baseline TIFF RGB images were called TIFF Class R images in earlier versions of the TIFF specification.</description>
   
   <rule id="IFDR-0001" context="ifd[type=RGB]" level="error">
-   <title>Valid Photometric Interpretation value</title>
+   <title>Valid Photometric Interpretation value for RGB image</title>
    <description>The Photometric Interpretation tag for RGB images must have a valid value. 2 = RGB.
    </description>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
    <assert test="{tags.tag[name=PhotometricInterpretation] == 3}">Photometric Interpretation value must be 3</assert>
   </rule>
   
-  <rule id="IFDP-0002" context="ifd[type=RGB]" level="error">
+  <rule id="IFDR-0002" context="ifd[type=RGB]" level="error">
    <title>Valid compression for RGB image</title>
    <description>In Baseline TIFF, RGB images can
     either be stored as uncompressed data or compressed with the PackBits algorithm.</description>
@@ -555,7 +563,7 @@ beyond the first one, so not all readers could render all the images in the file
    <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 32773}">Invalid Compression for RGB image</assert>
   </rule>
   
-  <rule id="IDFG-0002" context="ifd[type=RGB]" level="info">
+  <rule id="IDFR-0003" context="ifd[type=RGB]" level="info">
    <title>RGB image with PackBits Compression</title>
    <description>PackBits is often ineffective on continuous tone images, including many
     RGB images. In such cases, it is better to leave the image uncompressed.</description>
@@ -564,13 +572,12 @@ beyond the first one, so not all readers could render all the images in the file
   </rule>
   
   <!--
-  
-   <rule id="IFDB-0003" context="ifd[type=Palette]">
+   <rule id="IDFR-0004" context="ifd[type=RGB]">
    <title>Valid bits per sample and samples per Pixel</title>
-     <description>When No Extra Sample is defined then BitsPerSample must be 4 or 8 and SamplesPerPixel must be 3 for palette colo Images.</description>
+     <description></description>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
-   <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample] == '8,8,8'} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 3)}">BitsPerSample  must be 4 or 8 and BitsPerSample must be 3 for palette color image wihout ExtraSamples</assert>
+   <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample] == '8,8,8'} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 3)}"></assert>
   </rule>
   -->
   
@@ -714,7 +721,7 @@ beyond the first one, so not all readers could render all the images in the file
    <assert test="{tags.tag[name=BitsPerSample]} &amp;&amp; {class != 'image'}">BitsPerSample should only be used in an image IFD</assert>
   </rule>
   
-  <rule id="TAG-258-0003" context="ifd[class=image]" level="info">
+  <rule id="TAG-258-0004" context="ifd[class=image]" level="info">
    <title>BitsPerSample default value</title>
    <description>BitsPerSample tag has a default value, if it is not present value 1 bit per sample is assumed.</description>
   <reference><section>Section 8: Baseline Field Reference Guide</section><page>35</page></reference>
@@ -852,21 +859,21 @@ beyond the first one, so not all readers could render all the images in the file
    2 = CCITT Group 3 1-Dimensional Modified Huffman run-length encoding. this type of compression is defined only for bilevel images.
    32773 = PackBits compression, a simple byte-oriented run-length scheme.</description>
   
-  <rule id="bl-ty-208" context="tag[id=259]" level="error">
+  <rule id="TAG-259-0001" context="tag[id=259]" level="error">
    <title>Compression valid Type</title>
    <description>Compression Tag type must be SHORT</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>30</page></reference>
    <assert test="{type=='SHORT'}">Compression type is not valid, an SHORT type is expected</assert>
   </rule>
   
-  <rule id="bl-ca-187" context="tag[id=259]" level="error">
+  <rule id="TAG-259-0002" context="tag[id=259]" level="error">
    <title>Compression valid cardinality</title>
    <description>The cardinality of the Compression tag must be 1</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>30</page></reference>
    <assert test="{cardinality==1}">Compression must have a 1 cardinality</assert>
   </rule>
   
-  <rule id="IFDI-0012" context="ifd[class=image]" level="error">
+  <rule id="TAG-259-0003" context="ifd" level="error">
    <title>Valid Compression value</title>
    <description>The Compression tag must have a valid value.
     1 = No compression
@@ -877,7 +884,7 @@ beyond the first one, so not all readers could render all the images in the file
    <assert test="{tags.tag[name=Compression] &gt; 0} &amp;&amp; {tags.tag[name=Compression] &lt; 2} || {tags.tag[name=Compression] == 32773}">The Compression tag must have a valid value</assert>
   </rule>
   
-  <rule id="bl-ca-187" context="ifd[class=image]" level="error">
+  <rule id="TAG-259-0004" context="ifd[class=image]" level="error">
    <title>Compresion CCITT for bilevel images</title>
    <description>CCITT Group 3 1-Dimensional Modified Huffman run-length encoding compression is defined
     only for bilevel images and BitsPerSample must be 1
@@ -887,7 +894,7 @@ beyond the first one, so not all readers could render all the images in the file
     only for bilevel images and BitsPerSample must be 1</assert>
   </rule>
   
-  <rule id="TAG-266-0005" context="ifd" level="warning">
+  <rule id="TAG-259-0005" context="ifd" level="warning">
    <title>Compression requires and image ifd</title>
    <description>Compression should only be used in an image IFD</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
@@ -1057,7 +1064,7 @@ beyond the first one, so not all readers could render all the images in the file
    
  </rules>
  
- <rules id="TAG-289">
+ <rules id="TAG-288">
   <title>FreeOffsets</title>
   <description>For each string of contiguous unused bytes in a TIFF file, the byte offset of the string.
    
@@ -1066,14 +1073,14 @@ beyond the first one, so not all readers could render all the images in the file
    
    Not recommended for general interchange.</description>
   
-  <rule id="TAG-289-0001" context="tag[id=288]" level="error">
+  <rule id="TAG-288-0001" context="tag[id=288]" level="error">
    <title>FreeOffsets tag valid Type</title>
    <description>FreeOffsets Tag type must be LONG</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><pages>33</pages></reference>
    <assert test="{type=='LONG'}">FreeOffsets Tag type is not valid, a LONG type is expected</assert>
   </rule>
   
-  <rule id="TAG-289-0002" context="ifd" level="warning">
+  <rule id="TAG-288-0002" context="ifd" level="warning">
    <title>FreeOffsets not recommended for interchange</title>
    <description>Tag FreeOffsets is not recommended for general interchange</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><pages>33</pages></reference>
@@ -1225,28 +1232,28 @@ beyond the first one, so not all readers could render all the images in the file
    N = 1
    No default</description>
   
-  <rule id="bl-ty-199" context="tag[id=257]" level="error">
+  <rule id="TAG-257-0001" context="tag[id=257]" level="error">
    <title>ImageLength tag valid Type</title>
    <description>ImageLength Tag type must be  SHORT or LONG</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>34</page></reference>
    <assert test="{type=='SHORT'} || {type=='LONG'}">ImageLength Tag type is not valid, a SHORT or LONG type is expected</assert>
   </rule>
   
-  <rule id="bl-ca-129" context="tag[id=257]" level="error">
+  <rule id="TAG-257-0002" context="tag[id=257]" level="error">
    <title>ImageLength valid cardinality</title>
    <description>The cardinality of the ImageLength tag must be 1</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>34</page></reference>
    <assert test="{cardinality==1}">ImageLength cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
-  <rule id="IFDI-0004" context="ifd[class=image]" level="warning">
+  <rule id="TAG-257-0003" context="ifd[class=image]" level="warning">
    <title>Valid Image Length</title>
    <description>Although there is not an explicit reference in the TIFF Baseline, an image length should not be 0</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>34</page></reference>
    <assert test="{tags.tag[name=ImageLength] == 0}">An image can not have a 0 length</assert>
   </rule>
   
-  <rule id="TAG-256-0004" context="ifd" level="warning">
+  <rule id="TAG-257-0004" context="ifd" level="warning">
    <title>ImageLength requires and image ifd</title>
    <description>ImageLength should only be used in an image IFD</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>34</page></reference>
@@ -1750,7 +1757,7 @@ beyond the first one, so not all readers could render all the images in the file
   <rule id="TAG-296-0004" context="ifd" level="warning">
    <title>ResolutionUnit requires and image ifd</title>
    <description>ResolutionUnit should only be used in an image IFD</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>36</page></reference>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>38</page></reference>
    <assert test="{tags.tag[name=ResolutionUnit]} &amp;&amp; {class != 'image'}">ResolutionUnit should only be used in an image IFD</assert>
   </rule>
   
@@ -1760,17 +1767,54 @@ beyond the first one, so not all readers could render all the images in the file
     at different sizes. Even if the decision is arbitrary, it might be better to use dots per
     inch or dots per centimeter, and to pick XResolution and YResolution so that the
     aspect ratio is correct with and arbitrary image maximum dimension</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>36</page></reference>
-   <assert test="{tags.tag[name=ResolutionUnit] == 1}">ResolutionUnit without absolute units, different applications will import the image
-    at different sizes</assert>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>38</page></reference>
+   <assert test="{tags.tag[name=ResolutionUnit] == 1}">ResolutionUnit without absolute units, different applications will import the image at different sizes</assert>
   </rule>
   
-  <rule id="TAG-296-0005" context="ifd[class=image]" level="info">
+  <rule id="TAG-296-0006" context="ifd[class=image]" level="info">
    <title>ResolutionUnit default value</title>
-   <description>ResolutionUnit tag has a default value, if it is not present inch unit is assumed.
-   </description>
+   <description>ResolutionUnit tag has a default value, if it is not present inch unit is assumed.</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>41</page></reference>
    <assert test="{!tags.tag[name=ResolutionUnit]}">ResolutionUnit Tag is not defined. Then the default unit (Inch) it is assumed</assert>
+  </rule>
+ </rules>
+ 
+ <rules id="TAG-278">
+  <title>RowsPerStrip</title>
+  <description>The number of rows per strip
+  
+  Tag = 278 (116.H)
+  Type = SHORT or LONG
+  N = 1
+  The default is 2**32 - 1,which is effectively infinity. That is, the entire image is
+  one strip.</description>
+  
+  <rule id="TAG-278-0001" context="tag[id=278]" level="error">
+   <title>RowsPerStrip tag valid Type</title>
+   <description>ResolutionUnit Tag type must be SHORT</description>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
+   <assert test="{type=='SHORT'} || type=='LONG'">RowsPerStrip Tag type is not valid, a SHORT or LONG type is expected</assert>
+  </rule>
+  
+  <rule id="TAG-278-0002" context="tag[id=278]" level="error">
+   <title>RowsPerStrip valid cardinality</title>
+   <description>The cardinality of the RowsPerStrip tag must be 1</description>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
+   <assert test="{cardinality==1}">RowsPerStrip cardinality is not valid, cardinality should be 1</assert>
+  </rule>
+  
+  <rule id="TAG-278-0003" context="ifd[class=image]" level="warning">
+   <title>RowsPerStrip should only be in an image IFD</title>
+   <description>RowsPerStrip tag should only be used in a Baseline Image IFD</description>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
+   <assert test="{tags.tag[name=RowsPerStrip]} &amp;&amp; {strips != 1}">RowsPerStrip is required in an image IFD</assert>
+  </rule>
+  
+  <rule id="TAG-278-0004" context="ifd[strips=1]" level="info">
+   <title>RowsPerStrip default value</title>
+   <description>When RowsPerStrip is not defined in a strip image IFD then the default value 2**32 - 1 is assumed</description>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
+   <assert test="{!tags.tag[name=RowsPerStrip]} &amp;&amp; {strips == 1}">RowsPerStrip not defined, default value 2**32 - 1 is assumed</assert>
   </rule>
  </rules>
  
@@ -1843,19 +1887,13 @@ beyond the first one, so not all readers could render all the images in the file
    <assert test="{type=='LONG'} || {type=='SHORT'}">StripByteCounts Tag type is not valid, a SHORT or LONG type is expected</assert>
   </rule>
  
-  <rule id="TAG-279-0002" context="ifd[class=image]" level="error">
-   <title>StripByteCounts is required in an image IFD</title>
-   <description>StripByteCounts tag is required for Baseline Image IFD</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{tiles == 1} || {count(tags.tag[name=StripBYTECount]) == 1}">StripByteCounts is required in an image IFD</assert>
-  </rule>
   <!--  cardinality rule
   <rule id="TAG-279-0003" context="ifd[class=image]" level="error">
    <title>StripByteCounts valid cardinality</title>
    <description>StripByteCounts tag cardinality is equal StripsPerImage for PlanarConfiguration equal to 1, and
 SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="({tags.tag[name=PlanarConfiguration]) == 1} &amp;&amp; {tags.tag.cardinality == tags.tag[name=StripsPerImage]}) || {tags.tag[name=PlanarConfiguration]) == 2} &amp;&amp; {tags.tag.cardinality == tags.tag[name=SamplesPerPixel]*tags.tag[name=StripsPerImage]})">StripByteCounts invalid cardinality</assert>
+   <assert test="{tags.tag[name=PlanarConfiguration]) == 1} &amp;&amp; {tags.tag[name=StripByteCounts].cardinality == StripsPerImage} || {tags.tag[name=PlanarConfiguration]) == 2} &amp;&amp; {tags.tag[name=StripByteCounts].cardinality == tags.tag[name=SamplesPerPixel] * StripsPerImage}">StripByteCounts invalid cardinality</assert>
   </rule>
   -->
  </rules>
@@ -1896,20 +1934,13 @@ SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description
    <assert test="{type=='SHORT'}">StripOffsets Tag type is valid. However, earlier TIFF specifications required LONG strip offsets and that some software may not accept SHORT values</assert>
   </rule>
   
-  <rule id="TAG-273-0002" context="ifd[class=image]" level="error">
-   <title>StripOffsets is required in an image IFD</title>
-   <description>StripOffsets tag is required for Baseline Image IFD</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{tiles == 1} || {count(tags.tag[name=StripBYTECount]) == 1}">StripOffsets is required in an image IFD</assert>
-  </rule>
-  
   <!--  cardinality rule
-  <rule id="TAG-273-0003" context="ifd[class=image]" level="error">
+  <rule id="TAG-273-0003" context="ifd[strips=1]" level="error">
    <title>StripOffsets valid cardinality</title>
    <description>StripOffsets tag cardinality is equal StripsPerImage for PlanarConfiguration equal to 1, and
 SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="({tags.tag[name=PlanarConfiguration]) == 1} &amp;&amp; {tags.tag.cardinality == tags.tag[name=StripsPerImage]}) || {tags.tag[name=PlanarConfiguration]) == 2} &amp;&amp; {tags.tag.cardinality == tags.tag[name=SamplesPerPixel]*tags.tag[name=StripsPerImage]})">StripByteCounts invalid cardinality</assert>
+   <assert test="{tags.tag[name=PlanarConfiguration]) == 1} &amp;&amp; {tags.tag[name=StripOffsets].cardinality == StripsPerImage} || {tags.tag[name=PlanarConfiguration]) == 2} &amp;&amp; {tags.tag[name=StripOffsets].cardinality == tags.tag[name=SamplesPerPixel] * StripsPerImage}">StripOffsets invalid cardinality</assert>
   </rule>
   
   <rule id="TAG-273-0004" context="ifd[type=Strip]" level="warning">
@@ -2023,7 +2054,7 @@ not be larger than 64K bytes.
    <assert test="{tags.tag[name=Threshholding]} &amp;&amp; {type != Grayscale}">Threshholding Tag is only valid in an IDF contaning a Grayscale images</assert>
   </rule>
   
-  <rule id="TAG-263-0004" context="ifd[type=Grayscale]" level="info">
+  <rule id="TAG-263-0005" context="ifd[type=Grayscale]" level="info">
    <title>Threshholding default value</title>
    <description>Threshholding tag has a default value, if it is not present in black and white TIFF files that represent shades of gray then No dithering or halftoning has been applied to the image data is assumed.
    </description>
