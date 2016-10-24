@@ -23,19 +23,13 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
-import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.modules.threading.core.FileCheck;
 import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
@@ -47,17 +41,15 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Adrià Llorens on 03/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_BOTTOM,
-    viewLocation = "/fxml/bottom.fxml",
+    viewLocation = "/fxml/fragments/bottom.fxml",
     scope = Scope.SINGLETON)
 public class BottomFragment {
 

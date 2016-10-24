@@ -20,22 +20,23 @@
 package dpfmanager.shell.core;
 
 import dpfmanager.shell.core.app.MainGuiApp;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
-
-import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 15/02/2016.
@@ -207,6 +208,10 @@ public class DPFManagerProperties {
     return dataDir;
   }
 
+  public static String getConformancesConfig() {
+    return getDataDir() + "/conformance.xml";
+  }
+
   public static String getLanguage() {
     return getPropertiesValue("language", Locale.ENGLISH.toString());
   }
@@ -217,6 +222,29 @@ public class DPFManagerProperties {
 
   public static ResourceBundle getBundle(){
     return ResourceBundle.getBundle("bundles.language");
+  }
+
+  public static String getBuiltInDefinition(){
+    try {
+      return IOUtils.toString(DPFManagerProperties.class.getResourceAsStream("/builtin/Definition.xml"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return "";
+  }
+
+  public static InputStream getDefaultBuiltInConfig(){
+    return DPFManagerProperties.class.getResourceAsStream("/builtin/Configuration.xml");
+  }
+
+  /**
+   * Returns the common accepted extensions
+   */
+  public static List<String> getCommonExtensions(){
+    List<String> extensions = new ArrayList<>();
+    extensions.add("zip");
+    extensions.add("rar");
+    return extensions;
   }
 
   /**

@@ -1,13 +1,13 @@
 /**
- * <h1>PeriodicFragment.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>PeriodicFragment.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -23,7 +23,7 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.component.periodical.TimeSpinner;
+import dpfmanager.shell.interfaces.gui.component.common.TimeSpinner;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.periodic.core.PeriodicCheck;
@@ -39,7 +39,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
@@ -60,7 +59,7 @@ import java.util.ResourceBundle;
  * Created by Adrià Llorens on 18/04/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_PERIODIC,
-    viewLocation = "/fxml/periodic.fxml",
+    viewLocation = "/fxml/fragments/periodic.fxml",
     resourceBundleLocation = "bundles.language",
     scope = Scope.PROTOTYPE)
 public class PeriodicFragment {
@@ -133,7 +132,7 @@ public class PeriodicFragment {
   private boolean saved;
   private boolean newCheck;
 
-  private void initDefault(){
+  private void initDefault() {
     currentConfigs = new ArrayList<>();
     importedConfigs = new ArrayList<>();
   }
@@ -187,7 +186,7 @@ public class PeriodicFragment {
     showLoadingDelete();
     if (newCheck) {
       // Only from GUI
-      context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, getUuid(), true));
+    context.send(GuiConfig.COMPONENT_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, getUuid(), true));
     } else {
       // Delete from OS tasks
       context.send(BasicConfig.MODULE_PERIODICAL, new PeriodicMessage(PeriodicMessage.Type.DELETE, getUuid()));
@@ -413,8 +412,8 @@ public class PeriodicFragment {
   private boolean savePeriodical() {
     // Check input
     String input = inputText.getText();
-    for (String file : input.split(";")){
-      if (!new File(file).exists()){
+    for (String file : input.split(";")) {
+      if (!new File(file).exists()) {
         context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertFile")));
         return false;
       }
