@@ -33,7 +33,7 @@
   <rule id="IFH-0002" context="header" level="critical">
    <title>TIFF IFH contains the byte order</title>
    <description>TIFF Image File Header(IFH) must contain the byte order used within the file (IFD Bytes 0 to 1). Legal values are "II" for Little Endian or "MM" for Big Endian byte order</description>
-   <reference><section>2</section><page>13</page></reference>
+   <reference><section>Section 2: TIFF Structure</section><page>13</page></reference>
    <assert test="{byteOrder}">Byte Order must be defined</assert>
   </rule>
   

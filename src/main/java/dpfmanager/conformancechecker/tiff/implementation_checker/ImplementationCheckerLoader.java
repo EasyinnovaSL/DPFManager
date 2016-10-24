@@ -8,6 +8,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.Rul
 import dpfmanager.shell.core.DPFManagerProperties;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -67,6 +68,7 @@ public class ImplementationCheckerLoader {
                 if (id.equals(ro.getId())) excludedRules = true;
               }
               if (!excludedRules) {
+                ro.setIncluded(true);
                 rules.getRules().add(ro);
                 for (RuleType rule : ro.getRule()) {
                   //rule.iso = rulesIncluded.getIso();
@@ -88,13 +90,13 @@ public class ImplementationCheckerLoader {
 
   private static InputStream getFileFromResources(String pathStr) {
     InputStream fis = null;
-    Path path = Paths.get(pathStr);
-    Path pathConfig = Paths.get(DPFManagerProperties.getIsosDir() + "/" + pathStr);
+    File file = new File(pathStr);
+    File fileConfig = new File(DPFManagerProperties.getIsosDir() + "/" + pathStr);
     try {
-      if (Files.exists(path)) {
+      if (file.exists()) {
         // Look in current dir
         fis = new FileInputStream(pathStr);
-      } else if (Files.exists(pathConfig)) {
+      } else if (fileConfig.exists()) {
         // Look in isos config
         fis = new FileInputStream(DPFManagerProperties.getIsosDir() + "/" + pathStr);
       } else {
@@ -171,4 +173,10 @@ public class ImplementationCheckerLoader {
     }
     return getFileName(path);
   }
+
+  public static boolean isValid(String path) {
+    ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(path);
+    return icRules != null;
+  }
+
 }
