@@ -34,10 +34,15 @@ import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 import org.controlsfx.control.CheckTreeView;
 import org.jacpfx.api.annotations.Resource;
@@ -75,7 +80,7 @@ public class Wizard6Fragment {
   @FXML
   private HBox treeViewHBox;
 
-  private CheckTreeView<String> checkTreeView;
+  private CheckTreeView<RuleTreeItem> checkTreeView;
 
   private ConfigController controller;
 
@@ -105,24 +110,46 @@ public class Wizard6Fragment {
 
   private void addTreeView() {
     // Root node (my computer)
-    CheckBoxTreeItem<String> rootNode = new CheckBoxTreeItem<>("rootDummy");
+    CheckBoxTreeItem<RuleTreeItem> rootNode = new CheckBoxTreeItem<>(new RuleTreeItem());
     checkTreeView = new CheckTreeView<>(rootNode);
     checkTreeView.setShowRoot(false);
     rootNode.setExpanded(true);
 
-    // Root items
-    for (RulesType rule : rules.getRules()) {
-      String name = rule.getId() + ": " + rule.getTitle();
-      CheckBoxTreeItem treeNode = new CheckBoxTreeItem(name);
+    // Load rules
+    for (RulesType rule : rules.getOwnRules()) {
+      CheckBoxTreeItem<RuleTreeItem> treeNode = new CheckBoxTreeItem(new RuleTreeItem(rule.getId(), rule.getTitle(), rule.getDescription()));
       for (RuleType childRule : rule.getRule()) {
-        String childName = childRule.getId() + ": " + childRule.getTitle().getValue();
-        CheckBoxTreeItem treeNodeChild = new CheckBoxTreeItem(childName);
+        RuleTreeItem item = new RuleTreeItem(childRule.getId(), childRule.getTitle().getValue(), childRule.getDescription().getValue());
+        item.setReference(childRule.getReferenceText());
+        CheckBoxTreeItem<RuleTreeItem> treeNodeChild = new CheckBoxTreeItem(item);
         treeNodeChild.setSelected(true);
         treeNode.getChildren().add(treeNodeChild);
       }
       treeNode.setSelected(true);
       rootNode.getChildren().add(treeNode);
     }
+
+    // Initialize tooltip
+    checkTreeView.setCellFactory(new Callback<TreeView<RuleTreeItem>, TreeCell<RuleTreeItem>>() {
+      @Override
+      public TreeCell<RuleTreeItem> call(TreeView<RuleTreeItem> param) {
+        TreeCell<RuleTreeItem> cell = new CheckBoxTreeCell<RuleTreeItem>() {
+          @Override
+          public void updateItem(RuleTreeItem item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty) {
+              setText(item.getId() + ": " + item.getName());
+              String description = item.getDescription();
+              if (item.getReference() != null){
+                description += "\n" + item.getReference();
+              }
+              setTooltip(new Tooltip(description));
+            }
+          }
+        };
+        return cell;
+      }
+    });
 
     // Add data and add to gui
     treeViewHBox.getChildren().clear();
@@ -137,14 +164,13 @@ public class Wizard6Fragment {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("w6EnterFilename")));
       return;
     }
-    File file = askForFile();
+    File file = askForFile(isoTitle);
     if (file == null) {
       return;
     }
 
     // All ok
-    rules.setTitle(isoTitle);
-    modifyRules();
+    modifyRules(isoTitle);
     if (saveToFile(file)) {
       controller.editIsoSuccess(file.getAbsolutePath(), filePath == null);
     } else {
@@ -152,10 +178,11 @@ public class Wizard6Fragment {
     }
   }
 
-  private File askForFile() {
+  private File askForFile(String initial) {
     if (filePath == null) {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle(bundle.getString("w6SelectFileg"));
+      fileChooser.setInitialFileName(initial);
       fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML file", "*.xml"));
       fileChooser.setInitialDirectory(new File(DPFManagerProperties.getIsosDir()));
       return fileChooser.showSaveDialog(GuiWorkbench.getMyStage());
@@ -164,27 +191,40 @@ public class Wizard6Fragment {
     }
   }
 
-  private void modifyRules() {
-    for (TreeItem<String> item : checkTreeView.getRoot().getChildren()) {
+  private void modifyRules(String title) {
+    ImplementationCheckerObjectType newRules;
+    if (filePath == null) {
+      newRules = new ImplementationCheckerObjectType();
+      newRules.makeCopy(rules);
+    } else {
+      newRules = rules;
+    }
+    newRules.setTitle(title);
+
+    for (TreeItem<RuleTreeItem> item : checkTreeView.getRoot().getChildren()) {
       // First Level
-      CheckBoxTreeItem<String> checkItem = (CheckBoxTreeItem<String>) item;
-      String id = item.getValue().substring(0, item.getValue().indexOf(":"));
-      if (!checkItem.isSelected()) {
-        rules.removeRule(id);
+      CheckBoxTreeItem<RuleTreeItem> checkItem = (CheckBoxTreeItem<RuleTreeItem>) item;
+      String id = item.getValue().getId();
+      if (!checkItem.isSelected() && !checkItem.isIndeterminate()) {
+        newRules.removeRule(id);
       } else {
         // Second level
-        for (TreeItem<String> child : item.getChildren()) {
-          CheckBoxTreeItem<String> checkChild = (CheckBoxTreeItem<String>) child;
-          String idChild = checkChild.getValue().substring(0, checkChild.getValue().indexOf(":"));
-          if (!checkChild.isSelected()) {
-            RulesType rulesType = rules.getRulesById(id);
-            if (rulesType != null) {
+        RulesType rulesType = newRules.getRulesById(id);
+        if (rulesType != null) {
+          for (TreeItem<RuleTreeItem> child : item.getChildren()) {
+            CheckBoxTreeItem<RuleTreeItem> checkChild = (CheckBoxTreeItem<RuleTreeItem>) child;
+            String idChild = checkChild.getValue().getId();
+            if (!checkChild.isSelected()) {
               rulesType.removeRule(idChild);
             }
           }
         }
+        if (rulesType.getRule().size() == 0){
+          newRules.removeRule(id);
+        }
       }
     }
+    rules = newRules;
   }
 
   private boolean saveToFile(File file) {

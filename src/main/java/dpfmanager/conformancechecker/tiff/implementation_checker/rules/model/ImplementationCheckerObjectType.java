@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -291,6 +292,18 @@ public class ImplementationCheckerObjectType {
     return this.rules;
   }
 
+  public List<RulesType> getOwnRules() {
+    List<RulesType> ownRules = new ArrayList<>();
+    if (rules != null) {
+      for (RulesType rule : rules){
+        if (!rule.isIncluded()){
+          ownRules.add(rule);
+        }
+      }
+    }
+    return ownRules;
+  }
+
   public void removeRule(String id) {
     RulesType delete = null;
     for (RulesType rulesType : rules) {
@@ -310,6 +323,19 @@ public class ImplementationCheckerObjectType {
       }
     }
     return null;
+  }
+
+  public void makeCopy(ImplementationCheckerObjectType copy){
+    title = copy.getTitle();
+    iso = copy.getIso();
+    author = copy.getAuthor();
+    description = copy.getDescription();
+    version = copy.getVersion();
+    date = copy.getDate();
+    include = new ArrayList<>();
+    include.addAll(copy.getInclude());
+    rules = new ArrayList<>();
+    rules.addAll(copy.getRules());
   }
 
 }

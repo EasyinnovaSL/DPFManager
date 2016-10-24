@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -67,6 +68,8 @@ public class RulesType {
   protected List<RuleType> rule;
   @XmlAttribute(name = "id", required = true)
   protected String id;
+  @XmlTransient
+  private boolean included = false;
 
   /**
    * Gets the value of the title property.
@@ -181,4 +184,11 @@ public class RulesType {
     }
   }
 
+  public boolean isIncluded() {
+    return included;
+  }
+
+  public void setIncluded(boolean included) {
+    this.included = included;
+  }
 }

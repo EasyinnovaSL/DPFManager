@@ -68,6 +68,7 @@ public class ImplementationCheckerLoader {
                 if (id.equals(ro.getId())) excludedRules = true;
               }
               if (!excludedRules) {
+                ro.setIncluded(true);
                 rules.getRules().add(ro);
                 for (RuleType rule : ro.getRule()) {
                   //rule.iso = rulesIncluded.getIso();
