@@ -31,6 +31,7 @@ import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard5Fragment;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard3Fragment;
+import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard6Fragment;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -78,6 +79,8 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   private HBox hboxDescription;
   @FXML
   private Button continueButton;
+  @FXML
+  private Button backButton;
   @FXML
   private TextField saveNameInput;
   @FXML
@@ -153,6 +156,8 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   private void initAllFragments() {
     getContext().getManagedFragmentHandler(Wizard1Fragment.class).getController().init();
+    getContext().getManagedFragmentHandler(Wizard1Fragment.class).getController().setController(getController());
+    getContext().getManagedFragmentHandler(Wizard6Fragment.class).getController().setController(getController());
     getContext().getManagedFragmentHandler(Wizard2Fragment.class).getController().setModel(getModel());
     getContext().getManagedFragmentHandler(Wizard4Fragment.class).getController().setModel(getModel());
 
@@ -161,6 +166,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     getController().setFragment3(getContext().getManagedFragmentHandler(Wizard3Fragment.class));
     getController().setFragment4(getContext().getManagedFragmentHandler(Wizard4Fragment.class));
     getController().setFragment5(getContext().getManagedFragmentHandler(Wizard5Fragment.class));
+    getController().setFragment6(getContext().getManagedFragmentHandler(Wizard6Fragment.class));
 
     wizard.getChildren().clear();
     wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard1Fragment.class).getFragmentNode());
@@ -168,6 +174,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard3Fragment.class).getFragmentNode());
     wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard4Fragment.class).getFragmentNode());
     wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard5Fragment.class).getFragmentNode());
+    wizard.getChildren().add(getContext().getManagedFragmentHandler(Wizard6Fragment.class).getFragmentNode());
 
     includedNodes =  wizard.getChildren();
   }
@@ -219,9 +226,11 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   /** Main goto step wizard */
   public void gotoConfig(int x) {
-    getController().saveSettings(getModel().getConfigStep());
-    getModel().setConfigStep(x);
-    getController().loadSettings(x);
+    if (getModel().getConfigStep() != x) {
+      getController().saveSettings(getModel().getConfigStep());
+      getModel().setConfigStep(x);
+      getController().loadSettings(x);
+    }
     if (x < 6) {
       showSubConfig(x);
       setStepsBlue(x);
@@ -236,10 +245,22 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
     } else {
       NodeUtil.hideNode(labelW1);
     }
+    NodeUtil.showNode(backButton);
+    NodeUtil.showNode(continueButton);
+  }
+
+  public void gotoEdit() {
+    showSubConfig(6);
+    setStepsBlue(1);
+    setConfigArrowTranslate(1);
+    changeStepTitle(1);
+    NodeUtil.hideNode(labelW1);
+    NodeUtil.hideNode(backButton);
+    NodeUtil.hideNode(continueButton);
   }
 
   public void showSubConfig(int x) {
-    if (x < 1 || x > 5) {
+    if (x < 1 || x > 6) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, "Requested show sub config out of bounds!"));
       return;
     }

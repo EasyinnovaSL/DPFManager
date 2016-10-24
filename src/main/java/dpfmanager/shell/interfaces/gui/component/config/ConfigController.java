@@ -29,6 +29,7 @@ import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard2Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard3Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard4Fragment;
 import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard5Fragment;
+import dpfmanager.shell.interfaces.gui.fragment.wizard.Wizard6Fragment;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
@@ -47,6 +48,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
   private ManagedFragmentHandler<Wizard3Fragment> fragment3;
   private ManagedFragmentHandler<Wizard4Fragment> fragment4;
   private ManagedFragmentHandler<Wizard5Fragment> fragment5;
+  private ManagedFragmentHandler<Wizard6Fragment> fragment6;
 
   public void clearAllSteps() {
     fragment1.getController().clear();
@@ -105,7 +107,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     }
   }
 
-  private String checkInput(String name) {
+  public String checkInput(String name) {
     if (name.contains("/") || name.contains("\\") ||
         name.lastIndexOf(".") != name.indexOf(".") ||    // More than 2 '.'
         (name.contains(".") && !name.endsWith(".dpf"))) {  // Has some '.' but no .dpf
@@ -156,6 +158,26 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     }
   }
 
+  public void editIso(String iso,String path){
+    fragment6.getController().edit(iso, path);
+    getView().gotoEdit();
+  }
+
+  public void editIsoSuccess(String path, boolean needAdd){
+    File isoFile = new File(path);
+    File isoDir = new File(DPFManagerProperties.getIsosDir());
+    if (needAdd && isoFile.getParentFile().getAbsolutePath().equals(isoDir.getAbsolutePath())){
+      fragment1.getController().addConfigCheckBox(isoFile, false);
+    } else if (needAdd) {
+      fragment1.getController().addExternalCheckBox(path, false);
+    }
+    getView().gotoConfig(1);
+  }
+
+  public void editIsoCancelled(){
+    getView().gotoConfig(1);
+  }
+
   /**
    * Setters
    */
@@ -178,6 +200,10 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
 
   public void setFragment5(ManagedFragmentHandler<Wizard5Fragment> fragment5) {
     this.fragment5 = fragment5;
+  }
+
+  public void setFragment6(ManagedFragmentHandler<Wizard6Fragment> fragment6) {
+    this.fragment6 = fragment6;
   }
 
 }

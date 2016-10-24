@@ -528,11 +528,23 @@
 .separator-periodic{
     -fx-background-color: #808080;
 }
+.action-img-16 {
+    -fx-background-color: transparent;
+    -fx-background-size: cover;
+    -fx-border-width: 0;
+    -fx-min-width: 14;
+    -fx-pref-width: 14;
+    -fx-max-width: 14;
+    -fx-min-height: 14;
+    -fx-pref-height: 14;
+    -fx-max-height: 14;
+}
 .periodic-img{
     -fx-background-color: transparent;
     -fx-background-size: cover;
     -fx-border-width: 0;
     -fx-min-width: 20;
+    -fx-pref-width: 20;
     -fx-max-width: 20;
     -fx-min-height: 20;
     -fx-pref-height: 20;
@@ -541,6 +553,12 @@
 .combo-periodic{
     -fx-translate-x: -20;
     -fx-cursor: hand;
+}
+.cancel-img{
+    -fx-background-image: url('../images/periodic/cancel-gray.png');
+}
+.cancel-img:hover{
+    -fx-background-image: url('../images/periodic/cancel-red.png');
 }
 .delete-img{
     -fx-background-image: url('../images/periodic/trash-grey.png');
