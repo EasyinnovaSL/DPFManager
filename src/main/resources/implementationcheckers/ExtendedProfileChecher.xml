@@ -16,11 +16,9 @@ The features described in this part were either contained in earlier versions of
  <date>2016-09-20</date>
 
  <include>
-  <implementation>./BaselineProfileChecker.xml</implementation>
-  <exclude>
-   <rule>TAG-259-0003</rule>
-   <rule>IFDB-0002</rule>
-  </exclude>
+  <policyChecker>./BaselineProfileChecker.xml</policyChecker>
+ <excluderules>TAG-259-0003</excluderules>
+  <excluderules>IFDB-0002</excluderules>
  </include>
  
  <rules id="TAG-259-1">
