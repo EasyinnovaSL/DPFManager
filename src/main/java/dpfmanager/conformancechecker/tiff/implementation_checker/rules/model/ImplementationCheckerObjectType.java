@@ -338,4 +338,8 @@ public class ImplementationCheckerObjectType {
     rules.addAll(copy.getRules());
   }
 
+  public void removeIncludedRules(){
+    rules = getOwnRules();
+  }
+
 }

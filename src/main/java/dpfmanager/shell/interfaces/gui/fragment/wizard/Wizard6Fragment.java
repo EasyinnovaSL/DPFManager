@@ -143,7 +143,9 @@ public class Wizard6Fragment {
               if (item.getReference() != null){
                 description += "\n" + item.getReference();
               }
-              setTooltip(new Tooltip(description));
+              if (!description.isEmpty()) {
+                setTooltip(new Tooltip(description));
+              }
             }
           }
         };
@@ -233,13 +235,18 @@ public class Wizard6Fragment {
         file.delete();
       }
 
+      ImplementationCheckerObjectType newRules = new ImplementationCheckerObjectType();
+      newRules.makeCopy(rules);
+      newRules.removeIncludedRules();
+
+
       JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
       Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
       // output pretty printed
       jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-      jaxbMarshaller.marshal(rules, file);
+      jaxbMarshaller.marshal(newRules, file);
       return true;
     } catch (JAXBException e) {
       e.printStackTrace();
