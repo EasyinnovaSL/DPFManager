@@ -21,11 +21,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
   public void testReportsXML() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[4];
-    args[0] = "src/test/resources/Small/";
-    args[1] = "--reportformat";
+    String[] args = new String[5];
+    args[0] = "check";
+    args[1] = "-f";
     args[2] = "xml";
     args[3] = "-s";
+    args[4] = "src/test/resources/Small/";
 
     MainConsoleApp.main(args);
 
@@ -36,7 +37,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains(".mets")) n++;
     }
 
     assertEquals(7, n);
@@ -46,11 +47,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
   public void testReportsKoPdf() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[4];
-    args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
-    args[1] = "--reportformat";
+    String[] args = new String[5];
+    args[0] = "check";
+    args[1] = "-f";
     args[2] = "pdf";
     args[3] = "-s";
+    args[4] = "src/test/resources/Block/Bad alignment Big E.tif";
 
     MainConsoleApp.main(args);
 
@@ -76,11 +78,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
   public void testReportsZKoPdf() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[4];
-    args[0] = "src/test/resources/Block/Bad alignment Big E.tif";
-    args[1] = "--reportformat";
+    String[] args = new String[5];
+    args[0] = "check";
+    args[1] = "--format";
     args[2] = "pdf";
     args[3] = "-s";
+    args[4] = "src/test/resources/Block/Bad alignment Big E.tif";
 
     MainConsoleApp.main(args);
 
@@ -106,11 +109,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
   public void testReportsPDF() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[4];
-    args[0] = "src/test/resources/Small/";
-    args[1] = "--reportformat";
+    String[] args = new String[5];
+    args[0] = "check";
+    args[1] = "-f";
     args[2] = "pdf";
     args[3] = "-s";
+    args[4] = "src/test/resources/Small/";
 
     MainConsoleApp.main(args);
 
@@ -121,14 +125,14 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains(".mets")) n++;
     }
 
     assertEquals(7, n);
 
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
-    assertEquals(20, l.size());
+    assertEquals(14, l.size());
     doc.close();
   }
 

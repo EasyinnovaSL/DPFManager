@@ -69,7 +69,7 @@ public class InteroperabilityTest extends CommandLineTest {
       TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
 
       Validator v = new Validator();
-      v.validateBaseline(tiffValidation);
+      v.validate(tiffValidation, "implementationcheckers/BaselineProfileChecker.xml", false);
       int numberOfErrors = v.getErrors().size();
       assertEquals(0, numberOfErrors);
     } catch (ReadTagsIOException e) {
@@ -116,32 +116,43 @@ public class InteroperabilityTest extends CommandLineTest {
   @Test
   public void testExternalCheckerMov() throws Exception {
     if (!SystemUtils.IS_OS_WINDOWS) return;
+
+    /**
+     * Add mov external conformance checker
+     */
+    String[] args = new String[8];
+    args[0] = "modules";
+    args[1] = "--add";
+    args[2] = "MediaConch";
+    args[3] = "src/test/resources/plugins/video/MediaConch.exe"; // Simulate executable
+    args[4] = "--parameters";
+    args[5] = "-mc -fx %input% %config%";
+    args[6] = "--extensions";
+    args[7] = "mov";
+    MainConsoleApp.main(args);
+
+
+    /**
+     * Run the check
+     */
     String pathmov = "src/test/resources/interop/test.mov";
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
     }
 
-    String configfile = "temp/xx.cfg";
-    int idx = 0;
-    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
-
-    PrintWriter bw = new PrintWriter(configfile);
-    bw.write("ISO\tBaseline\n" +
-        "FORMAT\tXML\n");
-    bw.close();
-
     String path = "temp/output";
-    idx = 1;
+    int idx = 1;
     while (new File(path).exists()) path = "temp/output" + idx++;
 
-    String[] args = new String[6];
-    args[0] = pathmov;
+    args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
-    args[5] = configfile;
+    args[4] = "-f";
+    args[5] = "xml";
+    args[6] = pathmov;
 
     MainConsoleApp.main(args);
 
@@ -163,40 +174,48 @@ public class InteroperabilityTest extends CommandLineTest {
     assertEquals(xml.contains("implementationChecks"), true);
 
     FileUtils.deleteDirectory(new File(path));
-
-    new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }
 
   @Test
   public void testExternalCheckerPdf() throws Exception {
     if (!SystemUtils.IS_OS_WINDOWS) return;
-    String pathmov = "src/test/resources/interop/test.pdf";
+
+    /**
+     * Add mov external conformance checker
+     */
+    String[] args = new String[8];
+    args[0] = "modules";
+    args[1] = "--add";
+    args[2] = "VeraPDF";
+    args[3] = "src/test/resources/plugins/pdf/verapdf.bat"; // Simulate executable
+    args[4] = "--parameters";
+    args[5] = "--format xml %input% %config%";
+    args[6] = "--extensions";
+    args[7] = "pdf";
+    MainConsoleApp.main(args);
+
+    /**
+     * Run the check
+     */
+    String pathpdf = "src/test/resources/interop/test.pdf";
 
     if (!new File("temp").exists()) {
       new File("temp").mkdir();
     }
 
-    String configfile = "temp/xx.cfg";
-    int idx = 0;
-    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
-
-    PrintWriter bw = new PrintWriter(configfile);
-    bw.write("ISO\tBaseline\n" +
-        "FORMAT\tXML\n");
-    bw.close();
-
     String path = "temp/output";
-    idx = 1;
+    int idx = 1;
     while (new File(path).exists()) path = "temp/output" + idx++;
 
-    String[] args = new String[6];
-    args[0] = pathmov;
+    args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
-    args[5] = configfile;
+    args[4] = "--format";
+    args[5] = "xml";
+    args[6] = pathpdf;
 
     MainConsoleApp.main(args);
 
@@ -218,8 +237,6 @@ public class InteroperabilityTest extends CommandLineTest {
     assertEquals(xml.contains("ruleId specification=\"ISO_19005_1\""), true);
 
     FileUtils.deleteDirectory(new File(path));
-
-    new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }
 }

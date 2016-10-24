@@ -81,6 +81,13 @@ img {
 	font-family: Roboto Bold, sans-serif;
 }
 
+.CustomTable2 .c1{
+	width: 50%;
+}
+.CustomTable2 .c2{
+	width: 25%;
+}
+
 /* Resize */
 @media (max-width: 991px) {
 	.text-center-sm {

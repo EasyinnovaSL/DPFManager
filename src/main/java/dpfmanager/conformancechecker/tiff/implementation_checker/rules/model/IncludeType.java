@@ -18,6 +18,9 @@
  */
 package dpfmanager.conformancechecker.tiff.implementation_checker.rules.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -48,14 +51,14 @@ import javax.xml.bind.annotation.XmlValue;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "includeType", propOrder = {
-    "implementation",
-    "exclude"
+    "policyChecker",
+    "excluderules"
 })
 public class IncludeType {
 
     @XmlElement(required = true)
-    protected Object implementation;
-    protected Object exclude;
+    protected String policyChecker;
+    protected List<String> excluderules;
 
     /**
      * Gets the value of the implementation property.
@@ -65,44 +68,27 @@ public class IncludeType {
      *     {@link Object }
      *     
      */
-    public Object getImplementation() {
-        return implementation;
+    public Object getPolicyChecker() {
+        return policyChecker;
     }
 
     /**
      * Sets the value of the implementation property.
      * 
-     * @param value
+     * @param policyChecker
      *     allowed object is
      *     {@link Object }
      *     
      */
-    public void setImplementation(Object value) {
-        this.implementation = value;
+    public void setPolicyChecker(String policyChecker) {
+        this.policyChecker = policyChecker;
     }
 
-    /**
-     * Gets the value of the exclude property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
-     */
-    public Object getExclude() {
-        return exclude;
-    }
-
-    /**
-     * Sets the value of the exclude property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    public void setExclude(Object value) {
-        this.exclude = value;
+    public List<String> getExcluderules() {
+        if (excluderules == null) {
+            excluderules = new ArrayList<String>();
+        }
+        return this.excluderules;
     }
 
 }

@@ -5,7 +5,7 @@
    <ConformanceCheckers>
       <conformanceChecker>
          <uuid>1</uuid>
-         <name>Tiff</name>
+         <name>DPF Manager</name>
          <location>built-in</location>
          <parameters/>
          <state>disabled</state>

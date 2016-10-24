@@ -33,11 +33,11 @@ public class TiffITCheckerTest extends TestCase {
 
     Validator v = new Validator();
     if (profile == 0)
-      v.validateTiffIT(content, false);
+      v.validate(content, "implementationcheckers/TiffITProfileChecker.xml", false);
     else if (profile == 1)
-      v.validateTiffITP1(content, false);
+      v.validate(content, "implementationcheckers/TiffITP1ProfileChecker.xml", false);
     else
-      v.validateTiffITP2(content, false);
+      v.validate(content, "implementationcheckers/TiffITP2ProfileChecker.xml", false);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getTiffITValidation(profile);
@@ -58,11 +58,11 @@ public class TiffITCheckerTest extends TestCase {
 
     Validator v = new Validator();
     if (profile == 0)
-      v.validateTiffIT(content, false);
+      v.validate(content, "implementationcheckers/TiffITProfileChecker.xml", false);
     else if (profile == 1)
-      v.validateTiffITP1(content, false);
+      v.validate(content, "implementationcheckers/TiffITP1ProfileChecker.xml", false);
     else
-      v.validateTiffITP2(content, false);
+      v.validate(content, "implementationcheckers/TiffITP2ProfileChecker.xml", false);
     List<RuleResult> results = v.getErrors();
 
     if (errors > 0)
@@ -73,12 +73,12 @@ public class TiffITCheckerTest extends TestCase {
 
   public void testValidTestP0Valid() throws Exception {
     testValid("src" + separator + "test" + separator + "resources" + separator
-        + "IT Samples" + separator + "sample-cmyk-IT.tif", 0);
+        + "IT Samples" + separator + "sample-IT.tif", 0);
   }
 
   public void testValidTestP0Invalid() throws Exception {
     testInvalid("src" + separator + "test" + separator + "resources" + separator
-        + "IT Samples" + separator + "sample-IT.tif", 0, -1);
+        + "IT Samples" + separator + "sample-cmyk-IT.tif", 0, -1);
     testInvalid("src" + separator + "test" + separator + "resources" + separator
         + "IT Samples" + separator + "IMG_0887_EP.tif", 0, -1);
   }

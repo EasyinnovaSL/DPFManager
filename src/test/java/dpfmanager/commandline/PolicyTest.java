@@ -2,6 +2,8 @@ package dpfmanager.commandline;
 
 import static junit.framework.TestCase.assertEquals;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 
@@ -45,13 +47,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tPixelDensity,>,10\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -100,13 +103,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tByteOrder,=,BIG_ENDIAN\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -155,13 +159,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tByteOrder,=,LITTLE_ENDIAN\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -210,13 +215,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tImageWidth,>,10000,0\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -265,13 +271,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tImageWidth,>,100\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -319,13 +326,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tImageWidth,<,10000,1\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -374,13 +382,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tNumberImages,<,1,0\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -429,13 +438,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tNumberImages,<,10,0\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -486,13 +496,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tEqualXYResolution,=,True\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/classes/IMG_OK.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/classes/IMG_OK.tif";
 
     MainConsoleApp.main(args);
 
@@ -510,13 +521,23 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    String policyCheck = html.substring(html.indexOf("##ROW_PC##"));
-    policyCheck = policyCheck.substring(0, policyCheck.indexOf("</tr>"));
-    assertEquals(policyCheck.contains("<td class=\"error\">"), false);
-    assertEquals(policyCheck.contains("<td class=\"info\">0</td>"), true);
+    int index = html.indexOf("<table class=\"center-table CustomTable\">");
+    assertEquals(true, index > -1);
+    String table = html.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    String[] trs = table.split("</tr>");
+
+    // Policy errors
+    for (String tr : trs){
+      if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO + "</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(false, tr.contains("<td class=\"error\">"));
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      }
+    }
 
     FileUtils.deleteDirectory(new File(path));
-
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }
@@ -545,13 +566,14 @@ public class PolicyTest extends CommandLineTest {
         "RULE\tEqualXYResolution,=,False\n");
     bw.close();
 
-    String[] args = new String[6];
-    args[0] = "src/test/resources/classes/IMG_OK.tif";
+    String[] args = new String[7];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
-    args[4] = "-configuration";
+    args[4] = "-c";
     args[5] = configfile;
+    args[6] = "src/test/resources/classes/IMG_OK.tif";
 
     MainConsoleApp.main(args);
 
@@ -569,13 +591,23 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    String policyCheck = html.substring(html.indexOf("##ROW_PC##"));
-    policyCheck = policyCheck.substring(0, policyCheck.indexOf("</tr>"));
-    assertEquals(policyCheck.contains("<td class=\"error\">3</td>"), true);
-    assertEquals(policyCheck.contains("<td class=\"info\">0</td>"), true);
+    int index = html.indexOf("<table class=\"center-table CustomTable\">");
+    assertEquals(true, index > -1);
+    String table = html.substring(index);
+    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
+    String[] trs = table.split("</tr>");
+
+    // Policy errors
+    for (String tr : trs){
+      if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO + "</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+        assertEquals(true, tr.contains("<td class=\"error\">3</td>"));
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
+      }
+    }
 
     FileUtils.deleteDirectory(new File(path));
-
     new File(configfile).delete();
     FileUtils.deleteDirectory(new File("temp"));
   }

@@ -20,6 +20,20 @@
 package dpfmanager.shell.modules.periodic.core;
 
 
+import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
+
+import org.apache.logging.log4j.Level;
+
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -46,6 +60,125 @@ public class PeriodicCheck {
     this.input = input;
     this.configuration = configuration;
     this.periodicity = periodicity;
+  }
+
+  /**
+   * Parse from params
+   */
+  public boolean parse(Map<String, String> parameters, List<String> files, DpfContext context, ResourceBundle bundle) {
+    uuid = "dpf-" + System.currentTimeMillis();
+    input = null;
+    configuration = null;
+    periodicity = null;
+
+    // Input
+    String input = "";
+    for (String file : files){
+      if (!input.isEmpty()){
+        input += ";";
+      }
+      input += file;
+    }
+    if (input.isEmpty()){
+      return false;
+    }
+    setInput(input);
+
+    // Configuration
+    String configuration = "";
+    if (parameters.containsKey("-configuration")){
+      configuration = getOnlyNameIfPossible(parameters.get("-configuration"));
+    } else {
+      printOut(context, bundle.getString("specifyConfiguration"));
+      return false;
+    }
+    setConfiguration(configuration);
+
+    // Time
+    Periodicity periodicity = new Periodicity();
+    String time = "00:00"; // Default value
+    if (parameters.containsKey("-time") && isValidTime(parameters.get("-time"))){
+      time = parameters.get("-time");
+    }
+    periodicity.setTime(LocalTime.parse(time));
+
+    // Periodicity
+    Periodicity.Mode mode;
+    if (parameters.containsKey("-periodicity") && parseMode(parameters.get("-periodicity")) != null){
+      mode = parseMode(parameters.get("-periodicity"));
+    } else {
+      printOut(context, bundle.getString("specifyPeriodicity"));
+      return false;
+    }
+    periodicity.setMode(mode);
+    if (mode.equals(Periodicity.Mode.WEEKLY)){
+      String days = parameters.get("-extra");
+      List<Integer> list = parseWeekDays(days);
+      if (list == null || list.isEmpty()){
+        printOut(context, bundle.getString("daysOfWeekError"));
+        return false;
+      }
+      periodicity.setDaysOfWeek(list);
+    } else if (mode.equals(Periodicity.Mode.MONTHLY)){
+      Integer day = Integer.parseInt(parameters.get("-extra"));
+      if (day < 1 || day > 28){
+        printOut(context, bundle.getString("dayOfMonthError"));
+        return false;
+      }
+      periodicity.setDayOfMonth(day);
+    }
+    setPeriodicity(periodicity);
+    return true;
+  }
+
+  private String getOnlyNameIfPossible(String configuration){
+    File configFile = new File(configuration);
+    File configDir = new File(DPFManagerProperties.getConfigDir());
+    if (configFile.getParentFile().equals(configDir)){
+      return configFile.getName().replace(".dpf","");
+    } else {
+      return configuration;
+    }
+  }
+
+  private List<Integer> parseWeekDays(String days){
+    List<Integer> list = new ArrayList<>();
+    for (String day : days.split(",")){
+      Integer dayInt = Integer.parseInt(day);
+      if (dayInt < 1 || dayInt > 7){
+        return null;
+      }
+      list.add(dayInt);
+    }
+    return list;
+  }
+
+  private Periodicity.Mode parseMode(String mode){
+    switch (mode){
+      case "D":
+        return Periodicity.Mode.DAILY;
+      case "W":
+        return Periodicity.Mode.WEEKLY;
+      case "M":
+        return Periodicity.Mode.MONTHLY;
+      case "d":
+        return Periodicity.Mode.DAILY;
+      case "w":
+        return Periodicity.Mode.WEEKLY;
+      case "m":
+        return Periodicity.Mode.MONTHLY;
+    }
+    return null;
+  }
+
+  private boolean isValidTime(String time){
+    try {
+      SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+      sdf.parse(time);
+      return true;
+    } catch (ParseException ex) {
+      return false;
+    }
   }
 
   /**
@@ -93,5 +226,9 @@ public class PeriodicCheck {
     text += "   " + bundle.getString("configuration") + " " + configuration + EL;
     text += "   " + bundle.getString("periodicity") + " " + periodicity.toString(bundle) + EL;
     return text;
+  }
+
+  private void printOut(DpfContext context, String message) {
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message));
   }
 }

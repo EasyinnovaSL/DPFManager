@@ -36,30 +36,8 @@
 							<h4 class="color-grey">##IMG_FILEPATH##</h4>
 							<div style="display: none;" class="##CL_LINKR2##"><h5><a href="##LINK2##">Report of fixed image</a></h5></div>
 							<div style="display: none;" class="##CL_LINKR1##"><h5><a href="##LINK1##">Report of original image</a></h5></div>
-							
-							<div style="display: ##C_BL_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to TIFF Baseline</div>
-							<div style="display: ##C_BL_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to TIFF Baseline, BUT it has some warnings</div>
-							<div style="display: ##C_BL_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to TIFF Baseline</div>
 
-							<div style="display: ##C_EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to TIFF/EP</div>
-							<div style="display: ##C_EP_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to TIFF/EP, BUT it has some warnings</div>
-							<div style="display: ##C_EP_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to TIFF/EP</div>
-
-							<div style="display: ##C_IT0_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to TIFF/IT</div>
-							<div style="display: ##C_IT0_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to TIFF/IT, BUT it has some warnings</div>
-							<div style="display: ##C_IT0_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to TIFF/IT</div>
-
-							<div style="display: ##C_IT1_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to TIFF/IT-1</div>
-							<div style="display: ##C_IT1_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to TIFF/IT-1, BUT it has some warnings</div>
-							<div style="display: ##C_IT1_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to TIFF/IT-1</div>
-
-							<div style="display: ##C_IT2_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to TIFF/IT-2</div>
-							<div style="display: ##C_IT2_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to TIFF/IT-2, BUT it has some warnings</div>
-							<div style="display: ##C_IT2_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to TIFF/IT-2</div>
-							
-							<div style="display: ##C_PC_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Policy checker</div>
-							<div style="display: ##C_PC_WAR##;" class="warning"><i class="fa fa-exclamation-triangle"></i> This file conforms to Policy checker, BUT it has some warnings</div>
-							<div style="display: ##C_PC_ERR##;" class="error"><i class="fa fa-exclamation-triangle"></i> This file does NOT conform to Policy checker</div>
+							##DIVS_CONFORMS##
 						</div>
 						<div class="col-md-9">
 			                <table class="center-table CustomTable">
@@ -68,36 +46,7 @@
 			                        <td>Errors</td>
 			                        <td>Warnings</td>
 			                    </tr>
-			                    <tr class="##ROW_BL##">
-			                        <td>Baseline</td>
-			                        <td class="##F_BL_ERR_CLASS##">##F_BL_ERR##</td>
-			                        <td class="##F_BL_WAR_CLASS##">##F_BL_WAR##</td>
-			                    </tr>
-			                    <tr class="##ROW_EP##">
-			                        <td>Tiff/EP</td>
-			                        <td class="##F_EP_ERR_CLASS##">##F_EP_ERR##</td>
-			                        <td class="##F_EP_WAR_CLASS##">##F_EP_WAR##</td>
-			                    </tr>
-			                    <tr class="##ROW_IT##">
-			                        <td>Tiff/IT</td>
-			                        <td class="##F_IT_ERR_CLASS##">##F_IT_ERR##</td>
-			                        <td class="##F_IT_WAR_CLASS##">##F_IT_WAR##</td>
-			                    </tr>
-			                    <tr class="##ROW_IT1##">
-			                        <td>Tiff/IT-P1</td>
-			                        <td class="##F_IT1_ERR_CLASS##">##F_IT1_ERR##</td>
-			                        <td class="##F_IT1_WAR_CLASS##">##F_IT1_WAR##</td>
-			                    </tr>
-			                    <tr class="##ROW_IT2##">
-			                        <td>Tiff/IT-P2</td>
-			                        <td class="##F_IT2_ERR_CLASS##">##F_IT2_ERR##</td>
-			                        <td class="##F_IT2_WAR_CLASS##">##F_IT2_WAR##</td>
-			                    </tr>
-			                    <tr class="##ROW_PC##">
-			                        <td>Policy Checker</td>
-			                        <td class="##F_PC_ERR_CLASS##">##F_PC_ERR##</td>
-			                        <td class="##F_PC_WAR_CLASS##">##F_PC_WAR##</td>
-			                    </tr>
+								##TABLE_RESUME_ERRORS##
 			                </table>
 		                </div>
 	                </div>
@@ -129,94 +78,7 @@
 					##UL##
 				</div>
 			</div>
-			<div class="row top30 bot50 fullw ##BL_VISIBLE##">
-				<div>
-					<h4 class="left15"><i class="fa fa-check-square-o"></i>  Baseline conformance</h4>
-					<span style="margin-left: 20px; display: ##BL_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Baseline</span>
-					<table style="##BL_ERR-WAR##" class="CustomTable3 left15">
-				        <tr>
-				            <th class="bold col-md-2">Type</th>
-				            <th class="bold col-md-2">Location</th>
-				            <th class="bold col-md-4">Reference</th>
-				            <th class="bold col-md-4">Description</th>
-				        </tr>
-				        ##ROWS_BL##
-					</table>
-				</div>
-			</div>
-			<div class="row top30 bot50 ##EP_VISIBLE##">
-				<div>
-					<h4 class="left15"><i class="fa fa-check-square-o"></i>  Tiff/EP conformance</h4>
-					<span style="margin-left: 20px; display: ##EP_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Tiff/EP</span>
-					<table style="##EP_ERR-WAR##" class="CustomTable3 left15">
-				        <tr>
-				            <th class="bold col-md-2">Type</th>
-				            <th class="bold col-md-2">Location</th>
-				            <th class="bold col-md-4">Reference</th>
-				            <th class="bold col-md-4">Description</th>
-				        </tr>
-				        ##ROWS_EP##
-					</table>
-				</div>
-			</div>
-			<div class="row top30 bot50 ##IT_VISIBLE##">
-				<div>
-					<h4 class="left15"><i class="fa fa-check-square-o"></i>  Tiff/IT conformance</h4>
-					<span style="margin-left: 20px; display: ##IT_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Tiff/IT</span>
-					<table style="##IT_ERR-WAR##" class="CustomTable3 left15">
-				        <tr>
-				            <th class="bold col-md-2">Type</th>
-				            <th class="bold col-md-2">Location</th>
-				            <th class="bold col-md-4">Reference</th>
-				            <th class="bold col-md-4">Description</th>
-				        </tr>
-				        ##ROWS_IT##
-					</table>
-				</div>
-			</div>
-			<div class="row top30 bot50 ##IT1_VISIBLE##">
-				<div>
-					<h4 class="left15"><i class="fa fa-check-square-o"></i>  Tiff/IT-P1 conformance</h4>
-					<span style="margin-left: 20px; display: ##IT1_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Tiff/IT-P1</span>
-					<table style="##IT1_ERR-WAR##" class="CustomTable3 left15">
-				        <tr>
-				            <th class="bold col-md-2">Type</th>
-				            <th class="bold col-md-2">Location</th>
-				            <th class="bold col-md-4">Reference</th>
-				            <th class="bold col-md-4">Description</th>
-				        </tr>
-				        ##ROWS_IT1##
-					</table>
-				</div>
-			</div>
-			<div class="row top30 bot50 ##IT2_VISIBLE##">
-				<div>
-					<h4 class="left15"><i class="fa fa-check-square-o"></i>  Tiff/IT-P2 conformance</h4>
-					<span style="margin-left: 20px; display: ##IT2_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Tiff/IT-P2</span>
-					<table style="##IT2_ERR-WAR##" class="CustomTable3 left15">
-				        <tr>
-				            <th class="bold col-md-2">Type</th>
-				            <th class="bold col-md-2">Location</th>
-				            <th class="bold col-md-4">Reference</th>
-				            <th class="bold col-md-4">Description</th>
-				        </tr>
-				        ##ROWS_IT2##
-					</table>
-				</div>
-			</div>
-			<div class="row top30 bot50 ##PC_VISIBLE##">
-				<div>
-					<h4 class="left15"><i class="fa fa-check-square-o"></i>  Policy checker</h4>
-					<span style="margin-left: 20px; display: ##PC_OK##;" class="success"><i class="fa fa-check-circle"></i> This file conforms to Policy Checker</span>
-					<table style="##PC_ERR-WAR##" class="CustomTable left15">
-				        <tr>
-				            <th class="bold">Type</th>
-				            <th class="bold">Description</th>
-				        </tr>
-				        ##ROWS_PC##
-					</table>
-				</div>
-			</div>
+			##DIVS_ERRORS##
 		</div>
 	</div>
 	

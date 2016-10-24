@@ -190,6 +190,15 @@ public class DPFManagerProperties {
     return dir;
   }
 
+  public static String getIsosDir() {
+    String dir = getConfigDir() + "/isos";
+    File file = new File(dir);
+    if (!file.exists()){
+      file.mkdirs();
+    }
+    return dir;
+  }
+
   public static String getDataDir() {
     String dataDir = getConfigDir() + "/data";
     File dataFile = new File(dataDir);

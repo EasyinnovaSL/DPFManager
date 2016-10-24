@@ -34,6 +34,8 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashSet;
@@ -333,7 +335,7 @@ public class TiffImplementationChecker {
           tiffIfd.setType("RGB");
           break;
         case 3:
-          tiffIfd.setType("Pallete");
+          tiffIfd.setType("Palette");
           break;
         case 4:
           tiffIfd.setType("Transparency");
@@ -616,7 +618,7 @@ public class TiffImplementationChecker {
       Metadata meta = iptc.createMetadata();
       for (String key : meta.keySet())
       {
-        keyvalues.put(key, meta.get(key).toString());
+        keyvalues.put(key, meta.get(key).toString().replaceAll("\\p{C}", "?"));
       }
       tt.setIptc(keyvalues);
     } else {

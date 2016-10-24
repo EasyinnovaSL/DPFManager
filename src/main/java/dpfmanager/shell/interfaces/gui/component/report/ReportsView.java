@@ -353,7 +353,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
                 icon.setId("but" + i);
                 icon.setFitHeight(20);
                 icon.setFitWidth(20);
-                icon.setImage(new Image("images/format_" + i + ".png"));
+                icon.setImage(new Image("images/formats/" + i + ".png"));
                 icon.setCursor(Cursor.HAND);
 
                 String type = i;

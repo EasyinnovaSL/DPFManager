@@ -25,10 +25,14 @@ import dpfmanager.shell.modules.report.util.ReportRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Adrià Llorens on 04/03/2016.
@@ -105,6 +109,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
               }
 
               if (rr != null) {
+                // Add formats
                 for (String format : available_formats) {
                   File report;
                   if (format == "json" || format == "xml") {
@@ -114,6 +119,15 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
                   }
                   if (report.exists() && report.length() > 0) {
                     rr.addFormat(format, report.getPath());
+                  }
+                }
+                // Add mets
+                File folder = new File(baseDir + "/" + reportDay + "/" + reportDir + "/");
+                if (folder.exists() && folder.isDirectory()){
+                  String[] filter = {"mets.xml"};
+                  Collection<File> childs = FileUtils.listFiles(folder,filter, false);
+                  if (childs.size() > 0){
+                    rr.addFormat("mets", folder.getPath());
                   }
                 }
                 rows.add(rr);

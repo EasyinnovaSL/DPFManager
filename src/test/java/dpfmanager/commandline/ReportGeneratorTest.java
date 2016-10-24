@@ -29,11 +29,12 @@ public class ReportGeneratorTest extends CommandLineTest {
     int idx = 1;
     while (new File(path).exists()) path = "temp/output" + idx++;
 
-    String[] args = new String[4];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[5];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-o";
     args[3] = path;
+    args[4] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -64,32 +65,9 @@ public class ReportGeneratorTest extends CommandLineTest {
   public void testReportsFile() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
-    args[1] = "-s";
-
-    MainConsoleApp.main(args);
-
-    // Wait for finish
-    waitForFinishMultiThred(30);
-
-    String path = getPath();
-
-    File directori = new File(path);
-    int n=0;
-    for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
-    }
-    assertEquals(4, n);
-  }
-
-  @Test
-  public void testReportsSubfoldersWithEqualFilenames() throws Exception {
-    DPFManagerProperties.setFeedback(false);
-
     String[] args = new String[3];
-    args[0] = "-r";
-    args[1] = "src/test/resources/S2";
+    args[0] = "check";
+    args[1] = "src/test/resources/Small/Bilevel.tif";
     args[2] = "-s";
 
     MainConsoleApp.main(args);
@@ -102,18 +80,20 @@ public class ReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains(".mets")) n++;
     }
-    assertEquals(7, n);
+    assertEquals(4, n);
   }
 
   @Test
-  public void testReportsFolder() throws Exception {
+  public void testReportsSubfoldersWithEqualFilenames() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/Small";
-    args[1] = "-s";
+    String[] args = new String[4];
+    args[0] = "check";
+    args[1] = "-r";
+    args[2] = "src/test/resources/S2";
+    args[3] = "-s";
 
     MainConsoleApp.main(args);
 
@@ -125,7 +105,31 @@ public class ReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains(".mets")) n++;
+    }
+    assertEquals(7, n);
+  }
+
+  @Test
+  public void testReportsFolder() throws Exception {
+    DPFManagerProperties.setFeedback(false);
+
+    String[] args = new String[3];
+    args[0] = "check";
+    args[1] = "src/test/resources/Small";
+    args[2] = "-s";
+
+    MainConsoleApp.main(args);
+
+    // Wait for finish
+    waitForFinishMultiThred(30);
+
+    String path = getPath();
+
+    File directori = new File(path);
+    int n=0;
+    for (String file : directori.list()) {
+      if (!file.contains(".mets")) n++;
     }
 
     assertEquals(9, n);
@@ -135,9 +139,10 @@ public class ReportGeneratorTest extends CommandLineTest {
   public void testReportsZip() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/Small.zip";
-    args[1] = "-s";
+    String[] args = new String[3];
+    args[0] = "check";
+    args[1] = "src/test/resources/Small.zip";
+    args[2] = "-s";
 
     MainConsoleApp.main(args);
 
@@ -149,7 +154,7 @@ public class ReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains(".mets")) n++;
     }
 
     assertEquals(7, n);
@@ -161,9 +166,10 @@ public class ReportGeneratorTest extends CommandLineTest {
 
     String dirWeb = "http://dpfmanager.org/img/Bilevel.tif";
     try {
-      String[] args = new String[2];
-      args[0] = dirWeb;
-      args[1] = "-s";
+      String[] args = new String[3];
+      args[0] = "check";
+      args[1] = dirWeb;
+      args[2] = "-s";
 
       MainConsoleApp.main(args);
 
@@ -175,7 +181,7 @@ public class ReportGeneratorTest extends CommandLineTest {
       File directori = new File(path);
       int n=0;
       for (String file : directori.list()) {
-        if (!file.contains("Mets")) n++;
+        if (!file.contains(".mets")) n++;
       }
 
       assertEquals(4, n);
@@ -196,9 +202,10 @@ public class ReportGeneratorTest extends CommandLineTest {
 
     String dirWeb = "http://dpfmanager.org/test/Bilevel.zip";
     try {
-      String[] args = new String[2];
-      args[0] = dirWeb;
+      String[] args = new String[3];
+      args[0] = "check";
       args[1] = "-s";
+      args[2] = dirWeb;
 
       MainConsoleApp.main(args);
 
@@ -210,7 +217,7 @@ public class ReportGeneratorTest extends CommandLineTest {
       File directori = new File(path);
       int n=0;
       for (String file : directori.list()) {
-        if (!file.contains("Mets")) n++;
+        if (!file.contains(".mets")) n++;
       }
 
       assertEquals(4, n);
@@ -237,11 +244,12 @@ public class ReportGeneratorTest extends CommandLineTest {
   }
 
   private void assertReportsFormat(String formats) throws Exception {
-    String[] args = new String[4];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[5];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-f";
     args[3] = formats;
+    args[4] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -255,7 +263,7 @@ public class ReportGeneratorTest extends CommandLineTest {
 
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains(".mets")) n++;
     }
 
     assertEquals(filesExpect, n);

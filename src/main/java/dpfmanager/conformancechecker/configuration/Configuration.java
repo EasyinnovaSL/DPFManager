@@ -19,6 +19,7 @@
 
 package dpfmanager.conformancechecker.configuration;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
@@ -86,6 +87,36 @@ public class Configuration {
   private ResourceBundle bundle;
 
   /**
+   * Instantiates a new Configuration.
+   */
+  public Configuration() {
+    isos = new ArrayList<>();
+    rules = new Rules();
+    formats = new ArrayList<>();
+    fixes = new Fixes();
+    version = 0;
+    bundle = DPFManagerProperties.getBundle();
+  }
+
+  /**
+   * Instantiates a new Configuration with params
+   */
+  public Configuration(Rules rules, Fixes fixes, ArrayList<String> formats) {
+    isos = new ArrayList<>();
+    this.rules = rules;
+    this.formats = formats;
+    this.fixes = fixes;
+  }
+
+  /**
+   * Set the default values for a new configuration
+   */
+  public void initDefault() {
+    addISO(ImplementationCheckerLoader.getDefaultIso());
+    addFormat("HTML");
+  }
+
+  /**
    * Gets isos.
    *
    * @return the isos
@@ -131,36 +162,6 @@ public class Configuration {
    */
   public Rules getRules() {
     return rules;
-  }
-
-  /**
-   * Instantiates a new Configuration.
-   */
-  public Configuration() {
-    isos = new ArrayList<>();
-    rules = new Rules();
-    formats = new ArrayList<>();
-    fixes = new Fixes();
-    version = 0;
-    bundle = DPFManagerProperties.getBundle();
-  }
-
-  /**
-   * Instantiates a new Configuration with params
-   */
-  public Configuration(Rules rules, Fixes fixes, ArrayList<String> formats) {
-    isos = new ArrayList<>();
-    this.rules = rules;
-    this.formats = formats;
-    this.fixes = fixes;
-  }
-
-  /**
-   * Set the default values for a new configuration
-   */
-  public void initDefault() {
-    addISO("Baseline");
-    addFormat("HTML");
   }
 
   /**
@@ -416,7 +417,16 @@ public class Configuration {
       Node node = isoList.item(i);
       if (node.getNodeType() == Node.ELEMENT_NODE) {
         Element elem = (Element) node;
-        isos.add(elem.getTextContent());
+        String iso = elem.getTextContent();
+        if (version == 1){
+          // Old iso format
+          if (parseOldToNewIso(iso) != null) {
+            isos.add(parseOldToNewIso(iso));
+          }
+        } else if (version == 2){
+          // New iso format
+          isos.add(elem.getTextContent());
+        }
       }
     }
 
@@ -498,6 +508,15 @@ public class Configuration {
     }
   }
 
+  private String parseOldToNewIso(String old){
+    if (old.equals("Baseline")) return "BaselineProfileChecker";
+    if (old.equals("Tiff/EP")) return "TiffEPProfileChecker";
+    if (old.equals("Tiff/IT")) return "TiffITProfileChecker";
+    if (old.equals("Tiff/IT-1")) return "TiffITP1ProfileChecker";
+    if (old.equals("Tiff/IT-2")) return "TiffITP2ProfileChecker";
+    return null;
+  }
+
   /**
    * Read file.
    *
@@ -521,7 +540,7 @@ public class Configuration {
             String field2 = line.substring(line.indexOf("\t") + 1);
             switch (field1) {
               case "ISO":
-                isos.add(field2);
+                isos.add(parseOldToNewIso(field2));
                 break;
               case "FORMAT":
                 formats.add(field2);

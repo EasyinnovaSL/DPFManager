@@ -1,5 +1,5 @@
 /**
- * <h1>DatabaseController.java</h1> <p> This program is free software: you can redistribute it
+ * <h1>InteroperabilityController.java</h1> <p> This program is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
@@ -66,7 +66,7 @@ public class InteroperabilityController extends DpfSpringController {
       } else if (im.isConfigure()){
         service.setConfiguration(im.getName(), im.getExtra());
       } else if (im.isExtensions()){
-        service.setExtensions(im.getName(), im.getExtensions());
+        service.setExtensions(im.getName(), im.getExtra());
       } else if (im.isEnable()){
         service.setEnabled(im.getName(), true);
       } else if (im.isDisable()){

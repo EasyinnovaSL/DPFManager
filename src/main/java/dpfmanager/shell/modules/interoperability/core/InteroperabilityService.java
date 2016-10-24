@@ -1,5 +1,5 @@
 /**
- * <h1>DatabaseService.java</h1> <p> This program is free software: you can redistribute it and/or
+ * <h1>InteroperabilityService.java</h1> <p> This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
  * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
@@ -213,9 +213,10 @@ public class InteroperabilityService extends DpfService {
     }
   }
 
-  public void setExtensions(String name, List<String> extensions) {
+  public void setExtensions(String name, String extensionsStr) {
     ConformanceConfig conformance = getConformanceById(name);
-    if (validator.validateConformance(conformance, name, false)) {
+    List<String> extensions = validator.parseExtensions(extensionsStr);
+    if (validator.validateConformance(conformance, name, false) && !extensions.isEmpty()) {
       conformance.setExtensions(extensions);
       if (manager.writeChanges(conformances)) {
         // OK

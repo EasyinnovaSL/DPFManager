@@ -29,11 +29,12 @@ public class StatisticsGeneratorTest extends CommandLineTest {
   public void testStatistics() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[4];
-    args[0] = "src/test/resources/Small/Bilevel.tif";
+    String[] args = new String[5];
+    args[0] = "check";
     args[1] = "-s";
     args[2] = "-f";
-    args[3] = "'html,json,xml'";
+    args[3] = "html,json,xml";
+    args[4] = "src/test/resources/Small/Bilevel.tif";
 
     MainConsoleApp.main(args);
 
@@ -45,18 +46,19 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     String jsonFile = path + "/summary.json";
     String htmlFile = path + "/report.html";
 
-    assertXML(xmlFile, 1);
-    assertJSON(jsonFile, 1);
-    assertHTML(htmlFile, 1);
+    assertXML(xmlFile, 1, 0);
+    assertJSON(jsonFile, 1,0);
+    assertHTML(htmlFile, 1, 0);
   }
 
   @Test
   public void testStatistics2() throws Exception {
     DPFManagerProperties.setFeedback(false);
 
-    String[] args = new String[2];
-    args[0] = "src/test/resources/Small/";
-    args[1] = "-s";
+    String[] args = new String[3];
+    args[0] = "check";
+    args[1] = "src/test/resources/Small/";
+    args[2] = "-s";
 
     MainConsoleApp.main(args);
 
@@ -67,8 +69,8 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     String xmlFile = path + "/summary.xml";
     String htmlFile = path + "/report.html";
 
-    assertXML(xmlFile, 6);
-    assertHTML(htmlFile, 6);
+    assertXML(xmlFile, 3, 3);
+    assertHTML(htmlFile, 3, 3);
   }
 
   private String getPath() {
@@ -101,7 +103,8 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     return Integer.parseInt(getTextValue(ele, tagName));
   }
 
-  private void assertXML(String xmlFile, int files) throws Exception {
+  private void assertXML(String xmlFile, int valid, int invalid) throws Exception {
+    int files = valid + invalid;
     File fXmlFile = new File(xmlFile);
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -114,14 +117,15 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     if (nList != null && nList.getLength() > 0) {
       Element el = (Element) nList.item(0);
       assertEquals(files, getIntValue(el, "reports_count"));
-      assertEquals(0, getIntValue(el, "valid_files"));
-      assertEquals(files, getIntValue(el, "invalid_files"));
+      assertEquals(valid, getIntValue(el, "valid_files"));
+      assertEquals(invalid, getIntValue(el, "invalid_files"));
     }
   }
 
-  private void assertJSON(String json, int files) throws Exception {
+  private void assertJSON(String json, int valid, int invalid) throws Exception {
     JsonReader jsonReader = new JsonReader(new FileReader(json));
 
+    int files = valid + invalid;
     jsonReader.beginObject();
     String name = "";
     String valor = "";
@@ -135,9 +139,9 @@ public class StatisticsGeneratorTest extends CommandLineTest {
           if (valor.equalsIgnoreCase("reports_count")) {
             assertEquals(jsonReader.nextInt(), files);
           } else if (valor.equalsIgnoreCase("valid_files")) {
-            assertEquals(jsonReader.nextInt(), 0);
+            assertEquals(jsonReader.nextInt(), valid);
           } else if (valor.equalsIgnoreCase("invalid_files")) {
-            assertEquals(jsonReader.nextInt(), files);
+            assertEquals(jsonReader.nextInt(), invalid);
           } else {
             jsonReader.skipValue();
           }
@@ -152,7 +156,8 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     jsonReader.close();
   }
 
-  private void assertHTML(String html, int files) throws Exception {
+  private void assertHTML(String html, int valid, int invalid) throws Exception {
+    int files = valid + invalid;
     byte[] encoded = Files.readAllBytes(Paths.get(html));
     String content = new String(encoded);
 
@@ -177,8 +182,8 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     subs = subs.substring(subs.indexOf(">")+1);
     String field3 = subs.substring(0, subs.indexOf("<"));
 
-    assertEquals("0 passed", field1);
-    assertEquals(files + " failed", field2);
-    assertEquals("Global score 0%", field3);
+    assertEquals(valid+" passed", field1);
+    assertEquals(invalid+" failed", field2);
+    assertEquals("Global score "+(valid*100/files)+"%", field3);
   }
 }

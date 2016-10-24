@@ -21,8 +21,8 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
   @Test
   public void testBasicOptions() throws Exception {
     String[] args;
-    String expectedStr, currentStr;
     File expected, current;
+    String internalName = "DPF Manager";
 
     /*
      * Add
@@ -56,7 +56,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
     args = new String[3];
     args[0] = "modules";
     args[1] = "--disable";
-    args[2] = "Tiff";
+    args[2] = internalName;
     MainConsoleApp.main(args);
 
     /*
@@ -144,7 +144,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
     args = new String[3];
     args[0] = "modules";
     args[1] = "-r";
-    args[2] = "Tiff";
+    args[2] = internalName;
     MainConsoleApp.main(args);
 
     /*
@@ -153,7 +153,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
     args = new String[4];
     args[0] = "modules";
     args[1] = "-e";
-    args[2] = "Tiff";
+    args[2] = internalName;
     args[3] = "src/test/resources/Small/RGB.tif"; // Simulate executable
     MainConsoleApp.main(args);
 
@@ -163,7 +163,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
     args = new String[4];
     args[0] = "modules";
     args[1] = "--extensions";
-    args[2] = "Tiff";
+    args[2] = internalName;
     args[3] = "pdf";
     MainConsoleApp.main(args);
 
@@ -173,7 +173,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
     args = new String[4];
     args[0] = "modules";
     args[1] = "--configure";
-    args[2] = "Tiff";
+    args[2] = internalName;
     args[3] = "src/test/resources/ConfigFiles/config.dpf";
     MainConsoleApp.main(args);
 
@@ -183,7 +183,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
     args = new String[3];
     args[0] = "modules";
     args[1] = "--enable";
-    args[2] = "Tiff";
+    args[2] = internalName;
     MainConsoleApp.main(args);
 
     /*
@@ -201,7 +201,7 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
       int count = 0;
       for (int i = 0; i< expectedLines.size(); i++){
         String expectedLine = expectedLines.get(i);
-        String currentLine = expectedLines.get(i);
+        String currentLine = currentLines.get(i);
         if (!expectedLine.equals(currentLine)){
           count++;
         }

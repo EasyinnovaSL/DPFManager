@@ -90,6 +90,8 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   private Label stepTitle;
   @FXML
   private VBox wizard;
+  @FXML
+  private Label labelW1;
 
   @FXML
   private Button step1, step2, step3, step4, step5;
@@ -150,6 +152,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   }
 
   private void initAllFragments() {
+    getContext().getManagedFragmentHandler(Wizard1Fragment.class).getController().init();
     getContext().getManagedFragmentHandler(Wizard2Fragment.class).getController().setModel(getModel());
     getContext().getManagedFragmentHandler(Wizard4Fragment.class).getController().setModel(getModel());
 
@@ -227,6 +230,11 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
       setContinueButton(x);
     } else {
       getController().saveConfig();
+    }
+    if (x == 1){
+      NodeUtil.showNode(labelW1);
+    } else {
+      NodeUtil.hideNode(labelW1);
     }
   }
 
