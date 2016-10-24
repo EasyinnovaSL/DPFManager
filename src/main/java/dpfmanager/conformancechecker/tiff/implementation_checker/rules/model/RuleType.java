@@ -1,21 +1,3 @@
-/**
- * <h1>RuleType.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
- * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
- * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
- * 2015 Easy Innova, SL </p>
- *
- * @author Víctor Muñoz Solà
- * @version 1.0
- * @since 23/7/2015
- */
 
 package dpfmanager.conformancechecker.tiff.implementation_checker.rules.model;
 
@@ -25,8 +7,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
@@ -58,7 +44,7 @@ import javax.xml.bind.annotation.XmlValue;
  *         &lt;element name="reference" type="{http://www.dpfmanager.org/ProfileChecker}referenceType" maxOccurs="unbounded"/>
  *         &lt;element name="assert" type="{http://www.dpfmanager.org/ProfileChecker}assertType"/>
  *       &lt;/sequence>
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *       &lt;attribute name="context" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="level" use="required">
  *         &lt;simpleType>
@@ -70,6 +56,7 @@ import javax.xml.bind.annotation.XmlValue;
  *           &lt;/restriction>
  *         &lt;/simpleType>
  *       &lt;/attribute>
+ *       &lt;attribute name="experimental" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -78,7 +65,7 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ruleType", propOrder = {
+@XmlType(name = "ruleType", namespace = "http://www.dpfmanager.org/ProfileChecker", propOrder = {
     "title",
     "description",
     "reference",
@@ -86,36 +73,25 @@ import javax.xml.bind.annotation.XmlValue;
 })
 public class RuleType {
 
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker", required = true)
     protected RuleType.Title title;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker", required = true)
     protected RuleType.Description description;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker", required = true)
     protected List<ReferenceType> reference;
-    @XmlElement(name = "assert", required = true)
+    @XmlElement(name = "assert", namespace = "http://www.dpfmanager.org/ProfileChecker", required = true)
     protected AssertType _assert;
     @XmlAttribute(name = "id", required = true)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlID
+    @XmlSchemaType(name = "ID")
     protected String id;
     @XmlAttribute(name = "context", required = true)
     protected String context;
     @XmlAttribute(name = "level", required = true)
     protected String level;
-
-    public boolean isCritical() {
-        return getLevel() != null && getLevel().equals("critical");
-    }
-
-    public boolean isWarning() {
-        return getLevel() != null && getLevel().equals("warning");
-    }
-
-    public boolean isError() {
-        return getLevel() != null && getLevel().equals("error");
-    }
-
-    public boolean isInfo() {
-        return getLevel() != null && getLevel().equals("info");
-    }
+    @XmlAttribute(name = "experimental")
+    protected Boolean experimental;
 
     /**
      * Gets the value of the title property.
@@ -192,15 +168,6 @@ public class RuleType {
             reference = new ArrayList<ReferenceType>();
         }
         return this.reference;
-    }
-
-    public String getReferenceText() {
-        String s = "";
-        for (ReferenceType ref : getReference()) {
-            if (s.length() > 0) s += "\n";
-            s += ref.getSection() + ". Page " + ref.getPage();
-        }
-        return s;
     }
 
     /**
@@ -297,6 +264,34 @@ public class RuleType {
      */
     public void setLevel(String value) {
         this.level = value;
+    }
+
+    /**
+     * Gets the value of the experimental property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isExperimental() {
+        if (experimental == null) {
+            return true;
+        } else {
+            return experimental;
+        }
+    }
+
+    /**
+     * Sets the value of the experimental property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setExperimental(Boolean value) {
+        this.experimental = value;
     }
 
 
