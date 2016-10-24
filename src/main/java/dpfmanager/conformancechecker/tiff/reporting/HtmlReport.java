@@ -28,6 +28,7 @@ import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffObject;
+import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.IPTC;
@@ -369,9 +370,44 @@ public class HtmlReport extends Report {
     ul += "</ul>";
     htmlBody = StringUtils.replace(htmlBody, "##UL##", ul);
 
+    // Metadata incoherencies
+    IFD tdifd = td.getFirstIFD();
+    int nifd = 1;
+    while (tdifd != null) {
+      XMP xmp = null;
+      IPTC iptc = null;
+      if (tdifd.containsTagId(TiffTags.getTagId("XMP"))) xmp = (XMP)tdifd.getTag("XMP").getValue().get(0);
+      if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) iptc = (IPTC)tdifd.getTag("IPTC").getValue().get(0);
+
+      // Author
+      String authorTag = null; if (tdifd.containsTagId(TiffTags.getTagId("Artist"))) authorTag = tdifd.getTag("Artist").toString();
+      String authorIptc = null; if (iptc != null) authorIptc = iptc.getCreator();
+      String authorXmp = null; if (xmp != null) authorXmp = xmp.getCreator();
+      htmlBody = DetectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd, htmlBody);
+
+      tdifd = tdifd.getNextIFD();
+      nifd++;
+    }
+
     // Finish, write to html file
     htmlBody = StringUtils.replace(htmlBody, "\\.\\./html/", "");
     return htmlBody;
+  }
+
+  private String DetectIncoherency(String valueTag, String valueIptc, String valueXmp, String name, int nifd, String htmlBody) {
+    String htmlBodyMod = htmlBody;
+    String incoherencies = "";
+    if (valueTag != null && valueIptc != null && !valueTag.equals(valueIptc)) {
+      incoherencies += "<li>" + name + " on TAG and IPTC in IFD " + nifd + " (" + valueTag + ", " + valueIptc + ")</li>";
+    }
+    if (valueTag != null && valueXmp != null && !valueTag.equals(valueXmp)) {
+      incoherencies += "<li>" + name + " on TAG and XMP in IFD " + nifd + " (" + valueTag + ", " + valueXmp + ")</li>";
+    }
+    if (valueIptc != null && valueXmp != null && !valueIptc.equals(valueXmp)) {
+      incoherencies += "<li>" + name + " on IPTC and XMP in IFD " + nifd + " (" + valueIptc + ", " + valueXmp + ")</li>";
+    }
+    htmlBodyMod = htmlBodyMod.replace("##INCOHERENCIES##", incoherencies);
+    return htmlBodyMod;
   }
 
   private String makeConformsText(IndividualReport ir, String iso){
