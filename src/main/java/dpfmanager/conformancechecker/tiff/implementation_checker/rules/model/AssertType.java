@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "assertType", propOrder = {
+@XmlType(name = "assertType", namespace = "http://www.dpfmanager.org/ProfileChecker", propOrder = {
     "value"
 })
 public class AssertType {

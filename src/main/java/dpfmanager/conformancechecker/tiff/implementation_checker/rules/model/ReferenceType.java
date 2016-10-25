@@ -21,6 +21,7 @@ package dpfmanager.conformancechecker.tiff.implementation_checker.rules.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -35,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="document" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
- *         &lt;element name="section" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+ *         &lt;element name="section" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="paragraph" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;choice>
  *           &lt;element name="page" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "referenceType", propOrder = {
+@XmlType(name = "referenceType", namespace = "http://www.dpfmanager.org/ProfileChecker", propOrder = {
     "document",
     "section",
     "paragraph",
@@ -59,10 +60,15 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ReferenceType {
 
+    @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker")
     protected Object document;
+    @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker")
     protected String section;
+    @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker")
     protected String paragraph;
+    @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker")
     protected String page;
+    @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker")
     protected String pages;
 
     /**
@@ -94,7 +100,7 @@ public class ReferenceType {
      * 
      * @return
      *     possible object is
-     *     {@link Object }
+     *     {@link String }
      *     
      */
     public String getSection() {
@@ -106,7 +112,7 @@ public class ReferenceType {
      * 
      * @param value
      *     allowed object is
-     *     {@link Object }
+     *     {@link String }
      *     
      */
     public void setSection(String value) {
