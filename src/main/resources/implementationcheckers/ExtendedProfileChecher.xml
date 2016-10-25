@@ -17,8 +17,10 @@ The features described in this part were either contained in earlier versions of
 
  <include>
   <policyChecker>./BaselineProfileChecker.xml</policyChecker>
- <excluderules>TAG-259-0003</excluderules>
+  <excluderules>TAG-259-0003</excluderules>
   <excluderules>IFDB-0002</excluderules>
+  <excluderules>STRIPS-0001</excluderules>
+  <excluderules>STRIPS-0002</excluderules>
  </include>
  
  <rules id="TAG-259-1">
@@ -425,8 +427,29 @@ The features described in this part were either contained in earlier versions of
    be accessed more efficiently—and compression tends to work better—if the image
    is broken into roughly square tiles instead of horizontally-wide but verticallynarrow
    strips.</description>
-  
-  
+
+  <rule id="STRIPSEXT-0001" context="ifd[class=image]" level="error">
+   <title>An image IFD should have a StripOffsets</title>
+   <description>An Image File Directory(IFD) that contains and image data must have StripOffsets values</description>
+   <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
+   <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
+   <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
+   <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
+   <assert test="{tiles == 1} || {tags.tag[name=StripOffsets]}">Image IFD must have the tag StripOffsets</assert>
+  </rule>
+
+  <rule id="STRIPSEXT-0002" context="ifd[class=image]" level="error">
+   <title>An image IFD should have a StripBYTECount</title>
+   <description>An Image File Directory(IFD) that contains and image data must have StripBYTECount</description>
+   <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
+   <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
+   <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
+   <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
+   <assert test="{tiles == 1} || {tags.tag[name=StripBYTECount]}">Image IFD must have the tag StripBYTECount</assert>
+  </rule>
+
   <rule id="TILES-0001" context="ifd[class=image]" level="error">
    <title>An image IFD must be Tiled or Striped</title>
    <description>When the tiling fields described below are used, they replace the StripOffsets, StripByteCounts, and RowsPerStrip fields. 

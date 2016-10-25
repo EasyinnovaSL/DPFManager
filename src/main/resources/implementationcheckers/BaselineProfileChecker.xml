@@ -370,7 +370,7 @@
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{tiles == 1} || {tags.tag[name=StripOffsets]}">Image IFD must have the tag StripOffsets</assert>
+   <assert test="{tags.tag[name=StripOffsets]}">Image IFD must have the tag StripOffsets</assert>
   </rule>
   
   <rule id="STRIPS-0002" context="ifd[class=image]" level="error">
@@ -381,7 +381,7 @@
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
-   <assert test="{tiles == 1} || {tags.tag[name=StripBYTECount]}">Image IFD must have the tag StripBYTECount</assert>
+   <assert test="{tags.tag[name=StripBYTECount]}">Image IFD must have the tag StripBYTECount</assert>
   </rule>
   
   <rule id="STRIPS-0003" context="ifd[class=image]" level="error">
