@@ -113,19 +113,23 @@ public class Validator {
     List<RuleType> ordRules = new ArrayList<RuleType>();
     for (RulesType ruleSet : rules.getRules()) {
       for (RuleType rule : ruleSet.getRule()) {
-        if (rule.isCritical())
-          ordRules.add(rule);
+        if (!rule.getExperimental()) {
+          if (rule.isCritical())
+            ordRules.add(rule);
+        }
       }
     }
     for (RulesType ruleSet : rules.getRules()) {
       for (RuleType rule : ruleSet.getRule()) {
-        if (!rule.isCritical())
-          ordRules.add(rule);
+        if (!rule.getExperimental()) {
+          if (!rule.isCritical())
+            ordRules.add(rule);
+        }
       }
     }
 
     for (RuleType rule : ordRules) {
-      if (rule.getId().equals("TAG-254-0005"))
+      if (rule.getId().equals("TAG-320-0002"))
         rule.toString();
 
       String context = rule.getContext();

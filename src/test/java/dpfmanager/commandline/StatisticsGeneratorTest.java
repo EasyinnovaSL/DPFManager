@@ -69,8 +69,8 @@ public class StatisticsGeneratorTest extends CommandLineTest {
     String xmlFile = path + "/summary.xml";
     String htmlFile = path + "/report.html";
 
-    assertXML(xmlFile, 3, 3);
-    assertHTML(htmlFile, 3, 3);
+    assertXML(xmlFile, 4, 2);
+    assertHTML(htmlFile, 4, 2);
   }
 
   private String getPath() {

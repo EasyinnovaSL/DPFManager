@@ -104,6 +104,8 @@ public class RuleType {
   protected String context;
   @XmlAttribute(name = "level", required = true)
   protected String level;
+  @XmlAttribute(name = "experimental")
+  protected boolean experimental;
 
   public boolean isCritical() {
     return getLevel() != null && getLevel().equals("critical");
@@ -143,6 +145,22 @@ public class RuleType {
    */
   public void setTitle(RuleType.Title value) {
     this.title = value;
+  }
+
+  /**
+   * Gets the value of the experimental property.
+   *
+   */
+  public boolean getExperimental() {
+    return experimental;
+  }
+
+  /**
+   * Sets the value of the experimental property.
+   *
+   */
+  public void setExperimental(boolean experimental) {
+    this.experimental = experimental;
   }
 
   /**

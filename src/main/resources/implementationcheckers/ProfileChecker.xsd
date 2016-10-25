@@ -17,15 +17,7 @@
             <xsd:element maxOccurs="1" minOccurs="1" name="date" type="xsd:date"/>
             <xsd:element maxOccurs="unbounded" minOccurs="0" name="include" type="includeType"/>
             <xsd:sequence maxOccurs="1" minOccurs="1">
-                <xsd:element name="rules" maxOccurs="unbounded" minOccurs="1">
-                    <xsd:complexType>
-                        <xsd:complexContent>
-                            <xsd:extension base="rulesType">
-                                <xsd:attribute name="id" type="xsd:string"/>
-                            </xsd:extension>
-                        </xsd:complexContent>
-                    </xsd:complexType>
-                </xsd:element>
+                <xsd:element name="rules" maxOccurs="unbounded" minOccurs="1" type="rulesType"/>
             </xsd:sequence>
         </xsd:sequence>
     </xsd:complexType>
@@ -38,22 +30,24 @@
     </xsd:complexType>
     <xsd:complexType name="rulesType">
         <xsd:sequence>
-            <xsd:element name="title" type="xsd:string"/>
-            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="1" name="title" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string" maxOccurs="1" minOccurs="1"/>
             <xsd:element name="rule" type="ruleType" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+
     </xsd:complexType>
 
     <xsd:complexType name="ruleType">
         <xsd:sequence>
-            <xsd:element name="title">
+            <xsd:element name="title" maxOccurs="1" minOccurs="1">
                 <xsd:complexType>
                     <xsd:simpleContent>
                         <xsd:extension base="xsd:string"> </xsd:extension>
                     </xsd:simpleContent>
                 </xsd:complexType>
             </xsd:element>
-            <xsd:element name="description">
+            <xsd:element name="description" maxOccurs="1" minOccurs="1">
                 <xsd:complexType>
                     <xsd:simpleContent>
                         <xsd:extension base="xsd:string"> </xsd:extension>
@@ -63,7 +57,7 @@
             <xsd:element name="reference" type="referenceType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="assert" type="assertType" maxOccurs="1" minOccurs="1"/>
         </xsd:sequence>
-        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
         <xsd:attribute name="context" type="xsd:string" use="required"/>
         <xsd:attribute name="level" use="required">
             <xsd:simpleType>
@@ -75,7 +69,9 @@
                 </xsd:restriction>
             </xsd:simpleType>
         </xsd:attribute>
+        <xsd:attribute default="true" name="experimental" type="xsd:boolean" use="optional"/>
     </xsd:complexType>
+
 
     <xsd:complexType name="referenceType">
         <xsd:sequence>

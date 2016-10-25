@@ -16,67 +16,59 @@
      <title></title>
      <description></description>
      <rule id="ep-1" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Images must contain only one sub image</description>
+         <title>Images must contain only one sub image</title><description>Images must contain only one sub image</description>
          <reference><section></section><page>7</page></reference>
          <assert test="{count(tags.tag[name=SubIFDs]) == 1}">Each IFD must have a sub-ifd</assert>
      </rule>
      <rule id="ep-2" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Images must contain sub images</description>
+         <title>Images must contain sub images</title><description>Images must contain sub images</description>
          <reference><section></section><page>7</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd}">Each IFD must have a sub-ifd</assert>
      </rule>
      <rule id="ep-3" context="ifds.ifd[class=image]" level="error">
-         <title></title>
+         <title>The resolution X of the sub image (full resolution) must be greater than the main (thumbnail) image</title>
 		 <description>The resolution X of the sub image (full resolution) must be greater than the main (thumbnail) image</description>
          <reference><section></section><page>6</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageLength] > tags.tag[name=ImageLength]}">Sub-ifd width must be greater than thumbnail IFD</assert>
      </rule>
      <rule id="ep-4" context="ifds.ifd[class=image]" level="error">
-         <title></title>
+         <title>The resolution Y of the sub image (full resolution) must be greater than the main (thumbnail) image</title>
 		 <description>The resolution Y of the sub image (full resolution) must be greater than the main (thumbnail) image</description>
          <reference><section></section><page>6</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageWidth] > tags.tag[name=ImageWidth]}">Sub-ifd height must be greater than thumbnail IFD</assert>
      </rule>
      <rule id="ep-5" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>The tag NewSubFileType is mandatory</description>
+         <title>The tag NewSubFileType is mandatory</title><description>The tag NewSubFileType is mandatory</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType]}">NewSubfileType is required</assert>
      </rule>
      <rule id="ep-6" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid cardinality for tag NewSubFileType</description>
+         <title>Check valid cardinality for tag NewSubFileType</title><description>Check valid cardinality for tag NewSubFileType</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType].cardinality == 1}">NewSubfileType cardinality must be 1</assert>
      </rule>
      <rule id="ep-7" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid value for tag NewSubFileType</description>
+         <title>Check valid value for tag NewSubFileType</title><description>Check valid value for tag NewSubFileType</description>
          <reference><section></section><page>17</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType] == 0} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType] == 1}">NewSubfileType must be 0 or 1</assert>
      </rule>
      <rule id="ep-8" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid value for tag NewSubFileType on thumbnail image</description>
+         <title>Check valid value for tag NewSubFileType on thumbnail image</title><description>Check valid value for tag NewSubFileType on thumbnail image</description>
          <reference><section></section><page>17</page></reference>
          <assert test="{tags.tag[name=NewSubfileType] == 1}">NewSubfileType must be 1 for main IFDs</assert>
      </rule>
      <rule id="ep-9" context="tags.tag[name=SubIFDs].ifd" level="error">
-         <title></title>
-		 <description>Check valid value for tag NewSubFileType on full resolution image</description>
+         <title>Check valid value for tag NewSubFileType on full resolution image</title><description>Check valid value for tag NewSubFileType on full resolution image</description>
          <reference><section></section><page>17</page></reference>
          <assert test="{tags.tag[name=NewSubfileType] == 0}">NewSubfileType must be 0 for thumbnail IFDs</assert>
      </rule>
      <rule id="ep-10" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Images must contain sub images with the full resolution image</description>
+         <title>Images must contain sub images with the full resolution image</title><description>Images must contain sub images with the full resolution image</description>
          <reference><section></section><page>7</page></reference>
          <assert test="{tags.tag[name=SubIFDs]}">IFDs must have SubIFDs</assert>
      </rule>
      <rule id="ep-11" context="ifds.ifd[class=image]" level="error">
-         <title></title>
+         <title>Check image representation of thumbnail stored in strips (instead of tiles)</title>
 		 <description>Check image representation of thumbnail stored in strips (instead of tiles)</description>
          <reference><section></section><page>7</page></reference>
          <assert test="{strips == 1}">Thumbnail image must be stored in strips</assert>
@@ -87,122 +79,102 @@
      <title></title>
      <description></description>
      <rule id="ep-12" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag ImageDescription exists</description>
+         <title>Check mandatory tag ImageDescription exists</title><description>Check mandatory tag ImageDescription exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageDescription]}">ImageDescription tag is required</assert>
      </rule>
      <rule id="ep-13" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag SamplesPerPixel exists</description>
+         <title>Check mandatory tag SamplesPerPixel exists</title><description>Check mandatory tag SamplesPerPixel exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SamplesPerPixel]}">Tag is required</assert>
      </rule>
      <rule id="ep-14" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag ImageLength</description>
+         <title>Check cardinality valid for mandatory tag ImageLength</title><description>Check cardinality valid for mandatory tag ImageLength</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageLength].cardinality == 1}">Tag cardinality must be 1</assert>
      </rule>
      <rule id="ep-15" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag ImageWidth</description>
+         <title>Check cardinality valid for mandatory tag ImageWidth</title><description>Check cardinality valid for mandatory tag ImageWidth</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageWidth].cardinality == 1}">Tag cardinality must be 1</assert>
      </rule>
      <rule id="ep-16" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag Compression</description>
+         <title>Check cardinality valid for mandatory tag Compression</title><description>Check cardinality valid for mandatory tag Compression</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=Compression].cardinality == 1}">Tag cardinality must be 1</assert>
      </rule>
      <rule id="ep-17" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag XResolution exists</description>
+         <title>Check mandatory tag XResolution exists</title><description>Check mandatory tag XResolution exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=XResolution]}">Tag is required</assert>
      </rule>
      <rule id="ep-18" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag YResolution exists</description>
+         <title>Check mandatory tag YResolution exists</title><description>Check mandatory tag YResolution exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=YResolution]}">Tag is required</assert>
      </rule>
      <rule id="ep-19" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag XResolution</description>
+         <title>Check cardinality valid for mandatory tag XResolution</title><description>Check cardinality valid for mandatory tag XResolution</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=XResolution].cardinality == 1}">Tag cardinality must be 1</assert>
      </rule>
      <rule id="ep-20" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag YResolution</description>
+         <title>Check cardinality valid for mandatory tag YResolution</title><description>Check cardinality valid for mandatory tag YResolution</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=YResolution].cardinality == 1}">Tag cardinality must be 1</assert>
      </rule>
      <rule id="ep-21" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag Make exists</description>
+         <title>Check mandatory tag Make exists</title><description>Check mandatory tag Make exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=Make]}">Tag is required</assert>
      </rule>
      <rule id="ep-22" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag Model exists</description>
+         <title>Check mandatory tag Model exists</title><description>Check mandatory tag Model exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=Model]}">Tag is required</assert>
      </rule>
      <rule id="ep-23" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag Software exists</description>
+         <title>Check mandatory tag Software exists</title><description>Check mandatory tag Software exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=Software]}">Tag is required</assert>
      </rule>
      <rule id="ep-24" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag Copyright exists</description>
+         <title>Check mandatory tag Copyright exists</title><description>Check mandatory tag Copyright exists</description>
          <reference><section></section><page>14</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=Copyright]}">Tag is required</assert>
      </rule>
      <rule id="ep-25" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag DateTimeOriginal exists</description>
+         <title>Check mandatory tag DateTimeOriginal exists</title><description>Check mandatory tag DateTimeOriginal exists</description>
          <reference><section></section><page>14</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=DateTimeOriginal]}">Tag is required</assert>
      </rule>
      <rule id="ep-26" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag DateTimeOriginal</description>
+         <title>Check cardinality valid for mandatory tag DateTimeOriginal</title><description>Check cardinality valid for mandatory tag DateTimeOriginal</description>
          <reference><section></section><page>14</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=DateTimeOriginal].cardinality == 20}">DateTime length must be 20</assert>
      </rule>
      <rule id="ep-27" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag DateTime</description>
+         <title>Check cardinality valid for mandatory tag DateTime</title><description>Check cardinality valid for mandatory tag DateTime</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=DateTime].cardinality == 20}">DateTime length must be 20</assert>
      </rule>
      <rule id="ep-28" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag TIFFEPStandardID exists</description>
+         <title>Check mandatory tag TIFFEPStandardID exists</title><description>Check mandatory tag TIFFEPStandardID exists</description>
          <reference><section></section><page>15</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=TIFFEPStandardID]}">Tag is required</assert>
      </rule>
      <rule id="ep-29" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag TIFFEPStandardID</description>
+         <title>Check cardinality valid for mandatory tag TIFFEPStandardID</title><description>Check cardinality valid for mandatory tag TIFFEPStandardID</description>
          <reference><section></section><page>15</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=TIFFEPStandardID].cardinality == 4}">TIFFEPStandardID value must be 4</assert>
      </rule>
      <rule id="ep-30" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check tag CompressedBitsPerPixel does not exist in uncompressed images</description>
+         <title>Check tag CompressedBitsPerPixel does not exist in uncompressed images</title><description>Check tag CompressedBitsPerPixel does not exist in uncompressed images</description>
          <reference><section></section><page>14</page></reference>
          <assert test="{correctCompression}">CompressedBitsPerPixel tag is forbidden when Compression is 1</assert>
      </rule>
      <rule id="ep-31" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check thumbnail image is uncompressed</description>
+         <title>Check thumbnail image is uncompressed</title><description>Check thumbnail image is uncompressed</description>
          <reference><section></section><page>27</page></reference>
          <assert test="{tags.tag[name=Compression] == 1}">Compression must be 1 for the thumbnail</assert>
      </rule>
@@ -212,86 +184,72 @@
      <title></title>
      <description></description>
      <rule id="ep-32" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid values for tag PhotometricInterpretation</description>
+         <title>Check valid values for tag PhotometricInterpretation</title><description>Check valid values for tag PhotometricInterpretation</description>
          <reference><section></section><page>21</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=PhotometricInterpretation] == 1} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=PhotometricInterpretation] == 2} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=PhotometricInterpretation] == 6} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=PhotometricInterpretation] == 32803} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=PhotometricInterpretation] == 32767}">Photometric Interpretation value must be 1, 2, 6, 32803 or 32767</assert>
     </rule>
      <rule id="ep-33" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag PlanarConfiguration exists</description>
+         <title>Check mandatory tag PlanarConfiguration exists</title><description>Check mandatory tag PlanarConfiguration exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=PlanarConfiguration]}">PlanarConfiguration tag is required</assert>
     </rule>
      <rule id="ep-34" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag PlanarConfiguration</description>
+         <title>Check cardinality valid for mandatory tag PlanarConfiguration</title><description>Check cardinality valid for mandatory tag PlanarConfiguration</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=PlanarConfiguration].cardinality == 1}">PlanarConfiguration cardinality must be 1</assert>
      </rule>
      <rule id="ep-35" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid values for tag PlanarConfiguration</description>
+         <title>Check valid values for tag PlanarConfiguration</title><description>Check valid values for tag PlanarConfiguration</description>
          <reference><section></section><page>21</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=PlanarConfiguration] == 1} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=PlanarConfiguration] == 2}">PlanarConfiguration value must be 1 or 2</assert>
     </rule>
      <rule id="ep-36" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check mandatory tag PlanarConfiguration exists</description>
+         <title>Check mandatory tag PlanarConfiguration exists</title><description>Check mandatory tag PlanarConfiguration exists</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ResolutionUnit]}">ResolutionUnit tag is required</assert>
     </rule>
      <rule id="ep-37" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag ResolutionUnit</description>
+         <title>Check cardinality valid for mandatory tag ResolutionUnit</title><description>Check cardinality valid for mandatory tag ResolutionUnit</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ResolutionUnit].cardinality == 1}">ResolutionUnit cardinality must be 1</assert>
      </rule>
      <rule id="ep-38" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid values for tag ResolutionUnit</description>
+         <title>Check valid values for tag ResolutionUnit</title><description>Check valid values for tag ResolutionUnit</description>
          <reference><section></section><page>18</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ResolutionUnit] == 1} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ResolutionUnit] == 2} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ResolutionUnit] == 3}">ResolutionUnit value must be 1, 2 or 3</assert>
     </rule>
      <rule id="ep-39" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check cardinality valid for mandatory tag Orientation</description>
+         <title>Check cardinality valid for mandatory tag Orientation</title><description>Check cardinality valid for mandatory tag Orientation</description>
          <reference><section></section><page>13</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=Orientation].cardinality == 1}">Orientation cardinality must be 1</assert>
      </rule>
      <rule id="ep-40" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid values for tag Orientation</description>
+         <title>Check valid values for tag Orientation</title><description>Check valid values for tag Orientation</description>
          <reference><section></section><page>20</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=Orientation] == 1} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Orientation] == 3} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Orientation] == 6} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Orientation] == 8} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Orientation] == 9}">Orientation value must be 1, 3, 6, 8 or 9</assert>
     </rule>
      <rule id="ep-41" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid combination of values related to photometric interpretation</description>
+         <title>Check valid combination of values related to photometric interpretation</title><description>Check valid combination of values related to photometric interpretation</description>
          <reference><section></section><page>21</page></reference>
          <assert test="{correctPhotometricCasuistic == 1}">Invalid photometric interpretation fields</assert>
      </rule>
      <rule id="ep-42" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid values for tag TimeZoneOffset</description>
+         <title>Check valid values for tag TimeZoneOffset</title><description>Check valid values for tag TimeZoneOffset</description>
          <reference><section></section><page>38</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=TimeZoneOffset] > 11} &amp;&amp; {tags.tag[name=SubIFDs].ifd.tags.tag[name=TimeZoneOffset] &lt; -12}">TimeZoneOffset value must be between -12 and 11</assert>
      </rule>
      <rule id="ep-43" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid values for tag ExposureProgram</description>
+         <title>Check valid values for tag ExposureProgram</title><description>Check valid values for tag ExposureProgram</description>
          <reference><section></section><page>41</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 0} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 1} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 2} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 3} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 4} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 5} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 6} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 7} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] == 8} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=ExposureProgram] &gt; 32767}">ExposureProgram value must be between 0 and 8 or greater than 32767</assert>
      </rule>
      <rule id="ep-44" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid values for tag MeteringMode</description>
+         <title>Check valid values for tag MeteringMode</title><description>Check valid values for tag MeteringMode</description>
          <reference><section></section><page>42</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=MeteringMode] == 0} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=MeteringMode] == 1} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=MeteringMode] == 2} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=MeteringMode] == 3} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=MeteringMode] == 4} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=MeteringMode] &gt; 32767}">MeteringMode value must be between 0 and 4 or greater than 32767</assert>
      </rule>
      <rule id="ep-45" context="ifds.ifd[class=image]" level="error">
-         <title></title>
-		 <description>Check valid values for tag Flash</description>
+         <title>Check valid values for tag Flash</title><description>Check valid values for tag Flash</description>
          <reference><section></section><page>43</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 0} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 1} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 5} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 7} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 9} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 13} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 15} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 16} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 24} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 25} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 29} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 31} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=Flash] == 32}">Flash value not allowed</assert>
      </rule>
@@ -301,38 +259,32 @@
      <title></title>
      <description></description>
      <rule id="ep-46" context="ifds.ifd[class=image]" level="error">
-        <title></title>
-		 <description>Check valid values for Ycbcr images</description>
+        <title>Check valid values for Ycbcr images</title><description>Check valid values for Ycbcr images</description>
          <reference><section></section><page>14</page></reference>
          <assert test="{correctYcbcr == 1}">Invalid Ycbcr parameters</assert>
     </rule>
     <rule id="ep-47" context="tags" level="error">
-        <title></title>
-		 <description>Check forbidden tag PrimaryChromaticities does not exist</description>
+        <title>Check forbidden tag PrimaryChromaticities does not exist</title><description>Check forbidden tag PrimaryChromaticities does not exist</description>
         <reference><section></section><page>12</page></reference>
         <assert test="{!tag[name=PrimaryChromaticities]}">PrimaryChromaticities tag is forbidden</assert>
     </rule>
     <rule id="ep-48" context="tags" level="error">
-        <title></title>
-		 <description>Check forbidden tag WhitePoint does not exist</description>
+        <title>Check forbidden tag WhitePoint does not exist</title><description>Check forbidden tag WhitePoint does not exist</description>
         <reference><section></section><page>12</page></reference>
         <assert test="{!tag[name=WhitePoint]}">WhitePoint tag is forbidden</assert>
     </rule>
     <rule id="ep-49" context="tags" level="error">
-        <title></title>
-		 <description>Check forbidden tag TransferFunction does not exist</description>
+        <title>Check forbidden tag TransferFunction does not exist</title><description>Check forbidden tag TransferFunction does not exist</description>
         <reference><section></section><page>12</page></reference>
         <assert test="{!tag[name=TransferFunction]}">TransferFunction tag is forbidden</assert>
     </rule>
      <rule id="ep-50" context="ifds.ifd[class=image]" level="error">
-        <title></title>
-		 <description>Check valid values for tag FocalPlaneResolutionUnit</description>
+        <title>Check valid values for tag FocalPlaneResolutionUnit</title><description>Check valid values for tag FocalPlaneResolutionUnit</description>
          <reference><section></section><page>19</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=FocalPlaneResolutionUnit] > 0} &amp;&amp; {tags.tag[name=SubIFDs].ifd.tags.tag[name=FocalPlaneResolutionUnitUnit] &lt; 6}">FocalPlaneResolutionUnit value must be between 1 and 5</assert>
     </rule>
      <rule id="ep-51" context="ifds.ifd[class=image]" level="error">
-        <title></title>
-		 <description>Check valid values for tag SensingMethod</description>
+        <title>Check valid values for tag SensingMethod</title><description>Check valid values for tag SensingMethod</description>
          <reference><section></section><page>19</page></reference>
          <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=SensingMethod] > -1} &amp;&amp; {tags.tag[name=SubIFDs].ifd.tags.tag[name=SensingMethod] &lt; 9}">SensingMethod value must be between 0 and 8</assert>
     </rule>
