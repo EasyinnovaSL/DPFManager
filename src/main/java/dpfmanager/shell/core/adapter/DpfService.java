@@ -41,4 +41,8 @@ public abstract class DpfService {
     }
   }
 
+  public void reSetContext(DpfContext c){
+    context = c;
+  }
+
 }

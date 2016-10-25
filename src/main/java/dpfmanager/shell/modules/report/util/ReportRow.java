@@ -57,6 +57,8 @@ public class ReportRow {
   private final SimpleStringProperty score;
   private final SimpleMapProperty<String, String> formats;
   private final SimpleStringProperty delete;
+  private String uuid;
+  private String deletePath;
 
   /**
    * Instantiates a new Report row.
@@ -80,7 +82,9 @@ public class ReportRow {
     this.passed = new SimpleStringProperty(passed);
     this.score = new SimpleStringProperty(score);
     this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
-    this.delete = new SimpleStringProperty(deletePath);
+    this.uuid = System.currentTimeMillis()+"";
+    this.delete = new SimpleStringProperty(uuid);
+    this.deletePath = deletePath;
   }
 
   private String parseDate2Locale(String sdate){
@@ -593,6 +597,22 @@ public class ReportRow {
     } catch (Exception e) {
       return "";
     }
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public String getDeletePath() {
+    return deletePath;
+  }
+
+  public void setDeletePath(String deletePath) {
+    this.deletePath = deletePath;
   }
 }
 

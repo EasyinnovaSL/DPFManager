@@ -1,13 +1,13 @@
 /**
- * <h1>ReportsModel.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>ReportsModel.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.component.report;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.mvc.DpfModel;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.util.ReportRow;
@@ -28,30 +29,29 @@ import javafx.collections.ObservableList;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by Adrià Llorens on 04/03/2016.
  */
-public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
+public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
 
-  private boolean empty = true;
   private boolean all_reports_loaded = false;
   public static int reports_loaded = 25;
   private ObservableList<ReportRow> data;
   private boolean reload;
 
-  public ReportsModel(){
+  public ReportsModel() {
     reload = true;
     data = FXCollections.observableArrayList(new ArrayList<>());
   }
 
-  public void readIfNeed(){
-    if (reload){
+  public void readIfNeed() {
+    if (reload) {
       clearData();
       readReports();
       reload = false;
@@ -123,10 +123,10 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
                 }
                 // Add mets
                 File folder = new File(baseDir + "/" + reportDay + "/" + reportDir + "/");
-                if (folder.exists() && folder.isDirectory()){
+                if (folder.exists() && folder.isDirectory()) {
                   String[] filter = {"mets.xml"};
-                  Collection<File> childs = FileUtils.listFiles(folder,filter, false);
-                  if (childs.size() > 0){
+                  Collection<File> childs = FileUtils.listFiles(folder, filter, false);
+                  if (childs.size() > 0) {
                     rr.addFormat("mets", folder.getPath());
                   }
                 }
@@ -138,7 +138,6 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
               if (i == directories.length - 1 && j == directories2.length - 1) {
                 all_reports_loaded = true;
               }
-              empty = false;
             } else {
               index++;
             }
@@ -152,7 +151,19 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
     data.addAll(rows);
   }
 
-  public void setReload(boolean r){
+  public String getReportsSize() {
+    Long bytes = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
+    return readableFileSize(bytes);
+  }
+
+  private String readableFileSize(long size) {
+    if (size <= 0) return "0";
+    final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+    int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+    return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+  }
+
+  public void setReload(boolean r) {
     reload = r;
     all_reports_loaded = false;
   }
@@ -169,8 +180,21 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController>{
     return all_reports_loaded;
   }
 
-  public boolean isEmpty(){
-    return empty;
+  public boolean isEmpty() {
+    return data.isEmpty();
+  }
+
+  public void removeItem(String search) {
+    data.remove(getItemById(search));
+  }
+
+  public ReportRow getItemById(String search) {
+    for (ReportRow rr : data) {
+      if (rr.getUuid().equals(search)) {
+        return rr;
+      }
+    }
+    return null;
   }
 
 }

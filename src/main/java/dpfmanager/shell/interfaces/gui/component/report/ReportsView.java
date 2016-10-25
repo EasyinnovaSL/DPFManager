@@ -1,13 +1,13 @@
 /**
- * <h1>ReportsView.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>ReportsView.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.component.report;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
@@ -27,6 +28,7 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.util.ReportRow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -43,12 +45,16 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -57,13 +63,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 
 import com.sun.javafx.scene.control.skin.TableHeaderRow;
 
 import org.apache.commons.io.FileUtils;
-import org.controlsfx.control.PropertySheet;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -72,9 +76,8 @@ import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * Created by Adrià Llorens on 25/02/2016.
@@ -103,6 +106,22 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   private Label labelEmpty;
   @FXML
   private ProgressIndicator indicator;
+  @FXML
+  private Label labelSize;
+  @FXML
+  private HBox hboxSize;
+  @FXML
+  private HBox hboxOptions;
+  @FXML
+  private Button clearOptionsButton;
+  @FXML
+  private RadioButton radAll;
+  @FXML
+  private RadioButton radOlder;
+  @FXML
+  private ToggleGroup toggleClear;
+  @FXML
+  private DatePicker datePicker;
 
   private TableColumn<ReportRow, String> colScore;
   private TableColumn colFormats;
@@ -122,7 +141,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
       if (rMessage.isRead()) {
         getModel().setReload(true);
-        readData();
+        getModel().readIfNeed();
       }
     }
   }
@@ -136,7 +155,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
       } else if (rMessage.isRead()) {
         addData();
-        hideLoading();
       }
     }
     return null;
@@ -149,6 +167,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     setController(new ReportsController());
     getModel().setResourcebundle(bundle);
     addHeaders();
+    hideClearOptions();
   }
 
   private void addHeaders() {
@@ -230,6 +249,17 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     changeColumnTextColor(colWarnings, Color.ORANGE);
     changeColumnTextColor(colPassed, Color.GREENYELLOW);
     changeColumnTextColor(colScore, Color.LIGHTGRAY);
+
+    // Columns factories
+    Bindings.size(tabReports.getItems()).addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        resizeTable();
+      }
+    });
+    addChartScore();
+    addFormatIcons();
+    addDeleteIcon();
   }
 
   private void setMinMaxWidth(TableColumn column, int width) {
@@ -241,28 +271,19 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     column.setEditable(false);
   }
 
-  private void readData() {
-    // Read data
-    getModel().readIfNeed();
+  private void recalculateSize(){
+    labelSize.setText(bundle.getString("folderSize").replace("%1", getModel().getReportsSize()));
   }
 
   private void addData() {
     // Add data
     ObservableList<ReportRow> data = getModel().getData();
+    recalculateSize();
     tabReports.setItems(data);
 
     // Resize
     resizeTable();
-    Bindings.size(tabReports.getItems()).addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        resizeTable();
-      }
-    });
-
-    addChartScore();
-    addFormatIcons();
-    addDeleteIcon();
+    hideLoading();
   }
 
   private void resizeTable() {
@@ -398,42 +419,42 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
           @Override
           public void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
+            if (!empty && item != null) {
+              String path = getModel().getItemById(item).getDeletePath();
 
-            HBox box = new HBox();
-            box.setSpacing(3);
-            box.setAlignment(Pos.CENTER_LEFT);
+              HBox box = new HBox();
+              box.setSpacing(3);
+              box.setAlignment(Pos.CENTER_LEFT);
 
-            Button icon = new Button();
-            icon.setMinHeight(20);
-            icon.setPrefHeight(20);
-            icon.setMaxHeight(20);
-            icon.setMinWidth(20);
-            icon.setPrefWidth(20);
-            icon.setMaxWidth(20);
-            icon.getStyleClass().addAll("delete-img", "periodic-img");
-            icon.setCursor(Cursor.HAND);
-            icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
-              @Override
-              public void handle(MouseEvent event) {
-                // Delete report
-                File file = new File(item);
-                File dir = new File(file.getParent());
-                try {
-                  FileUtils.deleteDirectory(dir);
-                } catch (IOException e) {
-                  e.printStackTrace();
+              Button icon = new Button();
+              icon.setMinHeight(20);
+              icon.setPrefHeight(20);
+              icon.setMaxHeight(20);
+              icon.setMinWidth(20);
+              icon.setPrefWidth(20);
+              icon.setMaxWidth(20);
+              icon.getStyleClass().addAll("delete-img", "periodic-img");
+              icon.setCursor(Cursor.HAND);
+              icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                  // Delete report
+                  File file = new File(path);
+                  File dir = new File(file.getParent());
+                  try {
+                    FileUtils.deleteDirectory(dir);
+                  } catch (IOException e) {
+                    e.printStackTrace();
+                  }
+
+                  getModel().removeItem(item);
+                  addData();
                 }
+              });
 
-                final ObservableList items = getTableView().getItems();
-                if( items != null && items.size() > 0) {
-                  Object item = items.get(getTableRow().getIndex());
-                  items.remove(item);
-                }
-              }
-            });
-
-            box.getChildren().add(icon);
-            setGraphic(box);
+              box.getChildren().add(icon);
+              setGraphic(box);
+            }
           }
         };
         return cell;
@@ -443,7 +464,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
   void refreshTable(TableView tableView) {
     final ObservableList items = tableView.getItems();
-    if( items == null || items.size() == 0) return;
+    if (items == null || items.size() == 0) return;
 
     Object item = tableView.getItems().get(0);
     items.remove(item);
@@ -455,12 +476,23 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     });
   }
 
+  public void showClearOptions(){
+    NodeUtil.showNode(hboxOptions);
+    clearOptionsButton.setText(bundle.getString("hideOptions"));
+  }
+
+  public void hideClearOptions(){
+    NodeUtil.hideNode(hboxOptions);
+    clearOptionsButton.setText(bundle.getString("clearOptions"));
+  }
+
   private void showLoading() {
     indicator.setProgress(-1.0);
     NodeUtil.showNode(indicator);
     NodeUtil.hideNode(tabReports);
     NodeUtil.hideNode(labelEmpty);
     NodeUtil.hideNode(loadMore);
+    NodeUtil.hideNode(hboxSize);
   }
 
   private void hideLoading() {
@@ -470,11 +502,14 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     if (getModel().isEmpty()) {
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(labelEmpty);
+      NodeUtil.hideNode(hboxSize);
     } else if (getModel().isAllReportsLoaded()) {
       NodeUtil.hideNode(labelEmpty);
       NodeUtil.hideNode(loadMore);
+      NodeUtil.showNode(hboxSize);
     } else {
       NodeUtil.showNode(loadMore);
+      NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
     }
   }
@@ -482,6 +517,46 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   @FXML
   protected void loadMoreReports(ActionEvent event) throws Exception {
     getController().loadMoreReports();
+  }
+
+  @FXML
+  protected void clearOptions(ActionEvent event) throws Exception {
+    if (hboxOptions.isVisible()){
+      hideClearOptions();
+    } else {
+      showClearOptions();
+    }
+  }
+
+  @FXML
+  protected void clearReports(ActionEvent event) throws Exception {
+    LocalDate date = LocalDate.now();
+    date = date.plusYears(10L);
+    RadioButton radio = (RadioButton) toggleClear.getSelectedToggle();
+    if (radio.getId().equals("radOlder")){
+      if (datePicker.getValue() != null) {
+        date = datePicker.getValue();
+      } else {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertSelectDate")));
+        return;
+      }
+    }
+
+    // All ok, delete
+    if (getController().clearReports(date)){
+      getModel().clearData();
+      getModel().readReports();
+      recalculateSize();
+      hideClearOptions();
+      addData();
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("successDeleteReports")));
+    } else {
+      getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorDeleteReports")));
+    }
+  }
+
+  public ToggleGroup getToggleClear() {
+    return toggleClear;
   }
 
   public void hideLoadMore() {
