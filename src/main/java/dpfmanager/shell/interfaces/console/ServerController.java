@@ -61,7 +61,6 @@ public class ServerController {
     context = c;
     bundle = b;
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
-    parameters.put("mode", "SERVER");
   }
 
   /**

@@ -3,7 +3,7 @@
 <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
         <PatternLayout>
-            <MarkerPatternSelector defaultPattern="%-5p [%logger{36}] - %msg%n">
+            <MarkerPatternSelector defaultPattern="%-5p - %msg%n">
                 <PatternMatch key="PLAIN" pattern="%msg%n"/>
                 <PatternMatch key="EXCEPTION" pattern="%msg%n"/>
             </MarkerPatternSelector>
@@ -11,15 +11,15 @@
     </Console>
     <TextAreaAppender name="TextArea" maxLines="100">
         <PatternLayout>
-            <MarkerPatternSelector defaultPattern="%-5p [%logger{36}] - %msg%n">
+            <MarkerPatternSelector defaultPattern="%-5p - %msg%n">
                 <PatternMatch key="PLAIN" pattern="%msg%n"/>
                 <PatternMatch key="EXCEPTION" pattern="%msg%n"/>
             </MarkerPatternSelector>
         </PatternLayout>
     </TextAreaAppender>
-    <File name="File" fileName="${sys:app.home}/data/DpfManager.log" immediateFlush="false" append="true">
+    <File name="File" fileName="${sys:app.home}/data/DpfManager.log" immediateFlush="true" append="true">
         <PatternLayout>
-            <MarkerPatternSelector defaultPattern="%d{dd/MM HH:mm} %-5p [%logger{36}] - %msg%n">
+            <MarkerPatternSelector defaultPattern="%d{dd/MM HH:mm} %-5p - %msg%n">
                 <PatternMatch key="EXCEPTION" pattern="%msg%n"/>
             </MarkerPatternSelector>
         </PatternLayout>

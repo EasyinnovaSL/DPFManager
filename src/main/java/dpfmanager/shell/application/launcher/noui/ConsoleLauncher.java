@@ -82,11 +82,12 @@ public class ConsoleLauncher {
   /**
    * Initialize all services
    */
-  private void initServices() {
+  private void initServices(String mode) {
     // Load spring context
     AppContext.loadContext("DpfSpringConsole.xml");
+    // Set mode
     parameters = (Map<String, String>) AppContext.getApplicationContext().getBean("parameters");
-    parameters.put("mode", "CMD");
+    parameters.put("mode", mode);
     //Load DpfContext
     context = new ConsoleContext(AppContext.getApplicationContext());
   }
@@ -124,35 +125,35 @@ public class ConsoleLauncher {
       String first = params.get(0);
       if (first.equals("periodic")) {
         params.remove(0);
-        initServices();
+        initServices("CMD");
         PeriodicalController controller = new PeriodicalController(context, bundle);
         controller.parse(params);
         controller.run();
         return;
       } else if (first.equals("modules")){
         params.remove(0);
-        initServices();
+        initServices("CMD");
         ModulesController controller = new ModulesController(context, bundle);
         controller.parse(params);
         controller.run();
         return;
       } else if (first.equals("remote")) {
         params.remove(0);
-        initServices();
+        initServices("CMD");
         RemoteController controller = new RemoteController(context, bundle);
         controller.parse(params);
         controller.run();
         return;
       } else if (first.equals("check")) {
         params.remove(0);
-        initServices();
+        initServices("CMD");
         CheckController controller = new CheckController(context, bundle);
         controller.parse(params);
         controller.run();
         return;
       } else if (first.equals("server")) {
         params.remove(0);
-        initServices();
+        initServices("SERVER");
         ServerController controller = new ServerController(context, bundle);
         controller.parse(params);
         controller.run();

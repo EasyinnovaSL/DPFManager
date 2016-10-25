@@ -36,7 +36,10 @@ import org.apache.logging.log4j.MarkerManager;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Created by Adrià Llorens on 07/04/2016.
@@ -44,6 +47,9 @@ import javax.annotation.PostConstruct;
 @Service(BasicConfig.SERVICE_MESSAGES)
 @Scope("singleton")
 public class MessagesService extends DpfService {
+
+  @Resource(name = "parameters")
+  private Map<String, String> parameters;
 
   @PostConstruct
   public void init() {
@@ -57,14 +63,15 @@ public class MessagesService extends DpfService {
   }
 
   public void logMessage(LogMessage lm){
-    String clazz = lm.getMyClass().toString();
-    clazz = clazz.substring(clazz.lastIndexOf(".") + 1, clazz.length());
-    if (lm.getLevel().equals(Level.DEBUG)) {
+    if (lm.getLevel().equals(Level.DEBUG) && !isServer()) {
       // Log in console
       systemOut(lm.getMessage());
+    } else if (isServer()) {
+      // Default pattern
+      LogManager.getLogger("").log(Level.INFO, lm.getMessage());
     } else {
       // Default pattern
-      LogManager.getLogger(clazz).log(lm.getLevel(), lm.getMessage());
+      LogManager.getLogger("").log(lm.getLevel(), lm.getMessage());
     }
   }
 
@@ -95,5 +102,8 @@ public class MessagesService extends DpfService {
     LogManager.getLogger("").log(Level.ERROR, MarkerManager.getMarker("EXCEPTION"), message);
   }
 
+  public boolean isServer(){
+    return parameters.get("mode").equals("SERVER");
+  }
 
 }
