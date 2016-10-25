@@ -374,7 +374,10 @@ public class TiffImplementationChecker {
       photo = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")).getFirstNumericValue();
     }
     if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample"))) {
-      bps = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample")).getFirstNumericValue();
+      TagValue tv = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample"));
+      if (tv.getCardinality()>0) {
+        bps = (int) tv.getFirstNumericValue();
+      }
     }
     if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration"))) {
       planar = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration")).getFirstNumericValue();

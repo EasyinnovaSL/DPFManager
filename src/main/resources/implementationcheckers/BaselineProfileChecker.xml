@@ -384,12 +384,12 @@
    <assert test="{tags.tag[name=StripBYTECount]}">Image IFD must have the tag StripBYTECount</assert>
   </rule>
   
-  <rule id="STRIPS-0003" context="ifd[class=image]" level="error">
+  <rule id="STRIPS-0003" context="ifd[strips=1]" level="error">
    <title>Strips sizes match image dimensions</title>
    <description>strips structure must match with the image width and height</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{correctStrips == 1}">image width and image height do not match with strips sizes</assert>
+   <assert test="{correctStrips == 1}">Image width and image height do not match with strips sizes</assert>
   </rule>
 
   <rule id="STRIPS-0004" context="ifd[strips=1]" level="error">
@@ -511,7 +511,7 @@
    <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
    <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 32773}">Invalid Compression for palette color image</assert>
   </rule>
- 
+
   <rule id="IFDP-0003" context="ifd[type=Palette]" level="error">
    <title>Valid BitsPerSample for  palette color image</title>
    <description>Allowable values for Baseline TIFF  palette color images are 4 and 8, allowing either 16 or 256 distinct colors.</description>
@@ -533,13 +533,7 @@
    <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
    <assert test="{tags.tag[name=ColorMap]}">Color Map must be included in palette color images</assert>
   </rule>
-  
-  <rule id="IFDP-0006" context="ifd[type=Palette]" level="error">
-   <title>Valid compression for palette color image</title>
-   <description>In Baseline TIFF, palette color images can either be stored as uncompressed data or compressed with the PackBits algorithm.</description>
-   <reference><section>Section 5: Palette Color Images</section><page>23</page></reference>
-   <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 32773}">Invalid Compression for palette color image</assert>
-  </rule>
+
  </rules>
  
  <rules id="IFDR">
@@ -580,7 +574,7 @@
      <description>When No Extra Sample is defined then BitsPerSample must be 4 or 8 and SamplesPerPixel must be 3 for palette colo Images.</description>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
-   <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample] == '8,8,8'} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 3)}">BitsPerSample  must be 4 or 8 and BitsPerSample must be 3 for palette color image wihout ExtraSamples</assert>
+   <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample] == '8,8,8'} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 3}">BitsPerSample  must be 4 or 8 and BitsPerSample must be 3 for palette color image wihout ExtraSamples</assert>
   </rule>
   
  </rules>
@@ -891,7 +885,7 @@
     only for bilevel images and BitsPerSample must be 1
    </description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>30</page></reference>
-   <assert test="{tags.tag[name=Compression] != 2} || {tags.tag[name=BitsPerSample] == 1 }">CCITT compression is defined
+   <assert test="{tags.tag[name=Compression] != 2} || {tags.tag[name=BitsPerSample] == 1}">CCITT compression is defined
     only for bilevel images and BitsPerSample must be 1</assert>
   </rule>
   
@@ -1029,7 +1023,7 @@
     avoid potentially ambigous situations.
    </description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><pages>32</pages></reference>
-   <assert test="{tags.tag[name=FillOrder] != 2} || {tags.tag[name=BitsPerSample] == 1} &amp;&amp; {tags.tag[name=Compression] &lt; 3}">DateTime cardinality is not valid, cardinality should be 1</assert>
+   <assert test="{tags.tag[name=FillOrder] != 2} || {tags.tag[name=BitsPerSample] == 1} &amp;&amp; {tags.tag[name=Compression] &lt; 5}">FillOrder = 2 should be used only when BitsPerSample = 1 and the data is     either uncompressed or compressed using CCITT</assert>
   </rule>
   
   <rule id="TAG-266-0005" context="ifd" level="warning">
@@ -1892,7 +1886,7 @@
    <description>StripByteCounts tag cardinality is equal StripsPerImage for PlanarConfiguration equal to 1, and
 SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{tags.tag[name=PlanarConfiguration] == 1} &amp;&amp; {tags.tag[name=StripByteCounts].cardinality == StripsPerImage} || {tags.tag[name=PlanarConfiguration] == 2} &amp;&amp; {tags.tag[name=StripByteCounts].cardinality == tags.tag[name=SamplesPerPixel] * StripsPerImage}">StripByteCounts invalid cardinality</assert>
+   <assert test="{tags.tag[name=PlanarConfiguration] == 1} &amp;&amp; {tags.tag[name=StripBYTECount].cardinality == StripsPerImage} || {tags.tag[name=PlanarConfiguration] == 2} &amp;&amp; {tags.tag[name=StripBYTECount].cardinality == tags.tag[name=SamplesPerPixel] * StripsPerImage}">StripByteCounts invalid cardinality</assert>
   </rule>
 
  </rules>

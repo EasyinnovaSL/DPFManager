@@ -129,7 +129,7 @@ public class Validator {
     }
 
     for (RuleType rule : ordRules) {
-      if (rule.getId().equals("TAG-320-0002"))
+      if (rule.getId().equals("TAG-333-0002"))
         rule.toString();
 
       String context = rule.getContext();
@@ -245,9 +245,13 @@ public class Validator {
               if (operation.equals("==")) ok = value.equals(value2);
               else if (operation.equals("!="))
                 ok = !value.equals(value2);
-              else if (operation.equals(">"))
-                ok = Double.parseDouble(value) > Double.parseDouble(value2);
-              else {
+              else if (operation.equals(">")) {
+                try {
+                  ok = Double.parseDouble(value) > Double.parseDouble(value2);
+                } catch (Exception ex) {
+                  ok = false;
+                }
+              } else {
                 ok = Double.parseDouble(value) < Double.parseDouble(value2);
 
                 if (!ok)

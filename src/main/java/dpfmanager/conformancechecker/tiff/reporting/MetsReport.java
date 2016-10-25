@@ -285,19 +285,21 @@ public class MetsReport {
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("ReferenceBlackWhite"))) {
           BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite referenceBlackWhite = new BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite();
           try {
-            Rational headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(0);
-            Rational footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(1);
-            BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite.Component component = createComponentFromReferences(headroom, footroom);
-            referenceBlackWhite.setComponent(component);
-            headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(2);
-            footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(3);
-            component = createComponentFromReferences(headroom, footroom);
-            referenceBlackWhite.setComponent(component);
-            headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(4);
-            footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(5);
-            component = createComponentFromReferences(headroom, footroom);
-            referenceBlackWhite.setComponent(component);
-            photometricInterpretation.setReferenceBlackWhite(referenceBlackWhite);
+            if (ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(0) instanceof Rational && ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(1) instanceof Rational) {
+              Rational headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(0);
+              Rational footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(1);
+              BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite.Component component = createComponentFromReferences(headroom, footroom);
+              referenceBlackWhite.setComponent(component);
+              headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(2);
+              footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(3);
+              component = createComponentFromReferences(headroom, footroom);
+              referenceBlackWhite.setComponent(component);
+              headroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(4);
+              footroom = (Rational) ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(5);
+              component = createComponentFromReferences(headroom, footroom);
+              referenceBlackWhite.setComponent(component);
+              photometricInterpretation.setReferenceBlackWhite(referenceBlackWhite);
+            }
           } catch (Exception ex) {
             ex.printStackTrace();
           }
@@ -1068,7 +1070,14 @@ public class MetsReport {
 
     while (ifd != null) {
 
-      if (ifd.isImage() && !ifd.isThumbnail() && ifd.getMetadata() != null){
+      boolean v = false;
+      try {
+        v = ifd.isImage() && !ifd.isThumbnail() && ifd.getMetadata() != null;
+      } catch (Exception ex) {
+        v = false;
+      }
+
+      if (v){
 
         /*
           6 Basic Digital Object Information
@@ -1219,10 +1228,14 @@ public class MetsReport {
     DivType div = new DivType();
     div.setID("I" + ifd.hashCode());
     div.setTYPE("IFD");
-    if (ifd.isImage() && !ifd.isThumbnail()){
+    try {
+      if (ifd.isImage() && !ifd.isThumbnail()) {
+        div.setLABEL("Main Image");
+      } else if (ifd.isImage() && ifd.isThumbnail()) {
+        div.setLABEL("Thumbail");
+      }
+    } catch (Exception ex) {
       div.setLABEL("Main Image");
-    }else if(ifd.isImage() && ifd.isThumbnail()){
-      div.setLABEL("Thumbail");
     }
     DivType.Fptr fptr = new DivType.Fptr();
     fptr.setID("f" + file.hashCode());
@@ -1294,7 +1307,12 @@ public class MetsReport {
     List<FileType.Stream> streamList = new ArrayList<FileType.Stream>();
 
     // SubImage and extras
-    boolean isThumbail = ifd.isThumbnail();
+    boolean isThumbail = false;
+    try {
+      isThumbail = ifd.isThumbnail();
+    } catch (Exception ex) {
+      isThumbail = false;
+    }
 
     List <String> streamsStrings = new ArrayList<String>();
 
