@@ -58,14 +58,14 @@
    <assert test="{magicNumber==42}">TIFF signature is not correct (The TIFF signature must be 42)</assert>
   </rule>
    
-  <rule id="IFH-0006" context="*" level="critical" experimental="true">
+  <rule id="IFH-0006" context="header" level="critical">
    <title>First IFD offset refers out of the file</title>
    <description>The byte offset of the first IFD may refer at any location in the file after the Image File Header(IFH), respect to the beginning of the TIFF file.</description>
    <reference><section>Section 2: TIFF Structure</section><page>13</page></reference>
    <assert test="{offset &lt; $tiffValidationObject.size$}">First IFD bad offset position out of TIFF file, probably corrupted file.</assert>
   </rule>
   
-  <rule id="IFH-0007" context="*" level="critical"  experimental="true">
+  <rule id="IFH-0007" context="header" level="critical">
    <title>First IFD offset refers inside the IFH</title>
    <description>The byte offset of the first IFD may refer at any location in the file after the Image File Header(IFH)</description>
    <reference><section>Section 2: TIFF Structure</section><page>13</page></reference>
@@ -145,25 +145,25 @@
    <assert test="{cardinality > 0}">IDF entry with invalid cardinality</assert>
   </rule>
    
-  <rule id="IFD-0009" context="*" level="critical" experimental="true">
+  <rule id="IFD-0009" context="ifd" level="critical">
    <title>IFD offset refers to a location out of the file</title>
    <description>The byte offset of the first IFD may refer at any location in the file after the Image File Header(IFH), respect to the beginning of the TIFF file.</description>
    <reference><section>Section 2: TIFF Structure</section><page>14</page></reference>
    <assert test="{offset &lt; $tiffValidationObject.size$}">IFD bad offset position refers to a location out of the file, probably corrupted file.</assert>
   </rule>
   
-  <rule id="IFD-0010" context="*" level="critical" experimental="true">
+  <rule id="IFD-0010" context="ifd" level="critical">
    <title>IFD offset refers to a location inside the IFH</title>
    <description>The byte offset of the first IFD may refer at any location in the file after the Image File Header(IFH)</description>
    <reference><section>Section 2: TIFF Structure</section><page>14</page></reference>
    <assert test="{offset &gt; 7}||{offset == 0}">IFD bad offset position refers to a location inside the Image File Header(IFH), probably corrupted file.</assert>
   </rule>
 
-  <rule id="IFD-0011" context="*" level="error" experimental="true">
+  <rule id="IFD-0011" context="ifd[last]" level="error" experimental="true">
    <title>Last IFD offset must be 4 bytes of 0 </title>
    <description>The last IFD offset must be 4 bites of 0 </description>
    <reference><section>Section 2: TIFF Structure</section><page>14</page></reference>
-   <assert test="{offset%2==0}">The Last IFD offset must be 4 bites of 0</assert>
+   <assert test="{offset==0}">The Last IFD offset must be 4 bites of 0</assert>
   </rule>
 
   <rule id="IFD-0012" context="ifd" level="error">
@@ -637,14 +637,14 @@
    <assert test="{offset%2==0}">Bad word alignment in offset</assert>
   </rule>
 
-  <rule id="OFFSET-0002" context="*" level="critical">
+  <rule id="OFFSET-0002" context="tag" level="critical">
    <title>Offset refers to a location out of the file</title>
    <description>The byte offset may refer ar any location in the file after the Image File Header(IFH), respect to the beginning of the TIFF file.</description>
    <reference><section>Section 2: TIFF Structure</section><page>13</page></reference>
    <assert test="{offset &lt; $tiffValidationObject.size$}">Bad offset position, probably corrupted file.</assert>
   </rule>
   
-  <rule id="OFFSET-0003" context="*" level="critical">
+  <rule id="OFFSET-0003" context="tag" level="critical">
    <title>Offset refers to a location inside the IFH</title>
    <description>The byte offset may refer ar any location in the file after the Image File Header(IFH)</description>
    <reference><section>Section 2: TIFF Structure</section><page>13</page></reference>
