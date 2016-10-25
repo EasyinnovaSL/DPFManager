@@ -1605,7 +1605,7 @@
    0 = WhiteIsZero. For bilevel and grayscale images: 0 is imaged as white. 2**BitsPerSample-1 is imaged as black.
    1 = BlackIsZero. For bilevel and grayscale images: 0 is imaged as black. 2**BitsPerSample-1 is imaged as white. 
    2 = RGB. In the RGB model, a color is described as a combination of the three primary colors of light (red, green, and blue) in particular concentrations. 
-   3= Palette color.
+   3 = Palette color.
    4 = Transparency Mask.
    
    There is no default for PhotometricInterpretation, and it is required. Do not rely
