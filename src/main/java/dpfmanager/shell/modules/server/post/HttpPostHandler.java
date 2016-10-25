@@ -1,13 +1,13 @@
 /**
- * <h1>HttpPostHandler.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>HttpPostHandler.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -26,6 +26,7 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.server.messages.PostMessage;
 import dpfmanager.shell.modules.server.messages.StatusMessage;
 import io.netty.buffer.ByteBuf;
@@ -64,6 +65,7 @@ import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.util.Base64;
+import org.apache.logging.log4j.Level;
 import org.apache.tools.zip.ZipEntry;
 
 import java.io.File;
@@ -193,6 +195,9 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
       String link = parsePathToLink(path);
       map.put("status", "Finished");
       map.put("path", link);
+      printOut("Finished check, sending to user...");
+      printOut("  Uuid: " + id.toString());
+      printOut("  Path: " + path);
     } else {
       map.put("status", "NotFound");
     }
@@ -218,6 +223,9 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
     // OK start the check
     if (!map.containsKey("myerror")) {
       context.send(BasicConfig.MODULE_SERVER, new PostMessage(PostMessage.Type.POST, uuid, filepath, configpath));
+      printOut("");
+      printOut("New file check received.");
+      printOut("  Uuid: " + uuid);
     } else {
       deleteTmpFolder(uuid);
     }
@@ -234,16 +242,16 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
     }
   }
 
-  private String getName(String path){
+  private String getName(String path) {
     String ret = "";
     if (path != null) {
       if (path.contains(";")) {
         // List files
         String[] paths = path.split(";");
-        for (String newPath : paths){
+        for (String newPath : paths) {
           ret = ret + newPath.substring(newPath.lastIndexOf("\\") + 1, newPath.length()) + ", ";
         }
-        ret = ret.substring(0, ret.length()-1);
+        ret = ret.substring(0, ret.length() - 1);
       } else {
         ret = path.substring(path.lastIndexOf("\\") + 1, path.length());
       }
@@ -332,7 +340,7 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
     String name = attribute.getName();
     if (name.equals("id")) {
       id = Long.parseLong(attribute.getValue());
-    } else if (name.equals("config")){
+    } else if (name.equals("config")) {
       destFolder = createNewDirectory(uuid);
       String encoded = attribute.getValue();
       String decoded = new String(Base64.decodeBase64(encoded), "UTF-8");
@@ -353,7 +361,7 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
       } else {
         // Save file to check
         File dest = new File(destFolder.getAbsolutePath() + "/" + fileUpload.getFilename());
-        if (filepath == null){
+        if (filepath == null) {
           filepath = dest.getAbsolutePath();
         } else {
           filepath = filepath + ";" + dest.getAbsolutePath();
@@ -410,6 +418,10 @@ public class HttpPostHandler extends SimpleChannelInboundHandler<HttpObject> {
     FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status, Unpooled.copiedBuffer("Failure: " + status + "\r\n", CharsetUtil.UTF_8));
     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
     ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+  }
+
+  private void printOut(String message) {
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message));
   }
 
   @Override
