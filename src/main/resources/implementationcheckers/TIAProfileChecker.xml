@@ -14,24 +14,6 @@
         <policyChecker>./BaselineProfileChecker.xml</policyChecker>
     </include>
 
-    <rules id="TI/A Structure">
-        <title/>
-        <description/>
-        <rule id="" context="ifds.ifd[0]" level="">
-            <title>the first IFD must contain a full resolution unit or a thumbnail</title>
-            <description>TI/A recommends that a thumbnail image be stored in the 0th IFD. 
-                This provides a version of the image that is small (relative to the full-resolution image) and that may be quickly accessed by reader software.</description>
-            <reference> </reference>
-            <assert/>
-        </rule>
-        <rule id="" context="" level="">
-            <title>the first ifd must be a full resolution unit or a thumbnail</title>
-            <description/>
-            <reference> </reference>
-            <assert/>
-        </rule>
-    </rules>
-
     <rules id="MASTER">
         <title>Rules to validate IFD Master Image</title>
         <description>The following rules validate a valid ifd storing a master image according to TI/A specifications</description>
@@ -110,180 +92,174 @@
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType] % 2 == 1}}">Invalid IFD structure,The Master image define a subIFD containing a thumbnail</assert>
+            <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType] % 2 == 1}">Invalid IFD structure,The Master image define a subIFD containing a thumbnail</assert>
         </rule>
-        <!--TODO : completar titol descripcio i assert-->
+
         <rule id="MASTER-0010" context="ifds.ifd[class=image]" level="warning">
             <title>Master image recommended compression</title>
-            <description>TI/A do not recommend the use of compression for storing a master images</description>
+            <description>TI/A do not recommend the use of compression for storing a master images, An uncompressed image is always the best option for archival purpose</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]!=1}}">TI/A do not recommend the use of compression for storing a master images</assert>
+            <assert test="{tags.tag[name=Compression]!=1}">TI/A do not recommend the use of compression for storing a master images, an uncompressed image is preferred for archival purpose</assert>
         </rule>
         <rule id="MASTER-0011" context="ifds.ifd[class=image]" level="error">
             <title>CCITT 1D compression</title>
-            <description>not widely used, therefore obsolete</description>
+            <description>CCITT 1D compression is not widely used for archival purpose, therefore obsolete</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]!=2}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]!=2}">CCITT 1D Compression is forbidden regarding the TI/A the specification</assert>
         </rule>
         <rule id="MASTER-0012" context="ifds.ifd[class=image]" level="error">
             <title>Group 3 Fax compression</title>
-            <description>not widely used, therefore obsolete</description>
+            <description>Group 3 Fax compression is not widely used for archival purpose, therefore obsolete</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]!=3}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]!=3}">Group 3 Fax Compression is forbidden regarding the TI/A the specification</assert>
         </rule>
         <rule id="MASTER-0013" context="ifds.ifd[class=image]" level="warning">
-            <title>Main image Group 4 Fax   compression</title>
-            <description>supoorted but not recomended</description>
+            <title>Group 4 Fax compression</title>
+            <description>Although Group 4 Fax compression is supported in TI/A, is not recommended</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]==4}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]==4}">Group 4 Fax compression is supported in TI/A but not recommended</assert>
         </rule>
         <rule id="MASTER-0014" context="ifds.ifd[class=image]" level="warning">
-            <title>Main image LZW   compression</title>
-            <description>supoorted but not recomended</description>
+            <title>LZW compression</title>
+            <description>LZW compression is supported in TI/A specifications but not recommended</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]==5}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]==5}">LZW compression is supported in TI/A but not recommended</assert>
         </rule>
         <rule id="MASTER-0015" context="ifds.ifd[class=image]" level="error">
-            <title>Main image JPEG TIFF/6-.0    compression</title>
-            <description>snot widely used, therefore obsoleted</description>
+            <title>Main image JPEG TIFF/6-.0 compression</title>
+            <description>JPEG 'old' compression is replaced by 'new JPEG' and not widely used for archival purpose, therefore obsoleted</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]!=6}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]!=6}">JPEG TIFF/6-.0 'old JPEG' Compression is forbidden regarding the TI/A the specification</assert>
         </rule>
         <rule id="MASTER-0016" context="ifds.ifd[class=image]" level="warning">
-            <title>Main image JPEG  TIFF TechNote2    compression</title>
-            <description>snot widely used, therefore obsoleted</description>
+            <title>Main image JPEG TIFF TechNote2 compression</title>
+            <description>JPEG TIFF TechNote2 compression 'new JPEG' is not widely used for archival purpose, therefore obsoleted</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]==7}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]==7}">TI/A recomend the uncompressed image</assert>
         </rule>
         <rule id="MASTER-0017" context="ifds.ifd[class=image]" level="warning">
-            <title>Main image Adobe Deflate     compression</title>
-            <description>snsupoorted but not recomended</description>
+            <title>Adobe Deflate compression</title>
+            <description>Adobe Deflate compression is supported in TI/A specifications but not recommended</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]==8}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]==8}">Adobe Deflate compression is supported in TI/A specifications but not recommended</assert>
         </rule>
         <rule id="MASTER-0018" context="ifds.ifd[class=image]" level="warning">
-            <title>Main image JBIG bw      compression</title>
-            <description>snsupoorted but not recomended</description>
+            <title>JBIG bw compression</title>
+            <description>JBIG bw compression is supported in TI/A specifications but not recommended</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]==9}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]==9}">BIG bw compression is supported in TI/A specifications but not recommended</assert>
         </rule>
         <rule id="MASTER-0019" context="ifds.ifd[class=image]" level="warning">
-            <title>Main image JBIG color      compression</title>
-            <description>snsupoorted but not recomended</description>
+            <title>JBIG color compression</title>
+            <description>JBIG color compression is supported in TI/A specifications but not recommended</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression]==10}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression]==10}">JBIG color compression is supported in TI/A specifications but not recommended</assert>
         </rule>
         <rule id="MASTER-0020" context="ifds.ifd[class=image]" level="error">
-            <title>Main image endor Unique    compression</title>
-            <description>Vendor Unique (FORBIDDEN) not widely used, therefore obsolete</description>
+            <title>Vendor Unique compressions</title>
+            <description>Vendor Unique compressions (&gt; 32766) are not widely used, therefore obsolete</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=Compression] &lt; 32766}">TI/A recomend the uncompressed image</assert>
-        </rule>
-        <rule id="MASTER-0021" context="ifds.ifd[class=image]" level="warning">
-            <title>Main image JBIG color      compression</title>
-            <description>snsupoorted but not recomended</description>
-            <reference>
-                <section>Section 4.2: Image data</section>
-                <page>12</page>
-            </reference>
-            <assert test="{tags.tag[name=Compression]==10}}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=Compression] &lt; 32766}">Vendor Unique compressions (&gt; 32766) are not widely used, therefore obsolete</assert>
         </rule>
 
         <rule id="MASTER-0022" context="ifds.ifd[class=image]" level="warning">
-            <title>recomended PhotometricInterpretation</title>
-            <description>Ve</description>
+            <title>Recommended PhotometricInterpretation</title>
+            <description>TI/A Standard only recommend the use of RGB, Grayscale(BlackIsZero) and Bilevel(BlackIsZero) images.</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] != 1} || {tags.tag[name=PhotometricInterpretation] != 2}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] != 1} || {tags.tag[name=PhotometricInterpretation] != 2}">>TI/A Standard only recommend the use of RGB, Grayscale(BlackIsZero) and Bilevel(BlackIsZero) images</assert>
         </rule>
         <rule id="MASTER-0023" context="ifds.ifd[class=image]" level="warning">
-            <title> PhotometricInterpretation palette color</title>
-            <description>snsupoorted but not recomended</description>
+            <title>Palette color images</title>
+            <description>Palette color images are supported in TI/A specifications but not recommended.</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 3}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 3}">Palette color images are supported in TI/A specifications but not recommended</assert>
         </rule>
         <rule id="MASTER-0024" context="ifds.ifd[class=image]" level="warning">
-            <title> PhotometricInterpretation Transparency Mask </title>
-            <description>snsupoorted but not recomended</description>
+            <title>Transparency Mask</title>
+            <description>Transparency Mask images are supported in TI/A specifications but not recommended.</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 4}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 4}">Transparency Mask images are supported in TI/A specifications but not recommended</assert>
         </rule>
         <rule id="MASTER-0025" context="ifds.ifd[class=image]" level="warning">
-            <title> PhotometricInterpretation CMYKk </title>
-            <description>snsupoorted but not recomended</description>
+            <title>CMYKk images</title>
+            <description>CMYKk images are supported in TI/A specifications but not recommended</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">CMYKk images are supported in TI/A specifications but not recommended</assert>
         </rule>
         <rule id="MASTER-0026" context="ifds.ifd[class=image]" level="error">
-            <title> PhotometricInterpretation YCbCr </title>
-            <description>: YCbCr color space. Y refers to the luminance component, Cb and Cr refer to the two chrominance components. The component order shall be Y, Cb, Cr.</description>
+            <title>YCbCr images</title>
+            <description>YCbCr color space. Y refers to the luminance component, Cb and Cr refer to the two chrominance components. The component order shall be Y, Cb, Cr.
+                CMYKk images are forbidden in TI/A specifications.</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] != 6}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] != 6}">CMYKk images are forbidden in TI/A specifications</assert>
         </rule>
         <rule id="MASTER-0027" context="ifds.ifd[class=image]" level="error">
-            <title> PhotometricInterpretation : CFA </title>
-            <description>: YCbCr color space. Y refers to the luminance component, Cb and Cr refer to the two chrominance components. The component order shall be Y, Cb, Cr.</description>
+            <title>CFA images</title>
+            <description>CFA images are forbidden in TI/A specifications</description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] != 32803}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] != 32803}">CFA images are forbidden in TI/A specifications</assert>
         </rule>
         <rule id="MASTER-0028" context="ifds.ifd[class=image]" level="error">
-            <title> PhotometricInterpretation : "Vendor Unique </title>
-            <description>: and are not required to be interpreted by others. These values need to be obtained from Adobe Corporation.</description>
+            <title>Vendor Unique PhotometricInterpretation</title>
+            <description>Vendor Unique PhotometricInterpretation are not required to be interpreted by others. Their values need to be obtained from Adobe Corporation.
+            Vendor Unique PhotometricInterpretation (&gt;32767) are forbidden in TI/A specifications.
+            </description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] &lt; 32767}">TI/A recomend the uncompressed image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] &lt; 32767}"> Vendor Unique PhotometricInterpretation (&gt;32767) are forbidden in TI/A specifications.</assert>
         </rule>
     </rules>
 
@@ -417,15 +393,16 @@
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
-            <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType] % 2 == 0}}">TI/A Thumbnail must define a subIFD containing a full resolution image</assert>
+            <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType] % 2 == 0}">TI/A Thumbnail must define a subIFD containing a full resolution image</assert>
         </rule>
+        
     </rules>
 
-    <rules id="MANDATORI-TAG">
+    <rules id="MANDATORY-TAG">
         <title>Mandatory tags for TI/A</title>
         <description>This section describes the list of mandatory tags in TI/A Draft</description>
 
-        <rule id="MANDATORI-TAG-254-0001" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-254-0001" context="ifd[class=image]" level="error">
             <title>NewSubFileType mandatory tag</title>
             <description>This tag indicates whether the given IFD is a thumbnail or main (full-size) image. 
                 This tag is mandatory and there is no default value. The value shall be explicitly stated.
@@ -437,7 +414,7 @@
             <assert test="{tags.tag[name=NewSubFileType]}">NewSubFileType is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-254-0002" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-254-0002" context="ifd[class=image]" level="error">
             <title>NewSubFileType valid values</title>
             <description>This tag indicates whether the given IFD is a thumbnail or main (full-size) image. 
                 This tag is mandatory and there is no default value. The value shall be explicitly stated.
@@ -449,7 +426,7 @@
             <assert test="{tags.tag[name=NewSubFileType] == 0} || {tags.tag[name=NewSubFileType] == 1}">The only valid values for NewSubFileType are 0 (full resolution image) or 1 (Thumbnail)</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-256" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-256" context="ifd[class=image]" level="error">
             <title>Imagewidth mandatory tag</title>
             <description>This tag encodes the number of columns in the image, i.e. the number of pixels per line. This tag is mandatory and there is no default value. 
                 The image width may be the shorter or longer dimension of the image, depending upon the orientation of the camera during image capture</description>
@@ -460,7 +437,7 @@
             <assert test="{tags.tag[name=ImageWidth]}">Imagewidth is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-257" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-257" context="ifd[class=image]" level="error">
             <title>ImageLength mandatory tag</title>
             <description>This tag encodes the number of rows in the image, i.e. the number of lines in the image. This tag is mandatory and there is no default value. 
                 The image length may be the shorter or longer dimension of the image, depending upon the orientation of the camera during image capture</description>
@@ -471,7 +448,7 @@
             <assert test="{tags.tag[name=ImageLength]}">ImageLength is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-258" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-258" context="ifd[class=image]" level="error">
             <title>BitsPerSample mandatory tag</title>
             <description>This tag encodes the number of bits per component for each pixel. This tag is mandatory and there is no default value. 
                 This tag provides N values depending upon SamplesPerPixel present.</description>
@@ -482,7 +459,7 @@
             <assert test="{tags.tag[name=BitsPerSample]}">BitsPerSample is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-259" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-259" context="ifd[class=image]" level="error">
             <title>Compression mandatory tag</title>
             <description>This tag encodes the compression scheme used to store the image data. This tag is mandatory and there is no default value. The tag value shall equal “1” for the thumbnail IFD. In the Context of TI/A the default value is 1. 
                 For sustainability compression may not be used.</description>
@@ -493,7 +470,7 @@
             <assert test="{tags.tag[name=Compression]}">Compression is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-262" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-262" context="ifd[class=image]" level="error">
             <title>PhotometricInterpretation mandatory tag</title>
             <description>In TIFF/EP, this tag defines the color space of the image data components, and the order of the components. This tag is mandatory and there is no default value. 
                 The value shall be 1, 2, or 6 for the thumbnail IFD. Accepted values are 1 (grayscale) and 2 (rgb full color).</description>
@@ -504,7 +481,7 @@
             <assert test="{tags.tag[name=PhotometricInterpretation]}">PhotometricInterpretation is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-273" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-273" context="ifd[class=image]" level="error">
             <title>StripOffsets mandatory tag</title>
             <description>This tag encodes the byte offset(s) with respect to the beginning of the file to each strip of the image data. This mandatory tag-field is the only way for a reader to find the image data. 
                 TIFF baseline plus TI/A requires that the size of the image data contained in each strip, prior to compression, not exceed 64 KBytes.</description>
@@ -515,7 +492,7 @@
             <assert test="{tags.tag[name=StripOffsets]}">StripOffsets is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-274-0001" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-274-0001" context="ifd[class=image]" level="error">
             <title>Orientation mandatory tag</title>
             <description>This tag encodes the orientation of the camera relative to the scene, when the image was captured. Only the value 1 is allowed.</description>
             <reference>
@@ -525,7 +502,7 @@
             <assert test="{tags.tag[name=Orientation]}">Orientation is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-274-0002" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-274-0002" context="ifd[class=image]" level="error">
             <title>Orientation valid values</title>
             <description>This tag encodes the orientation of the camera relative to the scene, when the image was captured. Only the value 1 is allowed.</description>
             <reference>
@@ -535,7 +512,7 @@
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 3} || {tags.tag[name=Orientation] == 6} || {tags.tag[name=Orientation] == 8} || {tags.tag[name=Orientation] == 9}">Orientation valid values regarding the TI/A specifications are 1,3,6,8 or 9</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-277-0001" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-277-0001" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel mandatory tag</title>
             <description>This tag encodes the number of components or samples stored for each pixel in the image. This tag is mandatory and there is no default value. 
                 The value shall be explicitly stated.</description>
@@ -546,7 +523,7 @@
             <assert test="{tags.tag[name=SamplesPerPixel]}">SamplesPerPixel is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-277-0002" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-277-0002" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel valid for Bilevel</title>
             <description>This tag encodes the number of components or samples stored for each pixel in the image. This tag is mandatory and there is no default value. 
                 The value shall be explicitly stated.</description>
@@ -557,7 +534,7 @@
             <assert test="{type != Bilevel} || {tags.tag[name=SamplesPerPixel] == 1}">SamplesPerPixel is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-277-0003" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-277-0003" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel valid for Grayscale</title>
             <description>This tag encodes the number of components or samples stored for each pixel in the image. This tag is mandatory and there is no default value. 
             The value shall be explicitly stated.</description>
@@ -568,7 +545,7 @@
             <assert test="{type != Grayscale} || {tags.tag[name=SamplesPerPixel] == 1}">SamplesPerPixel is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-277-0004" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-277-0004" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel valid for RGB</title>
             <description>This tag encodes the number of components or samples stored for each pixel in the image. This tag is mandatory and there is no default value. 
             The value shall be explicitly stated.</description>
@@ -579,7 +556,7 @@
             <assert test="{type != RGB} || {tags.tag[name=SamplesPerPixel] == 3}">SamplesPerPixel is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-278" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-278" context="ifd[class=image]" level="error">
             <title>RowsPerStrip mandatory tag</title>
             <description>This tag encodes the number of rows per strip within the image. This tag is mandatory.</description>
             <reference>
@@ -589,7 +566,7 @@
             <assert test="{tags.tag[name=RowsPerStrip]}">RowsPerStrip is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-279" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-279" context="ifd[class=image]" level="error">
             <title>StripByteCounts mandatory tag</title>
             <description>This tag encodes the number of bytes present in each strip after compression has been applied. This tag is mandatory.</description>
             <reference>
@@ -599,7 +576,7 @@
             <assert test="{tags.tag[name=StripByteCounts]}">StripByteCounts is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-282" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-282" context="ifd[class=image]" level="error">
             <title>XResolution mandatory tag</title>
             <description>This tag encodes the number of pixels per ResolutionUnit in the ImageWidth direction. This tag specifies the desired ouput rendering Xresolution. This tag is mandatory and there is no default value. 
                 It must equal Yresolution.</description>
@@ -610,7 +587,7 @@
             <assert test="{tags.tag[name=XResolution]}">XResolution is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-283" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-283" context="ifd[class=image]" level="error">
             <title>YResolution mandatory tag</title>
             <description>This tag encodes the number of pixels per ResolutionUnit in the ImageLength direction. This tag specifies the desired output rendering Yresolution. This tag is mandatory and there is no default value. 
                 It must equal Xresolution.</description>
@@ -621,7 +598,7 @@
             <assert test="{tags.tag[name=YResolution]}">YResolution is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-284" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-284" context="ifd[class=image]" level="error">
             <title>PlanarConfiguration mandatory tag</title>
             <description>This tag describes how the components (samples) of each pixel are stored. This tag is mandatory and there is no default value.</description>
             <reference>
@@ -631,7 +608,7 @@
             <assert test="{tags.tag[name=PlanarConfiguration]}">PlanarConfiguration is mandatory regarding the TI/A specifications</assert>
         </rule>
 
-        <rule id="MANDATORI-TAG-296" context="ifd[class=image]" level="error">
+        <rule id="MANDATORY-TAG-296" context="ifd[class=image]" level="error">
             <title>ResolutionUnit mandatory tag</title>
             <description>This tag encodes the unit of measurement for the XResolution and Yresolution. This tag is mandatory and there is no default value.</description>
             <reference>
