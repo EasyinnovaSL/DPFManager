@@ -131,10 +131,10 @@ public class RuleElement {
   String operateMultiplier(String val) {
     String value = val;
     if (elevator != null) {
-      value = (Math.pow(Double.parseDouble(elevator), Double.parseDouble(val))) + "";
+      value = (int)(Math.pow(Double.parseDouble(elevator), Double.parseDouble(val))) + "";
     }
     if (multiplier != null) {
-      value = (Double.parseDouble(value) * Integer.parseInt(multiplier)) + "";
+      value = (int)(Double.parseDouble(value) * Integer.parseInt(multiplier)) + "";
     }
     return value;
   }

@@ -203,6 +203,26 @@
     <reference><section>Section 2: TIFF Structure</section><paragraph>7</paragraph><pages>16</pages></reference>
    <assert test="{count(ifds) &gt; 1}">There is more than one IFD in the TIFF file. some readers will only render the first one</assert>
   </rule>
+
+  <rule id="IFD-0017" context="ifd[class=image]" level="error">
+   <title>Check valid extra samples components</title>
+   <description>Check valid extra samples components</description>
+   <reference><section>Section 8</section><page>31</page></reference>
+   <assert test="{correctExtraSamples == 1}">Incorrect Extra Samples Count</assert>
+  </rule>
+  <rule id="IFD-0018" context="ifd[class=image]" level="error">
+   <title>Check not unused extra samples present</title>
+   <description>Check not unused extra samples present</description>
+   <reference><section>Section 8</section><page>31</page></reference>
+   <assert test="{onlyNecessaryExtraSamples == 1}">Unnecessary Extra Samples</assert>
+  </rule>
+  <rule id="IFD-0019" context="ifd[class=image]" level="error">
+   <title>Check valid Bits per Sample values</title>
+   <description>Check valid Bits per Sample values</description>
+   <reference><section>Section 8</section><page>29</page></reference>
+   <assert test="{validBitsPerSample == 1}">Invalid Bits per Sample</assert>
+  </rule>
+
  </rules>
  
  <rules id="IFDE">
@@ -236,7 +256,7 @@
     
    To store a complicated data structure in a private tag, use the UNDEFINED field type and set the Count to the number of bytes required to hold the data structure.</description>
    <reference><section>Section 2: TIFF Structure</section><pages>15-16</pages></reference>
-   <assert test="{tagtype &gt; 0} &amp; &amp;  {tagtype &lt; 13}">Invalid TIFF type, this type is not defined in the Baseline 6.0</assert>
+   <assert test="{tagtype &gt; 0} &amp;&amp;  {tagtype &lt; 13}">Invalid TIFF type, this type is not defined in the Baseline 6.0</assert>
   </rule> 
 
   <rule id="IDFE-0002" context="tag[type=ASCII]" level="error">
@@ -361,7 +381,7 @@
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
-   <assert test="{tiles == 1} || tags.tag[name=StripBYTECount])}">Image IFD must have the tag StripBYTECount</assert>
+   <assert test="{tiles == 1} || {tags.tag[name=StripBYTECount]}">Image IFD must have the tag StripBYTECount</assert>
   </rule>
   
   <rule id="STRIPS-0003" context="ifd[class=image]" level="error">
@@ -415,14 +435,6 @@
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
    <assert test="{tags.tag[name=ExtraSamples]} || {tags.tag[name=BitsPerSample] == 1} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 1}">BitsPerSample and BitsPerSample should be 1 for Bilevel images without ExtraSamples</assert>
-  </rule>
-
-  <rule id="IFDB-0003" context="ifd[type=Bilevel]" level="error" experimental="true">
-   <title>Valid BitsPerSample and SamplesPerPixel with ExtraSample</title>
-   <description>Whenan Extra Sample is defined then BitsPerSample cardinality and SamplesPerPixel must be 1 for Bilevel Images .</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
-   <assert test="{!tags.tag[name=ExtraSamples]} || {tags.tag[name=BitsPerSample] == 1} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 1}">BitsPerSample and BitsPerSample should be 1 for Bilevel images without ExtraSamples</assert>
   </rule>
 
   <rule id="IFDB-0004" context="ifd[type=Bilevel]" level="warning">
@@ -511,7 +523,7 @@
    <title>Palette image SamplesPerPixel must be 1</title>
      <description>Palette image can not contain ExtraSamples SamplesPerPixel must be 1.</description>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
-   <assert test="{!tags.tag[name=SamplesPerPixel] || tags.tag[name=SamplesPerPixel] == 1}">Palette image can not contain ExtraSamples, SamplesPerPixel must be 1.</assert>
+   <assert test="{!tags.tag[name=SamplesPerPixel] || {tags.tag[name=SamplesPerPixel] == 1}">Palette image can not contain ExtraSamples, SamplesPerPixel must be 1.</assert>
   </rule>
  
   <rule id="IFDP-0005" context="ifd[type=Palette]" level="error">
@@ -1781,7 +1793,7 @@
    <title>RowsPerStrip tag valid Type</title>
    <description>ResolutionUnit Tag type must be SHORT</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
-   <assert test="{type=='SHORT'} || type=='LONG'">RowsPerStrip Tag type is not valid, a SHORT or LONG type is expected</assert>
+   <assert test="{type=='SHORT'} || {type=='LONG'}">RowsPerStrip Tag type is not valid, a SHORT or LONG type is expected</assert>
   </rule>
 
   <rule id="TAG-278-0002" context="tag[id=278]" level="error">
@@ -1880,7 +1892,7 @@
    <description>StripByteCounts tag cardinality is equal StripsPerImage for PlanarConfiguration equal to 1, and
 SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{tags.tag[name=PlanarConfiguration]) == 1} &amp;&amp; {tags.tag[name=StripByteCounts].cardinality == StripsPerImage} || {tags.tag[name=PlanarConfiguration]) == 2} &amp;&amp; {tags.tag[name=StripByteCounts].cardinality == tags.tag[name=SamplesPerPixel] * StripsPerImage}">StripByteCounts invalid cardinality</assert>
+   <assert test="{tags.tag[name=PlanarConfiguration] == 1} &amp;&amp; {tags.tag[name=StripByteCounts].cardinality == StripsPerImage} || {tags.tag[name=PlanarConfiguration] == 2} &amp;&amp; {tags.tag[name=StripByteCounts].cardinality == tags.tag[name=SamplesPerPixel] * StripsPerImage}">StripByteCounts invalid cardinality</assert>
   </rule>
 
  </rules>
@@ -1926,7 +1938,7 @@ SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description
    <description>StripOffsets tag cardinality is equal StripsPerImage for PlanarConfiguration equal to 1, and
 SamplesPerPixel * StripsPerImage for PlanarConfiguration equal to 2</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{tags.tag[name=PlanarConfiguration]) == 1} &amp;&amp; {tags.tag[name=StripOffsets].cardinality == StripsPerImage} || {tags.tag[name=PlanarConfiguration]) == 2} &amp;&amp; {tags.tag[name=StripOffsets].cardinality == tags.tag[name=SamplesPerPixel] * StripsPerImage}">StripOffsets invalid cardinality</assert>
+   <assert test="{tags.tag[name=PlanarConfiguration] == 1} &amp;&amp; {tags.tag[name=StripOffsets].cardinality == StripsPerImage} || {tags.tag[name=PlanarConfiguration] == 2} &amp;&amp; {tags.tag[name=StripOffsets].cardinality == tags.tag[name=SamplesPerPixel] * StripsPerImage}">StripOffsets invalid cardinality</assert>
   </rule>
   
   <rule id="TAG-273-0004" context="ifd[type=Strip]" level="warning" experimental="true">
@@ -1938,7 +1950,7 @@ and the strips themselves, in both compressed and uncompressed forms, should
 not be larger than 64K bytes.
 </description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="({tags.tag[name=StripOffsets]).size &lt; 65537} &amp;&amp; {strips.size &lt; 65537}">StripByteCounts invalid cardinality</assert>
+   <assert test="({tags.tag[name=StripOffsets].size &lt; 65537} &amp;&amp; {strips.size &lt; 65537}">StripByteCounts invalid cardinality</assert>
   </rule>
  </rules>
  

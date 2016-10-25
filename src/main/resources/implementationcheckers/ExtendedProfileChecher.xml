@@ -64,7 +64,7 @@ The features described in this part were either contained in earlier versions of
     4 = T6-encoding
     32773 = PackBits compression, a simple byte-oriented run length scheme. </description>
    <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
-   <assert test="{tag[name=Compression] &gt; 0} &amp;&amp; {tag[name=Compression] &lt; 5} || {tag[name=Compression] == 32773}">Invalid Compression for Bilevel image</assert>
+   <assert test="{tags.tag[name=Compression] &gt; 0} &amp;&amp; {tags.tag[name=Compression] &lt; 5} || {tags.tag[name=Compression] == 32773}">Invalid Compression for Bilevel image</assert>
   </rule>
   
   <rule id="CCIT-0002" context="ifd[type=Bilevel]" level="error">
@@ -85,7 +85,7 @@ The features described in this part were either contained in earlier versions of
     The tag should be present as a safeguard against the CCITT encoding “leaking” into an unsuspecting application, allowing readers to detect and warn against the occurence.
    </description>
    <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
-   <assert test="{tag[name=Compression] == 2} &amp; &amp; {tag[name=FillOrder] == 2}"> FillOrder = 2 should occur only in highly-localized and preferably-transient material, as in a facsimile server supporting group 3 facsimile equipment.
+   <assert test="{tags.tag[name=Compression] == 2} &amp;&amp; {tags.tag[name=FillOrder] == 2}"> FillOrder = 2 should occur only in highly-localized and preferably-transient material, as in a facsimile server supporting group 3 facsimile equipment.
     The tag should be present as a safeguard against the CCITT encoding “leaking” into an unsuspecting application, allowing readers to detect and warn against the occurence.</assert>
   </rule>
   
@@ -122,7 +122,7 @@ The features described in this part were either contained in earlier versions of
    <title>T4Options only valid with CCIT compresion</title>
    <description>T4Options should only be used in with CCIT compresion</description>
    <reference><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
-   <assert test="{tags.tag[name=Compression] != 3} &amp; &amp; {tags.tag[name=T4Options]}"></assert>
+   <assert test="{tags.tag[name=Compression] != 3} &amp;&amp; {tags.tag[name=T4Options]}"></assert>
   </rule>
   
   <rule id="TAG-292-0004" context="ifd" level="warning">
@@ -171,7 +171,7 @@ The features described in this part were either contained in earlier versions of
    <title>T4Options only valid with CCIT compresion</title>
    <description>T4Options should only be used in with CCIT compresion</description>
    <reference><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
-   <assert test="{tags.tag[name=Compression] != 4} &amp; &amp; {tags.tag[name=T6Options]}"></assert>
+   <assert test="{tags.tag[name=Compression] != 4} &amp;&amp; {tags.tag[name=T6Options]}"></assert>
   </rule>
   
   <rule id="TAG-293-0004" context="ifd" level="warning">
@@ -414,7 +414,7 @@ The features described in this part were either contained in earlier versions of
    <title>Predictor default value</title>
    <description>Predictor tag has a default value, if it is not present value 1 is assumed.</description>
    <reference><section>Section 14: Differencing Predictor</section><page>64</page></reference>
-   <assert test="{!tags.tag[name=Predictor]} &amp;&amp; {tags.tag[Compression] == 5}">Predictor Tag is not defined. Then  1 value is assumed</assert>
+   <assert test="{!tags.tag[name=Predictor]} &amp;&amp; {tags.tag[name=Compression] == 5}">Predictor Tag is not defined. Then  1 value is assumed</assert>
   </rule>
  </rules>
  
@@ -427,7 +427,7 @@ The features described in this part were either contained in earlier versions of
    strips.</description>
   
   
-  <rule id="TILES-0001" context="ifd[class=Image]" level="error">
+  <rule id="TILES-0001" context="ifd[class=image]" level="error">
    <title>An image IFD must be Tiled or Striped</title>
    <description>When the tiling fields described below are used, they replace the StripOffsets, StripByteCounts, and RowsPerStrip fields. 
     
@@ -437,7 +437,7 @@ The features described in this part were either contained in earlier versions of
    <assert test="{strips == 0} || {tiles == 0}">Image must be in either Strips or Tiles</assert>
   </rule>
   
-  <rule id="TILES-0002" context="ifd[class=Image]" level="error">
+  <rule id="TILES-0002" context="ifd[class=image]" level="error">
    <title>An image IFD cannot be Tiled and Striped</title>
    <description>When the tiling fields described below are used, they replace the StripOffsets, StripByteCounts, and RowsPerStrip fields. 
     
@@ -827,7 +827,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>InkNames valid cardinality</title>
    <description>The cardinality InkNames Tag type must be equal of NumberOfInks</description>
    <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
-   <assert test="{!tags.tag[name=InkNames] || tags.tag[name=InkNames].cardinality == 4 || tags.tag[name=InkNames].cardinality == tags.tag[name=NumberOfInks]}">InkNames invalid cardinality, InkNames Tag type must be equal of NumberOfInks</assert>
+   <assert test="{!tags.tag[name=InkNames] || {tags.tag[name=InkNames].cardinality == 4 || {tags.tag[name=InkNames].cardinality == tags.tag[name=NumberOfInks]}">InkNames invalid cardinality, InkNames Tag type must be equal of NumberOfInks</assert>
   </rule>
   
   <rule id="TAG-333-0003" context="ifd" level="warning">
@@ -866,7 +866,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>DotRange valid cardinality</title>
    <description>The cardinality DotRange Tag type must be 2 or equal of 2 * BitsPerSample</description>
    <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
-   <assert test="{tags.tag[name=DotRange].cardinality == 2 || tags.tag[name=DotRange].cardinality == 2 * tags.tag[name=BitsPerSample].cardinality}">DotRange invalid cardinality, DotRange Tag cardinality must be equal 2 or 2* BitsPerSample</assert>
+   <assert test="{tags.tag[name=DotRange].cardinality == 2 || {tags.tag[name=DotRange].cardinality == 2 * tags.tag[name=BitsPerSample].cardinality}">DotRange invalid cardinality, DotRange Tag cardinality must be equal 2 or 2* BitsPerSample</assert>
   </rule>
 
   <rule id="TAG-336-0003" context="tag[id=336]" level="warning">
@@ -1284,21 +1284,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>Valid samples per Pixel</title>
    <description>When No Extra Sample is defined then SamplesPerPixel must be 3 for YCbCr Images.</description>
    <reference><section>Section 21: YCbCr Images</section><page>89</page></reference>
-   <assert test="{!tags.tag[name=Extrasample]} ||  {tags.tag[name=SamplesPerPixel] == 3}">SamplesPerPixel  must be 3 for YCbCr images without ExtraSamples</assert>
+   <assert test="{!tags.tag[name=Extrasample]} || {tags.tag[name=SamplesPerPixel] == 3}">SamplesPerPixel  must be 3 for YCbCr images without ExtraSamples</assert>
   </rule>
   
   <rule id="YCBCR-0004" context="ifd[type=YCbCr]" level="error">
    <title>Valid BitsPerSample</title>
    <description>When No Extra Sample is defined then BitsPerSample must be 8,8,8 for YCbCr Images.</description>
    <reference><section>Section 21: YCbCr Images</section><page>94</page></reference>
-   <assert test="{!tags.tag[name=Extrasample]} ||  {tags.tag[name=BitsPerSample] == 8,8,8}">SamplesPerPixel  must be 3 for YCbCr images without ExtraSamples</assert>
+   <assert test="{!tags.tag[name=Extrasample]} || {tags.tag[name=BitsPerSample] == '8,8,8'}">SamplesPerPixel  must be 3 for YCbCr images without ExtraSamples</assert>
   </rule>
   
   <rule id="IFDR-0005" context="ifd[type=YCbCr]" level="error">
    <title>Valid compression for YCbCr image</title>
    <description>YCbCr images can either be stored as uncompressed(1) data or compressed with the LZW(5) or JPEG(6) algorithm.</description>
    <reference><section>Section 21: YCbCr Images</section><page>94</page></reference>
-   <assert test="{!tags.tag[name=Compression]} || {tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 5 || tags.tag[name=Compression] == 6}">Invalid Compression for YCbCr image</assert>
+   <assert test="{!tags.tag[name=Compression]} || {tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 5} || {tags.tag[name=Compression] == 6}">Invalid Compression for YCbCr image</assert>
   </rule>
   
   <rule id="IFDR-0006" context="ifd[type=YCbCr]" level="warning">
@@ -1392,7 +1392,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>YCbCrSubSampling valid cardinality</title>
    <description>The cardinality YCbCrSubSampling Tag type must be 2</description>
    <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
-   <assert test="{tags.tag[name=YCbCrCoefficients].cardinality == 2 }">Invalid cardinality, YCbCrSubSampling cardinality should be 2</assert>
+   <assert test="{tags.tag[name=YCbCrCoefficients].cardinality == 2}">Invalid cardinality, YCbCrSubSampling cardinality should be 2</assert>
   </rule>
   
   <rule id="TAG-530-0003" context="ifd" level="warning">
@@ -1909,7 +1909,6 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   </rule>
  </rules>
  
- 
  <rules id="CIELab">
   <title>CIE L*a*b* Images</title>
   <description>CIE La*b* is a color space that is colorimetric, has separate lightness and chroma channels, and is approximately perceptually uniform. It has excellent applicability for device-independent manipulation of continuous tone images.
@@ -1938,21 +1937,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{tags.tag[name=ExtraSample]} &amp;&amp; {tags.tag[name=SamplesPerPixel] - tags.tag[name=ExtraSample] == 3}"></assert>
   </rule>
   
-  <rule id="CIELab-0003" context="ifd[type=CIELab]" level="error" experimental="true">
+  <rule id="CIELab-0004" context="ifd[type=CIELab]" level="error" experimental="true">
    <title>CIE L*a*b* image invalid WhitePoint tag</title>
    <description>A CIE L*a*b* must not apply WhitePoint tag</description>
    <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
    <assert test="{!tags.tag[name=WhitePoint]}">A CIE L*a*b* Image must not contain a WhitePoint tag</assert>
   </rule>
   
-  <rule id="CIELab-0003" context="ifd[type=CIELab]" level="error" experimental="true">
+  <rule id="CIELab-0005" context="ifd[type=CIELab]" level="error" experimental="true">
    <title>CIE L*a*b* image invalid PrimaryChromaticities tag</title>
    <description>A CIE L*a*b* must not apply PrimaryChromaticities tag</description>
    <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
    <assert test="{!tags.tag[name=PrimaryChromaticities]}">A CIE L*a*b* Image must not contain a PrimaryChromaticities tag</assert>
   </rule>
   
-  <rule id="CIELab-0003" context="ifd[type=CIELab]" level="error" experimental="true">
+  <rule id="CIELab-0006" context="ifd[type=CIELab]" level="error" experimental="true">
    <title>CIE L*a*b* image invalid TransferFunction tag</title>
    <description>A CIE L*a*b* must not apply TransferFunction tag</description>
    <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
@@ -1961,116 +1960,88 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   
  </rules>
  
- <rules description="tags-check">
-  
+ <rules id="Formulas">
+   <title>Cardinality Formulas</title>
+   <description>Cardinality Formulas.</description>
 
-  <rule id="bl-tg-15" context="ifd[class=Image]">
-   <assert test="{correctExtraSamples == 1}">Incorrect Extra Samples Count</assert>
-   <description>Check valid extra samples components</description>
-   <reference>Section 8, page 31</reference>
-  </rule>
-  
-  <rule id="bl-tg-16" context="ifd[class=Image]">
-   <assert test="{onlyNecessaryExtraSamples == 1}">Unnecessary Extra Samples</assert>
-   <description>Check not unused extra samples present</description>
-   <reference>Section 8, page 31</reference>
-  </rule>
-  <rule id="bl-tg-17" context="ifd[class=Image]">
-   <assert test="{validBitsPerSample == 1}">Invalid Bits per Sample</assert>
-   <description>Check valid Bits per Sample values</description>
-   <reference>Section 8, page 29</reference>
-  </rule>
-  
- 
-  
- </rules>
- 
- <rules description="cardinality-formulas">
-  <rule id="bl-ca-181" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGLosslessPredictors tag must match SamplesPerPixel value</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 22, page 107</reference>
-  </rule>
-  <rule id="bl-ca-182" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGPointTransforms tag must match SamplesPerPixel value</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 22, page 107</reference>
-  </rule>
-  <rule id="bl-ca-183" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGQTables tag must match SamplesPerPixel value</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 22, page 107</reference>
-  </rule>
-  <rule id="bl-ca-184" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGDCTables tag must match SamplesPerPixel value</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 22, page 107</reference>
-  </rule>
-  <rule id="bl-ca-185" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGACTables tag must match SamplesPerPixel value</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 22, page 107</reference>
-  </rule>
-  <rule id="bl-ca-186" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of WhiteLevel tag must match SamplesPerPixel value</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference></reference>
-  </rule>
-  <!-- moved to ifd image section
-  <rule id="bl-ca-187" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=BitsPerSample].cardinality == tags.tag[name=SamplesPerPixel]}">Samples per Pixel and Bits per Sample count do not match</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 8, page 29 and 39</reference>
-  </rule>-->
-  <rule id="bl-ca-188" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=MinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of MinSampleValue tag must match SamplesPerPixel value</assert>
-   <reference>Section 8, page 35</reference>
-  </rule>
-  <rule id="bl-ca-189" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=MaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of MaxSampleValue tag must match SamplesPerPixel value</assert>
-   <reference>Section 8, page 35</reference>
-  </rule>
-  <rule id="bl-ca-190" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMinSampleValue tag must match SamplesPerPixel value</assert>
-   <reference>Section 8, page 35</reference>
-  </rule>
-  <rule id="bl-ca-191" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMaxSampleValue tag must match SamplesPerPixel value</assert>
-   <reference>Section 8, page 35</reference>
-  </rule>
-  <rule id="bl-ca-192" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=ImageBaseColor].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of ImageBaseColor tag must match SamplesPerPixel value</assert>
-   <description>Check valid cardinality for tag</description>
-  </rule>
-  <rule id="bl-ca-193" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SampleFormat tag must match SamplesPerPixel value</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 19, page 80</reference>
-  </rule>
-  <rule id="bl-ca-194" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=CMYKEquivalent].cardinality == 4*tags.tag[name=SamplesPerPixel]}">CMYKEquivalent count must be 4*Bits per Sample</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 16, page 69</reference>
-  </rule>
-  <rule id="bl-ca-195" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=Decode].cardinality == 2*tags.tag[name=Decode]}">Decode count must be 2*Bits per Sample</assert>
-   <description>Check valid cardinality for tag</description>
-  </rule>
-  <rule id="bl-ca-196" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=GrayResponseCurve].cardinality == 2^tags.tag[name=BitsPerSample]}">Tag cardinality is not valid</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 8, page 33</reference>
-  </rule>
-  <rule id="bl-ca-197" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=ColorMap].cardinality == 3*2^tags.tag[name=BitsPerSample]}">Tag cardinality is not valid</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 8, page 29</reference>
-  </rule>
-  <rule id="bl-ca-198" context="ifd[class=Image]">
-   <assert test="{tags.tag[name=DotRange].cardinality &gt; 1}">Tag cardinality is not valid</assert>
-   <description>Check valid cardinality for tag</description>
-   <reference>Section 16, page 71</reference>
-  </rule>
+   <rule id="bl-ca-181" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>22</section><page>107</page></reference>
+    <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGLosslessPredictors tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-182" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>22</section><page>107</page></reference>
+    <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGPointTransforms tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-183" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>22</section><page>107</page></reference>
+    <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGQTables tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-184" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>22</section><page>107</page></reference>
+    <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGDCTables tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-185" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>22</section><page>107</page></reference>
+    <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGACTables tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-186" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>8</section><page>35</page></reference>
+    <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of WhiteLevel tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-190" context="ifd[class=image]" level="error">
+    <title></title>
+    <description></description>
+    <reference><section>8</section><page>35</page></reference>
+    <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMinSampleValue tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-191" context="ifd[class=image]" level="error">
+    <title></title>
+    <description></description>
+    <reference><section>8</section><page>35</page></reference>
+    <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMaxSampleValue tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-192" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>8</section><page>35</page></reference>
+    <assert test="{tags.tag[name=ImageBaseColor].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of ImageBaseColor tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-193" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>19</section><page>80</page></reference>
+    <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SampleFormat tag must match SamplesPerPixel value</assert>
+   </rule>
+   <rule id="bl-ca-194" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>16</section><page>69</page></reference>
+    <assert test="{tags.tag[name=CMYKEquivalent].cardinality == 4*tags.tag[name=SamplesPerPixel]}">CMYKEquivalent count must be 4*Bits per Sample</assert>
+   </rule>
+   <rule id="bl-ca-195" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>16</section><page>70</page></reference>
+    <assert test="{tags.tag[name=Decode].cardinality == 2*tags.tag[name=Decode]}">Decode count must be 2*Bits per Sample</assert>
+   </rule>
+   <rule id="bl-ca-198" context="ifd[class=image]" level="error">
+    <title>Check valid cardinality for tag</title>
+    <description>Check valid cardinality for tag</description>
+    <reference><section>16</section><page>71</page></reference>
+    <assert test="{tags.tag[name=DotRange].cardinality &gt; 1}">Tag cardinality is not valid</assert>
+   </rule>
  </rules>
  
 </implementationCheckerObject>
