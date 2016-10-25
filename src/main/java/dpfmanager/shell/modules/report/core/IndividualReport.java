@@ -377,6 +377,13 @@ public class IndividualReport implements Comparable {
     return isosCheck.contains(key);
   }
 
+  public List<RuleResult> getAllRuleResults(String key) {
+    List<RuleResult> all = new ArrayList<>();
+    all.addAll(getErrors(key));
+    all.addAll(getWarnings(key));
+    return all;
+  }
+
   /**
    * Get warnings and infos list.
    *

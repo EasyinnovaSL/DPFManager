@@ -205,7 +205,11 @@ public class RuleType {
       if (!ref.getSection().isEmpty()) {
         s += ref.getSection() + ". ";
       }
-      s += DPFManagerProperties.getBundle().getString("rulePage").replace("%1", ref.getPage());
+      String replace = "";
+      if (ref.getPage() != null){
+        replace = ref.getPage();
+      }
+      s += DPFManagerProperties.getBundle().getString("rulePage").replace("%1", replace);
     }
     return s;
   }

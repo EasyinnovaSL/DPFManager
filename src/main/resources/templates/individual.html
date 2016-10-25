@@ -8,6 +8,8 @@
 	<link rel="stylesheet" type="text/css" href="../html/css/font-awesome.css">
 	<link rel="stylesheet" type="text/css" href="../html/css/fontello.css">
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 </head>
 <body>
 	<div class="header">
@@ -93,8 +95,12 @@
 	</div>
 	
 	<!-- 	Java Script -->
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script type="text/javascript">
+	$(document).ready(function(){
+		$('[data-toggle="popover"]').popover({
+			html: true
+		});
+	});
 	var ifdSelected = 0;
 	function showIfd(nameid){
 		ifdSelected= nameid;
@@ -150,6 +156,13 @@
 	function expertChanged(){
 		if ($('#checkSelected').is(":checked")) $(".ifd"+ifdSelected+".expert").show();
 		else $(".expert").hide();
+	}
+	function onChangeInfo(index){
+		if ($("#checkInfo"+index).is(":checked")){
+			$(".info"+index).show()
+		} else {
+			$(".info"+index).hide()
+		}
 	}
     </script>
 </body>

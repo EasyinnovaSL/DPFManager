@@ -370,3 +370,7 @@ h4 i{
 .xmp,.exif,.iptc {
 	display:none;
 }
+
+.popover-title{
+	color: black;
+}

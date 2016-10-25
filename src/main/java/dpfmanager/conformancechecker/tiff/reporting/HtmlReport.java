@@ -1,13 +1,13 @@
 /**
- * <h1>HtmlReport.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>HtmlReport.java</h1> <p> This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -21,17 +21,18 @@ package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.TiffObject;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
-import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,7 +49,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Hashtable;
-import java.util.List;
 
 /**
  * Created by easy on 05/05/2016.
@@ -56,7 +56,7 @@ import java.util.List;
 public class HtmlReport extends Report {
   String makeConformDiv(int nerrors, int nwarnings, String key, String html, boolean check, boolean forcecheck) {
     String htmlBody = html;
-    if (check || (forcecheck && nerrors+nwarnings == 0)) {
+    if (check || (forcecheck && nerrors + nwarnings == 0)) {
       if (nerrors > 0) {
         htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "none");
         htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "none");
@@ -104,8 +104,8 @@ public class HtmlReport extends Report {
     htmlBody = StringUtils.replace(htmlBody, "##IMG_NAME##", ir.getFileName());
     htmlBody = StringUtils.replace(htmlBody, "##IMG_FILEPATH##", ir.getFilePath());
     String divs = "";
-    for (String iso : ir.getCheckedIsos()){
-      if (ir.hasValidation(iso) || ir.getErrors(iso).isEmpty()){
+    for (String iso : ir.getCheckedIsos()) {
+      if (ir.hasValidation(iso) || ir.getErrors(iso).isEmpty()) {
         divs += makeConformsText(ir, iso);
       }
     }
@@ -129,7 +129,7 @@ public class HtmlReport extends Report {
         "    <td class=\"##WAR_CLASS##\">##WAR##</td>\n" +
         "    </tr>";
     String rows = "";
-    for (String iso : ir.getCheckedIsos()){
+    for (String iso : ir.getCheckedIsos()) {
       if (ir.hasValidation(iso) || ir.getErrors(iso).isEmpty()) {
         String name = ImplementationCheckerLoader.getIsoName(iso);
         String row = rowTmpl;
@@ -152,63 +152,66 @@ public class HtmlReport extends Report {
      */
 
     String fullTmpl = "<div class=\"row top30 bot50 fullw\">\n" +
+        "\t\t\t\t<div class=\"clexpert\"><input type=\"checkbox\" name=\"info\" id=\"checkInfo##COUNT##\" onclick=\"onChangeInfo(##COUNT##)\"> Show infos</div>\n" +
         "\t\t\t\t<div>\n" +
         "\t\t\t\t\t<h4 class=\"left15\"><i class=\"fa fa-check-square-o\"></i>  ##TITLE##</h4>\n" +
         "\t\t\t\t\t##CONTENT##\n" +
         "\t\t\t\t</div>\n" +
         "\t\t\t</div>";
-    String conformTmpl = "<span style=\"margin-left: 20px;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to ##TITLE##</span>";
+//    String conformTmpl = "<span style=\"margin-left: 20px;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to ##TITLE##</span>";
     String errorsTmpl = "<table class=\"CustomTable3 left15\">\n" +
         "\t\t\t\t        <tr>\n" +
-        "\t\t\t\t            <th class=\"bold col-md-2\">Type</th>\n" +
-        "\t\t\t\t            <th class=\"bold col-md-2\">Location</th>\n" +
-        "\t\t\t\t            <th class=\"bold col-md-4\">Reference</th>\n" +
-        "\t\t\t\t            <th class=\"bold col-md-4\">Description</th>\n" +
+        "\t\t\t\t            <th class=\"bold\" style='width: 60px;'>Type</th>\n" +
+        "\t\t\t\t            <th class=\"bold\" style='width: 120px;'>ID</th>\n" +
+        "\t\t\t\t            <th class=\"bold\" style='width: 110px;'>Location</th>\n" +
+        "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
         "\t\t\t\t        </tr>\n" +
         "\t\t\t\t        ##ROWS##\n" +
         "\t\t\t\t\t</table>";
+    String tdTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
     rows = "";
-    for (String iso : ir.getIsosCheck()){
+    int count = 0;
+    for (String iso : ir.getIsosCheck()) {
       if (ir.hasValidation(iso)) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
+        ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(iso);
+        String name = rules.getTitle();
         String row = fullTmpl;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
         int infosCount = ir.getNInfos(iso);
         String content = "";
-        if (errorsCount + warningsCount == 0){
-          content += conformTmpl;
-        }
+//        if (errorsCount + warningsCount == 0) {
+//          content += conformTmpl;
+//        }
         if (errorsCount + warningsCount + infosCount > 0) {
           content += errorsTmpl;
-          // Errors
           String allRows = "";
-          for (RuleResult val : ir.getErrors(iso)) {
-            String errRow = "<tr><td class=\"bold error\">Error</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
-            errRow = errRow.replace("##LOC##", val.getLocation());
-            errRow = errRow.replace("##REF##", val.getReference() != null ? val.getReference() : "");
-            errRow = errRow.replace("##TEXT##", val.getDescription());
-            allRows += errRow;
-          }
-          // Warnings
-          for (RuleResult val : ir.getOnlyWarnings(iso)) {
-            String rowWar = "<tr><td class=\"bold warning\">Warning</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
-            rowWar = rowWar.replace("##LOC##", val.getLocation());
-            rowWar = rowWar.replace("##REF##", val.getReference() != null ? val.getReference() : "");
-            rowWar = rowWar.replace("##TEXT##", val.getDescription());
-            allRows += rowWar;
-          }
-          // Infos
-          for (RuleResult val : ir.getOnlyInfos(iso)) {
-            String rowInfo = "<tr><td class=\"bold info\">Info</td><td>##LOC##</td><td>##REF##</td><td>##TEXT##</td></tr>";
-            rowInfo = rowInfo.replace("##LOC##", val.getLocation());
-            rowInfo = rowInfo.replace("##REF##", val.getReference() != null ? val.getReference() : "");
-            rowInfo = rowInfo.replace("##TEXT##", val.getDescription());
-            allRows += rowInfo;
+          // Errors, Warnings and Infos
+          for (RuleResult val : ir.getAllRuleResults(iso)) {
+            String tdRow = tdTmpl;
+            String display = "";
+            String clasz = "";
+            if (val.getRule().isError() || val.getRule().isCritical()) {
+              tdRow = tdRow.replace("##FA_CLASS##", "times");
+            } else if (val.getRule().isWarning()) {
+              tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
+            } else if (val.getRule().isInfo()) {
+              tdRow = tdRow.replace("##FA_CLASS##", "info");
+              display = "style='display: none;'";
+              clasz = "class='info##COUNT##'";
+            }
+            tdRow = tdRow.replace("##ID##", val.getRule().getId());
+            tdRow = tdRow.replace("##LOC##", val.getLocation());
+            tdRow = tdRow.replace("##DESC##", val.getDescription());
+            tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
+            tdRow = tdRow.replace("##DISPLAY##", display);
+            tdRow = tdRow.replace("##CLASS##", clasz);
+            allRows += tdRow;
           }
           content = StringUtils.replace(content, "##ROWS##", allRows);
         }
         row = StringUtils.replace(row, "##CONTENT##", content);
+        row = StringUtils.replace(row, "##COUNT##", (++count) + "");
         row = StringUtils.replace(row, "##TITLE##", name);
         rows += row;
       }
@@ -224,11 +227,11 @@ public class HtmlReport extends Report {
       if (tag.tv.getId() == 700) {
         // XMP
         for (abstractTiffType to : tag.tv.getValue()) {
-          XMP xmp = (XMP)to;
+          XMP xmp = (XMP) to;
           try {
             Metadata metadata = xmp.createMetadata();
             for (String key : metadata.keySet()) {
-              row = "<tr class='xmp xmp" + (tag.index+1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+              row = "<tr class='xmp xmp" + (tag.index + 1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
               row = row.replace("##ICON##", "<i class=\"icon-" + key.toLowerCase() + "\"></i>");
               row = row.replace("##ID##", "");
               row = row.replace("##KEY##", key);
@@ -258,11 +261,11 @@ public class HtmlReport extends Report {
       if (tag.tv.getId() == 33723) {
         // IPTC
         for (abstractTiffType to : tag.tv.getValue()) {
-          IPTC iptc = (IPTC)to;
+          IPTC iptc = (IPTC) to;
           try {
             Metadata metadata = iptc.createMetadata();
             for (String key : metadata.keySet()) {
-              row = "<tr class='iptc iptc" + (tag.index+1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+              row = "<tr class='iptc iptc" + (tag.index + 1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
               row = row.replace("##ICON##", "<i class=\"icon-" + key.toLowerCase() + "\"></i>");
               row = row.replace("##ID##", "");
               row = row.replace("##KEY##", key);
@@ -278,10 +281,10 @@ public class HtmlReport extends Report {
       if (tag.tv.getId() == 34665) {
         // EXIF
         for (abstractTiffType to : tag.tv.getValue()) {
-          IFD exif = (IFD)to;
+          IFD exif = (IFD) to;
           try {
             for (TagValue tv : exif.getTags().getTags()) {
-              row = "<tr class='exif exif" + (tag.index+1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+              row = "<tr class='exif exif" + (tag.index + 1) + "'><td>##ICON##</td><td>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
               row = row.replace("##ICON##", "<i class=\"icon-" + tv.getName().toLowerCase() + "\"></i>");
               row = row.replace("##ID##", "");
               row = row.replace("##KEY##", tv.getName());
@@ -376,13 +379,19 @@ public class HtmlReport extends Report {
     while (tdifd != null) {
       XMP xmp = null;
       IPTC iptc = null;
-      if (tdifd.containsTagId(TiffTags.getTagId("XMP"))) xmp = (XMP)tdifd.getTag("XMP").getValue().get(0);
-      if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) iptc = (IPTC)tdifd.getTag("IPTC").getValue().get(0);
+      if (tdifd.containsTagId(TiffTags.getTagId("XMP")))
+        xmp = (XMP) tdifd.getTag("XMP").getValue().get(0);
+      if (tdifd.containsTagId(TiffTags.getTagId("IPTC")))
+        iptc = (IPTC) tdifd.getTag("IPTC").getValue().get(0);
 
       // Author
-      String authorTag = null; if (tdifd.containsTagId(TiffTags.getTagId("Artist"))) authorTag = tdifd.getTag("Artist").toString();
-      String authorIptc = null; if (iptc != null) authorIptc = iptc.getCreator();
-      String authorXmp = null; if (xmp != null) authorXmp = xmp.getCreator();
+      String authorTag = null;
+      if (tdifd.containsTagId(TiffTags.getTagId("Artist")))
+        authorTag = tdifd.getTag("Artist").toString();
+      String authorIptc = null;
+      if (iptc != null) authorIptc = iptc.getCreator();
+      String authorXmp = null;
+      if (xmp != null) authorXmp = xmp.getCreator();
       htmlBody = DetectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd, htmlBody);
 
       tdifd = tdifd.getNextIFD();
@@ -410,16 +419,25 @@ public class HtmlReport extends Report {
     return htmlBodyMod;
   }
 
-  private String makeConformsText(IndividualReport ir, String iso){
+  private String makePopoverAttributes(RuleResult val) {
+    RuleType rule = val.getRule();
+    String description = rule.getDescription().getValue();
+    if (val.getReference() != null) {
+      description += "<br><i>" + val.getReference() + "</i>";
+    }
+    return "data-toggle=\"popover\" title=\"" + rule.getTitle().getValue() + "\" data-content=\"" + description + "\" data-placement=\"auto bottom\" data-trigger=\"hover\"";
+  }
+
+  private String makeConformsText(IndividualReport ir, String iso) {
     String tmplPassed = "<div class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to ##TITLE##</div>";
     String tmplWarn = "<div class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> This file conforms to ##TITLE##, BUT it has some warnings</div>";
     String tmplError = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> This file does NOT conform to ##TITLE##</div>";
     String name = ImplementationCheckerLoader.getIsoName(iso);
     int err = ir.getNErrors(iso);
     int war = ir.getNWarnings(iso);
-    if (err == 0 && war == 0){
+    if (err == 0 && war == 0) {
       return StringUtils.replace(tmplPassed, "##TITLE##", name);
-    } else if (err == 0 && war > 0){
+    } else if (err == 0 && war > 0) {
       return StringUtils.replace(tmplWarn, "##TITLE##", name);
     } else {
       return StringUtils.replace(tmplError, "##TITLE##", name);
