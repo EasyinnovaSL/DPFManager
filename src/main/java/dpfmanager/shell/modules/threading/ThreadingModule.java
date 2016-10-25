@@ -21,6 +21,7 @@ package dpfmanager.shell.modules.threading;
 
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.messages.messages.CloseMessage;
@@ -75,6 +76,9 @@ public class ThreadingModule extends DpfModule {
   @PostConstruct
   public void onPostConstructComponent(final ResourceBundle resourceBundle) {
     service.setContext(new GuiContext(context));
+    if (context.getParentId().equals(GuiConfig.PERSPECTIVE_DESSIGN)){
+      service.reSetContext(new GuiContext(context));
+    }
   }
 
   @PreDestroy

@@ -64,10 +64,6 @@ public class ReportsPerspective extends DpfAbstractPerspective {
   @Resource
   public Context context;
 
-  private ScrollPane scrollPane;
-
-  private boolean firsttime;
-
   @Override
   public void handleMessage(DpfMessage dpfMessage, PerspectiveLayout layout) {
   }
@@ -104,8 +100,6 @@ public class ReportsPerspective extends DpfAbstractPerspective {
 
     // Define main pane
     borderPane = constructBorderPane(perspectiveLayout, topPane, mainPane);
-
-    firsttime = true;
   }
 
   @Override

@@ -653,6 +653,16 @@
     -fx-background-color: transparent;
     -fx-opacity: 0;
 }
+.button-trans-clear{
+    -fx-text-fill: #31C2F3;
+    -fx-background-color: #333333;
+    -fx-border-width: 1;
+    -fx-border-color: white;
+    -fx-border-radius: 5;
+}
+.button-trans-clear:pressed {
+    -fx-background-color: #868686;
+}
 
 /* Text Area */
 .text-area{
@@ -676,6 +686,12 @@
 
 .console-area .viewport{
     -fx-border-width: 0;
+}
+
+.border-box{
+    -fx-border-width: 1;
+    -fx-border-color: #1cc2ff;
+    -fx-border-radius: 5;
 }
 
 /* Scroll Bars */

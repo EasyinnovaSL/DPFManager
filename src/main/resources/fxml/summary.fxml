@@ -13,6 +13,10 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
@@ -43,20 +47,95 @@
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                 </columnResizePolicy>
             </TableView>
-         <ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">
-            <VBox.margin>
-               <Insets top="20.0" />
-            </VBox.margin>
-         </ProgressIndicator>
-            <Label fx:id="labelEmpty" styleClass="label-info" text="%noReports">
-            <VBox.margin>
-               <Insets top="15.0" />
-            </VBox.margin></Label>
-            <Button fx:id="loadMore" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" prefWidth="125.0" styleClass="secondary-button" text="%loadMore" textFill="WHITE">
+            <ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">
                 <VBox.margin>
-                    <Insets bottom="40.0" top="10.0" />
+                    <Insets top="20.0" />
                 </VBox.margin>
-            </Button>
+            </ProgressIndicator>
+            <Label fx:id="labelEmpty" styleClass="label-info" text="%noReports">
+                <VBox.margin>
+                    <Insets top="15.0" />
+                </VBox.margin>
+            </Label>
+            <GridPane>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                    <Button fx:id="loadMore" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" prefWidth="125.0" styleClass="secondary-button" text="%loadMore" textFill="WHITE" GridPane.columnIndex="1" />
+               <VBox alignment="TOP_RIGHT" spacing="10.0" GridPane.columnIndex="2">
+                  <children>
+                          <HBox fx:id="hboxSize" alignment="CENTER_RIGHT">
+                              <children>
+                                  <Label fx:id="labelSize" styleClass="lightgrey" text="%folderSize">
+                                      <HBox.margin>
+                                          <Insets right="10.0" />
+                                      </HBox.margin>
+                                  </Label>
+                                  <Button fx:id="clearOptionsButton" mnemonicParsing="false" onAction="#clearOptions" styleClass="button-trans-clear" text="%clearOptions">
+                                      <padding>
+                                          <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+                                      </padding>
+                                      <HBox.margin>
+                                          <Insets />
+                                      </HBox.margin>
+                                  </Button>
+                              </children>
+                          </HBox>
+                     <HBox fx:id="hboxOptions" alignment="CENTER_RIGHT" styleClass="border-box">
+                        <VBox.margin>
+                           <Insets top="5.0" />
+                        </VBox.margin>
+                        <children>
+                           <VBox spacing="10.0">
+                              <children>
+                                 <RadioButton fx:id="radAll" mnemonicParsing="false" selected="true" styleClass="lightgrey" text="%allReports">
+                                    <toggleGroup>
+                                       <ToggleGroup fx:id="toggleClear" />
+                                    </toggleGroup></RadioButton>
+                                 <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                       <RadioButton fx:id="radOlder" mnemonicParsing="false" styleClass="lightgrey" text="%olderThan" toggleGroup="$toggleClear" />
+                                       <DatePicker fx:id="datePicker" prefWidth="110.0">
+                                          <HBox.margin>
+                                             <Insets left="10.0" />
+                                          </HBox.margin>
+                                       </DatePicker>
+                                    </children>
+                                 </HBox>
+                              </children>
+                              <HBox.margin>
+                                 <Insets right="20.0" />
+                              </HBox.margin>
+                           </VBox>
+                           <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearReports" styleClass="button-trans-clear" text="%clear">
+                              <padding>
+                                 <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+                              </padding>
+                           </Button>
+                        </children>
+                        <padding>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </padding>
+                     </HBox>
+                  </children>
+                  <padding>
+                     <Insets right="10.0" />
+                  </padding>
+               </VBox>
+                </children>
+                <padding>
+                    <Insets left="65.0" right="65.0" />
+                </padding>
+                <VBox.margin>
+                    <Insets bottom="40.0" top="15.0" />
+                </VBox.margin>
+            </GridPane>
         </VBox>
     </children>
 </AnchorPane>
