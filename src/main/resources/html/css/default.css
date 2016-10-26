@@ -9,6 +9,10 @@ body {
     background-color: #333333;
 }
 
+.individual-in-global {
+    background-color: white;
+}
+
 .preview-image {
     max-width: 100%;
     max-height: 200px;
@@ -219,12 +223,13 @@ li {
     border-collapse: collapse;
     table-layout: fixed;
     width: 100%;
+    background-color: white;
 }
-
 .CustomTable3 th {
     text-align: left;
-    background-color: white;
+    background-color: #333333;
     padding: 5px;
+    color: lightgray;
 }
 
 .CustomTable3 th:first-child {
@@ -234,10 +239,14 @@ li {
 .CustomTable3 td {
     padding: 5px;
     padding-right: 10px;
+    word-wrap: break-word;
 }
 
 .CustomTable3 td:first-child {
-    padding-left: 20px;
+    padding-left: 15px;
+}
+.line-top{
+    border-top: 1px solid #333333;
 }
 
 /* 
@@ -512,10 +521,6 @@ h4 i {
     display: block;
 }
 
-.xmp, .exif, .iptc {
-    display: none;
-}
-
 .popover {
     max-width: 100%;
 }
@@ -526,13 +531,9 @@ h4 i {
 
 .popover-content i {
     float: right;
-    margin: 5px 20px 10px 0px;
+    margin: 5px 0px 10px 0px;
 }
 
-.clexpert {
-    float: right;
-    margin-top: 10px;
-}
 .expert {
     display: none;
 }
@@ -547,6 +548,54 @@ h4 i {
     color: #bebebe;
 }
 
+.vcenter{
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+.tcenter{
+    text-align: center!important;
+    padding-left: 0px!important;
+}
+
+/**
+ * Checkbox
+ */
+.clexpert {
+    float: right;
+    margin-top: 15px;
+}
 input[type="checkbox"] {
+    display:none;
+}
+input[type="checkbox"] + label {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     cursor: pointer;
+}
+input[type="checkbox"] + label span {
+    display:inline-block;
+    width:19px;
+    height:19px;
+    margin:-1px 0px 0 0;
+    vertical-align:middle;
+    background:url(../img/check_radio_sheet.png) left top no-repeat;
+    cursor: pointer;
+}
+input[type="checkbox"]:checked + label span {
+    background:url(../img/check_radio_sheet.png) -19px top no-repeat;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
 }

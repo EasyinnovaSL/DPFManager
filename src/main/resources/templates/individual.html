@@ -62,22 +62,17 @@
 	<div class="main">
 		<div class="container">
 			<div class="row top30-sm top50">
-				<div class="col-md-8">
-					<div class="clexpert"><input type="checkbox" name="expert" id="checkSelected" onchange="expertChanged()"> Expert mode</div>
-					<h4><i class="fa fa-tags"></i>  Tags</h4>
-					<table class="CustomTable3">
-				        <tr>
-							<th class="col-md-2"></th>
-				            <th class="bold col-md-2">Tag Id</th>
-				            <th class="bold col-md-4">Tag Name</th>
-				            <th class="bold col-md-4">Value</th>
-				        </tr>
-				        ##ROWS_TAGS##
-					</table>
-				</div>
+                ##TAGS_DIVS##
 				<div class="col-md-4 top30-sm">
-					<h4>File structure</h4>
-					##UL##
+					<h4 class="bold"><i class="fa fa fa-list-ul"></i>  File structure</h4>
+                    <table class="CustomTable3 ">
+                        <tr>
+                            <th>Elements</th>
+                        </tr>
+                        <tr>
+                            <td>##UL##</td>
+                        </tr>
+                    </table>
 				</div>
 				<div class="col-md-4 top30-sm">
 					<h4>Metadata Incoherencies</h4>
@@ -101,60 +96,17 @@
 			html: true
 		});
 	});
-	var ifdSelected = 0;
-	function showIfd(nameid){
-		ifdSelected= nameid;
-		$(".xmp").hide();
-		$(".exif").hide();
-		$(".iptc").hide();
-		$(".liifdlist").removeClass("bold");
-		$("#liifd"+ifdSelected).addClass("bold");
-		$(".ifd").removeClass("hide");
-		$(".ifd").hide();
-		$(".ifd"+ifdSelected).show();
-		expertChanged();
+	function showTagsDiv(id){
+        $(".tags-divs").hide();
+        $("#div"+id).show();
+
+        $("#structure li a").removeClass("bold");
+        $("#li"+id).addClass("bold");
+
+		expertChanged(id);
 	}
-	var xmpSelected = 0;
-	function showXmp(nameid){
-		xmpSelected= nameid;
-		$(".ifd").hide();
-		$(".exif").hide();
-		$(".iptc").hide();
-		$(".lixmplist").removeClass("bold");
-		$("#lixmp"+xmpSelected).addClass("bold");
-		$(".xmp").removeClass("hide");
-		$(".xmp").hide();
-		$(".xmp"+xmpSelected).show();
-		expertChanged();
-	}
-	var exifSelected = 0;
-	function showExif(nameid){
-		exifSelected= nameid;
-		$(".xmp").hide();
-		$(".ifd").hide();
-		$(".iptc").hide();
-		$(".liexiflist").removeClass("bold");
-		$("#liexif"+exifSelected).addClass("bold");
-		$(".exif").removeClass("hide");
-		$(".exif").hide();
-		$(".exif"+exifSelected).show();
-		expertChanged();
-	}
-	var iptcSelected = 0;
-	function showIptc(nameid){
-		iptcSelected= nameid;
-		$(".exif").hide();
-		$(".xmp").hide();
-		$(".ifd").hide();
-		$(".liiptclist").removeClass("bold");
-		$("#liiptc"+iptcSelected).addClass("bold");
-		$(".iptc").removeClass("hide");
-		$(".iptc").hide();
-		$(".iptc"+iptcSelected).show();
-		expertChanged();
-	}
-	function expertChanged(){
-		if ($('#checkSelected').is(":checked")) $(".ifd"+ifdSelected+".expert").show();
+	function expertChanged(sufix){
+		if ($('#checkSelected'+sufix).is(":checked")) $("."+sufix+".expert").show();
 		else $(".expert").hide();
 	}
 	function onChangeInfo(index){

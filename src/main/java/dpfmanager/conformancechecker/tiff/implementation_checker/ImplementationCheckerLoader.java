@@ -39,6 +39,9 @@ public class ImplementationCheckerLoader {
   }
 
   public synchronized static ImplementationCheckerObjectType getRules(String rulesFile) {
+    if (rulesFile.equals(TiffConformanceChecker.POLICY_ISO)){
+      return null;
+    }
     if (!rulesFile.contains("/") && !rulesFile.contains(".")) {
       rulesFile = "implementationcheckers/" + rulesFile + ".xml";
     }

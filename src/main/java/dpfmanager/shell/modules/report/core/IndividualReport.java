@@ -26,7 +26,9 @@ import com.easyinnova.tiff.model.TiffDocument;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +182,7 @@ public class IndividualReport implements Comparable {
   public List<String> getCheckedIsos() {
     List<String> checked = new ArrayList<>();
     checked.addAll(errors.keySet());
+    Collections.sort(checked, Collator.getInstance());
     return checked;
   }
 

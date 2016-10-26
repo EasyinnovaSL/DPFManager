@@ -69,7 +69,10 @@ import java.io.StringWriter;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -558,6 +561,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations);
+          Collections.sort(config.getIsos(), Collator.getInstance());
           ir.setIsosCheck(config.getIsos());
           Rules rules = config.getRules();
           XmlReport xmlReport = new XmlReport();
