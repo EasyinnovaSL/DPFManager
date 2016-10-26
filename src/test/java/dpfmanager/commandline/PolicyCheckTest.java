@@ -134,7 +134,8 @@ public class PolicyCheckTest extends CommandLineTest {
     bw.write("ISO\tBaseline\n" +
         "FORMAT\tHTML\n" +
         "FORMAT\tPDF\n" +
-        "RULE\tImageWidth,<,1000,1\n");
+        "RULE\tImageWidth,<,1000,1\n" +
+        "RULE\tImageLength,>,10,1\n");
     bw.close();
 
     String[] args = new String[7];
@@ -180,7 +181,7 @@ public class PolicyCheckTest extends CommandLineTest {
     for (String tr : trs){
       if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
-        assertEquals(true, tr.contains("<td class=\"warning\">1</td>"));
+        assertEquals(true, tr.contains("<td class=\"warning\">2</td>"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
@@ -198,7 +199,7 @@ public class PolicyCheckTest extends CommandLineTest {
     for (String tr : trs){
       if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
-        assertEquals(true, tr.contains(">1 warnings<"));
+        assertEquals(true, tr.contains(">2 warnings<"));
       } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));

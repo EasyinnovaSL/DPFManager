@@ -174,7 +174,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       // Image Height
       field = doc.createElement("field");
       fields.appendChild(field);
-      addElement(doc, field, "name", "ImageHeight");
+      addElement(doc, field, "name", "ImageLength");
       addElement(doc, field, "type", "integer");
       addElement(doc, field, "description", "Image Height in pixels");
       addElement(doc, field, "operators", ">,<,=");
