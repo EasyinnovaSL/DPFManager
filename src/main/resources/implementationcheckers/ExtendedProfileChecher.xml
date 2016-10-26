@@ -26,11 +26,11 @@
   <excluderules>STRIPS-0001</excluderules>
   <excluderules>STRIPS-0002</excluderules>
  </include>
- 
+
  <rules id="TAG-259-1">
  <title>Compression</title>
  <description>Compression scheme used on the image data.
-  
+
   Tag = 259 (103.H)
   Type = SHORT
   N = 1
@@ -1644,21 +1644,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>JPEG must be a single image</title>
    <description>When JPEG compression is used NewSubFileType must define a single image</description>
    <reference><section>Section 22: JPEG Compression</section><page>109</page></reference>
-   <assert test="{tags.tag[name=Compression] != 6} || {!tags.tag[name=NewSubFileType]} || {tags.tag[name=NewSubFileType] == 0}">When JPEG compression is used NewSubFileType must define a single image</assert>
+   <assert test="{tags.tag[name=Compression] != 6} || {!tags.tag[name=NewSubfileType]} || {tags.tag[name=NewSubfileType] == 0}">When JPEG compression is used NewSubFileType must define a single image</assert>
   </rule>
   
   <rule id="JPEG-0008" context="ifd[class=image]" level="error" >
    <title>JPEG tile width multiple of 8</title>
    <description>When JPEG compression is used tile width must be multiple of 8</description>
    <reference><section>Section 22: JPEG Compression</section><page>109</page></reference>
-   <assert test="{tags.tag[name=Compression] != 6} || {tags.tag[name=NewSubFileType] == 0}"></assert>
+   <assert test="{tags.tag[name=Compression] != 6} || {tags.tag[name=NewSubfileType] == 0}"></assert>
   </rule>
   
   <rule id="JPEG-0009" context="ifd[class=image]" level="error" >
    <title>JPEG tile width multiple of 8</title>
    <description>When JPEG compression is used tile width must be multiple of 8</description>
    <reference><section>Section 22: JPEG Compression</section><page>109</page></reference>
-   <assert test="{tags.tag[name=Compression] != 6} || {tags.tag[name=NewSubFileType] == 0}"></assert>
+   <assert test="{tags.tag[name=Compression] != 6} || {tags.tag[name=NewSubfileType] == 0}"></assert>
   </rule>
   
  </rules>

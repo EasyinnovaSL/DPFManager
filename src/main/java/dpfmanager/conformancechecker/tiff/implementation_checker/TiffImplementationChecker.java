@@ -120,6 +120,7 @@ public class TiffImplementationChecker {
 
     TiffIfd tiffIfd = new TiffIfd();
     tiffIfd.setN(n);
+    tiffIfd.setThumbnail(ifd.isThumbnail() ? 1 : 0);
     List<TiffTag> tags = new ArrayList<TiffTag>();
     int prevTagId = -1;
     boolean correctTagOrdering = true;
@@ -515,6 +516,7 @@ public class TiffImplementationChecker {
 
   TiffIfd createIfdNode(TagValue tv, String nodeName) {
     TiffIfd ifd = new TiffIfd();
+    ifd.setThumbnail(-1);
     List<TiffTag> tags = new ArrayList<TiffTag>();
     int prevTagId = -1;
     boolean correctTagOrdering = true;

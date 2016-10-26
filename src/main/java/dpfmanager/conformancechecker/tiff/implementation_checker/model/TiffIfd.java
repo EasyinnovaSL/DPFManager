@@ -46,6 +46,7 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
   int correctPhotometricCasuistic;
   int correctYcbcr;
   int offset;
+  int thumbnail;
   String type = "";
   String sclass = "image";
   String filetype = "";
@@ -94,6 +95,15 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
 
   public String getImgtype() {
     return imgtype;
+  }
+
+  @XmlAttribute
+  public void setThumbnail(int thumbnail) {
+    this.thumbnail = thumbnail;
+  }
+
+  public int getThumbnail() {
+    return thumbnail;
   }
 
   public void setOffset(int offset) {
@@ -237,6 +247,7 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("offset", offset + "", n));
     childs.add(new TiffSingleNode("filetype", filetype + "", n));
     childs.add(new TiffSingleNode("imgtype", imgtype + "", n));
+    childs.add(new TiffSingleNode("thumbnail", thumbnail + "", n));
     tags.setLocation("IFD" + n);
     childs.add(tags);
     if (subchilds) {

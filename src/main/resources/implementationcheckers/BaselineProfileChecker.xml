@@ -394,9 +394,9 @@
 
   <rule id="STRIPS-0004" context="ifd[strips=1]" level="error">
    <title>Inconsistent Strip lenght</title>
-   <description>The cardianlity of striptOffsets and the cardinality of StripsBytesCount must be the same</description>
+   <description>The cardinality of striptOffsets and the cardinality of StripsBytesCount must be the same</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
-   <assert test="{tags.tag[name=StripOffsets].cardinality == tags.tag[name=StripBYTECount].cardinality}">Inconsistent strip lengths, The cardianlity of striptOffsets and StripsBytesCount must match</assert>
+   <assert test="{tags.tag[name=StripOffsets].cardinality == tags.tag[name=StripBYTECount].cardinality}">Inconsistent strip lengths, The cardinality of striptOffsets and StripsBytesCount must match</assert>
   </rule>
  </rules>
  
@@ -434,10 +434,18 @@
    <description>When No Extra Sample is defined then BitsPerSample cardinality and SamplesPerPixel must be 1 for Bilevel Images.</description>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
-   <assert test="{tags.tag[name=ExtraSamples]} || {tags.tag[name=BitsPerSample] == 1} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 1}">BitsPerSample and BitsPerSample should be 1 for Bilevel images without ExtraSamples</assert>
+   <assert test="{tags.tag[name=ExtraSamples]} || (({tags.tag[name=BitsPerSample] == 1} || !tags.tag[name=BitsPerSample] ) &amp;&amp; ({tags.tag[name=SamplesPerPixel] == 1} || {!tags.tag[name=SamplesPerPixel]} )">BitsPerSample and BitsPerSample should be 1 for Bilevel images without ExtraSamples</assert>
   </rule>
 
-  <rule id="IFDB-0004" context="ifd[type=Bilevel]" level="warning">
+  <rule id="IFDB-0004" context="ifd[type=Bilevel]" level="error" experimental="true">
+   <title>Valid BitsPerSample and SamplesPerPixel with ExtraSample</title>
+   <description>When an Extra Sample is defined  1 sample is required for Bilevel Images.</description>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
+   <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
+   <assert test="{!tags.tag[name=ExtraSamples]} || {tags.tag[name=BitsPerSample] - tags.tag[name=ExtraSamples].cardinality == 1}">When an Extra Sample is defined 1 sample is required for Bilevel Images.</assert>
+  </rule>
+
+  <rule id="IFDB-0005" context="ifd[type=Bilevel]" level="warning">
    <title>Bilevel image display reversed</title>
    <description>When in a Bilevel image 0 is imaged as black and 2**BitsPerSample-1 is imaged as white.
     If Compression is 2 (CCITT Group 3 1-Dimensional Modified Huffman run-length encoding) the image should display and print reversed.</description>
@@ -484,9 +492,16 @@
    <description>When No Extra Sample is defined then BitsPerSample must be 4 or 8 and SamplesPerPixel must be 1 for Grayscale Images.</description>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
-   <assert test="{tags.tag[name=ExtraSamples]} || {tags.tag[name=BitsPerSample] == 4} || {tags.tag[name=BitsPerSample] == 8} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 1}">BitsPerSample  must be 4 or 8 and BitsPerSample must be 1 for Grayscale images without ExtraSamples</assert>
+   <assert test="{tags.tag[name=ExtraSamples]} || {tags.tag[name=BitsPerSample] == 4} || {tags.tag[name=BitsPerSample] == 8} &amp;&amp; ( {!tags.tag[name=SamplesPerPixel]} || {tags.tag[name=SamplesPerPixel] == 1})">BitsPerSample  must be 4 or 8 and BitsPerSample must be 1 for Grayscale images without ExtraSamples</assert>
   </rule>
 
+   <rule id="IFDG-0004" context="ifd[type=Bilevel]" level="error" experimental="true">
+    <title>Valid BitsPerSample and SamplesPerPixel with ExtraSample</title>
+    <description>When an Extra Sample is defined then 1 sample is required for Grayscale Images.</description>
+    <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
+    <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
+    <assert test="{!tags.tag[name=ExtraSamples]} || {tags.tag[name=BitsPerSample] - tags.tag[name=ExtraSamples].cardinality == 1}">1 sample is required to define Grayscale images with ExtraSamples</assert>
+   </rule>
  </rules>
  
  <rules id="IFDP">
@@ -523,7 +538,7 @@
    <title>Palette image SamplesPerPixel must be 1</title>
      <description>Palette image can not contain ExtraSamples SamplesPerPixel must be 1.</description>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
-   <assert test="{!tags.tag[name=SamplesPerPixel] || {tags.tag[name=SamplesPerPixel] == 1}">Palette image can not contain ExtraSamples, SamplesPerPixel must be 1.</assert>
+   <assert test="{!tags.tag[name=SamplesPerPixel]} || {tags.tag[name=SamplesPerPixel] == 1}">Palette image can not contain ExtraSamples, SamplesPerPixel must be 1.</assert>
   </rule>
  
   <rule id="IFDP-0005" context="ifd[type=Palette]" level="error">
@@ -574,8 +589,17 @@
      <description>When No Extra Sample is defined then BitsPerSample must be 4 or 8 and SamplesPerPixel must be 3 for palette colo Images.</description>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
      <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
-   <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample] == '8,8,8'} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 3}">BitsPerSample  must be 4 or 8 and BitsPerSample must be 3 for palette color image wihout ExtraSamples</assert>
-  </rule>
+   <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample] == '8,8,8'} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 3)}">BitsPerSample  must be 4 or 8 and BitsPerSample must be 3 for palette color image wihout ExtraSamples</assert>
+   </rule>
+
+    <rule id="IFDG-0005" context="ifd[type=RGB]" level="error" experimental="true">
+     <title>Valid BitsPerSample and SamplesPerPixel with ExtraSample</title>
+     <description>When an Extra Sample is defined then 3 sample is required for RGB Images.</description>
+     <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
+     <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
+     <assert test="{!tags.tag[name=ExtraSamples]} || {tags.tag[name=BitsPerSample] - tags.tag[name=ExtraSamples].cardinality == 3}">3 samples are required to define RGB images with ExtraSamples</assert>
+    </rule>
+
   
  </rules>
  
