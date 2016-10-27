@@ -76,7 +76,7 @@
             <title>TIFF/EPStandardID should only be used in first IFD</title>
             <description>TIFF/EPStandardID should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=TIFF/EPStandardID]}">TIFF/EPStandardID  should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=TIFF/EPStandardID]}">TIFF/EPStandardID should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -174,7 +174,7 @@
             <title>FocalPlaneXResolution should only be used in first IFD</title>
             <description>FocalPlaneXResolution should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0=!1} || {tags.tag[name=FocalPlaneXResolution]}">FocalPlaneXResolution should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=FocalPlaneXResolution]}">FocalPlaneXResolution should only be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37390-0005" context="ifd[class=image]" level="error" >
@@ -183,6 +183,13 @@
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{!tags.tag[name=FocalPlaneXResolution]} || {tags.tag[name=FocalPlaneYResolution]} &amp;&amp; {tags.tag[name=FocalPlaneResolutionUnit]}">FocalPlaneXResolution should only be used with FocalPlaneYResolution and FocalPlaneResolutionUnit</assert>
         </rule>
+
+        <rule id="TAG-37390-0006" context="ifds.ifd[class=image]" level="error">
+            <title>Check valid values for tag FocalPlaneResolutionUnit</title><description>Check valid values for tag FocalPlaneResolutionUnit</description>
+            <reference><section></section><page>19</page></reference>
+            <assert test="{tags.tag[name=FocalPlaneResolutionUnit] > 0} &amp;&amp; {tags.tag[name=FocalPlaneResolutionUnitUnit] &lt; 6}">FocalPlaneResolutionUnit value must be between 1 and 5</assert>
+        </rule>
+
     </rules>
     
     <rules id="TAG-37391">
@@ -212,7 +219,7 @@
             <title>FocalPlaneYResolution only in first IFD</title>
             <description>FocalPlaneYResolution should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=FocalPlaneYResolution]}">FocalPlaneYResolution should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=FocalPlaneYResolution]}">FocalPlaneYResolution should only be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37391-0004" context="ifd[class=image]" level="error" >
@@ -268,7 +275,7 @@
             <title>FocalPlaneResolutionUnit only in first IFD</title>
             <description>FocalPlaneResolutionUnit should only be used in the first IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=FocalPlaneResolutionUnit]}">FocalPlaneResolutionUnit should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=FocalPlaneResolutionUnit]}">FocalPlaneResolutionUnit should only be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37392-0005" context="ifd[class=image]" level="error" >
@@ -312,7 +319,7 @@
             <title>Orientation only in first IFD</title>
             <description>Orientation should only be used in the first IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=Orientation]}">Orientation should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=Orientation]}">Orientation should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -406,7 +413,7 @@
             <title>Interlace only in first IFD</title>
             <description>Interlace should only be used in the first IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=Interlace]}">Interlace should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=Interlace]}">Interlace should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -460,18 +467,18 @@
             <assert test="{tags.tag[name=Interlace] &gt; -1} &amp;&amp; {tags.tag[name=Interlace] &lt; 9}">SensingMethod invalid value.</assert>
         </rule>
         
-        <rule id="TAG-37399-0004" context="ifd[IFD0=1]" level="error" >
+        <rule id="TAG-37399-0004" context="ifd[class=image]" level="error" >
             <title>SensingMethod  in first IFD</title>
             <description>SensingMethod must be used in the first IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{tags.tag[name=SensingMethod]}">SensingMethod should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=SensingMethod]}">SensingMethod should only be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37399-0005" context="ifd[class=image]" level="error" >
             <title>SensingMethod only in first IFD</title>
             <description>SensingMethod should only be used in the first IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=Interlace]}">SensingMethod should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=Interlace]}">SensingMethod should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -575,28 +582,28 @@
             <title>SamplesPerPixel for CFA images</title>
             <description>SamplesPerPixel must be 1 for CFA images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] != 32803} || {tags.tag[name=SamplesPerPixel] == 1">Invalid SamplesPerPixel for CFA image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] != 32803} || {tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel for CFA image</assert>
         </rule>
         
         <rule id="TAG-277-0002" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for Grayscale images</title>
             <description>SamplesPerPixel must be 1 for Grayscale images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] != 1} || {tags.tag[name=SamplesPerPixel] == 1">Invalid SamplesPerPixel for CFA image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] != 1} || {tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel for CFA image</assert>
         </rule>
         
         <rule id="TAG-277-0003" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for RGB images</title>
             <description>SamplesPerPixel must be 3 for RGB images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] != 2} || {tags.tag[name=SamplesPerPixel] == 3">Invalid SamplesPerPixel for RGB image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] != 2} || {tags.tag[name=SamplesPerPixel] == 3}">Invalid SamplesPerPixel for RGB image</assert>
         </rule>
         
         <rule id="TAG-277-0004" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for YCbCr images</title>
             <description>SamplesPerPixel must be 3 for YCbCr images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] != 6} || {tags.tag[name=SamplesPerPixel] == 3">Invalid SamplesPerPixel for YCbCr image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] != 6} || {tags.tag[name=SamplesPerPixel] == 3}">Invalid SamplesPerPixel for YCbCr image</assert>
         </rule>
     </rules>
     
@@ -621,17 +628,17 @@
             <assert test="{tags.tag[name=Compression]}">Compression tag is mandatory</assert>
         </rule>
         <rule id="TAG-259-0003" context="ifd[thumbnail=1]" level="error">
-            <title>thumbnail must be uncompressed</title>
+            <title>Thumbnail must be uncompressed</title>
             <description>The Compression tag value shall equal “1” for the thumbnail IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{tags.tag[name=Compression] == 1}"></assert>
+            <assert test="{tags.tag[name=Compression] == 1}">Thumbnail must be uncompressed</assert>
         </rule>
-        <rule id="TAG-259-0004" context="ifd[thumbnail=0]" level="error">
-            <title>thumbnail must be uncompressed</title>
+        <!--<rule id="TAG-259-0004" context="ifd[thumbnail=0]" level="error">
+            <title>Thumbnail must be uncompressed</title>
             <description>The Compression tag value shall equal “1” for the thumbnail IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{tags.tag[name=Compression] == 1 || tags.tag[name=Compression] == 7 || {tags.tag[name=Compression] &gt; 32767}"></assert>
-        </rule>
+            <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] &gt; 32767}"></assert>
+        </rule>-->
     </rules>
     
     <rules id="TAG-37122">
@@ -661,7 +668,7 @@
             <title>CompressedBitsPerPixel requires compression</title>
             <description>CompressedBitsPerPixel should only be used on compressed images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{!tags.tag[name=CompressedBitsPerPixel] || tags.tag[name=Compression] == 7 || tags.tag[name=Compression] &gt; 32767}">CompressedBitsPerPixel should only be used on compressed images</assert>
+            <assert test="{!tags.tag[name=CompressedBitsPerPixel]} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] &gt; 32767}">CompressedBitsPerPixel should only be used on compressed images</assert>
         </rule>
     </rules>
     
@@ -686,7 +693,7 @@
             <title>JPEGTables only with JPEG compression</title>
             <description>JPEGTables should only be used with JPEG compression</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{tags.tag[name=Compression] != 7 || tags.tag[name=JPEGTables]}">JPEGTables should only be used with JPEG compression</assert>
+            <assert test="{tags.tag[name=Compression] != 7} || {tags.tag[name=JPEGTables]}">JPEGTables should only be used with JPEG compression</assert>
         </rule>
     </rules>
     
@@ -1466,7 +1473,7 @@
             <description>The format is: “YYYY:MM:DD HH:MM:SS”, with hours like those on a 24-hour
                 clock, and one space character between the date and the time</description>
             <reference><section>Section 8: Baseline Field Reference Guide</section><page>31</page></reference>
-            <assert test="{date(tags.tag[name=DateTimeOriginal]) || tags.tag[name=DateTimeOriginal] = '0000:00:00 00:00:00'}">Incorrect format for DateTimeOriginal</assert>
+            <assert test="{date(tags.tag[name=DateTimeOriginal])} || {tags.tag[name=DateTimeOriginal] = '0000:00:00 00:00:00'}">Incorrect format for DateTimeOriginal</assert>
         </rule>
         
         <rule id="TAG-36867-0004" context="ifd[IFD0=1]" level="error">
@@ -1480,7 +1487,7 @@
             <title>DateTimeOriginal should only be used in first IFD</title>
             <description>DateTimeOriginal should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=DateTimeOriginal]}">DateTimeOriginal should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=DateTimeOriginal]}">DateTimeOriginal should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1497,7 +1504,7 @@
             <description>The format is: “YYYY:MM:DD HH:MM:SS”, with hours like those on a 24-hour
                 clock, and one space character between the date and the time</description>
             <reference><section>Section 8: Baseline Field Reference Guide</section><page>31</page></reference>
-            <assert test="{date(tags.tag[name=DateTime]) || tags.tag[name=DateTime] = '0000:00:00 00:00:00'}">Incorrect format for DateTime</assert>
+            <assert test="{date(tags.tag[name=DateTime])} || {tags.tag[name=DateTime] = '0000:00:00 00:00:00'}">Incorrect format for DateTime</assert>
         </rule>
         
         <rule id="TAG-306-0002" context="ifd[IFD0=1]" level="error">
@@ -1511,7 +1518,7 @@
             <title>DateTime should only be used in first IFD</title>
             <description>DateTime should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=DateTime]}">DateTime should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=DateTime]}">DateTime should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1555,7 +1562,7 @@
             <title>TimeZoneOffset should only be used in first IFD</title>
             <description>TimeZoneOffset should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=TimeZoneOffset]}">TimeZoneOffset should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=TimeZoneOffset]}">TimeZoneOffset should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1591,7 +1598,7 @@
             <title>ExposureTime should only be used in first IFD</title>
             <description>ExposureTime should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=ExposureTime]}">ExposureTime should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=ExposureTime]}">ExposureTime should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1621,7 +1628,7 @@
             <title>ShutterSpeedValue should only be used in first IFD</title>
             <description>ShutterSpeedValue should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=ShutterSpeedValue]}">ShutterSpeedValue should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=ShutterSpeedValue]}">ShutterSpeedValue should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1657,7 +1664,7 @@
             <title>FNumber should only be used in first IFD</title>
             <description>FNumber should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=FNumber]}">FNumber should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=FNumber]}">FNumber should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1688,7 +1695,7 @@
             <title>ApertureValue should only be used in first IFD</title>
             <description>ApertureValue should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=ApertureValue]}">ApertureValue should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=ApertureValue]}">ApertureValue should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1718,7 +1725,7 @@
             <title>MaxApertureValue should only be used in first IFD</title>
             <description>MaxApertureValue should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=MaxApertureValue]}">MaxApertureValue should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=MaxApertureValue]}">MaxApertureValue should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1758,7 +1765,7 @@
             <title>BrightnessValue should only be used in first IFD</title>
             <description>BrightnessValue should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=BrightnessValue]}">BrightnessValue should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=BrightnessValue]}">BrightnessValue should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1796,7 +1803,7 @@
             <title>ExposureBiasValue should only be used in first IFD</title>
             <description>ExposureBiasValue should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=ExposureBiasValue]}">ExposureBiasValue should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=ExposureBiasValue]}">ExposureBiasValue should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1859,7 +1866,7 @@
             <title>ExposureProgram should only be used in first IFD</title>
             <description>ExposureProgram should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=ExposureProgram]}">ExposureProgram should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=ExposureProgram]}">ExposureProgram should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1911,7 +1918,7 @@
             <title>MeteringMode should only be used in first IFD</title>
             <description>MeteringMode should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=MeteringMode]}">MeteringMode should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=MeteringMode]}">MeteringMode should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -1971,7 +1978,7 @@
             <title>Flash should only be used in first IFD</title>
             <description>Flash should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=Flash]}">Flash should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=Flash]}">Flash should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2011,7 +2018,7 @@
             <title>FocalLength should only be used in first IFD</title>
             <description>FocalLength should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=FocalLength]}">FocalLength should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=FocalLength]}">FocalLength should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2051,7 +2058,7 @@
             <title>SubjectDistance should only be used in first IFD</title>
             <description>SubjectDistance should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=SubjectDistance]}">SubjectDistance should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=SubjectDistance]}">SubjectDistance should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2090,7 +2097,7 @@
             <title>SubjectLocation should only be used in first IFD</title>
             <description>SubjectLocation should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=SubjectLocation]}">SubjectLocation should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=SubjectLocation]}">SubjectLocation should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2123,7 +2130,7 @@
             <title>SelfTimerMode should only be used in first IFD</title>
             <description>SelfTimerMode should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=SelfTimerMode]}">SelfTimerMode should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=SelfTimerMode]}">SelfTimerMode should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2157,7 +2164,7 @@
             <title>BatteryLevel should only be used in first IFD</title>
             <description>BatteryLevel should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=BatteryLevel]}">BatteryLevel should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=BatteryLevel]}">BatteryLevel should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2212,7 +2219,7 @@
             <title>LightSource should only be used in first IFD</title>
             <description>LightSource should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=LightSource]}">LightSource should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=LightSource]}">LightSource should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2244,7 +2251,7 @@
             <title>InterColourProfile should only be used in first IFD</title>
             <description>InterColourProfile should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=ICCProfile]}">InterColourProfile should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=ICCProfile]}">InterColourProfile should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2282,7 +2289,7 @@
             <title>ExposureIndex should only be used in first IFD</title>
             <description>ExposureIndex should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=ExposureIndex]}">ExposureIndex should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=ExposureIndex]}">ExposureIndex should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2310,7 +2317,7 @@
             <title>ISOSpeedRatings should only be used in first IFD</title>
             <description>ISOSpeedRatings should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=ISOSpeedRatings]}">ISOSpeedRatings should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=ISOSpeedRatings]}">ISOSpeedRatings should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2335,7 +2342,7 @@
             <title>OECF should only be used in first IFD</title>
             <description>OECF should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=OECF]}">OECF should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=OECF]}">OECF should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2357,7 +2364,7 @@
             <title>SpectralSensitivity should only be used in first IFD</title>
             <description>SpectralSensitivity should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=SpectralSensitivity]}">SpectralSensitivity should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=SpectralSensitivity]}">SpectralSensitivity should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2387,7 +2394,7 @@
             <title>SpatialFrequencyResponse should only be used in first IFD</title>
             <description>SpatialFrequencyResponse should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=SpatialFrequencyResponse]}">SpatialFrequencyResponse should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=SpatialFrequencyResponse]}">SpatialFrequencyResponse should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2410,7 +2417,7 @@
             <title>Noise should only be used in first IFD</title>
             <description>Noise should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0!=1} || {tags.tag[name=SpatialFrequencyResponse]}">Noise should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=SpatialFrequencyResponse]}">Noise should only be used in the first IFD</assert>
         </rule>
     </rules>
     
@@ -2434,14 +2441,14 @@
             <title>RowsPerStrip mandatory for strip images</title>
             <description>This tag encodes the number of rows per strip within the image. This tag is mandatory when the image is stored as strips.</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{strips==0} || {tags.tag[name=RowsPerStrip]}"></assert>
+            <assert test="{strips==0} || {tags.tag[name=RowsPerStrip]}">RowsPerStrip mandatory for strip images</assert>
         </rule>
         
         <rule id="MANDATORY-TAG-0004" context="ifd[class=image]" level="error">
             <title>StripByteCounts mandatory for strip images</title>
             <description>This tag encodes the number of bytes present in each strip after compression has been applied. This tag is mandatory when the image is stored as strips.</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{strips==0} || {tags.tag[name=StripByteCounts]}"></assert>
+            <assert test="{strips==0} || {tags.tag[name=StripBYTECount]}">StripByteCounts mandatory for strip images</assert>
         </rule>
         
         <rule id="MASTER-0003" context="ifd[strips=1]" level="error" experimental="true">
@@ -2726,81 +2733,6 @@
             <reference><section></section><page>12</page></reference>
             <assert test="{!tag[name=TransferFunction]}">TransferFunction tag is forbidden</assert>
         </rule>
-        <rule id="ep-50" context="ifds.ifd[class=image]" level="error">
-            <title>Check valid values for tag FocalPlaneResolutionUnit</title><description>Check valid values for tag FocalPlaneResolutionUnit</description>
-            <reference><section></section><page>19</page></reference>
-            <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=FocalPlaneResolutionUnit] > 0} &amp;&amp; {tags.tag[name=SubIFDs].ifd.tags.tag[name=FocalPlaneResolutionUnitUnit] &lt; 6}">FocalPlaneResolutionUnit value must be between 1 and 5</assert>
-        </rule>
-        <rule id="ep-51" context="ifds.ifd[class=image]" level="error">
-            <title>Check valid values for tag SensingMethod</title><description>Check valid values for tag SensingMethod</description>
-            <reference><section></section><page>19</page></reference>
-            <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=SensingMethod] > -1} &amp;&amp; {tags.tag[name=SubIFDs].ifd.tags.tag[name=SensingMethod] &lt; 9}">SensingMethod value must be between 0 and 8</assert>
-        </rule>
     </rules>
-    <!--
- <rules id="tiffep-structure">
-     <title></title>
-     <description></description>
-     <rule id="ep-1" context="ifds.ifd[class=image]" level="error">
-         <title>Images must contain only one sub image</title><description>Images must contain only one sub image</description>
-         <reference><section></section><page>7</page></reference>
-         <assert test="{count(tags.tag[name=SubIFDs]) == 1}">Each IFD must have a sub-ifd</assert>
-     </rule>
-     <rule id="ep-2" context="ifds.ifd[class=image]" level="error">
-         <title>Images must contain sub images</title><description>Images must contain sub images</description>
-         <reference><section></section><page>7</page></reference>
-         <assert test="{tags.tag[name=SubIFDs].ifd}">Each IFD must have a sub-ifd</assert>
-     </rule>
-     <rule id="ep-3" context="ifds.ifd[class=image]" level="error">
-         <title>The resolution X of the sub image (full resolution) must be greater than the main (thumbnail) image</title>
-		 <description>The resolution X of the sub image (full resolution) must be greater than the main (thumbnail) image</description>
-         <reference><section></section><page>6</page></reference>
-         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageLength] > tags.tag[name=ImageLength]}">Sub-ifd width must be greater than thumbnail IFD</assert>
-     </rule>
-     <rule id="ep-4" context="ifds.ifd[class=image]" level="error">
-         <title>The resolution Y of the sub image (full resolution) must be greater than the main (thumbnail) image</title>
-		 <description>The resolution Y of the sub image (full resolution) must be greater than the main (thumbnail) image</description>
-         <reference><section></section><page>6</page></reference>
-         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=ImageWidth] > tags.tag[name=ImageWidth]}">Sub-ifd height must be greater than thumbnail IFD</assert>
-     </rule>
-     <rule id="ep-5" context="ifds.ifd[class=image]" level="error">
-         <title>The tag NewSubFileType is mandatory</title><description>The tag NewSubFileType is mandatory</description>
-         <reference><section></section><page>13</page></reference>
-         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType]}">NewSubfileType is required</assert>
-     </rule>
-     <rule id="ep-6" context="ifds.ifd[class=image]" level="error">
-         <title>Check valid cardinality for tag NewSubFileType</title><description>Check valid cardinality for tag NewSubFileType</description>
-         <reference><section></section><page>13</page></reference>
-         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType].cardinality == 1}">NewSubfileType cardinality must be 1</assert>
-     </rule>
-     <rule id="ep-7" context="ifds.ifd[class=image]" level="error">
-         <title>Check valid value for tag NewSubFileType</title><description>Check valid value for tag NewSubFileType</description>
-         <reference><section></section><page>17</page></reference>
-         <assert test="{tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType] == 0} || {tags.tag[name=SubIFDs].ifd.tags.tag[name=NewSubfileType] == 1}">NewSubfileType must be 0 or 1</assert>
-     </rule>
-     <rule id="ep-8" context="ifds.ifd[class=image]" level="error">
-         <title>Check valid value for tag NewSubFileType on thumbnail image</title><description>Check valid value for tag NewSubFileType on thumbnail image</description>
-         <reference><section></section><page>17</page></reference>
-         <assert test="{tags.tag[name=NewSubfileType] == 1}">NewSubfileType must be 1 for main IFDs</assert>
-     </rule>
-     <rule id="ep-9" context="tags.tag[name=SubIFDs].ifd" level="error">
-         <title>Check valid value for tag NewSubFileType on full resolution image</title><description>Check valid value for tag NewSubFileType on full resolution image</description>
-         <reference><section></section><page>17</page></reference>
-         <assert test="{tags.tag[name=NewSubfileType] == 0}">NewSubfileType must be 0 for thumbnail IFDs</assert>
-     </rule>
-     <rule id="ep-10" context="ifds.ifd[class=image]" level="error">
-         <title>Images must contain sub images with the full resolution image</title><description>Images must contain sub images with the full resolution image</description>
-         <reference><section></section><page>7</page></reference>
-         <assert test="{tags.tag[name=SubIFDs]}">IFDs must have SubIFDs</assert>
-     </rule>
-     <rule id="ep-11" context="ifds.ifd[class=image]" level="error">
-         <title>Check image representation of thumbnail stored in strips (instead of tiles)</title>
-		 <description>Check image representation of thumbnail stored in strips (instead of tiles)</description>
-         <reference><section></section><page>7</page></reference>
-         <assert test="{strips == 1}">Thumbnail image must be stored in strips</assert>
-     </rule>
- </rules>
--->
- 
 
 </implementationCheckerObject>

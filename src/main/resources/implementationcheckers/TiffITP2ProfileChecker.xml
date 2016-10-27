@@ -10,7 +10,7 @@
     <author>Easy Innova</author>
     <date>2016-09-20</date>
     
-    <include><policyChecker>BaselineProfileChecker.xml</policyChecker></include>
+    <include><policyChecker>TIFF_Baseline_Core_6_0.xml</policyChecker></include>
     <include>
         <policyChecker>TiffITProfileChecker.xml</policyChecker>
         <excluderules>CT-restricted-tags</excluderules>

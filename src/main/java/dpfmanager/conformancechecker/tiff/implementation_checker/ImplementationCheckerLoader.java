@@ -101,12 +101,12 @@ public class ImplementationCheckerLoader {
 
   private static InputStream getFileFromResources(String pathStr) {
     InputStream fis = null;
-    File file = new File(pathStr);
+    File file = new File("src/main/resources/" + pathStr);
     File fileConfig = new File(DPFManagerProperties.getIsosDir() + "/" + pathStr);
     try {
       if (file.exists()) {
         // Look in current dir
-        fis = new FileInputStream(pathStr);
+        fis = new FileInputStream("src/main/resources/" + pathStr);
       } else if (fileConfig.exists()) {
         // Look in isos config
         fis = new FileInputStream(DPFManagerProperties.getIsosDir() + "/" + pathStr);

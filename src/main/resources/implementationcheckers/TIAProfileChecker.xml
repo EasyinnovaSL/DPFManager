@@ -11,7 +11,7 @@
     <date>2016-10-24</date>
 
     <include>
-        <policyChecker>./BaselineProfileChecker.xml</policyChecker>
+        <policyChecker>./TIFF_Baseline_Core_6_0.xml</policyChecker>
     </include>
 
     <rules id="MASTER">
