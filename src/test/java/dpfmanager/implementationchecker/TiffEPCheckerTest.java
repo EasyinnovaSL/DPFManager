@@ -9,7 +9,6 @@ import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationResult;
 import com.easyinnova.tiff.reader.TiffReader;
 
-import java.io.File;
 import java.util.List;
 import static java.io.File.separator;
 
@@ -31,7 +30,7 @@ public class TiffEPCheckerTest extends TestCase {
     String content = tiffValidation.getXml();
 
     Validator v = new Validator();
-    v.validate(content, "implementationcheckers/TiffEPProfileChecker.xml", false);
+    v.validate(content, "implementationcheckers/TIFF_EP.xml", false);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getTiffEPValidation();
@@ -57,7 +56,7 @@ public class TiffEPCheckerTest extends TestCase {
       String content =  tiffValidation.getXml();
 
       Validator v = new Validator();
-      v.validate(content, "implementationcheckers/TiffEPProfileChecker.xml", false);
+      v.validate(content, "implementationcheckers/TIFF_EP.xml", false);
 
       if (errors > -1) {
         assertEquals(v.getErrors().size(), tr.getTiffEPValidation().getErrors().size());

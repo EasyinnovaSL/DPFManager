@@ -13,7 +13,6 @@ import com.easyinnova.tiff.reader.TiffReader;
 
 import junit.framework.TestCase;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -30,7 +29,7 @@ public class ImplementationCheckerTest extends TestCase {
     String content = tiffValidation.getXml();
 
     Validator v = new Validator();
-    v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
+    v.validate(content, "implementationcheckers/TIFF_Baseline_Core_6_0.xml", false);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getBaselineValidation();
@@ -46,7 +45,7 @@ public class ImplementationCheckerTest extends TestCase {
     String content = tiffValidation.getXml();
 
     Validator v = new Validator();
-    v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
+    v.validate(content, "implementationcheckers/TIFF_Baseline_Core_6_0.xml", false);
     List<RuleResult> results = v.getErrors();
 
     ValidationResult validation = tr.getBaselineValidation();
@@ -66,7 +65,7 @@ public class ImplementationCheckerTest extends TestCase {
       String content = tiffValidation.getXml();
 
       Validator v = new Validator();
-      v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
+      v.validate(content, "implementationcheckers/TIFF_Baseline_Core_6_0.xml", false);
 
       if (errors > -1) {
         assertEquals(errors, v.getErrors().size());
