@@ -34,8 +34,24 @@ public class TIATest extends TestCase {
     v.validate(content, "implementationcheckers/TIAProfileChecker.xml", false);
     List<RuleResult> results = v.getErrors();
 
-    ValidationResult validation = tr.getTiffEPValidation();
-    assertEquals(0, validation.getErrors().size());
-    assertEquals(4, results.size());
+    assertEquals(0, results.size());
+  }
+
+  public void testInvalidTest() throws Exception {
+    TiffReader tr = new TiffReader();
+    int result = tr.readFile("src" + separator + "test" + separator + "resources" + separator
+        + "Small" + separator + "Bilevel.tif");
+    assertEquals(0, result);
+
+    TiffDocument td = tr.getModel();
+    TiffImplementationChecker tic = new TiffImplementationChecker();
+    TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
+    String content = tiffValidation.getXml();
+
+    Validator v = new Validator();
+    v.validate(content, "implementationcheckers/TIAProfileChecker.xml", false);
+    List<RuleResult> results = v.getErrors();
+
+    assertEquals(1, results.size());
   }
 }

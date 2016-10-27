@@ -21,6 +21,7 @@ package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
+import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
@@ -556,6 +557,7 @@ public class XmlReport {
           }
         }
       }
+      checkBlankPages = false;
 
       ifd = ir.getTiffModel().getFirstIFD();
       int numBlankPages = 0;
@@ -939,13 +941,18 @@ public class XmlReport {
       // Schematron
       Schematron sch = new Schematron();
       try {
-        String resultsch = sch.testXML(output, rules);
+        Validator validation = sch.testXMLnoSchematron(ir.getTiffModel(), rules);
+        String validationString = "<policyCheckerOutput>";
+        for (RuleResult rr : validation.getErrors()) {
+          validationString += "<error>" + rr.getMessage() + "</error>";
+        }
+        for (RuleResult rr : validation.getWarnings()) {
+          validationString += "<warning>" + rr.getMessage() + "</warning>";
+        }
+        validationString += "</policyCheckerOutput>";
         String presch = output.substring(0, output.indexOf("</report>"));
         String postsch = output.substring(output.indexOf("</report>"));
-        if (resultsch.indexOf("<svrl:schematron-output") > -1) {
-          resultsch = resultsch.substring(resultsch.indexOf("<svrl:schematron-output"));
-        }
-        output = presch + resultsch + postsch;
+        output = presch + validationString + postsch;
       } catch (Exception e) {
         e.printStackTrace();
       }

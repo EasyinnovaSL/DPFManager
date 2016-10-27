@@ -34,6 +34,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.Rul
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import org.apache.camel.ExchangeException;
 import org.xml.sax.SAXException;
 
 import java.io.FileInputStream;
@@ -91,11 +92,9 @@ public class Validator {
    */
   public void validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     try {
-      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
-      Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-      StringReader reader = new StringReader(content);
-
-      validate((TiffValidationObject) jaxbUnmarshaller.unmarshal(reader), rulesFile, fastBreak);
+      TiffValidationObject obj = createValidationObjectFromXml(content);
+      ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
+      validate(obj, rules, fastBreak);
     } catch (Exception ex) {
       RuleResult rr = new RuleResult(false, null, null, "Fatal error in TIFF file");
       result = new ValidationResult();
@@ -103,11 +102,17 @@ public class Validator {
     }
   }
 
-  public void validate(TiffValidationObject model, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public static TiffValidationObject createValidationObjectFromXml(String content) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
+    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+    StringReader reader = new StringReader(content);
+    TiffValidationObject obj = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
+    return obj;
+  }
+
+  public void validate(TiffValidationObject model, ImplementationCheckerObjectType rules, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
     this.model = model;
-
-    ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
 
     boolean bbreak = false;
     List<RuleType> ordRules = new ArrayList<RuleType>();
@@ -129,7 +134,7 @@ public class Validator {
     }
 
     for (RuleType rule : ordRules) {
-      if (rule.getId().equals("THUMBNAIL-0011"))
+      if (rule.getId().equals("pol-1"))
         rule.toString();
 
       String context = rule.getContext();
@@ -254,7 +259,11 @@ public class Validator {
                   ok = false;
                 }
               } else {
-                ok = Double.parseDouble(value) < Double.parseDouble(value2);
+                try {
+                  ok = Double.parseDouble(value) < Double.parseDouble(value2);
+                } catch (Exception ex) {
+                  ok = false;
+                }
 
                 if (!ok)
                   ok = false;

@@ -3,9 +3,11 @@ package dpfmanager.commandline;
 import static junit.framework.TestCase.assertEquals;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -69,7 +71,8 @@ public class InteroperabilityTest extends CommandLineTest {
       TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
 
       Validator v = new Validator();
-      v.validate(tiffValidation, "implementationcheckers/BaselineProfileChecker.xml", false);
+      ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules("implementationcheckers/BaselineProfileChecker.xml");
+      v.validate(tiffValidation, rules, false);
       int numberOfErrors = v.getErrors().size();
       assertEquals(0, numberOfErrors);
     } catch (ReadTagsIOException e) {

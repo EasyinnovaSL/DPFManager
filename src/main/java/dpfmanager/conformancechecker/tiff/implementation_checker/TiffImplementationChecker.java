@@ -25,6 +25,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffIfds;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffTag;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffTags;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
+import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.Metadata;
@@ -32,16 +33,24 @@ import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.Rational;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 
 /**
@@ -63,6 +72,14 @@ public class TiffImplementationChecker {
 
     // Generic info
     tiffValidate.setSize(tiffDoc.getSize());
+    String endianess = "none";
+    if (tiffDoc.getEndianess() != null) endianess = tiffDoc.getEndianess().toString();
+    tiffValidate.setByteOrder(endianess);
+    int numberimages = tiffDoc.getImageIfds().size();
+    tiffValidate.setNumberImages(numberimages);
+    if (tiffDoc != null && tiffDoc.getIccProfile() != null) {
+      tiffValidate.setIccProfileClass(tiffDoc.getIccProfile().getProfileClass() + "");
+    }
 
     // Header
     TiffHeader header = new TiffHeader();
@@ -157,6 +174,7 @@ public class TiffImplementationChecker {
     tiffIfd.setCorrectStrips(1);
     tiffIfd.setCorrectTiles(1);
     tiffIfd.setOffset(ifd.getNextOffset());
+    tiffIfd.setIFD0(n == 1 ? 1 : 0);
 
     // Strips check
     if (ifd.hasStrips()) {
@@ -354,6 +372,53 @@ public class TiffImplementationChecker {
           break;
       }
     }
+
+    // Policy fields
+    if (ifd.getMetadata() != null && ifd.getMetadata().get("BitsPerSample") != null) {
+      String bps = ifd.getMetadata().get("BitsPerSample").toString();
+      tiffIfd.setBitDepth(bps);
+    }
+    String eqxy = "True";
+    if (ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YResolution"))) {
+      if (!ifd.getTag("XResolution").toString().equals(ifd.getTag("YResolution").toString()))
+        eqxy = "False";
+    }
+    tiffIfd.setEqualXYResolution(eqxy);
+    String dpi = "";
+    if (ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YResolution"))) {
+      try {
+        Rational ratx = (Rational) ifd.getTag("XResolution").getValue().get(0);
+        Rational raty = (Rational) ifd.getTag("YResolution").getValue().get(0);
+        int xres = (int) ratx.getFloatValue();
+        int yres = (int) raty.getFloatValue();
+        if (xres % 2 != 0 || yres % 2 != 0) dpi = "Uneven";
+        else dpi = "Even";
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    }
+    tiffIfd.setDpi(dpi);
+    String extra = "0";
+    if (ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ExtraSamples")))
+      extra = ifd.getTag("ExtraSamples").getCardinality() + "";
+    tiffIfd.setExtraChannels(extra);
+    String pixeldensity = "0";
+    if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ResolutionUnit")) && ifd.getMetadata().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("XResolution"))) {
+      try {
+        double ru = Double.parseDouble(ifd.getMetadata().get("ResolutionUnit").toString());
+        String xres = ifd.getMetadata().get("XResolution").toString();
+        double num = Double.parseDouble(xres.substring(0, xres.indexOf("/")));
+        double den = Double.parseDouble(xres.substring(xres.indexOf("/") + 1));
+        double xr = num / den;
+        double ppi;
+        if (ru == 2) ppi = xr;
+        else ppi = xr / 0.3937;
+        pixeldensity = ppi + "";
+      } catch (Exception ex) {
+        pixeldensity = "";
+      }
+    }
+    tiffIfd.setPixelDensity(pixeldensity);
 
     return tiffIfd;
   }
