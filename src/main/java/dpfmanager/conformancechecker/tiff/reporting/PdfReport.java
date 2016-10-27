@@ -19,20 +19,29 @@
 
 package dpfmanager.conformancechecker.tiff.reporting;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.PDFParams;
 
+import com.easyinnova.tiff.model.Metadata;
+import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
+import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.XMP;
+import com.easyinnova.tiff.model.types.abstractTiffType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 
 import java.awt.*;
@@ -41,7 +50,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -57,14 +69,61 @@ public class PdfReport extends Report {
   PDFParams makeConformSection(int nerrors, int nwarnings, String key, PDFParams pdfParams0, int pos_x, int image_width, int font_size, PDFont font) throws Exception {
     PDFParams pdfParams = pdfParams0;
     if (nerrors > 0) {
-      pdfParams = writeText(pdfParams, "This file does NOT conform to " + key, pos_x + image_width + 10, font, font_size, Color.red);
+      pdfParams = writeText(pdfParams, "NOT conform to " + key, pos_x + image_width + 10, font, font_size, Color.red);
     } else if (nwarnings > 0) {
-      pdfParams = writeText(pdfParams, "This file conforms to " + key + ", BUT it has some warnings", pos_x + image_width + 10, font, font_size, Color.orange);
+//      pdfParams = writeText(pdfParams, "This file conforms to " + key + ", BUT it has some warnings", pos_x + image_width + 10, font, font_size, Color.orange);
+      pdfParams = writeText(pdfParams, "Conforms to " + key, pos_x + image_width + 10, font, font_size, Color.green);
     } else {
-      pdfParams = writeText(pdfParams, "This file conforms to " + key, pos_x + image_width + 10, font, font_size, Color.green);
+      pdfParams = writeText(pdfParams, "Conforms to " + key, pos_x + image_width + 10, font, font_size, Color.green);
     }
     pdfParams.y -= 10;
     return pdfParams;
+  }
+
+  private Map<String, List<ReportTag>> parseTags(IndividualReport ir) {
+    /**
+     * Parse Tags
+     */
+    Map<String, List<ReportTag>> tags = new HashMap<>();
+    for (ReportTag tag : getTags(ir)) {
+      String mapId;
+      List<ReportTag> list = null;
+      if (tag.tv.getId() == 700) {
+        mapId = "xmp" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.tv.getId() == 33723) {
+        mapId = "ipt" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.tv.getId() == 34665) {
+        mapId = "exi" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.expert) {
+        mapId = "ifd" + tag.index + "e";
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else {
+        mapId = "ifd" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      }
+      if (list != null) {
+        list.add(tag);
+        tags.put(mapId, list);
+      }
+    }
+    return tags;
+  }
+
+  private List<String> detectIncoherency(String valueTag, String valueIptc, String valueXmp, String name, int nifd) {
+    List<String> list = new ArrayList<>();
+    if (valueTag != null && valueIptc != null && !valueTag.equals(valueIptc)) {
+      list.add(name + " on TAG and IPTC in IFD " + nifd + " (" + valueTag + ", " + valueIptc + ")");
+    }
+    if (valueTag != null && valueXmp != null && !valueTag.equals(valueXmp)) {
+      list.add(name + " on TAG and XMP in IFD " + nifd + " (" + valueTag + ", " + valueXmp + ")");
+    }
+    if (valueIptc != null && valueXmp != null && !valueIptc.equals(valueXmp)) {
+      list.add(name + " on IPTC and XMP in IFD " + nifd + " (" + valueIptc + ", " + valueXmp + ")");
+    }
+    return list;
   }
 
   /**
@@ -109,7 +168,9 @@ public class PdfReport extends Report {
       ximage = new PDJpeg(pdfParams.getDocument(), thumb);
       pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
 
-      // Image name & path
+      /**
+       * Image name and path
+       */
       font_size = 12;
       pdfParams.y += image_height - 12;
       pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size);
@@ -132,7 +193,9 @@ public class PdfReport extends Report {
       }
       pdfParams.y -= 10;
 
-      // Summary table
+      /**
+       * Summary table
+       */
       font_size = 8;
       pdfParams = writeText(pdfParams, "Errors", pos_x + image_width + 170, font, font_size);
       pdfParams = writeText(pdfParams, "Warnings", pos_x + image_width + 210, font, font_size);
@@ -151,100 +214,14 @@ public class PdfReport extends Report {
         }
       }
 
-      // Tags
-      font_size = 10;
       if (pdfParams.y > image_pos_y) pdfParams.y = image_pos_y;
-      pdfParams.y -= 20;
-      pdfParams = writeText(pdfParams, "Tags", pos_x, font, font_size);
-      font_size = 7;
-      pdfParams.y -= 20;
-      pdfParams = writeText(pdfParams, "IFD", pos_x, font, font_size);
-      pdfParams = writeText(pdfParams, "Tag ID", pos_x + 40, font, font_size);
-      pdfParams = writeText(pdfParams, "Tag Name", pos_x + 80, font, font_size);
-      pdfParams = writeText(pdfParams, "Value", pos_x + 200, font, font_size);
-      for (ReportTag tag : getTags(ir)) {
-        if (tag.expert) continue;
-        /*if (tag.tv.getId() == 700) {
-          // XMP
-          for (abstractTiffType to : tag.tv.getValue()) {
-            XMP xmp = (XMP)to;
-            try {
-              Metadata metadata = xmp.createMetadata();
-              for (String key : metadata.keySet()) {
-                pdfParams.y -= 18;
-                pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
-                pdfParams = writeText(pdfParams, "", pos_x + 40, font, font_size);
-                pdfParams = writeText(pdfParams, key, pos_x + 80, font, font_size);
-                pdfParams = writeText(pdfParams, metadata.get(key).toString().trim(), pos_x + 200, font, font_size);
-              }
-              int nh = 1;
-              for (Hashtable<String, String> kv : xmp.getHistory()) {
-                for (String key : kv.keySet()) {
-                  pdfParams.y -= 18;
-                  pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
-                  pdfParams = writeText(pdfParams, nh + "", pos_x + 40, font, font_size);
-                  pdfParams = writeText(pdfParams, key, pos_x + 80, font, font_size);
-                  pdfParams = writeText(pdfParams, kv.get(key).toString().trim(), pos_x + 200, font, font_size);
-                }
-                nh++;
-              }
-            } catch (Exception ex) {
-              ex.printStackTrace();
-            }
-          }
-          continue;
-        }
-        if (tag.tv.getId() == 33723) {
-          // IPTC
-          for (abstractTiffType to : tag.tv.getValue()) {
-            IPTC iptc = (IPTC)to;
-            try {
-              Metadata metadata = iptc.createMetadata();
-              for (String key : metadata.keySet()) {
-                pdfParams.y -= 18;
-                pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
-                pdfParams = writeText(pdfParams, "", pos_x + 40, font, font_size);
-                pdfParams = writeText(pdfParams, key, pos_x + 80, font, font_size);
-                pdfParams = writeText(pdfParams, metadata.get(key).toString().trim(), pos_x + 200, font, font_size);
-              }
-            } catch (Exception ex) {
-              ex.printStackTrace();
-            }
-          }
-          continue;
-        }
-        if (tag.tv.getId() == 34665) {
-          // EXIF
-          for (abstractTiffType to : tag.tv.getValue()) {
-            IFD exif = (IFD)to;
-            try {
-              for (TagValue tv : exif.getTags().getTags()) {
-                pdfParams.y -= 18;
-                pdfParams = writeText(pdfParams, (tag.index+1) + "", pos_x, font, font_size);
-                pdfParams = writeText(pdfParams, "", pos_x + 40, font, font_size);
-                pdfParams = writeText(pdfParams, tv.getFileName(), pos_x + 80, font, font_size);
-                pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + 200, font, font_size);
-              }
-            } catch (Exception ex) {
-              ex.printStackTrace();
-            }
-          }
-          continue;
-        }*/
-        String sDif = "";
-        if (tag.dif < 0) sDif = "(-)";
-        else if (tag.dif > 0) sDif = "(+)";
-        pdfParams.y -= 18;
-        pdfParams = writeText(pdfParams, tag.index + "", pos_x, font, font_size);
-        pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + 40, font, font_size);
-        pdfParams = writeText(pdfParams, tag.tv.getName(), pos_x + 80, font, font_size);
-        pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + 200, font, font_size);
-      }
 
-      // File structure
+      /**
+       * File structure
+       */
       font_size = 10;
       pdfParams.y -= 40;
-      pdfParams = writeText(pdfParams, "File Structure", pos_x, font, font_size);
+      pdfParams = writeTitle(pdfParams, "File Structure", "images/pdf/site.png", pos_x, font, font_size);
       TiffDocument td = ir.getTiffModel();
       IFD ifd = td.getFirstIFD();
       font_size = 7;
@@ -281,17 +258,195 @@ public class PdfReport extends Report {
         ifd = ifd.getNextIFD();
       }
 
-      // Conformance
+      /**
+       * Tags
+       */
+      font_size = 7;
+      Map<String, List<ReportTag>> tags = parseTags(ir);
+      for (String key : tags.keySet()) {
+        /**
+         * IFD
+         */
+        if (key.startsWith("ifd") && !key.endsWith("e")) {
+          pdfParams.y -= 40;
+          pdfParams = writeTitle(pdfParams, "IFD Tags", "images/pdf/tag.png", pos_x, font, 10);
+          pdfParams.y -= 20;
+          Integer[] margins = {2, 40, 180};
+          pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
+          for (ReportTag tag : tags.get(key)) {
+            pdfParams.y -= 15;
+            String sDif = "";
+            if (tag.dif < 0) sDif = "(-)";
+            else if (tag.dif > 0) sDif = "(+)";
+            pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
+            pdfParams = writeText(pdfParams, tag.tv.getName(), pos_x + margins[1], font, font_size);
+            pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+          }
+        }
+        /**
+         * IFD  expert
+         */
+        else if (key.startsWith("ifd")) {
+          pdfParams.y -= 40;
+          pdfParams = writeTitle(pdfParams, "IFD expert tags", "images/pdf/tag.png", pos_x, font, 10);
+          pdfParams.y -= 20;
+          Integer[] margins = {2, 40, 180};
+          pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
+          for (ReportTag tag : tags.get(key)) {
+            pdfParams.y -= 15;
+            String sDif = "";
+            if (tag.dif < 0) sDif = "(-)";
+            else if (tag.dif > 0) sDif = "(+)";
+            pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
+            pdfParams = writeText(pdfParams, tag.tv.getName(), pos_x + margins[1], font, font_size);
+            pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+          }
+        }
+        /**
+         * EXIF
+         */
+        if (key.startsWith("exi")) {
+          for (ReportTag tag : tags.get(key)) {
+            pdfParams.y -= 40;
+            String index = (tag.index > 0) ? " (IFD " + tag.index + ")" : "";
+            pdfParams = writeTitle(pdfParams, "EXIF Tags" + index, "images/pdf/tag.png", pos_x, font, 10);
+            pdfParams.y -= 20;
+            Integer[] margins = {2, 40, 180};
+            pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
+            IFD exif = (IFD) tag.tv.getValue().get(0);
+            for (TagValue tv : exif.getTags().getTags()) {
+              pdfParams.y -= 15;
+              pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
+              pdfParams = writeText(pdfParams, tv.getName(), pos_x + margins[1], font, font_size);
+              pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+            }
+          }
+        }
+        /**
+         * IPTC
+         */
+        if (key.startsWith("ipt")) {
+          for (ReportTag tag : tags.get(key)) {
+            pdfParams.y -= 40;
+            String index = (tag.index > 0) ? " (IFD " + tag.index + ")" : "";
+            pdfParams = writeTitle(pdfParams, "IPTC Tags" + index, "images/pdf/tag.png", pos_x, font, 10);
+            pdfParams.y -= 20;
+            Integer[] margins = {2, 180};
+            pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Name", "Value"), margins);
+            IPTC iptc = (IPTC) tag.tv.getValue().get(0);
+            Metadata metadata = iptc.createMetadata();
+            for (String mKey : iptc.createMetadata().keySet()) {
+              pdfParams.y -= 15;
+              pdfParams = writeText(pdfParams, mKey, pos_x + margins[0], font, font_size);
+              pdfParams = writeText(pdfParams, metadata.get(mKey).toString().trim(), pos_x + margins[1], font, font_size);
+            }
+          }
+        }
+        /**
+         * XMP
+         */
+        if (key.startsWith("xmp")) {
+          for (ReportTag tag : tags.get(key)) {
+            // Tags
+            pdfParams.y -= 40;
+            String index = (tag.index > 0) ? " (IFD " + tag.index + ")" : "";
+            pdfParams = writeTitle(pdfParams, "XMP Tags" + index, "images/pdf/tag.png", pos_x, font, 10);
+            pdfParams.y -= 20;
+            Integer[] margins = {2, 180};
+            pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Name", "Value"), margins);
+            XMP xmp = (XMP) tag.tv.getValue().get(0);
+            Metadata metadata = xmp.createMetadata();
+            for (String xKey : metadata.keySet()) {
+              pdfParams.y -= 15;
+              pdfParams = writeText(pdfParams, xKey, pos_x + margins[0], font, font_size);
+              pdfParams = writeText(pdfParams, metadata.get(xKey).toString().trim(), pos_x + margins[1], font, font_size);
+            }
+            // History
+            if (xmp.getHistory() != null) {
+              pdfParams.y -= 40;
+              pdfParams = writeTitle(pdfParams, "History" + index, "images/pdf/tag.png", pos_x, font, 10);
+              pdfParams.y -= 20;
+              pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Attribute", "Value"), margins);
+              int nh = 0;
+              for (Hashtable<String, String> kv : xmp.getHistory()) {
+                // TODO WORKARROUND
+                String hKey = kv.keySet().iterator().next();
+                if (hKey.equals("action") && nh != 0) {
+                  pdfParams.getContentStream().drawLine(pos_x, pdfParams.y-5, pos_x + 490, pdfParams.y-5);
+                }
+                pdfParams.y -= 15;
+                pdfParams = writeText(pdfParams, hKey, pos_x + margins[0], font, font_size);
+                pdfParams = writeText(pdfParams, kv.get(hKey).toString().trim(), pos_x + margins[1], font, font_size);
+                nh++;
+              }
+            }
+          }
+        }
+      }
+
+      /**
+       * Metadata incoherencies
+       */
+      pdfParams.y -= 40;
+      pdfParams = writeTitle(pdfParams, "Metadata analysis", "images/pdf/metadata.png", pos_x, font, 10);
+      pdfParams.y -= 20;
+      Integer[] margins = {2, 30};
+      pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("", "Description"), margins);
+      IFD tdifd = td.getFirstIFD();
+      int nifd = 1;
+      List<String> rows = new ArrayList<>();
+      while (tdifd != null) {
+        XMP xmp = null;
+        IPTC iptc = null;
+        if (tdifd.containsTagId(TiffTags.getTagId("XMP")))
+          xmp = (XMP) tdifd.getTag("XMP").getValue().get(0);
+        if (tdifd.containsTagId(TiffTags.getTagId("IPTC")))
+          iptc = (IPTC) tdifd.getTag("IPTC").getValue().get(0);
+
+        // Author
+        String authorTag = null;
+        if (tdifd.containsTagId(TiffTags.getTagId("Artist")))
+          authorTag = tdifd.getTag("Artist").toString();
+        String authorIptc = null;
+        if (iptc != null) authorIptc = iptc.getCreator();
+        String authorXmp = null;
+        if (xmp != null) authorXmp = xmp.getCreator();
+
+        rows.addAll(detectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd));
+        tdifd = tdifd.getNextIFD();
+        nifd++;
+      }
+      if (rows.isEmpty()){
+        pdfParams.y -= 15;
+        PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/check.png")));
+        pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y-1, 9, 9);
+        pdfParams = writeText(pdfParams, "No metadata incoherencies found", pos_x + margins[1], font, font_size);
+      }
+      for (String row : rows){
+        pdfParams.y -= 15;
+        PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/error.png")));
+        pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y-1, 9, 9);
+        pdfParams = writeText(pdfParams, row, pos_x + margins[1], font, font_size);
+      }
+
+      /**
+       * Conformance checkers
+       */
+      pdfParams.y -= 40;
+      font_size = 10;
+      pdfParams = writeTitle(pdfParams, "Conformance checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
       for (String iso : ir.getIsosCheck()) {
-        pdfParams.y -= 20;
-        String name = ImplementationCheckerLoader.getIsoName(iso);
-        pdfParams = writeErrorsWarnings(pdfParams, font, ir.getErrors(iso), ir.getOnlyWarnings(iso), ir.getOnlyInfos(iso), pos_x, name);
+        if (ir.hasValidation(iso)) {
+          String name = ImplementationCheckerLoader.getIsoName(iso);
+          pdfParams = writeErrorsWarnings(pdfParams, font, ir.getErrors(iso), ir.getOnlyWarnings(iso), ir.getOnlyInfos(iso), pos_x, name, iso.equals(TiffConformanceChecker.POLICY_ISO));
+        }
       }
 
       pdfParams.getContentStream().close();
 
       ir.setPDF(pdfParams.getDocument());
     } catch (Exception tfe) {
+      tfe.printStackTrace();
       ir.setPDF(null);
       //context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", tfe));
     }
@@ -334,81 +489,101 @@ public class PdfReport extends Report {
    * @return the int
    * @throws Exception the exception
    */
-  private PDFParams writeErrorsWarnings(PDFParams pdfParams, PDFont font, List<RuleResult> errors, List<RuleResult> warnings, List<RuleResult> infos, int pos_x, String type) throws Exception {
+  private PDFParams writeErrorsWarnings(PDFParams pdfParams, PDFont font, List<RuleResult> errors, List<RuleResult> warnings, List<RuleResult> infos, int pos_x, String type, boolean isPolicy) throws Exception {
     int font_size = 10;
-    int marg1 = 30;
-    int marg2 = 75;
-    int marg3 = 240;
+    Integer[] margins;
+    if (!isPolicy) {
+      // Conformance margins
+      margins = new Integer[]{2, 30, 90, 150, 480};
+    } else {
+      // Policy margins
+      margins = new Integer[]{2, 30, 200, 480};
+    }
     pdfParams.y -= 20;
 
-    pdfParams = writeText(pdfParams, type + " Conformance", pos_x, font, font_size);
-    font_size = 8;
-
-    // Conforms message
-    if (errors.size() + warnings.size() == 0) {
-      pdfParams.y -= 20;
-      PDXObjectImage ximage = new PDJpeg(pdfParams.getDocument(), getFileStreamFromResources("images/ok.jpg"));
-      pdfParams.getContentStream().drawXObject(ximage, pos_x + 8, pdfParams.y, 5, 5);
-      pdfParams = writeText(pdfParams, "This file conforms to " + type, pos_x + 15, font, font_size, Color.green);
+    String imgPath = "images/pdf/check.png";
+    if (errors.size() > 0) {
+      imgPath = "images/pdf/error.png";
+    } else if (warnings.size() > 0) {
+      imgPath = "images/pdf/warning.png";
     }
+    pdfParams = writeTitle(pdfParams, type, imgPath, pos_x, font, font_size);
+    font_size = 8;
 
     // Errors, warnings and infos list
     if (errors.size() + warnings.size() + infos.size() > 0) {
       pdfParams.y -= 20;
-      pdfParams = writeText(pdfParams, "Type", pos_x, font, font_size);
-      pdfParams = writeText(pdfParams, "Location", pos_x + marg1, font, font_size);
-      pdfParams = writeText(pdfParams, "Reference", pos_x + marg2, font, font_size);
-      pdfParams = writeText(pdfParams, "Description", pos_x + marg3, font, font_size);
+      pdfParams = writeRectangle(pdfParams, pos_x, font_size, 490, Color.decode("#333333"));
+      List<String> headers;
+      if (!isPolicy) {
+        headers = Arrays.asList("Type", "ID", "Location", "Description");
+      } else {
+        headers = Arrays.asList("Type", "Rule", "Description");
+      }
+      pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, headers, margins);
     }
+    pdfParams.y -= 10;
     for (RuleResult val : errors) {
-      pdfParams = writeResult(pdfParams, val, "Error", pos_x, font);
+      pdfParams = writeResult(pdfParams, val, "images/pdf/error.png", pos_x, font, margins, isPolicy);
     }
     for (RuleResult val : warnings) {
-      pdfParams = writeResult(pdfParams, val, "Warning", pos_x, font);
+      pdfParams = writeResult(pdfParams, val, "images/pdf/warning.png", pos_x, font, margins, isPolicy);
     }
     for (RuleResult val : infos) {
-      pdfParams = writeResult(pdfParams, val, "Info", pos_x, font);
+      pdfParams = writeResult(pdfParams, val, "images/pdf/info.png", pos_x, font, margins, isPolicy);
     }
     return pdfParams;
   }
 
-  private PDFParams writeResult(PDFParams pdfParams, RuleResult val, String type, int pos_x, PDFont font) throws Exception {
-    int marg1 = 30;
-    int marg2 = 75;
-    int marg3 = 240;
-    int marg4 = 500;
+  private PDFParams writeResult(PDFParams pdfParams, RuleResult val, String imgPath, int pos_x, PDFont font, Integer[] margins, boolean isPolicy) throws Exception {
     int font_size = 8;
-    pdfParams.y -= 20;
+    pdfParams.y -= 10;
 
     //Type
-    Color color = Color.red;
-    if (type.equals("Info")) {
-      color = Color.gray;
-    } else if (type.equals("Warning")) {
-      color = Color.orange;
+    PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources(imgPath)));
+    pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y-1, 9, 9);
+
+    if (!isPolicy) {
+      // ID
+      pdfParams = writeText(pdfParams, val.getRule() != null ? val.getRule().getId() : "", pos_x + margins[1], font, font_size);
+
+      // Location
+      List<String> linesLoc = splitInLines(font_size, font, val.getLocation(), margins[3] - margins[2] - 10, " ");
+      for (String line : linesLoc) {
+        pdfParams = writeText(pdfParams, line, pos_x + margins[2], font, font_size);
+        pdfParams.y -= 10;
+      }
+      pdfParams.y = pdfParams.y + 10 * linesLoc.size();
+
+      // Description
+      List<String> linesDes = splitInLines(font_size, font, val.getDescription(), margins[4] - margins[3] - 10, " ");
+      for (String line : linesDes) {
+        pdfParams = writeText(pdfParams, line, pos_x + margins[3], font, font_size);
+        pdfParams.y -= 10;
+      }
+      pdfParams.y += 10 * linesDes.size();
+
+      pdfParams.y -= linesDes.size() > linesLoc.size() ? linesDes.size() * 10 : linesLoc.size() * 10;
+    } else {
+      // Rule
+      List<String> linesRul = splitInLines(font_size, font, val.getRuleDescription(), margins[2] - margins[1] - 10, " ");
+      for (String line : linesRul) {
+        pdfParams = writeText(pdfParams, line, pos_x + margins[1], font, font_size);
+        pdfParams.y -= 10;
+      }
+      pdfParams.y += 10 * linesRul.size();
+
+      // Description
+      List<String> linesDes = splitInLines(font_size, font, val.getDescription(), margins[3] - margins[2] - 10, " ");
+      for (String line : linesDes) {
+        pdfParams = writeText(pdfParams, line, pos_x + margins[2], font, font_size);
+        pdfParams.y -= 10;
+      }
+      pdfParams.y += 10 * linesDes.size();
+
+      pdfParams.y -= linesDes.size() > linesRul.size() ? linesDes.size() * 10 : linesRul.size() * 10;
     }
-    pdfParams = writeText(pdfParams, type, pos_x, font, font_size, color);
 
-    // Location
-    pdfParams = writeText(pdfParams, val.getLocation(), pos_x + marg1, font, font_size);
-
-    // Reference
-    List<String> linesRef = splitInLines(font_size, font, val.getReference(), marg3 - marg2 - 10, " ");
-    for (String line : linesRef) {
-      pdfParams = writeText(pdfParams, line, pos_x + marg2, font, font_size);
-      pdfParams.y -= 10;
-    }
-    pdfParams.y = pdfParams.y + 10 * linesRef.size();
-
-    // Description
-    List<String> linesDes = splitInLines(font_size, font, val.getDescription(), marg4 - marg3 - 10, " ");
-    for (String line : linesDes) {
-      pdfParams = writeText(pdfParams, line, pos_x + marg3, font, font_size);
-      pdfParams.y -= 10;
-    }
-    pdfParams.y += 10 * linesDes.size();
-
-    pdfParams.y -= linesDes.size() > linesRef.size() ? linesDes.size() * 10 : linesRef.size() * 10;
     return pdfParams;
   }
 
@@ -423,27 +598,27 @@ public class PdfReport extends Report {
       if (size > max) {
         String[] words = text.split(regex);
         String line = words[0];
-        if (pathMode){
+        if (pathMode) {
           line += "/";
         }
         for (int i = 1; i < words.length; i++) {
           String word = words[i];
           String aux = line + regex + word;
-          if (pathMode){
+          if (pathMode) {
             aux = line + word + regex;
           }
           if (getSize(font_size, font, aux) > max) {
             lines.add(line);
             line = word;
-            if (pathMode){
+            if (pathMode) {
               line += "/";
             }
           } else {
             line = aux;
           }
         }
-        if (pathMode){
-          line = line.substring(0, line.length()-1);
+        if (pathMode) {
+          line = line.substring(0, line.length() - 1);
         }
         lines.add(line);
         return lines;
@@ -468,15 +643,15 @@ public class PdfReport extends Report {
    * @throws Exception the exception
    */
   private PDFParams writeText(PDFParams pdfParams, String text, int x, PDFont font, int font_size) throws Exception {
-    return writeText(pdfParams, text, x, 99999, font, font_size, Color.black);
+    return writeText(pdfParams, text, x, 99999, font, font_size, Color.black, null);
   }
 
   private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size) throws Exception {
-    return writeText(pdfParams, text, x, max_x, font, font_size, Color.black);
+    return writeText(pdfParams, text, x, max_x, font, font_size, Color.black, null);
   }
 
   private PDFParams writeText(PDFParams pdfParams, String text, int x, PDFont font, int font_size, Color color) throws Exception {
-    return writeText(pdfParams, text, x, 99999, font, font_size, color);
+    return writeText(pdfParams, text, x, 99999, font, font_size, color, null);
   }
 
   /**
@@ -490,7 +665,7 @@ public class PdfReport extends Report {
    * @param color     the color
    * @throws Exception the exception
    */
-  private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size, Color color) throws Exception {
+  private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size, Color color, PDPixelMap image) throws Exception {
     PDPageContentStream contentStream = pdfParams.getContentStream();
     try {
       if (newPageNeeded(pdfParams.y)) {
@@ -498,15 +673,49 @@ public class PdfReport extends Report {
         pdfParams.y = init_posy;
       }
 
+      if (image != null){
+        pdfParams.getContentStream().drawXObject(image, x-12, pdfParams.y - 1, 9, 9);
+      }
+
+      String stext = text.replace("\n", " ").replaceAll(" +", " ").trim();
       contentStream.beginText();
       contentStream.setFont(font, font_size);
       contentStream.setNonStrokingColor(color);
       contentStream.moveTextPositionByAmount(x, pdfParams.y);
-      contentStream.drawString(text);
+      contentStream.drawString(stext);
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
       contentStream.endText();
+      pdfParams.setContentStream(contentStream);
+      return pdfParams;
+    }
+  }
+
+  private PDFParams writeTitle(PDFParams pdfParams, String text, String imgPath, int x, PDFont font, int font_size) throws Exception {
+    PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources(imgPath)));
+    return writeText(pdfParams, text, x + 12, 99999, font, font_size, Color.black, titleImage);
+  }
+
+  private PDFParams writeTableHeaders(PDFParams pdfParams, int pos_x, int font_size, PDFont font, List<String> headers, Integer[] margins) throws Exception {
+    pdfParams = writeRectangle(pdfParams, pos_x, font_size, 490, Color.decode("#333333"));
+    int i = 0;
+    for (String header : headers) {
+      pdfParams = writeText(pdfParams, header, pos_x + margins[i], font, font_size, Color.lightGray);
+      i++;
+    }
+    return pdfParams;
+  }
+
+  private PDFParams writeRectangle(PDFParams pdfParams, int x, int font_size, int max, Color color) throws Exception {
+    PDPageContentStream contentStream = pdfParams.getContentStream();
+    try {
+      //draw rectangle
+      contentStream.setNonStrokingColor(color);
+      contentStream.fillRect(x, pdfParams.y - 3, max, font_size + 5);
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
       pdfParams.setContentStream(contentStream);
       return pdfParams;
     }
