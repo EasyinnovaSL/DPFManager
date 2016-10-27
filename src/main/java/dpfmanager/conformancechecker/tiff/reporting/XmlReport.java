@@ -178,7 +178,7 @@ public class XmlReport {
       elchild = doc.createElement("tag");
 
       elchild2 = doc.createElement("name");
-      elchild2.setTextContent(t.getName());
+      elchild2.setTextContent((t.getName().equals(t.getId()) ? "Private tag" : t.getName()));
       elchild.appendChild(elchild2);
 
       elchild2 = doc.createElement("id");
