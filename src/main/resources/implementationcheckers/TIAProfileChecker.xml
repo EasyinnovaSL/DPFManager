@@ -31,7 +31,7 @@
             <description>The image data is stored using strips, which are collectively termed segments.
                 The following tag-fields define the number of strips and the number of rows of image data stored in each strip: StripOffsets, RowsPerStrip, and StripByteCounts.
                 The image shall be divided into an integral number of strips, from 1 strip to the maximum number of strips, which equals the image’s length.
-                If necessary, the final strip can be “padded” with zeros. </description>
+                If necessary, the final strip can be "padded" with zeros. </description>
             <reference>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
@@ -397,7 +397,7 @@
             <title>NewSubFileType mandatory tag</title>
             <description>This tag indicates whether the given IFD is a thumbnail or main (full-size) image. 
                 This tag is mandatory and there is no default value. The value shall be explicitly stated.
-                If the current image is the main image, rather than the "thumbnail" image, a value of 0 shall be encoded in this field</description>
+                If the current image is the main image, rather than the 'thumbnail' image, a value of 0 shall be encoded in this field</description>
             <reference>
                 <section>Section 5.2 Tag Reference</section>
                 <page>26</page>
@@ -409,7 +409,7 @@
             <title>NewSubFileType valid values</title>
             <description>This tag indicates whether the given IFD is a thumbnail or main (full-size) image. 
                 This tag is mandatory and there is no default value. The value shall be explicitly stated.
-                If the current image is the main image, rather than the "thumbnail" image, a value of 0 shall be encoded in this field</description>
+                If the current image is the main image, rather than the 'thumbnail' image, a value of 0 shall be encoded in this field</description>
             <reference>
                 <section>Section 5.2 Tag Reference</section>
                 <page>26</page>
@@ -452,7 +452,7 @@
 
         <rule id="MANDATORY-TAG-259" context="ifd[class=image]" level="error">
             <title>Compression mandatory tag</title>
-            <description>This tag encodes the compression scheme used to store the image data. This tag is mandatory and there is no default value. The tag value shall equal “1” for the thumbnail IFD. In the Context of TI/A the default value is 1. 
+            <description>This tag encodes the compression scheme used to store the image data. This tag is mandatory and there is no default value. The tag value shall equal "1" for the thumbnail IFD. In the Context of TI/A the default value is 1. 
                 For sustainability compression may not be used.</description>
             <reference>
                 <section>Section 5.2 Tag Reference</section>
@@ -1025,7 +1025,7 @@
         <rule id="RECOMMENDED-TAG-270" context="ifd[thumbnail=0]" level="warning">
             <title>ImageDescription recommended tag</title>
             <description>A string that describes the subject or purpose of the image is recorded as a null-terminated ASCII string. This tag field may be additionally used to provide any other type of information related to the image. 
-                This is a mandatory tag, with an allowed value of “ ” (null character), indicating “unknown”.</description>
+                This is a mandatory tag, with an allowed value of " " (null character), indicating "unknown".</description>
             <reference>
                 <section>Section 5.2 Tag Reference</section>
                 <page>46</page>
@@ -1045,7 +1045,7 @@
 
         <rule id="RECOMMENDED-TAG-33432" context="ifd[thumbnail=0]" level="warning">
             <title>Copyright recommended tag</title>
-            <description>This tag encodes the copyright notice of the copyright holder. This is a mandatory tag, with an allowed value of “ ” (null character), indicating “unknown”. 
+            <description>This tag encodes the copyright notice of the copyright holder. This is a mandatory tag, with an allowed value of " " (null character), indicating "unknown". 
                 The complete copyright statement should be listed in this field including any dates and statements of claims. If desired, this tag-field can also list the royalty clearance house.</description>
             <reference>
                 <section>Section 5.2 Tag Reference</section>

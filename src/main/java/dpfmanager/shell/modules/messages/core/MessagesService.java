@@ -103,7 +103,7 @@ public class MessagesService extends DpfService {
   }
 
   public boolean isServer(){
-    return parameters.get("mode").equals("SERVER");
+    return parameters.containsKey("mode") ? parameters.get("mode").equals("SERVER") : false;
   }
 
 }

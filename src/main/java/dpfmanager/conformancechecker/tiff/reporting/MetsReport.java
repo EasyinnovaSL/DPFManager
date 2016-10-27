@@ -742,7 +742,7 @@ public class MetsReport {
           cfaPattern.setValue(new BigInteger(ir.getTiffModel().getMetadata().get("CFAPattern").toString().replace("[", "").replace("]", "").replace(",", "")));
           imageData.setCfaPattern(cfaPattern);
         } catch (Exception ex) {
-          ex.printStackTrace();
+          //ex.printStackTrace();
         }
       }
     }

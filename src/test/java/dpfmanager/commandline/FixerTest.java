@@ -32,8 +32,8 @@ public class FixerTest extends CommandLineTest {
         "FORMAT\tHTML\n" +
         "FORMAT\tXML\n" +
         "RULE\tImageWidth,>,1000\n" +
-        "FIX\tCopyright,Remove Tag,\n" +
-        "FIX\tImageDescription,Add Tag,description\n");
+        "FIX\tCopyright,removeTag,\n" +
+        "FIX\tImageDescription,addTag,description\n");
     bw.close();
 
     String path = "temp/output";
@@ -96,7 +96,7 @@ public class FixerTest extends CommandLineTest {
     bw.write("ISO\tBaseline\n" +
         "FORMAT\tHTML\n" +
         "FORMAT\tXML\n" +
-        "FIX\tArtist,Add Tag,NewArtist\n");
+        "FIX\tArtist,addTag,NewArtist\n");
     bw.close();
 
     String path = "temp/output";

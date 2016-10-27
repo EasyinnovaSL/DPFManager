@@ -69,7 +69,10 @@ import java.io.StringWriter;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -581,32 +584,20 @@ public class TiffConformanceChecker extends ConformanceChecker {
           break;
         case 0:
           //Logger.println("Validating Tiff");
-          String content = getValidationXmlString(tr);
-          Map<String, Validator> validations = new HashMap<>();
-          for (String path : ImplementationCheckerLoader.getPathsList()){
-            boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
-            Validator validation = new Validator(Logger);
-            validation.validate(content, path, !check);
-            validations.put(ImplementationCheckerLoader.getFileName(path), validation);
-          }
-          for (String iso : config.getIsos()){
-            if (iso.endsWith(".xml")){
-              Validator validation = new Validator(Logger);
-              validation.validate(content, iso, false);
-              validations.put(iso, validation);
-            }
-          }
+          Map<String, Validator> validations = getValidations(tr, config);
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
           IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations);
-          ir.setIsosCheck(config.getIsos());
+          ArrayList<String> isosCheck = new ArrayList<>(config.getIsos());
+          Collections.sort(isosCheck, Collator.getInstance());
+          ir.setIsosCheck(isosCheck);
           Rules rules = config.getRules();
           XmlReport xmlReport = new XmlReport();
           String output = xmlReport.parseIndividual(ir, config.getRules());
           ir.setConformanceCheckerReport(output);
           if (config.getRules() != null && config.getRules().getRules() != null && config.getRules().getRules().size() > 0) {
-            ir.getIsosCheck().add(POLICY_ISO);
+            ir.addIsosCheck(POLICY_ISO);
             ir.addValidation(POLICY_ISO,getPcValidation(output));
           }
 
@@ -641,9 +632,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
             for (Fix fix : fixes.getFixes()) {
               if (fix.getOperator() != null) {
-                if (fix.getOperator().equals("Add Tag")) {
+                if (fix.getOperator().equals("addTag")) {
                   td.addTag(fix.getTag(), fix.getValue());
-                } else if (fix.getOperator().equals("Remove Tag")) {
+                } else if (fix.getOperator().equals("removeTag")) {
                   td.removeTag(fix.getTag());
                 }
               } else {
@@ -671,14 +662,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             TiffDocument to = tr.getModel();
 
             //Logger.println("Validating Tiff");
-            String contentfixed = TiffConformanceChecker.getValidationXmlString(tr);
-            Map<String, Validator> validationsFixed = new HashMap<>();
-            for (String path : ImplementationCheckerLoader.getPathsList()){
-              boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
-              Validator validation = new Validator(Logger);
-              validation.validate(contentfixed, path, check);
-              validations.put(ImplementationCheckerLoader.getFileName(path), validation);
-            }
+            Map<String, Validator> validationsFixed = getValidations(tr, config);
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");
             name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
@@ -748,6 +732,25 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return null;
   }
 
+  private  Map<String, Validator> getValidations(TiffReader tr, Configuration config) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    String content = TiffConformanceChecker.getValidationXmlString(tr);
+    Map<String, Validator> validations = new HashMap<>();
+    for (String path : ImplementationCheckerLoader.getPathsList()){
+      boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
+      Validator validation = new Validator(Logger);
+      validation.validate(content, path, !check);
+      validations.put(ImplementationCheckerLoader.getFileName(path), validation);
+    }
+    for (String iso : config.getIsos()){
+      if (iso.endsWith(".xml")){
+        Validator validation = new Validator(Logger);
+        validation.validate(content, iso, false);
+        validations.put(iso, validation);
+      }
+    }
+    return validations;
+  }
+
   @Override
   public Configuration getDefaultConfiguration(){
     return checkConfig;
@@ -766,12 +769,19 @@ public class TiffConformanceChecker extends ConformanceChecker {
       index = output.indexOf("<error", index);
       if (index == -1) break;
       index = output.indexOf(">", index) + 1;
+      index = output.indexOf("<test", index);
+      index = output.indexOf(">", index) + 1;
+      String test = output.substring(index);
+      test = test.substring(0, test.indexOf("</"));
+      index = output.indexOf("<message", index);
+      index = output.indexOf(">", index) + 1;
       String text = output.substring(index);
       text = text.substring(0, text.indexOf("</"));
       RuleResult val = new RuleResult();
       val.setWarning(false);
       val.setMessage(text);
       val.setLocation("Policy checker");
+      val.setRuleDescription(test);
       valid.add(val);
     }
     index = output.indexOf("<policyCheckerOutput");
@@ -779,12 +789,19 @@ public class TiffConformanceChecker extends ConformanceChecker {
       index = output.indexOf("<warning", index);
       if (index == -1) break;
       index = output.indexOf(">", index) + 1;
+      index = output.indexOf("<test", index);
+      index = output.indexOf(">", index) + 1;
+      String test = output.substring(index);
+      test = test.substring(0, test.indexOf("</"));
+      index = output.indexOf("<message", index);
+      index = output.indexOf(">", index) + 1;
       String text = output.substring(index);
       text = text.substring(0, text.indexOf("</"));
       RuleResult val = new RuleResult();
       val.setWarning(true);
       val.setMessage(text);
       val.setLocation("Policy checker");
+      val.setRuleDescription(test);
       valid.add(val);
     }
     return valid;
@@ -792,27 +809,37 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   static ArrayList<RuleResult> getPcValidationOld(String output) {
     ArrayList<RuleResult> valid = new ArrayList<>();
+    // Errors
     int index = output.indexOf("<svrl:failed-assert");
     while (index > -1) {
       String text = output.substring(output.indexOf("text>", index));
       text = text.substring(text.indexOf(">") + 1);
       text = text.substring(0, text.indexOf("</"));
+      String desc = output.substring(output.indexOf("test=\"@", index)+7);
+      desc = desc.substring(0, desc.indexOf("\""));
+      desc = desc.replace("&gt;", ">").replace("&lt;", ">");
       index = output.indexOf("<svrl:failed-assert", index + 1);
       RuleResult val = new RuleResult();
       val.setWarning(false);
       val.setMessage(text);
+      val.setRuleDescription(desc);
       val.setLocation("Policy checker");
       valid.add(val);
     }
+    // Warnings
     index = output.indexOf("<svrl:successful-report");
     while (index > -1) {
       String text = output.substring(output.indexOf("text>", index));
       text = text.substring(text.indexOf(">") + 1);
       text = text.substring(0, text.indexOf("</"));
+      String desc = output.substring(output.indexOf("test=\"@", index)+7);
+      desc = desc.substring(0, desc.indexOf("\""));
+      desc = desc.replace("&gt;", ">").replace("&lt;", ">");
       index = output.indexOf("<svrl:successful-report", index + 1);
       RuleResult val = new RuleResult();
       val.setWarning(true);
       val.setMessage(text);
+      val.setRuleDescription(desc);
       val.setLocation("Policy checker");
       valid.add(val);
     }

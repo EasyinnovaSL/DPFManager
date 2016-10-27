@@ -227,6 +227,8 @@ public class RuleType {
       String refPage = ref.getPage();
       if (refPage == null)
         refPage = ref.getPages();
+      if (refPage == null)
+        refPage = "";
       s += page.replace("%1", refPage);
     }
     return s;

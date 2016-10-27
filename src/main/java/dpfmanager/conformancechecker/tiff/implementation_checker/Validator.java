@@ -96,7 +96,7 @@ public class Validator {
       ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
       validate(obj, rules, fastBreak);
     } catch (Exception ex) {
-      RuleResult rr = new RuleResult(false, null, null, "Fatal error in TIFF file");
+      RuleResult rr = new RuleResult("Fatal error in TIFF file");
       result = new ValidationResult();
       result.add(rr);
     }
@@ -309,21 +309,19 @@ public class Validator {
     }
 
     if (ok && rule.isWarning()) {
-      RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+      RuleResult rr = new RuleResult(false, node, rule);
       rr.setWarning(true);
       result.add(rr);
     } else if (ok && rule.isInfo()) {
-      RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+      RuleResult rr = new RuleResult(false, node, rule);
       rr.setInfo(true);
       result.add(rr);
     } else if (ok) {
-      RuleResult rr = new RuleResult(true, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
+      RuleResult rr = new RuleResult(true, node, rule);
       result.add(rr);
-    } else {
-      if (!rule.isWarning() && !rule.isInfo()) {
-        RuleResult rr = new RuleResult(false, node, rule, rule.getAssert().getValue() + " on node " + node.toString());
-        result.add(rr);
-      }
+    } else if (!rule.isWarning() && !rule.isInfo()) {
+      RuleResult rr = new RuleResult(false, node, rule);
+      result.add(rr);
     }
 
     return ok;

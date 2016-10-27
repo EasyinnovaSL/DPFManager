@@ -945,10 +945,10 @@ public class XmlReport {
           Validator validation = sch.testXMLnoSchematron(ir.getTiffModel(), rules);
           String validationString = "<policyCheckerOutput>";
           for (RuleResult rr : validation.getErrors()) {
-            validationString += "<error>" + rr.getMessage() + "</error>";
+            validationString += "<error><test>" + rr.getRule().getDescription().getValue() + "</test><message>" + rr.getMessage() + "</message></error>";
           }
           for (RuleResult rr : validation.getWarnings()) {
-            validationString += "<warning>" + rr.getMessage() + "</warning>";
+            validationString += "<warning><test>" + rr.getRule().getDescription().getValue() + "</test><message>" + rr.getMessage() + "</message></warning>";
           }
           validationString += "</policyCheckerOutput>";
           String presch = output.substring(0, output.indexOf("</report>"));

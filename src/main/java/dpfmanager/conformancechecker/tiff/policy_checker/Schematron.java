@@ -169,6 +169,9 @@ public class Schematron {
         sTest += "}";
       }
       assertObj.setTest(sTest);
+      RuleType.Description desc = new RuleType.Description();
+      desc.setValue(rule.getTag() + " " + rule.getOperator() + " " + rule.getValue());
+      ruleObj.setDescription(desc);
       if (!rule.getWarning()) assertObj.setValue("Invalid " + rule.getTag());
       else assertObj.setValue("Warning on " + rule.getTag());
       ruleObj.setAssert(assertObj);
