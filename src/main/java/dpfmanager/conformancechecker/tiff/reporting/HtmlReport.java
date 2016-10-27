@@ -19,9 +19,9 @@
 
 package dpfmanager.conformancechecker.tiff.reporting;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -35,7 +35,6 @@ import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.awt.image.BufferedImage;
@@ -46,46 +45,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by easy on 05/05/2016.
  */
 public class HtmlReport extends Report {
-
-  private String fontello = null;
-
-//  String makeConformDiv(int nerrors, int nwarnings, String key, String html, boolean check, boolean forcecheck) {
-//    String htmlBody = html;
-//    if (check || (forcecheck && nerrors + nwarnings == 0)) {
-//      if (nerrors > 0) {
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "none");
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "none");
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_ERR##", "block");
-//      } else if (nwarnings > 0) {
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "none");
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "block");
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_ERR##", "none");
-//      } else {
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "block");
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "none");
-//        htmlBody = StringUtils.replace(htmlBody, "##" + key + "_ERR##", "none");
-//      }
-//    } else {
-//      htmlBody = StringUtils.replace(htmlBody, "##" + key + "_OK##", "none");
-//      htmlBody = StringUtils.replace(htmlBody, "##" + key + "_WAR##", "none");
-//      htmlBody = StringUtils.replace(htmlBody, "##" + key + "_ERR##", "none");
-//    }
-//    return htmlBody;
-//  }
 
   /**
    * Parse an individual report to HTML.
@@ -160,15 +130,14 @@ public class HtmlReport extends Report {
      * Errors / Warnings resume
      */
 
-    String fullTmpl = "<div class=\"row top30 bot50 fullw\">\n" +
+    String fullTmpl = "<div class=\"row bot20 left20 fullw\">\n" +
         "\t\t\t\t##CHECK##\n" +
         "\t\t\t\t<div>\n" +
-        "\t\t\t\t\t<h4 class=\"bold left15\"><i class=\"fa fa-check-square-o\"></i>  ##TITLE##</h4>\n" +
+        "\t\t\t\t\t<h4 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
         "\t\t\t\t\t##CONTENT##\n" +
         "\t\t\t\t</div>\n" +
         "\t\t\t</div>";
     String checkInfos = "<div class=\"clexpert\"><input type=\"checkbox\" id=\"checkInfo##COUNT##\" onchange=\"onChangeInfo(##COUNT##)\"><label for=\"checkInfo##COUNT##\"><span></span> Show infos</label></div>";
-    String conformTmpl = "<span style=\"margin-left: 20px;\" class=\"success\"><i class=\"fa fa-check-circle\"></i> This file conforms to ##TITLE##</span>";
     String errorsTmpl = "<table class=\"CustomTable3 left15\">\n" +
         "\t\t\t\t        <tr>\n" +
         "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'>Type</th>\n" +
@@ -178,38 +147,70 @@ public class HtmlReport extends Report {
         "\t\t\t\t        </tr>\n" +
         "\t\t\t\t        ##ROWS##\n" +
         "\t\t\t\t\t</table>";
+    String policyTmpl = "<table class=\"CustomTable3 left15\">\n" +
+        "\t\t\t\t        <tr>\n" +
+        "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'>Type</th>\n" +
+        "\t\t\t\t            <th class=\"bold\">Rule</th>\n" +
+        "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
+        "\t\t\t\t        </tr>\n" +
+        "\t\t\t\t        ##ROWS##\n" +
+        "\t\t\t\t\t</table>";
     String tdTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
+    String pcTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##LOC##</td><td>##DESC##</td></tr>";
     rows = "";
     int count = 0;
     for (String iso : ir.getIsosCheck()) {
       if (ir.hasValidation(iso)) {
         String name = ImplementationCheckerLoader.getIsoName(iso);
-        String row = fullTmpl;
+        String row = fullTmpl, icon = "exclamation";
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
         int infosCount = ir.getNInfos(iso);
         int addedRows = 0, addedInfos = 0;
+        if (errorsCount > 0){
+          icon = "fa-times-circle";
+        } else if (warningsCount > 0) {
+          icon = "fa-exclamation-circle";
+        } else {
+          icon = "fa-check-circle";
+        }
         String content = "";
         if (errorsCount + warningsCount + infosCount > 0) {
-          content += errorsTmpl;
+          if (iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+            content += policyTmpl;
+          } else {
+            content += errorsTmpl;
+          }
           String allRows = "";
           // Errors, Warnings and Infos
           for (RuleResult val : ir.getAllRuleResults(iso)) {
-            String tdRow = tdTmpl;
-            String display = "";
-            String clasz = "";
-            if (val.getRule().isError() || val.getRule().isCritical()) {
-              tdRow = tdRow.replace("##FA_CLASS##", "times");
-            } else if (val.getRule().isWarning()) {
-              tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
-            } else if (val.getRule().isInfo()) {
-              tdRow = tdRow.replace("##FA_CLASS##", "info");
-              display = "style='display: none;'";
-              clasz = "class='info##COUNT##'";
-              addedInfos++;
+            String tdRow, display = "", clasz = "", location = "";
+            if (val.getRule() == null) {
+              // Policy value
+              tdRow = pcTmpl;
+              if (!val.ok() && !val.getWarning()) {
+                tdRow = tdRow.replace("##FA_CLASS##", "times");
+              } else if (!val.ok()) {
+                tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
+              }
+              location = val.getRuleDescription();
+            } else {
+              // Rule value
+              tdRow = tdTmpl;
+              if (val.getRule().isError() || val.getRule().isCritical()) {
+                tdRow = tdRow.replace("##FA_CLASS##", "times");
+              } else if (val.getRule().isWarning()) {
+                tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
+              } else if (val.getRule().isInfo()) {
+                tdRow = tdRow.replace("##FA_CLASS##", "info");
+                display = "style='display: none;'";
+                clasz = "class='info##COUNT##'";
+                addedInfos++;
+              }
+              location = val.getLocation();
             }
-            tdRow = tdRow.replace("##ID##", val.getRule().getId());
-            tdRow = tdRow.replace("##LOC##", val.getLocation());
+            tdRow = tdRow.replace("##ID##", val.getRule() != null ? val.getRule().getId() : "");
+            tdRow = tdRow.replace("##LOC##", location);
             tdRow = tdRow.replace("##DESC##", val.getDescription());
             tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
             tdRow = tdRow.replace("##DISPLAY##", display);
@@ -220,15 +221,16 @@ public class HtmlReport extends Report {
           content = StringUtils.replace(content, "##ROWS##", allRows);
         }
         if (addedRows == 0) {
-          content = conformTmpl;
+          content = "";
         }
-        if (addedInfos == 0){
+        if (addedInfos == 0) {
           row = StringUtils.replace(row, "##CHECK##", "");
         }
         row = StringUtils.replace(row, "##CHECK##", checkInfos);
         row = StringUtils.replace(row, "##CONTENT##", content);
         row = StringUtils.replace(row, "##COUNT##", (++count) + "");
         row = StringUtils.replace(row, "##TITLE##", name);
+        row = StringUtils.replace(row, "##ICON##", icon);
         rows += row;
       }
     }
@@ -264,7 +266,7 @@ public class HtmlReport extends Report {
       }
       aIni = "<a id='liifd" + index + "' href='javascript:void(0)' onclick=\"showTagsDiv('ifd" + index + "')\" class='" + bold + "'>";
       aEnd = "</a>";
-      ul += "<li><i class=\"fa-file-image-o\"></i>" + aIni + aBody + aEnd;
+      ul += "<li><i class=\"fa fa-file-image-o\"></i>" + aIni + aBody + aEnd;
       if (ifd.getsubIFD() != null) {
         typ = "";
         if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Main image";
@@ -301,9 +303,12 @@ public class HtmlReport extends Report {
     ul += "</ul>";
     htmlBody = StringUtils.replace(htmlBody, "##UL##", ul);
 
-    // Metadata incoherencies
+    /**
+     * Metadata incoherencies
+     */
     IFD tdifd = td.getFirstIFD();
     int nifd = 1;
+    rows = "";
     while (tdifd != null) {
       XMP xmp = null;
       IPTC iptc = null;
@@ -320,18 +325,24 @@ public class HtmlReport extends Report {
       if (iptc != null) authorIptc = iptc.getCreator();
       String authorXmp = null;
       if (xmp != null) authorXmp = xmp.getCreator();
-      htmlBody = DetectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd, htmlBody);
+      rows += detectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd);
 
       tdifd = tdifd.getNextIFD();
       nifd++;
     }
+    if (rows.isEmpty()){
+      rows = "<tr><td class='tcenter'><i style='font-size: 18px;' class=\"fa fa-check-circle\"></i></td><td>No metadata incoherencies found</td></tr>";
+    }
+    htmlBody = StringUtils.replace(htmlBody, "##META_ROWS##", rows);
 
-    // Finish, write to html file
+    /**
+     * Finish, write to html file
+     */
     htmlBody = StringUtils.replace(htmlBody, "\\.\\./html/", "");
     return htmlBody;
   }
 
-  private String generateTagsDivs(IndividualReport ir){
+  private String generateTagsDivs(IndividualReport ir) {
     Map<String, Boolean> hasExpert = new HashMap<>();
     Map<String, String> tagsMap = new HashMap<>();
     Map<String, String> templates = new HashMap<>();
@@ -350,8 +361,8 @@ public class HtmlReport extends Report {
           try {
             Metadata metadata = xmp.createMetadata();
             for (String key : metadata.keySet()) {
-              row = "<tr class='xmp" + tag.index + "'><td>"+key+"</td><td>"+metadata.get(key).toString().trim()+"</td></tr>";
-              String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : row;
+              row = "<tr class='xmp" + tag.index + "'><td>" + key + "</td><td>" + metadata.get(key).toString().trim() + "</td></tr>";
+              String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
             }
             int nh = 0;
@@ -361,7 +372,7 @@ public class HtmlReport extends Report {
                 String key = kv.keySet().iterator().next();
                 String value = kv.get(key);
                 row = "<tr class='##LINE## xmp" + tag.index + "'><td>##ATTR##</td><td>##VALUE##</td></tr>";
-                if (key.equals("action")){
+                if (key.equals("action")) {
                   nh++;
                   row = row.replace("##LINE##", "line-top");
                 } else {
@@ -386,7 +397,7 @@ public class HtmlReport extends Report {
           IFD exif = (IFD) to;
           try {
             for (TagValue tv : exif.getTags().getTags()) {
-              row = "<tr class='exi" + tag.index + "'><td>"+tv.getName()+"</td><td>"+tv.getDescriptiveValue()+"</td></tr>";
+              row = "<tr class='exi" + tag.index + "'><td>" + tv.getName() + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
             }
@@ -404,7 +415,7 @@ public class HtmlReport extends Report {
           try {
             Metadata metadata = iptc.createMetadata();
             for (String key : metadata.keySet()) {
-              row = "<tr class='ipt" + tag.index + "'><td>"+key+"</td><td>"+metadata.get(key).toString().trim()+"</td></tr>";
+              row = "<tr class='ipt" + tag.index + "'><td>" + key + "</td><td>" + metadata.get(key).toString().trim() + "</td></tr>";
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
             }
@@ -417,9 +428,9 @@ public class HtmlReport extends Report {
       // IFD
       String mapId = "ifd" + tag.index;
       String expert = "";
-      if (tag.expert){
+      if (tag.expert) {
         expert = " expert";
-        hasExpert.put(mapId,true);
+        hasExpert.put(mapId, true);
       }
       row = "<tr class='ifd" + tag.index + " " + expert + "'><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
       String sDif = "";
@@ -502,7 +513,7 @@ public class HtmlReport extends Report {
     /**
      * Generate HTMLs
      */
-    for (String key : tagsMap.keySet()){
+    for (String key : tagsMap.keySet()) {
       if (key.endsWith("h")) continue;
       String type = key.substring(0, 3);
       String display = "none;", expert = "";
@@ -513,8 +524,8 @@ public class HtmlReport extends Report {
       tmpl = StringUtils.replace(tmpl, "##INDEX##", key);
       tmpl = StringUtils.replace(tmpl, "##DISPLAY##", display);
       tmpl = StringUtils.replace(tmpl, "##ROWS##", tagsMap.get(key));
-      if (type.equals("xmp") && tagsMap.containsKey(key + "h")){
-        tmpl = StringUtils.replace(tmpl, "##ROWSH##", tagsMap.get(key+"h"));
+      if (type.equals("xmp") && tagsMap.containsKey(key + "h")) {
+        tmpl = StringUtils.replace(tmpl, "##ROWSH##", tagsMap.get(key + "h"));
         tmpl = StringUtils.replace(tmpl, "##DISH##", "block");
       } else {
         tmpl = StringUtils.replace(tmpl, "##DISH##", "none");
@@ -524,25 +535,24 @@ public class HtmlReport extends Report {
     return finalResult;
   }
 
-  private String DetectIncoherency(String valueTag, String valueIptc, String valueXmp, String name, int nifd, String htmlBody) {
-    String htmlBodyMod = htmlBody;
+  private String detectIncoherency(String valueTag, String valueIptc, String valueXmp, String name, int nifd) {
+    String tmpl = "<tr><td class='tcenter'><i style='font-size: 18px;' class=\"fa fa-times-circle\"></i></td><td>##TEXT##</td></tr>";
     String incoherencies = "";
     if (valueTag != null && valueIptc != null && !valueTag.equals(valueIptc)) {
-      incoherencies += "<li>" + name + " on TAG and IPTC in IFD " + nifd + " (" + valueTag + ", " + valueIptc + ")</li>";
+      incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG and IPTC in IFD " + nifd + " (" + valueTag + ", " + valueIptc + ")");
     }
     if (valueTag != null && valueXmp != null && !valueTag.equals(valueXmp)) {
-      incoherencies += "<li>" + name + " on TAG and XMP in IFD " + nifd + " (" + valueTag + ", " + valueXmp + ")</li>";
+      incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG and XMP in IFD " + nifd + " (" + valueTag + ", " + valueXmp + ")");
     }
     if (valueIptc != null && valueXmp != null && !valueIptc.equals(valueXmp)) {
-      incoherencies += "<li>" + name + " on IPTC and XMP in IFD " + nifd + " (" + valueIptc + ", " + valueXmp + ")</li>";
+      incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC and XMP in IFD " + nifd + " (" + valueIptc + ", " + valueXmp + ")");
     }
-    htmlBodyMod = htmlBodyMod.replace("##INCOHERENCIES##", incoherencies);
-    return htmlBodyMod;
+    return incoherencies;
   }
 
   private String makePopoverAttributes(RuleResult val) {
     RuleType rule = val.getRule();
-    if (!rule.getTitle().getValue().isEmpty() && !rule.getDescription().getValue().isEmpty()) {
+    if (rule != null && !rule.getTitle().getValue().isEmpty() && !rule.getDescription().getValue().isEmpty()) {
       String description = rule.getDescription().getValue();
       if (val.getReference() != null) {
         description += "<br><i>" + val.getReference() + "</i>";

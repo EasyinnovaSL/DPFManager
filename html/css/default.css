@@ -245,6 +245,9 @@ li {
 .CustomTable3 td:first-child {
     padding-left: 15px;
 }
+.line-top{
+    border-top: 1px solid #333333;
+}
 
 /* 
  * Titles css

@@ -33,8 +33,17 @@ public class RuleResult {
   RuleType rule;
   boolean warning = false;
   boolean info = false;
+  String ruleDescription;
 
   public RuleResult() {
+  }
+
+  public String getRuleDescription() {
+    return ruleDescription;
+  }
+
+  public void setRuleDescription(String ruleDescription) {
+    this.ruleDescription = ruleDescription;
   }
 
   public void setMessage(String message) {

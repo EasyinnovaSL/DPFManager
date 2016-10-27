@@ -80,7 +80,7 @@ public class ReportHtml extends ReportGeneric {
           "\t\t\t\t\t\t    </tr>";
       String rows = "";
       for (String iso : ir.getCheckedIsos()){
-        if (ir.hasValidation(iso) || ir.getErrors(iso).isEmpty()) {
+        if (ir.hasValidation(iso)) {
           String name = ImplementationCheckerLoader.getIsoName(iso);
           String row = rowTmpl;
           int errorsCount = ir.getNErrors(iso);

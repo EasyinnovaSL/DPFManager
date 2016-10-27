@@ -246,7 +246,7 @@ li {
     padding-left: 15px;
 }
 .line-top{
-    border-top: 1px solid #333333;
+    border-top: 1px solid #888888;
 }
 
 /* 
@@ -386,6 +386,10 @@ h4 i {
 
 .bot100 {
     margin-bottom: 100px;
+}
+
+.left20 {
+    margin-left: 20px;
 }
 
 .left15 {
@@ -543,6 +547,9 @@ h4 i {
 }
 .fa-exclamation-circle{
     color: #FF9900;
+}
+.fa-check-circle{
+    color: #66CC66;
 }
 .fa-info-circle{
     color: #bebebe;

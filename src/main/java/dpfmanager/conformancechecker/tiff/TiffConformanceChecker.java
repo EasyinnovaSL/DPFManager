@@ -542,21 +542,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           break;
         case 0:
           //Logger.println("Validating Tiff");
-          String content = getValidationXmlString(tr);
-          Map<String, Validator> validations = new HashMap<>();
-          for (String path : ImplementationCheckerLoader.getPathsList()){
-            boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
-            Validator validation = new Validator(Logger);
-            validation.validate(content, path, !check);
-            validations.put(ImplementationCheckerLoader.getFileName(path), validation);
-          }
-          for (String iso : config.getIsos()){
-            if (iso.endsWith(".xml")){
-              Validator validation = new Validator(Logger);
-              validation.validate(content, iso, false);
-              validations.put(iso, validation);
-            }
-          }
+          Map<String, Validator> validations = getValidations(tr, config);
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
@@ -568,7 +554,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           String output = xmlReport.parseIndividual(ir, config.getRules());
           ir.setConformanceCheckerReport(output);
           if (config.getRules() != null && config.getRules().getRules() != null && config.getRules().getRules().size() > 0) {
-            ir.getIsosCheck().add(POLICY_ISO);
+            ir.addIsosCheck(POLICY_ISO);
             ir.addValidation(POLICY_ISO,getPcValidation(output));
           }
 
@@ -603,9 +589,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
             for (Fix fix : fixes.getFixes()) {
               if (fix.getOperator() != null) {
-                if (fix.getOperator().equals("Add Tag")) {
+                if (fix.getOperator().equals("addTag")) {
                   td.addTag(fix.getTag(), fix.getValue());
-                } else if (fix.getOperator().equals("Remove Tag")) {
+                } else if (fix.getOperator().equals("removeTag")) {
                   td.removeTag(fix.getTag());
                 }
               } else {
@@ -633,14 +619,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             TiffDocument to = tr.getModel();
 
             //Logger.println("Validating Tiff");
-            String contentfixed = TiffConformanceChecker.getValidationXmlString(tr);
-            Map<String, Validator> validationsFixed = new HashMap<>();
-            for (String path : ImplementationCheckerLoader.getPathsList()){
-              boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
-              Validator validation = new Validator(Logger);
-              validation.validate(contentfixed, path, check);
-              validations.put(ImplementationCheckerLoader.getFileName(path), validation);
-            }
+            Map<String, Validator> validationsFixed = getValidations(tr, config);
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");
             name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
@@ -710,6 +689,25 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return null;
   }
 
+  private  Map<String, Validator> getValidations(TiffReader tr, Configuration config) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    String content = TiffConformanceChecker.getValidationXmlString(tr);
+    Map<String, Validator> validations = new HashMap<>();
+    for (String path : ImplementationCheckerLoader.getPathsList()){
+      boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
+      Validator validation = new Validator(Logger);
+      validation.validate(content, path, !check);
+      validations.put(ImplementationCheckerLoader.getFileName(path), validation);
+    }
+    for (String iso : config.getIsos()){
+      if (iso.endsWith(".xml")){
+        Validator validation = new Validator(Logger);
+        validation.validate(content, iso, false);
+        validations.put(iso, validation);
+      }
+    }
+    return validations;
+  }
+
   @Override
   public Configuration getDefaultConfiguration(){
     return checkConfig;
@@ -723,27 +721,37 @@ public class TiffConformanceChecker extends ConformanceChecker {
    */
   static ArrayList<RuleResult> getPcValidation(String output) {
     ArrayList<RuleResult> valid = new ArrayList<>();
+    // Errors
     int index = output.indexOf("<svrl:failed-assert");
     while (index > -1) {
       String text = output.substring(output.indexOf("text>", index));
       text = text.substring(text.indexOf(">") + 1);
       text = text.substring(0, text.indexOf("</"));
+      String desc = output.substring(output.indexOf("test=\"@", index)+7);
+      desc = desc.substring(0, desc.indexOf("\""));
+      desc = desc.replace("&gt;", ">").replace("&lt;", ">");
       index = output.indexOf("<svrl:failed-assert", index + 1);
       RuleResult val = new RuleResult();
       val.setWarning(false);
       val.setMessage(text);
+      val.setRuleDescription(desc);
       val.setLocation("Policy checker");
       valid.add(val);
     }
+    // Warnings
     index = output.indexOf("<svrl:successful-report");
     while (index > -1) {
       String text = output.substring(output.indexOf("text>", index));
       text = text.substring(text.indexOf(">") + 1);
       text = text.substring(0, text.indexOf("</"));
+      String desc = output.substring(output.indexOf("test=\"@", index)+7);
+      desc = desc.substring(0, desc.indexOf("\""));
+      desc = desc.replace("&gt;", ">").replace("&lt;", ">");
       index = output.indexOf("<svrl:successful-report", index + 1);
       RuleResult val = new RuleResult();
       val.setWarning(true);
       val.setMessage(text);
+      val.setRuleDescription(desc);
       val.setLocation("Policy checker");
       valid.add(val);
     }

@@ -228,6 +228,12 @@ public class IndividualReport implements Comparable {
     warnings.put(key, warningsPc);
   }
 
+  public void addIsosCheck(String iso){
+    if (!isosCheck.contains(iso)){
+      isosCheck.add(iso);
+    }
+  }
+
   /**
    * Sets report path.
    *
