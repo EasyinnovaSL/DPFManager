@@ -80,38 +80,6 @@ public class PdfReport extends Report {
     return pdfParams;
   }
 
-  private Map<String, List<ReportTag>> parseTags(IndividualReport ir) {
-    /**
-     * Parse Tags
-     */
-    Map<String, List<ReportTag>> tags = new HashMap<>();
-    for (ReportTag tag : getTags(ir)) {
-      String mapId;
-      List<ReportTag> list = null;
-      if (tag.tv.getId() == 700) {
-        mapId = "xmp" + tag.index;
-        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
-      } else if (tag.tv.getId() == 33723) {
-        mapId = "ipt" + tag.index;
-        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
-      } else if (tag.tv.getId() == 34665) {
-        mapId = "exi" + tag.index;
-        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
-      } else if (tag.expert) {
-        mapId = "ifd" + tag.index + "e";
-        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
-      } else {
-        mapId = "ifd" + tag.index;
-        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
-      }
-      if (list != null) {
-        list.add(tag);
-        tags.put(mapId, list);
-      }
-    }
-    return tags;
-  }
-
   private List<String> detectIncoherency(String valueTag, String valueIptc, String valueXmp, String name, int nifd) {
     List<String> list = new ArrayList<>();
     if (valueTag != null && valueIptc != null && !valueTag.equals(valueIptc)) {
@@ -279,7 +247,7 @@ public class PdfReport extends Report {
             if (tag.dif < 0) sDif = "(-)";
             else if (tag.dif > 0) sDif = "(+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
-            pdfParams = writeText(pdfParams, tag.tv.getName(), pos_x + margins[1], font, font_size);
+            pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
             pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
           }
         }
@@ -288,7 +256,7 @@ public class PdfReport extends Report {
          */
         else if (key.startsWith("ifd")) {
           pdfParams.y -= 40;
-          pdfParams = writeTitle(pdfParams, "IFD expert tags", "images/pdf/tag.png", pos_x, font, 10);
+          pdfParams = writeTitle(pdfParams, "IFD Expert Tags", "images/pdf/tag.png", pos_x, font, 10);
           pdfParams.y -= 20;
           Integer[] margins = {2, 40, 180};
           pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
@@ -298,7 +266,7 @@ public class PdfReport extends Report {
             if (tag.dif < 0) sDif = "(-)";
             else if (tag.dif > 0) sDif = "(+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
-            pdfParams = writeText(pdfParams, tag.tv.getName(), pos_x + margins[1], font, font_size);
+            pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
             pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
           }
         }
@@ -317,7 +285,7 @@ public class PdfReport extends Report {
             for (TagValue tv : exif.getTags().getTags()) {
               pdfParams.y -= 15;
               pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
-              pdfParams = writeText(pdfParams, tv.getName(), pos_x + margins[1], font, font_size);
+              pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId()) ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
               pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
             }
           }

@@ -66,20 +66,6 @@
 .image-default:before {
     font-family: "fontawesome";
     content: '\f02b';
-    font-style: normal;
-    font-weight: normal;
-    speak: none;
-    display: inline-block;
-    text-decoration: inherit;
-    width: 1em;
-    margin-right: .2em;
-    text-align: center;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1em;
-    margin-left: .2em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 .icon-make:before { font-family: "fontello";content: '\e800'; } /* '' */
 .icon-model:before { font-family: "fontello";content: '\e801'; } /* '�?' */
@@ -108,3 +94,11 @@
 .icon-calibrationsignature:before { font-family: "fontello";content: '\e80a'; } /* '' */
 .icon-originalrawfilename:before { font-family: "fontello";content: '\e80b'; } /* '?' */
 .icon-orientation:before { font-family: "fontello";content: '\e80c'; } /* '?' */
+.icon-copyright:before {
+    font-family: "fontawesome";
+    content: '\f1f9';
+}
+.icon-artist:before {
+    font-family: "fontawesome";
+    content: '\f007';
+}

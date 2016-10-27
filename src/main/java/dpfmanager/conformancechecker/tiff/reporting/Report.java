@@ -41,7 +41,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -276,5 +279,40 @@ public class Report {
       index++;
     }
     return list;
+  }
+
+  protected Map<String, List<ReportTag>> parseTags(IndividualReport ir) {
+    /**
+     * Parse Tags
+     */
+    Map<String, List<ReportTag>> tags = new HashMap<>();
+    for (ReportTag tag : getTags(ir)) {
+      String mapId;
+      List<ReportTag> list = null;
+      if (tag.tv.getId() == 700) {
+        mapId = "xmp" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.tv.getId() == 33723) {
+        mapId = "ipt" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.tv.getId() == 34665) {
+        mapId = "exi" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.expert) {
+        mapId = "ifd" + tag.index + "e";
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.tv.getId() == 330) {
+        mapId = "sub" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else {
+        mapId = "ifd" + tag.index;
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      }
+      if (list != null) {
+        list.add(tag);
+        tags.put(mapId, list);
+      }
+    }
+    return tags;
   }
 }
