@@ -1,27 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-   <version>2</version>
-   <isos>
-      <iso>TiffEPProfileChecker</iso>
-      <iso>TiffITP1ProfileChecker</iso>
-   </isos>
-   <formats>
-      <format>HTML</format>
-      <format>PDF</format>
-   </formats>
-   <rules>
-      <rule>
-         <tag>ImageLength</tag>
-         <operator>&lt;</operator>
-         <value>1000</value>
-      </rule>
-   </rules>
-   <fixes>
-      <fix>
-         <tag>Artist</tag>
-         <operator>addTag</operator>
-         <value>EasyTest</value>
-      </fix>
-   </fixes>
-   <description/>
+  <version>2</version>
+  <isos>
+    <iso>TiffEPProfileChecker</iso>
+    <iso>TiffITP1ProfileChecker</iso>
+  </isos>
+  <formats>
+    <format>HTML</format>
+    <format>PDF</format>
+  </formats>
+  <rules>
+    <rule>
+      <tag>ImageLength</tag>
+      <operator>&lt;</operator>
+      <value>1000</value>
+    </rule>
+  </rules>
+  <fixes>
+    <fix>
+      <tag>Artist</tag>
+      <operator>addTag</operator>
+      <value>EasyTest</value>
+    </fix>
+  </fixes>
+  <description/>
 </configuration>

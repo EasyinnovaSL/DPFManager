@@ -3,7 +3,7 @@
                              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                              xsi:schemaLocation="http://www.dpfmanager.org/ProfileChecker ProfileChecker.xsd">
     
-    <title>Tiff IT Implementation Checker</title>
+    <title>TIFF/IT</title>
     <iso>TIFF/IT</iso>
     <description>ISO 12639:2004(E)</description>
     <version>1.0.0</version>

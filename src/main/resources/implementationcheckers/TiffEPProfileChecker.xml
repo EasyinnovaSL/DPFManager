@@ -3,7 +3,7 @@
                              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                              xsi:schemaLocation="http://www.dpfmanager.org/ProfileChecker ProfileChecker.xsd">
 
-    <title>Tiff EP Implementation Checker</title>
+    <title>TIFF/EP</title>
     <iso>TIFF/EP</iso>
     <description>ISO 12234-2:2001(E)</description>
     <version>1.0.0</version>
