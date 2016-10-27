@@ -36,7 +36,7 @@ public class ImplementationCheckerLoader {
   private static List<String> isoPaths;
 
   public static String getDefaultIso() {
-    return "BaselineProfileChecker";
+    return "TIFF_Baseline_Core_6_0";
   }
 
   public synchronized static ImplementationCheckerObjectType getRules(String rulesFile) {
@@ -101,12 +101,12 @@ public class ImplementationCheckerLoader {
 
   private static InputStream getFileFromResources(String pathStr) {
     InputStream fis = null;
-    File file = new File(pathStr);
+    File file = new File("src/main/resources/" + pathStr);
     File fileConfig = new File(DPFManagerProperties.getIsosDir() + "/" + pathStr);
     try {
       if (file.exists()) {
         // Look in current dir
-        fis = new FileInputStream(pathStr);
+        fis = new FileInputStream("src/main/resources/" + pathStr);
       } else if (fileConfig.exists()) {
         // Look in isos config
         fis = new FileInputStream(DPFManagerProperties.getIsosDir() + "/" + pathStr);

@@ -71,7 +71,7 @@ public class InteroperabilityTest extends CommandLineTest {
       TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
 
       Validator v = new Validator();
-      ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules("implementationcheckers/BaselineProfileChecker.xml");
+      ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules("implementationcheckers/TIFF_Baseline_Core_6_0.xml");
       v.validate(tiffValidation, rules, false);
       int numberOfErrors = v.getErrors().size();
       assertEquals(0, numberOfErrors);

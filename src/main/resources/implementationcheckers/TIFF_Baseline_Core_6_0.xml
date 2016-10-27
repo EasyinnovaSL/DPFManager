@@ -1487,7 +1487,7 @@
   
   <rule id="TAG-254-0003" context="ifd[class=image]" level="error">
    <title>NewSubfileType valid value</title>
-   <description>The value of the NewSubfileType tag must be between 1 and 7</description>
+   <description>The value of the NewSubfileType tag must be between 0 and 7</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>36</page></reference>
    <assert test="{tags.tag[name=NewSubfileType] &gt; -1} &amp;&amp; {tags.tag[name=NewSubfileType] &lt; 8}">NewSubfileType value is not valid,the value should be between 0 and 7 </assert>
   </rule>

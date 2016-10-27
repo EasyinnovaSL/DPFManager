@@ -42,18 +42,22 @@ public class Clausules {
     String expr = expression;
     Operator operator = null;
     while (expr.startsWith("{")) {
-      Clausule cla = new Clausule();
-      cla.value = expr.substring(1, expr.indexOf("}"));
-      cla.operator = operator;
-      clausules.add(cla);
-      expr = expr.substring(expr.indexOf("}") + 1).trim();
-      if (expr.length() == 0) break;
-      if (expr.length() < 2)
-        expr.toString();
-      String op = expr.substring(0, 2);
-      if (op.equals("&&")) operator = Operator.AND;
-      else if (op.equals("||")) operator = Operator.OR;
-      expr = expr.substring(2).trim();
+      try {
+        Clausule cla = new Clausule();
+        cla.value = expr.substring(1, expr.indexOf("}"));
+        cla.operator = operator;
+        clausules.add(cla);
+        expr = expr.substring(expr.indexOf("}") + 1).trim();
+        if (expr.length() == 0) break;
+        if (expr.length() < 2)
+          expr.toString();
+        String op = expr.substring(0, 2);
+        if (op.equals("&&")) operator = Operator.AND;
+        else if (op.equals("||")) operator = Operator.OR;
+        expr = expr.substring(2).trim();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
     }
     return true;
   }

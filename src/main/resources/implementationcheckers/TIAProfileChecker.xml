@@ -11,7 +11,7 @@
     <date>2016-10-24</date>
 
     <include>
-        <policyChecker>./BaselineProfileChecker.xml</policyChecker>
+        <policyChecker>./TIFF_Baseline_Core_6_0.xml</policyChecker>
     </include>
 
     <rules id="MASTER">
@@ -38,7 +38,7 @@
             </reference>
             <assert test="{strips == 1}">In TI/A the only data structure supported are strips</assert>
         </rule>
-        <rule id="MASTER-0003" context="ifd[thumbnail=0]" level="warning" experimental="true">
+        <rule id="MASTER-0003" context="ifd[class=image]" level="warning" experimental="true">
             <title>64 Kbytes per strip</title>
             <description>It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.
                 This value is chosen to maximize compatibility with various operating systems.</description>

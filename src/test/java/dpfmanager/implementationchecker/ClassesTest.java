@@ -28,7 +28,7 @@ public class ClassesTest extends TestCase {
       String content = tiffValidation.getXml();
 
       Validator v = new Validator();
-      v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
+      v.validate(content, "implementationcheckers/TIFF_Baseline_Core_6_0.xml", false);
 
       if (errors > -1) {
         assertEquals(errors, v.getErrors().size());
@@ -53,7 +53,7 @@ public class ClassesTest extends TestCase {
       String content = tiffValidation.getXml();
 
       Validator v = new Validator();
-      v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
+      v.validate(content, "implementationcheckers/TIFF_Baseline_Core_6_0.xml", false);
 
       assertEquals(nerrors, v.getErrors().size());
       assertEquals(true, v.getErrors().get(0).getMessage().contains(error));
@@ -75,7 +75,7 @@ public class ClassesTest extends TestCase {
       String content = tiffValidation.getXml();
 
       Validator v = new Validator();
-      v.validate(content, "implementationcheckers/BaselineProfileChecker.xml", false);
+      v.validate(content, "implementationcheckers/TIFF_Baseline_Core_6_0.xml", false);
 
       if (errors > -1) {
         assertEquals(errors, v.getWarnings().size());

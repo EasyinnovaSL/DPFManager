@@ -531,7 +531,7 @@ public class PolicyTest extends CommandLineTest {
       if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO + "</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(false, tr.contains("<td class=\"error\">"));
-      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       }
     }
@@ -600,7 +600,7 @@ public class PolicyTest extends CommandLineTest {
       if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO + "</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"error\">2</td>"));
-      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       }
     }
