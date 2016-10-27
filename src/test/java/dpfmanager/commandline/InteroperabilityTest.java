@@ -6,9 +6,7 @@ import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
-import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
@@ -18,22 +16,15 @@ import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.reader.TiffReader;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -69,7 +60,7 @@ public class InteroperabilityTest extends CommandLineTest {
       TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
 
       Validator v = new Validator();
-      v.validate(tiffValidation, "implementationcheckers/BaselineProfileChecker.xml", false);
+      v.validate(tiffValidation, "implementationcheckers/TIFF_Baseline_Core_6_0.xml", false);
       int numberOfErrors = v.getErrors().size();
       assertEquals(0, numberOfErrors);
     } catch (ReadTagsIOException e) {
