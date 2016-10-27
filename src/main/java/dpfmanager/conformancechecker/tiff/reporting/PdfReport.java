@@ -677,11 +677,12 @@ public class PdfReport extends Report {
         pdfParams.getContentStream().drawXObject(image, x-12, pdfParams.y - 1, 9, 9);
       }
 
+      String stext = text.replace("\n", " ").replaceAll(" +", " ").trim();
       contentStream.beginText();
       contentStream.setFont(font, font_size);
       contentStream.setNonStrokingColor(color);
       contentStream.moveTextPositionByAmount(x, pdfParams.y);
-      contentStream.drawString(text);
+      contentStream.drawString(stext);
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
