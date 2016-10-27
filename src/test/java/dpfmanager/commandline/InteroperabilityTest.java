@@ -109,7 +109,7 @@ public class InteroperabilityTest extends CommandLineTest {
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
     String xml = tiffValidation.getXml();
     assertEquals(true, xml != null);
-    assertEquals(true, xml.contains("<tiffValidationObject>"));
+    assertEquals(true, xml.contains("<tiffValidationObject"));
     assertEquals(true, xml.contains("<correctStrips>1</correctStrips>"));
     assertEquals(true, xml.contains("<tag asci7=\"false\" id=\"257\" name=\"ImageLength\" type=\"SHORT\">"));
     assertEquals(true, xml.contains("<size>115396</size>"));
