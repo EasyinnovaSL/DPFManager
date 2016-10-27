@@ -52,9 +52,9 @@ public class ReportGeneratorTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<td>256</td><td>ImageWidth</td><td>999</td>"), true);
-    assertEquals(html.contains("<td>257</td><td>ImageLength</td><td>662</td>"), true);
-    assertEquals(html.contains("<td>305</td><td>Software</td><td>Adobe Photoshop CS6 (Macintosh)</td>"), true);
+    assertEquals(html.contains("256</td><td>ImageWidth</td><td>999</td>"), true);
+    assertEquals(html.contains("257</td><td>ImageLength</td><td>662</td>"), true);
+    assertEquals(html.contains("305</td><td>Software</td><td>Adobe Photoshop CS6 (Macintosh)</td>"), true);
 
     FileUtils.deleteDirectory(new File(path));
 

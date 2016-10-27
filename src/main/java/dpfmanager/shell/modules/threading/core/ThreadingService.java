@@ -229,7 +229,7 @@ public class ThreadingService extends DpfService {
         needReload = true;
       } else if (!silence) {
         // No ui, show to user
-        showToUser(fc.getInternal(), fc.getConfig().getOutput());
+        showToUser(fc.getInternal(), fc.getConfig());
       }
       if (!gm.isCancel()) {
         context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.FINISH, gm.getUuid()));
@@ -362,18 +362,25 @@ public class ThreadingService extends DpfService {
   /**
    * Show report
    */
-  private void showToUser(String internal, String output) {
-    String name = "report.html";
-    String htmlPath = internal + name;
-    if (output != null) {
-      htmlPath = output + "/" + name;
+  private void showToUser(String internal, Configuration config) {
+    String name = "";
+    String path;
+    if (config.getFormats().contains("HTML")){
+      name = "report.html";
+    } else if (config.getFormats().contains("PDF")) {
+      name = "report.pdf";
     }
-    File htmlFile = new File(htmlPath);
-    if (htmlFile.exists() && Desktop.isDesktopSupported()) {
+
+    path = internal + name;
+    if (config.getOutput() != null) {
+      path = config.getOutput() + "/" + name;
+    }
+    File file = new File(path);
+    if (file.exists() && Desktop.isDesktopSupported()) {
       try {
-        String fullHtmlPath = htmlFile.getAbsolutePath();
-        fullHtmlPath = fullHtmlPath.replaceAll("\\\\", "/");
-        Desktop.getDesktop().browse(new URI("file:///" + fullHtmlPath.replaceAll(" ", "%20")));
+        String fullPath = file.getAbsolutePath();
+        fullPath = fullPath.replaceAll("\\\\", "/");
+        Desktop.getDesktop().browse(new URI("file:///" + fullPath.replaceAll(" ", "%20")));
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("browserError"), e));
       }
