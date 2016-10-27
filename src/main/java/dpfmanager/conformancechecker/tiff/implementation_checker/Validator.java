@@ -34,6 +34,7 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.Rul
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import org.apache.camel.ExchangeException;
 import org.xml.sax.SAXException;
 
 import java.io.FileInputStream;
@@ -91,11 +92,9 @@ public class Validator {
    */
   public void validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     try {
-      JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
-      Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-      StringReader reader = new StringReader(content);
-
-      validate((TiffValidationObject) jaxbUnmarshaller.unmarshal(reader), rulesFile, fastBreak);
+      TiffValidationObject obj = createValidationObjectFromXml(content);
+      ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
+      validate(obj, rules, fastBreak);
     } catch (Exception ex) {
       RuleResult rr = new RuleResult(false, null, null, "Fatal error in TIFF file");
       result = new ValidationResult();
@@ -103,11 +102,17 @@ public class Validator {
     }
   }
 
-  public void validate(TiffValidationObject model, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public static TiffValidationObject createValidationObjectFromXml(String content) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    JAXBContext jaxbContext = JAXBContext.newInstance(TiffValidationObject.class);
+    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+    StringReader reader = new StringReader(content);
+    TiffValidationObject obj = (TiffValidationObject) jaxbUnmarshaller.unmarshal(reader);
+    return obj;
+  }
+
+  public void validate(TiffValidationObject model, ImplementationCheckerObjectType rules, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     result = new ValidationResult();
     this.model = model;
-
-    ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
 
     boolean bbreak = false;
     List<RuleType> ordRules = new ArrayList<RuleType>();
@@ -129,7 +134,7 @@ public class Validator {
     }
 
     for (RuleType rule : ordRules) {
-      if (rule.getId().equals("TAG-320-0002"))
+      if (rule.getId().equals("pol-1"))
         rule.toString();
 
       String context = rule.getContext();
@@ -173,8 +178,9 @@ public class Validator {
           String checkop = clausule.value.substring(clausule.value.indexOf(")") + 1).trim();
 
           RuleElement field = new RuleElement(countField, node, model);
-          if (!field.valid) ok = false;
-          else {
+          if (!field.valid) {
+            //ok = false;
+          } else {
             List<TiffNode> childs = field.getChildren();
             int n = childs.size();
             if (checkop.startsWith("==")) {
@@ -197,8 +203,9 @@ public class Validator {
           dateTimeField = dateTimeField.substring(0, dateTimeField.indexOf(")"));
 
           RuleElement field = new RuleElement(dateTimeField, node, model);
-          if (!field.valid) ok = false;
-          else {
+          if (!field.valid) {
+            //ok = false;
+          } else {
             List<TiffNode> childs = field.getChildren();
             for (TiffNode nod : childs) {
               ok = false;
@@ -226,15 +233,15 @@ public class Validator {
           // Check field values
           String operation = clausule.value.contains("==") ? "==" : (clausule.value.contains(">") ? ">" : clausule.value.contains("!=") ? "!=" : "<");
           RuleElement op1 = new RuleElement(clausule.value.substring(0, clausule.value.indexOf(operation)), node, model);
-          if (!op1.valid)
-            ok = false;
-          else {
+          if (!op1.valid) {
+            //ok = false;
+          } else {
             String value = op1.getValue();
             if (value == null) return ok;
             RuleElement op2 = new RuleElement(clausule.value.substring(clausule.value.indexOf(operation) + operation.length()).trim(), node, model);
-            if (!op2.valid)
+            if (!op2.valid) {
               ok = false;
-            else {
+            } else {
               String value2 = op2.getValue();
               if (value2 == null)
                 op2.getValue();
@@ -245,10 +252,18 @@ public class Validator {
               if (operation.equals("==")) ok = value.equals(value2);
               else if (operation.equals("!="))
                 ok = !value.equals(value2);
-              else if (operation.equals(">"))
-                ok = Double.parseDouble(value) > Double.parseDouble(value2);
-              else {
-                ok = Double.parseDouble(value) < Double.parseDouble(value2);
+              else if (operation.equals(">")) {
+                try {
+                  ok = Double.parseDouble(value) > Double.parseDouble(value2);
+                } catch (Exception ex) {
+                  ok = false;
+                }
+              } else {
+                try {
+                  ok = Double.parseDouble(value) < Double.parseDouble(value2);
+                } catch (Exception ex) {
+                  ok = false;
+                }
 
                 if (!ok)
                   ok = false;
@@ -259,15 +274,17 @@ public class Validator {
           if (clausule.value.startsWith("!")) {
             // Check field does not exist
             RuleElement elem = new RuleElement(clausule.value.substring(1), node, model);
-            if (!elem.valid) ok = false;
-            else {
+            if (!elem.valid) {
+              ok = true;
+            } else {
               ok = elem.getChildren().size() == 0;
             }
           } else {
             // Check field exists
             RuleElement elem = new RuleElement(clausule.value, node, model);
-            if (!elem.valid) ok = false;
-            else {
+            if (!elem.valid) {
+              ok = false;
+            } else {
               List<TiffNode> childs = elem.getChildren();
               if (childs == null) ok = false;
               else ok = childs.size() > 0;

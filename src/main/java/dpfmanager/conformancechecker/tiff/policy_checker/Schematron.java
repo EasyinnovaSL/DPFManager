@@ -19,7 +19,16 @@
 
 package dpfmanager.conformancechecker.tiff.policy_checker;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
+import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.AssertType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
 import dpfmanager.shell.core.DPFManagerProperties;
+
+import com.easyinnova.tiff.model.TiffDocument;
 
 import net.sf.saxon.TransformerFactoryImpl;
 
@@ -49,6 +58,7 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -93,6 +103,85 @@ public class Schematron {
     converted = converted.replace("<","#PP#");
     converted = converted.replace(">","#GG#");
     return converted;
+  }
+
+  public Validator testXMLnoSchematron(TiffDocument tiffModel, Rules rules) throws Exception {
+    String xmlTiffModel = TiffConformanceChecker.getValidationXmlString(tiffModel);
+
+    ImplementationCheckerObjectType rulesObj = new ImplementationCheckerObjectType();
+    RulesType rulesType = new RulesType();
+    int index = 1;
+    for (Rule rule : rules.getRules()) {
+      RuleType ruleObj = new RuleType();
+      if (rule.getWarning()) ruleObj.setLevel("warning");
+      else ruleObj.setLevel("error");
+      ruleObj.setId("pol-" + index++);
+      ruleObj.setContext("ifd[class=image]");
+      String tag = rule.getTag();
+      boolean stringValue = false;
+      if (tag.equals("ByteOrder")) {
+        tag = "byteOrder";
+        ruleObj.setContext("tiffValidationObject");
+        stringValue = true;
+      }
+      if (tag.equals("DPI")) {
+        tag = "dpi";
+        stringValue = true;
+      }
+      if (tag.equals("EqualXYResolution")) {
+        tag = "equalXYResolution";
+        stringValue = true;
+      }
+      if (tag.equals("NumberImages")) {
+        ruleObj.setContext("tiffValidationObject");
+        tag = "numberImages";
+      }
+      AssertType assertObj = new AssertType();
+      String operator = rule.getOperator();
+      if (operator.equals("=")) operator = "==";
+      if (rule.getValue().contains(",")) stringValue = true;
+      String sTest = "";
+      ArrayList<String> values = new ArrayList<>();
+      for (String value : rule.getValue().split(";")) {
+        String value2 = value;
+        if (tag.equals("Compression")) value2 = TiffConformanceChecker.compressionCode(value) + "";
+        if (tag.equals("Photometric")) {
+          value2 = TiffConformanceChecker.photometricCode(value) + "";
+          if (value2.equals("1")) values.add("0");
+        }
+        if (tag.equals("Planar")) {
+          value2 = TiffConformanceChecker.planarCode(value) + "";
+        }
+        values.add(value2);
+      }
+      for (String value : values) {
+        if (tag.equals("Photometric")) tag = "PhotometricInterpretation";
+        if (tag.equals("Planar")) tag = "PlanarConfiguration";
+        if (sTest.length() > 0) sTest += " || ";
+        if (tag.equals("byteOrder")) sTest += "{" + tag + " " + operator + " ";
+        else if (tag.equals("numberImages")) sTest += "{" + tag + " " + operator + " ";
+        else if (tag.equals("dpi")) sTest += "{" + tag + " " + operator + " ";
+        else if (tag.equals("equalXYResolution")) sTest += "{" + tag + " " + operator + " ";
+        else sTest += "{tags.tag[name=" + tag + "] " + operator + " ";
+        if (stringValue) sTest += "'";
+        sTest += value;
+        if (stringValue) sTest += "'";
+        sTest += "}";
+      }
+      assertObj.setTest(sTest);
+      if (!rule.getWarning()) assertObj.setValue("Invalid " + rule.getTag());
+      else assertObj.setValue("Warning on " + rule.getTag());
+      ruleObj.setAssert(assertObj);
+      rulesType.getRule().add(ruleObj);
+    }
+    rulesObj.getRules().add(rulesType);
+
+    TiffValidationObject model = Validator.createValidationObjectFromXml(xmlTiffModel);
+
+    Validator validation = new Validator();
+    validation.validate(model, rulesObj, false);
+
+    return validation;
   }
 
   /**

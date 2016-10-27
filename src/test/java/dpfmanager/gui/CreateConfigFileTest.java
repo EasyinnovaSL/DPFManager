@@ -84,7 +84,7 @@ public class CreateConfigFileTest extends ApplicationTest {
 
     // 3 - Add Rule
     addRule("ImageWidth", ">", "500");
-    addRule("ImageHeight", "<", "1000");
+    addRule("ImageLength", "<", "1000");
     clickOnScroll("#ID0 #removeButton");
     clickOnAndReload("#continueButton");
 
@@ -137,7 +137,7 @@ public class CreateConfigFileTest extends ApplicationTest {
     //Check combobox items size
     ComboBox comboBoxTag = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxTag");
     ComboBox comboBoxOp = (ComboBox) scene.lookup("#ID" + uniqueId + " #comboBoxOp");
-    Assert.assertEquals("ComboBox Tag inside 'Add Rule' failed", 16, comboBoxTag.getItems().size());
+    Assert.assertEquals("ComboBox Tag inside 'Add Rule' failed", 14, comboBoxTag.getItems().size());
     Assert.assertEquals("ComboBox Operator inside 'Add Rule' failed", 3, comboBoxOp.getItems().size());
 
     uniqueId++;

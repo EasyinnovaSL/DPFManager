@@ -134,7 +134,8 @@ public class PolicyCheckTest extends CommandLineTest {
     bw.write("ISO\tBaseline\n" +
         "FORMAT\tHTML\n" +
         "FORMAT\tPDF\n" +
-        "RULE\tImageWidth,<,1000,1\n");
+        "RULE\tImageWidth,<,1000,1\n" +
+        "RULE\tImageLength,>,10,1\n");
     bw.close();
 
     String[] args = new String[7];
@@ -180,7 +181,7 @@ public class PolicyCheckTest extends CommandLineTest {
     for (String tr : trs){
       if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
-        assertEquals(true, tr.contains("<td class=\"warning\">1</td>"));
+        assertEquals(true, tr.contains("<td class=\"warning\">2</td>"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
@@ -198,7 +199,7 @@ public class PolicyCheckTest extends CommandLineTest {
     for (String tr : trs){
       if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
-        assertEquals(true, tr.contains(">1 warnings<"));
+        assertEquals(true, tr.contains(">2 warnings<"));
       } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
@@ -388,100 +389,6 @@ public class PolicyCheckTest extends CommandLineTest {
       if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
-      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
-        assertEquals(true, tr.contains(">0 errors<"));
-        assertEquals(true, tr.contains(">0 warnings<"));
-      }
-    }
-
-    FileUtils.deleteDirectory(new File(path));
-    FileUtils.deleteDirectory(new File("temp"));
-  }
-
-  @Test
-  public void testPCBlankPagesWarnings() throws Exception {
-    DPFManagerProperties.setFeedback(false);
-
-    if (!new File("temp").exists()) {
-      new File("temp").mkdir();
-    }
-
-    String path = "temp/output";
-    int idx = 1;
-    while (new File(path).exists()) path = "temp/output" + idx++;
-
-    String configfile = "temp/xx.cfg";
-    idx = 0;
-    while (new File(configfile).exists()) configfile = "temp/xx" + idx++ + ".cfg";
-
-    PrintWriter bw = new PrintWriter(configfile);
-    bw.write("ISO\tBaseline\n" +
-        "FORMAT\tHTML\n" +
-        "RULE\tBlankPage,=,False,1\n");
-    bw.close();
-
-    String[] args = new String[7];
-    args[0] = "check";
-    args[1] = "-s";
-    args[2] = "-o";
-    args[3] = path;
-    args[4] = "--configuration";
-    args[5] = configfile;
-    args[6] = "src/test/resources/Small/Bilevel.tif";
-
-    MainConsoleApp.main(args);
-
-    // Wait for finish
-    waitForFinishMultiThred(30);
-
-    File directori = new File(path + "/html");
-    assertEquals(directori.exists(), true);
-
-    String html = null;
-    String htmlglobal = null;
-    byte[] encoded = Files.readAllBytes(Paths.get(path + "/report.html"));
-    htmlglobal = new String(encoded);
-    for (String file : directori.list()) {
-      if (file.equals("1-Bilevel.tif.html")) {
-        encoded = Files.readAllBytes(Paths.get(path + "/html/" + file));
-        html = new String(encoded);
-      }
-    }
-    assertEquals(html != null, true);
-    assertEquals(html.contains("This file conforms to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
-    assertEquals(html.contains("This file does NOT conform to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
-    assertEquals(html.contains("This file conforms to "+TiffConformanceChecker.POLICY_ISO+", BUT it has some warnings"), true);
-    assertEquals(html.contains("This file does NOT conform to "+TiffConformanceChecker.POLICY_ISO), false);
-
-    int index = html.indexOf("<table class=\"center-table CustomTable\">");
-    assertEquals(true, index > -1);
-    String table = html.substring(index);
-    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
-    String[] trs = table.split("</tr>");
-
-    // 1 Policy error
-    for (String tr : trs){
-      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
-        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
-        assertEquals(true, tr.contains("<td class=\"warning\">1</td>"));
-      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
-        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
-        assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
-      }
-    }
-
-    // Global errors / warnings resume
-    assertEquals(htmlglobal != null, true);
-    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
-    assertEquals(true, index > -1);
-    table = htmlglobal.substring(index);
-    table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
-    trs = table.split("</tr>");
-
-    for (String tr : trs){
-      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
-        assertEquals(true, tr.contains(">0 errors<"));
-        assertEquals(true, tr.contains(">1 warnings<"));
       } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));

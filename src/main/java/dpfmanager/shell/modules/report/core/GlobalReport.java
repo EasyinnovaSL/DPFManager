@@ -147,8 +147,8 @@ public class GlobalReport {
     int n = 0;
     for (IndividualReport ir : reports) {
       boolean ok = true;
-      for (String iso : ir.getIsosCheck()){
-        if (ir.hasValidation(iso) && ir.getErrors(iso).size() > 0){
+      for (String iso : ir.getIsosCheck()) {
+        if (ir.hasValidation(iso) && ir.getErrors(iso).size() > 0) {
           ok = false;
         }
       }

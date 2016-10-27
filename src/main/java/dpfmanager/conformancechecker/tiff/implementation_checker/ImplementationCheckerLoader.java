@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -64,12 +65,19 @@ public class ImplementationCheckerLoader {
 
             for (RulesType ro : rulesIncluded.getRules()) {
               boolean excludedRules = false;
+              HashSet<String> excluded = new HashSet<>();
               for (String id : inc.getExcluderules()) {
                 if (id.equals(ro.getId())) excludedRules = true;
+                excluded.add(id);
               }
               if (!excludedRules) {
                 ro.setIncluded(true);
                 rules.getRules().add(ro);
+                for (int i=0;i<ro.getRule().size();i++) {
+                  if (excluded.contains(ro.getRule().get(i).getId())) {
+                    ro.getRule().remove(i--);
+                  }
+                }
                 for (RuleType rule : ro.getRule()) {
                   //rule.iso = rulesIncluded.getIso();
                 }

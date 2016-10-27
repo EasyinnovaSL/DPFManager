@@ -28,6 +28,7 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -38,6 +39,10 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
   TiffHeader header;
   TiffIfds lifds;
   long size;
+  String byteOrder;
+  int numberImages;
+  String iccProfileClass = "";
+
   HashMap<String, List<TiffNode>> hashObjects = null;
 
   public void setSize(long size) {
@@ -46,6 +51,33 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
 
   public long getSize() {
     return size;
+  }
+
+  @XmlAttribute
+  public void setIccProfileClass(String iccProfileClass) {
+    this.iccProfileClass = iccProfileClass;
+  }
+
+  public String getIccProfileClass() {
+    return iccProfileClass;
+  }
+
+  @XmlAttribute
+  public void setByteOrder(String byteOrder) {
+    this.byteOrder = byteOrder;
+  }
+
+  public String getByteOrder() {
+    return byteOrder;
+  }
+
+  @XmlAttribute
+  public void setNumberImages(int numberImages) {
+    this.numberImages = numberImages;
+  }
+
+  public int getNumberImages() {
+    return numberImages;
   }
 
   public void setHeader(TiffHeader header) {
@@ -71,14 +103,17 @@ public class TiffValidationObject extends TiffNode implements TiffNodeInterface 
     childs.add(lifds);
     if (subchilds) childs.addAll(lifds.getChildren(subchilds));
     childs.add(new TiffSingleNode("size", size + ""));
+
+    // for policy checker
+    childs.add(new TiffSingleNode("byteOrder", byteOrder));
+    childs.add(new TiffSingleNode("numberImages", numberImages + ""));
+    childs.add(new TiffSingleNode("iccProfileClass", iccProfileClass + ""));
     return childs;
   }
 
   public List<TiffNode> getObjectsFromContext(String context, boolean subchilds) {
     String key = context;
     if (subchilds) key += "1"; else key += "0";
-    if (key.equals("ifds.ifd[class=image]1"))
-      key.toString();
     if (hashObjects != null && hashObjects.containsKey(key)) return hashObjects.get(key);
 
     List<TiffNode> objects = new ArrayList<>();

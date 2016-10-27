@@ -94,7 +94,7 @@ public class ImportConfigFileTest extends ApplicationTest {
     //Go to summary and compare
     clickOnAndReload("#step5");
     FxAssert.verifyThat("#labIsos", NodeMatchers.hasText(ImplementationCheckerLoader.getIsoName("TiffEPProfileChecker") + ", " + ImplementationCheckerLoader.getIsoName("TiffITP1ProfileChecker")));
-    FxAssert.verifyThat("#labRules", NodeMatchers.hasText("ImageHeight < 1000"));
+    FxAssert.verifyThat("#labRules", NodeMatchers.hasText("ImageLength < 1000"));
     FxAssert.verifyThat("#labReports", NodeMatchers.hasText("HTML, PDF"));
     FxAssert.verifyThat("#labFixes", NodeMatchers.hasText("Add Tag Artist 'EasyTest'"));
 

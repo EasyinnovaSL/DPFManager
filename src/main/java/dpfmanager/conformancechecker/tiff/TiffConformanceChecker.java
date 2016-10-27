@@ -174,7 +174,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       // Image Height
       field = doc.createElement("field");
       fields.appendChild(field);
-      addElement(doc, field, "name", "ImageHeight");
+      addElement(doc, field, "name", "ImageLength");
       addElement(doc, field, "type", "integer");
       addElement(doc, field, "description", "Image Height in pixels");
       addElement(doc, field, "operators", ">,<,=");
@@ -224,20 +224,20 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", "False,True");
       // BlankPage
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "BlankPage");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Page devoid of content (completely white)");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", "False,True");
+      //field = doc.createElement("field");
+      //fields.appendChild(field);
+      //addElement(doc, field, "name", "BlankPage");
+      //addElement(doc, field, "type", "integer");
+      //addElement(doc, field, "description", "Page devoid of content (completely white)");
+      //addElement(doc, field, "operators", "=");
+      //addElement(doc, field, "values", "False,True");
       // NumberBlankPage
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "NumberBlankImages");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Number of Blank Pages");
-      addElement(doc, field, "operators", ">,<,=");
+      //field = doc.createElement("field");
+      //fields.appendChild(field);
+      //addElement(doc, field, "name", "NumberBlankImages");
+      //addElement(doc, field, "type", "integer");
+      //addElement(doc, field, "description", "Number of Blank Pages");
+      //addElement(doc, field, "operators", ">,<,=");
       // Compression
       field = doc.createElement("field");
       fields.appendChild(field);
@@ -383,6 +383,44 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return "Unknown";
   }
 
+  public static int compressionCode(String name) {
+    switch (name) {
+      case "None": return 1;
+      case "CCITT": return 2;
+      case "CCITT GR3": return 3;
+      case "CCITT GR4": return 4;
+      case "LZW": return 5;
+      case "OJPEG": return 6;
+      case "JPEG": return 7;
+      case "DEFLATE Adobe": return 8;
+      case "JBIG BW": return 9;
+      case "JBIG C": return 10;
+      case "PackBits": return 32773;
+    }
+    return -1;
+  }
+
+  public static int photometricCode(String name) {
+    switch (name) {
+      case "Bilevel": return 1;
+      case "RGB": return 2;
+      case "Palette": return 3;
+      case "Transparency Mask": return 4;
+      case "CMYK": return 5;
+      case "YCbCr": return 6;
+      case "CIELAB": return 10;
+    }
+    return -1;
+  }
+
+  public static int planarCode(String name) {
+    switch (name) {
+      case "Chunky": return 1;
+      case "Planar": return 2;
+    }
+    return -1;
+  }
+
   private static Document convertStringToDocument(String xmlStr) {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder;
@@ -481,6 +519,10 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   public static String getValidationXmlString(TiffReader tr) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     TiffDocument td = tr.getModel();
+    return getValidationXmlString(td);
+  }
+
+  public static String getValidationXmlString(TiffDocument td) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     TiffImplementationChecker tic = new TiffImplementationChecker();
     tic.setITFields(true);
     TiffValidationObject tiffValidation = tic.CreateValidationObject(td);
@@ -718,6 +760,37 @@ public class TiffConformanceChecker extends ConformanceChecker {
    * @return the pc validation
    */
   static ArrayList<RuleResult> getPcValidation(String output) {
+    ArrayList<RuleResult> valid = new ArrayList<>();
+    int index = output.indexOf("<policyCheckerOutput");
+    while (true) {
+      index = output.indexOf("<error", index);
+      if (index == -1) break;
+      index = output.indexOf(">", index) + 1;
+      String text = output.substring(index);
+      text = text.substring(0, text.indexOf("</"));
+      RuleResult val = new RuleResult();
+      val.setWarning(false);
+      val.setMessage(text);
+      val.setLocation("Policy checker");
+      valid.add(val);
+    }
+    index = output.indexOf("<policyCheckerOutput");
+    while (true) {
+      index = output.indexOf("<warning", index);
+      if (index == -1) break;
+      index = output.indexOf(">", index) + 1;
+      String text = output.substring(index);
+      text = text.substring(0, text.indexOf("</"));
+      RuleResult val = new RuleResult();
+      val.setWarning(true);
+      val.setMessage(text);
+      val.setLocation("Policy checker");
+      valid.add(val);
+    }
+    return valid;
+  }
+
+  static ArrayList<RuleResult> getPcValidationOld(String output) {
     ArrayList<RuleResult> valid = new ArrayList<>();
     int index = output.indexOf("<svrl:failed-assert");
     while (index > -1) {

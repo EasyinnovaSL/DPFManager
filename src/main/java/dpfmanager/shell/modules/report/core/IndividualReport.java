@@ -174,6 +174,7 @@ public class IndividualReport implements Comparable {
   }
 
   public List<String> getIsosCheck() {
+    if (isosCheck == null) return new ArrayList<>();
     return isosCheck;
   }
 

@@ -19,6 +19,8 @@
 
 package dpfmanager.conformancechecker.tiff.implementation_checker.model;
 
+import com.easyinnova.tiff.model.types.IFD;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,10 +48,17 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
   int correctPhotometricCasuistic;
   int correctYcbcr;
   int offset;
+  int thumbnail;
+  int IFD0;
   String type = "";
   String sclass = "image";
   String filetype = "";
   String imgtype = "";
+  String pixelDensity = "";
+  String bitDepth = "";
+  String dpi = "";
+  String extraChannels = "";
+  String equalXYResolution = "";
 
   @XmlAttribute
   public void setType(String type) {
@@ -58,6 +67,60 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
 
   public String getType() {
     return type;
+  }
+
+  @XmlAttribute
+  public void setPixelDensity(String pixelDensity) {
+    this.pixelDensity = pixelDensity;
+  }
+
+  public String getPixelDensity() {
+    return pixelDensity;
+  }
+
+  @XmlAttribute
+  public void setIFD0(int value) {
+    this.IFD0 = value;
+  }
+
+  public int getIFD0() {
+    return IFD0;
+  }
+
+  @XmlAttribute
+  public void setBitDepth(String bitDepth) {
+    this.bitDepth = bitDepth;
+  }
+
+  public String getBitDepth() {
+    return bitDepth;
+  }
+
+  @XmlAttribute
+  public void setDpi(String dpi) {
+    this.dpi = dpi;
+  }
+
+  public String getDpi() {
+    return dpi;
+  }
+
+  @XmlAttribute
+  public void setExtraChannels(String extraChannels) {
+    this.extraChannels = extraChannels;
+  }
+
+  public String getExtraChannels() {
+    return extraChannels;
+  }
+
+  @XmlAttribute
+  public void setEqualXYResolution(String equalXYResolution) {
+    this.equalXYResolution = equalXYResolution;
+  }
+
+  public String getEqualXYResolution() {
+    return equalXYResolution;
   }
 
   @XmlAttribute(name = "class")
@@ -94,6 +157,15 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
 
   public String getImgtype() {
     return imgtype;
+  }
+
+  @XmlAttribute
+  public void setThumbnail(int thumbnail) {
+    this.thumbnail = thumbnail;
+  }
+
+  public int getThumbnail() {
+    return thumbnail;
   }
 
   public void setOffset(int offset) {
@@ -237,6 +309,16 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("offset", offset + "", n));
     childs.add(new TiffSingleNode("filetype", filetype + "", n));
     childs.add(new TiffSingleNode("imgtype", imgtype + "", n));
+    childs.add(new TiffSingleNode("thumbnail", thumbnail + "", n));
+    childs.add(new TiffSingleNode("IFD0", IFD0 + "", n));
+
+    // for policy checker
+    childs.add(new TiffSingleNode("pixelDensity", pixelDensity + "", n));
+    childs.add(new TiffSingleNode("bitDepth", bitDepth + "", n));
+    childs.add(new TiffSingleNode("dpi", dpi + "", n));
+    childs.add(new TiffSingleNode("extraChannels", extraChannels + "", n));
+    childs.add(new TiffSingleNode("equalXYResolution", equalXYResolution + "", n));
+
     tags.setLocation("IFD" + n);
     childs.add(tags);
     if (subchilds) {
