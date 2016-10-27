@@ -117,16 +117,33 @@ public class Schematron {
       else ruleObj.setLevel("error");
       ruleObj.setId("pol-" + index++);
       ruleObj.setContext("ifd[class=image]");
+      String tag = rule.getTag();
+      boolean stringValue = false;
+      if (tag.equals("ByteOrder")) {
+        tag = "byteOrder";
+        ruleObj.setContext("tiffValidationObject");
+        stringValue = true;
+      }
+      if (tag.equals("DPI")) {
+        tag = "dpi";
+        stringValue = true;
+      }
+      if (tag.equals("EqualXYResolution")) {
+        tag = "equalXYResolution";
+        stringValue = true;
+      }
+      if (tag.equals("NumberImages")) {
+        ruleObj.setContext("tiffValidationObject");
+        tag = "numberImages";
+      }
       AssertType assertObj = new AssertType();
       String operator = rule.getOperator();
-      boolean stringValue = false;
       if (operator.equals("=")) operator = "==";
       if (rule.getValue().contains(",")) stringValue = true;
       String sTest = "";
       ArrayList<String> values = new ArrayList<>();
       for (String value : rule.getValue().split(";")) {
         String value2 = value;
-        String tag = rule.getTag();
         if (tag.equals("Compression")) value2 = TiffConformanceChecker.compressionCode(value) + "";
         if (tag.equals("Photometric")) {
           value2 = TiffConformanceChecker.photometricCode(value) + "";
@@ -138,19 +155,22 @@ public class Schematron {
         values.add(value2);
       }
       for (String value : values) {
-        String tag = rule.getTag();
         if (tag.equals("Photometric")) tag = "PhotometricInterpretation";
         if (tag.equals("Planar")) tag = "PlanarConfiguration";
         if (sTest.length() > 0) sTest += " || ";
-        sTest += "{tags.tag[name=" + tag + "] " + operator + " ";
+        if (tag.equals("byteOrder")) sTest += "{" + tag + " " + operator + " ";
+        else if (tag.equals("numberImages")) sTest += "{" + tag + " " + operator + " ";
+        else if (tag.equals("dpi")) sTest += "{" + tag + " " + operator + " ";
+        else if (tag.equals("equalXYResolution")) sTest += "{" + tag + " " + operator + " ";
+        else sTest += "{tags.tag[name=" + tag + "] " + operator + " ";
         if (stringValue) sTest += "'";
         sTest += value;
         if (stringValue) sTest += "'";
         sTest += "}";
       }
       assertObj.setTest(sTest);
-      if (rule.getWarning()) assertObj.setValue("Invalid value of tag " + rule.getTag());
-      else assertObj.setValue("Warning on value of tag " + rule.getTag());
+      if (!rule.getWarning()) assertObj.setValue("Invalid " + rule.getTag());
+      else assertObj.setValue("Warning on " + rule.getTag());
       ruleObj.setAssert(assertObj);
       rulesType.getRule().add(ruleObj);
     }

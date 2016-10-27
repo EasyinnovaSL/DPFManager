@@ -941,18 +941,20 @@ public class XmlReport {
       // Schematron
       Schematron sch = new Schematron();
       try {
-        Validator validation = sch.testXMLnoSchematron(ir.getTiffModel(), rules);
-        String validationString = "<policyCheckerOutput>";
-        for (RuleResult rr : validation.getErrors()) {
-          validationString += "<error>" + rr.getMessage() + "</error>";
+        if (rules != null) {
+          Validator validation = sch.testXMLnoSchematron(ir.getTiffModel(), rules);
+          String validationString = "<policyCheckerOutput>";
+          for (RuleResult rr : validation.getErrors()) {
+            validationString += "<error>" + rr.getMessage() + "</error>";
+          }
+          for (RuleResult rr : validation.getWarnings()) {
+            validationString += "<warning>" + rr.getMessage() + "</warning>";
+          }
+          validationString += "</policyCheckerOutput>";
+          String presch = output.substring(0, output.indexOf("</report>"));
+          String postsch = output.substring(output.indexOf("</report>"));
+          output = presch + validationString + postsch;
         }
-        for (RuleResult rr : validation.getWarnings()) {
-          validationString += "<warning>" + rr.getMessage() + "</warning>";
-        }
-        validationString += "</policyCheckerOutput>";
-        String presch = output.substring(0, output.indexOf("</report>"));
-        String postsch = output.substring(output.indexOf("</report>"));
-        output = presch + validationString + postsch;
       } catch (Exception e) {
         e.printStackTrace();
       }

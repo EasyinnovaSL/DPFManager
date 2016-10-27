@@ -73,7 +73,7 @@ public class PolicyTest extends CommandLineTest {
     }
     assertEquals(xml_orig != null, true);
     assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
-    assertEquals(xml_orig.contains("failed-assert"), true);
+    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), true);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -129,7 +129,7 @@ public class PolicyTest extends CommandLineTest {
     }
     assertEquals(xml_orig != null, true);
     assertEquals(xml_orig.contains("Invalid ByteOrder"), false);
-    assertEquals(xml_orig.contains("failed-assert"), false);
+    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), false);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -185,7 +185,7 @@ public class PolicyTest extends CommandLineTest {
     }
     assertEquals(xml_orig != null, true);
     assertEquals(xml_orig.contains("Invalid ByteOrder"), true);
-    assertEquals(xml_orig.contains("failed-assert"), true);
+    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), true);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -240,7 +240,7 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("failed-assert"), true);
+    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), true);
     assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
 
     FileUtils.deleteDirectory(new File(path));
@@ -296,7 +296,7 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("failed-assert"), false);
+    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), false);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -351,8 +351,8 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("failed-assert"), false);
-    assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
+    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), false);
+    assertEquals(xml_orig.contains("Warning on ImageWidth"), true);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -407,7 +407,7 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("failed-assert"), true);
+    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), true);
     assertEquals(xml_orig.contains("Invalid NumberImages"), true);
 
     FileUtils.deleteDirectory(new File(path));
@@ -463,7 +463,7 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("failed-assert"), false);
+    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), false);
     assertEquals(xml_orig.contains("Invalid NumberImages"), false);
 
     FileUtils.deleteDirectory(new File(path));
@@ -492,7 +492,6 @@ public class PolicyTest extends CommandLineTest {
     bw.write("ISO\tBaseline\n" +
         "FORMAT\tHTML\n" +
         "RULE\tDPI,=,Even\n" +
-        "RULE\tBlankPage,=,False\n" +
         "RULE\tEqualXYResolution,=,True\n");
     bw.close();
 
@@ -562,7 +561,6 @@ public class PolicyTest extends CommandLineTest {
     bw.write("ISO\tBaseline\n" +
         "FORMAT\tHTML\n" +
         "RULE\tDPI,=,Uneven\n" +
-        "RULE\tBlankPage,=,True\n" +
         "RULE\tEqualXYResolution,=,False\n");
     bw.close();
 
@@ -601,7 +599,7 @@ public class PolicyTest extends CommandLineTest {
     for (String tr : trs){
       if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO + "</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
-        assertEquals(true, tr.contains("<td class=\"error\">3</td>"));
+        assertEquals(true, tr.contains("<td class=\"error\">2</td>"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       }
