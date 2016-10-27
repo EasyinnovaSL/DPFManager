@@ -411,6 +411,7 @@ public class HtmlReport extends Report {
           String expert = "";
           if (!showTag(tv)) {
             expert = "expert";
+            hasExpert.put(mapId, true);
           }
           row = "<tr class='sub" + tag.index + " " + expert + "'><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
           row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");

@@ -298,11 +298,12 @@ public class Report {
       } else if (tag.tv.getId() == 34665) {
         mapId = "exi" + tag.index;
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
-      } else if (tag.expert) {
-        mapId = "ifd" + tag.index + "e";
-        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else if (tag.tv.getId() == 330) {
         mapId = "sub" + tag.index;
+        IFD sub = (IFD) tag.tv.getValue().get(0);
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.expert) {
+        mapId = "ifd" + tag.index + "e";
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else {
         mapId = "ifd" + tag.index;

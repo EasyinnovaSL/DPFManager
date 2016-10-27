@@ -50,10 +50,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -68,13 +71,12 @@ public class PdfReport extends Report {
 
   PDFParams makeConformSection(int nerrors, int nwarnings, String key, PDFParams pdfParams0, int pos_x, int image_width, int font_size, PDFont font) throws Exception {
     PDFParams pdfParams = pdfParams0;
+    String imgPath = "images/pdf/check.png";
     if (nerrors > 0) {
-      pdfParams = writeText(pdfParams, "NOT conform to " + key, pos_x + image_width + 10, font, font_size, Color.red);
-    } else if (nwarnings > 0) {
-//      pdfParams = writeText(pdfParams, "This file conforms to " + key + ", BUT it has some warnings", pos_x + image_width + 10, font, font_size, Color.orange);
-      pdfParams = writeText(pdfParams, "Conforms to " + key, pos_x + image_width + 10, font, font_size, Color.green);
+      imgPath = "images/pdf/error.png";
+      pdfParams = writeTitle(pdfParams, key, imgPath, Color.red, pos_x + image_width + 10, font, font_size, 7);
     } else {
-      pdfParams = writeText(pdfParams, "Conforms to " + key, pos_x + image_width + 10, font, font_size, Color.green);
+      pdfParams = writeTitle(pdfParams, key, imgPath, Color.green, pos_x + image_width + 10, font, font_size, 7);
     }
     pdfParams.y -= 10;
     return pdfParams;
@@ -144,7 +146,7 @@ public class PdfReport extends Report {
       pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size);
       font_size = 11;
       pdfParams.y -= 32;
-      List<String> linesPath = splitInLines(font_size, font, ir.getFilePath().replaceAll("\\\\", "/"), 500, "/");
+      List<String> linesPath = splitInLines(font_size, font, ir.getFilePath().replaceAll("\\\\", "/"), 490-image_width, "/");
       for (String line : linesPath) {
         pdfParams = writeText(pdfParams, line, pos_x + image_width + 10, font, font_size);
         pdfParams.y -= 10;
@@ -231,7 +233,7 @@ public class PdfReport extends Report {
        */
       font_size = 7;
       Map<String, List<ReportTag>> tags = parseTags(ir);
-      for (String key : tags.keySet()) {
+      for (String key : sortByTag(tags.keySet())) {
         /**
          * IFD
          */
@@ -247,7 +249,7 @@ public class PdfReport extends Report {
             if (tag.dif < 0) sDif = "(-)";
             else if (tag.dif > 0) sDif = "(+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
-            pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
+            pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId()+"") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
             pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
           }
         }
@@ -266,8 +268,27 @@ public class PdfReport extends Report {
             if (tag.dif < 0) sDif = "(-)";
             else if (tag.dif > 0) sDif = "(+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
-            pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
+            pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId()+"") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
             pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+          }
+        }
+        /**
+         * SUB
+         */
+        if (key.startsWith("sub")) {
+          for (ReportTag tag : tags.get(key)) {
+            pdfParams.y -= 40;
+            pdfParams = writeTitle(pdfParams, "Sub IFD Tags", "images/pdf/tag.png", pos_x, font, 10);
+            pdfParams.y -= 20;
+            Integer[] margins = {2, 40, 180};
+            pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
+            IFD sub = (IFD) tag.tv.getValue().get(0);
+            for (TagValue tv : sub.getTags().getTags()) {
+              pdfParams.y -= 15;
+              pdfParams = writeText(pdfParams, tv.getId()+"", pos_x + margins[0], font, font_size);
+              pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId()+"") ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
+              pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+            }
           }
         }
         /**
@@ -285,7 +306,7 @@ public class PdfReport extends Report {
             for (TagValue tv : exif.getTags().getTags()) {
               pdfParams.y -= 15;
               pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
-              pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId()) ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
+              pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId()+"") ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
               pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
             }
           }
@@ -421,31 +442,6 @@ public class PdfReport extends Report {
   }
 
   /**
-   * New page pd page content stream.
-   *
-   * @param contentStream the content stream
-   * @param document      the document
-   * @return the pd page content stream
-   * @throws Exception the exception
-   */
-  PDPageContentStream newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
-    contentStream.close();
-    PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
-    document.addPage(page);
-    return new PDPageContentStream(document, page);
-  }
-
-  /**
-   * New page needed boolean.
-   *
-   * @param pos_y the pos y
-   * @return the boolean
-   */
-  boolean newPageNeeded(int pos_y) {
-    return pos_y < 100;
-  }
-
-  /**
    * Write errors warnings int.
    *
    * @param pdfParams the pdf params
@@ -481,7 +477,6 @@ public class PdfReport extends Report {
     // Errors, warnings and infos list
     if (errors.size() + warnings.size() + infos.size() > 0) {
       pdfParams.y -= 20;
-      pdfParams = writeRectangle(pdfParams, pos_x, font_size, 490, Color.decode("#333333"));
       List<String> headers;
       if (!isPolicy) {
         headers = Arrays.asList("Type", "ID", "Location", "Description");
@@ -506,6 +501,8 @@ public class PdfReport extends Report {
   private PDFParams writeResult(PDFParams pdfParams, RuleResult val, String imgPath, int pos_x, PDFont font, Integer[] margins, boolean isPolicy) throws Exception {
     int font_size = 8;
     pdfParams.y -= 10;
+
+    pdfParams.checkNewPage();
 
     //Type
     PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources(imgPath)));
@@ -600,6 +597,32 @@ public class PdfReport extends Report {
     return font_size * font.getStringWidth(text) / 1000;
   }
 
+  private List<String> sortByTag(Set<String> keysSet){
+    List<String> keys = new ArrayList<>(keysSet);
+    keys.sort(new Comparator<String>() {
+      @Override
+      public int compare(String o1, String o2) {
+        String sub1 = o1.substring(0, 3);
+        String sub2 = o2.substring(0, 3);
+        if (sub1.equals(sub2)){
+          return o1.compareTo(o2);
+        } else if (sub1.equals("ifd") || sub2.equals("ifd")){
+          return sub1.equals("ifd") ? -1 : 1;
+        } else if (sub1.equals("sub") || sub2.equals("sub")){
+          return sub1.equals("sub") ? -1 : 1;
+        } else if (sub1.equals("exi") || sub2.equals("exi")){
+          return sub1.equals("exi") ? -1 : 1;
+        } else if (sub1.equals("xmp") || sub2.equals("xmp")){
+          return sub1.equals("xmp") ? -1 : 1;
+        } else if (sub1.equals("ipt") || sub2.equals("ipt")){
+          return sub1.equals("ipt") ? -1 : 1;
+        }
+        return 0;
+      }
+    });
+    return keys;
+  }
+
   /**
    * Write text.
    *
@@ -611,15 +634,15 @@ public class PdfReport extends Report {
    * @throws Exception the exception
    */
   private PDFParams writeText(PDFParams pdfParams, String text, int x, PDFont font, int font_size) throws Exception {
-    return writeText(pdfParams, text, x, 99999, font, font_size, Color.black, null);
+    return writeText(pdfParams, text, x, 99999, font, font_size, Color.black, null, 0);
   }
 
   private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size) throws Exception {
-    return writeText(pdfParams, text, x, max_x, font, font_size, Color.black, null);
+    return writeText(pdfParams, text, x, max_x, font, font_size, Color.black, null, 0);
   }
 
   private PDFParams writeText(PDFParams pdfParams, String text, int x, PDFont font, int font_size, Color color) throws Exception {
-    return writeText(pdfParams, text, x, 99999, font, font_size, color, null);
+    return writeText(pdfParams, text, x, 99999, font, font_size, color, null, 0);
   }
 
   /**
@@ -633,16 +656,13 @@ public class PdfReport extends Report {
    * @param color     the color
    * @throws Exception the exception
    */
-  private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size, Color color, PDPixelMap image) throws Exception {
+  private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size, Color color, PDPixelMap image, int imgSize) throws Exception {
     PDPageContentStream contentStream = pdfParams.getContentStream();
     try {
-      if (newPageNeeded(pdfParams.y)) {
-        contentStream = newPage(contentStream, pdfParams.getDocument());
-        pdfParams.y = init_posy;
-      }
+      contentStream = pdfParams.checkNewPage();
 
       if (image != null){
-        pdfParams.getContentStream().drawXObject(image, x-12, pdfParams.y - 1, 9, 9);
+        contentStream.drawXObject(image, x - imgSize -3, pdfParams.y - 1, imgSize, imgSize);
       }
 
       contentStream.beginText();
@@ -660,11 +680,17 @@ public class PdfReport extends Report {
   }
 
   private PDFParams writeTitle(PDFParams pdfParams, String text, String imgPath, int x, PDFont font, int font_size) throws Exception {
+    return writeTitle(pdfParams, text, imgPath, Color.black, x, font, font_size, 9);
+  }
+
+  private PDFParams writeTitle(PDFParams pdfParams, String text, String imgPath, Color color, int x, PDFont font, int font_size, int imgSize) throws Exception {
+    pdfParams.checkNewPage();
     PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources(imgPath)));
-    return writeText(pdfParams, text, x + 12, 99999, font, font_size, Color.black, titleImage);
+    return writeText(pdfParams, text, x + imgSize + 3, 99999, font, font_size, color, titleImage, imgSize);
   }
 
   private PDFParams writeTableHeaders(PDFParams pdfParams, int pos_x, int font_size, PDFont font, List<String> headers, Integer[] margins) throws Exception {
+    pdfParams.checkNewPage();
     pdfParams = writeRectangle(pdfParams, pos_x, font_size, 490, Color.decode("#333333"));
     int i = 0;
     for (String header : headers) {

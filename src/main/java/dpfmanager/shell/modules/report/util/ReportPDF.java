@@ -91,8 +91,7 @@ public class ReportPDF extends ReportGeneric {
           String name = ImplementationCheckerLoader.getIsoName(iso);
           pdfParams.y -= 15;
           col = gr.getReportsOk(iso) == gr.getReportsCount() ? Color.green : Color.red;
-          pdfParams = writeText(pdfParams, gr.getReportsOk(iso) + "", pos_x, font, font_size, col);
-          pdfParams = writeText(pdfParams, "conforms to " + name, pos_x + 30, font, font_size, col);
+          pdfParams = writeText(pdfParams, gr.getReportsOk(iso) + " files conforms to " + name, pos_x, font, font_size, col);
         }
       }
 
@@ -117,7 +116,7 @@ public class ReportPDF extends ReportGeneric {
       pdfParams.y -= 10;
       pdfParams = writeText(pdfParams, gr.getAllReportsKo() + " failed", pos_x + 50, font, font_size, Color.red);
       pdfParams.y -= 10;
-      pdfParams = writeText(pdfParams, "Global score " + (doub * 100) + "%", pos_x + 50, font, font_size, Color.black);
+      pdfParams = writeText(pdfParams, "Global score " + (int) (doub * 100) + "%", pos_x + 50, font, font_size, Color.black);
 
       /**
        * Individual Tiff images list
