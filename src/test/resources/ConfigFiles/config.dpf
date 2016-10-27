@@ -2,7 +2,7 @@
 <configuration>
   <version>2</version>
   <isos>
-    <iso>TiffEPProfileChecker</iso>
+    <iso>TIFF_EP</iso>
     <iso>TiffITP1ProfileChecker</iso>
   </isos>
   <formats>

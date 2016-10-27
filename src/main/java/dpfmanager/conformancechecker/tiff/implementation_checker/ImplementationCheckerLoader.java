@@ -36,7 +36,7 @@ public class ImplementationCheckerLoader {
   private static List<String> isoPaths;
 
   public static String getDefaultIso() {
-    return "BaselineProfileChecker";
+    return "TIFF_Baseline_Core_6_0";
   }
 
   public synchronized static ImplementationCheckerObjectType getRules(String rulesFile) {

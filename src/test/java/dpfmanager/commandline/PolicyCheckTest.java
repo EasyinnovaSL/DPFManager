@@ -70,8 +70,8 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
-    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
+    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO), false);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO), true);
 
@@ -86,7 +86,7 @@ public class PolicyCheckTest extends CommandLineTest {
       if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
         assertEquals(true, tr.contains("<td class=\"error\">1</td>"));
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
-      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
         assertEquals(false, tr.contains("<td class=\"error\">1</td>"));
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       }
@@ -104,7 +104,7 @@ public class PolicyCheckTest extends CommandLineTest {
       if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
         assertEquals(true, tr.contains(">1 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
-      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
       }
@@ -166,8 +166,8 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
-    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
+    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO), true);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO), false);
 
@@ -182,7 +182,7 @@ public class PolicyCheckTest extends CommandLineTest {
       if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"warning\">2</td>"));
-      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       }
@@ -200,7 +200,7 @@ public class PolicyCheckTest extends CommandLineTest {
       if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">2 warnings<"));
-      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
       }
@@ -261,8 +261,8 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
-    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
+    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO), false);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO), true);
 
@@ -277,7 +277,7 @@ public class PolicyCheckTest extends CommandLineTest {
       if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"error\">1</td>"));
-      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       }
@@ -295,7 +295,7 @@ public class PolicyCheckTest extends CommandLineTest {
       if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
         assertEquals(true, tr.contains(">1 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
-      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
       }
@@ -356,8 +356,8 @@ public class PolicyCheckTest extends CommandLineTest {
       }
     }
     assertEquals(html != null, true);
-    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), true);
-    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")), false);
+    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
+    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO), true);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO), false);
 
@@ -371,7 +371,7 @@ public class PolicyCheckTest extends CommandLineTest {
     for (String tr : trs){
       if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
-      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"</td>")){
+      } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       }
@@ -389,7 +389,7 @@ public class PolicyCheckTest extends CommandLineTest {
       if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
-      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("BaselineProfileChecker")+"<")){
+      } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
       }

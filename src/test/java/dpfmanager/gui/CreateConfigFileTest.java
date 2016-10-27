@@ -77,8 +77,8 @@ public class CreateConfigFileTest extends ApplicationTest {
 
     // 2 - Deselect tiff baseline and Select Tiff/EP & TIFF/IT-P1
     // 1: Baseline   2: EP   3: IT   4: ITP1   5: IT-P2
-    clickOnScroll("#BaselineProfileChecker");
-    clickOnScroll("#TiffEPProfileChecker");
+    clickOnScroll("#TIFF_Baseline_Core_6_0");
+    clickOnScroll("#TIFF_EP");
     clickOnScroll("#TiffITP1ProfileChecker");
     clickOnAndReload("#continueButton");
 

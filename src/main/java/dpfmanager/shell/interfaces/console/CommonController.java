@@ -169,7 +169,7 @@ public class CommonController {
       if (pdf) config.getFormats().add("PDF");
       if (html) config.getFormats().add("HTML");
       if (json) config.getFormats().add("JSON");
-      config.getIsos().add("BaselineProfileChecker");
+      config.getIsos().add("TIFF_Baseline_Core_6_0");
       config.setOutput(outputFolder);
     }
   }

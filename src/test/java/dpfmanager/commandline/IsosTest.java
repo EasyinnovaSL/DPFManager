@@ -73,9 +73,9 @@ public class IsosTest extends CommandLineTest {
 
       // Olny conforms to baseline
       for (String tr : trs){
-        if (tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("BaselineProfileChecker"))){
+        if (tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0"))){
           assertEquals(true, tr.contains(">1<"));
-        } else if (tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("TiffITProfileChecker")) || tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("TiffEPProfileChecker"))){
+        } else if (tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("TiffITProfileChecker")) || tr.contains("conforms to " + ImplementationCheckerLoader.getIsoName("TIFF_EP"))){
           assertEquals(true, tr.contains(">0<"));
         }
       }

@@ -509,8 +509,8 @@ public class Configuration {
   }
 
   private String parseOldToNewIso(String old){
-    if (old.equals("Baseline")) return "BaselineProfileChecker";
-    if (old.equals("Tiff/EP")) return "TiffEPProfileChecker";
+    if (old.equals("Baseline")) return "TIFF_Baseline_Core_6_0";
+    if (old.equals("Tiff/EP")) return "TIFF_EP";
     if (old.equals("Tiff/IT")) return "TiffITProfileChecker";
     if (old.equals("Tiff/IT-1")) return "TiffITP1ProfileChecker";
     if (old.equals("Tiff/IT-2")) return "TiffITP2ProfileChecker";
