@@ -62,7 +62,6 @@ public class ConformanceCheckersManagerTest extends CommandLineTest {
     /*
      * Compare Step 1
      */
-    System.out.println(FileUtils.readFileToString(new File(DPFManagerProperties.getConformancesConfig())));
     expected = new File("src/test/resources/ConformanceConfiguration/step1.xml");
     current = new File(DPFManagerProperties.getConformancesConfig());
     compareFiles(expected, current, 1);

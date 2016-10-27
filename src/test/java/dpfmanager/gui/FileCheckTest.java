@@ -79,7 +79,7 @@ public class FileCheckTest extends ApplicationTest {
     clickOnAndReload("#tabReports #butxml", "#pane-show");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     TextArea textArea = (TextArea) scene.lookup("#textArea");
-    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"";
     String initial = textArea.getText().substring(0,expected.length());
     Assert.assertEquals("Report xml", expected, initial);
 
