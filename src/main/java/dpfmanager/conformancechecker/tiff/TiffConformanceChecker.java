@@ -224,20 +224,20 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", "False,True");
       // BlankPage
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "BlankPage");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Page devoid of content (completely white)");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", "False,True");
+      //field = doc.createElement("field");
+      //fields.appendChild(field);
+      //addElement(doc, field, "name", "BlankPage");
+      //addElement(doc, field, "type", "integer");
+      //addElement(doc, field, "description", "Page devoid of content (completely white)");
+      //addElement(doc, field, "operators", "=");
+      //addElement(doc, field, "values", "False,True");
       // NumberBlankPage
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "NumberBlankImages");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Number of Blank Pages");
-      addElement(doc, field, "operators", ">,<,=");
+      //field = doc.createElement("field");
+      //fields.appendChild(field);
+      //addElement(doc, field, "name", "NumberBlankImages");
+      //addElement(doc, field, "type", "integer");
+      //addElement(doc, field, "description", "Number of Blank Pages");
+      //addElement(doc, field, "operators", ">,<,=");
       // Compression
       field = doc.createElement("field");
       fields.appendChild(field);
