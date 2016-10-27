@@ -130,7 +130,7 @@ public class HtmlReport extends Report {
      * Errors / Warnings resume
      */
 
-    String fullTmpl = "<div class=\"row bot20 left20 fullw\">\n" +
+    String fullTmpl = "<div class=\"row bot20 fullw\">\n" +
         "\t\t\t\t##CHECK##\n" +
         "\t\t\t\t<div>\n" +
         "\t\t\t\t\t<h4 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
@@ -365,7 +365,6 @@ public class HtmlReport extends Report {
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
             }
-            int nh = 0;
             if (xmp.getHistory() != null) {
               for (Hashtable<String, String> kv : xmp.getHistory()) {
                 // TODO WORKARROUND
@@ -373,7 +372,6 @@ public class HtmlReport extends Report {
                 String value = kv.get(key);
                 row = "<tr class='##LINE## xmp" + tag.index + "'><td>##ATTR##</td><td>##VALUE##</td></tr>";
                 if (key.equals("action")) {
-                  nh++;
                   row = row.replace("##LINE##", "line-top");
                 } else {
                   row = row.replace("##LINE##", "");
@@ -397,7 +395,8 @@ public class HtmlReport extends Report {
           IFD exif = (IFD) to;
           try {
             for (TagValue tv : exif.getTags().getTags()) {
-              row = "<tr class='exi" + tag.index + "'><td>" + tv.getName() + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
+              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>"+tv.getId()+"</td><td>" + tv.getName() + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
+              row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
             }
@@ -478,6 +477,8 @@ public class HtmlReport extends Report {
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  EXIF</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
+        "\t\t\t\t            <th style=\"width: 40px;\"></th>\n" +
+        "\t\t\t\t            <th style=\"width: 70px;\" class=\"bold tcenter\">ID</th>\n" +
         "\t\t\t\t            <th class=\"bold\">Name</th>\n" +
         "\t\t\t\t            <th class=\"bold\">Value</th>\n" +
         "\t\t\t\t        </tr>\n" +

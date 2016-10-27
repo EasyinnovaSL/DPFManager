@@ -92,11 +92,11 @@ img {
 }
 
 .CustomTable2 .c1 {
-    width: 50%;
+
 }
 
 .CustomTable2 .c2 {
-    width: 25%;
+    white-space: nowrap;
 }
 
 /* Resize */
