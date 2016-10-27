@@ -75,6 +75,7 @@ public class GuiWorkbench implements FXWorkbench {
     testValues = new HashMap<>();
     thestage = stage;
     thestage.setMinWidth(DpFManagerConstants.MIN_WIDTH);
+    thestage.setWidth(DpFManagerConstants.WINDOW_WIDTH);
     layout.setWorkbenchXYSize(DpFManagerConstants.WIDTH, DpFManagerConstants.HEIGHT);
     if (parameters.getRaw().contains("-test")) {
       layout.setStyle(StageStyle.UNDECORATED);

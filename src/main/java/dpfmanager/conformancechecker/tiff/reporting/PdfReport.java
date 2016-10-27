@@ -674,7 +674,7 @@ public class PdfReport extends Report {
       }
 
       if (image != null){
-        pdfParams.getContentStream().drawXObject(image, x-12, pdfParams.y - 1, 9, 9);
+        contentStream.drawXObject(image, x-12, pdfParams.y - 1, 9, 9);
       }
 
       String stext = text.replace("\n", " ").replaceAll(" +", " ").trim();

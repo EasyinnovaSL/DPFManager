@@ -324,7 +324,7 @@
    <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
-   <assert test="{tag[name=XResolution]}">Image IFD must have a tag X Resolution</assert>
+   <assert test="{tag[name=XResolution]}">Image IFD must have tag X Resolution</assert>
   </rule>
   
   <rule id="IFDI-0005" context="tags" level="error">

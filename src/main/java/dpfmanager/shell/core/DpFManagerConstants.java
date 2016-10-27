@@ -30,7 +30,12 @@ public class DpFManagerConstants {
   public static final int MIN_WIDTH = 400;
 
   /**
-   * The initial width
+   * The window width
+   */
+  public static final int WINDOW_WIDTH = 1040;
+
+  /**
+   * The initial width of the main panel
    */
   public static final int WIDTH = 970;
 
