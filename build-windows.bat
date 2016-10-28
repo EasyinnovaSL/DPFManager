@@ -16,7 +16,7 @@ goto commonexit
 iscc.exe build-windows.iss
 goto commonexit
 
-:founpath
+:foundpath
 "C:\Program Files (x86)\Inno Setup 5\iscc.exe" build-windows.iss
 goto commonexit
 
