@@ -116,8 +116,13 @@ public class PdfReport extends Report {
       float scale = 3;
       synchronized (this) {
         InputStream inputStream = getFileStreamFromResources("images/logo.jpg");
-        ximage = new PDJpeg(pdfParams.getDocument(), inputStream);
-        pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
+        ximage = null;
+        try {
+          ximage = new PDJpeg(pdfParams.getDocument(), inputStream);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+        if (ximage != null) pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
       }
 
       // Report Title
@@ -135,6 +140,9 @@ public class PdfReport extends Report {
         thumb = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
       }
       image_width = image_height * thumb.getWidth() / thumb.getHeight();
+      if (image_width > 200) {
+        image_height = image_width * thumb.getHeight() / thumb.getWidth();
+      }
       ximage = new PDJpeg(pdfParams.getDocument(), thumb);
       pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
 
@@ -662,7 +670,7 @@ public class PdfReport extends Report {
       contentStream = pdfParams.checkNewPage();
 
       if (image != null){
-        contentStream.drawXObject(image, x - imgSize -3, pdfParams.y - 1, imgSize, imgSize);
+        contentStream.drawXObject(image, x - imgSize - 3, pdfParams.y - 1, imgSize, imgSize);
       }
 
       String stext = text.replace("\n", " ").replaceAll(" +", " ").trim();
