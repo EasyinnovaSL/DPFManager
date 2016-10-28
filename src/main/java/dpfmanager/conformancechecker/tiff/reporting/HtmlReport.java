@@ -133,7 +133,7 @@ public class HtmlReport extends Report {
     String fullTmpl = "<div class=\"row bot20 fullw\">\n" +
         "\t\t\t\t##CHECK##\n" +
         "\t\t\t\t<div>\n" +
-        "\t\t\t\t\t<h4 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
+        "\t\t\t\t\t<h5 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
         "\t\t\t\t\t##CONTENT##\n" +
         "\t\t\t\t</div>\n" +
         "\t\t\t</div>";
@@ -271,7 +271,7 @@ public class HtmlReport extends Report {
         typ = "";
         if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Main image";
         else typ = " - Thumbnail";
-        ul += "<ul><li><i class=\"fa fa-file-o\"></i> SubIFD" + typ + "</li></ul>";
+        ul += "<ul><li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick=\"showTagsDiv('sub" + index + "')\" id='lisub" + index + "'>SubIFD" + typ + "</a></li></ul>";
       }
       if (ifd.containsTagId(34665)) {
         ul += "<ul><li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick=\"showTagsDiv('exi" + index + "')\" id='liexi" + index + "'>EXIF</a></li></ul>";
@@ -389,20 +389,37 @@ public class HtmlReport extends Report {
         continue;
       }
       if (tag.tv.getId() == 34665) {
-        String mapId = "exi" + tag.index;
         // EXIF
-        for (abstractTiffType to : tag.tv.getValue()) {
-          IFD exif = (IFD) to;
-          try {
-            for (TagValue tv : exif.getTags().getTags()) {
-              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>"+tv.getId()+"</td><td>" + tv.getName() + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
-              row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
-              String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
-              tagsMap.put(mapId, rows + row);
-            }
-          } catch (Exception ex) {
-            ex.printStackTrace();
+        String mapId = "exi" + tag.index;
+        IFD exif = (IFD) tag.tv.getValue().get(0);
+        for (TagValue tv : exif.getTags().getTags()) {
+          if (tv.getId() == 36864){
+            tv.toString();
           }
+          row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>"+tv.getId()+"</td><td>" + (tv.getName().equals(tv.getId()+"") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
+          row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
+          String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
+          tagsMap.put(mapId, rows + row);
+        }
+        continue;
+      }
+      if (tag.tv.getId() == 330) {
+        // Sub IFD
+        String mapId = "sub" + tag.index;
+        IFD sub = (IFD) tag.tv.getValue().get(0);
+        for (TagValue tv : sub.getTags().getTags()) {
+          String expert = "";
+          if (!showTag(tv)) {
+            expert = "expert";
+            hasExpert.put(mapId, true);
+          }
+          row = "<tr class='sub" + tag.index + " " + expert + "'><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+          row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
+          row = row.replace("##ID##", tv.getId() + "");
+          row = row.replace("##KEY##", (tv.getName().equals(tv.getId()+"") ? "Private tag" : tv.getName()));
+          row = row.replace("##VALUE##", tv.getDescriptiveValue());
+          String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
+          tagsMap.put(mapId, rows + row);
         }
         continue;
       }
@@ -437,7 +454,7 @@ public class HtmlReport extends Report {
       else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";
       row = row.replace("##ICON##", "<i class=\"image-default icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
-      row = row.replace("##KEY##", tag.tv.getName());
+      row = row.replace("##KEY##", (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()));
       row = row.replace("##VALUE##", tag.tv.getDescriptiveValue());
       String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
       tagsMap.put(mapId, rows + row);
@@ -448,9 +465,9 @@ public class HtmlReport extends Report {
      */
     String finalResult = "";
     String expertTmpl = "<div class=\"clexpert\"><input type=\"checkbox\" id=\"checkSelected##INDEX##\" onchange=\"expertChanged('##INDEX##')\"><label for=\"checkSelected##INDEX##\"><span></span> Expert mode</label></div>";
-    String ifdTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
+    String genTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
         "\t\t\t\t\t##EXPERT##\n" +
-        "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  IFD Tags</h4>\n" +
+        "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  ##TITLE##</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
         "\t\t\t\t            <th style=\"width: 40px;\"></th>\n" +
@@ -461,24 +478,14 @@ public class HtmlReport extends Report {
         "\t\t\t\t        ##ROWS##\n" +
         "\t\t\t\t\t</table>\n" +
         "\t\t\t\t</div>";
+    String subTmpl = StringUtils.replace(genTmpl, "##TITLE##", "Sub IFD Tags");
+    String ifdTmpl = StringUtils.replace(genTmpl, "##TITLE##", "IFD Tags");
+    String exifTmpl = StringUtils.replace(genTmpl, "##TITLE##", "EXIF");
     String iptcTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
         "\t\t\t\t\t##EXPERT##\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  IPTC</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
-        "\t\t\t\t            <th class=\"bold\">Name</th>\n" +
-        "\t\t\t\t            <th class=\"bold\">Value</th>\n" +
-        "\t\t\t\t        </tr>\n" +
-        "\t\t\t\t        ##ROWS##\n" +
-        "\t\t\t\t\t</table>\n" +
-        "\t\t\t\t</div>";
-    String exifTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##EXPERT##\n" +
-        "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  EXIF</h4>\n" +
-        "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
-        "\t\t\t\t        <tr>\n" +
-        "\t\t\t\t            <th style=\"width: 40px;\"></th>\n" +
-        "\t\t\t\t            <th style=\"width: 70px;\" class=\"bold tcenter\">ID</th>\n" +
         "\t\t\t\t            <th class=\"bold\">Name</th>\n" +
         "\t\t\t\t            <th class=\"bold\">Value</th>\n" +
         "\t\t\t\t        </tr>\n" +
@@ -507,6 +514,7 @@ public class HtmlReport extends Report {
         "\t\t\t\t\t</div>\n" +
         "\t\t\t\t</div>";
     templates.put("ifd", ifdTmpl);
+    templates.put("sub", subTmpl);
     templates.put("ipt", iptcTmpl);
     templates.put("xmp", xmpTmpl);
     templates.put("exi", exifTmpl);

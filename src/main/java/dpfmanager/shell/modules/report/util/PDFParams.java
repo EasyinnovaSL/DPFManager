@@ -84,4 +84,36 @@ public class PDFParams {
     return document;
   }
 
+  public PDPageContentStream checkNewPage() throws Exception {
+    if (newPageNeeded(y)) {
+      contentStream = newPage(getContentStream(), getDocument());
+      y = 800;
+    }
+    return contentStream;
+  }
+
+  /**
+   * New page pd page content stream.
+   *
+   * @param contentStream the content stream
+   * @param document      the document
+   * @return the pd page content stream
+   * @throws Exception the exception
+   */
+  PDPageContentStream newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
+    contentStream.close();
+    PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
+    document.addPage(page);
+    return new PDPageContentStream(document, page);
+  }
+
+  /**
+   * New page needed boolean.
+   *
+   * @param pos_y the pos y
+   * @return the boolean
+   */
+  boolean newPageNeeded(int pos_y) {
+    return pos_y < 80;
+  }
 }
