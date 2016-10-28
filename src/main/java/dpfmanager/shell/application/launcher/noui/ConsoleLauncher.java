@@ -174,6 +174,8 @@ public class ConsoleLauncher {
         printOut(bundle.getString("unknownCommand").replace("%1", first));
         displayHelp();
       }
+    } else {
+      displayHelp();
     }
   }
 
