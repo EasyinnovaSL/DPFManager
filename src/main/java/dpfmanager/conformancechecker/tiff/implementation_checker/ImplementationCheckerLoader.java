@@ -11,15 +11,21 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -103,7 +109,8 @@ public class ImplementationCheckerLoader {
     return rules;
   }
 
-  private static InputStream getFileFromResources(String pathStr) {
+  private static InputStream getFileFromResources(String spathStr) {
+    String pathStr = spathStr.replace("./", "");
     InputStream fis = null;
     File file = new File("src/main/resources/" + pathStr);
     File fileConfig = new File(DPFManagerProperties.getIsosDir() + "/" + pathStr);
@@ -115,10 +122,36 @@ public class ImplementationCheckerLoader {
         // Look in isos config
         fis = new FileInputStream(DPFManagerProperties.getIsosDir() + "/" + pathStr);
       } else {
-        // Look in JAR
+        // Look in class
         Class cls = ImplementationCheckerLoader.class;
         ClassLoader cLoader = cls.getClassLoader();
         fis = cLoader.getResourceAsStream(pathStr);
+        fis = null;
+
+        if (fis == null) {
+          // Look in JAR
+          CodeSource src = ImplementationCheckerLoader.class.getProtectionDomain().getCodeSource();
+          if (src != null) {
+            try {
+              URL jar = src.getLocation();
+              ZipInputStream zip = new ZipInputStream(jar.openStream());
+              ZipEntry zipFile;
+              while ((zipFile = zip.getNextEntry()) != null) {
+                String name = zipFile.getName();
+                if (name.contains(pathStr)) {
+                  try {
+                    fis = zip;
+                    break;
+                  } catch (Exception ex) {
+                    throw new Exception("");
+                  }
+                }
+              }
+            } catch (Exception ex) {
+
+            }
+          }
+        }
       }
     } catch (FileNotFoundException e) {
     }
@@ -133,6 +166,7 @@ public class ImplementationCheckerLoader {
         Class cls = ImplementationCheckerLoader.class;
         ClassLoader cLoader = cls.getClassLoader();
         InputStream in = cLoader.getResourceAsStream(path);
+
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String resource;
         while ((resource = br.readLine()) != null) {
@@ -141,7 +175,22 @@ public class ImplementationCheckerLoader {
           }
         }
       } catch (Exception e) {
+        try {
+          CodeSource src = ImplementationCheckerLoader.class.getProtectionDomain().getCodeSource();
+          if (src != null) {
+            URL jar = src.getLocation();
+            ZipInputStream zip = new ZipInputStream(jar.openStream());
+            ZipEntry zipFile;
+            while ((zipFile = zip.getNextEntry()) != null) {
+              String name = zipFile.getName();
+              if (name.endsWith(".xml") && name.contains("implementationcheckers")) {
+                list.add(name);
+              }
+            }
+          }
+        } catch (Exception ex) {
 
+        }
       }
       isoPaths = list;
     }
