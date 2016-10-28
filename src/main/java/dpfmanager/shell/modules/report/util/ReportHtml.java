@@ -79,12 +79,14 @@ public class ReportHtml extends ReportGeneric {
           "\t\t\t\t\t\t        <td></td>\n" +
           "\t\t\t\t\t\t    </tr>";
       String rows = "";
+      int totalWarnings = 0;
       for (String iso : ir.getCheckedIsos()){
         if (ir.hasValidation(iso)) {
           String name = ImplementationCheckerLoader.getIsoName(iso);
           String row = rowTmpl;
           int errorsCount = ir.getNErrors(iso);
           int warningsCount = ir.getNWarnings(iso);
+          totalWarnings += warningsCount;
           row = StringUtils.replace(row, "##NAME##", name);
           row = StringUtils.replace(row, "##ERR_N##", "" + errorsCount);
           row = StringUtils.replace(row, "##WAR_N##", "" + warningsCount);
@@ -110,7 +112,7 @@ public class ReportHtml extends ReportGeneric {
       if (percent == 100) {
         imageBody = StringUtils.replace(imageBody, "##CLASS##", "success");
         imageBody = StringUtils.replace(imageBody, "##RESULT##", "Passed");
-        if (ir.getAllNWarnings() > 0) {
+        if (totalWarnings > 0) {
           imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "inline-block");
         } else {
           imageBody = StringUtils.replace(imageBody, "##DISPLAY_WAR##", "none");
