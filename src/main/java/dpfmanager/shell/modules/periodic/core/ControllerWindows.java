@@ -222,7 +222,7 @@ public class ControllerWindows extends Controller {
 //  protected String getInputFromArguments(String arguments){
 //    String input = "";
 //    String withouVBS = arguments.substring(arguments.substring(1).indexOf("\"")+3, arguments.length());
-//    String aux = withouVBS.substring(18); // Skip -s -configuration
+//    String aux = withouVBS.substring(12); // Skip -s -configuration
 //    String[] files = aux.split("\"");
 //    boolean first = true;
 //    for (String file : files) {
