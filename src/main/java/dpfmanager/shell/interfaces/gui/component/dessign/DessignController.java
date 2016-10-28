@@ -79,7 +79,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       }
     } else {
       // Input text
-      if (getView().getInputText().getText().equals(getBundle().getString("selectFile")) || getView().getInputText().getText().equals(getBundle().getString("selectFolder"))) {
+      if (getView().getInputText().getText().isEmpty() || getView().getInputText().getText().equals(getBundle().getString("inputText")) || getView().getInputText().getText().equals(getBundle().getString("selectFolder"))) {
         getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertFile")));
         return;
       } else {

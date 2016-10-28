@@ -597,9 +597,10 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>iscc</executable>
+                                    <executable>cmd</executable>
                                     <arguments>
-                                        <argument>build-windows.iss</argument>
+                                        <argument>/C</argument>
+                                        <argument>build-windows.bat</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

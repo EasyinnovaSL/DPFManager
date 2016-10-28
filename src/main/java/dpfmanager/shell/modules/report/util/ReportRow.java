@@ -1,13 +1,13 @@
 /**
- * <h1>ReportRow.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>ReportRow.java</h1> <p> This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -33,10 +33,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,9 +61,9 @@ public class ReportRow {
   /**
    * Instantiates a new Report row.
    *
-   * @param sdate     the date
+   * @param sdate    the date
    * @param nFiles   the n files
-   * @param stime     the time
+   * @param stime    the time
    * @param input    the input
    * @param errors   the errors
    * @param warnings the warnings
@@ -82,20 +80,20 @@ public class ReportRow {
     this.passed = new SimpleStringProperty(passed);
     this.score = new SimpleStringProperty(score);
     this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
-    this.uuid = System.currentTimeMillis()+"";
+    this.uuid = System.currentTimeMillis() + "";
     this.delete = new SimpleStringProperty(uuid);
     this.deletePath = deletePath;
   }
 
-  private String parseDate2Locale(String sdate){
-    try{
+  private String parseDate2Locale(String sdate) {
+    try {
       // Convert to date
       SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
       Date date = df.parse(sdate);
       // Locale date
       DateFormat locDf = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
       sdate = locDf.format(date);
-    } catch (Exception e){
+    } catch (Exception e) {
     }
     return sdate;
   }
@@ -333,7 +331,7 @@ public class ReportRow {
       String xml = readFullFile(file.getPath(), Charset.defaultCharset());
       String stime = getStime(file.getPath());
       int passed = 0, errors = 0, warnings = 0, score = 0;
-      String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".xml");
+      String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".xml");
 
       // Passed
       if (xml.indexOf("<valid_files>") >= 0) {
@@ -378,7 +376,7 @@ public class ReportRow {
         score = passed * 100 / n;
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1", "" + errors), bundle.getString("warnings").replace("%1", "" + warnings), bundle.getString("passed").replace("%1", "" + passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -400,8 +398,8 @@ public class ReportRow {
       String html = readFullFile(file.getPath(), Charset.defaultCharset());
       int passed = 0, errors = 0, warnings = 0, score = 0;
       String stime = getStime(file.getPath());
-      File folder = new File(file.getParentFile().getAbsolutePath()+"/html");
-      String input = parseInputFiles(folder,file.getAbsolutePath(),".html");
+      File folder = new File(file.getParentFile().getAbsolutePath() + "/html");
+      String input = parseInputFiles(folder, file.getAbsolutePath(), ".html");
 
       // Passed
       if (html.indexOf("id=\"pie-global\"") >= 0) {
@@ -467,7 +465,7 @@ public class ReportRow {
         }
       }
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1", "" + errors), bundle.getString("warnings").replace("%1", "" + warnings), bundle.getString("passed").replace("%1", "" + passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -516,7 +514,7 @@ public class ReportRow {
       // Warnings
       if (jObj.has("individualreports")) {
         try {
-          JsonArray jArray = ((JsonObject)jObj.get("individualreports")).get("report").getAsJsonArray().getAsJsonArray();
+          JsonArray jArray = ((JsonObject) jObj.get("individualreports")).get("report").getAsJsonArray().getAsJsonArray();
           for (JsonElement element : jArray) {
             if (element.toString().contains("\"warning\"")) {
               warnings++;
@@ -533,7 +531,7 @@ public class ReportRow {
       }
 
 
-      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1",""+errors), bundle.getString("warnings").replace("%1",""+warnings), bundle.getString("passed").replace("%1",""+passed), score + "%", file.getAbsolutePath());
+      ReportRow row = new ReportRow(sdate, stime, input, "" + n, bundle.getString("errors").replace("%1", "" + errors), bundle.getString("warnings").replace("%1", "" + warnings), bundle.getString("passed").replace("%1", "" + passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
@@ -553,37 +551,29 @@ public class ReportRow {
       String n = "?";
       String passed = "?", errors = "?", warnings = "?", score = "?";
       String stime = getStime(file.getPath());
-      String input = parseInputFiles(file.getParentFile(),file.getAbsolutePath(),".pdf");
+      String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".pdf");
 
-      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1",errors), bundle.getString("warnings").replace("%1",warnings), bundle.getString("passed").replace("%1",passed), score + "%", file.getAbsolutePath());
+      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1", errors), bundle.getString("warnings").replace("%1", warnings), bundle.getString("passed").replace("%1", passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
     }
   }
 
-  private static String parseInputFiles(File folder, String filePath, String ext){
+  private static String parseInputFiles(File folder, String filePath, String ext) {
     String input = "";
     int count = 0;
     for (final File fileEntry : folder.listFiles()) {
-      if (!fileEntry.isDirectory()) {
-        if (fileEntry.getPath().toLowerCase().endsWith(ext)) {
-          if (!fileEntry.getAbsolutePath().equals(filePath)) {
-            if (input.length() > 0) input += ", ";
-            String fname = fileEntry.getName();
-            if (fname.toLowerCase().endsWith(ext))
-              fname = fname.substring(0, fname.length() - ext.length());
-            if (fname.toLowerCase().endsWith(".tif"))
-              fname = fname.substring(0, fname.length() - 4);
-            if (fname.toLowerCase().endsWith(".tiff"))
-              fname = fname.substring(0, fname.length() - 5);
-            input += fname;
-            if (count == 5){
-              break;
-            }
-            count++;
-          }
+      if (!fileEntry.isDirectory() && fileEntry.getPath().toLowerCase().endsWith(ext) && !fileEntry.getAbsolutePath().equals(filePath)) {
+        String fname = fileEntry.getName();
+        if (fname.toLowerCase().endsWith(ext) && !fname.toLowerCase().endsWith(".mets.xml") && !fname.toLowerCase().endsWith("_fixed" + ext)) {
+          fname = fname.substring(fname.indexOf("-") + 1, fname.length() - ext.length());
+          input = (input.length() > 0) ? input + ", " + fname : fname;
         }
+        if (count == 5) {
+          break;
+        }
+        count++;
       }
     }
     return input;
