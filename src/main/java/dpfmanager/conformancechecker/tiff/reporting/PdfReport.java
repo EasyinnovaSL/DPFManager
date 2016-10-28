@@ -126,17 +126,27 @@ public class PdfReport extends Report {
 
       // Image
       pos_x = 50;
-      int image_height = 130;
-      int image_width = 200;
-      pdfParams.y -= (image_height + 30);
+      int max_image_height = 130;
+      int max_image_width = 200;
+      pdfParams.y -= (max_image_height + 30);
       int image_pos_y = pdfParams.y;
       BufferedImage thumb = tiff2Jpg(ir.getFilePath());
       if (thumb == null) {
         thumb = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
       }
-      image_width = image_height * thumb.getWidth() / thumb.getHeight();
+      int image_height = thumb.getHeight();
+      int image_width = thumb.getWidth();
+      if (image_height > max_image_height){
+        image_width = max_image_height * image_width / image_height;
+        image_height = max_image_height;
+      }
+      if (image_width > max_image_width){
+        image_height = max_image_width * image_height / image_width;
+        image_width = max_image_width;
+      }
       ximage = new PDJpeg(pdfParams.getDocument(), thumb);
       pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
+      image_width = max_image_width;
 
       /**
        * Image name and path
