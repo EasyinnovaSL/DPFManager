@@ -62,7 +62,7 @@ public class Jobs {
       "    " + PROCESSED_FILES + " INTEGER," +
       "    " + INIT + " BIGINT," +
       "    " + FINISH + " BIGINT," +
-      "    " + INPUT + " VARCHAR(255)," +
+      "    " + INPUT + " VARCHAR(10000)," +
       "    " + ORIGIN + " VARCHAR(10)," +
       "    " + PID + " INTEGER NOT NULL," +
       "    " + OUTPUT + " VARCHAR(255)," +

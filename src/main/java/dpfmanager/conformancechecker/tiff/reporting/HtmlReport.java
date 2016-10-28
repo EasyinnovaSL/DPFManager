@@ -566,6 +566,10 @@ public class HtmlReport extends Report {
       if (val.getReference() != null) {
         description += "<br><i>" + val.getReference() + "</i>";
       }
+      if (rule.getId().equals("RECOMMENDED-TAG-270")){
+        val.toString();
+      }
+      description = description.replaceAll("\"","'");
       return "data-toggle=\"popover\" title=\"" + rule.getTitle().getValue() + "\" data-content=\"" + description + "\" data-placement=\"auto bottom\" data-trigger=\"hover\"";
     }
     return "";

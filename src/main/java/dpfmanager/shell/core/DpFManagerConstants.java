@@ -50,7 +50,7 @@ public class DpFManagerConstants {
   public static final int MAX_CHECKS = 3;
 
   /**
-   * Database update interval in milliseconds
+   * Database update intervalr in milliseconds
    */
   public static final Integer UPDATE_INTERVAL = 1000;
 
@@ -67,7 +67,7 @@ public class DpFManagerConstants {
   /**
    * The database version, incress it for force delete tables and recreate
    */
-  public static final int DATABASE_VERSION = 2;
+  public static final int DATABASE_VERSION = 3;
 
   /**
    * The configuration xml version
