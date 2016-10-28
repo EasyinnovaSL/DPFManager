@@ -441,7 +441,7 @@ public class ReportGenerator {
     // Copy the html folder to target
     String pathStr = "./src/main/resources/html";
     Path path = Paths.get(pathStr);
-    if (false && Files.exists(path)) {
+    if (Files.exists(path)) {
       // Look in current dir
       File folder = new File(pathStr);
       if (folder.exists() && folder.isDirectory()) {
@@ -498,7 +498,7 @@ public class ReportGenerator {
           arrayFolders.add(new File(targetPath + File.separator + "html/img/"));
           arrayFolders.add(new File(targetPath + File.separator + "html/fonts/"));
           arrayFolders.add(new File(targetPath + File.separator + "html/css/"));
-          
+
           //if originals folders not exists
           for (File item : arrayFolders) {
             if (!item.exists()) {
