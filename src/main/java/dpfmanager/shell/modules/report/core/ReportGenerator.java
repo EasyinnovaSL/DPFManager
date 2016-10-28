@@ -441,7 +441,7 @@ public class ReportGenerator {
     // Copy the html folder to target
     String pathStr = "./src/main/resources/html";
     Path path = Paths.get(pathStr);
-    if (Files.exists(path)) {
+    if (false && Files.exists(path)) {
       // Look in current dir
       File folder = new File(pathStr);
       if (folder.exists() && folder.isDirectory()) {
@@ -459,40 +459,48 @@ public class ReportGenerator {
         try {
           Class cls = ReportGenerator.class;
           ClassLoader cLoader = cls.getClassLoader();
-          String[] arrayFiles = new String[16];
-          File[] arrayFoulders = new File[4];
+          List<String> arrayFiles = new ArrayList<>();
+          List<File> arrayFolders = new ArrayList<>();
 
           //files in js folder
-          arrayFiles[0] = "html/js/jquery-1.9.1.min.js";
-          arrayFiles[1] = "html/js/jquery.flot.pie.min.js";
-          arrayFiles[2] = "html/js/jquery.flot.min.js";
+          arrayFiles.add("html/js/bootstrap.min.js");
+          arrayFiles.add("html/js/jquery-1.9.1.min.js");
+          arrayFiles.add("html/js/jquery.flot.pie.min.js");
+          arrayFiles.add("html/js/jquery.flot.min.js");
 
           //files in img folder
-          arrayFiles[3] = "html/img/noise.jpg";
-          arrayFiles[4] = "html/img/logo.png";
-          arrayFiles[5] = "html/img/logo - copia.png";
+          arrayFiles.add("html/img/noise.jpg");
+          arrayFiles.add("html/img/logo.png");
+          arrayFiles.add("html/img/logo - copia.png");
+          arrayFiles.add("html/img/check_radio_sheet.png");
 
           //files in fonts folder
-          arrayFiles[6] = "html/fonts/fontawesome-webfont.woff2";
-          arrayFiles[7] = "html/fonts/fontawesome-webfont.woff";
-          arrayFiles[8] = "html/fonts/fontawesome-webfont.ttf";
-          arrayFiles[9] = "html/fonts/fontawesome-webfont.svg";
-          arrayFiles[10] = "html/fonts/fontawesome-webfont.eot";
-          arrayFiles[11] = "html/fonts/FontAwesome.otf";
-          arrayFiles[12] = "html/fonts/Roboto-Bold.ttf";
+          arrayFiles.add("html/fonts/fontawesome-webfont.woff2");
+          arrayFiles.add("html/fonts/fontawesome-webfont.woff");
+          arrayFiles.add("html/fonts/fontawesome-webfont.ttf");
+          arrayFiles.add("html/fonts/fontawesome-webfont.svg");
+          arrayFiles.add("html/fonts/fontawesome-webfont.eot");
+          arrayFiles.add("html/fonts/fontello.woff2");
+          arrayFiles.add("html/fonts/fontello.woff");
+          arrayFiles.add("html/fonts/fontello.ttf");
+          arrayFiles.add("html/fonts/fontello.svg");
+          arrayFiles.add("html/fonts/fontello.eot");
+          arrayFiles.add("html/fonts/FontAwesome.otf");
+          arrayFiles.add("html/fonts/Roboto-Bold.ttf");
 
           //files in css folder
-          arrayFiles[13] = "html/css/font-awesome.css";
-          arrayFiles[14] = "html/css/default.css";
-          arrayFiles[15] = "html/css/bootstrap.css";
+          arrayFiles.add("html/css/font-awesome.css");
+          arrayFiles.add("html/css/default.css");
+          arrayFiles.add("html/css/bootstrap.css");
+          arrayFiles.add("html/css/fontello.css");
 
-          arrayFoulders[0] = new File(targetPath + File.separator + "html/js/");
-          arrayFoulders[1] = new File(targetPath + File.separator + "html/img/");
-          arrayFoulders[2] = new File(targetPath + File.separator + "html/fonts/");
-          arrayFoulders[3] = new File(targetPath + File.separator + "html/css/");
-
+          arrayFolders.add(new File(targetPath + File.separator + "html/js/"));
+          arrayFolders.add(new File(targetPath + File.separator + "html/img/"));
+          arrayFolders.add(new File(targetPath + File.separator + "html/fonts/"));
+          arrayFolders.add(new File(targetPath + File.separator + "html/css/"));
+          
           //if originals folders not exists
-          for (File item : arrayFoulders) {
+          for (File item : arrayFolders) {
             if (!item.exists()) {
               item.mkdirs();
             }
