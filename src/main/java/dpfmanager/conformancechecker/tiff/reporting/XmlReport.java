@@ -76,7 +76,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * Created by easy on 02/05/2016.
  */
-public class XmlReport {
+public class XmlReport extends Report {
   /**
    * Creates the ifd node.
    *
@@ -246,59 +246,6 @@ public class XmlReport {
       index++;
     }
     return list;
-  }
-
-  /**
-   * Read showable tags file.
-   *
-   * @return hashset of tags
-   */
-  protected HashSet<String> readShowableTags() {
-    HashSet<String> hs = new HashSet<String>();
-    try {
-      Path path = Paths.get("./src/main/resources/");
-      if (Files.exists(path)) {
-        // Look in current dir
-        FileReader fr = new FileReader("./src/main/resources/htmltags.txt");
-        BufferedReader br = new BufferedReader(fr);
-        String line = br.readLine();
-        while (line != null) {
-          String[] fields = line.split("\t");
-          if (fields.length == 1) {
-            hs.add(fields[0]);
-          }
-          line = br.readLine();
-        }
-        br.close();
-        fr.close();
-      } else {
-        // Look in JAR
-        String resource = "htmltags.txt";
-        Class cls = ReportHtml.class;
-        ClassLoader cLoader = cls.getClassLoader();
-        InputStream in = cLoader.getResourceAsStream(resource);
-        //CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
-        if (in != null) {
-          try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String line = br.readLine();
-            while (line != null) {
-              String[] fields = line.split("\t");
-              if (fields.length == 1) {
-                hs.add(fields[0]);
-              }
-              line = br.readLine();
-            }
-          } catch (Exception ex) {
-            ex.printStackTrace();
-          }
-        } else {
-          throw new Exception("InputStream is null");
-        }
-      }
-    } catch (Exception ex) {
-    }
-    return hs;
   }
 
   /**
