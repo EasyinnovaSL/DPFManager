@@ -52,7 +52,11 @@ public class ImplementationCheckerLoader {
       if (!preLoadedValidatorsSingleton.containsKey(rulesFile)) {
         JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        rules = (ImplementationCheckerObjectType) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
+        try {
+          rules = (ImplementationCheckerObjectType) jaxbUnmarshaller.unmarshal(getFileFromResources(rulesFile));
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
 
         for (RulesType ro : rules.getRules()) {
           for (RuleType rule : ro.getRule()) {
