@@ -83,8 +83,6 @@ public class GuiWorkbench implements FXWorkbench {
       layout.setStyle(StageStyle.DECORATED);
     }
 
-    EventHandler<WindowEvent> closeHandler = thestage.getOnCloseRequest();
-
     thestage.setOnCloseRequest(new EventHandler<WindowEvent>() {
       @Override
       public void handle(WindowEvent event) {
@@ -92,7 +90,7 @@ public class GuiWorkbench implements FXWorkbench {
           context.send(GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_THREADING, new CloseMessage(CloseMessage.Type.THREADING));
           event.consume();
         } else {
-          closeHandler.handle(event);
+          System.exit(0);
         }
       }
     });
