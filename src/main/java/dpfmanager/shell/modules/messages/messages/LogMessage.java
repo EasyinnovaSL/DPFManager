@@ -33,16 +33,30 @@ public class LogMessage extends DpfMessage {
   private Level level;
   private Class clas;
   private TextArea textArea;
+  private boolean forceConsole;
 
   public LogMessage(Class c, Level l, String m) {
     message = m;
     level = l;
     clas = c;
     textArea = null;
+    forceConsole = false;
+  }
+
+  public LogMessage(Class c, Level l, String m, boolean f) {
+    message = m;
+    level = l;
+    clas = c;
+    textArea = null;
+    forceConsole = f;
   }
 
   public LogMessage(TextArea ta) {
     textArea = ta;
+  }
+
+  public boolean isForceConsole() {
+    return forceConsole;
   }
 
   public String getMessage() {

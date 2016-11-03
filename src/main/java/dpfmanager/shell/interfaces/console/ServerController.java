@@ -141,7 +141,7 @@ public class ServerController {
    * Custom print lines
    */
   private void printOut(String message) {
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message));
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message, true));
   }
 
   private void printErr(String message) {

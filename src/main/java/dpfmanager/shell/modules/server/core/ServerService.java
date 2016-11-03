@@ -91,7 +91,7 @@ public class ServerService extends DpfService {
       server = new HttpServer(port, context);
       server.start();
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("failedServer").replace("%1",server.getServerUri())));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("failedServer").replace("%1",server.getServerUri()), true));
     }
   }
 

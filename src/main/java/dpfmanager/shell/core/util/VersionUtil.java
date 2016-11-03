@@ -37,11 +37,10 @@ public class VersionUtil {
     String version = args[0];
     String baseDir = args[1];
 
-    String issPath = baseDir + "/build-windows.iss";
+    String issPath = baseDir + "/package/windows/DPF Manager.iss";
     String rpmPath = baseDir + "/package/linux/DPFManager.old.spec";
     String propOutput = baseDir + "/target/classes/version.properties";
 
-    // Windows iss
     try {
       // Windows iss
       File issFile = new File(issPath);

@@ -226,7 +226,6 @@ public class PeriodicalController {
   public void displayHelp() {
     printOut("");
     printOut(bundle.getString("helpP0"));
-    printOut(bundle.getString("helpSources"));
     printOut("");
     printOut(bundle.getString("helpOptions"));
     printOptions("helpP", 6);

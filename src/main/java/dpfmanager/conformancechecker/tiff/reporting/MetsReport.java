@@ -1414,7 +1414,7 @@ public class MetsReport {
       MetsType.MetsHdr.Agent agent = new MetsType.MetsHdr.Agent();
       agent.setROLE("CREATOR");
       agent.setID("A" + agent.hashCode());
-      agent.setName("C. Reator");
+      agent.setName("DPF Manager");
       metsHdr.setAgent(agent);
       mets.setMetsHdr(metsHdr);
 

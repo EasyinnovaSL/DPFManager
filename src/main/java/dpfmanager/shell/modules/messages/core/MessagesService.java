@@ -67,8 +67,13 @@ public class MessagesService extends DpfService {
       // Log in console
       systemOut(lm.getMessage());
     } else if (isServer()) {
-      // Default pattern
-      LogManager.getLogger("").log(Level.INFO, lm.getMessage());
+      if (lm.isForceConsole()) {
+        // Log in console
+        systemOut(lm.getMessage());
+      } else {
+        // Default pattern
+        LogManager.getLogger("").log(Level.INFO, lm.getMessage());
+      }
     } else {
       // Default pattern
       LogManager.getLogger("").log(lm.getLevel(), lm.getMessage());

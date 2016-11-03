@@ -72,7 +72,7 @@ public final class HttpServer {
 
       Channel ch = b.bind(PORT).sync().channel();
 
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, DPFManagerProperties.getBundle().getString("startedServer").replace("%1", getServerUri())));
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, DPFManagerProperties.getBundle().getString("startedServer").replace("%1", getServerUri()), true));
 
       ch.closeFuture().sync();
     } finally {
