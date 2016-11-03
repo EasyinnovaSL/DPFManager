@@ -770,9 +770,6 @@
                             <appName>${project.name}</appName>
                             <additionalAppResources>${project.basedir}/package/resources
                             </additionalAppResources>
-                            <bundleArguments>
-                                <runtime />
-                            </bundleArguments>
                         </configuration>
                         <executions>
                             <execution>
@@ -780,13 +777,6 @@
                                 <phase>package</phase>
                                 <goals>
                                     <goal>build-jar</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>create-native</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>build-native</goal>
                                 </goals>
                             </execution>
                         </executions>
