@@ -788,7 +788,7 @@
 
         <!-- NOT Windows Profile Installers -->
         <profile>
-            <id>not-win-deploy</id>
+            <id>not-win-deploy-installers</id>
             <activation>
                 <os>
                     <family>!Windows</family>
