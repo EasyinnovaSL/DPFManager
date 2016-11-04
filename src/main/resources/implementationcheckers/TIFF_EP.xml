@@ -6,12 +6,12 @@
     <title>TIFF/EP</title>
     <iso>TIFF/EP image data format ISO 12234:2001(E)</iso>
     <description>The term TIFF/EP refers to Tag Image File Format/Electronic Photography, defined in this part of ISO 12234.
-        The term “TIFF 6.0” refers to the TIFF Revision 6.0 specification.
+        The term "TIFF 6.0" refers to the TIFF Revision 6.0 specification.
         TIFF/EP is defined to be as compatible as possible with existing desktop software packages, to enable them to operate with images from electronic still-picture cameras.
         TIFF Revision 6.0 is used as the basis for achieving this interoperability with the large installed base of imaging software.
         Wherever possible, TIFF/EP uses tags already defined in TIFF 6.0 and provides guidelines for the use of these tags as well as the allowed field values.
         New tags are defined to encode image data features that are not included in TIFF 6.0. These new tags conform to the practices specified in TIFF 6.0.
-        This document also describes how related images, such as both “parent” high resolution and “thumbnail” low resolution images of the same subject, or temporal sequence “bursts” of the same scene, can be stored in a single TIFF/EP file.</description>
+        This document also describes how related images, such as both "parent" high resolution and "thumbnail" low resolution images of the same subject, or temporal sequence "bursts" of the same scene, can be stored in a single TIFF/EP file.</description>
     <version>1.0.0</version>
     <author>Easy Innova</author>
     <date>2016-09-20</date>
@@ -62,27 +62,27 @@
             <title>TIFF/EPStandardID valid value</title>
             <description>TIFF/EPStandardID must contain a valid value</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{tags.tag[name=TIFF/EPStandardID] == 1,0,0,0}">TIFF/EPStandardID tag must contain a valid value 1000 defining the current TIFF/EP version</assert>
+            <assert test="{tags.tag[name=TIFFEPStandardID] == 1,0,0,0}">TIFF/EPStandardID tag must contain a valid value 1000 defining the current TIFF/EP version</assert>
         </rule>
         
         <rule id="TAG-37398-0003" context="ifd[IFD0=1]" level="error">
             <title>TIFF/EPStandardID must be use in the first IFD</title>
             <description>TIFF/EPStandardID tag must be used in the first IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{tags.tag[name=TIFF/EPStandardID]}">TIFF/EPStandardID tag must be used in the first IFD</assert>
+            <assert test="{tags.tag[name=TIFFEPStandardID]}">TIFF/EPStandardID tag must be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37398-0005" context="ifd[class=image]" level="error" >
             <title>TIFF/EPStandardID should only be used in first IFD</title>
             <description>TIFF/EPStandardID should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{IFD0==1} || {!tags.tag[name=TIFF/EPStandardID]}">TIFF/EPStandardID should only be used in the first IFD</assert>
+            <assert test="{IFD0==1} || {!tags.tag[name=TIFFEPStandardID]}">TIFF/EPStandardID should only be used in the first IFD</assert>
         </rule>
     </rules>
     
     <rules id="TAG-245">
         <title>NewSubFileType</title>
-        <description>This tag indicates whether the given IFD is a thumbnail or main (full-size) image. This tag is mandatory and there is no default value. The value shall be explicitly stated. If the current image is the main image, rather than the “thumbnail” image, a value of 0 shall be encoded in this field.
+        <description>This tag indicates whether the given IFD is a thumbnail or main (full-size) image. This tag is mandatory and there is no default value. The value shall be explicitly stated. If the current image is the main image, rather than the "thumbnail" image, a value of 0 shall be encoded in this field.
         
         Tag = 254 (FE.H)
         Type = LONG
@@ -93,21 +93,21 @@
         1: Thumbnail
         </description>
         
-        <rule id="TAG-245-0001" context="ifd[class=image]" level="error">
+        <rule id="TAG-245-1-0001" context="ifd[class=image]" level="error">
             <title>NewSubFileType valid values</title>
             <description>NewSubFileType valid values are:
                 0: Full resolution image
                 1: Thumbnail
             </description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
-            <assert test="{tags.tag[name=NewSubFileType] &gt; -1} &amp;&amp; {tags.tag[name=NewSubFileType] &lt; 2}">NewSubFileType invalid value.</assert>
+            <assert test="{tags.tag[name=NewSubfileType] &gt; -1} &amp;&amp; {tags.tag[name=NewSubfileType] &lt; 2}">NewSubFileType invalid value.</assert>
         </rule>
         
-        <rule id="TAG-245-0002" context="ifd[class=image]" level="error">
+        <rule id="TAG-245-1-0002" context="ifd[class=image]" level="error">
             <title>NewSubFileType is mandatory</title>
             <description>NewSubFileType is mandatory and there is no default value. The value shall be explicitly stated.</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
-            <assert test="{tags.tag[name=NewSubFileType]}">NewSubFileType is mandatory the value shall be explicitly stated</assert>
+            <assert test="{tags.tag[name=NewSubfileType]}">NewSubFileType is mandatory the value shall be explicitly stated</assert>
         </rule>
     </rules>
     
@@ -118,9 +118,9 @@
         
         <rule id="TAG-330-0001" context="tag[id=330]" level="error">
             <title>SubIFDs valid Type</title>
-            <description>SubIFDs Tag type must be BYTE</description>
+            <description>SubIFDs Tag type must be LONG</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
-            <assert test="{type=='BYTE'}">SubIFDs type is not valid, an BYTE type is expected</assert>
+            <assert test="{type=='LONG'}">SubIFDs type is not valid, an LONG type is expected</assert>
         </rule>
         
         <rule id="TAG-330-0002" context="tag[id=330]" level="warning">
@@ -139,7 +139,7 @@
             Tag = 296 (128.H)
             Type = SHORT</description>
         
-        <rule id="TAG-296-0001" context="ifd[class=image]" level="error">
+        <rule id="TAG-296-1-0001" context="ifd[class=image]" level="error">
             <title>ResolutionUnit is mandatory</title>
             <description>ResolutionUnit is mandatory and there is no default value. The value shall be explicitly stated.</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
@@ -296,12 +296,12 @@
             
             valid values are:
             
-            1: The 0th row represents the visual top of the image and the 0th column represents the visual left-hand side. The camera orientation is known to be in the normal “landscape” orientation.
+            1: The 0th row represents the visual top of the image and the 0th column represents the visual left-hand side. The camera orientation is known to be in the normal "landscape" orientation.
             3: The 0th row represents the visual bottom of the image and the 0th column represents the visual righthand side. Normal orientation rotated 180 degrees.
             6: The 0th row represents the visual right-hand side of the image and the 0th column represents the visual top. Normal orientation rotated clockwise 90 degrees.
             8: The 0th row represents the visual left-hand side of the image and the 0th column represents the visual bottom. Normal orientation rotated counter-clockwise 90 degrees.
             9: Orientation is unknown.</description>
-        <rule id="TAG-274-0001" context="ifd[class=image]" level="error">
+        <rule id="TAG-274-1-0001" context="ifd[class=image]" level="error">
             <title>Orientation valid values</title>
             <description>Orientation valid values are: 
                 1: landscape
@@ -315,7 +315,7 @@
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 3} || {tags.tag[name=Orientation] == 6} || {tags.tag[name=Orientation] == 8} || {tags.tag[name=Orientation] == 9}">Orientation valid values regarding the TIFF/EP specifications are 1,3,6,8 or 9</assert>
         </rule>
         
-        <rule id="TAG-274-0004" context="ifd[class=image]" level="error" >
+        <rule id="TAG-274-1-0004" context="ifd[class=image]" level="error" >
             <title>Orientation only in first IFD</title>
             <description>Orientation should only be used in the first IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
@@ -335,29 +335,29 @@
         1 BlackIsZero. Used to describe greyscale images. 0 is black, 2**BitsPerSample - 1 is white
         2 RGB. Used for images stored in RGB colour space. Red, green and blue minimum intensity is 0, and maximum intensity is 2**BitsPerSample - 1. The component order shall be R, G, B.
         6 YCbCr colour space. Y refers to the luminance component, Cb and Cr refer to the two chrominance components. The component order shall be Y, Cb, Cr.
-        32803  CFA. TIFF/EP readers are not required to handle this tag value. Used to describe “raw” image data from single-chip colour sensors having a colour filter array (CFA) overlay. 
-        >32767 These values are “Vendor Unique” and are not required to be interpreted by others. These values need to be obtained from Adobe Corporation.
+        32803  CFA. TIFF/EP readers are not required to handle this tag value. Used to describe "raw" image data from single-chip colour sensors having a colour filter array (CFA) overlay. 
+        >32767 These values are "Vendor Unique" and are not required to be interpreted by others. These values need to be obtained from Adobe Corporation.
         </description>
         
-        <rule id="TAG-262-0001" context="ifd[class=image]" level="error">
+        <rule id="TAG-262-1-0001" context="ifd[class=image]" level="error">
             <title>valid PhotometricInterpretation vales</title>
             <description>The PhotometricInterpretation value shall be 1(grayscale), 2(RGB) ,6(YCbCr) , 32803(CFA) or other values above 32767.</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation]==1} || {tags.tag[name=PhotometricInterpretation]==2} || {tags.tag[name=PhotometricInterpretation]==6} || {tags.tag[name=PhotometricInterpretation]==32803} || {tags.tag[name=PhotometricInterpretation] &gt; 32767}">invalid PhotometricInterpretation for a full resolution image</assert>
         </rule>
         
-        <rule id="TAG-262-0002" context="ifd[thumbnail=0]" level="error">
+        <rule id="TAG-262-1-0002" context="ifd[thumbnail=0]" level="error">
             <title>valid PhotometricInterpretation for full resolution image</title>
             <description>The PhotometricInterpretation value shall be 1(grayscale), 2(RGB) ,6(YCbCr) , 32803(CFA) or other values above 32767 for the full resolution image.</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation]==1} || {tags.tag[name=PhotometricInterpretation]==2} || {tags.tag[name=PhotometricInterpretation]==6} || {tags.tag[name=PhotometricInterpretation]==32803} || {tags.tag[name=PhotometricInterpretation] &gt; 32767}">invalid PhotometricInterpretation for a full resolution image</assert>
         </rule>
         
-        <rule id="TAG-262-0003" context="ifd[thumbnail=1]" level="error">
+        <rule id="TAG-262-1-0003" context="ifd[thumbnail=1]" level="error">
             <title>valid PhotometricInterpretation for thumbnail image</title>
             <description>The PhotometricInterpretation value shall be 1, 2 or 6 for the Thumbnail IFD.</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation]==1} || {tags.tag[name=PhotometricInterpretation]==2} || {tags.tag[name=PhotometricInterpretation]==6}">invalid PhotometricInterpretation for a thumbnail image</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation]==1} || {tags.tag[name=PhotometricInterpretation]==2} || {tags.tag[name=PhotometricInterpretation]==6}">Invalid PhotometricInterpretation for a thumbnail image</assert>
         </rule>
     </rules>
     
@@ -373,8 +373,8 @@
       
         valid values are:
         0 non-interlaced (progressive scan)
-        1 vertical field 1, horizontal field 1 (video field 1, “odd” lines)
-        2 vertical field 2, horizontal field 1 (video field 2, “even” lines)
+        1 vertical field 1, horizontal field 1 (video field 1, "odd" lines)
+        2 vertical field 2, horizontal field 1 (video field 2, "even" lines)
         3-127 vertical field 3-127, horizontal field 1
         128 vertical field 1, horizontal field 2.
         129-255 vertical field 2-127, horizontal field 2
@@ -399,8 +399,8 @@
             <title>Interlace valid values</title>
             <description>Interlace valid values are between 0 and 16383.
                 0 non-interlaced (progressive scan)
-                1 vertical field 1, horizontal field 1 (video field 1, “odd” lines)
-                2 vertical field 2, horizontal field 1 (video field 2, “even” lines)
+                1 vertical field 1, horizontal field 1 (video field 1, "odd" lines)
+                2 vertical field 2, horizontal field 1 (video field 2, "even" lines)
                 3-127 vertical field 3-127, horizontal field 1
                 128 vertical field 1, horizontal field 2.
                 129-255 vertical field 2-127, horizontal field 2
@@ -506,7 +506,7 @@
             <title>CFARepeatPatternDim valid cardinality</title>
             <description>The cardinality of the CFARepeatPatternDim tag must be 1</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
-            <assert test="{cardinality==1}">CFARepeatPatternDim must have a 1 cardinality</assert>
+            <assert test="{cardinality==2}">CFARepeatPatternDim must have a 1 cardinality</assert>
         </rule>
         
         <rule id="TAG-33421-0003" context="ifd[class=image]" level="error">
@@ -578,28 +578,28 @@
         N = 1
         </description>
         
-        <rule id="TAG-277-0001" context="ifd[class=image]" level="error">
+        <rule id="TAG-277-1-0001" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for CFA images</title>
             <description>SamplesPerPixel must be 1 for CFA images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 32803} || {tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel for CFA image</assert>
         </rule>
         
-        <rule id="TAG-277-0002" context="ifd[class=image]" level="error">
+        <rule id="TAG-277-1-0002" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for Grayscale images</title>
             <description>SamplesPerPixel must be 1 for Grayscale images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 1} || {tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel for CFA image</assert>
         </rule>
         
-        <rule id="TAG-277-0003" context="ifd[class=image]" level="error">
+        <rule id="TAG-277-1-0003" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for RGB images</title>
             <description>SamplesPerPixel must be 3 for RGB images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 2} || {tags.tag[name=SamplesPerPixel] == 3}">Invalid SamplesPerPixel for RGB image</assert>
         </rule>
         
-        <rule id="TAG-277-0004" context="ifd[class=image]" level="error">
+        <rule id="TAG-277-1-0004" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for YCbCr images</title>
             <description>SamplesPerPixel must be 3 for YCbCr images</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
@@ -610,32 +610,32 @@
     <rules id="TAG-259">
         <title>Compression</title>
         <description>This tag encodes the compression scheme used to store the image data. This tag is mandatory and there is no
-            default value. The tag value shall equal “1” for the thumbnail IFD.</description>
-        <rule id="TAG-259-0001" context="ifd[class=image]" level="error">
+            default value. The tag value shall equal "1" for the thumbnail IFD.</description>
+        <rule id="TAG-259-1-0001" context="ifd[class=image]" level="error">
             <title>Compression valid values</title>
             <description>Compression valid values are:
                 1 No compression. Data is packed as tightly as possible into bytes, padding at the end of the row to assure that each row's data ends upon a byte boundary.
                 7 TIFF/JPEG compression. JPEG bitstream defines whether Baseline DCT JPEG or other JPEG version is used. TIFF/EP readers are only required to support Baseline DCT JPEG method.
-                Other Values above 32767 .These values are “Vendor Unique” and are not required to be interpreted by others. These “private” values need to be obtained from Adobe Corporation.
+                Other Values above 32767 .These values are "Vendor Unique" and are not required to be interpreted by others. These "private" values need to be obtained from Adobe Corporation.
             </description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] &gt; 32767}">invalid compression value</assert>
         </rule>
-        <rule id="TAG-259-0002" context="ifd[class=image]" level="error">
+        <rule id="TAG-259-1-0002" context="ifd[class=image]" level="error">
             <title>Compression is mandatory</title>
-            <description>This tag is mandatory and there is no default value. The tag value shall equal “1” for the thumbnail IFD.</description>
+            <description>This tag is mandatory and there is no default value. The tag value shall equal "1" for the thumbnail IFD.</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=Compression]}">Compression tag is mandatory</assert>
         </rule>
-        <rule id="TAG-259-0003" context="ifd[thumbnail=1]" level="error">
+        <rule id="TAG-259-1-0003" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail must be uncompressed</title>
-            <description>The Compression tag value shall equal “1” for the thumbnail IFD</description>
+            <description>The Compression tag value shall equal "1" for the thumbnail IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=Compression] == 1}">Thumbnail must be uncompressed</assert>
         </rule>
         <!--<rule id="TAG-259-0004" context="ifd[thumbnail=0]" level="error">
             <title>Thumbnail must be uncompressed</title>
-            <description>The Compression tag value shall equal “1” for the thumbnail IFD</description>
+            <description>The Compression tag value shall equal "1" for the thumbnail IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] &gt; 32767}"></assert>
         </rule>-->
@@ -677,7 +677,7 @@
         <description>This optional tag may be used to encode the JPEG quantization and Huffman tables for subsequent use by the JPEG decompression process. 
             When this is done, these tables need not be duplicated in each segment (strip or tile), thus saving space and processing time. 
             This tag may be used even in a single-segment file, although there is no space saving in this case.
-            When this optional tag is present, it shall contain a valid JPEG “abbreviated table specification” datastream. This datastream shall begin with SOI and end with EOI. It contains one or more JPEG tables, including: DQT, DHT
+            When this optional tag is present, it shall contain a valid JPEG "abbreviated table specification" datastream. This datastream shall begin with SOI and end with EOI. It contains one or more JPEG tables, including: DQT, DHT
             
             Tag = 347 (15B.H)
             Type = UNDEFINED
@@ -754,7 +754,7 @@
     <rules id="TAG-34853">
         <title>GPSInfo</title>
         <description>This optional tag-field is used to indicate the position of the camera via data provided by a Global Positioning System (GPS) satellite receiver. 
-            The format of this tag-field is a “private IFD”. This means that this tag-field points to the offset of an IFD that holds a group of private GPSInfo tag-fields which contain the GPS data.
+            The format of this tag-field is a "private IFD". This means that this tag-field points to the offset of an IFD that holds a group of private GPSInfo tag-fields which contain the GPS data.
             
             Tag = 34853 (8825.H)
             Type = LONG
@@ -805,7 +805,7 @@
             <title>GPSVersionID valid value</title>
             <description>GPSVersionID must contain a valid value</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
-            <assert test="{tags.tag[name=TIFF/EPStandardID] == 2,0,0,0}">GPSVersionID tag must contain a valid value 2000 defining the current GPS info version</assert>
+            <assert test="{tags.tag[name=TIFFEPStandardID] == '2,0,0,0'}">GPSVersionID tag must contain a valid value 2000 defining the current GPS info version</assert>
         </rule>
     </rules>
     
@@ -862,7 +862,7 @@
     
     <rules id="TAG-3">
         <title>GPSLongitudeRef</title>
-        <description>tag-value is an ASCII value of “E” for east longitudes and “W” for west longitudes relative
+        <description>tag-value is an ASCII value of "E" for east longitudes and "W" for west longitudes relative
             to the International Prime Meridian which is located by the astronomical observatory in Greenwich, UK.
             
             Tag = 3 (3.H)
@@ -913,7 +913,7 @@
     
     <rules id="TAG-5">
         <title>GPSAltitudeRef</title>
-        <description>tag value shall contain a one BYTE value of “0”, indicating sea level, for the current version.
+        <description>tag value shall contain a one BYTE value of "0", indicating sea level, for the current version.
             The altitude reading is given in metres relative to sea level.
         
         Tag = 5 (5.H)
@@ -962,7 +962,7 @@
     
     <rules id="TAG-7">
         <title>GPSTimeStamp</title>
-        <description>tag value shall contain a one BYTE value of “0”, indicating sea level, for the current version.
+        <description>tag value shall contain a one BYTE value of "0", indicating sea level, for the current version.
             The altitude reading is given in metres relative to sea level.
         
         Tag = 7 (7.H)
@@ -1227,7 +1227,7 @@
     <rules id="TAG-18">
         <title>GPSMapDatum</title>
         <description>tag contains an ASCII character string indicates the geodetic survey data used by the GPS
-            receiver. If the survey data is restricted to Japan, the value of this tag is “TOKYO” or “WSG-84”.
+            receiver. If the survey data is restricted to Japan, the value of this tag is "TOKYO" or "WSG-84".
         
         Tag = 18 (F.12) 
         Type = ASCII
@@ -1470,7 +1470,7 @@
         
         <rule id="TAG-36867-0003" context="ifd[IFD0=1]" level="error">
             <title>DateTimeOriginal valid format</title>
-            <description>The format is: “YYYY:MM:DD HH:MM:SS”, with hours like those on a 24-hour
+            <description>The format is: "YYYY:MM:DD HH:MM:SS", with hours like those on a 24-hour
                 clock, and one space character between the date and the time</description>
             <reference><section>Section 8: Baseline Field Reference Guide</section><page>31</page></reference>
             <assert test="{date(tags.tag[name=DateTimeOriginal])} || {tags.tag[name=DateTimeOriginal] = '0000:00:00 00:00:00'}">Incorrect format for DateTimeOriginal</assert>
@@ -1499,22 +1499,22 @@
             Type = ASCII
             N = 20
         </description>
-        <rule id="TAG-306-0001" context="ifd[IFD0=1]" level="error">
+        <rule id="TAG-306-1-0001" context="ifd[IFD0=1]" level="error">
             <title>DateTime valid format</title>
-            <description>The format is: “YYYY:MM:DD HH:MM:SS”, with hours like those on a 24-hour
+            <description>The format is: "YYYY:MM:DD HH:MM:SS", with hours like those on a 24-hour
                 clock, and one space character between the date and the time</description>
             <reference><section>Section 8: Baseline Field Reference Guide</section><page>31</page></reference>
             <assert test="{date(tags.tag[name=DateTime])} || {tags.tag[name=DateTime] = '0000:00:00 00:00:00'}">Incorrect format for DateTime</assert>
         </rule>
         
-        <rule id="TAG-306-0002" context="ifd[IFD0=1]" level="error">
+        <rule id="TAG-306-1-0002" context="ifd[IFD0=1]" level="error">
             <title>DateTime must be use in the first IFD</title>
             <description>DateTime tag must be used in the first IFD</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{tags.tag[name=DateTime]}">DateTime tag must be used in the first IFD</assert>
         </rule>
         
-        <rule id="TAG-306-0003" context="ifd[class=image]" level="error" >
+        <rule id="TAG-306-1-0003" context="ifd[class=image]" level="error" >
             <title>DateTime should only be used in first IFD</title>
             <description>DateTime should only be used in the first Image File Directory(IFD)</description>
             <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
@@ -1824,13 +1824,13 @@
         2 Program Normal
         3 Aperture Priority
         4 Shutter Priority
-        5 Program Creative (biased toward greater “depth of field”)
-        6 Program Action (biased toward faster “shutter speed”)
+        5 Program Creative (biased toward greater "depth of field")
+        6 Program Action (biased toward faster "shutter speed")
         7 Portrait Mode (intended for close-up photos with the background out-of-focus)
         8 Landscape Mode (intended for landscapes with the background in good focus)
         Other values > 32767
-        These values are “Vendor Unique” and are not required to be interpreted by others.
-        These “private” values need to be obtained from PIMA.
+        These values are "Vendor Unique" and are not required to be interpreted by others.
+        These "private" values need to be obtained from PIMA.
         </description>
         <rule id="TAG-34850-0001" context="tag[id=34850]" level="error">
             <title>ExposureProgram tag valid Type</title>
@@ -1853,8 +1853,8 @@
                 2 Program Normal
                 3 Aperture Priority
                 4 Shutter Priority
-                5 Program Creative (biased toward greater “depth of field”)
-                6 Program Action (biased toward faster “shutter speed”)
+                5 Program Creative (biased toward greater "depth of field")
+                6 Program Action (biased toward faster "shutter speed")
                 7 Portrait Mode (intended for close-up photos with the background out-of-focus)
                 8 Landscape Mode (intended for landscapes with the background in good focus)
                 Other values > 32767
@@ -1886,7 +1886,7 @@
         3 Spot
         4 MultiSpot
         Other values >32767
-        These values are “Vendor Unique” and are not required to be interpreted by others.
+        These values are "Vendor Unique" and are not required to be interpreted by others.
         These private values need to be obtained from the TIFF/EP registry.</description>
         <rule id="TAG-37383-0001" context="tag[id=37383]" level="error">
             <title>MeteringMode tag valid Type</title>
@@ -1940,11 +1940,11 @@
             9 Flash fired, Fill flash mode, Camera has no flash return sensing capability
             13 Flash fired, Fill flash mode, Flash return not sensed
             15 Flash fired, Fill flash mode, Flash return sensed
-            16 Flash did not file, Flash “off” mode
-            24 Flash did not fire, “Auto” flash mode
-            25 Flash fired, “Auto” flash mode, Camera has no flash return sensing capability
-            29 Flash fired, “Auto” flash mode, Flash return not sensed
-            31 Flash fired, “Auto” flash mode, Flash return sensed
+            16 Flash did not file, Flash "off" mode
+            24 Flash did not fire, "Auto" flash mode
+            25 Flash fired, "Auto" flash mode, Camera has no flash return sensing capability
+            29 Flash fired, "Auto" flash mode, Flash return not sensed
+            31 Flash fired, "Auto" flash mode, Flash return sensed
             32 Camera does not have a flash unit
             Usage: IFD0
         </description>
@@ -2103,8 +2103,8 @@
     
     <rules id="TAG-34859">
         <title>SelfTimerMode</title>
-        <description>This optional tag encodes the number of seconds the image capture was delayed from the time the “take picture
-            button” was pressed by the camera operator. If the value is zero, this implies that the self-timer is off.
+        <description>This optional tag encodes the number of seconds the image capture was delayed from the time the "take picture
+            button" was pressed by the camera operator. If the value is zero, this implies that the self-timer is off.
             
             Tag Name = SelfTimerMode
             Tag = 34859 (882B.H)
@@ -2226,7 +2226,7 @@
     <rules id="TAG-34675">
         <title>InterColourProfile</title>
         <description>This tag encodes an embedded InterColour device profile relating to the camera colour characterization. Refer to
-            “ICC.1:2001, File Format for Colour Profiles”, for further information on the use of this tag. Note that the ICC Profile
+            "ICC.1:2001, File Format for Colour Profiles", for further information on the use of this tag. Note that the ICC Profile
             Format may be revised in the future and the most recent version of the ICC specification should be used.
         
         Tag = 34675 (8773.H)
@@ -2323,7 +2323,7 @@
     
     <rules id="TAG-34856">
         <title>OECF</title>
-        <description>This optional tag allows the “Opto-Electronic Conversion Function” (OECF) values described in ISO 14524:1999 to
+        <description>This optional tag allows the "Opto-Electronic Conversion Function" (OECF) values described in ISO 14524:1999 to
             be stored as a table of values. The OECF is the relationship between the optical input and the image file code
             value outputs of an electronic camera. The columns of the table can provide the camera OECF values, or the focal
             plane OECF values, or both.
@@ -2497,33 +2497,33 @@
             <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
             <assert test="{tags.tag[name=ReferenceBlackWhite]}">ReferenceBlackWhite tag is mandatory for YCbCr images</assert>
         </rule>
-        <rule id="TAG-532-0003" context="ifd[class=image]" level="error">
+        <rule id="TAG-532-0003" context="ifd[IFD0=1]" level="error">
             <title>Make tag mandatory</title>
-            <description>Make is a mandatory tag with an allowed value of “ ” (null character) indicating “unknown”.</description>
+            <description>Make is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
             <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
             <assert test="{tags.tag[name=Make]}">Make tag is mandatory</assert>
         </rule>
-        <rule id="TAG-532-0004" context="ifd[class=image]" level="error">
+        <rule id="TAG-532-0004" context="ifd[IFD0=1]" level="error">
             <title>Model tag mandatory</title>
-            <description>Model is a mandatory tag with an allowed value of “ ” (null character) indicating “unknown”.</description>
+            <description>Model is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
             <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
             <assert test="{tags.tag[name=Model]}">Model tag is mandatory</assert>
         </rule>
-        <rule id="TAG-532-0005" context="ifd[class=image]" level="error">
+        <rule id="TAG-532-0005" context="ifd[IFD0=1]" level="error">
             <title>Software tag mandatory</title>
-            <description>Software is a mandatory tag with an allowed value of “ ” (null character) indicating “unknown”.</description>
+            <description>Software is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
             <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
             <assert test="{tags.tag[name=Software]}">Software tag is mandatory</assert>
         </rule>
-        <rule id="TAG-532-0006" context="ifd[class=image]" level="error">
+        <rule id="TAG-532-0006" context="ifd[IFD0=1]" level="error">
             <title>ImageDescription tag mandatory</title>
-            <description>ImageDescription is a mandatory tag with an allowed value of “ ” (null character) indicating “unknown”.</description>
+            <description>ImageDescription is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
             <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
             <assert test="{tags.tag[name=ImageDescription]}">ImageDescription tag is mandatory</assert>
         </rule>
-        <rule id="TAG-532-0007" context="ifd[class=image]" level="error">
+        <rule id="TAG-532-0007" context="ifd[IFD0=1]" level="error">
             <title>Copyright tag mandatory</title>
-            <description>Copyright is a mandatory tag with an allowed value of “ ” (null character) indicating “unknown”.</description>
+            <description>Copyright is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
             <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
             <assert test="{tags.tag[name=Copyright]}">Copyright tag is mandatory</assert>
         </rule>
@@ -2540,7 +2540,7 @@
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
-            <assert test="{tags.tag[name=XResolution] == tags.tag[name=YResolution]}">In IFF/EP the  aspect ratio should be is 1:1 (square)</assert>
+            <assert test="{tags.tag[name=XResolution] != tags.tag[name=YResolution]}">In TIFF/EP the aspect ratio should be is 1:1 (square)</assert>
         </rule>
         
         <rule id="MASTER-0002" context="ifd[class=image]" level="warning" experimental="true">

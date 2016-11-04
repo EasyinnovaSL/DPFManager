@@ -319,12 +319,15 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
     childs.add(new TiffSingleNode("extraChannels", extraChannels + "", n));
     childs.add(new TiffSingleNode("equalXYResolution", equalXYResolution + "", n));
 
-    tags.setLocation("IFD" + n);
+    if (n < 0) tags.setLocation("SubIFD" + (-n));
+    else tags.setLocation("IFD" + n);
+
     childs.add(tags);
     if (subchilds) {
       List<TiffNode> subobjects = tags.getChildren(subchilds);
       for (TiffNode node : subobjects) {
-        node.setLocation("IFD" + n);
+        if (n < 0) node.setLocation("SubIFD" + (-n));
+        else node.setLocation("IFD" + n);
         childs.add(node);
       }
     }
@@ -337,7 +340,8 @@ public class TiffIfd extends TiffNode implements TiffNodeInterface {
 
   @Override
   public String toString() {
-    String s = "ifd " + n;
+    if (getLocation() != null) return getLocation();
+    String s = "IFD" + n;
     return s;
   }
 }
