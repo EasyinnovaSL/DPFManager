@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="implementation_checker" type="implementation_checkerType"/>
+
+    <xsd:complexType name="implementation_checkerType">
+        <xsd:sequence>
+            <xsd:element name="implementation_check" type="implementation_checkType"/>
+            <xsd:element name="results" type="resultsType"/>
+        </xsd:sequence>
+        <xsd:attribute name="TIAProfileChecker" type="xsd:string" />
+        <xsd:attribute name="TIFF_Baseline_Core_6_0" type="xsd:string" />
+        <xsd:attribute name="TIFF_Baseline_Extended_6_0" type="xsd:string" />
+        <xsd:attribute name="TIFF_EP" type="xsd:string" />
+        <xsd:attribute name="TiffITP1ProfileChecker" type="xsd:string" />
+        <xsd:attribute name="TiffITP2ProfileChecker" type="xsd:string" />
+        <xsd:attribute name="TiffITProfileChecker" type="xsd:string" />
+        <xsd:attribute name="ref" type="xsd:string" />
+        <xsd:attribute name="totalErrors" type="xsd:string" />
+        <xsd:attribute name="totalWarnings" type="xsd:string" />
+        <xsd:attribute name="version" type="xsd:string" />
+    </xsd:complexType>
+
+    <xsd:complexType name="implementation_checkType">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="rule_result" maxOccurs="unbounded" type="rule_resultType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="resultsType">
+        <xsd:sequence>
+            <xsd:element name="rule_result" maxOccurs="unbounded" type="rule_resultType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="rule_resultType">
+        <xsd:sequence>
+            <xsd:element name="level" type="xsd:string"/>
+            <xsd:element name="message" type="xsd:string"/>
+            <xsd:element name="context" type="xsd:string"/>
+            <xsd:element name="location" type="xsd:string"/>
+            <xsd:element name="ruleId" type="xsd:string"/>
+            <xsd:element name="ruleTest" type="xsd:string"/>
+            <xsd:element name="ruleValue" type="xsd:string"/>
+            <xsd:element name="iso_reference" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

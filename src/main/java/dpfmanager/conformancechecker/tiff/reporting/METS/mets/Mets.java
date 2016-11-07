@@ -19,6 +19,9 @@
 
 package dpfmanager.conformancechecker.tiff.reporting.METS.mets;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.implementation_check.ImplementationCheckerType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -48,6 +51,7 @@ import org.w3c.dom.Element;
  * 
  * 
  */
+@XmlSeeAlso(ImplementationCheckerType.class)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "mets")
