@@ -21,6 +21,8 @@ package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.conformancechecker.tiff.implementation_checker.implementation_check.ImplementationCheckerType;
+import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.METS.niso.*;
 import dpfmanager.conformancechecker.tiff.reporting.METS.premis.Event;
@@ -39,6 +41,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -62,11 +65,14 @@ import java.util.List;
 import java.util.SplittableRandom;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -1018,7 +1024,35 @@ public class MetsReport {
       Event.EventOutcomeInformation eventOutcomeInformation = new Event.EventOutcomeInformation();
       eventOutcomeInformation.setEventOutcome("Report output");
       Event.EventOutcomeInformation.EventOutcomeDetail eventOutcomeDetail = new Event.EventOutcomeInformation.EventOutcomeDetail();
-      eventOutcomeDetail.setAny(null);
+      String report = ir.getConformanceCheckerReport();
+      if (report != null && report.contains("<implementation_checker")) {
+        report = report.substring(report.indexOf("<implementation_checker"));
+        int iend = report.indexOf("</implementation_checker");
+        iend = report.indexOf(">", iend) + 1;
+        if (iend > -1) report = report.substring(0, iend);
+      }
+      try {
+        // Good way (add object)
+        JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerType.class);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        ByteArrayInputStream reportBytes = new ByteArrayInputStream(report.getBytes());
+        ImplementationCheckerType reportObj = (ImplementationCheckerType) jaxbUnmarshaller.unmarshal(reportBytes);
+        eventOutcomeDetail.setAny(reportObj);
+      } catch (Exception ex) {
+        // Not so good way (add string)
+        if (report != null) {
+          if (report.indexOf(">") > -1) report = report.substring(report.indexOf(">") + 1);
+          int iend = report.indexOf("</implementation_checker");
+          if (iend > -1) report = report.substring(0, iend);
+          JAXBElement<String> jaxbElement =
+              new JAXBElement(new QName("implementation_checker"),
+                  String.class, report);
+          eventOutcomeDetail.setAny(jaxbElement);
+        } else {
+          // No way (add nothing)
+          eventOutcomeDetail.setAny(null);
+        }
+      }
       eventOutcomeInformation.setEventOutcomeDetail(eventOutcomeDetail);
       premisObject.setEventOutcomeInformation(eventOutcomeInformation);
 
@@ -1403,7 +1437,7 @@ public class MetsReport {
     if (ir.containsData()) {
       //mets properties
       mets.setOBJID("123456");
-      mets.setLABEL("My title");
+      mets.setLABEL("DPF Manager Report");
       mets.setTYPE("myType");
       mets.setPROFILE("myProfile");
 

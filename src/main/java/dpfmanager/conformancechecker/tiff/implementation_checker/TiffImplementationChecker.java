@@ -157,7 +157,7 @@ public class TiffImplementationChecker {
           tagIds.add(tv.getId());
         }
         prevTagId = tv.getId();
-        tags.add(CreateTiffTag(tv));
+        tags.add(CreateTiffTag(tv, n));
         usedOffsetsSizes.put(tv.getReadOffset(), tv.getReadlength());
       } catch (Exception ex) {
         ex.printStackTrace();
@@ -598,7 +598,7 @@ public class TiffImplementationChecker {
         tagIds.add(tvv.getId());
       }
       prevTagId = tvv.getId();
-      tags.add(CreateTiffTag(tvv));
+      tags.add(CreateTiffTag(tvv, 0));
     }
     TiffTags tiffTags = new TiffTags();
     tiffTags.setTagsCount(tags.size());
@@ -625,7 +625,7 @@ public class TiffImplementationChecker {
     return false;
   }
 
-  public TiffTag CreateTiffTag(TagValue tv) {
+  public TiffTag CreateTiffTag(TagValue tv, int parentIfd) {
     TiffTag tt = new TiffTag();
     tt.setId(tv.getId());
     if (tv.getId() > 32767) tt.setPrivateTag("private");
@@ -672,7 +672,7 @@ public class TiffImplementationChecker {
       tt.setExif(ifd);
     } else if (tv.getId() == 330) {
       // SubIFD
-      TiffIfd ifd = CreateIFDValidation((IFD)tv.getValue().get(0), 0);
+      TiffIfd ifd = CreateIFDValidation((IFD)tv.getValue().get(0), -parentIfd);
       //TiffIfd ifd = createIfdNode(tv, "image");
       tt.setIfd(ifd);
     } else if (tv.getId() == 400) {

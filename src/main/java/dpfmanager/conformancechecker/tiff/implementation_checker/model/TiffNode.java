@@ -111,6 +111,7 @@ public class TiffNode implements TiffNodeInterface {
   @Override
   public String toString() {
     String s = "";
+    if (getLocation() != null) return getLocation();
     s += getContext();
     return s;
   }
