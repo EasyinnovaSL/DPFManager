@@ -2063,14 +2063,14 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
     <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of WhiteLevel tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-190" context="ifd[class=image]" level="error">
-    <title></title>
-    <description></description>
+    <title>Check valid cardinality for tag SMinSampleValue</title>
+    <description>Check valid cardinality for tag SMinSampleValue</description>
     <reference><section>8</section><page>35</page></reference>
     <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMinSampleValue tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-191" context="ifd[class=image]" level="error">
-    <title></title>
-    <description></description>
+    <title>Check valid cardinality for tag SMaxSampleValue</title>
+    <description>Check valid cardinality for tag SMaxSampleValue</description>
     <reference><section>8</section><page>35</page></reference>
     <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMaxSampleValue tag must match SamplesPerPixel value</assert>
    </rule>
