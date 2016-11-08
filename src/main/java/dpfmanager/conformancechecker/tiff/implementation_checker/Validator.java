@@ -34,7 +34,6 @@ import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.Rul
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
-import org.apache.camel.ExchangeException;
 import org.xml.sax.SAXException;
 
 import java.io.FileInputStream;
