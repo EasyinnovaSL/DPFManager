@@ -51,7 +51,7 @@
    2 = CCITT Group 3 1-Dimensional Modified Huffman run-length encoding.
    32773 = PackBits compression, a simple byte-oriented run-length scheme
   </description>
-  <reference><section>Section 8: Baseline Field Reference Guide</section><pages>30-31</pages></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><pages>30-31</pages></reference>
   <assert test="{tags.tag[name=Compression] &gt; 0} &amp;&amp; {tags.tag[name=Compression] &lt; 7} || {tags.tag[name=Compression] == 32773}">The Compression tag must have a valid value</assert>
  </rule>
  </rules>
@@ -94,7 +94,7 @@
     8 = CIE L*a*b*.
     9 = ICC L*a*b*.
     10 = ITU L*a*b*.</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
    <assert test="{tags.tag[name=PhotometricInterpretation] &gt; -1} &amp;&amp; {tags.tag[name=PhotometricInterpretation] &lt; 11}">Photometric Interpretation value must be between 0 and 10</assert>
   </rule>
  </rules>
@@ -112,7 +112,7 @@
     3 = T4-encoding
     4 = T6-encoding
     32773 = PackBits compression, a simple byte-oriented run length scheme. </description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
    <assert test="{tags.tag[name=Compression] &gt; 0} &amp;&amp; {tags.tag[name=Compression] &lt; 5} || {tags.tag[name=Compression] == 32773}">Invalid Compression for Bilevel image</assert>
   </rule>
   
@@ -120,7 +120,7 @@
    <title>Bilevel CCIT compression requires FillOrder Tag</title>
    <description>TIFF FillOrder (tag 266) should always be explicitly specified. when CCIT compresion is used in Bilevel images
    </description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
    <assert test="{tags.tag[name=Compression] != 2} || {count(tags.tag[name=FillOrder]) == 1}">Bilevel CCIT compression requires FillOrder Tag</assert>
   </rule>
   
@@ -133,7 +133,7 @@
     FillOrder = 2 should occur only in highly-localized and preferably-transient material, as in a facsimile server supporting group 3 facsimile equipment.
     The tag should be present as a safeguard against the CCITT encoding “leaking” into an unsuspecting application, allowing readers to detect and warn against the occurence.
    </description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>49</page></reference>
    <assert test="{tags.tag[name=Compression] == 2} &amp;&amp; {tags.tag[name=FillOrder] == 2}"> FillOrder = 2 should occur only in highly-localized and preferably-transient material, as in a facsimile server supporting group 3 facsimile equipment.
     The tag should be present as a safeguard against the CCITT encoding “leaking” into an unsuspecting application, allowing readers to detect and warn against the occurence.</assert>
   </rule>
@@ -156,35 +156,35 @@
   <rule id="TAG-292-0001" context="tag[id=292]" level="error">
    <title>T4Options tag valid Type</title>
    <description>T4Options Tag type must be LONG</description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
    <assert test="{type=='LONG'}">T4Options Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-292-0002" context="tag[id=292]" level="error">
    <title>T4Options valid cardinality</title>
    <description>The cardinality of the T4Options tag must be 1</description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
    <assert test="{cardinality==1}">Tag T4Options cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-292-0003" context="ifd[class=image]" level="warning">
    <title>T4Options only valid with CCIT compresion</title>
    <description>T4Options should only be used in with CCIT compresion</description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
    <assert test="{tags.tag[name=Compression] != 3} &amp;&amp; {tags.tag[name=T4Options]}"></assert>
   </rule>
   
   <rule id="TAG-292-0004" context="ifd" level="warning">
    <title>T4Options requires and image ifd</title>
    <description>T4Options should only be used in an image IFD</description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
    <assert test="{tags.tag[name=T4Options]} &amp;&amp; {class != 'image'}">T4Options should only be used in an image IFD</assert>
   </rule>
   
   <rule id="TAG-292-0005" context="ifd" level="info">
    <title>T4Options default value</title>
    <description>T4Options tag has a default value, if it is not present in CCIT compresion. value 0 is assumed </description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>51</page></reference>
    <assert test="{tags.tag[name=Compression] == 3} &amp;&amp; {!tags.tag[name=T4Options]}">T4Options Tag is not defined. Then the default value 0 is assumed</assert>
   </rule>
  </rules>
@@ -205,35 +205,35 @@
   <rule id="TAG-293-0001" context="tag[id=293]" level="error">
    <title>T6Options tag valid Type</title>
    <description>T6Options Tag type must be LONG</description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
    <assert test="{type=='LONG'}">T6Options Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-293-0002" context="tag[id=293]" level="error">
    <title>T6Options valid cardinality</title>
    <description>The cardinality of the T6Options tag must be 1</description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
    <assert test="{cardinality==1}">Tag T6Options cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-293-0003" context="ifd[class=image]" level="warning">
    <title>T4Options only valid with CCIT compresion</title>
    <description>T4Options should only be used in with CCIT compresion</description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
    <assert test="{tags.tag[name=Compression] != 4} &amp;&amp; {tags.tag[name=T6Options]}"></assert>
   </rule>
   
   <rule id="TAG-293-0004" context="ifd" level="warning">
    <title>T4Options requires and image ifd</title>
    <description>T4Options should only be used in an image IFD</description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
    <assert test="{tags.tag[name=T6Options]} &amp;&amp; {class != 'image'}">T4Options should only be used in an image IFD</assert>
   </rule>
   
   <rule id="TAG-293-0005" context="ifd" level="info">
    <title>T4Options default value</title>
    <description>T4Options tag has a default value, if it is not present in CCIT compresion. value 0 is assumed </description>
-   <reference><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 11: CCITT Bilevel Encodings</section><page>52</page></reference>
    <assert test="{tags.tag[name=Compression] == 4} &amp;&amp; {!tags.tag[name=T6Options]}">T4Options Tag is not defined. Then the default value 0 is assumed</assert>
   </rule>
  </rules>
@@ -249,7 +249,7 @@
   <rule id="TAG-269-0001" context="tag[id=269]" level="error">
    <title>DocumentName tag valid Type</title>
    <description>DocumentName Tag type must be ASCII</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{type=='ASCII'}">DocumentName Tag type is not valid, an ASCII type is expected</assert>
   </rule>
  </rules>
@@ -265,7 +265,7 @@
   <rule id="TAG-285-0001" context="tag[id=285]" level="error">
    <title>PageName tag valid Type</title>
    <description>PageName Tag type must be ASCII</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{type=='ASCII'}">PageName Tag type is not valid, an ASCII type is expected</assert>
   </rule>
  </rules>
@@ -284,49 +284,49 @@
   <rule id="TAG-297-0001" context="tag[id=297]" level="error">
    <title>PageNumber tag valid Type</title>
    <description>PageNumber Tag type must be ASCII</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{type=='SHORT'}">PageNumber Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-297-0002" context="tag[id=297]" level="error">
    <title>PageNumber valid cardinality</title>
    <description>The cardinality of the PageNumber tag must be 2</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{cardinality==2}">PageNumber cardinality is not valid, cardinality should be 2</assert>
   </rule>
   
   <rule id="TAG-297-0003" context="tags" level="warning">
    <title>PageNumber out of the document</title>
    <description>PageNumber value must be less than the total number of pages in the document</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{tag[name=PageNumber](0) &lt; tag[name=PageNumber](1)}">Incoherent page number</assert>
   </rule>
   
    <rule id="TAG-297-0004" context="tag[id=297]" level="error" experimental="true">
    <title>First page is numbered 0</title>
    <description>In a multiple page (e.g. facsimile) document. First page is numbered 0 </description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="">In a multiple page (e.g. facsimile) document. First page is numbered 0</assert>
   </rule>
    
   <rule id="TAG-297-0005" context="tag[id=297]" level="warning" experimental="true">
    <title>Page number repeated</title>
    <description>Page number repeated in a multiple page (e.g. facsimile) document</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="">Page number repeated in a multiple page (e.g. facsimile) document</assert>
   </rule>
   
   <rule id="TAG-297-0006" context="tag[id=297]" level="warning" experimental="true">
    <title>Missing pages</title>
    <description>There is a missing page in a multiple page (e.g. facsimile) document.</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="">There is a missing page in a multiple page (e.g. facsimile) document.</assert>
   </rule>
   
   <rule id="TAG-297-0007" context="tag[id=297]" level="warning" experimental="true">
    <title>Incoherent total number of pages</title>
    <description>All the images in a multiple page (e.g. facsimile) document should have the same total number of pages</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="tag[name=PageNumber](1) != TOTALNUMBERPAGES">PageNumber Tag contains and invalid total number of pages</assert>
   </rule>
  </rules>
@@ -343,14 +343,14 @@
   <rule id="TAG-286-0001" context="tag[id=286]" level="error">
    <title>XPosition tag valid Type</title>
    <description>XPosition Tag type must be RATIONAL</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{type=='ASCII'}">XPosition Tag type is not valid, an RATIONAL type is expected</assert>
   </rule>
   
   <rule id="TAG-286-0002" context="tag[id=286]" level="error">
    <title>XPosition valid cardinality</title>
    <description>The cardinality of the XPosition tag must be 1</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{cardinality==2}">XPosition cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
@@ -368,14 +368,14 @@
   <rule id="TAG-287-0001" context="tag[id=287]" level="error">
    <title>YPosition tag valid Type</title>
    <description>YPosition Tag type must be RATIONAL</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{type=='ASCII'}">YPosition Tag type is not valid, an RATIONAL type is expected</assert>
   </rule>
   
   <rule id="TAG-287-0002" context="tag[id=287]" level="error">
    <title>YPosition valid cardinality</title>
    <description>The cardinality of the YPosition tag must be 1</description>
-   <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
    <assert test="{cardinality==2}">YPosition cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
@@ -402,14 +402,14 @@
     Althought, the Software Freedom Law Center says that after 1 October 2006, there will be no significant patent claims interfering with the use of LZW compression.
     In 2007, the company's LZW Patent and Software Information Web page stated that the "Unisys Corporation holds and has patents pending on a number of improvements on the inventions claimed in the above-expired patents.".
     Since June 2009, the Unisys Web site has no mention of LZW.</description>
-   <reference><section>Section 13: LZW Compression</section><page>57</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 13: LZW Compression</section><page>57</page></reference>
    <assert test="{tags.tag[Compression] == 5}">Image using LZW compression. LZW compresion is under unclear patent situation</assert>
   </rule>
   
   <rule id="LZW-0002" context="ifd[class=image]" level="info">
    <title>LZW unefective in 16 bits depth images </title>
    <description></description>
-   <reference></reference>
+   <reference><document>Extended TIFF 6</document></reference>
    <assert></assert>
   </rule>
  
@@ -432,35 +432,35 @@
   <rule id="TAG-317-0001" context="tag[id=317]" level="error">
    <title>Predictor tag valid Type</title>
    <description>Predictor Tag type must be SHORT</description>
-   <reference><section>Section 14: Differencing Predictor</section><page>64</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 14: Differencing Predictor</section><page>64</page></reference>
    <assert test="{type=='SHORT'}">Predictor Tag type is not valid, an SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-317-0002" context="tag[id=317]" level="error">
    <title>Predictor valid cardinality</title>
    <description>The cardinality of the Predictor tag must be 1</description>
-   <reference><section>Section 14: Differencing Predictor</section><page>64</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 14: Differencing Predictor</section><page>64</page></reference>
    <assert test="{cardinality==1}">Predictor cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-317-0003" context="ifd" level="warning">
    <title>Predictor requires and image IFD</title>
    <description>Predictor should only be used in an image IFD</description>
-   <reference><section>Section 14: Differencing Predictor</section><page>64</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 14: Differencing Predictor</section><page>64</page></reference>
    <assert test="{tags.tag[name=Predictor]} &amp;&amp; {class != 'image'}">Predictor should only be used in an image IFD</assert>
   </rule>
   
   <rule id="TAG-317-0004" context="ifd" level="warning">
    <title>Predictor requires LZW compresion</title>
    <description>Predictor should only be used in an image IFD with LZW compresion</description>
-   <reference><section>Section 14: Differencing Predictor</section><page>64</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 14: Differencing Predictor</section><page>64</page></reference>
    <assert test="{tags.tag[name=Predictor]} &amp;&amp; {tags.tag[name=Compression] != 5}">Predictor should only be used in an image IFD</assert>
   </rule>
   
   <rule id="TAG-317-0005" context="ifd[class=image]" level="info">
    <title>Predictor default value</title>
    <description>Predictor tag has a default value, if it is not present value 1 is assumed.</description>
-   <reference><section>Section 14: Differencing Predictor</section><page>64</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 14: Differencing Predictor</section><page>64</page></reference>
    <assert test="{!tags.tag[name=Predictor]} &amp;&amp; {tags.tag[name=Compression] == 5}">Predictor Tag is not defined. Then  1 value is assumed</assert>
   </rule>
  </rules>
@@ -476,22 +476,22 @@
   <rule id="STRIPSEXT-0001" context="ifd[class=image]" level="error">
    <title>An image IFD should have a StripOffsets</title>
    <description>An Image File Directory(IFD) that contains and image data must have StripOffsets values</description>
-   <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
-   <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
-   <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
-   <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 3: Bilevel Images</section><page>21</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 4: Grayscale Images</section><page>22</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 5: Palette-color Images</section><page>23</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
    <assert test="{tiles == 1} || {tags.tag[name=StripOffsets]}">Image IFD must have the tag StripOffsets</assert>
   </rule>
 
   <rule id="STRIPSEXT-0002" context="ifd[class=image]" level="error">
    <title>An image IFD should have a StripBYTECount</title>
    <description>An Image File Directory(IFD) that contains and image data must have StripBYTECount</description>
-   <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
-   <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
-   <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
-   <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 3: Bilevel Images</section><page>21</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 4: Grayscale Images</section><page>22</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 5: Palette-color Images</section><page>23</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><page>19</page></reference>
    <assert test="{tiles == 1} || {tags.tag[name=StripBYTECount]}">Image IFD must have the tag StripBYTECount</assert>
   </rule>
 
@@ -501,7 +501,7 @@
     
     Use of tiles will therefore cause older TIFF readers to give up because they will have no way of knowing where the image data is or how it is organized. 
     Do not use both strip-oriented and tile-oriented fields in the same TIFF file.</description>
-   <reference><section>Section 15: Tiled Images</section><page>66</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>66</page></reference>
    <assert test="{strips == 0} || {tiles == 0}">Image must be in either Strips or Tiles</assert>
   </rule>
   
@@ -511,49 +511,49 @@
     
     Use of tiles will therefore cause older TIFF readers to give up because they will have no way of knowing where the image data is or how it is organized. 
     Do not use both strip-oriented and tile-oriented fields in the same TIFF file.</description>
-   <reference><section>Section 15: Tiled Images</section><page>66</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>66</page></reference>
    <assert test="{strips == 1} || {tiles == 1}">Image cannot be in both Strips and Tiles</assert>
   </rule>
   
   <rule id="TILES-0003" context="ifd[tiles=1]" level="error">
    <title>Inconsistent tile lengths</title>
    <description>The TileOffsets cardinality and TileBYTECounts cardinality must have the same value</description>
-   <reference><section>Section 15: Tiled Images</section><page>68</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>68</page></reference>
    <assert test="{tags.tag[name=TileOffsets].cardinality == tags.tag[name=TileBYTECounts].cardinality}">Inconsistent tile lengths, TileOffsets and TileBYTECounts cardinality must match</assert>
   </rule>
   
   <rule id="TILES-0004" context="ifd[tiles=1]" level="error">
    <title>TileOffsets required for tiled images</title>
    <description>TileOffsets is required in an Image File Directory(IDF) containing an image organized in tiles</description>
-   <reference><section>Section 15: Tiled Images</section><page>68</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>68</page></reference>
    <assert test="{strips == 1} || {tags.tag[name=TileOffsets]}">Missing required TileOffsets tag for tiled images</assert>
   </rule>
   
   <rule id="TILES-0005" context="ifd[tiles=1]" level="error">
    <title>TileByteCounts required for tiled images</title>
    <description>TileByteCounts is required in an Image File Directory(IDF) containing an image organized in tiles</description>
-   <reference><section>Section 15: Tiled Images</section><page>68</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>68</page></reference>
    <assert test="{strips == 1} || {tags.tag[name=TileBYTECounts]}">Missing required TileByteCounts tag for tiled images</assert>
   </rule>
   
   <rule id="TILES-0006" context="ifd[tiles=1]" level="error">
    <title>TileWidth required for tiled images</title>
    <description>TileWidth is required in an Image File Directory(IDF) containing an image organized in tiles</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{strips == 1} || {tags.tag[name=TileWidth]}">Missing required TileOffsets tag for tiled images</assert>
   </rule>
   
   <rule id="TILES-0007" context="ifd[tiles=1]" level="error">
    <title>TileLength required for tiled images</title>
    <description>TileLength is required in an Image File Directory(IDF) containing an image organized in tiles</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{strips == 1} || {tags.tag[name=TileLength]}">Missing required TileLength tag for tiled images</assert>
   </rule>
   
   <rule id="TILES-0008" context="ifd[tiles=1]" level="error">
    <title>Tiles sizes match image dimensions</title>
    <description>Tiles structure must match with the image width and height</description>
-   <reference><section>Section 15: Tiled Images</section><pages>66-68</pages></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><pages>66-68</pages></reference>
    <assert test="{correctTiles == 1}">image width and image height do not match with tiles sizes</assert>
   </rule>
   
@@ -561,7 +561,7 @@
   <rule id="TILES-0009" context="ifd[tiles=1]" level="warning">
    <title>tiles about 4K to 32K bytes</title>
    <description>We recommend choosing TileWidth and TileLength such that the resulting tiles are about 4K to 32K bytes before compression. This seems to be a reasonable value for most applications and compression schemes.</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="">We recommend choosing TileWidth and TileLength such that the resulting tiles are about 4K to 32K bytes before compression</assert>
   </rule>
   -->
@@ -586,28 +586,28 @@
   <rule id="TAG-322-0001" context="tag[id=322]" level="error">
    <title>TileWidth tag valid Type</title>
    <description>TileWidth Tag type must be SHORT or LONG</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{type=='SHORT'} || {type=='LONG'}">TileWidth Tag type is not valid, a SHORT or LONG type is expected</assert>
   </rule>
   
   <rule id="TAG-322-0002" context="tag[id=322]" level="error">
    <title>TileWidth valid cardinality</title>
    <description>The cardinality of the TileWidth tag must be 1</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{cardinality==1}">TileWidth cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-322-0003" context="ifd[tiles=1]" level="warning">
    <title>TileWidth bigger than ImageWidth</title>
    <description>Note that ImageWidth can be less than TileWidth, although this means that the tiles are too large or that you are using tiling on really small images, neither of which is recommended</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{tags.tag[name=ImageWidth]} &lt; {tags.tag[name=TileWidth]}">It is not recomend a TileWidth greater than the ImageWidth, this means that the tiles are too large or tiling is used on really small image</assert>
   </rule>
   
   <rule id="TAG-322-0004" context="ifd[tiles=1]" level="error">
    <title>TileWidth must be bigger than zero</title>
    <description>Tile Width must be bigger than 0</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{tags.tag[name=TileWidth] &gt; 0}">Invalid value for field TileWidth</assert>
   </rule>
   
@@ -615,7 +615,7 @@
   <rule id="TAG-322-0005" context="ifd[tiles=1]" level="error">
    <title>TileWidth must be a multiple of 16</title>
    <description>TileWidth must be a multiple of 16. This restriction improves performance in some graphics environments and enhances compatibility with compression schemes such as JPEG.</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{tags.tag[name=TileWidth] % 16 == 0 }">TileWidth must be a multiple of 16</assert>
   </rule>
   -->
@@ -636,28 +636,28 @@
   <rule id="TAG-323-0001" context="tag[id=323]" level="error">
    <title>TileLength tag valid Type</title>
    <description>TileLength Tag type must be SHORT or LONG</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{type=='SHORT'} || {type=='LONG'}">TileLength Tag type is not valid, a SHORT or LONG type is expected</assert>
   </rule>
   
   <rule id="TAG-323-0002" context="tag[id=323]" level="error">
    <title>TileLength valid cardinality</title>
    <description>The cardinality of the TileLength tag must be 1</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{cardinality==1}">TileLength cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-323-0003" context="ifd[tiles=1]" level="warning">
    <title>TileLength bigger than ImageLength</title>
    <description>Note that ImageLength can be less than TileLength, although this means that the tiles are too large or that you are using tiling on really small images, neither of which is recommended</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{tags.tag[name=ImageLength]} &lt; {tags.tag[name=TileLength]}">It is not recomend a TileLength bigger than the ImageLength, this means that the tiles are too large or tiling is used on really small image</assert>
   </rule>
   
   <rule id="TAG-323-0004" context="ifd[tiles=1]" level="error">
    <title>TileLength must be bigger than zero</title>
    <description>TileLength must be bigger than 0</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{tags.tag[name=TileLength] &gt; 0}">Invalid value for field TileLength</assert>
   </rule>
   
@@ -665,7 +665,7 @@
   <rule id="TAG-323-0005" context="ifd[tiles=1]" level="error">
    <title>TileLength must be a multiple of 16</title>
    <description>TileLength must be a multiple of 16. This restriction improves performance in some graphics environments and enhances compatibility with compression schemes such as JPEG.</description>
-   <reference><section>Section 15: Tiled Images</section><page>67</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>67</page></reference>
    <assert test="{tags.tag[name=TileWidth] % 16 == 0 }">TileLength must be a multiple of 16</assert>
   </rule>
   -->
@@ -687,7 +687,7 @@
   <rule id="TAG-324-0001" context="tag[id=325]" level="error">
   <title>TileOffsets tag valid Type</title>
   <description>TileOffsets Tag type must be LONG</description>
-  <reference><section>Section 15: Tiled Images</section><page>68</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>68</page></reference>
   <assert test="{type=='LONG'}">TileOffsets Tag type is not valid, a LONG type is expected</assert>
  </rule>
  
@@ -696,7 +696,7 @@
    <title>TileOffsets valid cardinality</title>
    <description>TileOffsets tag cardinality is equal TilesPerImage for PlanarConfiguration equal to 1, and
 SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
-   <reference><section>Section 15: Tiled Images</section><page>68</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>68</page></reference>
    <assert test="{tags.tag[name=PlanarConfiguration]) == 1} &amp;&amp; {tags.tag[name=TileOffsets].cardinality == TilesPerImage} || {tags.tag[name=PlanarConfiguration]) == 2} &amp;&amp; {tags.tag[name=TileOffsets].cardinality == tags.tag[name=SamplesPerPixel] * TilesPerImage}">TileOffsets invalid cardinality</assert>
   </rule>
  -->  
@@ -715,7 +715,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-273-0001" context="tag[id=279]" level="error">
    <title>StripOffsets tag valid Type</title>
    <description>StripOffsets Tag type must be SHORT OR LONG</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><page>40</page></reference>
    <assert test="{type=='LONG'} || {type=='SHORT'}">StripOffsets Tag type is not valid, a SHORT or LONG type is expected</assert>
   </rule>
   
@@ -724,7 +724,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>TileOffsets valid cardinality</title>
    <description>TileOffsets tag cardinality is equal TilesPerImage for PlanarConfiguration equal to 1, and
 SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
-   <reference><section>Section 15: Tiled Images</section><page>68</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 15: Tiled Images</section><page>68</page></reference>
    <assert test="{tags.tag[name=PlanarConfiguration]) == 1} &amp;&amp; {tags.tag[name=TileBYTECounts].cardinality == TilesPerImage} || {tags.tag[name=PlanarConfiguration]) == 2} &amp;&amp; {tags.tag[name=TileBYTECounts].cardinality == tags.tag[name=SamplesPerPixel] * TilesPerImage}">TileByteCounts invalid cardinality</assert>
   </rule>
  -->  
@@ -746,7 +746,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>Valid Photometric Interpretation value for CMYK image</title>
    <description>The Photometric Interpretation tag for CMYK images must have a valid value. 5 = CMYK.
    </description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Photometric Interpretation value must be 5</assert>
   </rule>
   
@@ -757,22 +757,22 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="IFDB-0003" context="ifd[type=CMYK]">
    <title>Valid Number BitsPerSample for CMYK Images</title>
      <description>When No Extra Sample is defined then BitsPerSample cardinaliy must be equal to NumberOfInks or 4 if NumberOfInks is not defined</description>
-    <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+    <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample].cardinality == {tags.tag[name=NumberOfInks]} || {!tags.tag[name=NumberOfInks]} &amp;&amp;{tags.tag[name=BitsPerSample].cardinality == 4}">invalid BitsPerSample  cardinality in CMYK image IFD</assert>
   </rule>
   
    <rule id="IFDB-0003" context="ifd[type=Palette]">
    <title>Valid BitsPerSample and samples per Pixel</title>
      <description>For now, only 8-bit components are recommended. The value “8” is repeated SamplesPerPixel times.</description>
-     <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+     <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{{tags.tag[name=BitsPerSample] == 8,8...Samplesperpixel times  ">For now, only 8-bit components are recommended</assert>
   </rule>
   
   <rule id="IFDB-0003" context="ifd[type=Palette]">
    <title>Valid bits per sample and samples per Pixel</title>
      <description>When No Extra Sample is defined then BitsPerSample must be 4 or 8 and SamplesPerPixel must be 3 for palette colo Images.</description>
-     <reference><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
-     <reference><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
+     <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><page>29</page></reference>
+     <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><page>39</page></reference>
    <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample].cardinality == {tags.tag[name=NumberOfInks]} || {!tags.tag[name=NumberOfInks]} &amp;&amp;{tags.tag[name=BitsPerSample].cardinality == 4}">BitsPerSample  must be 4 or 8 and BitsPerSample must be 3 for palette color image wihout ExtraSamples</assert>
   </rule>
   -->
@@ -796,42 +796,42 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
  <rule id="TAG-332-0001" context="tag[id=332]" level="error">
   <title>InkSet tag valid Type</title>
   <description>InkSet Tag type must be SHORT</description>
-  <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
   <assert test="{type=='SHORT'}">InkSet Tag type is not valid, a SHORT type is expected</assert>
  </rule>
  
  <rule id="TAG-332-0002" context="tag[id=332]" level="error">
   <title>InkSet valid cardinality</title>
   <description>The cardinality of the InkSet tag must be 1</description>
-  <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
   <assert test="{cardinality==1}">InkSet cardinality is not valid, cardinality should be 1</assert>
  </rule>
  
  <rule id="TAG-332-0003" context="ifd" level="warning">
   <title>InkSet only in CMYK Image IFD</title>
   <description>InkSet should only be used in a Image File Directory containing a CMYK image</description>
-  <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
   <assert test="{tags.tag[name=InkSet]} &amp;&amp; {type != 'CMYK'}">InkSet tag should only be used in a Image File Directory containing a CMYK image</assert>
  </rule>
  <!--
  <rule id="IFDB-0003" context="ifd[type=CMYK]" level="warning">
   <title>InkSet CMYK no need InkNames</title>
   <description>The InkNames field should not exist when InkSet=1 (CMYK image)</description>
-  <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
   <assert test="{!tags.tag[name=InkSet]} &amp;&amp; {tags.tag[name=InkNames]} || {tags.tag[name=InkSet] == 1} &amp;&amp; {tags.tag[name=InkNames]}">invalid BitsPerSample  cardinality in CMYK image IFD</assert>
  </rule>
  -->
  <rule id="TAG-332-0004" context="ifd[type=CMYK]" level="error">
   <title>InkSet no CMYK need InkNames</title>
   <description>The InkNames field must exist when InkSet=2 (No CMYK image)</description>
-  <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
   <assert test="{tags.tag[name=InkSet] == 1} || {!tags.tag[name=InkSet]} || {tags.tag[name=InkNames]}">invalid BitsPerSample  cardinality in CMYK image IFD</assert>
  </rule>
  
  <rule id="TAG-332-0005" context="ifd[type=CMYK]" level="info">
   <title>InkSet default value</title>
   <description>When Inkset is not defined in a CMYK image then the default value 1 (CMYK) is assumed</description>
-  <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
   <assert test="{!tags.tag[name=InkSet]}">InkSet not defined the default value 1(CMYK) is assumed</assert>
  </rule> 
 </rules>
@@ -848,28 +848,28 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-334-0001" context="tag[id=334]" level="error">
    <title>NumberOfInks tag valid Type</title>
    <description>NumberOfInks Tag type must be LONG</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{type=='SHORT'}">NumberOfInks Tag type is not valid, a LONG type is expected</assert>
   </rule>
   
   <rule id="TAG-334-0002" context="tag[id=334]" level="error">
    <title>NumberOfInks valid cardinality</title>
    <description>The cardinality of the NumberOfInks tag must be 1</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{cardinality==1}">NumberOfInks cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-334-0003" context="ifd" level="warning">
    <title>NumberOfInks only in CMYK Image IFD</title>
    <description>NumberOfInks should only be used in a Image File Directory containing a CMYK image</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{tags.tag[name=NumberOfInks]} &amp;&amp; {type != 'CMYK'}">NumberOfInks tag should only be used in a Image File Directory containing a CMYK image</assert>
   </rule>
   
   <rule id="TAG-334-0004" context="ifd[type=CMYK]" level="info">
    <title>NumberOfInks default value</title>
    <description>When NumberOfInks is not defined in a CMYK image then the default value 4 is assumed</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{!tags.tag[name=NumberOfInks]}">NumberOfInks not defined the default value 4 is assumed</assert>
   </rule> 
  </rules>
@@ -887,21 +887,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-333-0001" context="tag[id=333]" level="error">
    <title>InkNames tag valid Type</title>
    <description>InkNames Tag type must be ASCII</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{type=='ASCII'}">InkNames Tag type is not valid, an ASCII type is expected</assert>
   </rule>
   
   <rule id="TAG-333-0002" context="ifd[type=CMYK]" level="error">
    <title>InkNames valid cardinality</title>
    <description>The cardinality InkNames Tag type must be equal of NumberOfInks</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{!tags.tag[name=InkNames]} || {tags.tag[name=InkNames].cardinality == 4} || {tags.tag[name=InkNames].cardinality == tags.tag[name=NumberOfInks]}">InkNames invalid cardinality, InkNames Tag type must be equal of NumberOfInks</assert>
   </rule>
   
   <rule id="TAG-333-0003" context="ifd" level="warning">
    <title>InkNames only in CMYK Image IFD</title>
    <description>InkNames should only be used in a Image File Directory containing a CMYK image</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{tags.tag[name=InkNames]} &amp;&amp; {type != 'CMYK'}">InkNames tag should only be used in a Image File Directory containing a CMYK image</assert>
   </rule>
  </rules>
@@ -926,35 +926,35 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-336-0001" context="tag[id=336]" level="error">
    <title>DotRange tag valid Type</title>
    <description>DotRange Tag type must be BYTE or SHORT</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{type=='BYTE'} || {type=='SHORT'}">DotRange Tag type is not valid, a BYTE or SHORT type is expected</assert>
   </rule>
 
   <rule id="TAG-336-0002" context="ifd[type=CMYK]" level="error">
    <title>DotRange valid cardinality</title>
    <description>The cardinality DotRange Tag type must be 2 or equal of 2 * BitsPerSample</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{tags.tag[name=DotRange].cardinality == 2 || {tags.tag[name=DotRange].cardinality == 2 * tags.tag[name=BitsPerSample].cardinality}">DotRange invalid cardinality, DotRange Tag cardinality must be equal 2 or 2* BitsPerSample</assert>
   </rule>
 
   <rule id="TAG-336-0003" context="tag[id=336]" level="warning">
    <title>Multiple dot ranges</title>
    <description>Use of multiple dot ranges is strongly discouraged in the interests of simplicity and compatibility with ANSI IT8 standards.</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{cardinality &gt; 2}">The use of multiple dot ranges is valid, however, strongly discouraged in the interests of simplicity and compatibility with ANSI IT8 standards.</assert>
   </rule>
 
   <rule id="TAG-336-0004" context="tag[id=336]" level="warning">
    <title>DotRange used to revers pixel values</title>
    <description>It is strongly discouraged that a CMYK TIFF writer attempt to use this field to reverse the sense of the pixel values so that smaller values mean more ink instead of less ink. That is, DotRange[0] should be less than DotRange[1].</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{tags.tag[name=InkNames](0) &gt; tags.tag[name=InkNames](1)">InkNames used to reverse the sense of the pixel, That is strongly discouraged</assert>
   </rule>
 
  <rule id="TAG-336-0005" context="ifd" level="warning">
   <title>DotRange only in CMYK Image IFD</title>
   <description>DotRange should only be used in a Image File Directory containing a CMYK image</description>
-  <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
   <assert test="{tags.tag[name=DotRange]} &amp;&amp; {type != 'CMYK'}">DotRange tag should only be used in a Image File Directory containing a CMYK image</assert>
  </rule>
   
@@ -971,14 +971,14 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-337-0001" context="tag[id=337]" level="error">
    <title>TargetPrinter tag valid Type</title>
    <description>TargetPrinter Tag type must be ASCII</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{type=='ASCII'}">TargetPrinter Tag type is not valid, an ASCII type is expected</assert>
   </rule>
   
   <rule id="TAG-337-0002" context="ifd" level="warning">
    <title>TargetPrinter only in CMYK Image IFD</title>
    <description>TargetPrinter should only be used in a Image File Directory containing a CMYK image</description>
-   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>
    <assert test="{tags.tag[name=TargetPrinter]} &amp;&amp; {type != 'CMYK'}">TargetPrinter tag should only be used in a Image File Directory containing a CMYK image</assert>
   </rule>
  </rules>
@@ -1002,14 +1002,14 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-321-0001" context="tag[id=321]" level="error">
    <title>HalftoneHints tag valid Type</title>
    <description>HalftoneHints Tag type must be SHORT</description>
-   <reference><section>Section 17: HalftoneHints</section><page>72</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 17: HalftoneHints</section><page>72</page></reference>
    <assert test="{type=='SHORT'}">HalftoneHints Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-321-0002" context="tag[id=321]" level="error">
    <title>HalftoneHints valid cardinality</title>
    <description>The cardinality HalftoneHints Tag type must be 2</description>
-   <reference><section>Section 17: HalftoneHints</section><page>72</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 17: HalftoneHints</section><page>72</page></reference>
    <assert test="{tags.tag[name=DotRange].cardinality == 2 }">Invalid cardinality, HalftoneHints cardinality should be 2</assert>
   </rule>
  </rules>
@@ -1027,7 +1027,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
     of each pixel contains the opacity of that pixel, and the color information is premultiplied
     by alpha
    </description>
-   <reference><section>Section 18: Associated Alpha Handling</section><page>77</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 18: Associated Alpha Handling</section><page>77</page></reference>
    <assert test="{tags.tag[name=ExtraSamples] == 1}">The image contain an ExtraSample that may define an associated alpha</assert>
   </rule>
  </rules>
@@ -1054,21 +1054,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-339-0001" context="tag[id=339]" level="error">
    <title>SampleFormat tag valid Type</title>
    <description>SampleFormat Tag type must be SHORT</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{type=='SHORT'}">SampleFormat Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-339-0002" context="ifd[id=321]" level="error">
    <title>SampleFormat valid cardinality</title>
    <description>The cardinality SampleFormat Tag type must be SamplesPerPixel</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel] }">Invalid cardinality, SampleFormat cardinality should be SamplesPerPixel</assert>
   </rule>
   
   <rule id="TAG-339-0003" context="ifd[class=image]" level="warning">
    <title>SampleFormat only in Image IFD</title>
    <description>SampleFormat should only be used in a Image File Directory containing an image</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=TargetPrinter]} &amp;&amp; {class != image}">SampleFormat tag should only be used in a Image File Directory containing an image</assert>
   </rule>
  </rules>
@@ -1087,21 +1087,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
  <rule id="TAG-340-0001" context="tag[id=340]" level="error">
   <title>SampleFormat tag valid Type</title>
   <description>SampleFormat Tag type must matches best matches the sample data</description>
-  <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
   <assert test="{type=='SHORT'}">SampleFormat Tag type is not valid, a SHORT type is expected</assert>
  </rule>
  -->
  <rule id="TAG-340-0002" context="ifd[id=340]" level="error">
   <title>SMinSampleValue valid cardinality</title>
   <description>The cardinality SMinSampleValue Tag type must be SamplesPerPixel</description>
-  <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
   <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel] }">Invalid cardinality, SMinSampleValue cardinality should be SamplesPerPixel</assert>
  </rule>
  
  <rule id="TAG-340-0003" context="ifd[class=image]" level="warning">
   <title>SMinSampleValue only in Image IFD</title>
   <description>SMinSampleValue should only be used in a Image File Directory containing an image</description>
-  <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
   <assert test="{tags.tag[name=SMinSampleValue]} &amp;&amp; {class != image}">SMinSampleValue tag should only be used in a Image File Directory containing an image</assert>
  </rule>
 </rules>
@@ -1120,21 +1120,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
  <rule id="TAG-341-0001" context="tag[id=340]" level="error">
   <title>SMaxSampleValue tag valid Type</title>
   <description>SMaxSampleValue Tag type must matches best matches the sample data</description>
-  <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
   <assert test="">SampleFormat Tag type is not valid, a SHORT type is expected</assert>
  </rule>
  -->
   <rule id="TAG-341-0002" context="ifd[id=340]" level="error">
    <title>SMaxSampleValue valid cardinality</title>
    <description>The cardinality SMaxSampleValue Tag type must be SamplesPerPixel</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel] }">Invalid cardinality, SMaxSampleValue cardinality should be SamplesPerPixel</assert>
   </rule>
   
   <rule id="TAG-341-0003" context="ifd[class=image]" level="warning">
    <title>SMaxSampleValue only in Image IFD</title>
    <description>SMaxSampleValue should only be used in a Image File Directory containing an image</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=SMaxSampleValue]} &amp;&amp; {class != image}">SMaxSampleValue tag should only be used in a Image File Directory containing an image</assert>
   </rule>
  </rules>
@@ -1153,21 +1153,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-318-0001" context="tag[id=318]" level="error">
    <title>WhitePoint tag valid Type</title>
    <description>WhitePoint Tag type must be RATIONAL</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{type=='RATIONAL'}">WhitePoint Tag type is not valid, a RATIONAL type is expected</assert>
   </rule>
   
   <rule id="TAG-318-0002" context="ifd[id=318]" level="error">
    <title>WhitePoint valid cardinality</title>
    <description>The cardinality WhitePoint Tag type must be SamplesPerPixel</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=WhitePoint].cardinality == 2 }">Invalid cardinality, WhitePoint cardinality should be 2</assert>
   </rule>
   <!--
   <rule id="TAG-318-0003" context="ifd" level="warning">
    <title>WhitePoint only in Image IFD</title>
    <description>WhitePoint should only be used in a Image File Directory containing an RGB image</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=WhitePoint]} &amp;&amp; {type == RGB}">WhitePoint tag should only be used in a Image File Directory containing an RGB image</assert>
   </rule>
  </rules>
@@ -1187,21 +1187,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-319-0001" context="tag[id=319]" level="error">
    <title>PrimaryChromaticities tag valid Type</title>
    <description>PrimaryChromaticities Tag type must be RATIONAL</description>
-   <reference><section>Section 20: RGB Image Colorimetry</section><page>83</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 20: RGB Image Colorimetry</section><page>83</page></reference>
    <assert test="{type=='RATIONAL'}">PrimaryChromaticities Tag type is not valid, a RATIONAL type is expected</assert>
   </rule>
   
   <rule id="TAG-319-0002" context="ifd[id=319]" level="error">
    <title>PrimaryChromaticities valid cardinality</title>
    <description>The cardinality PrimaryChromaticities Tag type must be SamplesPerPixel</description>
-   <reference><section>Section 20: RGB Image Colorimetry</section><page>83</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 20: RGB Image Colorimetry</section><page>83</page></reference>
    <assert test="{tags.tag[name=WhitePoint].cardinality == 6 }">Invalid cardinality, PrimaryChromaticities cardinality should be 2</assert>
   </rule>
   <!--
   <rule id="TAG-319-0003" context="ifd" level="warning">
    <title>PrimaryChromaticities only in Image IFD</title>
    <description>PrimaryChromaticities should only be used in a Image File Directory containing an RGB image</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=PrimaryChromaticities]} &amp;&amp; {type == RGB}">PrimaryChromaticities tag should only be used in a Image File Directory containing an RGB image</assert>
   </rule> -->
  </rules>
@@ -1222,21 +1222,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-301-0001" context="tag[id=301]" level="error">
    <title>TransferFunction tag valid Type</title>
    <description>TransferFunction Tag type must be SHORT</description>
-   <reference><section>Section 20: RGB Image Colorimetry</section><page>84</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 20: RGB Image Colorimetry</section><page>84</page></reference>
    <assert test="{type=='SHORT'}">TransferFunction Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   <!--
   <rule id="TAG-301-0002" context="ifd[id=301]" level="error">
    <title>TransferFunction valid cardinality</title>
    <description>The cardinality TransferFunction Tag type must be SamplesPerPixel</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test=""></assert>
   </rule>
  
   <rule id="TAG-301-0003" context="ifd" level="warning">
    <title>TransferFunction only in Image IFD</title>
    <description>TransferFunction should only be used in a Image File Directory containing an RGB image</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=PrimaryChromaticities]} &amp;&amp; {type == YCbCr} ||  {type == RGB} ">TransferFunction tag should only be used in a Image File Directory containing an RGB image</assert>
   </rule>-->
  </rules>
@@ -1257,28 +1257,28 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-342-0001" context="tag[id=319]" level="error">
    <title>TransferRange tag valid Type</title>
    <description>TransferRange Tag type must be SHORT</description>
-   <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
    <assert test="{type=='SHORT'}">TransferRange Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-342-0002" context="ifd[id=319]" level="error">
    <title>TransferRange valid cardinality</title>
    <description>The cardinality TransferRange Tag type must be SamplesPerPixel</description>
-   <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
    <assert test="{tags.tag[name=WhitePoint].cardinality == 6 }">Invalid cardinality, TransferRange cardinality should be 6</assert>
   </rule>
   <!--
   <rule id="TAG-342-0003" context="ifd" level="warning">
    <title>TransferRange only in Image IFD</title>
    <description>PrimaryChromaticities should only be used in a Image File Directory containing an RGB image</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=TransferRange]} &amp;&amp; {type == YCbCr} ||  {type == RGB}">PrimaryChromaticities tag should only be used in a Image File Directory containing an RGB image</assert>
   </rule> -->
   
   <rule id="TAG-342-0004" context="ifd" level="error">
    <title>TransferRange need TransferFunction tag</title>
    <description>TransferRange may only be used when in a TransferFunction is defined</description>
-   <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
    <assert test="{!tags.tag[name=TransferRange]} || {!tags.tag[name=TransferFunction]}">TransferRange tag may only be used when a transfer function is defined</assert>
   </rule> 
  </rules>
@@ -1299,21 +1299,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-532-0001" context="tag[id=532]" level="error">
    <title>ReferenceBlackWhite tag valid Type</title>
    <description>ReferenceBlackWhite Tag type must be RATIONAL</description>
-   <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
    <assert test="{type=='RATIONAL'}">ReferenceBlackWhite Tag type is not valid, a RATIONAL type is expected</assert>
   </rule>
   
   <rule id="TAG-532-0002" context="ifd[id=532]" level="error">
    <title>ReferenceBlackWhite valid cardinality</title>
    <description>The cardinality ReferenceBlackWhite Tag type must be 6</description>
-   <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
    <assert test="{tags.tag[name=ReferenceBlackWhite].cardinality == 6 }">Invalid cardinality, ReferenceBlackWhite cardinality should be 6</assert>
   </rule>
   <!--
   <rule id="TAG-532-0003" context="ifd" level="warning">
    <title>ReferenceBlackWhite only in Image IFD</title>
    <description>ReferenceBlackWhite should only be used in a Image File Directory containing an RGB o  YCbCr image</description>
-   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 19: Data Sample Format</section><page>80</page></reference>
    <assert test="{tags.tag[name=ReferenceBlackWhite]} &amp;&amp; {type == YCbCr} ||  {type == RGB}">ReferenceBlackWhite tag should only be used in a Image File Directory containing an RGB or YCbCr image</assert>
   </rule> -->
 
@@ -1337,35 +1337,35 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
     A value of 6 indicates that the image data is in the YCbCr color space. TIFF uses the international standard notation YCbCr for color-difference sample coding. 
     Y is the luminance component. Cb and Cr are the two chrominance components. 
     RGB pixels are converted to and from YCbCr form for storage and display</description>
-   <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
    <assert test="{tags.tag[name=PhotometricInterpretation] == 6}">Photometric Interpretation value must be 6 for YCbCr images</assert>
   </rule>
   
   <rule id="YCBCR-0002" context="ifd[type=YCbCr]" level="error">
    <title>YCbCr Images must contain ReferenceBlackWhite</title>
    <description>Default for ReferenceBlackWhite is inappropriate for Class Y, it must be used explicitly</description>
-   <reference><section>Section 21: YCbCr Images</section><page>89</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>89</page></reference>
    <assert test="{tags.tag[name=ReferenceBlackWhite]}">Default for ReferenceBlackWhite is inappropriate for Class Y, it must be used explicitly</assert>
   </rule>
   
   <rule id="YCBCR-0003" context="ifd[type=YCbCr]" level="error">
    <title>Valid samples per Pixel</title>
    <description>When No Extra Sample is defined then SamplesPerPixel must be 3 for YCbCr Images.</description>
-   <reference><section>Section 21: YCbCr Images</section><page>89</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>89</page></reference>
    <assert test="{!tags.tag[name=Extrasample]} || {tags.tag[name=SamplesPerPixel] == 3}">SamplesPerPixel  must be 3 for YCbCr images without ExtraSamples</assert>
   </rule>
   
   <rule id="YCBCR-0004" context="ifd[type=YCbCr]" level="error">
    <title>Valid BitsPerSample</title>
    <description>When No Extra Sample is defined then BitsPerSample must be 8,8,8 for YCbCr Images.</description>
-   <reference><section>Section 21: YCbCr Images</section><page>94</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>94</page></reference>
    <assert test="{!tags.tag[name=Extrasample]} || {tags.tag[name=BitsPerSample] == '8,8,8'}">SamplesPerPixel  must be 3 for YCbCr images without ExtraSamples</assert>
   </rule>
   
   <rule id="IFDR-0005" context="ifd[type=YCbCr]" level="error">
    <title>Valid compression for YCbCr image</title>
    <description>YCbCr images can either be stored as uncompressed(1) data or compressed with the LZW(5) or JPEG(6) algorithm.</description>
-   <reference><section>Section 21: YCbCr Images</section><page>94</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>94</page></reference>
    <assert test="{!tags.tag[name=Compression]} || {tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 5} || {tags.tag[name=Compression] == 6}">Invalid Compression for YCbCr image</assert>
   </rule>
   
@@ -1385,35 +1385,35 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-529-0001" context="tag[id=529]" level="error">
    <title>YCbCrCoefficients tag valid Type</title>
    <description>YCbCrCoefficients Tag type must be RATIONAL</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{type=='RATIONAL'}">YCbCrCoefficients Tag type is not valid, a RATIONAL type is expected</assert>
   </rule>
   
   <rule id="TAG-529-0002" context="ifd[id=529]" level="error">
    <title>YCbCrCoefficients valid cardinality</title>
    <description>The cardinality YCbCrCoefficients Tag type must be 3</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{tags.tag[name=YCbCrCoefficients].cardinality == 3 }">Invalid cardinality, YCbCrCoefficients cardinality should be 3</assert>
   </rule>
   
   <rule id="TAG-529-0003" context="ifd" level="warning">
    <title>YCbCrCoefficients only in Image YCbCr</title>
    <description>YCbCrCoefficients should only be used in a Image File Directory containing an YCbCr image</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{tags.tag[name=YCbCrCoefficients]} &amp;&amp; {type != 'YCbCr'}">ReferenceBlackWhite tag should only be used in a Image File Directory containing a YCbCr image</assert>
   </rule> 
   
   <rule id="TAG-529-0004" context="ifd[type=YCbCr]" level="warning">
    <title>YCbCrCoefficients defined</title>
    <description>YCbCrCoefficients tag is defined the values may not follow the CCIR Recommendation 601-1: 299/1000, 587/1000 and 114/1000, for LumaRed, LumaGreen and LumaBlue, respectively. </description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{tags.tag[name=YCbCrCoefficients]}">YCbCrCoefficients tag is defined. The values may not follow the CCIR Recommendation 601-1: 299/1000, 587/1000 and 114/1000, for LumaRed, LumaGreen and LumaBlue, respectively.</assert>
   </rule> 
 
   <rule id="TAG-529-0005" context="ifd[type=YCbCr]" level="info">
    <title>YCbCrCoefficients default value</title>
    <description>YCbCrCoefficients tag has a default value, if it is not present values defined by CCIR Recommendation 601-1:299/1000, 587/1000 and 114/1000, for LumaRed, LumaGreen and LumaBlue,  are assumed</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{!tags.tag[name=YCbCrCoefficients]}">YCbCrCoefficients tag is not defined. Then values 299/1000, 587/1000 and 114/1000 are assumed (CCIR Recommendation 601-1).</assert>
   </rule> 
  </rules>
@@ -1446,28 +1446,28 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-530-0001" context="tag[id=530]" level="error">
    <title>YCbCrSubSampling tag valid Type</title>
    <description>YCbCrSubSampling Tag type must be SHORT</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{type=='SHORT'}">YCbCrSubSampling Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-530-0002" context="ifd[id=530]" level="error">
    <title>YCbCrSubSampling valid cardinality</title>
    <description>The cardinality YCbCrSubSampling Tag type must be 2</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{tags.tag[name=YCbCrCoefficients].cardinality == 2}">Invalid cardinality, YCbCrSubSampling cardinality should be 2</assert>
   </rule>
   
   <rule id="TAG-530-0003" context="ifd" level="warning">
    <title>YCbCrSubSampling only in Image YCbCr</title>
    <description>YCbCrSubSampling should only be used in a Image File Directory containing an YCbCr image</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{tags.tag[name=YCbCrSubSampling]} &amp;&amp; {type != 'YCbCr'}">YCbCrSubSampling tag should only be used in a Image File Directory containing a YCbCr image</assert>
   </rule> 
   
   <rule id="TAG-530-0004" context="ifd[type=YCbCr]" level="info">
    <title>YCbCrSubSampling default value</title>
    <description>YCbCrSubSampling tag has a default value, if it is not present values [ 2, 2 ]  are assumed</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{!tags.tag[name=YCbCrSubSampling]}">YCbCrSubSampling tag is not defined. Then values [ 2, 2 ] are assumed.</assert>
   </rule> 
 
@@ -1475,49 +1475,49 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
  <rule id="TAG-530-0005" context="ifd[type=YCbCr]" level="error" experimental="true">
   <title>YCbCrSubsampleVert less than or equal to YCbCrSubsampleHoriz</title>
   <description>YCbCrSubsampleVert shall always be less than or equal to YCbCrSubsampleHoriz.</description>
-  <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
   <assert test="{tags.tag[name=YCbCrSubSampling](1) - 1  &lt; tags.tag[name=YCbCrSubSampling](0)}">YCbCrSubSampling tag is not defined. Then values [ 2, 2 ] are assumed.</assert>
  </rule> 
  
  <rule id="TAG-530-0006" context="ifd[type=YCbCr]" level="error" experimental="true">
   <title>YCbCrSubsampleVert less than or equal to YCbCrSubsampleHoriz</title>
   <description>YCbCrSubsampleVert shall always be less than or equal to YCbCrSubsampleHoriz.</description>
-  <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
   <assert test="{tags.tag[name=YCbCrSubSampling](1) - 1  &lt; tags.tag[name=YCbCrSubSampling](0)}">YCbCrSubSampling tag is not defined. Then values [ 2, 2 ] are assumed.</assert>
  </rule>
  
  <rule id="TAG-530-0007" context="ifd[type=YCbCr]" level="error" experimental="true">
   <title>ImageWidth multiple of YCbCrSubsampleHoriz</title>
   <description>ImageWidth and ImageLength are constrained to be integer multiples of YCbCrSubsampleHoriz and YCbCrSubsampleVert respectively.</description>
-  <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
   <assert test="{!tags.tag[name=YCbCrSubSampling]} &amp;&amp; {tags.tag[name=ImageWidth] % 2 == 0} || {tags.tag[name=ImageWidth] % tags.tag[name=YCbCrSubSampling](0) == 0}">ImageWidth are constrained to be integer multiples of YCbCrSubsampleHoriz</assert>
  </rule>
  
  <rule id="TAG-530-0008" context="ifd[type=YCbCr]" level="error" experimental="true">
   <title>ImageLength multiple of YCbCrSubsampleVert</title>
   <description>ImageWidth and ImageLength are constrained to be integer multiples of YCbCrSubsampleHoriz and YCbCrSubsampleVert respectively.</description>
-  <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
   <assert test="{!tags.tag[name=YCbCrSubSampling]} &amp;&amp; {tags.tag[name=ImageLength] % 2 == 0} || {tags.tag[name=ImageLength] % tags.tag[name=YCbCrSubSampling](1) == 0}">ImageLength are constrained to be integer multiples of YCbCrSubsampleVert</assert>
  </rule>
  
  <rule id="TAG-530-0009" context="ifd[type=YCbCr]" level="error">
   <title>TileWidth multiple of YCbCrSubsampleHoriz</title>
   <description>TileWidth and TileLength are constrained to be integer multiples of YCbCrSubsampleHoriz and YCbCrSubsampleVert respectively.</description>
-  <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
   <assert test="{strips==0} || {tags.tag[name=TileWidth] % 2 == 0} || {tags.tag[name=TileWidth] % tags.tag[name=YCbCrSubSampling](0) == 0}">TileWidth are constrained to be integer multiples of YCbCrSubsampleHoriz</assert>
  </rule>
  
  <rule id="TAG-530-0010" context="ifd[type=YCbCr]" level="error">
   <title>TileLength multiple of YCbCrSubsampleVert</title>
   <description>TileWidth and TileLength are constrained to be integer multiples of YCbCrSubsampleHoriz and YCbCrSubsampleVert respectively.</description>
-  <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
   <assert test="{strips==0} || {tags.tag[name=TileWidth] % 2 == 0} || {tags.tag[name=TileWidth] % tags.tag[name=YCbCrSubSampling](1) == 0}">TileLength are constrained to be integer multiples of YCbCrSubsampleVert</assert>
  </rule>
  
  <rule id="TAG-530-0011" context="ifd[type=YCbCr]" level="error">
   <title>TileLength multiple of YCbCrSubsampleVert</title>
   <description>RowsPerStrip must be an integer multiple of YCbCrSubsampleVert.</description>
-  <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
   <assert test="{tiles==0} || {tags.tag[name=RowsPerStrip] % 2 == 0} || {tags.tag[name=RowsPerStrip] % tags.tag[name=YCbCrSubSampling](1) == 0}">RowsPerStrip are constrained to be integer multiples of YCbCrSubsampleVert</assert>
  </rule>
  </rules>
@@ -1544,35 +1544,35 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-531-0001" context="tag[id=531]" level="error">
    <title>YCbCrPositioning tag valid Type</title>
    <description>YCbCrPositioning Tag type must be SHORT</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{type=='SHORT'}">YCbCrPositioning Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-531-0002" context="tag[id=531]" level="error">
    <title>YCbCrPositioning valid cardinality</title>
    <description>The cardinality YCbCrPositioning Tag type must be 1</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{cardinality == 1}">Invalid cardinality, YCbCrPositioning cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-531-0003" context="ifd[type=YCbCr]" level="error">
    <title>YCbCrPositioning valid values</title>
    <description>The valid values for YCbCrPositioning tag are 1 or 2</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{tags.tag[name=YCbCrPositioning] &gt; 0} &amp;&amp; {tags.tag[name=YCbCrPositioning] &lt; 3}">Invalid value, YCbCrPositioning values should be 1 or 2</assert>
   </rule>
  
   <rule id="TAG-531-0004" context="ifd" level="warning">
    <title>YCbCrPositioning only in Image YCbCr</title>
    <description>YCbCrPositioning should only be used in a Image File Directory containing an YCbCr image</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{tags.tag[name=YCbCrPositioning]} &amp;&amp; {type != 'YCbCr'}">YCbCrPositioning tag should only be used in a Image File Directory containing a YCbCr image</assert>
   </rule> 
   
   <rule id="TAG-531-0005" context="ifd[type=YCbCr]" level="info">
    <title>YCbCrPositioning default value</title>
    <description>YCbCrPositioning tag has a default value, if it is not present value 1 is assumed</description>
-   <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 21: YCbCr Images</section><page>90</page></reference>
    <assert test="{!tags.tag[name=YCbCrPositioning]}">YCbCrPositioning tag is not defined. Then values 1 is assumed.</assert>
   </rule> 
  </rules>
@@ -1590,7 +1590,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
     RGB (Photometric Interpretation = 2)
     CMYK (Photometric Interpretation = 5) 
     YCbCr (Photometric Interpretation = 6)</description>
-   <reference><section>Section 22: JPEG Compression</section><page>102</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>102</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} || {type=='Grayscale'} || {type=='RGB'} || {type=='CMYK'} || {type=='YCbCr'}">JPEG is effective only on continuous-tone color spaces</assert>
   </rule>
   
@@ -1598,7 +1598,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>JPEG default Block Interleaved</title>
    <description>The PlanarConfiguration Field is used to specify whether or not the compressed data is interleaved as defined by JPEG. 
     For any of the JPEG DCTbased processes, the interleaved data units are coded 8x8 blocks rather than component samples</description>
-   <reference><section>Section 22: JPEG Compression</section><page>103</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>103</page></reference>
    <assert test="{tags.tag[name=Compression] == 6} &amp;&amp; {!tags.tag[name=PlanarConfiguration]} ">When JPEG compression is used in a TIFF image the PlanarConfiguration default value (1) Field is used to specify Block Interleaved JPEG</assert>
   </rule>
   
@@ -1606,7 +1606,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>JPEG Block Interleaved</title>
    <description>The PlanarConfiguration Field is used to specify whether or not the compressed data is interleaved as defined by JPEG. 
     For any of the JPEG DCTbased processes, the interleaved data units are coded 8x8 blocks rather than component samples</description>
-   <reference><section>Section 22: JPEG Compression</section><page>103</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>103</page></reference>
    <assert test="{tags.tag[name=Compression] == 6} &amp;&amp; {tags.tag[name=PlanarConfiguration] == 1} ">When JPEG compression is used in a TIFF image the PlanarConfiguration (1)Field is used to specify Block Interleaved JPEG</assert>
   </rule>
   
@@ -1614,7 +1614,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>JPEG not interleaved</title>
    <description>The PlanarConfiguration Field is used to specify whether or not the compressed data is interleaved as defined by JPEG. 
     For any of the JPEG DCTbased processes, the interleaved data units are coded 8x8 blocks rather than component samples</description>
-   <reference><section>Section 22: JPEG Compression</section><page>103</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>103</page></reference>
    <assert test="{tags.tag[name=Compression] == 6} &amp;&amp; {tags.tag[name=PlanarConfiguration] == 2} ">When JPEG compression is used in a TIFF image the PlanarConfiguration (2)Field is used to specify not Interleaved JPEG</assert>
   </rule>
   
@@ -1622,7 +1622,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>JPEG and strips</title>
    <description>Although JPEG codes consecutive image blocks in a single contiguous bitstream, it is extremely useful to employ the concept of tiles in an image. 
     The TIFF Tiles section defines some new fields for tiles. These fields should be stored in place of the older fields for strips. The concept of tiling an image in both dimensions is important because JPEG hardware may be limited in the size of each block that is handled.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>103</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>103</page></reference>
    <assert test="{tags.tag[name=Compression] == 6} &amp;&amp; {strips==1}">It is extremely recommended using a tiled data structure when JPEG compression is applied</assert>
   </rule>
   <rule id="JPEG-0006" context="ifd[class=image]" level="error" experimental="true">
@@ -1630,28 +1630,28 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <description>To maximize interchangeability of TIFF files with other formats, a restriction is placed on tile height for files containing JPEG-compressed image data conforming to the JPEG interchange format syntax. 
     The restriction, imposed only when the tile width is shorter than the image width and when the JPEGInterchangeFormat Field is present and non-zero, states that the tile height must be equal to the height of one JPEG Minimum Coded Unit (MCU).
     This restriction ensures that TIFF files may be converted to JPEG interchange format without undergoing decompression.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>103</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>103</page></reference>
    <assert test="{!tags.tag[name=JPEGInterchangeFormat]} || {tags.tag[name=JPEGInterchangeFormat] == 0} &amp;&amp; {tiles==1} || {tags.tag[name=TileWidth] &lt; tags.tag[name=ImageWidth]  &amp;&amp; {tags.tag[name=TileHeight] == tags.tag[name=JPEGRestartInterval] }"></assert>
   </rule>
   
   <rule id="JPEG-0007" context="ifd[class=image]" level="error" >
    <title>JPEG must be a single image</title>
    <description>When JPEG compression is used NewSubFileType must define a single image</description>
-   <reference><section>Section 22: JPEG Compression</section><page>109</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>109</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} || {!tags.tag[name=NewSubfileType]} || {tags.tag[name=NewSubfileType] == 0}">When JPEG compression is used NewSubFileType must define a single image</assert>
   </rule>
   
   <rule id="JPEG-0008" context="ifd[class=image]" level="error" >
    <title>JPEG tile width multiple of 8</title>
    <description>When JPEG compression is used tile width must be multiple of 8</description>
-   <reference><section>Section 22: JPEG Compression</section><page>109</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>109</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} || {tags.tag[name=NewSubfileType] == 0}"></assert>
   </rule>
   
   <rule id="JPEG-0009" context="ifd[class=image]" level="error" >
    <title>JPEG tile width multiple of 8</title>
    <description>When JPEG compression is used tile width must be multiple of 8</description>
-   <reference><section>Section 22: JPEG Compression</section><page>109</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>109</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} || {tags.tag[name=NewSubfileType] == 0}"></assert>
   </rule>
   
@@ -1674,21 +1674,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
  <rule id="TAG-512-0001" context="tag[id=512]" level="error">
   <title>JPEGProc tag valid Type</title>
   <description>JPEGProc Tag type must be SHORT</description>
-  <reference><section>Section 22: JPEG Compression</section><page>104</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>104</page></reference>
   <assert test="{type=='SHORT'}">JPEGProc Tag type is not valid, a SHORT type is expected</assert>
  </rule>
  
  <rule id="TAG-512-0002" context="tag[id=512]" level="error">
   <title>JPEGProc valid cardinality</title>
   <description>The cardinality JPEGProc Tag type must be 1</description>
-  <reference><section>Section 22: JPEG Compression</section><page>104</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>104</page></reference>
   <assert test="{cardinality == 1}">Invalid cardinality, JPEGProc cardinality should be 1</assert>
  </rule>
  
  <rule id="TAG-512-0003" context="ifd[class=image]" level="error">
   <title>JPEGProc valid values</title>
   <description>The valid values for JPEGProc tag are 1 (Baseline sequential process) or 14 (Lossless process with Huffman coding)</description>
-  <reference><section>Section 22: JPEG Compression</section><page>104</page></reference>
+  <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>104</page></reference>
   <assert test="{tags.tag[name=JPEGProc] == 1} || {tags.tag[name=JPEGProc] == 14}">Invalid value, JPEGProc values should be 1 or 14</assert>
  </rule>
 </rules>
@@ -1707,14 +1707,14 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-513-0001" context="tag[id=513]" level="error">
    <title>JPEGInterchangeFormat tag valid Type</title>
    <description>JPEGInterchangeFormat Tag type must be LONG</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{type=='LONG'}">JPEGInterchangeFormat Tag type is not valid, a LONG type is expected</assert>
   </rule>
   
   <rule id="TAG-513-0002" context="tag[id=513]" level="error">
    <title>JPEGInterchangeFormat valid cardinality</title>
    <description>The cardinality JPEGInterchangeFormat Tag type must be 1</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{cardinality == 1}">Invalid cardinality, JPEGInterchangeFormat cardinality should be 1</assert>
   </rule>
   
@@ -1722,7 +1722,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <title>JPEG interchange format</title>
    <description>This Field indicates whether a JPEG interchange format bitstream is present in the TIFF file. 
     If a JPEG interchange format bitstream is present, then this Field points to the Start of Image (SOI) marker code.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=JPEGInterchangeFormat] &gt; 0}">JPEG compression with JPEG interchange format to maximize interchangeability of TIFF files with other formats</assert>
   </rule>
  </rules>
@@ -1741,21 +1741,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-514-0001" context="tag[id=514]" level="error">
    <title>JPEGInterchangeFormatLength tag valid Type</title>
    <description>JPEGInterchangeFormatLength Tag type must be LONG</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{type=='LONG'}">JPEGInterchangeFormatLength Tag type is not valid, a LONG type is expected</assert>
   </rule>
   
   <rule id="TAG-514-0002" context="tag[id=514]" level="error">
    <title>JPEGInterchangeFormatLength valid cardinality</title>
    <description>The cardinality JPEGInterchangeFormatLength Tag type must be 1</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{cardinality == 1}">Invalid cardinality, JPEGInterchangeFormatLength cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-514-0003" context="ifd[class=image]" level="error">
    <title>JPEGInterchangeFormatLength only used with JPEGInterchangeFormat</title>
    <description>This Field is relevant only if the JPEGInterchangeFormat Field is present and is non-zero.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{!tags.tag[name=JPEGInterchangeFormatLength]} || {tags.tag[name=Compression] == 6} &amp;&amp; {tags.tag[name=JPEGInterchangeFormat] &gt; 0}">JPEGInterchangeFormatLength should only be used if the JPEGInterchangeFormat Field is present and is non-zero</assert>
   </rule>
  </rules>
@@ -1773,21 +1773,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-515-0001" context="tag[id=515]" level="error">
    <title>JPEGRestartInterval tag valid Type</title>
    <description>JPEGRestartInterval Tag type must be SHORT</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{type=='SHORT'}">JPEGRestartInterval Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-515-0002" context="tag[id=515]" level="error">
    <title>JPEGRestartInterval valid cardinality</title>
    <description>The cardinality JPEGRestartInterval Tag type must be 1</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{cardinality == 1}">Invalid cardinality, JPEGRestartInterval cardinality should be 1</assert>
   </rule>
   
   <rule id="TAG-515-0003" context="ifd[class=image]" level="warning">
    <title>JPEGRestartInterval only used with JPEG compression</title>
    <description>JPEGRestartInterval is relevant only if the JPEG compression is used.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} &amp;&amp; {tags.tag[name=JPEGRestartInterval]}">JPEGRestartInterval should only be used if the JPEG  compression is used</assert>
   </rule>
  </rules>
@@ -1803,21 +1803,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-517-0001" context="tag[id=517]" level="error">
    <title>JPEGLosslessPredictors tag valid Type</title>
    <description>JPEGLosslessPredictors Tag type must be SHORT</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{type=='SHORT'}">JPEGLosslessPredictors Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-517-0002" context="ifd[class=image]" level="error">
    <title>JPEGLosslessPredictors valid cardinality</title>
    <description>The cardinality JPEGLosslessPredictors Tag should match SamplesPerPixel</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Invalid cardinality, JPEGLosslessPredictors cardinality should match SamplesPerPixel</assert>
   </rule>
   
   <rule id="TAG-517-0003" context="ifd[class=image]" level="warning">
    <title>JPEGLosslessPredictors only used with JPEG compression</title>
    <description>JPEGLosslessPredictors is relevant only if the JPEG compression is used.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} &amp;&amp; {tags.tag[name=JPEGLosslessPredictors]}">JPEGLosslessPredictors should only be used if the JPEG  compression is used</assert>
   </rule>
  </rules>
@@ -1834,21 +1834,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-518-0001" context="tag[id=517]" level="error">
    <title>JPEGPointTransforms tag valid Type</title>
    <description>JPEGPointTransforms Tag type must be SHORT</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{type=='SHORT'}">JPEGPointTransforms Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
   <rule id="TAG-518-0002" context="ifd[class=image]" level="error">
    <title>JPEGPointTransforms valid cardinality</title>
    <description>The cardinality JPEGPointTransforms Tag should match SamplesPerPixel</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Invalid cardinality, JPEGPointTransforms cardinality should match SamplesPerPixel</assert>
   </rule>
   
   <rule id="TAG-518-0003" context="ifd[class=image]" level="warning">
    <title>JPEGPointTransforms only used with JPEG compression</title>
    <description>JPEGPointTransforms is relevant only if the JPEG lossless compression is used.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} &amp;&amp; {tags.tag[name=JPEGProc] != 14}  &amp;&amp; {tags.tag[name=JPEGPointTransforms]}">JPEGPointTransforms should only be used if the JPEG lossless compression is used</assert>
   </rule>
  </rules>
@@ -1874,21 +1874,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-519-0001" context="tag[id=519]" level="error">
    <title>JPEGQTables tag valid Type</title>
    <description>JPEGQTables Tag type must be LONG</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{type=='LONG'}">JPEGQTables Tag type is not valid, a LONG type is expected</assert>
   </rule>
   
   <rule id="TAG-519-0002" context="ifd[class=image]" level="error">
    <title>JPEGQTables valid cardinality</title>
    <description>The cardinality JPEGQTables Tag should match SamplesPerPixel</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Invalid cardinality, JPEGQTables cardinality should match SamplesPerPixel</assert>
   </rule>
   
   <rule id="TAG-519-0003" context="ifd[class=image]" level="warning">
    <title>JPEGQTables only used with JPEG compression</title>
    <description>JPEGQTables is relevant only if the JPEG  compression is used.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} &amp;&amp; {tags.tag[name=JPEGQTables]}">JPEGQTables should only be used if the JPEG  compression is used</assert>
   </rule>
  </rules>
@@ -1913,21 +1913,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-520-0001" context="tag[id=520]" level="error">
    <title>JPEGDCTables tag valid Type</title>
    <description>JPEGDCTables Tag type must be LONG</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{type=='LONG'}">JPEGDCTables Tag type is not valid, a LONG type is expected</assert>
   </rule>
   
   <rule id="TAG-520-0002" context="ifd[class=image]" level="error">
    <title>JPEGDCTables valid cardinality</title>
    <description>The cardinality JPEGDCTables Tag should match SamplesPerPixel</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Invalid cardinality, JPEGDCTables cardinality should match SamplesPerPixel</assert>
   </rule>
   
   <rule id="TAG-520-0003" context="ifd[class=image]" level="warning">
    <title>JPEGDCTables only used with JPEG compression</title>
    <description>JPEGDCTables is relevant only if the JPEG  compression is used.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} &amp;&amp; {tags.tag[name=JPEGDCTables]}">JPEGDCTables should only be used if the JPEG  compression is used</assert>
   </rule>
  </rules>
@@ -1952,21 +1952,21 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="TAG-521-0001" context="tag[id=521]" level="error">
    <title>JPEGACTables tag valid Type</title>
    <description>JPEGACTables Tag type must be LONG</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{type=='LONG'}">JPEGACTables Tag type is not valid, a LONG type is expected</assert>
   </rule>
   
   <rule id="TAG-521-0002" context="ifd[class=image]" level="error">
    <title>JPEGACTables valid cardinality</title>
    <description>The cardinality JPEGACTables Tag should match SamplesPerPixel</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Invalid cardinality, JPEGACTables cardinality should match SamplesPerPixel</assert>
   </rule>
   
   <rule id="TAG-521-0003" context="ifd[class=image]" level="warning">
    <title>JPEGACTables only used with JPEG compression</title>
    <description>JPEGACTables is relevant only if the JPEG  compression is used.</description>
-   <reference><section>Section 22: JPEG Compression</section><page>105</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 22: JPEG Compression</section><page>105</page></reference>
    <assert test="{tags.tag[name=Compression] != 6} &amp;&amp; {tags.tag[name=JPEGACTables]}">JPEGACTables should only be used if the JPEG  compression is used</assert>
   </rule>
  </rules>
@@ -1980,7 +1980,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="CIELab-0001" context="ifd[type=CIELab]" level="error">
    <title>Valid PhotometricInterpretation for CIE L*a*b* </title>
    <description>An Image File directory containing a CIE L*a*b* image must have a value 8 in Photometric Interpretation tag </description>
-   <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
    <assert test="{tags.tag[name=PhotometricInterpretation] == 6}"></assert>
   </rule>
   
@@ -1988,35 +1988,35 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <rule id="CIELab-0002" context="ifd[type=CIELab]" level="error" experimental="true">
    <title>Valid bits per sample and samples per Pixel</title>
    <description>A CIE L*a*b* image should have 3 Samples per pixel and 8 bits per sample unless an extra sample is defined</description>
-   <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
    <assert test="{!tags.tag[name=ExtraSample]} || {tags.tag[name=BitsPerSample] == '8,8,8'} &amp;&amp; {tags.tag[name=SamplesPerPixel] == 3}"></assert>
   </rule>
   
   <rule id="CIELab-0003" context="ifd[type=CIELab]" level="error" experimental="true">
    <title>Valid bits per sample and samples per Pixel</title>
    <description>A CIE L*a*b* image should have 3 Samples per pixel and 8 bits per sample unless an extra sample is defined</description>
-   <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
    <assert test="{tags.tag[name=ExtraSample]} &amp;&amp; {tags.tag[name=SamplesPerPixel] - tags.tag[name=ExtraSample] == 3}"></assert>
   </rule>
   
   <rule id="CIELab-0004" context="ifd[type=CIELab]" level="error" experimental="true">
    <title>CIE L*a*b* image invalid WhitePoint tag</title>
    <description>A CIE L*a*b* must not apply WhitePoint tag</description>
-   <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
    <assert test="{!tags.tag[name=WhitePoint]}">A CIE L*a*b* Image must not contain a WhitePoint tag</assert>
   </rule>
   
   <rule id="CIELab-0005" context="ifd[type=CIELab]" level="error" experimental="true">
    <title>CIE L*a*b* image invalid PrimaryChromaticities tag</title>
    <description>A CIE L*a*b* must not apply PrimaryChromaticities tag</description>
-   <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
    <assert test="{!tags.tag[name=PrimaryChromaticities]}">A CIE L*a*b* Image must not contain a PrimaryChromaticities tag</assert>
   </rule>
   
   <rule id="CIELab-0006" context="ifd[type=CIELab]" level="error" experimental="true">
    <title>CIE L*a*b* image invalid TransferFunction tag</title>
    <description>A CIE L*a*b* must not apply TransferFunction tag</description>
-   <reference><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
+   <reference><document>Extended TIFF 6</document><section>Section 23: CIE L*a*b* Images</section><page>111</page></reference>
    <assert test="{!tags.tag[name=TransferFunction]}">A CIE L*a*b* Image must not contain a TransferFunction tag</assert>
   </rule>
   
@@ -2029,79 +2029,79 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <rule id="bl-ca-181" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>22</section><page>107</page></reference>
+    <reference><document>Extended TIFF 6</document><section>22</section><page>107</page></reference>
     <assert test="{tags.tag[name=JPEGLosslessPredictors].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGLosslessPredictors tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-182" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>22</section><page>107</page></reference>
+    <reference><document>Extended TIFF 6</document><section>22</section><page>107</page></reference>
     <assert test="{tags.tag[name=JPEGPointTransforms].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGPointTransforms tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-183" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>22</section><page>107</page></reference>
+    <reference><document>Extended TIFF 6</document><section>22</section><page>107</page></reference>
     <assert test="{tags.tag[name=JPEGQTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGQTables tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-184" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>22</section><page>107</page></reference>
+    <reference><document>Extended TIFF 6</document><section>22</section><page>107</page></reference>
     <assert test="{tags.tag[name=JPEGDCTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGDCTables tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-185" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>22</section><page>107</page></reference>
+    <reference><document>Extended TIFF 6</document><section>22</section><page>107</page></reference>
     <assert test="{tags.tag[name=JPEGACTables].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of JPEGACTables tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-186" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>8</section><page>35</page></reference>
+    <reference><document>Extended TIFF 6</document><section>8</section><page>35</page></reference>
     <assert test="{tags.tag[name=WhiteLevel].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of WhiteLevel tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-190" context="ifd[class=image]" level="error">
-    <title></title>
-    <description></description>
-    <reference><section>8</section><page>35</page></reference>
+    <title>Check valid cardinality for tag SMinSampleValue</title>
+    <description>Check valid cardinality for tag SMinSampleValue</description>
+    <reference><document>Extended TIFF 6</document><section>8</section><page>35</page></reference>
     <assert test="{tags.tag[name=SMinSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMinSampleValue tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-191" context="ifd[class=image]" level="error">
-    <title></title>
-    <description></description>
-    <reference><section>8</section><page>35</page></reference>
+    <title>Check valid cardinality for tag SMaxSampleValue</title>
+    <description>Check valid cardinality for tag SMaxSampleValue</description>
+    <reference><document>Extended TIFF 6</document><section>8</section><page>35</page></reference>
     <assert test="{tags.tag[name=SMaxSampleValue].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SMaxSampleValue tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-192" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>8</section><page>35</page></reference>
+    <reference><document>Extended TIFF 6</document><section>8</section><page>35</page></reference>
     <assert test="{tags.tag[name=ImageBaseColor].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of ImageBaseColor tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-193" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>19</section><page>80</page></reference>
+    <reference><document>Extended TIFF 6</document><section>19</section><page>80</page></reference>
     <assert test="{tags.tag[name=SampleFormat].cardinality == tags.tag[name=SamplesPerPixel]}">Cardinality of SampleFormat tag must match SamplesPerPixel value</assert>
    </rule>
    <rule id="bl-ca-194" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>16</section><page>69</page></reference>
+    <reference><document>Extended TIFF 6</document><section>16</section><page>69</page></reference>
     <assert test="{tags.tag[name=CMYKEquivalent].cardinality == 4*tags.tag[name=SamplesPerPixel]}">CMYKEquivalent count must be 4*Bits per Sample</assert>
    </rule>
    <rule id="bl-ca-195" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>16</section><page>70</page></reference>
+    <reference><document>Extended TIFF 6</document><section>16</section><page>70</page></reference>
     <assert test="{tags.tag[name=Decode].cardinality == 2*tags.tag[name=Decode]}">Decode count must be 2*Bits per Sample</assert>
    </rule>
    <rule id="bl-ca-198" context="ifd[class=image]" level="error">
     <title>Check valid cardinality for tag</title>
     <description>Check valid cardinality for tag</description>
-    <reference><section>16</section><page>71</page></reference>
+    <reference><document>Extended TIFF 6</document><section>16</section><page>71</page></reference>
     <assert test="{tags.tag[name=DotRange].cardinality &gt; 1}">Tag cardinality is not valid</assert>
    </rule>
  </rules>

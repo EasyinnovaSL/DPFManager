@@ -39,7 +39,6 @@ import dpfmanager.shell.modules.periodic.messages.PeriodicMessage;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
-import org.apache.tools.zip.ZipEntry;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;

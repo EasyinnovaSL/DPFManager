@@ -20,7 +20,7 @@
         <rule id="MASTER-0001" context="ifd[thumbnail=0]" level="error">
             <title>Square aspect ration</title>
             <description>In TI/A the only valid pixel aspect ratio is 1:1 (square), so that XResolution equals YResolution</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -32,7 +32,7 @@
                 The following tag-fields define the number of strips and the number of rows of image data stored in each strip: StripOffsets, RowsPerStrip, and StripByteCounts.
                 The image shall be divided into an integral number of strips, from 1 strip to the maximum number of strips, which equals the image’s length.
                 If necessary, the final strip can be "padded" with zeros. </description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -42,7 +42,7 @@
             <title>64 Kbytes per strip</title>
             <description>It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.
                 This value is chosen to maximize compatibility with various operating systems.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -51,7 +51,7 @@
         <rule id="MASTER-0004" context="ifd[thumbnail=0]" level="error">
             <title>NewSubFileType defined</title>
             <description>New NewSubFileType tag must be explicit defined in an Image File Directory storing a master image.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -60,7 +60,7 @@
         <rule id="MASTER-0005" context="ifd[thumbnail=0]" level="error">
             <title>Valid NewSubFileType</title>
             <description>NewSubFileType tag must define a full resolution image in an Image File Directory storing a master image.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -69,7 +69,7 @@
         <rule id="MASTER-0006" context="ifd[thumbnail=0]" level="error">
             <title>valid NewSubFileType</title>
             <description>TI/A standard TIFF defines a unique valid value for NewSubFileType, the value should be 0 for a full resolution image.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -78,7 +78,7 @@
         <rule id="MASTER-0007" context="ifd[thumbnail=0]" level="error">
             <title>SubIFD not permitted</title>
             <description>TI/A do not permit the use of SubIFDs in a master image.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -88,7 +88,7 @@
         <rule id="MASTER-0009" context="ifd[thumbnail=0]" level="error">
             <title>Master image with a subIFD thumbnail</title>
             <description>Although TI/A do not recommend the use of thumbnails, when a thumbnails is defined it must contain a subIFD containing the main image.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -98,7 +98,7 @@
         <rule id="MASTER-0010" context="ifd[thumbnail=0]" level="warning">
             <title>Master image recommended compression</title>
             <description>TI/A do not recommend the use of compression for storing a master images, An uncompressed image is always the best option for archival purpose</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -107,7 +107,7 @@
         <rule id="MASTER-0011" context="ifd[thumbnail=0]" level="error">
             <title>CCITT 1D compression</title>
             <description>CCITT 1D compression is not widely used for archival purpose, therefore obsolete</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -116,7 +116,7 @@
         <rule id="MASTER-0012" context="ifd[thumbnail=0]" level="error">
             <title>Group 3 Fax compression</title>
             <description>Group 3 Fax compression is not widely used for archival purpose, therefore obsolete</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -125,7 +125,7 @@
         <rule id="MASTER-0013" context="ifd[thumbnail=0]" level="warning">
             <title>Group 4 Fax compression</title>
             <description>Although Group 4 Fax compression is supported in TI/A, is not recommended</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -134,7 +134,7 @@
         <rule id="MASTER-0014" context="ifd[thumbnail=0]" level="warning">
             <title>LZW compression</title>
             <description>LZW compression is supported in TI/A specifications but not recommended</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -143,7 +143,7 @@
         <rule id="MASTER-0015" context="ifd[thumbnail=0]" level="error">
             <title>Main image JPEG TIFF/6-.0 compression</title>
             <description>JPEG 'old' compression is replaced by 'new JPEG' and not widely used for archival purpose, therefore obsoleted</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -152,7 +152,7 @@
         <rule id="MASTER-0016" context="ifd[thumbnail=0]" level="warning">
             <title>Main image JPEG TIFF TechNote2 compression</title>
             <description>JPEG TIFF TechNote2 compression 'new JPEG' is not widely used for archival purpose, therefore obsoleted</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -161,7 +161,7 @@
         <rule id="MASTER-0017" context="ifd[thumbnail=0]" level="warning">
             <title>Adobe Deflate compression</title>
             <description>Adobe Deflate compression is supported in TI/A specifications but not recommended</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -170,7 +170,7 @@
         <rule id="MASTER-0018" context="ifd[thumbnail=0]" level="warning">
             <title>JBIG bw compression</title>
             <description>JBIG bw compression is supported in TI/A specifications but not recommended</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -179,7 +179,7 @@
         <rule id="MASTER-0019" context="ifd[thumbnail=0]" level="warning">
             <title>JBIG color compression</title>
             <description>JBIG color compression is supported in TI/A specifications but not recommended</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -188,7 +188,7 @@
         <rule id="MASTER-0020" context="ifd[thumbnail=0]" level="error">
             <title>Vendor Unique compressions</title>
             <description>Vendor Unique compressions (&gt; 32766) are not widely used, therefore obsolete</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -198,7 +198,7 @@
         <rule id="MASTER-0022" context="ifd[thumbnail=0]" level="warning">
             <title>Recommended PhotometricInterpretation</title>
             <description>TI/A Standard only recommend the use of RGB, Grayscale(BlackIsZero) and Bilevel(BlackIsZero) images.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -207,7 +207,7 @@
         <rule id="MASTER-0023" context="ifd[thumbnail=0]" level="warning">
             <title>Palette color images</title>
             <description>Palette color images are supported in TI/A specifications but not recommended.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -216,7 +216,7 @@
         <rule id="MASTER-0024" context="ifd[thumbnail=0]" level="warning">
             <title>Transparency Mask</title>
             <description>Transparency Mask images are supported in TI/A specifications but not recommended.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -225,7 +225,7 @@
         <rule id="MASTER-0025" context="ifd[thumbnail=0]" level="warning">
             <title>CMYKk images</title>
             <description>CMYKk images are supported in TI/A specifications but not recommended</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -235,7 +235,7 @@
             <title>YCbCr images</title>
             <description>YCbCr color space. Y refers to the luminance component, Cb and Cr refer to the two chrominance components. The component order shall be Y, Cb, Cr.
                 CMYKk images are forbidden in TI/A specifications.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -244,7 +244,7 @@
         <rule id="MASTER-0027" context="ifd[thumbnail=0]" level="error">
             <title>CFA images</title>
             <description>CFA images are forbidden in TI/A specifications</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -255,7 +255,7 @@
             <description>Vendor Unique PhotometricInterpretation are not required to be interpreted by others. Their values need to be obtained from Adobe Corporation.
             Vendor Unique PhotometricInterpretation (&gt;32767) are forbidden in TI/A specifications.
             </description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.2: Image data</section>
                 <page>12</page>
             </reference>
@@ -270,7 +270,7 @@
         <rule id="THUMBNAIL-0001" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail square aspect ration</title>
             <description>In TI/A the only valid pixel aspect ratio is 1:1 (square), so that XResolution equals YResolution</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -279,7 +279,7 @@
         <rule id="THUMBNAIL-0002" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail strip data Structure</title>
             <description>TI/A requires that the thumbnail image be stored in strips, so that the thumbnails may be read by any baseline TIFF 6.0 reader.  </description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -289,7 +289,7 @@
             <title>Thumbnail 64 Kbytes per strip</title>
             <description>It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.
                 This value is chosen to maximize compatibility with various operating systems.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -299,7 +299,7 @@
             <title>Thumbnail No compression</title>
             <description>It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.
                 This value is chosen to maximize compatibility with various operating systems.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -308,7 +308,7 @@
         <rule id="THUMBNAIL-0005" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail NewSubFileType defined</title>
             <description>NewSubFileType must be defined for TI/A standard TIFF Thumbnail.</description>
-             <reference>
+             <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -317,7 +317,7 @@
         <rule id="THUMBNAIL-0006" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail valid NewSubFileType</title>
             <description>NewSubFileType must be propertly defined for TI/A standard TIFF Thumbnail.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -326,7 +326,7 @@
         <rule id="THUMBNAIL-0007" context="ifd[thumbnail=1]" level="warning">
             <title>Thumbnail valid NewSubFileType</title>
             <description>NewSubFileType must be propertly defined for TI/A standard TIFF Thumbnail.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -335,7 +335,7 @@
         <rule id="THUMBNAIL-0008" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail ImageWidth</title>
             <description>The dimensions of the thumbnail image are restricted by TI/A to 256 pixels maximum horizontally and 256 pixels maximum vertically as defined in TIFF/EP.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -344,7 +344,7 @@
         <rule id="THUMBNAIL-0009" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail ImageLength</title>
             <description>The dimensions of the thumbnail image are restricted by TI/A to 256 pixels maximum horizontally and 256 pixels maximum vertically as defined in TIFF/EP.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -353,7 +353,7 @@
         <rule id="THUMBNAIL-0010" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail requires SubIFD tag</title>
             <description>Although TI/A do not recommend the use of thumbnails, when a thumbnails is defined it must contain a subIFD containing the main image.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -362,7 +362,7 @@
         <rule id="THUMBNAIL-0011" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail dimension lower than main image</title>
             <description>The resolution X of the sub image (full resolution) must be greater than the thumbnail image</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -371,7 +371,7 @@
         <rule id="THUMBNAIL-0012" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail dimension lower than main image</title>
             <description>The resolution Y of the sub image (full resolution) must be greater than the main (thumbnail) image</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -380,7 +380,7 @@
         <rule id="THUMBNAIL-0013" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail subIFD contains a full resolution image</title>
             <description>TI/A Thumbnail must define a subIFD containing a full resolution image</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>14</page>
             </reference>
@@ -398,9 +398,9 @@
             <description>This tag indicates whether the given IFD is a thumbnail or main (full-size) image. 
                 This tag is mandatory and there is no default value. The value shall be explicitly stated.
                 If the current image is the main image, rather than the 'thumbnail' image, a value of 0 shall be encoded in this field</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>26</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=NewSubfileType]}">NewSubFileType is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -410,9 +410,9 @@
             <description>This tag indicates whether the given IFD is a thumbnail or main (full-size) image. 
                 This tag is mandatory and there is no default value. The value shall be explicitly stated.
                 If the current image is the main image, rather than the 'thumbnail' image, a value of 0 shall be encoded in this field</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>26</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=NewSubfileType] == 0} || {tags.tag[name=NewSubfileType] == 1}">The only valid values for NewSubFileType are 0 (full resolution image) or 1 (Thumbnail)</assert>
         </rule>
@@ -421,9 +421,9 @@
             <title>Imagewidth mandatory tag</title>
             <description>This tag encodes the number of columns in the image, i.e. the number of pixels per line. This tag is mandatory and there is no default value. 
                 The image width may be the shorter or longer dimension of the image, depending upon the orientation of the camera during image capture</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>27</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=ImageWidth]}">Imagewidth is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -432,9 +432,9 @@
             <title>ImageLength mandatory tag</title>
             <description>This tag encodes the number of rows in the image, i.e. the number of lines in the image. This tag is mandatory and there is no default value. 
                 The image length may be the shorter or longer dimension of the image, depending upon the orientation of the camera during image capture</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>27</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=ImageLength]}">ImageLength is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -443,9 +443,9 @@
             <title>BitsPerSample mandatory tag</title>
             <description>This tag encodes the number of bits per component for each pixel. This tag is mandatory and there is no default value. 
                 This tag provides N values depending upon SamplesPerPixel present.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>27</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=BitsPerSample]}">BitsPerSample is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -454,9 +454,9 @@
             <title>Compression mandatory tag</title>
             <description>This tag encodes the compression scheme used to store the image data. This tag is mandatory and there is no default value. The tag value shall equal "1" for the thumbnail IFD. In the Context of TI/A the default value is 1. 
                 For sustainability compression may not be used.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>27</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=Compression]}">Compression is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -465,9 +465,9 @@
             <title>PhotometricInterpretation mandatory tag</title>
             <description>In TIFF/EP, this tag defines the color space of the image data components, and the order of the components. This tag is mandatory and there is no default value. 
                 The value shall be 1, 2, or 6 for the thumbnail IFD. Accepted values are 1 (grayscale) and 2 (rgb full color).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>28</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=PhotometricInterpretation]}">PhotometricInterpretation is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -476,29 +476,19 @@
             <title>StripOffsets mandatory tag</title>
             <description>This tag encodes the byte offset(s) with respect to the beginning of the file to each strip of the image data. This mandatory tag-field is the only way for a reader to find the image data. 
                 TIFF baseline plus TI/A requires that the size of the image data contained in each strip, prior to compression, not exceed 64 KBytes.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>29</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=StripOffsets]}">StripOffsets is mandatory regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="MANDATORY-TAG-274-0001" context="ifd[class=image]" level="error">
-            <title>Orientation mandatory tag</title>
-            <description>This tag encodes the orientation of the camera relative to the scene, when the image was captured. Only the value 1 is allowed.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>30</page>
-            </reference>
-            <assert test="{tags.tag[name=Orientation]}">Orientation is mandatory regarding the TI/A specifications</assert>
         </rule>
 
         <rule id="MANDATORY-TAG-274-0002" context="ifd[class=image]" level="error">
             <title>Orientation valid values</title>
             <description>This tag encodes the orientation of the camera relative to the scene, when the image was captured. Only the value 1 is allowed.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>30</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 3} || {tags.tag[name=Orientation] == 6} || {tags.tag[name=Orientation] == 8} || {tags.tag[name=Orientation] == 9}">Orientation valid values regarding the TI/A specifications are 1,3,6,8 or 9</assert>
         </rule>
@@ -507,9 +497,9 @@
             <title>SamplesPerPixel mandatory tag</title>
             <description>This tag encodes the number of components or samples stored for each pixel in the image. This tag is mandatory and there is no default value. 
                 The value shall be explicitly stated.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>30</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=SamplesPerPixel]}">SamplesPerPixel is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -518,9 +508,9 @@
             <title>SamplesPerPixel valid for Bilevel</title>
             <description>This tag encodes the number of components or samples stored for each pixel in the image. This tag is mandatory and there is no default value. 
                 The value shall be explicitly stated.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>30</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{type != 'Bilevel'} || {tags.tag[name=SamplesPerPixel] == 1}">SamplesPerPixel is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -529,9 +519,9 @@
             <title>SamplesPerPixel valid for Grayscale</title>
             <description>This tag encodes the number of components or samples stored for each pixel in the image. This tag is mandatory and there is no default value. 
             The value shall be explicitly stated.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>30</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{type != 'Grayscale'} || {tags.tag[name=SamplesPerPixel] == 1}">SamplesPerPixel is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -540,9 +530,9 @@
             <title>SamplesPerPixel valid for RGB</title>
             <description>This tag encodes the number of components or samples stored for each pixel in the image. This tag is mandatory and there is no default value. 
             The value shall be explicitly stated.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>30</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{type != 'RGB'} || {tags.tag[name=SamplesPerPixel] == 3}">SamplesPerPixel is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -550,9 +540,9 @@
         <rule id="MANDATORY-TAG-278" context="ifd[class=image]" level="error">
             <title>RowsPerStrip mandatory tag</title>
             <description>This tag encodes the number of rows per strip within the image. This tag is mandatory.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>30</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=RowsPerStrip]}">RowsPerStrip is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -560,9 +550,9 @@
         <rule id="MANDATORY-TAG-279" context="ifd[class=image]" level="error">
             <title>StripByteCounts mandatory tag</title>
             <description>This tag encodes the number of bytes present in each strip after compression has been applied. This tag is mandatory.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>30</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=StripBYTECount]}">StripBYTECount is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -570,9 +560,9 @@
         <rule id="MANDATORY-TAG-284" context="ifd[class=image]" level="error">
             <title>PlanarConfiguration mandatory tag</title>
             <description>This tag describes how the components (samples) of each pixel are stored. This tag is mandatory and there is no default value.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>32</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>16</page>
             </reference>
             <assert test="{tags.tag[name=PlanarConfiguration]}">PlanarConfiguration is mandatory regarding the TI/A specifications</assert>
         </rule>
@@ -580,441 +570,11 @@
         <rule id="MANDATORY-TAG-296" context="ifd[class=image]" level="error">
             <title>ResolutionUnit mandatory tag</title>
             <description>This tag encodes the unit of measurement for the XResolution and Yresolution. This tag is mandatory and there is no default value.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>33</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1 Tag List</section>
+                <page>17</page>
             </reference>
             <assert test="{tags.tag[name=ResolutionUnit]}">ResolutionUnit is mandatory regarding the TI/A specifications</assert>
-        </rule>
-    </rules>
-
-    <rules id="FORBIDDEN_TAGS">
-        <title>Forbidden tags for TI/A</title>
-        <description>This section describes the list of forbidden tags in TI/A Draft</description>
-
-        <rule id="FORBIDDEN-TAG-255" context="ifd[class=image]" level="error">
-            <title>SubFileType forbidden tag</title>
-            <description>This tag has been replaced by the NewSubFileType Tag in TIFF6.0 and is therefore obsolete and forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>34</page>
-            </reference>
-            <assert test="{!tags.tag[name=SubFileType]}">SubFileType is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-263" context="ifd[class=image]" level="error">
-            <title>Threshholding forbidden tag</title>
-            <description>For black and white TIFF files that represent shades of gray, the technique used to convert from gray to black and white pixels.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>34</page>
-            </reference>
-            <assert test="{!tags.tag[name=Threshholding]}">Threshholding is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-264" context="ifd[class=image]" level="error">
-            <title>CellWidth forbidden tag</title>
-            <description>The width of the dithering or halftoning matrix used to create a dithered or halftoned bilevel file.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>34</page>
-            </reference>
-            <assert test="{!tags.tag[name=CellWidth]}">CellWidth is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-265" context="ifd[class=image]" level="error">
-            <title>CellLength forbidden tag</title>
-            <description>The length of the dithering or halftoning matrix used to create a dithered or halftoned bilevel file.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>35</page>
-            </reference>
-            <assert test="{!tags.tag[name=CellLength]}">CellLength is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-266" context="ifd[class=image]" level="error">
-            <title>FillOrder forbidden tag</title>
-            <description>The logical order of bits within a byte. Used in CCITT 1D or 2D compression. This compression is not widely used so it is likely to become obsolete.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>35</page>
-            </reference>
-            <assert test="{!tags.tag[name=FillOrder]}">FillOrder is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-280" context="ifd[class=image]" level="error">
-            <title>MinSampleValue forbidden tag</title>
-            <description>The minimum component value used. This field is used only for statistical purposes. It does not affect the visual appereance of an image.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>35</page>
-            </reference>
-            <assert test="{!tags.tag[name=MinSampleValue]}">MinSampleValue is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-281" context="ifd[class=image]" level="error">
-            <title>MaxSampleValue forbidden tag</title>
-            <description>The maximum component value used. This field is used only for statistical purposes. It does not affect the visual appereance of an image.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>35</page>
-            </reference>
-            <assert test="{!tags.tag[name=MaxSampleValue]}">MaxSampleValue is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-288" context="ifd[class=image]" level="error">
-            <title>FreeOffsets forbidden tag</title>
-            <description>For each string of contiguous unused bytes in a TIFF file, the byte offset of the string.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>36</page>
-            </reference>
-            <assert test="{!tags.tag[name=FreeOffsets]}">FreeOffsets is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-289" context="ifd[class=image]" level="error">
-            <title>FreeByteCounts forbidden tag</title>
-            <description>For each string of contiguous unused bytes in a TIFF file, the number of bytes in the string.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>36</page>
-            </reference>
-            <assert test="{!tags.tag[name=FreeByteCounts]}">FreeByteCounts is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-290" context="ifd[class=image]" level="error">
-            <title>GrayResponseUnit forbidden tag</title>
-            <description>The precision of the information contained in the GrayResponseCurve.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>36</page>
-            </reference>
-            <assert test="{!tags.tag[name=GrayResponseUnit]}">GrayResponseUnit is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-291" context="ifd[class=image]" level="error">
-            <title>GrayResponseCurve forbidden tag</title>
-            <description>For grayscale data, the optical density of each possible pixel value.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>37</page>
-            </reference>
-            <assert test="{!tags.tag[name=GrayResponseCurve]}">GrayResponseCurve is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-292" context="ifd[class=image]" level="error">
-            <title>T4Options forbidden tag</title>
-            <description>This tag relates to Group 3 Fax Compression. This compression of bilevel images is not allowed in TI/A because it is not widely used, therefore it is likly to become obsolete.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>37</page>
-            </reference>
-            <assert test="{!tags.tag[name=T4Options]}">T4Options is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-293" context="ifd[class=image]" level="error">
-            <title>T6Options forbidden tag</title>
-            <description>This tag relates to Group 4 Fax Compression. This compression of bilevel images is not recommended. Since there are some images around in archives, this is a case to discuss. We would recommend to convert and declare this tag as forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>37</page>
-            </reference>
-            <assert test="{!tags.tag[name=T6Options]}">T6Options is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-301" context="ifd[class=image]" level="error">
-            <title>TransferFunction forbidden tag</title>
-            <description>Describes a transfer function for the image in tabular style. Pixel components can be gamma-compensated, companded, non-uniformly quantized, or coded in some other way. The TransferFunction maps the pixel components from a non-linear BitsPerSample (e.g. 8-bit) form into a 16-bit linear form without a perceptible loss of accuracy.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>38</page>
-            </reference>
-            <assert test="{!tags.tag[name=TransferFunction]}">TransferFunction is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-318" context="ifd[class=image]" level="error">
-            <title>WhitePoint forbidden tag</title>
-            <description>The chromaticity of the white point of the image. This tag is used in relation to CIELab and YCC color which is not allowed in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>38</page>
-            </reference>
-            <assert test="{!tags.tag[name=WhitePoint]}">WhitePoint is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-319" context="ifd[class=image]" level="error">
-            <title>PrimaryChromaticities forbidden tag</title>
-            <description>The chromaticities of the primaries of the image. This tag relates to the CIE xy chromaticity diagram which is not allowed in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>38</page>
-            </reference>
-            <assert test="{!tags.tag[name=PrimaryChromaticities]}">PrimaryChromaticities is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-321" context="ifd[class=image]" level="error">
-            <title>HalftoneHints forbidden tag</title>
-            <description>The purpose of the HalftoneHints field is to convey to the halftone function the range of gray levels within a colorimetrically-specified YCC ot CIELab image that should retain tonal detail. 
-                Since YCC and CIELab color is not allowed in TI/A this tag is forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>39</page>
-            </reference>
-            <assert test="{!tags.tag[name=HalftoneHints]}">HalftoneHints is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-322" context="ifd[class=image]" level="error">
-            <title>TileWidth forbidden tag</title>
-            <description>This tag relates to tiling which is not allowed in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>39</page>
-            </reference>
-            <assert test="{!tags.tag[name=TileWidth]}">TileWidth is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-323" context="ifd[class=image]" level="error">
-            <title>TileLength forbidden tag</title>
-            <description>This tag relates to tiling which is not allowed in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>39</page>
-            </reference>
-            <assert test="{!tags.tag[name=TileLength]}">TileLength is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-324" context="ifd[class=image]" level="error">
-            <title>TileOffsets forbidden tag</title>
-            <description>This tag relates to tiling which is not allowed in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>39</page>
-            </reference>
-            <assert test="{!tags.tag[name=TileOffsets]}">TileOffsets is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-325" context="ifd[class=image]" level="error">
-            <title>TileByteCounts forbidden tag</title>
-            <description>This tag relates to tiling which is not allowed in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>40</page>
-            </reference>
-            <assert test="{!tags.tag[name=TileBYTECounts]}">TileByteCounts is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-342" context="ifd[class=image]" level="error">
-            <title>TransferRange forbidden tag</title>
-            <description>This tag is used in relation to YCC color which is not allowed in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>40</page>
-            </reference>
-            <assert test="{!tags.tag[name=TransferRange]}">TransferRange is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-512" context="ifd[class=image]" level="error">
-            <title>JPEGProc forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>40</page>
-            </reference>
-            <assert test="{!tags.tag[name=JPEGProc]}">JPEGProc is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-513" context="ifd[class=image]" level="error">
-            <title>JPEGInterChangeFormat forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>40</page>
-            </reference>
-            <assert test="{!tags.tag[name=JPEGInterChangeFormat]}">JPEGInterChangeFormat is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-514" context="ifd[class=image]" level="error">
-            <title>JPEGInterchangeFormatLength forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>41</page>
-            </reference>
-            <assert test="{!tags.tag[name=JPEGInterchangeFormatLength]}">JPEGInterchangeFormatLength is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-515" context="ifd[class=image]" level="error">
-            <title>JPEGRestartInterval forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>41</page>
-            </reference>
-            <assert test="{!tags.tag[name=JPEGRestartInterval]}">JPEGRestartInterval is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-517" context="ifd[class=image]" level="error">
-            <title>JPEGLosslessPredictors forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>41</page>
-            </reference>
-            <assert test="{!tags.tag[name=JPEGLosslessPredictors]}">JPEGLosslessPredictors is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-518" context="ifd[class=image]" level="error">
-            <title>JPEGPointTransforms forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>41</page>
-            </reference>
-            <assert test="{!tags.tag[name=JPEGPointTransforms]}">JPEGPointTransforms is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-519" context="ifd[class=image]" level="error">
-            <title>JPEGQTables forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>42</page>
-            </reference>
-            <assert test="{!tags.tag[name=JPEGQTables]}">JPEGQTables is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-521" context="ifd[class=image]" level="error">
-            <title>JPEGACTables forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>42</page>
-            </reference>
-            <assert test="{!tags.tag[name=JPEGACTables]}">JPEGACTables is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-529" context="ifd[class=image]" level="error">
-            <title>YCbCrCoefficients forbidden tag</title>
-            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>42</page>
-            </reference>
-            <assert test="{!tags.tag[name=YCbCrCoefficients]}">YCbCrCoefficients is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-530" context="ifd[class=image]" level="error">
-            <title>YCbCrSubSampling forbidden tag</title>
-            <description>This tag encodes the subsampling factors used for the chrominance components of a YCbCr image. Since YCC colors are forbidden in TI/A, this tag is not allowed.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>42</page>
-            </reference>
-            <assert test="{!tags.tag[name=YCbCrSubSampling]}">YCbCrSubSampling is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-531" context="ifd[class=image]" level="error">
-            <title>YCbCrPositioning forbidden tag</title>
-            <description>This tag encodes the positions of subsampled chrominance components relative to luminance samples. Since YCC colors are forbidden in TI/A, this tag is not allowed.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>43</page>
-            </reference>
-            <assert test="{!tags.tag[name=YCbCrPositioning]}">YCbCrPositioning is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-532" context="ifd[class=image]" level="error">
-            <title>ReferenceBlackWhite forbidden tag</title>
-            <description>This tag is used related to YCC colors and therefore forbidden in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>43</page>
-            </reference>
-            <assert test="{!tags.tag[name=ReferenceBlackWhite]}">ReferenceBlackWhite is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-33421" context="ifd[class=image]" level="error">
-            <title>CFARepeatPatternDim forbidden tag</title>
-            <description>This tag encodes the number of pixels horizontally and vertically that are needed to uniquely define the repeat pattern of the color filter array (CFA) pattern used in the color image sensor. 
-                Since this tag defines elements of a raw file and raw files are not allowed in TI/A this tag is forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>43</page>
-            </reference>
-            <assert test="{!tags.tag[name=CFARepeatPatternDim]}">CFARepeatPatternDim is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-33422" context="ifd[class=image]" level="error">
-            <title>CFAPattern forbidden tag</title>
-            <description>Since this tag defines elements of a raw file and raw files are not allowed in TI/A this tag is forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>43</page>
-            </reference>
-            <assert test="{!tags.tag[name=CFAPattern]}">CFAPattern is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-34857" context="ifd[class=image]" level="error">
-            <title>Interlace forbidden tag</title>
-            <description>Interlacing is not allowed in TI/A images.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>44</page>
-            </reference>
-            <assert test="{!tags.tag[name=Interlace]}">Interlace is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-37122" context="ifd[class=image]" level="error">
-            <title>CompressedBitsPerPixel forbidden tag</title>
-            <description>This tag encodes the average number of bits per pixel used to store a compressed raw image. Since raw images are not allowed in TI/A this tag is forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>44</page>
-            </reference>
-            <assert test="{!tags.tag[name=CompressedBitsPerPixel]}">CompressedBitsPerPixel is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-37390" context="ifd[class=image]" level="error">
-            <title>FocalPlaneXResolution forbidden tag</title>
-            <description>This tag encodes the number of pixels per FocalPlaneResolutionUnit  in the ImageWidth  direction for the main image. This tag specifies the actual FocalPlaneXResolution  at the focal plane of the camera.
-                Since this tag relates to raw images it is forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>44</page>
-            </reference>
-            <assert test="{!tags.tag[name=FocalPlaneXResolution]}">FocalPlaneXResolution is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-37391" context="ifd[class=image]" level="error">
-            <title>FocalPlaneYResolution forbidden tag</title>
-            <description>This tag encodes the number of pixels per FocalPlaneResolutionUnit  in the ImageLength  direction for the main image. This tag specifies the actual FocalPlaneYResolution  at the focal plane of the camera. 
-                Since this tag relates to raw images and therefore is forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>45</page>
-            </reference>
-            <assert test="{!tags.tag[name=FocalPlaneYResolution]}">FocalPlaneYResolution is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-37392" context="ifd[class=image]" level="error">
-            <title>FocalPlaneResolutionUnit forbidden tag</title>
-            <description>This tag encodes the unit of measurement for the FocalPlaneXResolution  and FocalPlaneYResolution. Since this tag relates to raw images and therefore is forbidden.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>45</page>
-            </reference>
-            <assert test="{!tags.tag[name=FocalPlaneResolutionUnit]}">FocalPlaneResolutionUnit is forbidden regarding the TI/A specifications</assert>
-        </rule>
-
-        <rule id="FORBIDDEN-TAG-37724" context="ifd[class=image]" level="error">
-            <title>ImageSourceData forbidden tag</title>
-            <description>This tag describes the Adobe Photoshop specific image source data tag. This section has the layer and mask information found in a typical layered Photoshop file. 
-                Since layered files are forbidden in TI/A this tag is not allowed.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>45</page>
-            </reference>
-            <assert test="{!tags.tag[name=ImageSourceData]}">ImageSourceData is forbidden regarding the TI/A specifications</assert>
         </rule>
     </rules>
 
@@ -1022,11 +582,21 @@
         <title>Recommended tags for TI/A</title>
         <description>This section describes the list of optional but recommended tags in TI/A Draft</description>
 
+        <rule id="RECOMMENDED-TAG-274-0001" context="ifd[class=image]" level="warning">
+            <title>Orientation recommended tag</title>
+            <description>This tag encodes the orientation of the camera relative to the scene, when the image was captured. Only the value 1 is allowed.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.2 Tag Reference</section>
+                <page>30</page>
+            </reference>
+            <assert test="{!tags.tag[name=Orientation]}">Orientation is recommended regarding the TI/A specifications</assert>
+        </rule>
+
         <rule id="RECOMMENDED-TAG-270" context="ifd[thumbnail=0]" level="warning">
             <title>ImageDescription recommended tag</title>
             <description>A string that describes the subject or purpose of the image is recorded as a null-terminated ASCII string. This tag field may be additionally used to provide any other type of information related to the image. 
                 This is a mandatory tag, with an allowed value of " " (null character), indicating "unknown".</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 5.2 Tag Reference</section>
                 <page>46</page>
             </reference>
@@ -1036,7 +606,7 @@
         <rule id="RECOMMENDED-TAG-700" context="ifd[thumbnail=0]" level="warning">
             <title>XMP recommended tag</title>
             <description>This tag defines an XML/RDF-based metadata container.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 5.2 Tag Reference</section>
                 <page>54</page>
             </reference>
@@ -1047,7 +617,7 @@
             <title>Copyright recommended tag</title>
             <description>This tag encodes the copyright notice of the copyright holder. This is a mandatory tag, with an allowed value of " " (null character), indicating "unknown". 
                 The complete copyright statement should be listed in this field including any dates and statements of claims. If desired, this tag-field can also list the royalty clearance house.</description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 5.2 Tag Reference</section>
                 <page>54</page>
             </reference>
@@ -1059,7 +629,7 @@
             <description>This tag encodes an embedded InterColor device profile relating to the camera color characterization. Refer to the ICC-resources at www.color.org, for further information on the use of this tag. 
                 Note that the ICC Profile Format may be revised in the future, and the most recent version of the ICC specification should be used. Therefore it is only declared optional.
             </description>
-            <reference>
+            <reference><document>TI/A Draft v0.1</document>
                 <section>Section 5.2 Tag Reference</section>
                 <page>56</page>
             </reference>
@@ -1071,12 +641,437 @@
         <title>Not recommended tags for TI/A</title>
         <description>This section describes the list of optional but not recommended tags in TI/A Draft</description>
 
+        <rule id="NOTRECOMMENDED-TAG-255" context="ifd[class=image]" level="warning">
+            <title>SubFileTypenot recommended tag</title>
+            <description>This tag has been replaced by the NewSubFileType Tag in TIFF6.0 and is therefore obsolete and not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=SubFileType]}">SubFileType is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-263" context="ifd[class=image]" level="warning">
+            <title>Threshholdingnot recommended tag</title>
+            <description>For black and white TIFF files that represent shades of gray, the technique used to convert from gray to black and white pixels.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=Threshholding]}">Threshholding is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-264" context="ifd[class=image]" level="warning">
+            <title>CellWidthnot recommended tag</title>
+            <description>The width of the dithering or halftoning matrix used to create a dithered or halftoned bilevel file.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=CellWidth]}">CellWidth is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-265" context="ifd[class=image]" level="warning">
+            <title>CellLengthnot recommended tag</title>
+            <description>The length of the dithering or halftoning matrix used to create a dithered or halftoned bilevel file.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=CellLength]}">CellLength is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-266" context="ifd[class=image]" level="warning">
+            <title>FillOrdernot recommended tag</title>
+            <description>The logical order of bits within a byte. Used in CCITT 1D or 2D compression. This compression is not widely used so it is likely to become obsolete.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=FillOrder]}">FillOrder is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-280" context="ifd[class=image]" level="warning">
+            <title>MinSampleValuenot recommended tag</title>
+            <description>The minimum component value used. This field is used only for statistical purposes. It does not affect the visual appereance of an image.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=MinSampleValue]}">MinSampleValue is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-281" context="ifd[class=image]" level="warning">
+            <title>MaxSampleValuenot recommended tag</title>
+            <description>The maximum component value used. This field is used only for statistical purposes. It does not affect the visual appereance of an image.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=MaxSampleValue]}">MaxSampleValue is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-288" context="ifd[class=image]" level="warning">
+            <title>FreeOffsetsnot recommended tag</title>
+            <description>For each string of contiguous unused bytes in a TIFF file, the byte offset of the string.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=FreeOffsets]}">FreeOffsets is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-289" context="ifd[class=image]" level="warning">
+            <title>FreeByteCountsnot recommended tag</title>
+            <description>For each string of contiguous unused bytes in a TIFF file, the number of bytes in the string.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=FreeByteCounts]}">FreeByteCounts is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-290" context="ifd[class=image]" level="warning">
+            <title>GrayResponseUnitnot recommended tag</title>
+            <description>The precision of the information contained in the GrayResponseCurve.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=GrayResponseUnit]}">GrayResponseUnit is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-291" context="ifd[class=image]" level="warning">
+            <title>GrayResponseCurvenot recommended tag</title>
+            <description>For grayscale data, the optical density of each possible pixel value.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=GrayResponseCurve]}">GrayResponseCurve is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-292" context="ifd[class=image]" level="warning">
+            <title>T4Optionsnot recommended tag</title>
+            <description>This tag relates to Group 3 Fax Compression. This compression of bilevel images is not allowed in TI/A because it is not widely used, therefore it is likly to become obsolete.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=T4Options]}">T4Options is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-293" context="ifd[class=image]" level="warning">
+            <title>T6Optionsnot recommended tag</title>
+            <description>This tag relates to Group 4 Fax Compression. This compression of bilevel images is not recommended. Since there are some images around in archives, this is a case to discuss. We would recommend to convert and declare this tag as not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=T6Options]}">T6Options is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-301" context="ifd[class=image]" level="warning">
+            <title>TransferFunctionnot recommended tag</title>
+            <description>Describes a transfer function for the image in tabular style. Pixel components can be gamma-compensated, companded, non-uniformly quantized, or coded in some other way. The TransferFunction maps the pixel components from a non-linear BitsPerSample (e.g. 8-bit) form into a 16-bit linear form without a perceptible loss of accuracy.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=TransferFunction]}">TransferFunction is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-318" context="ifd[class=image]" level="warning">
+            <title>WhitePointnot recommended tag</title>
+            <description>The chromaticity of the white point of the image. This tag is used in relation to CIELab and YCC color which is not allowed in TI/A.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=WhitePoint]}">WhitePoint is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-319" context="ifd[class=image]" level="warning">
+            <title>PrimaryChromaticitiesnot recommended tag</title>
+            <description>The chromaticities of the primaries of the image. This tag relates to the CIE xy chromaticity diagram which is not allowed in TI/A.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=PrimaryChromaticities]}">PrimaryChromaticities is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-321" context="ifd[class=image]" level="warning">
+            <title>HalftoneHintsnot recommended tag</title>
+            <description>The purpose of the HalftoneHints field is to convey to the halftone function the range of gray levels within a colorimetrically-specified YCC ot CIELab image that should retain tonal detail.
+                Since YCC and CIELab color is not allowed in TI/A this tag is not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=HalftoneHints]}">HalftoneHints is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-322" context="ifd[class=image]" level="warning">
+            <title>TileWidthnot recommended tag</title>
+            <description>This tag relates to tiling which is not allowed in TI/A.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=TileWidth]}">TileWidth is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-323" context="ifd[class=image]" level="warning">
+            <title>TileLengthnot recommended tag</title>
+            <description>This tag relates to tiling which is not allowed in TI/A.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=TileLength]}">TileLength is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-324" context="ifd[class=image]" level="warning">
+            <title>TileOffsetsnot recommended tag</title>
+            <description>This tag relates to tiling which is not allowed in TI/A.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=TileOffsets]}">TileOffsets is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-325" context="ifd[class=image]" level="warning">
+            <title>TileByteCountsnot recommended tag</title>
+            <description>This tag relates to tiling which is not allowed in TI/A.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=TileBYTECounts]}">TileByteCounts is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-342" context="ifd[class=image]" level="warning">
+            <title>TransferRangenot recommended tag</title>
+            <description>This tag is used in relation to YCC color which is not allowed in TI/A.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=TransferRange]}">TransferRange is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-512" context="ifd[class=image]" level="warning">
+            <title>JPEGProcnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=JPEGProc]}">JPEGProc is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-513" context="ifd[class=image]" level="warning">
+            <title>JPEGInterChangeFormatnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=JPEGInterChangeFormat]}">JPEGInterChangeFormat is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-514" context="ifd[class=image]" level="warning">
+            <title>JPEGInterchangeFormatLengthnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=JPEGInterchangeFormatLength]}">JPEGInterchangeFormatLength is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-515" context="ifd[class=image]" level="warning">
+            <title>JPEGRestartIntervalnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=JPEGRestartInterval]}">JPEGRestartInterval is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-517" context="ifd[class=image]" level="warning">
+            <title>JPEGLosslessPredictorsnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=JPEGLosslessPredictors]}">JPEGLosslessPredictors is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-518" context="ifd[class=image]" level="warning">
+            <title>JPEGPointTransformsnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=JPEGPointTransforms]}">JPEGPointTransforms is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-519" context="ifd[class=image]" level="warning">
+            <title>JPEGQTablesnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=JPEGQTables]}">JPEGQTables is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-521" context="ifd[class=image]" level="warning">
+            <title>JPEGACTablesnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=JPEGACTables]}">JPEGACTables is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-529" context="ifd[class=image]" level="warning">
+            <title>YCbCrCoefficientsnot recommended tag</title>
+            <description>This tag refers to JPEG the compression scheme before the TIFFTechNote2, which made all JPEG related tags in TIFF 6.0 obsolete. These tags were replaced by the tag JPEGTables (347).</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=YCbCrCoefficients]}">YCbCrCoefficients is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-530" context="ifd[class=image]" level="warning">
+            <title>YCbCrSubSamplingnot recommended tag</title>
+            <description>This tag encodes the subsampling factors used for the chrominance components of a YCbCr image. Since YCC colors are not recommended in TI/A, this tag is not allowed.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=YCbCrSubSampling]}">YCbCrSubSampling is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-531" context="ifd[class=image]" level="warning">
+            <title>YCbCrPositioningnot recommended tag</title>
+            <description>This tag encodes the positions of subsampled chrominance components relative to luminance samples. Since YCC colors are not recommended in TI/A, this tag is not allowed.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=YCbCrPositioning]}">YCbCrPositioning is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-532" context="ifd[class=image]" level="warning">
+            <title>ReferenceBlackWhitenot recommended tag</title>
+            <description>This tag is used related to YCC colors and therefore not recommended in TI/A.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=ReferenceBlackWhite]}">ReferenceBlackWhite is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-33421" context="ifd[class=image]" level="warning">
+            <title>CFARepeatPatternDimnot recommended tag</title>
+            <description>This tag encodes the number of pixels horizontally and vertically that are needed to uniquely define the repeat pattern of the color filter array (CFA) pattern used in the color image sensor.
+                Since this tag defines elements of a raw file and raw files are not allowed in TI/A this tag is not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=CFARepeatPatternDim]}">CFARepeatPatternDim is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-33422" context="ifd[class=image]" level="warning">
+            <title>CFAPatternnot recommended tag</title>
+            <description>Since this tag defines elements of a raw file and raw files are not allowed in TI/A this tag is not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=CFAPattern]}">CFAPattern is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-34857" context="ifd[class=image]" level="warning">
+            <title>Interlacenot recommended tag</title>
+            <description>Interlacing is not allowed in TI/A images.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=Interlace]}">Interlace is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-37122" context="ifd[class=image]" level="warning">
+            <title>CompressedBitsPerPixelnot recommended tag</title>
+            <description>This tag encodes the average number of bits per pixel used to store a compressed raw image. Since raw images are not allowed in TI/A this tag is not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=CompressedBitsPerPixel]}">CompressedBitsPerPixel is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-37390" context="ifd[class=image]" level="warning">
+            <title>FocalPlaneXResolutionnot recommended tag</title>
+            <description>This tag encodes the number of pixels per FocalPlaneResolutionUnit  in the ImageWidth  direction for the main image. This tag specifies the actual FocalPlaneXResolution  at the focal plane of the camera.
+                Since this tag relates to raw images it is not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=FocalPlaneXResolution]}">FocalPlaneXResolution is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-37391" context="ifd[class=image]" level="warning">
+            <title>FocalPlaneYResolutionnot recommended tag</title>
+            <description>This tag encodes the number of pixels per FocalPlaneResolutionUnit  in the ImageLength  direction for the main image. This tag specifies the actual FocalPlaneYResolution  at the focal plane of the camera.
+                Since this tag relates to raw images and therefore is not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=FocalPlaneYResolution]}">FocalPlaneYResolution is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-37392" context="ifd[class=image]" level="warning">
+            <title>FocalPlaneResolutionUnitnot recommended tag</title>
+            <description>This tag encodes the unit of measurement for the FocalPlaneXResolution  and FocalPlaneYResolution. Since this tag relates to raw images and therefore is not recommended.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=FocalPlaneResolutionUnit]}">FocalPlaneResolutionUnit is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
+        <rule id="NOTRECOMMENDED-TAG-37724" context="ifd[class=image]" level="warning">
+            <title>ImageSourceDatanot recommended tag</title>
+            <description>This tag describes the Adobe Photoshop specific image source data tag. This section has the layer and mask information found in a typical layered Photoshop file.
+                Since layered files are not recommended in TI/A this tag is not allowed.</description>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageSourceData]}">ImageSourceData is not recommended regarding the TI/A specifications</assert>
+        </rule>
+
         <rule id="NOTRECOMMENDED-TAG-338" context="ifd[class=image]" level="warning">
             <title>ExtraSamples not recommended tag</title>
             <description>Controlls the alpha channel. Not recommended in TI/A images.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>51</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
             </reference>
             <assert test="{tags.tag[name=ExtraSamples]}">ExtraSamples is not recommended regarding the TI/A specifications</assert>
         </rule>
@@ -1084,9 +1079,9 @@
         <rule id="NOTRECOMMENDED-TAG-347" context="ifd[class=image]" level="warning">
             <title>JPEGTables not recommended tag</title>
             <description>This tag replaced the TIFF Rev. 6.0 specification in the tags 512, 513, 514, 515, 517, 518, 519, 520 and 521, whose design proved  inappropriate. TIFF JPEG compression is allowed, but not recommended. </description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>53</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
             </reference>
             <assert test="{tags.tag[name=JPEGTables]}">JPEGTables is not recommended regarding the TI/A specifications</assert>
         </rule>
@@ -1095,9 +1090,9 @@
             <title>ExifIFD not recommended tag</title>
             <description>Exif IFD is a set of tags for recording Exif-specific attribute information. It is pointed to by the offset from the TIFF header (Value Offset) indicated by an Exif private tag value. 
                 An Exif IFD has the same structure as that of the IFD specified in TIFF. Ordinarily, however, it does not contain image data as in the case of TIFF.  It is not recommended in TI/A.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>55</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
             </reference>
             <assert test="{tags.tag[name=ExifIFD]}">ExifIFD is not recommended regarding the TI/A specifications</assert>
         </rule>
@@ -1106,11 +1101,12 @@
             <title>ExifVersion not recommended tag</title>
             <description>The version of the supported Exif standard.  According to exif.org, nonexistence of this field is taken to mean nonconformance to the Exif standard.  
                 In the context of TI/A this tag is not applicable.</description>
-            <reference>
-                <section>Section 5.2 Tag Reference</section>
-                <page>60</page>
+            <reference><document>TI/A Draft v0.1</document>
+                <section>Section 5.1.2 List of not recommended or problematic Tags</section>
+                <page>17</page>
             </reference>
             <assert test="{tags.tag[name=ExifVersion]}">ExifVersion is not recommended regarding the TI/A specifications</assert>
         </rule>
     </rules>
+
 </implementationCheckerObject>

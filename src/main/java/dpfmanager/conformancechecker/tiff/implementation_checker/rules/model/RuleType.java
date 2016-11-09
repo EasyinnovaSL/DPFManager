@@ -220,6 +220,8 @@ public class RuleType {
     String s = "";
     for (ReferenceType ref : getReference()) {
       if (s.length() > 0) s += "\n";
+      if (ref.getDocument() != null && ref.getDocument().toString().length() > 0)
+        s += ref.getDocument().toString() + ": ";
       if (!ref.getSection().isEmpty()) {
         s += ref.getSection() + ". ";
       }

@@ -117,11 +117,11 @@
     </repositories>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.github.jai-imageio</groupId>
             <artifactId>jai-imageio-core</artifactId>
@@ -142,15 +142,13 @@
             <version>2.5</version>
         </dependency>
 
-        <dependency>
-            <!--Avoid schematron slf4j log error-->
+        <!--<dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>
             <version>1.7.19</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
-            <!--Controls FX-->
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>8.40.12</version>
@@ -174,11 +172,11 @@
             <artifactId>camel-core</artifactId>
             <version>2.15.2</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xmljson</artifactId>
             <version>2.15.2</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ftp</artifactId>
@@ -191,17 +189,17 @@
             <version>2.15.2</version>
         </dependency>-->
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
             <version>2.15.2</version>
-        </dependency>
+        </dependency>-->
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.5</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>com.easyinnova</groupId>
@@ -412,7 +410,7 @@
             </plugin>
 
             <!--Report -->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.0-beta-2</version>
@@ -434,7 +432,7 @@
                         </plugin>
                     </reportPlugins>
                 </configuration>
-            </plugin>
+            </plugin>-->
 
             <!-- Download dependencies source -->
             <plugin>
