@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ReferenceType {
 
     @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker")
-    protected Object document;
+    protected String document;
     @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker")
     protected String section;
     @XmlElement(namespace = "http://www.dpfmanager.org/ProfileChecker")
@@ -79,7 +79,7 @@ public class ReferenceType {
      *     {@link Object }
      *     
      */
-    public Object getDocument() {
+    public String getDocument() {
         return document;
     }
 
@@ -91,7 +91,7 @@ public class ReferenceType {
      *     {@link Object }
      *     
      */
-    public void setDocument(Object value) {
+    public void setDocument(String value) {
         this.document = value;
     }
 

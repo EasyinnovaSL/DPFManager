@@ -47,35 +47,35 @@
         <rule id="TAG-37398-0001" context="tag[id=37398]" level="error">
             <title>TIFF/EPStandardID valid Type</title>
             <description>TIFF/EPStandardID Tag type must be BYTE</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{type=='BYTE'}">TIFF/EPStandardID type is not valid, an BYTE type is expected</assert>
         </rule>
         
         <rule id="TAG-37398-0002" context="tag[id=37398]" level="error">
             <title>TIFF/EPStandardID valid cardinality</title>
             <description>The cardinality of the TIFF/EPStandardID tag must be 4</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{cardinality==4}">TIFF/EPStandardID must have a 4 cardinality</assert>
         </rule>
         
         <rule id="TAG-37398-0004" context="ifd[IFD0=1]" level="error" experimental="true">
             <title>TIFF/EPStandardID valid value</title>
             <description>TIFF/EPStandardID must contain a valid value</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{tags.tag[name=TIFFEPStandardID] == 1,0,0,0}">TIFF/EPStandardID tag must contain a valid value 1000 defining the current TIFF/EP version</assert>
         </rule>
         
         <rule id="TAG-37398-0003" context="ifd[IFD0=1]" level="error">
             <title>TIFF/EPStandardID must be use in the first IFD</title>
             <description>TIFF/EPStandardID tag must be used in the first IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{tags.tag[name=TIFFEPStandardID]}">TIFF/EPStandardID tag must be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37398-0005" context="ifd[class=image]" level="error" >
             <title>TIFF/EPStandardID should only be used in first IFD</title>
             <description>TIFF/EPStandardID should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>16</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=TIFFEPStandardID]}">TIFF/EPStandardID should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -99,14 +99,14 @@
                 0: Full resolution image
                 1: Thumbnail
             </description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
             <assert test="{tags.tag[name=NewSubfileType] &gt; -1} &amp;&amp; {tags.tag[name=NewSubfileType] &lt; 2}">NewSubFileType invalid value.</assert>
         </rule>
         
         <rule id="TAG-245-1-0002" context="ifd[class=image]" level="error">
             <title>NewSubFileType is mandatory</title>
             <description>NewSubFileType is mandatory and there is no default value. The value shall be explicitly stated.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
             <assert test="{tags.tag[name=NewSubfileType]}">NewSubFileType is mandatory the value shall be explicitly stated</assert>
         </rule>
     </rules>
@@ -119,14 +119,14 @@
         <rule id="TAG-330-0001" context="tag[id=330]" level="error">
             <title>SubIFDs valid Type</title>
             <description>SubIFDs Tag type must be LONG</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
             <assert test="{type=='LONG'}">SubIFDs type is not valid, an LONG type is expected</assert>
         </rule>
         
         <rule id="TAG-330-0002" context="tag[id=330]" level="warning">
             <title>SubIFDs cardinality</title>
             <description>The cardinality of theSubIFDs may be grater than 1 but currently (actual TIFF/EP specifications), defines the cardinality of 1 and the Value contains the offset to the IFD containing the full resolution image.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
             <assert test="{cardinality &gt; 1}">SubIFDs should have a 1 cardinality defines by the current TIFF/EP specification</assert>
         </rule>
     </rules>
@@ -142,7 +142,7 @@
         <rule id="TAG-296-1-0001" context="ifd[class=image]" level="error">
             <title>ResolutionUnit is mandatory</title>
             <description>ResolutionUnit is mandatory and there is no default value. The value shall be explicitly stated.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=ResolutionUnit]}">ResolutionUnit is mandatory the value shall be explicitly stated</assert>
         </rule>
     </rules>
@@ -159,34 +159,34 @@
         <rule id="TAG-37390-0001" context="tag[id=37390]" level="error">
             <title>FocalPlaneXResolution valid Type</title>
             <description>FocalPlaneXResolution Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{type=='RATIONAL'}">FocalPlaneXResolution type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37390-0002" context="tag[id=37390]" level="error">
             <title>FocalPlaneXResolution valid cardinality</title>
             <description>The cardinality of the FocalPlaneXResolution tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{cardinality==1}">FocalPlaneXResolution must have a 1 cardinality</assert>
         </rule>
         
         <rule id="TAG-37390-0004" context="ifd[class=image]" level="error" >
             <title>FocalPlaneXResolution should only be used in first IFD</title>
             <description>FocalPlaneXResolution should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=FocalPlaneXResolution]}">FocalPlaneXResolution should only be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37390-0005" context="ifd[class=image]" level="error" >
             <title>FocalPlaneXResolution with FocalPlaneYResolution and FocalPlaneResolutionUnit</title>
             <description>FocalPlaneXResolution should only be used with FocalPlaneYResolution and FocalPlaneResolutionUnit</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{!tags.tag[name=FocalPlaneXResolution]} || {tags.tag[name=FocalPlaneYResolution]} &amp;&amp; {tags.tag[name=FocalPlaneResolutionUnit]}">FocalPlaneXResolution should only be used with FocalPlaneYResolution and FocalPlaneResolutionUnit</assert>
         </rule>
 
         <rule id="TAG-37390-0006" context="ifds.ifd[class=image]" level="error">
             <title>Check valid values for tag FocalPlaneResolutionUnit</title><description>Check valid values for tag FocalPlaneResolutionUnit</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{tags.tag[name=FocalPlaneResolutionUnit] > 0} &amp;&amp; {tags.tag[name=FocalPlaneResolutionUnitUnit] &lt; 6}">FocalPlaneResolutionUnit value must be between 1 and 5</assert>
         </rule>
 
@@ -204,28 +204,28 @@
         <rule id="TAG-37391-0001" context="tag[id=37391]" level="error">
             <title>FocalPlaneYResolution valid Type</title>
             <description>FocalPlaneYResolution Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{type=='RATIONAL'}">FocalPlaneYResolution type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37391-0002" context="tag[id=37391]" level="error">
             <title>FocalPlaneYResolution valid cardinality</title>
             <description>The cardinality of the FocalPlaneYResolution tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{cardinality==1}">FocalPlaneYResolution must have a 1 cardinality</assert>
         </rule>
         
         <rule id="TAG-37391-0003" context="ifd[class=image]" level="error" >
             <title>FocalPlaneYResolution only in first IFD</title>
             <description>FocalPlaneYResolution should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=FocalPlaneYResolution]}">FocalPlaneYResolution should only be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37391-0004" context="ifd[class=image]" level="error" >
             <title>FocalPlaneYResolution with FocalPlaneXResolution and FocalPlaneYResolution</title>
             <description>FocalPlaneYResolution should only be used with FocalPlaneXResolution and FocalPlaneResolutionUnit</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{!tags.tag[name=FocalPlaneYResolution]} || {tags.tag[name=FocalPlaneXResolution]} &amp;&amp; {tags.tag[name=FocalPlaneResolutionUnit]}">FocalPlaneYResolution should only be used with FocalPlaneXResolution and FocalPlaneResolutionUnit</assert>
         </rule>
     </rules>
@@ -248,14 +248,14 @@
         <rule id="TAG-37392-0001" context="tag[id=37392]" level="error">
             <title>FocalPlaneResolutionUnit valid Type</title>
             <description>FocalPlaneResolutionUnit Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{type=='SHORT'}">FocalPlaneResolutionUnit type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-37392-0002" context="tag[id=37392]" level="error">
             <title>FocalPlaneResolutionUnit valid cardinality</title>
             <description>The cardinality of the FocalPlaneResolutionUnit tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{cardinality==1}">FocalPlaneResolutionUnit must have a 1 cardinality</assert>
         </rule>
         
@@ -267,21 +267,21 @@
                 3 Centimetre
                 4 Millimetre
                 5 Micrometre</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{tags.tag[name=FocalPlaneResolutionUnit] &gt; 0} &amp;&amp; {tags.tag[name=FocalPlaneResolutionUnit] &lt; 6}">FocalPlaneResolutionUnit invalid value.</assert>
         </rule>
         
         <rule id="TAG-37392-0004" context="ifd[class=image]" level="error" >
             <title>FocalPlaneResolutionUnit only in first IFD</title>
             <description>FocalPlaneResolutionUnit should only be used in the first IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=FocalPlaneResolutionUnit]}">FocalPlaneResolutionUnit should only be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37392-0005" context="ifd[class=image]" level="error" >
             <title>FocalPlaneResolutionUnit with FocalPlaneXResolution and FocalPlaneYResolution</title>
             <description>FocalPlaneResolutionUnit should only be used with FocalPlaneXResolution and FocalPlaneYResolution</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>19</page></reference>
             <assert test="{!tags.tag[name=FocalPlaneResolutionUnit]} || {tags.tag[name=FocalPlaneXResolution]} &amp;&amp; {tags.tag[name=FocalPlaneYResolution]}">FocalPlaneResolutionUnit should only be used with FocalPlaneXResolution and FocalPlaneYResolution</assert>
         </rule>
     </rules>
@@ -308,14 +308,14 @@
                 2: Normal orientation rotated 180 degrees.
                 3: Normal orientation rotated clockwise 90 degrees.
                 4: Normal orientation rotated counter-clockwise 90 degrees.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>20</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>20</page></reference>
             <assert test="{tags.tag[name=Orientation] == 1} || {tags.tag[name=Orientation] == 3} || {tags.tag[name=Orientation] == 6} || {tags.tag[name=Orientation] == 8} || {tags.tag[name=Orientation] == 9}">Orientation valid values regarding the TIFF/EP specifications are 1,3,6,8 or 9</assert>
         </rule>
         
         <rule id="TAG-274-1-0004" context="ifd[class=image]" level="error" >
             <title>Orientation only in first IFD</title>
             <description>Orientation should only be used in the first IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>20</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>20</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=Orientation]}">Orientation should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -339,21 +339,21 @@
         <rule id="TAG-262-1-0001" context="ifd[class=image]" level="error">
             <title>valid PhotometricInterpretation vales</title>
             <description>The PhotometricInterpretation value shall be 1(grayscale), 2(RGB), 6(YCbCr), 32803(CFA) or other values above 32767.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>21</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>21</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation]==1} || {tags.tag[name=PhotometricInterpretation]==2} || {tags.tag[name=PhotometricInterpretation]==6} || {tags.tag[name=PhotometricInterpretation]==32803} || {tags.tag[name=PhotometricInterpretation] &gt; 32767}">invalid PhotometricInterpretation for a full resolution image</assert>
         </rule>
         
         <rule id="TAG-262-1-0002" context="ifd[thumbnail=0]" level="error">
             <title>valid PhotometricInterpretation for full resolution image</title>
             <description>The PhotometricInterpretation value shall be 1(grayscale), 2(RGB) ,6(YCbCr) , 32803(CFA) or other values above 32767 for the full resolution image.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>21</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>21</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation]==1} || {tags.tag[name=PhotometricInterpretation]==2} || {tags.tag[name=PhotometricInterpretation]==6} || {tags.tag[name=PhotometricInterpretation]==32803} || {tags.tag[name=PhotometricInterpretation] &gt; 32767}">invalid PhotometricInterpretation for a full resolution image</assert>
         </rule>
         
         <rule id="TAG-262-1-0003" context="ifd[thumbnail=1]" level="error">
             <title>valid PhotometricInterpretation for thumbnail image</title>
             <description>The PhotometricInterpretation value shall be 1, 2 or 6 for the Thumbnail IFD.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>21</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>21</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation]==1} || {tags.tag[name=PhotometricInterpretation]==2} || {tags.tag[name=PhotometricInterpretation]==6}">Invalid PhotometricInterpretation for a thumbnail image</assert>
         </rule>
     </rules>
@@ -381,14 +381,14 @@
         <rule id="TAG-34857-0001" context="tag[id=34857]" level="error">
             <title>Interlace valid Type</title>
             <description>Interlace Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{type=='SHORT'}">Interlace type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-34857-0002" context="tag[id=34857]" level="error">
             <title>Interlace valid cardinality</title>
             <description>The cardinality of the Interlace tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{cardinality==1}">Interlace must have a 1 cardinality</assert>
         </rule>
         
@@ -402,14 +402,14 @@
                 128 vertical field 1, horizontal field 2.
                 129-255 vertical field 2-127, horizontal field 2
                 256-16383 vertical field 1-127, horizontal field 3-127</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{tags.tag[name=Interlace] &gt; -1} &amp;&amp; {tags.tag[name=Interlace] &lt; 16384}">Interlace invalid value.</assert>
         </rule>
         
         <rule id="TAG-34857-0004" context="ifd[class=image]" level="error" >
             <title>Interlace only in first IFD</title>
             <description>Interlace should only be used in the first IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=Interlace]}">Interlace should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -437,14 +437,14 @@
         <rule id="TAG-37399-0001" context="tag[id=37399]" level="error">
             <title>SensingMethod valid Type</title>
             <description>SensingMethod Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{type=='SHORT'}">SensingMethod type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-37399-0002" context="tag[id=37399]" level="error">
             <title>SensingMethod valid cardinality</title>
             <description>The cardinality of the SensingMethod tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{cardinality==1}">SensingMethod must have a 1 cardinality</assert>
         </rule>
         
@@ -460,21 +460,21 @@
                 6 MonochromeLinear sensor
                 7 TriLinear sensor
                 8 ColourSequentialLinear sensor</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{tags.tag[name=SensingMethod] &gt; -1} &amp;&amp; {tags.tag[name=SensingMethod] &lt; 9}">SensingMethod invalid value.</assert>
         </rule>
         
         <rule id="TAG-37399-0004" context="ifd[class=image]" level="error" >
             <title>SensingMethod  in first IFD</title>
             <description>SensingMethod must be used in the first IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=SensingMethod]}">SensingMethod should only be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-37399-0005" context="ifd[class=image]" level="error" >
             <title>SensingMethod only in first IFD</title>
             <description>SensingMethod should only be used in the first IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>22</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=Interlace]}">SensingMethod should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -495,14 +495,14 @@
         <rule id="TAG-33421-0001" context="tag[id=33421]" level="error">  
             <title>CFARepeatPatternDim valid Type</title>
             <description>CFARepeatPatternDim Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
             <assert test="{type=='SHORT'}">CFARepeatPatternDim type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-33421-0002" context="tag[id=33421]" level="error">
             <title>CFARepeatPatternDim valid cardinality</title>
             <description>The cardinality of the CFARepeatPatternDim tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
             <assert test="{cardinality==2}">CFARepeatPatternDim must have a 1 cardinality</assert>
         </rule>
         
@@ -518,14 +518,14 @@
                 6 MonochromeLinear sensor
                 7 TriLinear sensor
                 8 ColourSequentialLinear sensor</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
             <assert test="{tags.tag[name=CFARepeatPatternDim] &gt; -1} &amp;&amp; {tags.tag[name=CFARepeatPatternDim] &lt; 2}">CFARepeatPatternDim invalid value.</assert>
         </rule>
         
         <rule id="THUMBNAIL-0011" context="ifd[thumbnail=0]" level="error">
             <title>CFARepeatPatternDim in CFA full resolution image</title>
             <description>CFARepeatPatternDim is mandatory for full resolution image when PhotometricInterpretation = 32803</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 32803} || {tags.tag[name=CFARepeatPatternDim]}">FARepeatPatternDim is mandatory for CFA full resolution image</assert>
         </rule>
     </rules>
@@ -543,21 +543,21 @@
         <rule id="TAG-33422-0001" context="tag[id=33422]" level="error">  
             <title>CFAPattern valid Type</title>
             <description>CFAPattern Tag type must be BYTE</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
             <assert test="{type=='BYTE'}">CFAPattern type is not valid, an BYTE type is expected</assert>
         </rule>
         
         <rule id="TAG-33422-0002" context="ifd[thumbnail=0]" level="error" experimental="true">
             <title>CFAPattern valid cardinality</title>
             <description>The cardinality of the CFAPattern tag must be CFARepeatRows * CFARepeatCols</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
             <assert test="{tags.tag[name=CFAPattern].cardinality == tags.tag[name=CFARepeatPatternDim](0)*tags.tag[name=CFARepeatPatternDim](1)}">CFAPattern must have a CFARepeatRows * CFARepeatCols cardinality</assert>
         </rule>
         
         <rule id="TAG-33422-0003" context="ifd[thumbnail=0]" level="error">
             <title>CFAPattern in CFA full resolution image</title>
             <description>CFAPattern is mandatory for full resolution image when PhotometricInterpretation = 32803</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>23</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 32803} || {tags.tag[name=CFARepeatPatternDim]}">CFAPattern is mandatory for CFA full resolution image</assert>
         </rule>
     </rules>
@@ -575,28 +575,28 @@
         <rule id="TAG-277-1-0001" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for CFA images</title>
             <description>SamplesPerPixel must be 1 for CFA images</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 32803} || {tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel for CFA image</assert>
         </rule>
         
         <rule id="TAG-277-1-0002" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for Grayscale images</title>
             <description>SamplesPerPixel must be 1 for Grayscale images</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 1} || {tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel for CFA image</assert>
         </rule>
         
         <rule id="TAG-277-1-0003" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for RGB images</title>
             <description>SamplesPerPixel must be 3 for RGB images</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 2} || {tags.tag[name=SamplesPerPixel] == 3}">Invalid SamplesPerPixel for RGB image</assert>
         </rule>
         
         <rule id="TAG-277-1-0004" context="ifd[class=image]" level="error">
             <title>SamplesPerPixel for YCbCr images</title>
             <description>SamplesPerPixel must be 3 for YCbCr images</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
             <assert test="{tags.tag[name=PhotometricInterpretation] != 6} || {tags.tag[name=SamplesPerPixel] == 3}">Invalid SamplesPerPixel for YCbCr image</assert>
         </rule>
     </rules>
@@ -612,25 +612,25 @@
                 7 TIFF/JPEG compression. JPEG bitstream defines whether Baseline DCT JPEG or other JPEG version is used. TIFF/EP readers are only required to support Baseline DCT JPEG method.
                 Other Values above 32767 .These values are "Vendor Unique" and are not required to be interpreted by others. These "private" values need to be obtained from Adobe Corporation.
             </description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] &gt; 32767}">invalid compression value</assert>
         </rule>
         <rule id="TAG-259-1-0002" context="ifd[class=image]" level="error">
             <title>Compression is mandatory</title>
             <description>This tag is mandatory and there is no default value. The tag value shall equal "1" for the thumbnail IFD.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
             <assert test="{tags.tag[name=Compression]}">Compression tag is mandatory</assert>
         </rule>
         <rule id="TAG-259-1-0003" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail must be uncompressed</title>
             <description>The Compression tag value shall equal "1" for the thumbnail IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
             <assert test="{tags.tag[name=Compression] == 1}">Thumbnail must be uncompressed</assert>
         </rule>
         <!--<rule id="TAG-259-0004" context="ifd[thumbnail=0]" level="error">
             <title>Thumbnail must be uncompressed</title>
             <description>The Compression tag value shall equal "1" for the thumbnail IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>18</page></reference>
             <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] &gt; 32767}"></assert>
         </rule>-->
     </rules>
@@ -647,21 +647,21 @@
         <rule id="TAG-37122-0001" context="tag[id=37122]" level="error">  
             <title>CompressedBitsPerPixel valid Type</title>
             <description>CompressedBitsPerPixel Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
             <assert test="{type=='RATIONAL'}">CompressedBitsPerPixel type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37122-0002" context="tag[id=37122]" level="error">
             <title>CompressedBitsPerPixel valid cardinality</title>
             <description>The cardinality of the CompressedBitsPerPixel tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
             <assert test="{cardinality==1}">CompressedBitsPerPixel must have a 1 cardinality</assert>
         </rule>
         
         <rule id="TAG-37122-0003" context="ifd[class=image]" level="error">
             <title>CompressedBitsPerPixel requires compression</title>
             <description>CompressedBitsPerPixel should only be used on compressed images</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>27</page></reference>
             <assert test="{!tags.tag[name=CompressedBitsPerPixel]} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] &gt; 32767}">CompressedBitsPerPixel should only be used on compressed images</assert>
         </rule>
     </rules>
@@ -680,13 +680,13 @@
         <rule id="TAG-347-0001" context="tag[id=347]" level="error">  
             <title>JPEGTables valid Type</title>
             <description>JPEGTables Tag type must be UNDEFINED</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>28</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>28</page></reference>
             <assert test="{type=='UNDEFINED'}">JPEGTables type is not valid, an UNDEFINED type is expected</assert>
         </rule>
         <rule id="TAG-347-0002" context="ifd[class=image]" level="error">
             <title>JPEGTables only with JPEG compression</title>
             <description>JPEGTables should only be used with JPEG compression</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>28</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>28</page></reference>
             <assert test="{tags.tag[name=Compression] != 7} || {tags.tag[name=JPEGTables]}">JPEGTables should only be used with JPEG compression</assert>
         </rule>
     </rules>
@@ -705,7 +705,7 @@
         <rule id="TAG-37395-0001" context="tag[id=37395]" level="error">
             <title>ImageHistory tag valid Type</title>
             <description>ImageHistory Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>33</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>33</page></reference>
             <assert test="{type=='ASCII'}">ImageHistory Tag type is not valid, an ASCII type is expected</assert>
         </rule>
     </rules>
@@ -722,7 +722,7 @@
         <rule id="TAG-33723-0001" context="tag[id=33723]" level="error">
             <title>IPTC/NAA tag valid Type</title>
             <description>IPTC/NAA Tag type must be LONG or ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>33</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>33</page></reference>
             <assert test="{type=='ASCII'} || {type='LONG'}">IPTC/NAA Tag type is not valid, an LONG or ASCII type is expected</assert>
         </rule>
     </rules>
@@ -740,7 +740,7 @@
         <rule id="TAG-37394-0001" context="tag[id=37394]" level="error">
             <title>IPTC/NAA tag valid Type</title>
             <description>IPTC/NAA Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>33</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>33</page></reference>
             <assert test="{type=='ASCII'}">IPTC/NAA Tag type is not valid, an ASCII type is expected</assert>
         </rule>
     </rules>
@@ -758,13 +758,13 @@
         <rule id="TAG-34853-0001" context="tag[id=34853]" level="error">
             <title>GPSInfo tag valid Type</title>
             <description>GPSInfo Tag type must be LONG</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>34</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>34</page></reference>
             <assert test="{type=='LONG'}">GPSInfo Tag type is not valid, an LONG type is expected</assert>
         </rule>
         
         <rule id="TAG-34853-0002" context="tag[id=34853]" level="error">
             <title>GPSInfo valid cardinality</title><description>Check valid cardinality for tag GPSInfo, cardinality must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>34</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>34</page></reference>
             <assert test="{cardinality == 1}">GPSInfo cardinality must be 1</assert>
         </rule>
     </rules>
@@ -784,21 +784,21 @@
         <rule id="TAG-0-0001" context="tag[id=0]" level="error">
             <title>GPSVersionID valid Type</title>
             <description>GPSVersionID Tag type must be BYTE</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
             <assert test="{type=='BYTE'}">GPSVersionID type is not valid, an BYTE type is expected</assert>
         </rule>
         
         <rule id="TAG-0-0002" context="tag[id=0]" level="error">
             <title>GPSVersionID valid cardinality</title>
             <description>The cardinality of the GPSVersionID tag must be 4</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
             <assert test="{cardinality==4}">GPSVersionID must have a 4 cardinality</assert>
         </rule>
         
         <rule id="TAG-0-0003" context="ifd[class=GPS]" level="error" experimental="true">
             <title>GPSVersionID valid value</title>
             <description>GPSVersionID must contain a valid value</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
             <assert test="{tags.tag[name=TIFFEPStandardID] == '2,0,0,0'}">GPSVersionID tag must contain a valid value 2000 defining the current GPS info version</assert>
         </rule>
     </rules>
@@ -816,14 +816,14 @@
         <rule id="TAG-1-0001" context="tag[id=1]" level="error">
             <title>GPSLatitudeRef tag valid Type</title>
             <description>GPSLatitudeRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
             <assert test="{type=='ASCII'}">GPSLatitudeRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-1-0002" context="tag[id=1]" level="error">
             <title>GPSLatitudeRef valid cardinality</title>
             <description>The cardinality of the GPSLatitudeRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
             <assert test="{cardinality==2}">GPSLatitudeRef must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -842,14 +842,14 @@
         <rule id="TAG-2-0001" context="tag[id=2]" level="error">
             <title>GPSLatitude tag valid Type</title>
             <description>GPSLatitude Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
             <assert test="{type=='RATIONAL'}">GPSLatitude Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-2-0002" context="tag[id=2]" level="error">
             <title>GPSLatitude valid cardinality</title>
             <description>The cardinality of the GPSLatitude tag must be 3</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>35</page></reference>
             <assert test="{cardinality==3}">GPSLatitude must have a 3 cardinality</assert>
         </rule>
     </rules>
@@ -867,14 +867,14 @@
         <rule id="TAG-3-0001" context="tag[id=3]" level="error">
             <title>GPSLongitudeRef tag valid Type</title>
             <description>GPSLongitudeRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPSLongitudeRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-3-0002" context="tag[id=3]" level="error">
             <title>GPSLongitudeRef valid cardinality</title>
             <description>The cardinality of the GPSLongitudeRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==2}">GPSLongitudeRef must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -893,14 +893,14 @@
         <rule id="TAG-4-0001" context="tag[id=4]" level="error">
             <title>GPSLongitude tag valid Type</title>
             <description>GPSLongitude Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='RATIONAL'}">GPSLongitude Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-4-0002" context="tag[id=4]" level="error">
             <title>GPSLongitude valid cardinality</title>
             <description>The cardinality of the GPSLongitude tag must be 3</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==3}">GPSLongitude must have a 3 cardinality</assert>
         </rule>
     </rules>
@@ -919,14 +919,14 @@
         <rule id="TAG-5-0001" context="tag[id=5]" level="error">
             <title>GPSAltitudeRef tag valid Type</title>
             <description>GPSAltitudeRef Tag type must be BYTE</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='BYTE'}">GPSAltitudeRef Tag type is not valid, an BYTE type is expected</assert>
         </rule>
         
         <rule id="TAG-5-0002" context="tag[id=5]" level="error">
             <title>GPSAltitudeRef valid cardinality</title>
             <description>The cardinality of the GPSAltitudeRef tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==1}">GPSAltitudeRef must have a 1 cardinality</assert>
         </rule>
     </rules>
@@ -942,14 +942,14 @@
         <rule id="TAG-6-0001" context="tag[id=6]" level="error">
             <title>GPSLatitude tag valid Type</title>
             <description>GPSLatitude Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='RATIONAL'}">GPSLatitude Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-6-0002" context="tag[id=6]" level="error">
             <title>GPSLatitude valid cardinality</title>
             <description>The cardinality of the GPSLatitude tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==1}">GPSLatitude must have a 1 cardinality</assert>
         </rule>
     </rules>
@@ -966,14 +966,14 @@
         <rule id="TAG-7-0001" context="tag[id=7]" level="error">
             <title>GPSTimeStamp tag valid Type</title>
             <description>GPSTimeStamp Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='RATIONAL'}">GPSTimeStamp Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-7-0002" context="tag[id=7]" level="error">
             <title>GPSTimeStamp valid cardinality</title>
             <description>The cardinality of the GPSTimeStamp tag must be 3</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==3}">GPSTimeStamp must have a 3 cardinality</assert>
         </rule>
     </rules>
@@ -992,7 +992,7 @@
         <rule id="TAG-8-0001" context="tag[id=8]" level="error">
             <title>GPSSatellites tag valid Type</title>
             <description>GPSSatellites Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPSSatellites Tag type is not valid, an ASCII type is expected</assert>
         </rule>
     </rules>
@@ -1009,14 +1009,14 @@
         <rule id="TAG-9-0001" context="tag[id=9]" level="error">
             <title>GPStatus tag valid Type</title>
             <description>GPStatus Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPStatus Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-9-0002" context="tag[id=9]" level="error">
             <title>GPStatus valid cardinality</title>
             <description>The cardinality of the GPStatus tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==2}">GPStatus must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -1034,14 +1034,14 @@
         <rule id="TAG-10-0001" context="tag[id=10]" level="error">
             <title>GPSMeasureMode tag valid Type</title>
             <description>GPSMeasureMode Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPSMeasureMode Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-10-0002" context="tag[id=10]" level="error">
             <title>GPSMeasureMode valid cardinality</title>
             <description>The cardinality of the GPSMeasureMode tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==2}">GPSMeasureMode must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -1060,14 +1060,14 @@
         <rule id="TAG-11-0001" context="tag[id=11]" level="error">
             <title>GPSDOP tag valid Type</title>
             <description>Measurement precision(GPSDOP) Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='RATIONAL'}">Measurement precision(GPSDOP) Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-11-0002" context="tag[id=11]" level="error">
             <title>GPSDOP valid cardinality</title>
             <description>The cardinality of the Measurement precision(GPSDOP) tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==1}">Measurement precision(GPSDOP) must have a 1 cardinality</assert>
         </rule>
     </rules>
@@ -1085,14 +1085,14 @@
         <rule id="TAG-12-0001" context="tag[id=12]" level="error">
             <title>GPSSpeedRef tag valid Type</title>
             <description>GPSSpeedRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPSSpeedRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-12-0002" context="tag[id=12]" level="error">
             <title>GPSSpeedRef valid cardinality</title>
             <description>The cardinality of the GPSSpeedRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==2}">GPSSpeedRef must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -1108,14 +1108,14 @@
         <rule id="TAG-13-0001" context="tag[id=13]" level="error">
             <title>GPSSpeed tag valid Type</title>
             <description>GPSSpeed Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='RATIONAL'}">GPSSpeed Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-13-0002" context="tag[id=13]" level="error">
             <title>GPSSpeed valid cardinality</title>
             <description>The cardinality of the GPSSpeed tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==1}">GPSSpeed must have a 1 cardinality</assert>
         </rule>
     </rules>
@@ -1133,14 +1133,14 @@
         <rule id="TAG-14-0001" context="tag[id=14]" level="error">
             <title>GPSTrackRef tag valid Type</title>
             <description>GPSTrackRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPSTrackRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-14-0002" context="tag[id=14]" level="error">
             <title>GPSTrackRef valid cardinality</title>
             <description>The cardinality of the GPSTrackRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==2}">GPSTrackRef must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -1157,14 +1157,14 @@
         <rule id="TAG-15-0001" context="tag[id=15]" level="error">
             <title>GPSTrack tag valid Type</title>
             <description>GPSTrack Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='RATIONAL'}">GPSTrack Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-15-0002" context="tag[id=15]" level="error">
             <title>GPSTrack valid cardinality</title>
             <description>The cardinality of the GPSTrack tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==1}">GPSTrack must have a 1 cardinality</assert>
         </rule>
     </rules>
@@ -1182,14 +1182,14 @@
         <rule id="TAG-16-0001" context="tag[id=16]" level="error">
             <title>GPSImgDirectionRef tag valid Type</title>
             <description>GPSImgDirectionRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPSImgDirectionRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-16-0002" context="tag[id=16]" level="error">
             <title>GPSImgDirectionRef valid cardinality</title>
             <description>The cardinality of the GPSImgDirectionRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==2}">GPSImgDirectionRef must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -1206,14 +1206,14 @@
         <rule id="TAG-17-0001" context="tag[id=17]" level="error">
             <title>GPSImgDirection tag valid Type</title>
             <description>GPSImgDirection Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='RATIONAL'}">GPSImgDirection Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-17-0002" context="tag[id=17]" level="error">
             <title>GPSImgDirection valid cardinality</title>
             <description>The cardinality of the GPSImgDirection tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==1}">GPSImgDirection must have a 1 cardinality</assert>
         </rule>
     </rules>
@@ -1230,7 +1230,7 @@
         <rule id="TAG-18-0001" context="tag[id=18]" level="error">
             <title>GPSMapDatum tag valid Type</title>
             <description>GPSMapDatum Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPSMapDatum Tag type is not valid, an ASCII type is expected</assert>
         </rule>
     </rules>
@@ -1248,14 +1248,14 @@
         <rule id="TAG-19-0001" context="tag[id=19]" level="error">
             <title>GPSDestLatitudeRef tag valid Type</title>
             <description>GPSDestLatitudeRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='ASCII'}">GPSDestLatitudeRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-19-0002" context="tag[id=19]" level="error">
             <title>GPSDestLatitudeRef valid cardinality</title>
             <description>The cardinality of the GPSDestLatitudeRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==2}">GPSDestLatitudeRef must have a 2 cardinality</assert>
         </rule>
      </rules>
@@ -1275,14 +1275,14 @@
         <rule id="TAG-20-0001" context="tag[id=20]" level="error">
             <title>GPSDestLatitude tag valid Type</title>
             <description>GPSDestLatitude Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{type=='RATIONAL'}">GPSDestLatitude Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-20-0002" context="tag[id=20]" level="error">
             <title>GPSDestLatitude valid cardinality</title>
             <description>The cardinality of the GPSDestLatitude tag must be 3</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>36</page></reference>
             <assert test="{cardinality==3}">GPSDestLatitude must have a 3 cardinality</assert>
         </rule>
     </rules>
@@ -1300,14 +1300,14 @@
         <rule id="TAG-21-0001" context="tag[id=21]" level="error">
             <title>GPSDestLongitudeRef tag valid Type</title>
             <description>GPSDestLongitudeRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{type=='ASCII'}">GPSDestLongitudeRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-21-0002" context="tag[id=21]" level="error">
             <title>GPSDestLongitudeRef valid cardinality</title>
             <description>The cardinality of the GPSDestLongitudeRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{cardinality==2}">GPSDestLongitudeRef must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -1327,14 +1327,14 @@
         <rule id="TAG-22-0001" context="tag[id=22]" level="error">
             <title>GPSDestLongitude tag valid Type</title>
             <description>GPSDestLongitude Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{type=='RATIONAL'}">GPSDestLongitude Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-22-0002" context="tag[id=22]" level="error">
             <title>GPSDestLongitude valid cardinality</title>
             <description>The cardinality of the GPSDestLongitude tag must be 3</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{cardinality==3}">GPSDestLongitude must have a 3 cardinality</assert>
         </rule>
     </rules>
@@ -1352,14 +1352,14 @@
         <rule id="TAG-23-0001" context="tag[id=23]" level="error">
             <title>GPSDestBearingRef tag valid Type</title>
             <description>GPSDestBearingRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{type=='ASCII'}">GPSDestBearingRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-23-0002" context="tag[id=23]" level="error">
             <title>GPSDestBearingRef valid cardinality</title>
             <description>The cardinality of the GPSDestBearingRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{cardinality==2}">GPSDestBearingRef must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -1376,14 +1376,14 @@
         <rule id="TAG-24-0001" context="tag[id=24]" level="error">
             <title>GPSDestBearing tag valid Type</title>
             <description>GPSDestBearing Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{type=='RATIONAL'}">GPSDestBearing Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-24-0002" context="tag[id=24]" level="error">
             <title>GPSDestBearing valid cardinality</title>
             <description>The cardinality of the GPSDestBearing tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{cardinality==1}">GPSDestBearing must have a 1 cardinality</assert>
         </rule>
     </rules>
@@ -1401,14 +1401,14 @@
         <rule id="TAG-25-0001" context="tag[id=25]" level="error">
             <title>GPSDestDistanceRef tag valid Type</title>
             <description>GPSDestDistanceRef Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{type=='ASCII'}">GPSDestDistanceRef Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-25-0002" context="tag[id=25]" level="error">
             <title>GPSDestDistanceRef valid cardinality</title>
             <description>The cardinality of the GPSDestDistanceRef tag must be 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{cardinality==2}">GPSDestDistanceRef must have a 2 cardinality</assert>
         </rule>
     </rules>
@@ -1424,14 +1424,14 @@
         <rule id="TAG-26-0001" context="tag[id=26]" level="error">
             <title>GPSDestDistance tag valid Type</title>
             <description>GPSDestDistance Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{type=='RATIONAL'}">GPSDestDistance Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-26-0002" context="tag[id=26]" level="error">
             <title>GPSDestDistance valid cardinality</title>
             <description>The cardinality of the GPSDestDistance tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{cardinality==1}">GPSDestDistance must have a 1 cardinality</assert>
         </rule>
     </rules>
@@ -1451,14 +1451,14 @@
         <rule id="TAG-36867-0001" context="tag[id=36867]" level="error">
             <title>DateTimeOriginal tag valid Type</title>
             <description>DateTimeOriginal Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{type=='ASCII'}">DateTimeOriginal Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-36867-0002" context="tag[id=36867]" level="error">
             <title>DateTimeOriginal valid cardinality</title>
             <description>The cardinality of the DateTimeOriginal tag must be 20</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{cardinality==20}">DateTimeOriginal cardinality is not valid, cardinality should be 20</assert>
         </rule>
         
@@ -1466,21 +1466,21 @@
             <title>DateTimeOriginal valid format</title>
             <description>The format is: "YYYY:MM:DD HH:MM:SS", with hours like those on a 24-hour
                 clock, and one space character between the date and the time</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{date(tags.tag[name=DateTimeOriginal])} || {tags.tag[name=DateTimeOriginal] = '0000:00:00 00:00:00'}">Incorrect format for DateTimeOriginal</assert>
         </rule>
         
         <rule id="TAG-36867-0004" context="ifd[IFD0=1]" level="error">
             <title>DateTimeOriginal must be use in the first IFD</title>
             <description>DateTimeOriginal tag must be used in the first IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{tags.tag[name=DateTimeOriginal]}">DateTimeOriginal tag must be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-36867-0005" context="ifd[class=image]" level="error" >
             <title>DateTimeOriginal should only be used in first IFD</title>
             <description>DateTimeOriginal should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=DateTimeOriginal]}">DateTimeOriginal should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1497,21 +1497,21 @@
             <title>DateTime valid format</title>
             <description>The format is: "YYYY:MM:DD HH:MM:SS", with hours like those on a 24-hour
                 clock, and one space character between the date and the time</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{date(tags.tag[name=DateTime])} || {tags.tag[name=DateTime] = '0000:00:00 00:00:00'}">Incorrect format for DateTime</assert>
         </rule>
         
         <rule id="TAG-306-1-0002" context="ifd[IFD0=1]" level="error">
             <title>DateTime must be use in the first IFD</title>
             <description>DateTime tag must be used in the first IFD</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{tags.tag[name=DateTime]}">DateTime tag must be used in the first IFD</assert>
         </rule>
         
         <rule id="TAG-306-1-0003" context="ifd[class=image]" level="error" >
             <title>DateTime should only be used in first IFD</title>
             <description>DateTime should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>37</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=DateTime]}">DateTime should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1534,28 +1534,28 @@
         <rule id="TAG-34858-0001" context="tag[id=34858]" level="error">
             <title>TimeZoneOffset tag valid Type</title>
             <description>TimeZoneOffset Tag type must be SSHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
             <assert test="{type=='SSHORT'}">TimeZoneOffset Tag type is not valid, an SSHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-34858-0002" context="tag[id=34858]" level="error">
             <title>TimeZoneOffset valid cardinality</title>
             <description>The cardinality of the TimeZoneOffset tag must be 1 or 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
             <assert test="{cardinality==1} || {cardinality==2}">TimeZoneOffset cardinality is not valid, cardinality should be 1 or 2</assert>
         </rule>
         
         <rule id="TAG-34858-0003" context="tag[IFD0=1]" level="error" experimental="true">
             <title>TimeZoneOffset valid values</title>
             <description>The valees of the TimeZoneOffset tag must between -12 and +11</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
             <assert test="">TimeZoneOffset value is not valid, values should be between -12 and +11</assert>
         </rule>
         
         <rule id="TAG-34858-0004" context="ifd[class=image]" level="error" >
             <title>TimeZoneOffset should only be used in first IFD</title>
             <description>TimeZoneOffset should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=TimeZoneOffset]}">TimeZoneOffset should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1578,20 +1578,20 @@
         <rule id="TAG-33434-0001" context="tag[id=33434]" level="error">
             <title>ExposureTime tag valid Type</title>
             <description>ExposureTime Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
             <assert test="{type=='RATIONAL'}">ExposureTime Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-33434-0002" context="tag[id=33434]" level="error">
             <title>ExposureTime valid cardinality</title>
             <description>The cardinality of the ExposureTime tag must be 1 or 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
             <assert test="{cardinality==1} || {cardinality==2}">ExposureTime cardinality is not valid, cardinality should be 1 or 2</assert>
         </rule>
         <rule id="TAG-33434-0003" context="ifd[class=image]" level="error" >
             <title>ExposureTime should only be used in first IFD</title>
             <description>ExposureTime should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>38</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=ExposureTime]}">ExposureTime should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1608,20 +1608,20 @@
         <rule id="TAG-37377-0001" context="tag[id=37377]" level="error">
             <title>ShutterSpeedValue tag valid Type</title>
             <description>ShutterSpeedValue Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{type=='RATIONAL'}">ShutterSpeedValue Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37377-0002" context="tag[id=37377]" level="error">
             <title>ShutterSpeedValue valid cardinality</title>
             <description>The cardinality of the ShutterSpeedValue tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{cardinality==1}">ShutterSpeedValue cardinality is not valid, cardinality should be 1</assert>
         </rule>
         <rule id="TAG-37377-0003" context="ifd[class=image]" level="error" >
             <title>ShutterSpeedValue should only be used in first IFD</title>
             <description>ShutterSpeedValue should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=ShutterSpeedValue]}">ShutterSpeedValue should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1644,20 +1644,20 @@
         <rule id="TAG-33437-0001" context="tag[id=33437]" level="error">
             <title>FNumber tag valid Type</title>
             <description>FNumber Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{type=='RATIONAL'}">FNumber Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-33437-0002" context="tag[id=33437]" level="error">
             <title>FNumber valid cardinality</title>
             <description>The cardinality of the FNumber tag must be 1 or 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{cardinality==1} || {cardinality==2}">FNumber cardinality is not valid, cardinality should be 1 or 2</assert>
         </rule>
         <rule id="TAG-33437-0003" context="ifd[class=image]" level="error" >
             <title>FNumber should only be used in first IFD</title>
             <description>FNumber should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=FNumber]}">FNumber should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1675,20 +1675,20 @@
         <rule id="TAG-37378-0001" context="tag[id=37378]" level="error">
             <title>ApertureValue tag valid Type</title>
             <description>ApertureValue Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{type=='RATIONAL'}">ApertureValue Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37378-0002" context="tag[id=37378]" level="error">
             <title>ApertureValue valid cardinality</title>
             <description>The cardinality of the ApertureValue tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{cardinality==1}">ApertureValue cardinality is not valid, cardinality should be 1</assert>
         </rule>
         <rule id="TAG-37378-0003" context="ifd[class=image]" level="error" >
             <title>ApertureValue should only be used in first IFD</title>
             <description>ApertureValue should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>39</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=ApertureValue]}">ApertureValue should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1706,19 +1706,19 @@
         <rule id="TAG-37381-0001" context="tag[id=37381]" level="error">
             <title>MaxApertureValue tag valid Type</title>
             <description>MaxApertureValue Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{type=='RATIONAL'}">MaxApertureValue Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         <rule id="TAG-37381-0002" context="tag[id=37381]" level="error">
             <title>MaxApertureValue valid cardinality</title>
             <description>The cardinality of the MaxApertureValue tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{cardinality==1}">MaxApertureValue cardinality is not valid, cardinality should be 1</assert>
         </rule>
         <rule id="TAG-37381-0003" context="ifd[class=image]" level="error" >
             <title>MaxApertureValue should only be used in first IFD</title>
             <description>MaxApertureValue should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=MaxApertureValue]}">MaxApertureValue should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1745,20 +1745,20 @@
         <rule id="TAG-37379-0001" context="tag[id=37379]" level="error">
             <title>BrightnessValue tag valid Type</title>
             <description>BrightnessValue Tag type must be SRATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{type=='SRATIONAL'}">BrightnessValue Tag type is not valid, an SRATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37379-0002" context="tag[id=37379]" level="error">
             <title>BrightnessValue valid cardinality</title>
             <description>The cardinality of the BrightnessValue tag must be 1 or 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{cardinality==1} || {cardinality==2}">BrightnessValue cardinality is not valid, cardinality should be 1 or 2</assert>
         </rule>
         <rule id="TAG-37379-0003" context="ifd[class=image]" level="error" >
             <title>BrightnessValue should only be used in first IFD</title>
             <description>BrightnessValue should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=BrightnessValue]}">BrightnessValue should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1783,20 +1783,20 @@
         <rule id="TAG-37380-0001" context="tag[id=37380]" level="error">
             <title>ExposureBiasValue tag valid Type</title>
             <description>ExposureBiasValue Tag type must be SRATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{type=='SRATIONAL'}">ExposureBiasValue Tag type is not valid, an SRATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37380-0002" context="tag[id=37380]" level="error">
             <title>ExposureBiasValue valid cardinality</title>
             <description>The cardinality of the ExposureBiasValue tag must be 1 or 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{cardinality==1} || {cardinality==2}">ExposureBiasValue cardinality is not valid, cardinality should be 1 or 2</assert>
         </rule>
         <rule id="TAG-37380-0003" context="ifd[class=image]" level="error" >
             <title>ExposureBiasValue should only be used in first IFD</title>
             <description>ExposureBiasValue should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>40</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=ExposureBiasValue]}">ExposureBiasValue should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1829,14 +1829,14 @@
         <rule id="TAG-34850-0001" context="tag[id=34850]" level="error">
             <title>ExposureProgram tag valid Type</title>
             <description>ExposureProgram Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
             <assert test="{type=='SHORT'}">ExposureProgram Tag type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-34850-0002" context="tag[id=34850]" level="error">
             <title>ExposureProgram valid cardinality</title>
             <description>The cardinality of the ExposureProgram tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
             <assert test="{cardinality==1}">ExposureProgram cardinality is not valid, cardinality should be 1</assert>
         </rule>
         <rule id="TAG-34850-0003" context="ifd[IFD0=1]" level="error">
@@ -1853,13 +1853,13 @@
                 8 Landscape Mode (intended for landscapes with the background in good focus)
                 Other values > 32767
             </description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
             <assert test="{tags.tag[name=ExposureProgram] &gt; -1} &amp;&amp; {tags.tag[name=ExposureProgram] &lt; 9} || {tags.tag[name=ExposureProgram] &gt; 32767}">ExposureProgram tag value is not valid</assert>
         </rule>
         <rule id="TAG-34850-0004" context="ifd[class=image]" level="error" >
             <title>ExposureProgram should only be used in first IFD</title>
             <description>ExposureProgram should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=ExposureProgram]}">ExposureProgram should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1885,14 +1885,14 @@
         <rule id="TAG-37383-0001" context="tag[id=37383]" level="error">
             <title>MeteringMode tag valid Type</title>
             <description>MeteringMode Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
             <assert test="{type=='SHORT'}">MeteringMode Tag type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-37383-0002" context="tag[id=37383]" level="error">
             <title>MeteringMode valid cardinality</title>
             <description>The cardinality of the MeteringMode tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
             <assert test="{cardinality==1}">MeteringMode cardinality is not valid, cardinality should be 1</assert>
         </rule>
         <rule id="TAG-37383-0003" context="ifd[IFD0=1]" level="error">
@@ -1905,13 +1905,13 @@
                 4 MultiSpot
                 Other values >32767
             </description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
             <assert test="{tags.tag[name=MeteringMode] &gt; -1} &amp;&amp; {tags.tag[name=MeteringMode] &lt; 5} || {tags.tag[name=MeteringMode] &gt; 32767}">MeteringMode tag value is not valid</assert>
         </rule>
         <rule id="TAG-37383-0004" context="ifd[class=image]" level="error" >
             <title>MeteringMode should only be used in first IFD</title>
             <description>MeteringMode should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>41</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=MeteringMode]}">MeteringMode should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1945,14 +1945,14 @@
         <rule id="TAG-37385-0001" context="tag[id=37385]" level="error">
             <title>Flash tag valid Type</title>
             <description>Flash Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>42</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>42</page></reference>
             <assert test="{type=='SHORT'}">Flash Tag type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-37385-0002" context="tag[id=37385]" level="error">
             <title>Flash valid cardinality</title>
             <description>The cardinality of the Flash tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>42</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>42</page></reference>
             <assert test="{cardinality==1}">Flash cardinality is not valid, cardinality should be 1</assert>
         </rule>
         <rule id="TAG-37385-0003" context="ifd[IFD0=1]" level="error">
@@ -1965,13 +1965,13 @@
                 4 MultiSpot
                 Other values >32767
             </description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>42</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>42</page></reference>
             <assert test="{tags.tag[name=Flash] &gt; -1} &amp;&amp; {tags.tag[name=Flash] &lt; 5} || {tags.tag[name=Flash] &gt; 32767}">Flash tag value is not valid</assert>
         </rule>
         <rule id="TAG-37385-0004" context="ifd[class=image]" level="error" >
             <title>Flash should only be used in first IFD</title>
             <description>Flash should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>42</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>42</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=Flash]}">Flash should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -1998,20 +1998,20 @@
         <rule id="TAG-37386-0001" context="tag[id=37386]" level="error">
             <title>FocalLength tag valid Type</title>
             <description>FocalLength Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
             <assert test="{type=='RATIONAL'}">FocalLength Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37386-0002" context="tag[id=37386]" level="error">
             <title>FocalLength valid cardinality</title>
             <description>The cardinality of the FocalLength tag must be 1 or 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
             <assert test="{cardinality==1} || {cardinality==2}">FocalLength cardinality is not valid, cardinality should be 1 or 2</assert>
         </rule>
         <rule id="TAG-37386-0003" context="ifd[class=image]" level="error" >
             <title>FocalLength should only be used in first IFD</title>
             <description>FocalLength should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=FocalLength]}">FocalLength should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2038,20 +2038,20 @@
         <rule id="TAG-37382-0001" context="tag[id=37382]" level="error">
             <title>SubjectDistance tag valid Type</title>
             <description>SubjectDistance Tag type must be SRATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
             <assert test="{type=='SRATIONAL'}">SubjectDistance Tag type is not valid, an SRATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37382-0002" context="tag[id=37382]" level="error">
             <title>SubjectDistance valid cardinality</title>
             <description>The cardinality of the SubjectDistance tag must be 1 or 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
             <assert test="{cardinality==1} || {cardinality==2}">SubjectDistance cardinality is not valid, cardinality should be 1 or 2</assert>
         </rule>
         <rule id="TAG-37382-0003" context="ifd[class=image]" level="error" >
             <title>SubjectDistance should only be used in first IFD</title>
             <description>SubjectDistance should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>44</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=SubjectDistance]}">SubjectDistance should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2077,20 +2077,20 @@
         <rule id="TAG-37396-0001" context="tag[id=37396]" level="error">
             <title>SubjectLocation tag valid Type</title>
             <description>SubjectLocation Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{type=='SHORT'}">SubjectLocation Tag type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-37396-0002" context="tag[id=37396]" level="error">
             <title>SubjectLocation valid cardinality</title>
             <description>The cardinality of the SubjectLocation tag must be 2,3 or 4</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{cardinality==2} || {cardinality==3}  || {cardinality==4}">SubjectLocation cardinality is not valid, cardinality should be 2,3 or 4</assert>
         </rule>
         <rule id="TAG-37396-0003" context="ifd[class=image]" level="error" >
             <title>SubjectLocation should only be used in first IFD</title>
             <description>SubjectLocation should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=SubjectLocation]}">SubjectLocation should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2109,21 +2109,21 @@
         <rule id="TAG-34859-0001" context="tag[id=34859]" level="error">
             <title>SelfTimerMode tag valid Type</title>
             <description>SelfTimerMode Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{type=='SHORT'}">SelfTimerMode Tag type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-34859-0002" context="tag[id=34859]" level="error">
             <title>SelfTimerMode valid cardinality</title>
             <description>The cardinality of the SelfTimerMode tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{cardinality==1}">SelfTimerMode cardinality is not valid, cardinality should be 1</assert>
         </rule>
         
         <rule id="TAG-34859-0004" context="ifd[class=image]" level="error" >
             <title>SelfTimerMode should only be used in first IFD</title>
             <description>SelfTimerMode should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=SelfTimerMode]}">SelfTimerMode should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2143,21 +2143,21 @@
         <rule id="TAG-33423-0001" context="tag[id=33423]" level="error">
             <title>BatteryLevel tag valid Type</title>
             <description>BatteryLevel Tag type must be RATIONAL or ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{type=='RATIONAL'} || {type=='ASCII'}">BatteryLevel Tag type is not valid, an RATIONAL or ASCII type is expected</assert>
         </rule>
         
         <rule id="TAG-33423-0002" context="tag[id=33423]" level="error">
             <title>BatteryLevel valid cardinality</title>
             <description>The cardinality of the BatteryLevel tag must be 1 if RATIONAL is used</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{cardinality!=1} || {type=='RATIONAL'}">BatteryLevel cardinality is not valid, cardinality should be 1</assert>
         </rule>
         
         <rule id="TAG-33423-0003" context="ifd[class=image]" level="error" >
             <title>BatteryLevel should only be used in first IFD</title>
             <description>BatteryLevel should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>45</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=BatteryLevel]}">BatteryLevel should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2198,21 +2198,21 @@
         <rule id="TAG-37384-0001" context="tag[id=37384]" level="error">
             <title>LightSource tag valid Type</title>
             <description>LightSource Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>46</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>46</page></reference>
             <assert test="{type=='SHORT'}">LightSource Tag type is not valid, an SHORT type is expected</assert>
         </rule>
         
         <rule id="TAG-37384-0002" context="tag[id=37384]" level="error">
             <title>LightSource valid cardinality</title>
             <description>The cardinality of the LightSource tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>46</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>46</page></reference>
             <assert test="{cardinality==1}">LightSource cardinality is not valid, cardinality should be 1</assert>
         </rule>
         
         <rule id="TAG-37384-0004" context="ifd[class=image]" level="error" >
             <title>LightSource should only be used in first IFD</title>
             <description>LightSource should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>46</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>46</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=LightSource]}">LightSource should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2230,21 +2230,21 @@
         <rule id="TAG-34675-0001" context="tag[id=34675]" level="error">
             <title>InterColourProfile tag valid Type</title>
             <description>InterColourProfile Tag type must be UNDEFINED</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
             <assert test="{type=='UNDEFINED'}">InterColourProfile Tag type is not valid, an UNDEFINED type is expected</assert>
         </rule>
         
         <rule id="TAG-34675-0002" context="tag[id=34675]" level="error">
             <title>InterColourProfile valid cardinality</title>
             <description>The cardinality of the InterColourProfile tag must be 1</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
             <assert test="{cardinality==1}">InterColourProfile cardinality is not valid, cardinality should be 1</assert>
         </rule>
         
         <rule id="TAG-34675-0004" context="ifd[class=image]" level="error" >
             <title>InterColourProfile should only be used in first IFD</title>
             <description>InterColourProfile should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=ICCProfile]}">InterColourProfile should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2269,20 +2269,20 @@
         <rule id="TAG-37397-0001" context="tag[id=37397]" level="error">
             <title>ExposureIndex tag valid Type</title>
             <description>ExposureIndex Tag type must be RATIONAL</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
             <assert test="{type=='RATIONAL'}">ExposureIndex Tag type is not valid, an RATIONAL type is expected</assert>
         </rule>
         
         <rule id="TAG-37397-0002" context="tag[id=37397]" level="error">
             <title>ExposureIndex valid cardinality</title>
             <description>The cardinality of the ExposureIndex tag must be 1 or 2</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
             <assert test="{cardinality==1} || {cardinality==2}">ExposureIndex cardinality is not valid, cardinality should be 1 or 2</assert>
         </rule>
         <rule id="TAG-37397-0003" context="ifd[class=image]" level="error" >
             <title>ExposureIndex should only be used in first IFD</title>
             <description>ExposureIndex should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=ExposureIndex]}">ExposureIndex should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2304,13 +2304,13 @@
         <rule id="TAG-34855-0001" context="tag[id=34855]" level="error">
             <title>ISOSpeedRatings tag valid Type</title>
             <description>ISOSpeedRatings Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
             <assert test="{type=='SHORT'}">ISOSpeedRatings Tag type is not valid, an SHORT type is expected</assert>
         </rule>
         <rule id="TAG-34855-0002" context="ifd[class=image]" level="error" >
             <title>ISOSpeedRatings should only be used in first IFD</title>
             <description>ISOSpeedRatings should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=ISOSpeedRatings]}">ISOSpeedRatings should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2329,13 +2329,13 @@
         <rule id="TAG-34856-0001" context="tag[id=34856]" level="error">
             <title>OECF tag valid Type</title>
             <description>OECF Tag type must be SHORT</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>48</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>48</page></reference>
             <assert test="{type=='SHORT'}">OECF Tag type is not valid, an SHORT type is expected</assert>
         </rule>
         <rule id="TAG-34856-0002" context="ifd[class=image]" level="error" >
             <title>OECF should only be used in first IFD</title>
             <description>OECF should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>48</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>48</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=OECF]}">OECF should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2351,13 +2351,13 @@
         <rule id="TAG-34852-0001" context="tag[id=34852]" level="error">
             <title>SpectralSensitivity tag valid Type</title>
             <description>SpectralSensitivity Tag type must be ASCII</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>48</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>48</page></reference>
             <assert test="{type=='ASCII'}">SpectralSensitivity Tag type is not valid, an ASCII type is expected</assert>
         </rule>
         <rule id="TAG-34852-0002" context="ifd[class=image]" level="error" >
             <title>SpectralSensitivity should only be used in first IFD</title>
             <description>SpectralSensitivity should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>48</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>48</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=SpectralSensitivity]}">SpectralSensitivity should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2381,13 +2381,13 @@
         <rule id="TAG-37388-0001" context="tag[id=37388]" level="error">
             <title>SpatialFrequencyResponse tag valid Type</title>
             <description>SpatialFrequencyResponse Tag type must be UNDEFINED</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>49</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>49</page></reference>
             <assert test="{type=='UNDEFINED'}">SpatialFrequencyResponse Tag type is not valid, an UNDEFINED type is expected</assert>
         </rule>
         <rule id="TAG-37388-0002" context="ifd[class=image]" level="error" >
             <title>SpatialFrequencyResponse should only be used in first IFD</title>
             <description>SpatialFrequencyResponse should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>49</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>49</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=SpatialFrequencyResponse]}">SpatialFrequencyResponse should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2404,13 +2404,13 @@
         <rule id="TAG-37389-0001" context="tag[id=37389]" level="error">
             <title>Noise tag valid Type</title>
             <description>Noise Tag type must be UNDEFINED</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>49</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>49</page></reference>
             <assert test="{type=='UNDEFINED'}">Noise Tag type is not valid, an UNDEFINED type is expected</assert>
         </rule>
         <rule id="TAG-37389-0002" context="ifd[class=image]" level="error" >
             <title>Noise should only be used in first IFD</title>
             <description>Noise should only be used in the first Image File Directory(IFD)</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>49</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>49</page></reference>
             <assert test="{IFD0==1} || {!tags.tag[name=SpatialFrequencyResponse]}">Noise should only be used in the first IFD</assert>
         </rule>
     </rules>
@@ -2421,27 +2421,27 @@
         <rule id="MANDATORY-TAG-0001" context="ifd[class=image]" level="error">
             <title>PlanarConfiguration mandatory tag</title>
             <description>This tag describes how the components (samples) of each pixel are stored. This tag is mandatory and there is no default value.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>32</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>32</page></reference>
             <assert test="{tags.tag[name=PlanarConfiguration]}">PlanarConfiguration is mandatory</assert>
         </rule>
         <rule id="MANDATORY-TAG-0002" context="ifd[class=image]" level="error">
             <title>BitsPerSample mandatory tag</title>
             <description>This tag encodes the number of bits per component for each pixel. This tag is mandatory and there is no default value. This tag provides N values depending upon SamplesPerPixel present.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
             <assert test="{tags.tag[name=BitsPerSample]}">BitsPerSample is mandatory</assert>
         </rule>
         
         <rule id="MANDATORY-TAG-0003" context="ifd[class=image]" level="error">
             <title>RowsPerStrip mandatory for strip images</title>
             <description>This tag encodes the number of rows per strip within the image. This tag is mandatory when the image is stored as strips.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>25</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>25</page></reference>
             <assert test="{strips==0} || {tags.tag[name=RowsPerStrip]}">RowsPerStrip mandatory for strip images</assert>
         </rule>
         
         <rule id="MANDATORY-TAG-0004" context="ifd[class=image]" level="error">
             <title>StripByteCounts mandatory for strip images</title>
             <description>This tag encodes the number of bytes present in each strip after compression has been applied. This tag is mandatory when the image is stored as strips.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>25</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>25</page></reference>
             <assert test="{strips==0} || {tags.tag[name=StripBYTECount]}">StripByteCounts mandatory for strip images</assert>
         </rule>
         
@@ -2449,73 +2449,73 @@
             <title>64 Kbytes per strip</title>
             <description>It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.
                 This value is chosen to maximize compatibility with various operating systems.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>24</page></reference>
             <assert test="{tags.tag[name=Compression] != 0} || {StripsSize &gt; 65536}">It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.</assert>
         </rule>
         <rule id="TAG-530-0004" context="ifd[type=YCbCr]" level="error">
             <title>YCbCrSubSampling mandatori for YCbCr images</title>
             <description>YCbCrSubSampling It is mandatory when PhotometricInterpretation = 6, and there are no defaults allowed</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>28</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>28</page></reference>
             <assert test="{tags.tag[name=YCbCrSubSampling]}">It is mandatory for YCbCr images and there are no defaults allowed</assert>
         </rule> 
         <rule id="TAG-531-0005" context="ifd[type=YCbCr]" level="error">
             <title>YCbCrPositioning mandatori for YCbCr images</title>
             <description>YCbCrPositioning tag is mandatory when PhotometricInterpretation = 6 and the value shall equal 2.there are no defaults allowed</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
             <assert test="{tags.tag[name=YCbCrPositioning]==2}">YCbCrPositioning  is mandatory when PhotometricInterpretation = 6 and the value shall equal 2</assert>
         </rule> 
         <rule id="TAG-529-0005" context="ifd[type=YCbCr]" level="error">
             <title>YCbCrCoefficients mandatori for YCbCr images</title>
             <description>YCbCrCoefficients tag tag is mandatory when PhotometricInterpretation = 6 and there are no defaults allowed.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
             <assert test="{tags.tag[name=YCbCrCoefficients]}">YCbCrCoefficients tag is not defined and is mandatory for YCbCr Images</assert>
         </rule> 
         <rule id="TAG-529-0004" context="ifd[type=YCbCr]" level="info">
             <title>YCbCrCoefficients recommended values CCIR 601-1</title>
             <description>YCbCrCoefficients CCIR Recommendation 601-1: 299/1000, 587/1000 and 114/1000, for LumaRed, LumaGreen and LumaBlue, respectively. </description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
             <assert test="{tags.tag[name=YCbCrCoefficients]}">YCbCrCoefficients tag is defined. The values may not follow the CCIR Recommendation 601-1: 299/1000, 587/1000 and 114/1000, for LumaRed, LumaGreen and LumaBlue, respectively.</assert>
         </rule> 
         <rule id="TAG-529-0006" context="ifd[type=YCbCr]" level="info">
             <title>YCbCrCoefficients recommended values CCIR 709</title>
             <description>YCbCrCoefficients CCIR Recommendation 709: 2125/10000, 7154/10000 and 721/10000, for LumaRed, LumaGreen and LumaBlue, respectively. </description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
             <assert test="{tags.tag[name=YCbCrCoefficients]}">YCbCrCoefficients tag is defined. The values may not follow the CCIR Recommendation 709: 2125/10000, 7154/10000 and 721/10000, for LumaRed, LumaGreen and LumaBlue, respectively.</assert>
         </rule> 
         <rule id="TAG-532-0002" context="ifd[type=YCbCr]" level="error">
             <title>ReferenceBlackWhite mandatori for YCbCr images</title>
             <description>ReferenceBlackWhite tag is mandatory when PhotometricInterpretation = 6 and there are no defaults allowed.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>30</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>30</page></reference>
             <assert test="{tags.tag[name=ReferenceBlackWhite]}">ReferenceBlackWhite tag is mandatory for YCbCr images</assert>
         </rule>
         <rule id="TAG-532-0003" context="ifd[IFD0=1]" level="error">
             <title>Make tag mandatory</title>
             <description>Make is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>31</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>31</page></reference>
             <assert test="{tags.tag[name=Make]}">Make tag is mandatory</assert>
         </rule>
         <rule id="TAG-532-0004" context="ifd[IFD0=1]" level="error">
             <title>Model tag mandatory</title>
             <description>Model is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>31</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>31</page></reference>
             <assert test="{tags.tag[name=Model]}">Model tag is mandatory</assert>
         </rule>
         <rule id="TAG-532-0005" context="ifd[IFD0=1]" level="error">
             <title>Software tag mandatory</title>
             <description>Software is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>31</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>31</page></reference>
             <assert test="{tags.tag[name=Software]}">Software tag is mandatory</assert>
         </rule>
         <rule id="TAG-532-0006" context="ifd[IFD0=1]" level="error">
             <title>ImageDescription tag mandatory</title>
             <description>ImageDescription is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>32</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>32</page></reference>
             <assert test="{tags.tag[name=ImageDescription]}">ImageDescription tag is mandatory</assert>
         </rule>
         <rule id="TAG-532-0007" context="ifd[IFD0=1]" level="error">
             <title>Copyright tag mandatory</title>
             <description>Copyright is a mandatory tag with an allowed value of " " (null character) indicating "unknown".</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>32</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>32</page></reference>
             <assert test="{tags.tag[name=Copyright]}">Copyright tag is mandatory</assert>
         </rule>
     </rules>
@@ -2527,7 +2527,7 @@
         <rule id="MASTER-0001" context="ifd[thumbnail=0]" level="warning">
             <title>Square aspect ration</title>
             <description>In TIFF/EP recommends a pixel aspect ratio is 1:1 (square), so that XResolution equals YResolution</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.2: Image data</section>
                 <page>5</page>
             </reference>
@@ -2538,7 +2538,7 @@
             <title>64 Kbytes per strip</title>
             <description>It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.
                 This value is chosen to maximize compatibility with various operating systems.</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.2: Image data</section>
                 <page>5</page>
             </reference>
@@ -2547,27 +2547,27 @@
         <rule id="MASTER-0004" context="ifd[thumbnail=0]" level="error">
             <title>NewSubFileType defined</title>
             <description>New NewSubFileType tag must be explicit defined in an Image File Directory storing a master image.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
             <assert test="{tags.tag[name=NewSubfileType]}">New NewSubFileType tag must be explicitly defined in an Image File Directory storing a master image.</assert>
         </rule>
         <rule id="MASTER-0005" context="ifd[thumbnail=0]" level="error">
             <title>Valid NewSubFileType</title>
             <description>NewSubFileType tag must define a full resolution image in an Image File Directory storing a master image.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
             <assert test="{tags.tag[name=NewSubfileType]  == 0}">NewSubFileType invalid value for a master image, the value should define a full resolution image.</assert>
         </rule>
        
         <rule id="MASTER-0007" context="ifd[thumbnail=0]" level="error">
             <title>SubIFD not permitted</title>
             <description>TIFF-EP do not permit the use of SubIFDs in a master image.</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>17</page></reference>
             <assert test="{count(tags.tag[name=SubIFDs]) == 0}">TIFF/EP do not permit the use of SubIFDs in a master image</assert>
         </rule>
        
         <rule id="MASTER-0009" context="ifd[thumbnail=0]" level="error">
             <title>Master image with a subIFD thumbnail</title>
             <description>Although TIFF/EP do not recommend the use of thumbnails, when a thumbnails is defined it must contain a subIFD containing the main image.</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.2: Image data</section>
                 <page>6</page>
             </reference>
@@ -2582,7 +2582,7 @@
         <rule id="THUMBNAIL-0001" context="ifd[thumbnail=1]" level="warning">
             <title>Thumbnail square aspect ration</title>
             <description>In TIFF/EP recommends aspect ratio is 1:1 (square), so that XResolution equals YResolution</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2591,7 +2591,7 @@
         <rule id="THUMBNAIL-0002" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail strip data Structure</title>
             <description>TIFF/EP requires that the thumbnail image be stored in strips, so that the thumbnails may be read by any baseline TIFF 6.0 reader.  </description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2601,7 +2601,7 @@
             <title>Thumbnail 64 Kbytes per strip</title>
             <description>It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.
                 This value is chosen to maximize compatibility with various operating systems.</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2611,7 +2611,7 @@
             <title>Thumbnail No compression</title>
             <description>It is recommended that the image data, prior to compression, not exceed 64 Kbytes per strip.
                 This value is chosen to maximize compatibility with various operating systems.</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2620,7 +2620,7 @@
         <rule id="THUMBNAIL-0005" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail NewSubFileType defined</title>
             <description>NewSubFileType must be defined for TIFF/EP standard TIFF Thumbnail.</description>
-             <reference>
+             <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                  <page>6</page>
             </reference>
@@ -2629,7 +2629,7 @@
         <rule id="THUMBNAIL-0006" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail valid NewSubFileType</title>
             <description>NewSubFileType must be propertly defined for TIFF/EP standard TIFF Thumbnail.</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2639,7 +2639,7 @@
         <rule id="THUMBNAIL-0008" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail ImageWidth</title>
             <description>The dimensions of the thumbnail image are restricted by TIFF/EP to 256 pixels maximum horizontally and 256 pixels maximum vertically as defined in TIFF/EP.</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2648,7 +2648,7 @@
         <rule id="THUMBNAIL-0009" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail ImageLength</title>
             <description>The dimensions of the thumbnail image are restricted by TIFF/EP to 256 pixels maximum horizontally and 256 pixels maximum vertically as defined in TIFF/EP.</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2657,7 +2657,7 @@
         <rule id="THUMBNAIL-0010" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail requires SubIFD tag</title>
             <description>Although TIFF/EP do not recommend the use of thumbnails, when a thumbnails is defined it must contain a subIFD containing the main image.</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2666,7 +2666,7 @@
         <rule id="THUMBNAIL-0014" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail dimension lower than main image</title>
             <description>The resolution X of the sub image (full resolution) must be greater than the thumbnail image</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2675,7 +2675,7 @@
         <rule id="THUMBNAIL-0012" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail dimension lower than main image</title>
             <description>The resolution Y of the sub image (full resolution) must be greater than the main (thumbnail) image</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2684,7 +2684,7 @@
         <rule id="THUMBNAIL-0013" context="ifd[thumbnail=1]" level="error">
             <title>Thumbnail subIFD contains a full resolution image</title>
             <description>TIFF/EP Thumbnail must define a subIFD containing a full resolution image</description>
-            <reference>
+            <reference><document>TIFF/EP</document>
                 <section>Section 4.3: Thumbnail images</section>
                 <page>6</page>
             </reference>
@@ -2697,22 +2697,22 @@
         <description>Forbidden and restricted tags</description>
         <rule id="ep-46" context="ifds.ifd[class=image]" level="error">
             <title>Check valid values for Ycbcr images</title><description>Check valid values for Ycbcr images</description>
-            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>29</page></reference>
             <assert test="{correctYcbcr == 1}">Invalid Ycbcr parameters</assert>
         </rule>
         <rule id="ep-47" context="tags" level="error">
             <title>Check forbidden tag PrimaryChromaticities does not exist</title><description>Check forbidden tag PrimaryChromaticities does not exist</description>
-            <reference><section>Section 4.5: Camera colour space information</section><page>9</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 4.5: Camera colour space information</section><page>9</page></reference>
             <assert test="{!tag[name=PrimaryChromaticities]}">PrimaryChromaticities tag is forbidden</assert>
         </rule>
         <rule id="ep-48" context="tags" level="error">
             <title>Check forbidden tag WhitePoint does not exist</title><description>Check forbidden tag WhitePoint does not exist</description>
-            <reference><section>Section 4.5: Camera colour space information</section><page>9</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 4.5: Camera colour space information</section><page>9</page></reference>
             <assert test="{!tag[name=WhitePoint]}">WhitePoint tag is forbidden</assert>
         </rule>
         <rule id="ep-49" context="tags" level="error">
             <title>Check forbidden tag TransferFunction does not exist</title><description>Check forbidden tag TransferFunction does not exist</description>
-            <reference><section>Section 4.5: Camera colour space information</section><page>9</page></reference>
+            <reference><document>TIFF/EP</document><section>Section 4.5: Camera colour space information</section><page>9</page></reference>
             <assert test="{!tag[name=TransferFunction]}">TransferFunction tag is forbidden</assert>
         </rule>
     </rules>
