@@ -23,6 +23,7 @@
   <excluderules>IDFG-0001</excluderules>
   <excluderules>IFDP-0002</excluderules>
   <excluderules>IFDR-0002</excluderules>
+  <excluderules>TAG-284-0004</excluderules>
   <excluderules>STRIPS-0001</excluderules>
   <excluderules>STRIPS-0002</excluderules>
  </include>
