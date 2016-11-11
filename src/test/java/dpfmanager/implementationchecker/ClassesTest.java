@@ -98,7 +98,7 @@ public class ClassesTest extends TestCase {
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_OK_sampleformat2.tif", 0);
 
     assertNumberOfErrors("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_resolution.tif", 0);
-    assertNumberOfWarnings("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_resolution.tif", 1);
+    assertNumberOfWarnings("src" + separator + "test" + separator + "resources" + separator + "classes" + separator + "IMG_KO_resolution.tif", 2);
   }
 
   /**
