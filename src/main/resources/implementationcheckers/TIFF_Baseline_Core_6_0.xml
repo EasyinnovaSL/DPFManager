@@ -121,7 +121,7 @@
    <title>Number of directory entry not match with the file entries</title>
    <description>Number of directory entry not match with the file entries</description>
    <reference><section>Section 2: TIFF Structure</section><page>14</page></reference>
-   <assert test="{tagsCount &gt; 0}">Number of directory entry must be the same that the directories entries</assert>
+   <assert test="{tagsCount == count(tag)}">Number of directory entry must be the same that the directories entries</assert>
   </rule>
   
   <rule id="IFD-0006" context="ifd" level="error">
@@ -286,7 +286,7 @@
   <title>Validation rules for an image IFD</title>
   <description>This section contains all the common rules for and image IFD </description>
   
-  <rule id="IFDI-0001" context="tags" level="error">
+  <rule id="IFDI-0001" context="ifd[class=image]" level="error">
    <title>An image IFD must have a Photometric Interpretation</title>
    <description>There is no default value for Photometric Interpretation tag, so it is required for an Image File Directory that contains and image data</description>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
@@ -294,7 +294,7 @@
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
-   <assert test="{count(tag[name=PhotometricInterpretation]) == 1}">An Image IFD must have a Photometric Interpretation tag</assert>
+   <assert test="{tags.tag[name=PhotometricInterpretation])}">An Image IFD must have a Photometric Interpretation tag</assert>
   </rule>
   
   <rule id="IFDI-0002" context="ifd[class=image]" level="error">
@@ -317,24 +317,24 @@
    <assert test="{tags.tag[name=ImageWidth]}">Image IFD must have a Width tag</assert>
   </rule>
   
-  <rule id="IFDI-0004" context="tags" level="error">
+  <rule id="IFDI-0004" context="ifd[class=image]" level="error">
    <title>An image IFD must have a X Resolution value</title>
    <description>An  Image File Directory(IFD) that contains and image data must have a X Resolution value</description>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
    <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
-   <assert test="{tag[name=XResolution]}">Image IFD must have tag X Resolution</assert>
+   <assert test="{tags.tag[name=XResolution]}">Image IFD must have tag X Resolution</assert>
   </rule>
   
-  <rule id="IFDI-0005" context="tags" level="error">
+  <rule id="IFDI-0005" context="ifd[class=image]" level="error">
    <title>An image IFD must have a Y Resolution value</title>
    <description>An  Image File Directory(IFD) that contains and image data must have a Y Resolution value</description>
    <reference><section>Section 3: Bilevel Images</section><page>21</page></reference>
    <reference><section>Section 4: Grayscale Images</section><page>22</page></reference>
    <reference><section>Section 5: Palette-color Images</section><page>23</page></reference>
    <reference><section>Section 6: RGB Full Color Images</section><page>23</page></reference>
-   <assert test="{tag[name=YResolution]}">Image IFD must have tag Y Resolution</assert>
+   <assert test="{tags.tag[name=YResolution]}">Image IFD must have tag Y Resolution</assert>
   </rule>
 
   <rule id="IFDI-0006" context="ifd[class=image]" level="error" experimental="true">
@@ -1547,13 +1547,13 @@
    Default is 1.
    
    1 = The 0th row represents the visual top of the image, and the 0th column represents the visual left-hand side.
-   2 = The 0th row represents the visual top of the image, and the 0th column representsthe visual right-hand side.
-   3 = The 0th row represents the visual bottom of the image, and the 0th column representsthe visual right-hand side.
-   4 = The 0th row represents the visual bottom of the image, and the 0th column representsthe visual left-hand side.
-   5 = The 0th row represents the visual left-hand side of the image, and the 0th columnrepresents the visual top.
+   2 = The 0th row represents the visual top of the image, and the 0th column represents the visual right-hand side.
+   3 = The 0th row represents the visual bottom of the image, and the 0th column represents the visual right-hand side.
+   4 = The 0th row represents the visual bottom of the image, and the 0th column represents the visual left-hand side.
+   5 = The 0th row represents the visual left-hand side of the image, and the 0th column represents the visual top.
    6 = The 0th row represents the visual right-hand side of the image, and the 0th column represents the visual top.
-   7 = The 0th row represents the visual right-hand side of the image, and the 0th columnrepresents the visual bottom.
-   8 = The 0th row represents the visual left-hand side of the image, and the 0th columnrepresents the visual bottom.
+   7 = The 0th row represents the visual right-hand side of the image, and the 0th column represents the visual bottom.
+   8 = The 0th row represents the visual left-hand side of the image, and the 0th column represents the visual bottom.
   
    Support for orientations other than 1 is not a Baseline TIFF requirement.</description>
   
@@ -1571,7 +1571,7 @@
    <assert test="{cardinality==1}">Orientation cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
-  <rule id="TAG-274-0003" context="tags" level="error">
+  <rule id="TAG-274-0003" context="ifd[class=image]" level="error">
     <title>Orientation tag valid value</title>
     <description>Orientation valid values are between 1 and 8.
 
@@ -1588,7 +1588,7 @@
     <assert test="{tags.tag[name=Orientation] > 0} &amp;&amp; {tags.tag[name=Orientation] &lt; 9}">Orientation value is not valid, possible values are between 1 and 8</assert>
    </rule>
   
-  <rule id="TAG-274-0004" context="tags" level="warning">
+  <rule id="TAG-274-0004" context="ifd[class=image]" level="warning">
    <title>Orientation other than 1</title>
    <description>Support for orientations other than 1 is not a Baseline TIFF requirement.</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>36</page></reference>
@@ -1606,7 +1606,7 @@
    <title>Orientation default value</title>
    <description>Orientation tag has a default value, if it is not present the 0th row represents the visual top of the image, and the 0th column represents the visual left-hand side.</description>
    <reference><section>Section 8: Baseline Field Reference Guide</section><page>36</page></reference>
-   <assert test="{!tags.tag[name=PlanarConfiguration]}">Orientation Tag is not defined. Then 0th row represents the visual top of the image, and the 0th column represents the visual left-hand side</assert>
+   <assert test="{!tags.tag[name=Orientation]}">Orientation Tag is not defined. Then 0th row represents the visual top of the image, and the 0th column represents the visual left-hand side</assert>
   </rule>
  </rules>
  
@@ -1693,14 +1693,14 @@
     <assert test="{cardinality==1}">PlanarConfiguration cardinality is not valid, cardinality should be 1</assert>
    </rule>
    
-  <rule id="TAG-284-0003" context="tags" level="error">
+  <rule id="TAG-284-0003" context="ifd[class=image]" level="error">
     <title>PlanarConfiguration valid values</title>
     <description>The values of the PlanarConfiguration tag must be 1(Chunky) or 2(Planar)</description>
     <reference><section>Section 8: Baseline Field Reference Guide</section><page>38</page></reference>
     <assert test="{tags.tag[name=PlanarConfiguration] &gt; 0} &amp;&amp; {tags.tag[name=PlanarConfiguration] &lt; 3}">PlanarConfiguration value is not valid, valeu should be ust be 1(Chunky) or 2(Planar)</assert>
    </rule>
   
-  <rule id="TAG-284-0004" context="tags" level="warning">
+  <rule id="TAG-284-0004" context="ifd[class=image]" level="warning">
     <title>PlanarConfiguration Planar</title>
     <description>PlanarConfiguration in Planar format is not currently in widespread use and it is not recommended
      for general interchange. It is used as an extension and Baseline TIFF
@@ -1762,7 +1762,7 @@
    <assert test="{cardinality==1}">ResolutionUnit cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
-  <rule id="TAG-296-0003" context="tags" level="error">
+  <rule id="TAG-296-0003" context="ifd[class=image]" level="error">
    <title>ResolutionUnit valid values</title>
    <description>The values of the ResolutionUnit tag are:
     1 = No absolute unit of measurement. 
@@ -1779,7 +1779,7 @@
    <assert test="{tags.tag[name=ResolutionUnit]} &amp;&amp; {class != 'image'}">ResolutionUnit should only be used in an image IFD</assert>
   </rule>
   
-  <rule id="TAG-296-0005" context="tags" level="info">
+  <rule id="TAG-296-0005" context="ifd[class=image]" level="info">
    <title>ResolutionUnit without absolute units</title>
    <description>The drawback of ResolutionUnit without absolute units is that different applications will import the image
     at different sizes. Even if the decision is arbitrary, it might be better to use dots per

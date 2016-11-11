@@ -295,11 +295,11 @@
    <assert test="{cardinality==2}">PageNumber cardinality is not valid, cardinality should be 2</assert>
   </rule>
   
-  <rule id="TAG-297-0003" context="tags" level="warning">
+  <rule id="TAG-297-0003" context="ifd[class=image]" level="warning" experimental="true">
    <title>PageNumber out of the document</title>
    <description>PageNumber value must be less than the total number of pages in the document</description>
    <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
-   <assert test="{tag[name=PageNumber](0) &lt; tag[name=PageNumber](1)}">Incoherent page number</assert>
+   <assert test="{tags.tag[name=PageNumber](0) &lt; tags.tag[name=PageNumber](1)}">Incoherent page number</assert>
   </rule>
   
    <rule id="TAG-297-0004" context="tag[id=297]" level="error" experimental="true">
@@ -344,14 +344,14 @@
    <title>XPosition tag valid Type</title>
    <description>XPosition Tag type must be RATIONAL</description>
    <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
-   <assert test="{type=='ASCII'}">XPosition Tag type is not valid, an RATIONAL type is expected</assert>
+   <assert test="{type=='RATIONAL'}">XPosition Tag type is not valid, an RATIONAL type is expected</assert>
   </rule>
   
   <rule id="TAG-286-0002" context="tag[id=286]" level="error">
    <title>XPosition valid cardinality</title>
    <description>The cardinality of the XPosition tag must be 1</description>
    <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
-   <assert test="{cardinality==2}">XPosition cardinality is not valid, cardinality should be 1</assert>
+   <assert test="{cardinality==1}">XPosition cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
  </rules>
@@ -369,14 +369,14 @@
    <title>YPosition tag valid Type</title>
    <description>YPosition Tag type must be RATIONAL</description>
    <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
-   <assert test="{type=='ASCII'}">YPosition Tag type is not valid, an RATIONAL type is expected</assert>
+   <assert test="{type=='RATIONAL'}">YPosition Tag type is not valid, an RATIONAL type is expected</assert>
   </rule>
   
   <rule id="TAG-287-0002" context="tag[id=287]" level="error">
    <title>YPosition valid cardinality</title>
    <description>The cardinality of the YPosition tag must be 1</description>
    <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
-   <assert test="{cardinality==2}">YPosition cardinality is not valid, cardinality should be 1</assert>
+   <assert test="{cardinality==1}">YPosition cardinality is not valid, cardinality should be 1</assert>
   </rule>
   
  </rules>
@@ -825,7 +825,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <title>InkSet no CMYK need InkNames</title>
   <description>The InkNames field must exist when InkSet=2 (No CMYK image)</description>
   <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
-  <assert test="{tags.tag[name=InkSet] == 1} || {!tags.tag[name=InkSet]} || {tags.tag[name=InkNames]}">invalid BitsPerSample  cardinality in CMYK image IFD</assert>
+  <assert test="{tags.tag[name=InkSet] == 1} || {!tags.tag[name=InkSet]} || {tags.tag[name=InkNames]}">The InkNames field must exist when InkSet=2 (No CMYK image)</assert>
  </rule>
  
  <rule id="TAG-332-0005" context="ifd[type=CMYK]" level="info">

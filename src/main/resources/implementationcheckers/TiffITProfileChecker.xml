@@ -10,8 +10,1301 @@
     <author>Easy Innova</author>
     <date>2016-09-20</date>
 
-    <include><policyChecker>TIFF_Baseline_Core_6_0.xml</policyChecker></include>
+    <include><policyChecker>TIFF_Baseline_Core_6_0.xml</policyChecker>
+    <excluderules>IFDE-0001</excluderules>
+        <excluderules>TAG-296-0005</excluderules>
+        <excluderules>TAG-254-0003</excluderules>
+        <excluderules>TAG-259-0003</excluderules>
+        <excluderules>TAG-284-0003</excluderules>
+        <excluderules>TAG-284-0004</excluderules>
+        <excluderules>TAG-262-0003</excluderules>
+
+    </include>
+
+    <rules id="IFDE-0">
+    <title>Validation rules for the TIFF Image File Directory Entry(IFD)</title>
+    <description>Each 12-byte IFD entry has the following format:
+
+        Bytes 0-1 The Tag that identifies the field.
+        Bytes 2-3 The field Type.
+        Bytes 4-7 The number of values, Count of the indicated Type.
+        Bytes 8-11 The Value Offset, the file offset (in bytes) of the Value for the field.
+
+        The Value is expected to begin on a word boundary; the corresponding Value Offset will thus be an even number.
+        This file offset may point anywhere in the file, even after the image data.</description>
+
+        <rule id="IFDE-0001-1" context="ifd" level="error" experimental="true">
+        <title>invalid IFDE type</title>
+        <description>The field types and their sizes are:
+
+            1 = BYTE 8-bit unsigned integer.
+            2 = ASCII 8-bit byte that contains a 7-bit ASCII code; the last byte must be NUL (binary zero).
+            3 = SHORT 16-bit (2-byte) unsigned integer.
+            4 = LONG 32-bit (4-byte) unsigned integer.
+            5 = RATIONAL Two LONGs: the first represents the numerator of a fraction; the second, the denominator.
+            7 = UNDEFINED An 8-bit byte that may contain anything, depending on the definition of the field.
+
+            To store a complicated data structure in a private tag, use the UNDEFINED field type and set the Count to the number of bytes required to hold the data structure.</description>
+        <reference><section>Section 7.5.1: IFD entry</section><pages>9</pages></reference>
+        <assert test="{tagtype &gt; 0} &amp;&amp;  {tagtype &lt; 8}  &amp;&amp; {tagtype != 6}">Invalid TIFF type, this type is not defined in the Baseline 6.0</assert>
+    </rule>
+</rules>
+
+    <rules id="TAG-269">
+        <title>DocumentName</title>
+        <description>The name of the document from which this image was scanned.
+
+            Tag = 269 (10D.H)
+            Type = ASCII
+            No default</description>
+
+        <rule id="TAG-269-0001" context="tag[id=269]" level="error">
+            <title>DocumentName tag valid Type</title>
+            <description>DocumentName Tag type must be ASCII</description>
+            <reference><document>TIFF 6.0 Specification. Part 2: Extended TIFF</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+            <assert test="{type=='ASCII'}">DocumentName Tag type is not valid, an ASCII type is expected</assert>
+        </rule>
+    </rules>
+    <rules id="TAG-285">
+        <title>PageName</title>
+        <description>The name of the page from which this image was scanned.
+
+            Tag = 285 (11D.H)
+            Type = ASCII
+            No default</description>
+
+        <rule id="TAG-285-0001" context="tag[id=285]" level="error">
+            <title>PageName tag valid Type</title>
+            <description>PageName Tag type must be ASCII</description>
+            <reference><document>TIFF 6.0 Specification. Part 2: Extended TIFF</document><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+            <assert test="{type=='ASCII'}">PageName Tag type is not valid, an ASCII type is expected</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34016">
+        <title>Site</title>
+        <description>Site name.
+
+            Tag = 34016 (84E0.H)
+            Type = ASCII
+            No default</description>
+
+        <rule id="TAG-34016-0001" context="tag[id=34016]" level="error">
+            <title>Site tag valid Type</title>
+            <description>Site Tag type must be ASCII</description>
+            <reference><section>Section 7.2.3: System identification</section><page>11</page></reference>
+            <assert test="{type=='ASCII'}">Site Tag type is not valid, an ASCII type is expected</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34018">
+        <title>IT8Header</title>
+        <description>Unmodified headers appended by ASCII “null” from ISO 10755, ISO 10756, and ISO 10759.
+
+            Tag = 34016 (84E2.H)
+            Type = ASCII
+            No default</description>
+
+        <rule id="TAG-34018-0001" context="tag[id=34018]" level="error">
+            <title>IT8Header tag valid Type</title>
+            <description>IT8Header Tag type must be ASCII</description>
+            <reference><section>Section 7.2.3: System identification</section><page>11</page></reference>
+            <assert test="{type=='ASCII'}">IT8Header Tag type is not valid, an ASCII type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34018-0002" context="ifd[class=image]" level="warning">
+            <title>IT8Header obsolete</title>
+            <description>The IT8Header field provides the ability to include unmodified headers (appended by an ASCII “null” at the end of the character string) from ISO 10755, ISO 10756, and ISO 10759 in the TIFF/IT files.
+                TIFF/IT readers are not required to interpret and use the contents of the IT8Header field.
+                The use of the IT8Header tag is only recommended for compatibility with readers based on the 1998 edition of this International Standard:ISO 12639-1998. International Standards ISO 10755, ISO 10756, and ISO 10759 are obsolete and have been withdrawn.</description>
+            <reference><section>Section 7.2.3: System identification</section><page>11</page></reference>
+            <assert test="{tags.tag[name=IT8Header]}">The use of the IT8Header tag is only recommended for compatibility with ISO 12639-1998. ISO 10755, ISO 10756, and ISO 10759 are obsolete.</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-274-1">
+        <title>Orientation</title>
+        <description>The orientation of the image with respect to the rows and columns.
+            Tag = 274 (112.H)
+            Type = SHORT
+            N = 1
+            Default is 1.
+
+            Basic orientations:
+            1 = The 0th row represents the visual top of the image, and the 0th column represents the visual left-hand side.
+            4 = The 0th row represents the visual bottom of the image, and the 0th column represents the visual left-hand side.
+            5 = The 0th row represents the visual left-hand side of the image, and the 0th column represents the visual top.
+            8 = The 0th row represents the visual left-hand side of the image, and the 0th column represents the visual bottom.
+
+            Optional orientations:
+            2 = The 0th row represents the visual top of the image, and the 0th column representsthe visual right-hand side.
+            3 = The 0th row represents the visual bottom of the image, and the 0th column representsthe visual right-hand side.
+            6 = The 0th row represents the visual right-hand side of the image, and the 0th column represents the visual top.
+            7 = The 0th row represents the visual right-hand side of the image, and the 0th columnrepresents the visual bottom.
+
+            Support for orientations other than 1 is not a Baseline TIFF requirement.</description>
+        <rule id="TAG-274-1-0007" context="ifd[class=image]" level="warning">
+            <title>Orientation recommended values</title>
+            <description>Orientation basic values are:
+
+                1 = The 0th row represents the visual top of the image, and the 0th column represents the visual left-hand side.
+                4 = The 0th row represents the visual bottom of the image, and the 0th column represents the visual left-hand side.
+                5 = The 0th row represents the visual left-hand side of the image, and the 0th column represents the visual top.
+                8 = The 0th row represents the visual left-hand side of the image, and the 0th column represents the visual bottom.
+                Default is 1.</description>
+            <reference><section>Section 8: Baseline Field Reference Guide</section><page>36</page></reference>
+            <assert test="{tags.tag[name=Orientation] != 1} &amp;&amp; {tags.tag[name=Orientation] != 4} &amp;&amp; {tags.tag[name=Orientation] != 5} &amp;&amp; {tags.tag[name=Orientation] != 8}">Orientation value is valid but not recommended, use a basic Orientation value instead</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-286">
+        <title>XPosition</title>
+        <description>X position of the image. The X offset in ResolutionUnits of the left side of the image, with respect to the left side of the page.
+
+            Tag = 286 (11E.H)
+            Type = RATIONAL
+            N = 1
+            No default</description>
+        <rule id="TAG-286-1-0001" context="tag[id=286]" level="error">
+            <title>XPosition tag valid Type</title>
+            <description>XPosition Tag type must be RATIONAL</description>
+            <reference><section>Section 7.2.4: Image size and orientation</section><page>12</page></reference>
+            <assert test="{type=='RATIONAL'}">XPosition Tag type is not valid, an RATIONAL type is expected</assert>
+        </rule>
+
+        <rule id="TAG-286-1-0002" context="tag[id=286]" level="error">
+            <title>XPosition valid cardinality</title>
+            <description>The cardinality of the XPosition tag must greater than 0</description>
+            <reference><section>Section 7.2.4: Image size and orientation</section><page>12</page></reference>
+            <assert test="{cardinality &gt; 0}">XPosition cardinality is not valid, cardinality should be greater than 0</assert>
+        </rule>
+        <rule id="TAG-286-1-0003" context="ifd[class=image]" level="error">
+            <title>XPosition invalid location</title>
+            <description>XPosition should only be used within a FP file</description>
+            <reference><section>Section 7.10.2.2: FP file structure</section><page>46</page></reference>
+            <assert test="{!tags.tag[name=XPosition]} || {filetype=='fp'}">XPosition should only be used within a FP file</assert>
+        </rule>
+        <rule id="TAG-286-1-0004" context="ifd[filetype=fp]" level="error">
+            <title>XPosition match YPosition</title>
+            <description>The cardinality of the XPosition tag must match YPosition cardinality</description>
+            <reference><section>Section 7.10.2.2: FP file structure</section><page>46</page></reference>
+            <assert test="{tags.tag[name=XPosition].cardinality == tags.tag[name=YPosition].cardinality}">XPosition cardinality is not valid, cardinality must match YPosition cardinality</assert>
+        </rule>
+        <rule id="TAG-286-1-0005" context="ifd[filetype=fp]" level="warning">
+            <title>XPosition default value</title>
+            <description>If the XPosition and YPosition fields are not included for a component, the component is assumed to be positioned at the top left corner of the page.</description>
+            <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+            <assert test="{!tags.tag[name=YPosition]}">If the XPosition field is not included for a component, the component is assumed to be positioned at the top left corner of the page. value 1</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-287-1">
+        <title>YPosition</title>
+        <description>Y position of the image. The Y offset in ResolutionUnits of the top of the image, with respect to the top of the page. In the TIFF coordinate scheme, the positive Y direction is down, so that YPosition is always positive.
+
+            Tag = 287 (11F.H)
+            Type = RATIONAL
+            N = 1
+            No default</description>
+
+        <rule id="TAG-287-1-0001" context="tag[id=287]" level="error">
+            <title>YPosition tag valid Type</title>
+            <description>YPosition Tag type must be RATIONAL</description>
+            <reference><section>Section 7.2.4: Image size and orientation</section><page>12</page></reference>
+            <assert test="{type=='RATIONAL'}">YPosition Tag type is not valid, an RATIONAL type is expected</assert>
+        </rule>
+
+        <rule id="TAG-287-1-0002" context="tag[id=287]" level="error">
+            <title>YPosition valid cardinality</title>
+            <description>The cardinality of the YPosition tag must greater than 0</description>
+            <reference><section>Section 7.2.4: Image size and orientation</section><page>12</page></reference>
+            <assert test="{cardinality &gt; 0}">YPosition cardinality is not valid, cardinality should be greater than 0</assert>
+        </rule>
+        <rule id="TAG-287-1-0003" context="ifd[class=image]" level="error">
+            <title>YPosition invalid location</title>
+            <description>YPosition should only be used within a FP file</description>
+            <reference><section>Section 7.10.2.2: FP file structure</section><page>46</page></reference>
+            <assert test="{!tags.tag[name=YPosition]} || {filetype=='fp'}">YPosition should only be used within a FP file</assert>
+        </rule>
+        <rule id="TAG-287-1-0004" context="ifd[filetype=fp]" level="error">
+            <title>YPosition match XPosition</title>
+            <description>The cardinality of the YPosition tag must match XPosition cardinality</description>
+            <reference><section>Section 7.10.2.2: FP file structure</section><page>46</page></reference>
+            <assert test="{tags.tag[name=YPosition].cardinality == tags.tag[name=XPosition].cardinality}">YPosition cardinality is not valid, cardinality must match XPosition cardinality</assert>
+        </rule>
+        <rule id="TAG-287-1-0005" context="ifd[filetype=fp]" level="warning">
+           <title>YPosition default value</title>
+          <description>If the XPosition and YPosition fields are not included for a component, the component is assumed to be positioned at the top left corner of the page.</description>
+          <reference><section>Section 12: Document Storage and Retrieval</section><page>55</page></reference>
+        <assert test="{!tags.tag[name=YPosition]}">If the YPosition field is not included for a component, the component is assumed to be positioned at the top left corner of the page. value 1</assert>
+    </rule>
+    </rules>
+
+    <rules id="TAG-296-1">
+        <title>ResolutionUnit</title>
+        <description>The unit of measurement for XResolution and YResolution.
+
+            Tag = 296 (128.H)
+            Type = SHORT
+            N = 1
+            Default is 2.
+
+            Currently defined values are:
+            2 = Inch.
+            3 = Centimeter.</description>
+        <rule id="TAG-296-1-0005" context="ifd[class=image]" level="error">
+            <title>ResolutionUnit without absolute units</title>
+            <description>ResolutionUnit (field 296) for TIFF/IT, TIFF/IT-P1 and TIFF/IT-P2 conformity levels shall contain the value 3 to indicate centimetres or the value 2 (default value) to indicate inches.
+                The other value for  ResolutionUnit recognized by TIFF, but not by TIFF/IT, is 1, meaning no absolute unit of measurement is specified.</description>
+            <reference><section>Section 7.2.5: Image resolution</section><page>13</page></reference>
+            <assert test="{tags.tag[name=ResolutionUnit] != 1}">ResolutionUnit without absolute units, TIFF/IT do not support no absolute unit of measurement</assert>
+        </rule>
+
+
+    </rules>
+
+    <rules id="TAG-254-1">
+    <title>NewSubfileType</title>
+    <description>A general indication of the kind of data contained in this subfile.
+        Replaces the old SubfileType field, due to limitations in the definition of that field. NewSubfileType is mainly useful when there are multiple subfiles in a single TIFF file.
+        This field is made up of a set of 32 flag bits. Unused bits are expected to be 0. Bit 0 is the low-order bit.
+
+        Tag = 254 (FE.H)
+        Type = LONG
+        N = 1
+        Default is 0.
+
+        Currently defined values are:
+        Bit 0 is 1 if the image is a reduced-resolution version of another image in this TIFF file; else the bit is 0.
+        Bit 1 is 1 if the image is a single page of a multi-page image (see the PageNumber field description); else the bit is 0.
+        Bit 2 is 1 if the image defines a transparency mask for another image in this TIFF file. The PhotometricInterpretation value must be 4, designating a transparency mask.
+        Bit 3 is 1 if identify TIFF/IT-FP files.
+
+        These values are defined as bit flags because they are independent of each other.</description>
+
+    <rule id="TAG-254-1-0003" context="ifd[class=image]" level="error">
+        <title>NewSubfileType valid value</title>
+        <description>The value of the NewSubfileType tag must be between 0 and 16</description>
+        <reference><section>Section 7.10.2.2: FP file structure</section><page>46</page></reference>
+        <assert test="{tags.tag[name=NewSubfileType] &gt; -1} &amp;&amp; {tags.tag[name=NewSubfileType] &lt; 16}">NewSubfileType value is not valid,the value should be between 0 and 15 </assert>
+    </rule>
+    </rules>
+
+    <rules id="TAG-259-1">
+    <title>Compression</title>
+    <description>Compression scheme used on the image data.
+
+        Tag = 259 (103.H)
+        Type = SHORT
+        N = 1
+        Default = 1
+
+        Currently defined values are:
+        1 = No compression
+        4 = CCITT G4-encoding scheme
+        7 = JPEG encoding scheme ('new-style' JPEG)
+        8 = Deflate ('Adobe-style')
+        32895 = the use of RasterPadding in the CT or MP format (IT8CTPAD)
+        32896 = the run-length encoding scheme for the LW format (IT8LW)
+        32897 = the run-length encoding scheme for the HC format (IT8MP)
+        32898 = the run-length encoding scheme for the BL format (T8BL)</description>
+
+
+    <rule id="TAG-259-1-0003" context="ifd" level="error">
+        <title>Valid Compression value</title>
+        <description>The Compression tag must have a valid value.
+            1 = No compression
+            4 = CCITT G4-encoding scheme
+            7 = JPEG encoding scheme ('new-style' JPEG)
+            8 = Deflate ('Adobe-style')
+            32895 = the use of RasterPadding in the CT or MP format (IT8CTPAD)
+            32896 = the run-length encoding scheme for the LW format (IT8LW)
+            32897 = the run-length encoding scheme for the HC format (IT8MP)
+            32898 = the run-length encoding scheme for the BL format (T8BL)
+        </description>
+        <reference><section>Section 8: Baseline Field Reference Guide</section><pages>30-31</pages></reference>
+        <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 4} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] == 8} || {tags.tag[name=Compression] == 32895} || {tags.tag[name=Compression] == 32896} || {tags.tag[name=Compression] == 32897} || {tags.tag[name=Compression] == 32898}">The Compression tag must have a valid value</assert>
+    </rule>
+    </rules>
+
+    <rules id="TAG-284-1">
+    <title>PlanarConfiguration</title>
+    <description>How the components of each pixel are stored.
+
+        Tag = 284 (11C.H)
+        Type = SHORT
+        N = 1
+        Default is 1
+
+        Currently defined values are:
+        1 = pixel interleaved
+        2 = colour interleaved
+        32768 = line interleaved</description>
+
+    <rule id="TAG-284-1-0003" context="ifd[class=image]" level="error">
+        <title>PlanarConfiguration valid values</title>
+        <description>The values of the PlanarConfiguration tag must be 1(Chunky) or 2(Planar)</description>
+        <reference><section>Section 8: Baseline Field Reference Guide</section><page>38</page></reference>
+        <assert test="{tags.tag[name=PlanarConfiguration] &gt; 0} &amp;&amp; {tags.tag[name=PlanarConfiguration] &lt; 3}">PlanarConfiguration value is not valid, valeu should be ust be 1(Chunky) or 2(Planar)</assert>
+    </rule>
+    </rules>
+
+    <rules id="TAG-34019">
+        <title>RasterPadding</title>
+        <description>The RasterPadding field allows each line of colour or interleaved colours to be padded to a 1-, 2-, 4-, 512-, or
+            1 024-byte boundary.
+
+            Tag = 34019 (84E3.H)
+            Type = SHORT
+            N = 1
+            Value = VALUE (possible values listed below)
+            Default 0
+
+            valid values are:
+            0 = byte raster (default value) pad to 1 byte
+            1 = word raster pad to 2 bytes
+            2 = long-word raster pad to 4 bytes
+            9 = sector raster pad to 512 bytes
+            10 = long sector raster pad to 1 024 bytes
+        </description>
+
+        <rule id="TAG-34019-0001" context="tag[id=34019]" level="error">
+            <title>RasterPadding valid Type</title>
+            <description>RasterPadding Tag type must be SHORT</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>13</page>
+            </reference>
+            <assert test="{type=='SHORT'}">RasterPadding type is not valid, an SHORT type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34019-0002" context="tag[id=34019]" level="error">
+            <title>RasterPadding valid cardinality</title>
+            <description>The cardinality of the RasterPadding tag must be 1</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>13</page>
+            </reference>
+            <assert test="{cardinality==1}">RasterPadding must have a 1 cardinality</assert>
+        </rule>
+
+        <rule id="TAG-34019-0004" context="ifd[class=image]" level="error">
+            <title>RasterPadding valid values</title>
+            <description>RasterPadding valid values are:
+                0 = byte raster (default value) pad to 1 byte
+                1 = word raster pad to 2 bytes
+                2 = long-word raster pad to 4 bytes
+                9 = sector raster pad to 512 bytes
+                10 = long sector raster pad to 1 024 bytes</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>13</page>
+            </reference>
+            <assert test="{tags.tag[name=RasterPadding] &amp;&amp; 0} || {tags.tag[name=RasterPadding] &amp;&amp; 1} || {tags.tag[name=RasterPadding] &amp;&amp; 2} || {tags.tag[name=RasterPadding] &amp;&amp; 9} || {tags.tag[name=RasterPadding] &amp;&amp; 10}">RasterPadding invalid value.</assert>
+        </rule>
+
+        <rule id="TAG-34019-0005" context="ifd[class=image]" level="info">
+            <title>RasterPadding default value</title>
+            <description>RasterPadding has a default value when it is not defined in a Colour continuous-tone pictures (CT) value 0 is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>13</page>
+            </reference>
+            <assert test="{filetype=='ct'} &amp;&amp; {!tags.tag[name=RasterPadding]}">RasterPadding has a default value when it is not defined in a Colour continuous-tone pictures (CT) value 0 is assumed</assert>
+        </rule>
+
+        <rule id="TAG-34019-0006" context="ifd[class=image]" level="info">
+            <title>RasterPadding default value</title>
+            <description>RasterPadding has a default value when it is not defined in a Monochrome continuous-tone picture (MP) value 0 is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>13</page>
+            </reference>
+            <assert test="{filetype=='mp'} &amp;&amp; {!tags.tag[name=RasterPadding]}">RasterPadding has a default value when it is not defined in a Colour continuous-tone pictures (CT) value 0 is assumed</assert>
+        </rule>
+
+        <rule id="TAG-34019-0007" context="ifd[class=image]" level="error">
+            <title>RasterPadding only in CT and MP type</title>
+            <description>RasterPadding should only be used in Colour continuous-tone pictures (CT)</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>13</page>
+            </reference>
+            <assert test="{filetype=='ct'} || {filetype=='mp'} || {!tags.tag[name=RasterPadding]}">RasterPadding should only be used in Colour continuous-tone pictures.</assert>
+        </rule>
+    </rules>
+
+<rules id="TAG-34020">
+    <title>BitsPerRunLength</title>
+
+    <description>Number of bits for short run length encoding.
+
+        Tag = 34020 (84E4.H)
+        Type = SHORT
+        N = 1
+        Default 8
+
+    </description>
+
+    <rule id="TAG-34020-0001" context="tag[id=34020]" level="error">
+        <title>BitsPerRunLength valid Type</title>
+        <description>BitsPerRunLength Tag type must be SHORT</description>
+        <reference>
+            <section>Section 7.2.6: Data format</section>
+            <page>14</page>
+        </reference>
+        <assert test="{type=='SHORT'}">BitsPerRunLength type is not valid, an SHORT type is expected</assert>
+    </rule>
+
+    <rule id="TAG-34020-0002" context="tag[id=34020]" level="error">
+        <title>BitsPerRunLength valid cardinality</title>
+        <description>The cardinality of the BitsPerRunLength tag must be 1</description>
+        <reference>
+            <section>Section 7.2.6: Data format</section>
+            <page>14</page>
+        </reference>
+        <assert test="{cardinality==1}">BitsPerRunLength must have a 1 cardinality</assert>
+    </rule>
+
+    <rule id="TAG-34020-0003" context="ifd[class=image]" level="error">
+        <title>BitsPerRunLength valid  only in LW file</title>
+        <description>BitsPerRunLength should only be used in TIFF/IT-LW line-art files</description>
+        <reference>
+            <section>Section 7.2.6: Data format</section>
+            <page>14</page>
+        </reference>
+        <assert test="{!tags.tag[name=BitsPerRunLength]} || {filetype=='lw'}">BitsPerRunLength should only be used in TIFF/IT-LW line-art files</assert>
+    </rule>
+
+    <rule id="TAG-34020-0004" context="ifd[filetype=lw]" level="info">
+        <title>BitsPerRunLength default value</title>
+        <description>BitsPerRunLength has a default value. if it not present default value 8 is assumed</description>
+        <reference>
+            <section>Section 7.2.6: Data format</section>
+            <page>14</page>
+        </reference>
+        <assert test="{!tags.tag[name=BitsPerRunLength]}">BitsPerRunLength has a default value. if it not present default value 8 is assumed</assert>
+    </rule>
+</rules>
+
+    <rules id="TAG-34021">
+        <title>BitsPerExtendedRunLength</title>
+
+        <description>Number of bits for long run length encoding.
+
+            Tag = 34021 (84E5.H)
+            Type = SHORT
+            N = 1
+            Default 16
+
+        </description>
+
+        <rule id="TAG-34021-0001" context="tag[id=34021]" level="error">
+            <title>BitsPerExtendedRunLength valid Type</title>
+            <description>BitsPerExtendedRunLength Tag type must be SHORT</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{type=='SHORT'}">BitsPerExtendedRunLength type is not valid, an SHORT type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34021-0002" context="tag[id=34021]" level="error">
+            <title>BitsPerExtendedRunLength valid cardinality</title>
+            <description>The cardinality of the BitsPerExtendedRunLength tag must be 1</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{cardinality==1}">BitsPerExtendedRunLength must have a 1 cardinality</assert>
+        </rule>
+
+        <rule id="TAG-34021-0003" context="ifd[class=image]" level="error">
+            <title>BitsPerExtendedRunLength valid  only in LW file</title>
+            <description>BitsPerExtendedRunLength should only be used in TIFF/IT-LW line-art files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=BitsPerExtendedRunLength]} || {filetype=='lw'}">BitsPerExtendedRunLength should only be used in TIFF/IT-LW line-art files</assert>
+        </rule>
+
+        <rule id="TAG-34021-0004" context="ifd[filetype=lw]" level="info">
+            <title>BitsPerExtendedRunLength default value</title>
+            <description>BitsPerExtendedRunLength has a default value. if it not present default value 8 is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=BitsPerExtendedRunLength]}">BitsPerExtendedRunLength has a default value. if it not present default value 8 is assumed</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34030">
+        <title>HCUsage</title>
+        <description>HCUsage indicate the type of information contained in the HC file.
+
+            Tag = 34030 (84EE.H)
+            Type = LONG
+            N = 1
+            Default 0
+
+            bit 0  If 1 means the file contains high-resolution CT contone information
+            bit 1  If 1 means the file contains line-art (line-work) information
+            bit 2  If 1 means the file contains trapping information</description>
+
+        <rule id="TAG-34030-0001" context="tag[id=34030]" level="error">
+            <title>HCUsage valid Type</title>
+            <description>HCUsage Tag type must be LONG</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{type=='LONG'}">HCUsage type is not valid, an LONG type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34030-0002" context="tag[id=34030]" level="error">
+            <title>HCUsage valid cardinality</title>
+            <description>The cardinality of the HCUsage tag must be 1</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{cardinality==1}">HCUsage must have a 1 cardinality</assert>
+        </rule>
+
+        <rule id="TAG-34030-0003" context="ifd[class=image]" level="error">
+            <title>HCUsage valid only in HC file</title>
+            <description>HCUsage should only be used in TIFF/IT-HC files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=HCUsage]} || {filetype=='hc'}">HCUsage should only be used in TIFF/IT-HC files</assert>
+        </rule>
+
+        <rule id="TAG-34030-0004" context="ifd[filetype=hc]" level="info">
+            <title>HCUsage default value</title>
+            <description>HCUsage has a default value. if it not present default value 0 is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=HCUsage]}">HCUsage has a default value. if it not present default value 0 is assumed</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34031">
+        <title>TrapIndicator</title>
+        <description>The TrapIndicator field is optional and is used to indicate whether the file or file set has been trapped.
+            Trapped means the modification of the boundaries of colour objects to prevent the media colour from accidentally
+            showing through when colour planes are slightly misregistered in the reproduction process.
+
+            Tag = 34031 (84EF.H)
+            Type = BYTE
+            N = 1
+            Default 1
+
+            valid values are:
+            1  = file set includes any necessary trapping data and no further trapping is needed
+            0  = no trapping modifications have been made to the file or file set. Any desired trapping must be done before final rendering.
+
+            The value of TrapIndicator, if present, shall be “1” for SD files.
+            In file types other than FP, the TrapIndicator indicates the presence of trapping internal to that single file.
+            In an FP file set, the value of TrapIndicator indicates the status of trapping both within and between all subfiles.
+            The value in the FP file shall be used and the value in the individual files shall be ignored.</description>
+
+        <rule id="TAG-34031-0001" context="tag[id=34031]" level="error">
+            <title>TrapIndicator valid Type</title>
+            <description>TrapIndicator Tag type must be BYTE</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{type=='BYTE'}">TrapIndicator type is not valid, an BYTE type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34031-0002" context="tag[id=34031]" level="error">
+            <title>TrapIndicator valid cardinality</title>
+            <description>The cardinality of the TrapIndicator tag must be 1</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{cardinality==1}">TrapIndicator must have a 1 cardinality</assert>
+        </rule>
+
+        <rule id="TAG-34031-0004" context="ifd[filetype=hc]" level="info">
+            <title>TrapIndicator default value</title>
+            <description>TrapIndicator has a default value. if it not present default value 1 is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=TrapIndicator]}">TrapIndicator has a default value. if it not present default value 1 is assumed</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-1-262">
+    <title>PhotometricInterpretation</title>
+    <description>The color space of the image data.
+
+        Tag = 262 (106.H)
+        Type = SHORT
+        N = 1
+        No default
+
+        Currently defined values are:
+        0 = BackgroundColor. Recommended for MP, BP, and BL images
+        1 = ImageColor (foreground colour). for MP, BP, and BL images
+        2 = RGB. In the RGB model, a color is described as a combination of the three primary colors of light (red, green, and blue) in particular concentrations.
+        5 = CMYK. (The primary colour space for TIFF/IT Standard) for CT, LW, SD, and HC images, file data in the sequence CMYK, or separated image file data in other colours or sequences if modified by other fields.
+        6 = YCbCr.
+        8 = CIE L*a*b*.
+
+
+        There is no default for PhotometricInterpretation, and it is required. Do not rely
+        on applications defaulting to what you want.</description>
+
+
+
+    <rule id="TAG-262-1-0003" context="ifd" level="error">
+        <title>Valid Photometric Interpretation value</title>
+        <description>The Photometric Interpretation tag must have a valid value.
+
+            0 = WhiteIsZero. For bilevel and grayscale images: 0 is imaged as white.
+            1 = BlackIsZero. For bilevel and grayscale images: 0 is imaged as black.
+            2 = RGB. RGB value of (0,0,0) represents black, and (255,255,255) represents white, assuming 8-bit components. The components are stored in the indicated order: first Red, then Green, then Blue.
+            3 = Palette color. In this model, a color is described with a single component. The value of the component is used as an index into the red, green and blue curves in the ColorMap field to retrieve an RGB triplet that defines the color. When PhotometricInterpretation=3 is used, ColorMap must be present and SamplesPerPixel must be 1.
+            4 = Transparency Mask. This means that the image is used to define an irregularly shaped region of another image in the same TIFF file. SamplesPerPixel and BitsPerSample must be 1. PackBits compression is recommended. The 1-bits define the interior of the region; the 0-bits define the exterior of the region.
+            5 = CMYK.The primary colour space for TIFF/IT Standard.</description>
+        <reference><section>Section 8: Baseline Field Reference Guide</section><page>37</page></reference>
+        <assert test="{tags.tag[name=PhotometricInterpretation] &gt; -1} &amp;&amp; {tags.tag[name=PhotometricInterpretation] &lt; 5}">Photometric Interpretation value must be between 0 and 4</assert>
+    </rule>
+    </rules>
     
+    <rules id="TAG-34017">
+        <title>ColorSequence</title>
+        <description>This field specified optional colours or colour sequences
+
+            Tag = 34017 (84E1.H)
+            Type = ASCII
+            No default</description>
+
+        <rule id="TAG-34017-0001" context="tag[id=34017]" level="error">
+            <title>ColorSequence tag valid Type</title>
+            <description>ColorSequence Tag type must be ASCII</description>
+            <reference><section>Section 7.2.6: Data format</section><page>17</page></reference>
+            <assert test="{type=='ASCII'}">ColorSequence Tag type is not valid, an ASCII type is expected</assert>
+        </rule>
+        <rule id="TAG-34017-0002" context="tag[id=34017]" level="error">
+            <title>ColorSequence tag valid Cardinality</title>
+            <description>The total number of unique entries in ColorSequence is limited to sixteen (16).</description>
+            <reference><section>Section 7.2.6: Data format</section><page>17</page></reference>
+            <assert test="{cardinality &lt; 18}">The total number of unique entries in ColorSequence is limited to sixteen</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-332-1">
+        <title>InkSet</title>
+        <description>The set of inks used in a separated (PhotometricInterpretation=5) image.
+
+            Tag = 332 (14C.H)
+            Type = SHORT
+            N = 1
+            Default is 1
+
+            Current values are:
+            1 = CMYK. The order of the components is cyan, magenta, yellow, black. Usually, a value of 0 represents 0% ink coverage and a value of 255 represents 100% ink coverage for that component, but see DotRange below. The InkNames field should not exist when InkSet=1.
+            2 = not CMYK. See the InkNames field for a description of the inks to be used.</description>
+
+        <rule id="TAG-332-1-0001" context="tag[id=332]" level="error">
+            <title>InkSet tag valid Type</title>
+            <description>InkSet Tag type must be SHORT</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{type=='SHORT'}">InkSet Tag type is not valid, a SHORT type is expected</assert>
+        </rule>
+
+        <rule id="TAG-332-1-0002" context="tag[id=332]" level="error">
+            <title>InkSet valid cardinality</title>
+            <description>The cardinality of the InkSet tag must be 1</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{cardinality==1}">InkSet cardinality is not valid, cardinality should be 1</assert>
+        </rule>
+
+        <rule id="TAG-332-1-0003" context="ifd" level="warning">
+            <title>InkSet only in CMYK Image IFD</title>
+            <description>InkSet should only be used in a Image File Directory containing a CMYK image</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=InkSet]} &amp;&amp; {type != 'CMYK'}">InkSet tag should only be used in a Image File Directory containing a CMYK image</assert>
+        </rule>
+        <!--
+        <rule id="IFDB-0003" context="ifd[type=CMYK]" level="warning">
+         <title>InkSet CMYK no need InkNames</title>
+         <description>The InkNames field should not exist when InkSet=1 (CMYK image)</description>
+         <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+         <assert test="{!tags.tag[name=InkSet]} &amp;&amp; {tags.tag[name=InkNames]} || {tags.tag[name=InkSet] == 1} &amp;&amp; {tags.tag[name=InkNames]}">invalid BitsPerSample  cardinality in CMYK image IFD</assert>
+        </rule>
+        -->
+        <rule id="TAG-332-0004" context="ifd[type=CMYK]" level="error">
+            <title>InkSet no CMYK need InkNames</title>
+            <description>The InkNames field must exist when InkSet=2 (No CMYK image)</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=InkSet] == 1} || {!tags.tag[name=InkSet]} || {tags.tag[name=InkNames]}">InkNames field must exist when InkSet=2</assert>
+        </rule>
+
+        <rule id="TAG-332-0005" context="ifd[type=CMYK]" level="info">
+            <title>InkSet default value</title>
+            <description>When Inkset is not defined in a CMYK image then the default value 1 (CMYK) is assumed</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{!tags.tag[name=InkSet]}">InkSet not defined the default value 1(CMYK) is assumed</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-334-1">
+        <title>NumberOfInks</title>
+        <description>The number of inks. Usually equal to SamplesPerPixel, unless there are extra samples.
+
+            Tag = 334 (14E.H)
+            Type = SHORT
+            N = 1
+            Default is 4 </description>
+
+        <rule id="TAG-334-1-0001" context="tag[id=334]" level="error">
+            <title>NumberOfInks tag valid Type</title>
+            <description>NumberOfInks Tag type must be LONG</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{type=='SHORT'}">NumberOfInks Tag type is not valid, a LONG type is expected</assert>
+        </rule>
+
+        <rule id="TAG-334-1-0002" context="tag[id=334]" level="error">
+            <title>NumberOfInks valid cardinality</title>
+            <description>The cardinality of the NumberOfInks tag must be 1</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{cardinality==1}">NumberOfInks cardinality is not valid, cardinality should be 1</assert>
+        </rule>
+
+        <rule id="TAG-334-1-0003" context="ifd" level="warning">
+            <title>NumberOfInks only in CMYK Image IFD</title>
+            <description>NumberOfInks should only be used in a Image File Directory containing a CMYK image</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=NumberOfInks]} &amp;&amp; {type != 'CMYK'}">NumberOfInks tag should only be used in a Image File Directory containing a CMYK image</assert>
+        </rule>
+
+        <rule id="TAG-334-1-0004" context="ifd[type=CMYK]" level="info">
+            <title>NumberOfInks default value</title>
+            <description>When NumberOfInks is not defined in a CMYK image then the default value 4 is assumed</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{!tags.tag[name=NumberOfInks]}">NumberOfInks not defined the default value 4 is assumed</assert>
+        </rule>
+
+        <rule id="TAG-334-1-0005" context="ifd[type=CMYK]" level="info">
+            <title>NumberOfInks match SamplesPerPixel</title>
+            <description>Unless ExtraSamples are used NumberOfInks must match SamplesPerPixel</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=ExtraSamples]} || {!tags.tag[name=NumberOfInks]} || {tags.tag[name=NumberOfInks] == tags.tag[name=SamplesPerPixel]}">Unless ExtraSamples are used NumberOfInks must match SamplesPerPixel</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-333-1">
+        <title>InkNames</title>
+        <description>The name of each ink used in a separated (PhotometricInterpretation=5) image, written as a list of concatenated, NUL-terminated ASCII strings.
+            The number of strings must be equal to NumberOfInks. The samples are in the same order as the ink names.
+
+            Tag = 333 (14D.H)
+            Type = ASCII
+            N = total number of characters in all the ink name strings, including the NULs.
+            No default</description>
+
+        <rule id="TAG-333-1-0001" context="tag[id=333]" level="error">
+            <title>InkNames tag valid Type</title>
+            <description>InkNames Tag type must be ASCII</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{type=='ASCII'}">InkNames Tag type is not valid, an ASCII type is expected</assert>
+        </rule>
+
+        <rule id="TAG-333-1-0002" context="ifd[type=CMYK]" level="error">
+            <title>InkNames valid cardinality</title>
+            <description>The cardinality InkNames Tag type must be equal of NumberOfInks</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{!tags.tag[name=InkNames]} || {tags.tag[name=InkNames].cardinality == 4} || {tags.tag[name=InkNames].cardinality == tags.tag[name=NumberOfInks]}">InkNames invalid cardinality, InkNames Tag type must be equal of NumberOfInks</assert>
+        </rule>
+
+        <rule id="TAG-333-1-0003" context="ifd" level="warning">
+            <title>InkNames only in CMYK Image IFD</title>
+            <description>InkNames should only be used in a Image File Directory containing a CMYK image</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=InkNames]} &amp;&amp; {type != 'CMYK'}">InkNames tag should only be used in a Image File Directory containing a CMYK image</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34032">
+    <title>CMYKEquivalent</title>
+    <description>CMYKEquivalent is the set of entries for the cyan, magenta, yellow and black inks that together define a
+        colour that is expected to be as close as possible visually to 100 % of the specified ink.
+
+        Tag = 34032 (84F0.H)
+        Type = BYTE or SHORT
+        N= Any
+        </description>
+
+    <rule id="TAG-34032-0001" context="tag[id=34032]" level="error">
+        <title>CMYKEquivalent tag valid Type</title>
+        <description>CMYKEquivalent Tag type must be BYTE or SHORT</description>
+        <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+        <assert test="{type=='SHORT'} || {type=='BYTE'}">CMYKEquivalent Tag type is not valid, a BYTE or SHORT type is expected</assert>
+    </rule>
+
+        <rule id="TAG-34032-0002" context="ifd" level="warning">
+            <title>CMYKEquivalent only in CMYK Image IFD</title>
+            <description>CMYKEquivalent should only be used in a Image File Directory containing a CMYK image</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=CMYKEquivalent]} &amp;&amp; {type != 'CMYK'}">CMYKEquivalent tag should only be used in a Image File Directory containing a CMYK image</assert>
+        </rule>
+    </rules>
+
+
+    <rules id="TAG-336">
+        <title>DotRange</title>
+        <description>The component values that correspond to a 0% dot and 100% dot. DotRange[0] corresponds to a 0% dot, and DotRange[1] corresponds to a 100% dot.
+            If a DotRange pair is included for each component, the values for each component are stored together, so that the pair for Cyan would be first, followed by the pair for Magenta, and so on.
+            Use of multiple dot ranges is, however, strongly discouraged in the interests of simplicity and compatibility with ANSI IT8 standards.
+            A number of prepress systems like to keep some “headroom” and “footroom” on both ends of the range. What to do with components that are less than the 0% aim point or greater than the 100% aim point is not specified and is application-dependent.
+
+            It is strongly recommended that a CMYK TIFF writer not attempt to use this field to reverse the sense of the pixel values so that smaller values mean more ink instead of less ink. That is, DotRange[0] should be less than DotRange[1].
+            DotRange[0] and DotRange[1] must be within the range [0, (2**BitsPerSample) - 1].
+
+            Tag = 336 (150.H)
+            Type = BYTE or SHORT
+            N = 2
+            Default: a component value of 0 corresponds to a 0% dot, and a component value of 255 (assuming 8-bit pixels) corresponds to a 100% dot. That is, DotRange[0] = 0 and DotRange[1] = (2**BitsPerSample) - 1.
+        </description>
+
+
+        <rule id="TAG-336-0001" context="tag[id=336]" level="error">
+            <title>DotRange tag valid Type</title>
+            <description>DotRange Tag type must be BYTE or SHORT</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{type=='BYTE'} || {type=='SHORT'}">DotRange Tag type is not valid, a BYTE or SHORT type is expected</assert>
+        </rule>
+
+        <rule id="TAG-336-0002" context="ifd[type=CMYK]" level="error">
+            <title>DotRange valid cardinality</title>
+            <description>The cardinality DotRange Tag type must be 2</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=DotRange].cardinality == 2}">DotRange invalid cardinality, DotRange Tag cardinality must be equal 2 </assert>
+        </rule>
+
+        <rule id="TAG-336-0004" context="tag[id=336]" level="warning">
+            <title>DotRange used to revers pixel values</title>
+            <description>It is strongly discouraged that a CMYK TIFF writer attempt to use this field to reverse the sense of the pixel values so that smaller values mean more ink instead of less ink. That is, DotRange[0] should be less than DotRange[1].</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=InkNames](0) &gt; tags.tag[name=InkNames](1)">InkNames used to reverse the sense of the pixel, That is strongly discouraged</assert>
+        </rule>
+
+        <rule id="TAG-336-0005" context="ifd" level="warning">
+            <title>DotRange only in CMYK Image IFD</title>
+            <description>DotRange should only be used in a Image File Directory containing a CMYK image</description>
+            <reference><section>Section 16: CMYK Images</section><page>69</page></reference>
+            <assert test="{tags.tag[name=DotRange]} &amp;&amp; {type != 'CMYK'}">DotRange tag should only be used in a Image File Directory containing a CMYK image</assert>
+        </rule>
+
+    </rules>
+
+
+
+    <rules id="TAG-34029">
+        <title>ColorCharacterization</title>
+        <description>The colour values of separated, RGB or other colour images may be further characterized by the use of data tables as specified in ISO 12641 and ISO 12642, or a named colour space, such as “sRBG” as defined in IEC 61966-2-1.
+            These ASCII data tables may be carried with the image file they describe by use of the ColorCharacterization field.
+
+            Tag = 34029 (84ED.H)
+            Type = ASCII
+            No default</description>
+
+        <rule id="TAG-34029-0001" context="tag[id=34029]" level="error">
+            <title>ColorCharacterization tag valid Type</title>
+            <description>ColorCharacterization Tag type must be ASCII</description>
+            <reference><section>Section 7.2.6: Data format</section><page>17</page></reference>
+            <assert test="{type=='ASCII'}">ColorCharacterization Tag type is not valid, an ASCII type is expected</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34675">
+        <title>InterColourProfile</title>
+        <description>This tag encodes an embedded InterColour device profile relating to the camera colour characterization. Refer to
+            "ICC.1:2001, File Format for Colour Profiles", for further information on the use of this tag. Note that the ICC Profile
+            Format may be revised in the future and the most recent version of the ICC specification should be used.
+
+            Tag = 34675 (8773.H)
+            Type = UNDEFINED
+            N = any (actual size of the embedded IC profile in bytes)</description>
+
+        <rule id="TAG-34675-0001" context="tag[id=34675]" level="error">
+            <title>InterColourProfile tag valid Type</title>
+            <description>InterColourProfile Tag type must be UNDEFINED</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{type=='UNDEFINED'}">InterColourProfile Tag type is not valid, an UNDEFINED type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34675-0002" context="tag[id=34675]" level="error">
+            <title>InterColourProfile valid cardinality</title>
+            <description>The cardinality of the InterColourProfile tag must be 1</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{cardinality==1}">InterColourProfile cardinality is not valid, cardinality should be 1</assert>
+        </rule>
+
+    </rules>
+
+    <rules id="TAG-34022">
+        <title>ColorTable</title>
+        <description>In LW images, colour values are specified by encoding them in a colour palette table.
+
+            Tag = 34675 (8773.H)
+            Type = BYTE
+            N = (Last Valid Colour + 1)*20 </description>
+
+        <rule id="TAG-34022-0001" context="tag[id=34022]" level="error">
+            <title>ColorTable tag valid Type</title>
+            <description>ColorTable Tag type must be BYTE</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{type=='BYTE'}">ColorTable Tag type is not valid, an BYTE type is expected</assert>
+        </rule>
+        <rule id="TAG-34022-0002" context="tag[id=34022]" level="error" experimental="true">
+            <title>ColorTable valid cardinality</title>
+            <description>The cardinality of the ColorTable tag must be (LastValidColour + 1)*20</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{cardinality== (LastValidColour + 1)*20}">ColorTable cardinality is not valid, cardinality should be (LastValidColour + 1)*20</assert>
+        </rule>
+        <rule id="TAG-34022-0003" context="ifd[class=image]" level="error">
+            <title>ColorTable valid only in LW file</title>
+            <description>ColorTable should only be used in TIFF/IT-LW files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ColorTable]} || {filetype=='lw'}">ColorTable should only be used in TIFF/IT-LW files</assert>
+        </rule>
+    </rules>
+    
+    <rules id="TAG-34025">
+        <title>ImageColorValue</title>
+        <description>This field denote the value of the image color in BP and BL images
+
+            Tag = 34025 (84E9.H)
+            Type = BYTE
+            N = 1</description>
+
+        <rule id="TAG-34025-0001" context="tag[id=34025]" level="error">
+            <title>ImageColorValue tag valid Type</title>
+            <description>ImageColorValue Tag type must be BYTE</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{type=='BYTE'}">ImageColorValue Tag type is not valid, an BYTE type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34025-0002" context="tag[id=34025]" level="error">
+            <title>ImageColorValue valid cardinality</title>
+            <description>The cardinality of the ImageColorValue tag must be 1</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{cardinality==1}">ImageColorValue cardinality is not valid, cardinality should be 1</assert>
+        </rule>
+        <rule id="TAG-34025-0003" context="ifd[class=image]" level="error">
+            <title>ImageColorValue valid only in BP and BL files</title>
+            <description>ImageColorValue should only be used in TIFF/IT-BP and TIFF/IT-BL files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorValue]} || {filetype=='bp'} ||  {filetype=='bl'}">ImageColorValue should only be used in TIFF/IT-BP and TIFF/IT-BL files</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34026">
+        <title>BackgroundColorValue</title>
+        <description>This field denote the value of the image background in BP and BL images
+
+            Tag = 34026 (84EA.H)
+            Type = BYTE
+            N = 1</description>
+
+        <rule id="TAG-34026-0001" context="tag[id=34026]" level="error">
+            <title>BackgroundColorValue tag valid Type</title>
+            <description>BackgroundColorValue Tag type must be BYTE</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{type=='BYTE'}">BackgroundColorValue Tag type is not valid, an BYTE type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34026-0002" context="tag[id=34026]" level="error">
+            <title>BackgroundColorValue valid cardinality</title>
+            <description>The cardinality of the BackgroundColorValue tag must be 1</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{cardinality==1}">BackgroundColorValue cardinality is not valid, cardinality should be 1</assert>
+        </rule>
+        <rule id="TAG-34026-0003" context="ifd[class=image]" level="error">
+            <title>BackgroundColorValue valid only in BP and BL files</title>
+            <description>BackgroundColorValue should only be used in TIFF/IT-BP and TIFF/IT-BL files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=BackgroundColorValue]} || {filetype=='bp'} ||  {filetype=='bl'}">BackgroundColorValue should only be used in TIFF/IT-BP and TIFF/IT-BL files</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34027">
+        <title>PixelIntensityRange</title>
+        <description>The pixels in an MP image denote intensities of a particular colour. The colour is defined by the ImageColorValue field.
+            Similar to the DotRange field, percent intensity may be mapped into two-byte values as indicated by the field PixelIntensityRange
+
+            Tag = 34027 (84EB.H)
+            Type = BYTE
+            N = 2
+            Default values : 0,(2**BitsPerSample−1)</description>
+
+        <rule id="TAG-34027-0001" context="tag[id=34027]" level="error">
+            <title>PixelIntensityRange tag valid Type</title>
+            <description>PixelIntensityRange Tag type must be BYTE</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{type=='BYTE'}">PixelIntensityRange Tag type is not valid, an BYTE type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34027-0002" context="tag[id=34027]" level="error">
+            <title>PixelIntensityRange valid cardinality</title>
+            <description>The cardinality of the PixelIntensityRange tag must be 2</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{cardinality==2}">PixelIntensityRange cardinality is not valid, cardinality should be 2</assert>
+        </rule>
+        <rule id="TAG-34027-0003" context="ifd[filetype=mp]" level="info">
+            <title>PixelIntensityRange default value</title>
+            <description>PixelIntensityRange has a default value. if it not present default value 0,(2**BitsPerSample−1) is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=PixelIntensityRange]}">PixelIntensityRange has a default value. if it not present default value 0,(2**BitsPerSample−1) is assumed</assert>
+        </rule>
+        <rule id="TAG-34027-0004" context="ifd[class=image]" level="error">
+            <title>PixelIntensityRange valid only in MP files</title>
+            <description>PixelIntensityRange should only be used in TIFF/IT-MP files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=PixelIntensityRange]} || {filetype=='mp'}">PixelIntensityRange should only be used in TIFF/IT-MP files</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34028">
+        <title>TransparencyIndicator</title>
+        <description>TransparencyIndicator is used as a transparency indicator for HC files.
+
+            Tag = 34028 (84EC.H)
+            Type = BYTE
+            N = 1
+            Default 0
+
+            valid values are:
+            0 = signifies that transparency is not used
+            1 = transparency is used
+        </description>
+
+        <rule id="TAG-34028-0001" context="tag[id=34028]" level="error">
+            <title>TransparencyIndicator tag valid Type</title>
+            <description>TransparencyIndicator Tag type must be BYTE</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{type=='BYTE'}">TransparencyIndicator Tag type is not valid, an BYTE type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34028-0002" context="tag[id=34028]" level="error">
+            <title>TransparencyIndicator valid cardinality</title>
+            <description>The cardinality of the TransparencyIndicator tag must be 1</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{cardinality==1}">TransparencyIndicator cardinality is not valid, cardinality should be 1</assert>
+        </rule>
+
+        <rule id="TAG-34028-0003" context="ifd[filetype=hc]" level="error">
+            <title>TransparencyIndicator valid values</title>
+            <description>The only valid values for TransparencyIndicator are:
+                0 = signifies that transparency is not used
+                1 = signifies that transparency is used</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{tags.tag[name=TransparencyIndicator] == 0} || {tags.tag[name=TransparencyIndicator] == 1}">TransparencyIndicator value is not valid, the only valid values are 0 and 1</assert>
+        </rule>
+
+        <rule id="TAG-34028-0004" context="ifd[filetype=hc]" level="info">
+            <title>TransparencyIndicator default value</title>
+            <description>TransparencyIndicator has a default value. if it not present default value 0, no transparency, is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=TransparencyIndicator]}">TransparencyIndicator has a default value. if it not present default value 0 is assumed</assert>
+        </rule>
+        <rule id="TAG-34028-0005" context="ifd[class=image]" level="error">
+            <title>TransparencyIndicator valid only in HC files</title>
+            <description>TransparencyIndicator should only be used in TIFF/IT-HC  files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=TransparencyIndicator]} || {filetype=='hc'}">TransparencyIndicator should only be used in TIFF/IT-HC files</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34023">
+        <title>ImageColorIndicator</title>
+        <description>The data stream for binary images (BP and BL) functions as a switch between foreground and background colours.
+            The ImageColorIndicator field indicates whether or not the particular image or foreground colour is encoded in the binary image (along with information about transparency) or in the monochrome continuoustone picture image (where no background colour exists)
+
+            Tag = 34023 (84E7.H)
+            Type = BYTE
+            N = 1
+            Default 0
+
+            Valid values are:
+
+            0 = image/background colour not defined (default value);
+            1 = image/background colour defined;
+            2 = full transparency, image/background colour not defined.
+        </description>
+        <rule id="TAG-34023-0001" context="tag[id=34023]" level="error">
+            <title>ImageColorIndicator tag valid Type</title>
+            <description>ImageColorIndicator Tag type must be BYTE</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{type=='BYTE'}">ImageColorIndicator Tag type is not valid, an BYTE type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34023-0002" context="tag[id=34023]" level="error">
+            <title>ImageColorIndicator valid cardinality</title>
+            <description>The cardinality of the ImageColorIndicator tag must be 1</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{cardinality==1}">ImageColorIndicator cardinality is not valid, cardinality should be 1</assert>
+        </rule>
+        <rule id="TAG-34023-0003" context="ifd[filetype=hc]" level="error">
+            <title>ImageColorIndicator valid values</title>
+            <description>The only valid values for ImageColorIndicator are:
+                0 = image/background colour not defined (default value);
+                1 = image/background colour defined;
+                2 = full transparency, image/background colour not defined.</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{tags.tag[name=ImageColorIndicator] &gt; -1 } &amp;&amp; {tags.tag[name=ImageColorIndicator] &lt; 3}">ImageColorIndicator value is not valid, the only valid values are 0 and 1</assert>
+        </rule>
+        <rule id="TAG-34023-0004" context="ifd[filetype=bp]" level="info">
+            <title>ImageColorIndicator default value in TIFF/IT-BP</title>
+            <description>ImageColorIndicator has a default value. if it not present default value 0,  image/background colour not defined, is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorIndicator]}">ImageColorIndicator has a default value. if it not present default value 0 is assumed</assert>
+        </rule>
+        <rule id="TAG-34023-0005" context="ifd[filetype=bl]" level="info">
+            <title>ImageColorIndicator default value in TIFF/IT-BL</title>
+            <description>ImageColorIndicator has a default value. if it not present default value 0,  image/background colour not defined, is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorIndicator]}">ImageColorIndicator has a default value. if it not present default value 0 is assumed</assert>
+        </rule>
+        <rule id="TAG-34023-0006" context="ifd[filetype=mp]" level="info">
+            <title>ImageColorIndicator default value in TIFF/IT-MP</title>
+            <description>ImageColorIndicator has a default value. if it not present default value 0,  image/background colour not defined, is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorIndicator]}">ImageColorIndicator has a default value. if it not present default value 0 is assumed</assert>
+        </rule>
+        <rule id="TAG-34023-0007" context="ifd[class=image]" level="error">
+            <title>ImageColorIndicator valid only in HC files</title>
+            <description>ImageColorIndicator should only be used in TIFF/IT-HC  files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorIndicator]} || {filetype=='bp'} || {filetype=='bl'} || {filetype=='mp'}">ImageColorIndicator should only be used in TIFF/IT-HC files</assert>
+        </rule>
+    </rules>
+
+    <rules id="TAG-34023">
+        <title>ImageColorIndicator</title>
+        <description>The data stream for binary images (BP and BL) functions as a switch between foreground and background colours.
+            The ImageColorIndicator field indicates whether or not the particular image or foreground colour is encoded in the binary image (along with information about transparency) or in the monochrome continuoustone picture image (where no background colour exists)
+
+            Tag = 34023 (84E7.H)
+            Type = BYTE
+            N = 1
+            Default 0
+
+            Valid values are:
+
+            0 = image/background colour not defined (default value);
+            1 = image/background colour defined;
+            2 = full transparency, image/background colour not defined.
+        </description>
+        <rule id="TAG-34023-0001" context="tag[id=34023]" level="error">
+            <title>ImageColorIndicator tag valid Type</title>
+            <description>ImageColorIndicator Tag type must be BYTE</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{type=='BYTE'}">ImageColorIndicator Tag type is not valid, an BYTE type is expected</assert>
+        </rule>
+
+        <rule id="TAG-34023-0002" context="tag[id=34023]" level="error">
+            <title>ImageColorIndicator valid cardinality</title>
+            <description>The cardinality of the ImageColorIndicator tag must be 1</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{cardinality==1}">ImageColorIndicator cardinality is not valid, cardinality should be 1</assert>
+        </rule>
+        <rule id="TAG-34023-0003" context="ifd[filetype=hc]" level="error">
+            <title>ImageColorIndicator valid values</title>
+            <description>The only valid values for ImageColorIndicator are:
+                0 = image/background colour not defined (default value);
+                1 = image/background colour defined;
+                2 = full transparency, image/background colour not defined.</description>
+            <reference><section>Section 5.2: TIFF/EP tag definitions grouped by function</section><page>47</page></reference>
+            <assert test="{tags.tag[name=ImageColorIndicator] &gt; -1 } &amp;&amp; {tags.tag[name=ImageColorIndicator] &lt; 3}">ImageColorIndicator value is not valid, the only valid values are 0 and 1</assert>
+        </rule>
+        <rule id="TAG-34023-0004" context="ifd[filetype=bp]" level="info">
+            <title>ImageColorIndicator default value in TIFF/IT-BP</title>
+            <description>ImageColorIndicator has a default value. if it not present default value 0,  image/background colour not defined, is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorIndicator]}">ImageColorIndicator has a default value. if it not present default value 0 is assumed</assert>
+        </rule>
+        <rule id="TAG-34023-0005" context="ifd[filetype=bl]" level="info">
+            <title>ImageColorIndicator default value in TIFF/IT-BL</title>
+            <description>ImageColorIndicator has a default value. if it not present default value 0,  image/background colour not defined, is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorIndicator]}">ImageColorIndicator has a default value. if it not present default value 0 is assumed</assert>
+        </rule>
+        <rule id="TAG-34023-0006" context="ifd[filetype=mp]" level="info">
+            <title>ImageColorIndicator default value in TIFF/IT-MP</title>
+            <description>ImageColorIndicator has a default value. if it not present default value 0,  image/background colour not defined, is assumed</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorIndicator]}">ImageColorIndicator has a default value. if it not present default value 0 is assumed</assert>
+        </rule>
+        <rule id="TAG-34023-0007" context="ifd[class=image]" level="error">
+            <title>ImageColorIndicator valid only in HC files</title>
+            <description>ImageColorIndicator should only be used in TIFF/IT-HC  files</description>
+            <reference>
+                <section>Section 7.2.6: Data format</section>
+                <page>14</page>
+            </reference>
+            <assert test="{!tags.tag[name=ImageColorIndicator]} || {filetype=='bp'} || {filetype=='bl'} || {filetype=='mp'}">ImageColorIndicator should only be used in TIFF/IT-HC files</assert>
+        </rule>
+
+    </rules>
+
+    <!-- To check -->
     <rules id="common">
         <title></title>
         <description></description>
@@ -21,6 +1314,8 @@
             <assert test="{filetype=='ct'} || {filetype=='lw'} || {filetype=='hc'} || {filetype=='mp'} || {filetype=='bp'} || {filetype=='bl'} || {filetype=='sd'} || {filetype=='fp'}">Undefined file type</assert>
         </rule>
     </rules>
+
+
 
     <rules id="CT-common-it-rules">
         <title></title>
