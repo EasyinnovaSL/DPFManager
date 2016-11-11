@@ -133,7 +133,7 @@ public class Validator {
     }
 
     for (RuleType rule : ordRules) {
-      if (rule.getId().equals("pol-1"))
+      if (rule.getId().equals("IFD-0005"))
         rule.toString();
 
       String context = rule.getContext();

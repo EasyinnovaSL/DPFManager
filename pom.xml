@@ -195,16 +195,16 @@
             <version>2.15.2</version>
         </dependency>-->
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.5</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tifflibrary4java</artifactId>
-            <version>1.8</version>
+            <version>1.7.2</version>
         </dependency>
 
         <dependency>
