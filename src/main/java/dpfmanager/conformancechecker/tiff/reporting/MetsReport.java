@@ -689,10 +689,13 @@ public class MetsReport {
         ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData.SubjectDistance subjectDistance = new ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData.SubjectDistance();
         TypeOfNonNegativeDecimalType distance = new TypeOfNonNegativeDecimalType();
         distance.setUse("Manager");
-        Long subjectLongValue = (Long) ir.getTiffModel().getMetadata().get("SubjectDistance");
-        distance.setValue(BigDecimal.valueOf(subjectLongValue.getValue()));
-        subjectDistance.setDistance(distance);
-        imageData.setSubjectDistance(subjectDistance);
+        TiffObject to = ir.getTiffModel().getMetadata().get("SubjectDistance");
+        if (to instanceof Long) {
+          Long subjectLongValue = (Long) to;
+          distance.setValue(BigDecimal.valueOf(subjectLongValue.getValue()));
+          subjectDistance.setDistance(distance);
+          imageData.setSubjectDistance(subjectDistance);
+        }
       }
       if (ir.getTiffModel().getMetadata().contains("MeteringMode") && MeteringModeType.verifyTag(ir.getTiffModel().getMetadata().get("MeteringMode").toString())) {
         TypeOfMeteringModeType meteringModeType = new TypeOfMeteringModeType();

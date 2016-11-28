@@ -312,10 +312,20 @@ public class HtmlReport extends Report {
     while (tdifd != null) {
       XMP xmp = null;
       IPTC iptc = null;
-      if (tdifd.containsTagId(TiffTags.getTagId("XMP")))
-        xmp = (XMP) tdifd.getTag("XMP").getValue().get(0);
-      if (tdifd.containsTagId(TiffTags.getTagId("IPTC")))
-        iptc = (IPTC) tdifd.getTag("IPTC").getValue().get(0);
+      if (tdifd.containsTagId(TiffTags.getTagId("XMP"))) {
+        try {
+          xmp = (XMP) tdifd.getTag("XMP").getValue().get(0);
+        } catch (Exception ex) {
+          xmp = null;
+        }
+      }
+      if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) {
+        try {
+          iptc = (IPTC) tdifd.getTag("IPTC").getValue().get(0);
+        } catch (Exception ex) {
+          iptc = null;
+        }
+      }
 
       // Author
       String authorTag = null;
@@ -427,8 +437,8 @@ public class HtmlReport extends Report {
         String mapId = "ipt" + tag.index;
         // IPTC
         for (abstractTiffType to : tag.tv.getValue()) {
-          IPTC iptc = (IPTC) to;
           try {
+            IPTC iptc = (IPTC) to;
             Metadata metadata = iptc.createMetadata();
             for (String key : metadata.keySet()) {
               row = "<tr class='ipt" + tag.index + "'><td>" + key + "</td><td>" + metadata.get(key).toString().trim() + "</td></tr>";
@@ -436,7 +446,8 @@ public class HtmlReport extends Report {
               tagsMap.put(mapId, rows + row);
             }
           } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.toString();
+            //ex.printStackTrace();
           }
         }
         continue;

@@ -683,14 +683,17 @@ public class TiffImplementationChecker {
       // XMP
     } else if (tv.getId() == 33723) {
       // IPTC
-      IPTC iptc = (IPTC)tv.getValue().get(0);
-      Hashtable<String, String> keyvalues = new Hashtable<String, String>();
-      Metadata meta = iptc.createMetadata();
-      for (String key : meta.keySet())
-      {
-        keyvalues.put(key, meta.get(key).toString().replaceAll("\\p{C}", "?"));
+      try {
+        IPTC iptc = (IPTC) tv.getValue().get(0);
+        Hashtable<String, String> keyvalues = new Hashtable<String, String>();
+        Metadata meta = iptc.createMetadata();
+        for (String key : meta.keySet()) {
+          keyvalues.put(key, meta.get(key).toString().replaceAll("\\p{C}", "?"));
+        }
+        tt.setIptc(keyvalues);
+      } catch (Exception ex) {
+
       }
-      tt.setIptc(keyvalues);
     } else {
       tt.setValue(tv.toString().replaceAll("\\p{C}", "?"));
     }
