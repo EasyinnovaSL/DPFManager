@@ -20,13 +20,19 @@
 package dpfmanager.shell.interfaces.gui.component.report;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.adapter.DpfService;
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.mvc.DpfModel;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.util.ReportRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
+import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -34,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.ResourceBundle;
 
 /**
  * Created by Adrià Llorens on 04/03/2016.
@@ -44,8 +51,12 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
   public static int reports_loaded = 25;
   private ObservableList<ReportRow> data;
   private boolean reload;
+  private Context context;
+  private ResourceBundle bundle;
 
-  public ReportsModel() {
+  public ReportsModel(Context context) {
+    this.context = context;
+    bundle = DPFManagerProperties.getBundle();
     reload = true;
     data = FXCollections.observableArrayList(new ArrayList<>());
   }
@@ -80,13 +91,19 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
         // Convert to ints for ordering
         Integer[] int_directories = new Integer[directories2.length];
         for (int j = 0; j < directories2.length; j++) {
-          int_directories[j] = Integer.parseInt(directories2[j]);
+          try {
+            int_directories[j] = Integer.parseInt(directories2[j]);
+          } catch (Exception ex) {
+            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("incorrectReport") + ": " + directories2[j]));
+            int_directories[j] = -1;
+          }
         }
         Arrays.sort(int_directories, Collections.reverseOrder());
 
         if (index + directories2.length >= start) {
           String[] available_formats = {"html", "xml", "json", "pdf"};
           for (int j = 0; j < int_directories.length; j++) {
+            if (int_directories[j] < 0) continue;
             String reportDir = String.valueOf(int_directories[j]);
             if (index >= start && index < start + count) {
               ReportRow rr = null;

@@ -337,12 +337,15 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Name", "Value"), margins);
-            IPTC iptc = (IPTC) tag.tv.getValue().get(0);
-            Metadata metadata = iptc.createMetadata();
-            for (String mKey : iptc.createMetadata().keySet()) {
-              pdfParams.y -= 15;
-              pdfParams = writeText(pdfParams, mKey, pos_x + margins[0], font, font_size);
-              pdfParams = writeText(pdfParams, metadata.get(mKey).toString().trim(), pos_x + margins[1], font, font_size);
+            abstractTiffType obj = tag.tv.getValue().get(0);
+            if (obj instanceof IPTC) {
+              IPTC iptc = (IPTC) obj;
+              Metadata metadata = iptc.createMetadata();
+              for (String mKey : iptc.createMetadata().keySet()) {
+                pdfParams.y -= 15;
+                pdfParams = writeText(pdfParams, mKey, pos_x + margins[0], font, font_size);
+                pdfParams = writeText(pdfParams, metadata.get(mKey).toString().trim(), pos_x + margins[1], font, font_size);
+              }
             }
           }
         }
@@ -404,8 +407,12 @@ public class PdfReport extends Report {
         IPTC iptc = null;
         if (tdifd.containsTagId(TiffTags.getTagId("XMP")))
           xmp = (XMP) tdifd.getTag("XMP").getValue().get(0);
-        if (tdifd.containsTagId(TiffTags.getTagId("IPTC")))
-          iptc = (IPTC) tdifd.getTag("IPTC").getValue().get(0);
+        if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) {
+          abstractTiffType obj = tdifd.getTag("IPTC").getValue().get(0);
+          if (obj instanceof IPTC) {
+            iptc = (IPTC) obj;
+          }
+        }
 
         // Author
         String authorTag = null;
