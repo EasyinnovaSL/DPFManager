@@ -50,6 +50,10 @@
   <description>The Compression tag must have a valid value.
    1 = No compression
    2 = CCITT Group 3 1-Dimensional Modified Huffman run-length encoding.
+   3 = T4-encoding
+   4 = T6-encoding
+   5 = LZW
+   6 = JPEG ('old-style' JPEG, later overriden in Technote2)
    32773 = PackBits compression, a simple byte-oriented run-length scheme
   </description>
   <reference><document>Extended TIFF 6</document><section>Section 8: Baseline Field Reference Guide</section><pages>30-31</pages></reference>
@@ -945,7 +949,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{cardinality &gt; 2}">The use of multiple dot ranges is valid, however, strongly discouraged in the interests of simplicity and compatibility with ANSI IT8 standards.</assert>
   </rule>
 
-  <rule id="TAG-336-0004" context="tag[id=336]" level="warning">
+  <rule id="TAG-336-0004" context="tag[id=336]" level="warning" experimental="true">
    <title>DotRange used to revers pixel values</title>
    <description>It is strongly discouraged that a CMYK TIFF writer attempt to use this field to reverse the sense of the pixel values so that smaller values mean more ink instead of less ink. That is, DotRange[0] should be less than DotRange[1].</description>
    <reference><document>Extended TIFF 6</document><section>Section 16: CMYK Images</section><page>69</page></reference>

@@ -163,7 +163,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
     // Init MVC
-    setModel(new ReportsModel());
+    setModel(new ReportsModel(context));
     setController(new ReportsController());
     getModel().setResourcebundle(bundle);
     addHeaders();
