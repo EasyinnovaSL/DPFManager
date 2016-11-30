@@ -48,7 +48,8 @@ public class DatabaseCache {
     Long current = System.currentTimeMillis();
     Jobs job = new Jobs();
     job.setId(uuid);
-    job.setHash(DigestUtils.sha256Hex(uuid.toString()));
+    //job.setHash(DigestUtils.sha256Hex(uuid.toString()));
+    job.setHash(uuid.toString());
     job.setState(state);
     job.setTotalFiles(total);
     job.setProcessedFiles(0);
