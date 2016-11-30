@@ -67,7 +67,7 @@ public class DpFManagerConstants {
   /**
    * The database version, incress it for force delete tables and recreate
    */
-  public static final int DATABASE_VERSION = 3;
+  public static final int DATABASE_VERSION = 4;
 
   /**
    * The configuration xml version
