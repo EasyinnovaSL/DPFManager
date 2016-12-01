@@ -149,7 +149,7 @@ public abstract class Controller {
   }
 
   protected String getConfigurationFromArguments(String arguments){
-    String aux = arguments.substring(12); // Skip -s -configuration
+    String aux = arguments.substring(arguments.indexOf("\"")); // Skip -s -configuration
     String[] files = aux.split("\"");
     for (String file : files) {
       if (!file.replaceAll(" ", "").isEmpty()) {
