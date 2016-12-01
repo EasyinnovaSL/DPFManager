@@ -917,13 +917,15 @@ public class MetsReport {
           grayResponse.setGrayResponseCurve(grayResponseCurve);
         }
       }
-      if(ifd.getMetadata().containsTagId(TiffTags.getTagId("GrayResponseUnit")) && GrayResponseUnitType.verifyTag(ifd.getMetadata().get("GrayResponseUnit").toString())){
-        TypeOfGrayResponseUnitType grayResponseUnit = new TypeOfGrayResponseUnitType();
-        grayResponseUnit.setUse("System");
-        grayResponseUnit.setValue(GrayResponseUnitType.fromValue(ifd.getMetadata().get("GrayResponseUnit").toString()));
-        grayResponse.setGrayResponseUnit(grayResponseUnit);
+      if (grayResponse != null) {
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("GrayResponseUnit")) && GrayResponseUnitType.verifyTag(ifd.getMetadata().get("GrayResponseUnit").toString())) {
+          TypeOfGrayResponseUnitType grayResponseUnit = new TypeOfGrayResponseUnitType();
+          grayResponseUnit.setUse("System");
+          grayResponseUnit.setValue(GrayResponseUnitType.fromValue(ifd.getMetadata().get("GrayResponseUnit").toString()));
+          grayResponse.setGrayResponseUnit(grayResponseUnit);
+        }
+        imageColorEncoding.setGrayResponse(grayResponse);
       }
-      imageColorEncoding.setGrayResponse(grayResponse);
     }
     if(ifd.getMetadata().containsTagId(TiffTags.getTagId("WhitePoint"))) {
       ImageAssessmentMetadataType.ImageColorEncoding.WhitePoint whitePoint = new ImageAssessmentMetadataType.ImageColorEncoding.WhitePoint();
@@ -1542,10 +1544,12 @@ public class MetsReport {
       return sw.toString();
 
     } catch (JAXBException e) {
-      e.printStackTrace();
+      System.err.println("Error generating METS report");
+      //e.printStackTrace();
       return null;
     } catch (Exception e) {
-      e.printStackTrace();
+      System.err.println("Error generating METS report");
+      //e.printStackTrace();
       return null;
     }
 
