@@ -57,6 +57,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -204,6 +205,13 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     // Loading available conformances
     available = false;
     NodeUtil.hideNode(vboxAvailable);
+
+    comboChoice.setOnMousePressed(new EventHandler<MouseEvent>(){
+      @Override
+      public void handle(MouseEvent event) {
+        comboChoice.requestFocus();
+      }
+    });
 //    Label label = new Label(bundle.getString("loadingAvailableCC"));
 //    label.getStyleClass().add("lightgrey");
 //    flowPane.getChildren().add(label);
