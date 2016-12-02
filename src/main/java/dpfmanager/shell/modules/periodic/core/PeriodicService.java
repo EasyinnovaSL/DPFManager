@@ -57,8 +57,10 @@ public class PeriodicService extends DpfService {
 
   @Override
   protected void handleContext(DpfContext context) {
-    if (System.getProperty("os.name").startsWith("Windows")) {
+    if (System.getProperty("os.name").toLowerCase().contains("win")) {
       controller = new ControllerWindows(context, DPFManagerProperties.getBundle());
+    } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+      controller = new ControllerMacOS(context, DPFManagerProperties.getBundle());
     } else {
       controller = new ControllerLinux(context, DPFManagerProperties.getBundle());
     }

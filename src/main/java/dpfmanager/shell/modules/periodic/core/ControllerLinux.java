@@ -82,12 +82,10 @@ public class ControllerLinux extends Controller {
     int index = 0;
     while (index < lines.size()){
       String line = lines.get(index);
-      if (line.startsWith("# dpf-")){
+      if (line.startsWith("# dpf-") && index+1<lines.size() && !lines.get(index+1).startsWith("#") && fromCronLine(line.substring(2), lines.get(index+1)) != null){
         index++;
         String uuid = line.substring(2);
-        if (index < lines.size()) {
-          checks.add(fromCronLine(uuid, lines.get(index)));
-        }
+        checks.add(fromCronLine(uuid, lines.get(index)));
       }
       index++;
     }
@@ -113,39 +111,43 @@ public class ControllerLinux extends Controller {
   }
 
   private PeriodicCheck fromCronLine(String uuid, String line) {
-    String[] parts = line.split(" ");
-    String minutes = parts[0];
-    if (minutes.length() == 1){
-      minutes = "0"+minutes;
+    try {
+      String[] parts = line.split(" ");
+      String minutes = parts[0];
+      if (minutes.length() == 1) {
+        minutes = "0" + minutes;
+      }
+      String hours = parts[1];
+      if (hours.length() == 1) {
+        hours = "0" + hours;
+      }
+      String dayOfMonth = parts[2];
+      String dayOfWeek = parts[4];
+
+      String command = parts[5];
+      String arguments = line.substring(line.indexOf(command) + command.length() + 1);
+
+      // Parse input & configuration
+      String input = getInputFromArguments(arguments);
+      String configuration = getConfigurationFromArguments(arguments);
+
+      // Parse periodicity
+      Periodicity periodicity = new Periodicity();
+      if (!dayOfMonth.equals("*")) {
+        periodicity.setMode(Periodicity.Mode.MONTHLY);
+        periodicity.setDayOfMonth(Integer.parseInt(dayOfMonth));
+      } else if (!dayOfWeek.equals("*")) {
+        periodicity.setMode(Periodicity.Mode.WEEKLY);
+        periodicity.setDaysOfWeek(parseDaysList(dayOfWeek));
+      } else {
+        periodicity.setMode(Periodicity.Mode.DAILY);
+      }
+      periodicity.setTime(LocalTime.parse(hours + ":" + minutes));
+
+      return new PeriodicCheck(uuid, input, configuration, periodicity);
+    } catch (Exception ex) {
+      return null;
     }
-    String hours = parts[1];
-    if (hours.length() == 1){
-      hours = "0"+hours;
-    }
-    String dayOfMonth = parts[2];
-    String dayOfWeek = parts[4];
-
-    String command = parts[5];
-    String arguments = line.substring(line.indexOf(command) + command.length()+1);
-
-    // Parse input & configuration
-    String input = getInputFromArguments(arguments);
-    String configuration = getConfigurationFromArguments(arguments);
-
-    // Parse periodicity
-    Periodicity periodicity = new Periodicity();
-    if (!dayOfMonth.equals("*")){
-      periodicity.setMode(Periodicity.Mode.MONTHLY);
-      periodicity.setDayOfMonth(Integer.parseInt(dayOfMonth));
-    } else if (!dayOfWeek.equals("*")){
-      periodicity.setMode(Periodicity.Mode.WEEKLY);
-      periodicity.setDaysOfWeek(parseDaysList(dayOfWeek));
-    } else {
-      periodicity.setMode(Periodicity.Mode.DAILY);
-    }
-    periodicity.setTime(LocalTime.parse(hours+":"+minutes));
-
-    return new PeriodicCheck(uuid, input, configuration, periodicity);
   }
 
   private List<Integer> parseDaysList(String days){
