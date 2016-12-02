@@ -67,6 +67,9 @@ public class ConformanceRunnable extends DpfRunnable {
     if (config == null){
       config = pi.getDefaultConfigurationFromFile(filename);
     }
+    if (config == null){
+      config = pi.getDefaultConfigurationFromFile("a.tif");
+    }
     // If no default one, create one
     if (config == null){
       config = new Configuration();
