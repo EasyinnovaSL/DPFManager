@@ -85,7 +85,9 @@ public class ControllerLinux extends Controller {
       if (line.startsWith("# dpf-")){
         index++;
         String uuid = line.substring(2);
-        checks.add(fromCronLine(uuid, lines.get(index)));
+        if (index < lines.size()) {
+          checks.add(fromCronLine(uuid, lines.get(index)));
+        }
       }
       index++;
     }
