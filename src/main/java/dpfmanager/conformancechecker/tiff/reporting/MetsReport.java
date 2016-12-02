@@ -1544,11 +1544,13 @@ public class MetsReport {
       return sw.toString();
 
     } catch (JAXBException e) {
-      System.err.println("Error generating METS report");
+      // TODO: Something
+      //System.err.println("Error generating METS report");
       //e.printStackTrace();
       return null;
     } catch (Exception e) {
-      System.err.println("Error generating METS report");
+      // TODO: Something
+      //System.err.println("Error generating METS report");
       //e.printStackTrace();
       return null;
     }
