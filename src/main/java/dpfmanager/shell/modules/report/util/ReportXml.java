@@ -91,13 +91,15 @@ public class ReportXml extends ReportGeneric {
         try {
           File file = new File(ir.getReportPath() + ".xml");
           if (file.exists()) {
-            InputStream inputStream = new FileInputStream(file);
-            Reader reader = new InputStreamReader(inputStream, "UTF-8");
-            InputSource is = new InputSource(reader);
-            is.setEncoding("UTF-8");
-            Document docreport = db.parse(is);
-            Node node = doc.importNode(docreport.getDocumentElement(), true);
-            individualreports.appendChild(node);
+            //InputStream inputStream = new FileInputStream(file);
+            //Reader reader = new InputStreamReader(inputStream, "UTF-8");
+            //InputSource is = new InputSource(reader);
+            //is.setEncoding("UTF-8");
+            //Document docreport = db.parse(is);
+            //Node node = doc.importNode(docreport.getDocumentElement(), true);
+            Element el = doc.createElement("report");
+            el.setTextContent(ir.getReportPath() + ".xml");
+            individualreports.appendChild(el);
           }
         } catch (Exception ex) {
           ex.toString();
@@ -115,6 +117,9 @@ public class ReportXml extends ReportGeneric {
       stats.appendChild(el);
       el = doc.createElement("invalid_files");
       el.setTextContent("" + gr.getAllReportsKo());
+      stats.appendChild(el);
+      el = doc.createElement("warnings");
+      el.setTextContent("" + gr.getAllReportsWarnings());
       stats.appendChild(el);
 
       // write the content into xml file

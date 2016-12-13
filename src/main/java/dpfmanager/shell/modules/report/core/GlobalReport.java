@@ -159,6 +159,24 @@ public class GlobalReport {
   }
 
   /**
+   * Get the count of reports with some warning.
+   *
+   * @return nreports warning
+   */
+  public int getAllReportsWarnings() {
+    int n = 0;
+    for (SmallIndividualReport rep : reports) {
+      for (String iso : rep.getCheckedIsos()) {
+        if (rep.getNWarnings(iso) > 0) {
+          n++;
+          break;
+        }
+      }
+    }
+    return n;
+  }
+
+  /**
    * Get the count of reports with some error.
    *
    * @return nreportsko reports ko
