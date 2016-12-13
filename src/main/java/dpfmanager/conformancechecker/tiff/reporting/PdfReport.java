@@ -120,7 +120,7 @@ public class PdfReport extends Report {
         try {
           ximage = new PDJpeg(pdfParams.getDocument(), inputStream);
         } catch (Exception ex) {
-          ex.printStackTrace();
+          //ex.printStackTrace();
         }
         if (ximage != null) pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
       }

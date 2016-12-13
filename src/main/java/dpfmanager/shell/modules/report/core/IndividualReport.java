@@ -182,8 +182,10 @@ public class IndividualReport implements Comparable {
 
   public List<String> getCheckedIsos() {
     List<String> checked = new ArrayList<>();
-    checked.addAll(errors.keySet());
-    Collections.sort(checked, Collator.getInstance());
+    if (errors != null) {
+      checked.addAll(errors.keySet());
+      Collections.sort(checked, Collator.getInstance());
+    }
     return checked;
   }
 

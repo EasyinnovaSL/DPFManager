@@ -45,7 +45,7 @@ public class GlobalReport {
   /**
    * The list of all individual reports.
    */
-  private List<IndividualReport> reports;
+  private List<SmallIndividualReport> reports;
 
   /**
    * Number of reports ok
@@ -97,22 +97,23 @@ public class GlobalReport {
    * @param ir the individual report.
    */
   public void addIndividual(IndividualReport ir) {
-    reports.add(ir);
+    SmallIndividualReport small = new SmallIndividualReport(ir);
+    reports.add(small);
   }
 
   /**
    * Generate the full report information.
    */
   public void generate() {
-    List<IndividualReport> toDelete = new ArrayList<>();
+    List<SmallIndividualReport> toDelete = new ArrayList<>();
     Collections.sort(reports);
-    for (IndividualReport ir : reports) {
+    for (SmallIndividualReport ir : reports) {
       if (ir.isError()){
         toDelete.add(ir);
       } else {
         for (String iso : ir.getCheckedIsos()){
           if (ir.hasValidation(iso)){
-            if (ir.getErrors(iso).size() == 0){
+            if (ir.getNErrors(iso) == 0){
               if (nReportsOk.containsKey(iso)){
                 nReportsOk.put(iso, nReportsOk.get(iso)+1);
               } else {
@@ -145,10 +146,10 @@ public class GlobalReport {
    */
   public int getAllReportsOk() {
     int n = 0;
-    for (IndividualReport ir : reports) {
+    for (SmallIndividualReport ir : reports) {
       boolean ok = true;
       for (String iso : ir.getIsosCheck()) {
-        if (ir.hasValidation(iso) && ir.getErrors(iso).size() > 0) {
+        if (ir.hasValidation(iso) && ir.getNErrors(iso) > 0) {
           ok = false;
         }
       }
@@ -168,8 +169,8 @@ public class GlobalReport {
 
   public int getReportsOk(String iso) {
     int n = 0;
-    for (IndividualReport ir : reports) {
-      if (ir.getErrors(iso).size() == 0){
+    for (SmallIndividualReport ir : reports) {
+      if (ir.getNErrors(iso) == 0){
         n++;
       }
     }
@@ -181,20 +182,8 @@ public class GlobalReport {
    *
    * @return the individual reports
    */
-  public List<IndividualReport> getIndividualReports() {
+  public List<SmallIndividualReport> getIndividualReports() {
     return reports;
   }
 
-//  public void computePcChecks() {
-//    hasPc = false;
-//    nreportsPcOk = 0;
-//    for (IndividualReport ir : getIndividualReports()) {
-//      if (ir.hasPcValidation()) {
-//        hasPc = true;
-//        if (ir.getPCErrors().size() == 0) {
-//          nreportsPcOk++;
-//        }
-//      }
-//    }
-//  }
 }

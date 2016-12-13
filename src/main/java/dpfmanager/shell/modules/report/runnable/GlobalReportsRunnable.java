@@ -36,8 +36,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -86,9 +89,9 @@ public class GlobalReportsRunnable extends DpfRunnable {
     global.generate();
 
     // Create it
-    String summaryXml = null;
+    String summaryXmlFile = null;
     try {
-      summaryXml = generator.makeSummaryReport(internalReportFolder, global, config);
+      summaryXmlFile = generator.makeSummaryReport(internalReportFolder, global, config);
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", internalReportFolder)));
     } catch (OutOfMemoryError e) {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorOccurred"), bundle.getString("outOfMemory")));
@@ -96,8 +99,8 @@ public class GlobalReportsRunnable extends DpfRunnable {
 
     // Send report over FTP
     try {
-      if (DPFManagerProperties.getFeedback() && summaryXml != null) {
-        sendFtpCamel(summaryXml);
+      if (DPFManagerProperties.getFeedback() && summaryXmlFile != null) {
+        sendFtpCamel(summaryXmlFile);
       }
     } catch (Exception e) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), e));
@@ -111,11 +114,12 @@ public class GlobalReportsRunnable extends DpfRunnable {
   /**
    * Sends the report to the preforma FTP.
    *
-   * @param summaryXml the summary xml
+   * @param summaryXmlFile the summary xml
    * @throws NoSuchAlgorithmException An error occurred
    */
-  private void sendFtpCamel(String summaryXml)
-      throws NoSuchAlgorithmException {
+  private void sendFtpCamel(String summaryXmlFile)
+      throws NoSuchAlgorithmException, IOException {
+    String summaryXml = FileUtils.readFileToString(new File(summaryXmlFile), "utf-8");
     context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("sendingFeedback")));
     String ftp = "84.88.145.109";
     String user = "preformaapp";

@@ -641,15 +641,14 @@ public class ReportGenerator {
   public String makeSummaryReport(String internalReportFolder,
       GlobalReport gr, Configuration config) {
 
-    String output = null;
     String xmlFileStr = internalReportFolder + "summary.xml";
     String jsonFileStr = internalReportFolder + "summary.json";
     String htmlFileStr = internalReportFolder + "report.html";
     String pdfFileStr = internalReportFolder + "report.pdf";
-    output = reportXml.parseGlobal(xmlFileStr, gr);
+    reportXml.parseGlobal(xmlFileStr, gr);
 
     if (config.getFormats().contains("JSON")) {
-      reportJson.xmlToJson(output, jsonFileStr, this);
+      reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
     }
     if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
@@ -660,6 +659,7 @@ public class ReportGenerator {
     }
     if (!config.getFormats().contains("XML")) {
       deleteFileOrFolder(new File(xmlFileStr));
+      xmlFileStr = null;
     }
 
     String outputFolder = config.getOutput();
@@ -675,6 +675,6 @@ public class ReportGenerator {
       }
     }
 
-    return output;
+    return xmlFileStr;
   }
 }

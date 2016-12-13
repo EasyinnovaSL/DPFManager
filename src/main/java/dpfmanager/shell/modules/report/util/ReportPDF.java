@@ -26,6 +26,7 @@ import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -123,7 +124,7 @@ public class ReportPDF extends ReportGeneric {
        */
       pos_x = 100;
       pdfParams.y -= 50;
-      for (IndividualReport ir : gr.getIndividualReports()) {
+      for (SmallIndividualReport ir : gr.getIndividualReports()) {
           int image_height = 65;
           int image_width = 100;
 
@@ -145,7 +146,7 @@ public class ReportPDF extends ReportGeneric {
           }
 
           // Check if we need new page before draw image
-          int maxHeight = getMaxHeight(ir, image_height);
+          int maxHeight = getMaxHeight(ir.getIsosCheck().size(), image_height);
           if (newPageNeeded(pdfParams.y - maxHeight)) {
             pdfParams.setContentStream(newPage(pdfParams.getContentStream(), pdfParams.getDocument()));
             pdfParams.y = init_posy;
@@ -193,7 +194,7 @@ public class ReportPDF extends ReportGeneric {
           graph_size = 25;
           image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
           g2d = image.createGraphics();
-          doub = (double) ir.calculatePercent();
+          doub = (double) ir.getPercent();
           extent = 360d * doub / 100.0;
           g2d.setColor(Color.gray);
           g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
@@ -215,21 +216,18 @@ public class ReportPDF extends ReportGeneric {
 
       // Full individual reports
       ArrayList<PDDocument> toClose = new ArrayList<PDDocument>();
-      for (IndividualReport ir : gr.getIndividualReports()) {
+      for (SmallIndividualReport ir : gr.getIndividualReports()) {
 
-          if (!ir.containsData()) continue;
-          PDDocument doc = null;
-          if (ir.getPDF() != null)
-            doc = ir.getPDF();
-          else if (ir.getPDFDocument() != null)
-            doc = PDDocument.load(ir.getPDFDocument());
-          if (doc != null) {
-            List<PDPage> l = doc.getDocumentCatalog().getAllPages();
-            for (PDPage pag : l) {
-              pdfParams.getDocument().addPage(pag);
-            }
-            toClose.add(doc);
+        if (!ir.getContainsData()) continue;
+
+        PDDocument doc = PDDocument.load(new File(ir.getReportPath() + ".pdf"));
+        if (doc != null) {
+          List<PDPage> l = doc.getDocumentCatalog().getAllPages();
+          for (PDPage pag : l) {
+            pdfParams.getDocument().addPage(pag);
           }
+          toClose.add(doc);
+        }
       }
 
       pdfParams.getContentStream().close();
@@ -245,8 +243,8 @@ public class ReportPDF extends ReportGeneric {
     }
   }
 
-  private int getMaxHeight(IndividualReport ir, int image_height) {
-    int height = 15 + ir.getIsosCheck().size() * 10;
+  private int getMaxHeight(int nIsos, int image_height) {
+    int height = 15 + nIsos * 10;
     if (image_height > height) {
       height = image_height;
     }

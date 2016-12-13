@@ -26,6 +26,7 @@ import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -51,8 +52,8 @@ public class ReportHtml extends ReportGeneric {
 
     // Parse individual Reports
     int index = 0;
-    for (IndividualReport ir : gr.getIndividualReports()) {
-      if (!ir.containsData()) continue;
+    for (SmallIndividualReport ir : gr.getIndividualReports()) {
+      if (!ir.getContainsData()) continue;
       String imageBody;
       imageBody = generator.readFilefromResources(imagePath);
       // Image
@@ -64,7 +65,7 @@ public class ReportHtml extends ReportGeneric {
       imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", encodeUrl(imgPath));
 
       // Basic
-      int percent = ir.calculatePercent();
+      int percent = ir.getPercent();
       imageBody = StringUtils.replace(imageBody, "##PERCENT##", "" + percent);
       imageBody = StringUtils.replace(imageBody, "##INDEX##", "" + index);
       imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());

@@ -28,6 +28,16 @@ import org.json.JSONObject;
 import org.json.XML;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLInputFactory;
 
 /**
  * The Class ReportJson.
@@ -53,6 +63,44 @@ public class ReportJson extends ReportGeneric {
       getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
     }
   }
+
+  /**
+   * XML to JSON.
+   *
+   * @param xmlFile          the XML
+   * @param jsonFilename the json filename
+   */
+  public void xmlToJsonFile(String xmlFile, String jsonFilename, ReportGenerator generator) {
+    // Convert to JSON
+    try {
+      String content = new String(Files.readAllBytes(Paths.get(xmlFile)));
+      JSONObject soapDatainJsonObject = XML.toJSONObject(content);
+      String json = soapDatainJsonObject.toString();
+      generator.deleteFileOrFolder(new File(jsonFilename));
+      generator.writeToFile(jsonFilename, json);
+    } catch (Exception e) {
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
+    }
+  }
+
+  /**
+   * XML to JSON via File.
+   *
+   * @param xml          the XML filename
+   * @param jsonFilename the json filename
+   */
+  /*public void xmlToJsonFile(String xml, String jsonFilename, ReportGenerator generator) {
+    // Convert to JSON
+    try {
+      XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(new FileInputStream(xml));
+      XMLEventWriter writer = new MappedXMLOutputFactory(new HashMap()).createXMLEventWriter(new FileOutputStream(jsonFilename));
+      writer.add(reader);
+      writer.close();
+      reader.close();
+    } catch (Exception e) {
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
+    }
+  }*/
 
   /**
    * Get the JSON string into the file inside the folderPath.

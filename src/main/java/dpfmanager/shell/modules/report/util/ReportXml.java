@@ -34,14 +34,23 @@ package dpfmanager.shell.modules.report.util;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -64,7 +73,7 @@ public class ReportXml extends ReportGeneric {
    * @param gr      the global report.
    * @return the XML string generated
    */
-  public String parseGlobal(String xmlfile, GlobalReport gr) {
+  public void parseGlobal(String xmlfile, GlobalReport gr) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -76,12 +85,23 @@ public class ReportXml extends ReportGeneric {
       globalreport.appendChild(individualreports);
 
       // Individual reports
-      for (IndividualReport ir : gr.getIndividualReports()) {
+      for (SmallIndividualReport ir : gr.getIndividualReports()) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document docreport = db.parse(new ByteArrayInputStream(ir.getConformanceCheckerReport().getBytes("UTF-8")));
-        Node node = doc.importNode(docreport.getDocumentElement(), true);
-        individualreports.appendChild(node);
+        try {
+          File file = new File(ir.getReportPath() + ".xml");
+          if (file.exists()) {
+            InputStream inputStream = new FileInputStream(file);
+            Reader reader = new InputStreamReader(inputStream, "UTF-8");
+            InputSource is = new InputSource(reader);
+            is.setEncoding("UTF-8");
+            Document docreport = db.parse(is);
+            Node node = doc.importNode(docreport.getDocumentElement(), true);
+            individualreports.appendChild(node);
+          }
+        } catch (Exception ex) {
+          ex.toString();
+        }
       }
 
       // Statistics
@@ -108,14 +128,6 @@ public class ReportXml extends ReportGeneric {
       StreamResult result = new StreamResult(f);
       transformer.transform(source, result);
 
-      // To String
-      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-      StringWriter writer = new StringWriter();
-      transformer.transform(new DOMSource(doc), new StreamResult(writer));
-      String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
-
-      return output;
-
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {
@@ -123,6 +135,5 @@ public class ReportXml extends ReportGeneric {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return "";
   }
 }
