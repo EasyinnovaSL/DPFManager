@@ -67,7 +67,7 @@ public class ReportJson extends ReportGeneric {
   /**
    * XML to JSON.
    *
-   * @param xmlFile          the XML
+   * @param xmlFile          the XML File
    * @param jsonFilename the json filename
    */
   public void xmlToJsonFile(String xmlFile, String jsonFilename, ReportGenerator generator) {
@@ -82,25 +82,6 @@ public class ReportJson extends ReportGeneric {
       getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
     }
   }
-
-  /**
-   * XML to JSON via File.
-   *
-   * @param xml          the XML filename
-   * @param jsonFilename the json filename
-   */
-  /*public void xmlToJsonFile(String xml, String jsonFilename, ReportGenerator generator) {
-    // Convert to JSON
-    try {
-      XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(new FileInputStream(xml));
-      XMLEventWriter writer = new MappedXMLOutputFactory(new HashMap()).createXMLEventWriter(new FileOutputStream(jsonFilename));
-      writer.add(reader);
-      writer.close();
-      reader.close();
-    } catch (Exception e) {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
-    }
-  }*/
 
   /**
    * Get the JSON string into the file inside the folderPath.

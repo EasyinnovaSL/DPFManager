@@ -166,7 +166,7 @@ public class GlobalReport {
   public int getAllReportsWarnings() {
     int n = 0;
     for (SmallIndividualReport rep : reports) {
-      for (String iso : rep.getCheckedIsos()) {
+      for (String iso : rep.getIsosCheck()) {
         if (rep.getNWarnings(iso) > 0) {
           n++;
           break;
