@@ -19,15 +19,6 @@
     </Pane>
     <VBox fx:id="vboxRadios" spacing="10.0">
     </VBox>
-    <Button fx:id="importIso" mnemonicParsing="false" onAction="#importIso"
-            styleClass="secondary-button" text="%w1Import">
-        <VBox.margin>
-            <Insets top="15.0"/>
-        </VBox.margin>
-        <padding>
-            <Insets bottom="2.0" left="10.0" right="10.0" top="2.0"/>
-        </padding>
-    </Button>
     <VBox.margin>
         <Insets left="350.0"/>
     </VBox.margin>

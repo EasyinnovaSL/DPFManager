@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.report.core;
 
+import dpfmanager.conformancechecker.tiff.implementation_checker.ValidationResult;
 import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 
@@ -133,7 +134,7 @@ public class IndividualReport implements Comparable {
    * @param path      the path
    * @param tiffModel the TIFF model
    */
-  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, Validator> validators) {
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators) {
     filename = name;
     filepath = path;
     containsData = true;
@@ -369,12 +370,12 @@ public class IndividualReport implements Comparable {
    * @param tiffModel   the tiff model
    * @param validations the validations
    */
-  public void generate(TiffDocument tiffModel, Map<String, Validator> validations) {
+  public void generate(TiffDocument tiffModel, Map<String, ValidationResult> validations) {
     this.tiffModel = tiffModel;
 
     for (String key : validations.keySet()) {
       errors.put(key, validations.get(key).getErrors());
-      warnings.put(key, validations.get(key).getWarningsAndInfos());
+      warnings.put(key, validations.get(key).getWarnings(true));
     }
   }
 

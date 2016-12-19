@@ -1,13 +1,13 @@
 /**
- * <h1>Wizard2Fragment.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>Wizard2Fragment.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -21,10 +21,12 @@ package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
+import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.util.NumberTextField;
+import dpfmanager.shell.interfaces.gui.component.config.ConfigController;
 import dpfmanager.shell.interfaces.gui.component.config.ConfigModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,13 +35,17 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -50,6 +56,7 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -69,10 +76,17 @@ public class Wizard2Fragment {
 
   @FXML
   private VBox rulesBox;
+  @FXML
+  private VBox isosBox;
 
+  private ConfigController controller;
   private ConfigModel model;
 
   public Wizard2Fragment() {
+  }
+
+  public void setController(ConfigController controller) {
+    this.controller = controller;
   }
 
   @FXML
@@ -89,14 +103,22 @@ public class Wizard2Fragment {
     rules.set(readFromGui(rulesBox));
   }
 
+  public void saveIsos(Configuration config) {
+    for (CheckBox chk : getCheckBoxs()) {
+      if (!chk.isSelected()) {
+        config.removeModifiedIso(chk.getId().replace("w2", ""));
+      }
+    }
+  }
+
   public ArrayList<Rule> readFromGui(VBox rulesBox) {
     ArrayList<Rule> rules = new ArrayList<Rule>();
     boolean wrong_format = false;
-    for (Node n : rulesBox.getChildren()){
+    for (Node n : rulesBox.getChildren()) {
       HBox hbox = (HBox) n;
       String tag = null, operator = null, value = null;
       boolean bwarning = false;
-      if (hbox.getChildren().size() != 5){
+      if (hbox.getChildren().size() != 5) {
         wrong_format = true;
       } else {
         CheckBox warning = (CheckBox) hbox.getChildren().get(0);
@@ -105,16 +127,14 @@ public class Wizard2Fragment {
         ComboBox comboBox = (ComboBox) hbox.getChildren().get(1);
         if (comboBox.getValue() != null) {
           tag = comboBox.getValue().toString();
-        }
-        else{
+        } else {
           wrong_format = true;
         }
 
         ComboBox comboOp = (ComboBox) hbox.getChildren().get(2);
         if (comboOp.getValue() != null) {
           operator = comboOp.getValue().toString();
-        }
-        else{
+        } else {
           wrong_format = true;
         }
 
@@ -123,7 +143,7 @@ public class Wizard2Fragment {
           CheckComboBox comboVal = (CheckComboBox) nodeVal;
           value = "";
           for (int idx = 0; idx < comboVal.getCheckModel().getCheckedIndices().size(); idx++) {
-            int selindex = (Integer)comboVal.getCheckModel().getCheckedIndices().get(idx);
+            int selindex = (Integer) comboVal.getCheckModel().getCheckedIndices().get(idx);
             if (value.length() > 0) value += ";";
             value += comboVal.getCheckModel().getItem(selindex);
           }
@@ -156,6 +176,58 @@ public class Wizard2Fragment {
       String operator = r.getOperator();
       addRule(tag, operator, value, r.getWarning());
     }
+  }
+
+  public void loadIsos(Configuration config) {
+    isosBox.getChildren().clear();
+    for (String iso : config.getIsos()) {
+      addIsoBox(iso);
+    }
+  }
+
+  private void addIsoBox(String iso) {
+    HBox hbox = new HBox();
+    hbox.setAlignment(Pos.CENTER_LEFT);
+
+    Label label = new Label(ImplementationCheckerLoader.getIsoName(iso));
+    label.setId("w2" + iso);
+    label.getStyleClass().add("checkreport");
+    hbox.getChildren().add(label);
+
+    // EDIT
+    Button edit = new Button();
+    edit.getStyleClass().addAll("edit-img", "action-img-16");
+    edit.setCursor(Cursor.HAND);
+    edit.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        String id = label.getId();
+        controller.editIso(id.replace("w2", ""));
+      }
+    });
+    hbox.getChildren().add(edit);
+    HBox.setMargin(edit, new Insets(0, 0, 0, 10));
+
+    isosBox.getChildren().add(hbox);
+  }
+
+  public void check(String iso) {
+    for (CheckBox chk : getCheckBoxs()) {
+      if (chk.getId().equals("w2"+iso)) {
+        chk.setSelected(true);
+      }
+    }
+  }
+
+  private List<CheckBox> getCheckBoxs() {
+    List<CheckBox> boxs = new ArrayList<>();
+    for (Node node : isosBox.getChildren()) {
+      HBox hbox = (HBox) node;
+      if (hbox.getChildren().get(0) instanceof CheckBox) {
+        boxs.add((CheckBox) hbox.getChildren().get(0));
+      }
+    }
+    return boxs;
   }
 
   private void addRule(String tag, String operator, String value, boolean bwarning) {
@@ -275,7 +347,7 @@ public class Wizard2Fragment {
       hbox.getChildren().add(value);
     } else {
       CheckComboBox comboVal = new CheckComboBox();
-      comboVal.getStyleClass().addAll("combo-box-white","dpf-bar");
+      comboVal.getStyleClass().addAll("combo-box-white", "dpf-bar");
       for (String value : values) {
         comboVal.getItems().add(value);
       }
