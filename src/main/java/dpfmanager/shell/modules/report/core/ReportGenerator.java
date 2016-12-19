@@ -463,41 +463,41 @@ public class ReportGenerator {
           List<File> arrayFolders = new ArrayList<>();
 
           //files in js folder
-          arrayFiles.add("html/js/bootstrap.min.js");
-          arrayFiles.add("html/js/jquery-1.9.1.min.js");
-          arrayFiles.add("html/js/jquery.flot.pie.min.js");
-          arrayFiles.add("html/js/jquery.flot.min.js");
+          arrayFiles.add("html" + File.separator + "js" + File.separator + "bootstrap.min.js");
+          arrayFiles.add("html" + File.separator + "js" + File.separator + "jquery-1.9.1.min.js");
+          arrayFiles.add("html" + File.separator + "js" + File.separator + "jquery.flot.pie.min.js");
+          arrayFiles.add("html" + File.separator + "js" + File.separator + "jquery.flot.min.js");
 
           //files in img folder
-          arrayFiles.add("html/img/noise.jpg");
-          arrayFiles.add("html/img/logo.png");
-          arrayFiles.add("html/img/logo - copia.png");
-          arrayFiles.add("html/img/check_radio_sheet.png");
+          arrayFiles.add("html" + File.separator + "img" + File.separator + "noise.jpg");
+          arrayFiles.add("html" + File.separator + "img" + File.separator + "logo.png");
+          arrayFiles.add("html" + File.separator + "img" + File.separator + "logo - copia.png");
+          arrayFiles.add("html" + File.separator + "img" + File.separator + "check_radio_sheet.png");
 
           //files in fonts folder
-          arrayFiles.add("html/fonts/fontawesome-webfont.woff2");
-          arrayFiles.add("html/fonts/fontawesome-webfont.woff");
-          arrayFiles.add("html/fonts/fontawesome-webfont.ttf");
-          arrayFiles.add("html/fonts/fontawesome-webfont.svg");
-          arrayFiles.add("html/fonts/fontawesome-webfont.eot");
-          arrayFiles.add("html/fonts/fontello.woff2");
-          arrayFiles.add("html/fonts/fontello.woff");
-          arrayFiles.add("html/fonts/fontello.ttf");
-          arrayFiles.add("html/fonts/fontello.svg");
-          arrayFiles.add("html/fonts/fontello.eot");
-          arrayFiles.add("html/fonts/FontAwesome.otf");
-          arrayFiles.add("html/fonts/Roboto-Bold.ttf");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.woff2");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.woff");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.ttf");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.svg");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.eot");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.woff2");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.woff");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.ttf");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.svg");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.eot");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "FontAwesome.otf");
+          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "Roboto-Bold.ttf");
 
           //files in css folder
-          arrayFiles.add("html/css/font-awesome.css");
-          arrayFiles.add("html/css/default.css");
-          arrayFiles.add("html/css/bootstrap.css");
-          arrayFiles.add("html/css/fontello.css");
+          arrayFiles.add("html" + File.separator + "css" + File.separator + "font-awesome.css");
+          arrayFiles.add("html" + File.separator + "css" + File.separator + "default.css");
+          arrayFiles.add("html" + File.separator + "css" + File.separator + "bootstrap.css");
+          arrayFiles.add("html" + File.separator + "css" + File.separator + "fontello.css");
 
-          arrayFolders.add(new File(targetPath + File.separator + "html/js/"));
-          arrayFolders.add(new File(targetPath + File.separator + "html/img/"));
-          arrayFolders.add(new File(targetPath + File.separator + "html/fonts/"));
-          arrayFolders.add(new File(targetPath + File.separator + "html/css/"));
+          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "js" + File.separator + ""));
+          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "img" + File.separator + ""));
+          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "fonts" + File.separator + ""));
+          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "css" + File.separator + ""));
 
           //if originals folders not exists
           for (File item : arrayFolders) {
