@@ -89,7 +89,6 @@ public class FileCheckTest extends ApplicationTest {
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     textArea = (TextArea) scene.lookup("#textArea");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
-    jObj = jObj.get("globalreport").getAsJsonObject();
     Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
   }
 }

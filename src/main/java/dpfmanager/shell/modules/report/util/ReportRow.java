@@ -486,7 +486,7 @@ public class ReportRow {
       JsonObject jObjRoot = new JsonParser().parse(json).getAsJsonObject();
       String stime = getStime(file.getPath());
       String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".json");
-      JsonObject jObj = jObjRoot.getAsJsonObject("globalreport");
+      JsonObject jObj = jObjRoot;
 
       // Passed
       if (jObj.has("stats")) {

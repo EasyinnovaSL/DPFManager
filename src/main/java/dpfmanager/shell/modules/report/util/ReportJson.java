@@ -71,7 +71,7 @@ public class ReportJson extends ReportGeneric {
       generator.deleteFileOrFolder(new File(jsonFilename));
       generator.writeToFile(jsonFilename, json);
     } catch (Exception e) {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON report " + jsonFilename,e));
     }
   }
 
