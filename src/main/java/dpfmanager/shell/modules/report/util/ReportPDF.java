@@ -215,7 +215,7 @@ public class ReportPDF extends ReportGeneric {
       }
 
       // Full individual reports
-      ArrayList<PDDocument> toClose = new ArrayList<PDDocument>();
+      /*ArrayList<PDDocument> toClose = new ArrayList<PDDocument>();
       for (SmallIndividualReport ir : gr.getIndividualReports()) {
 
         if (!ir.getContainsData()) continue;
@@ -228,16 +228,16 @@ public class ReportPDF extends ReportGeneric {
           }
           toClose.add(doc);
         }
-      }
+      }*/
 
       pdfParams.getContentStream().close();
 
       pdfParams.getDocument().save(pdffile);
       pdfParams.getDocument().close();
 
-      for (PDDocument doc : toClose) {
+      /*for (PDDocument doc : toClose) {
         doc.close();
-      }
+      }*/
     } catch (Exception tfe) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", tfe));
     }
