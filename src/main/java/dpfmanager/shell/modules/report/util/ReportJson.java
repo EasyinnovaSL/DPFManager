@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class ReportJson extends ReportGeneric {
     // Convert to JSON
     try {
       XmlMapper xmlMapper = new XmlMapper();
-      JsonNode node = xmlMapper.readTree(xml.getBytes());
+      JsonNode node = xmlMapper.readTree(Charset.forName("UTF-8").encode(xml).array());
 
       ObjectMapper jsonMapper = new ObjectMapper();
       String json = jsonMapper.writeValueAsString(node);
