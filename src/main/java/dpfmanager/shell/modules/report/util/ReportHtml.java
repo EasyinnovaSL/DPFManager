@@ -256,11 +256,15 @@ public class ReportHtml extends ReportGeneric {
 
   private String makeConformsRow(GlobalReport gr, String iso, boolean force) {
     String row = "<tr><td class=\"##TYPE## border-bot\">##OK##</td><td class=\"##TYPE## border-bot\">Conforms to ##NAME## ##POLICY##</td></tr>";
-    String policy = gr.hasModificationIso(iso) ? "(with custom policy)" : "";
-    row = StringUtils.replace(row, "##OK##", "" + gr.getReportsOk(iso));
+    String policy = "";
+    int n = 0;
+    if (gr.hasModificationIso(iso)){
+      policy = gr.getReportsOk(iso) == gr.getReportsOkPolicy(iso) ? "" : " (with custom policy)";
+    }
+    row = StringUtils.replace(row, "##OK##", "" + (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)));
     row = StringUtils.replace(row, "##NAME##", ImplementationCheckerLoader.getIsoName(iso));
     row = StringUtils.replace(row, "##POLICY##", policy);
-    row = StringUtils.replace(row, "##TYPE##", gr.getReportsOk(iso) == gr.getReportsCount() ? "success" : "error");
+    row = StringUtils.replace(row, "##TYPE##", (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)) == gr.getReportsCount() ? "success" : "error");
     return row;
   }
 

@@ -111,6 +111,7 @@ public class Configuration {
     this.rules = rules;
     this.formats = formats;
     this.fixes = fixes;
+    modifiedIsos = new HashMap<>();
   }
 
   /**

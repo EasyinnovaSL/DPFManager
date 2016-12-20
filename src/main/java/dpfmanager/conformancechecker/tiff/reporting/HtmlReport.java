@@ -722,10 +722,11 @@ public class HtmlReport extends Report {
 
   private String makeConformsText(IndividualReport ir, String iso) {
     String tmplPassed = "<div class=\"success\"><i class=\"fa fa-check-circle\"></i> ##TITLE##</div>";
-//    String tmplWarn = "<div class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> ##TITLE##</div>";
     String tmplError = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> ##TITLE##</div>";
     String name = ImplementationCheckerLoader.getIsoName(iso);
-    name += ir.hasModifiedIso(iso) ? " (with custom policy)" : "";
+    if (ir.hasModifiedIso(iso) && ir.getNErrors(iso) != ir.getNErrorsPolicy(iso)){
+      name += " (with custom policy)";
+    }
     int err = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
     int war = ir.hasModifiedIso(iso) ? ir.getNWarningsPolicy(iso) : ir.getNWarnings(iso);
     if (err == 0 && war == 0) {

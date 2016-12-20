@@ -415,7 +415,7 @@ public class IndividualReport {
   public List<RuleResult> getErrorsPolicy(String key) {
     List<RuleResult> filtered = new ArrayList<>();
     for (RuleResult rr : errors.get(key)) {
-      if (modifiedIsos.get(key).contains(rr.getRule().getId())) {
+      if (rr.isRelaxed()) {
         filtered.add(rr);
       }
     }
@@ -437,6 +437,16 @@ public class IndividualReport {
     return result;
   }
 
+  public List<RuleResult> getOnlyWarningsPolicy(String key) {
+    List<RuleResult> result = new ArrayList<>();
+    for (RuleResult rule : getWarnings(key)) {
+      if (rule.getWarning() && rule.isRelaxed()) {
+        result.add(rule);
+      }
+    }
+    return result;
+  }
+
   /**
    * Get infos list.
    *
@@ -446,6 +456,16 @@ public class IndividualReport {
     List<RuleResult> result = new ArrayList<>();
     for (RuleResult rule : getWarnings(key)) {
       if (rule.getInfo()) {
+        result.add(rule);
+      }
+    }
+    return result;
+  }
+
+  public List<RuleResult> getOnlyInfosPolicy(String key) {
+    List<RuleResult> result = new ArrayList<>();
+    for (RuleResult rule : getWarnings(key)) {
+      if (rule.getInfo() && rule.isRelaxed()) {
         result.add(rule);
       }
     }

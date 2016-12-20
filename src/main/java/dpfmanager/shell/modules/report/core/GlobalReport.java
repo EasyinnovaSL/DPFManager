@@ -53,6 +53,11 @@ public class GlobalReport {
   private Map<String, Integer> nReportsOk;
 
   /**
+   * Number of reports ok with policy
+   */
+  private Map<String, Integer> nReportsOkPolicy;
+
+  /**
    * The isos to check
    */
   private List<String> isos;
@@ -70,6 +75,7 @@ public class GlobalReport {
   public GlobalReport() {
     reports = new ArrayList<>();
     nReportsOk = new HashMap<>();
+    nReportsOkPolicy = new HashMap<>();
     isos = new ArrayList<>();
     isosChecked = new ArrayList<>();
     errVal = 0;
@@ -121,6 +127,13 @@ public class GlobalReport {
                 nReportsOk.put(iso, nReportsOk.get(iso)+1);
               } else {
                 nReportsOk.put(iso, 1);
+              }
+            }
+            if (ir.getNErrorsPolicy(iso) == 0){
+              if (nReportsOkPolicy.containsKey(iso)){
+                nReportsOkPolicy.put(iso, nReportsOkPolicy.get(iso)+1);
+              } else {
+                nReportsOkPolicy.put(iso, 1);
               }
             }
             if (!isos.contains(iso)) isos.add(iso);
@@ -190,14 +203,26 @@ public class GlobalReport {
   }
 
   public int getReportsOk(String iso) {
-    int n = 0;
-    for (SmallIndividualReport ir : reports) {
-      int size = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
-      if (size == 0){
-        n++;
-      }
-    }
-    return n;
+    return nReportsOk.containsKey(iso) ? nReportsOk.get(iso) : 0;
+//    int n = 0;
+//    for (SmallIndividualReport ir : reports) {
+//      if (ir.getNErrors(iso) == 0){
+//        n++;
+//      }
+//    }
+//    return n;
+  }
+
+  public int getReportsOkPolicy(String iso) {
+    return nReportsOkPolicy.containsKey(iso) ? nReportsOkPolicy.get(iso) : 0;
+//    int n = 0;
+//    for (SmallIndividualReport ir : reports) {
+//      int size = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
+//      if (size == 0){
+//        n++;
+//      }
+//    }
+//    return n;
   }
 
   public boolean hasModificationIso(String iso) {

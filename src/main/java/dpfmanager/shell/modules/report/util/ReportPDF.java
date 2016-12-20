@@ -82,17 +82,21 @@ public class ReportPDF extends ReportGeneric {
       font_size = 15;
       pdfParams = writeText(pdfParams, "Processed files: " + gr.getIndividualReports().size(), pos_x, font, font_size, Color.cyan);
 
-      // Summary table
+      // Conforms table
       pos_x = 100;
       pdfParams.y -= 15;
       font_size = 8;
-      Color col;
+      Color color;
       for (String iso : gr.getCheckedIsos()){
         if (gr.getIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
           String name = ImplementationCheckerLoader.getIsoName(iso);
+          String policy = "";
+          if (gr.hasModificationIso(iso)){
+            policy = gr.getReportsOk(iso) == gr.getReportsOkPolicy(iso) ? "" : " (with custom policy)";
+          }
           pdfParams.y -= 15;
-          col = gr.getReportsOk(iso) == gr.getReportsCount() ? Color.green : Color.red;
-          pdfParams = writeText(pdfParams, gr.getReportsOk(iso) + " files conforms to " + name, pos_x, font, font_size, col);
+          color = (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)) == gr.getReportsCount() ? Color.green : Color.red;
+          pdfParams = writeText(pdfParams, (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)) + " files conforms to " + name + policy, pos_x, font, font_size, color);
         }
       }
 
@@ -172,17 +176,41 @@ public class ReportPDF extends ReportGeneric {
           font_size = 6;
           pdfParams.y -= 10;
           pdfParams = writeText(pdfParams, "Conformance Checker", pos_x + image_width + 10, font, font_size, Color.black);
-          pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, image_width + 150, pdfParams.y - 5);
+          pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, pos_x + image_width + 170, pdfParams.y - 5);
           pdfParams.y -= 2;
 
           // Isos table
+          int mode = 1, col1 = 100, col2 = 140;
+          if (ir.getModifiedIsos().size() != 0) {
+            pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
+            pdfParams = writeText(pdfParams, "Policy", pos_x + image_width + col2, font, font_size);
+            mode = 2;
+          }
           for (String iso : ir.getCheckedIsos()) {
             if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
               String name = ImplementationCheckerLoader.getIsoName(iso);
-              pdfParams.y -= 10;
-              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
-              pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + 110, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
-              pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + 140, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+              pdfParams.y -= 5;
+              if (mode == 1) {
+                pdfParams.y -= 10;
+                pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
+                pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
+                pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+              } else {
+                pdfParams.y -= 15;
+                pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
+                pdfParams.y += 5;
+                // Errors
+                pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
+                if (ir.hasModifiedIso(iso)) {
+                  pdfParams = writeText(pdfParams, ir.getNErrorsPolicy(iso) + " errors", pos_x + image_width + col2, font, font_size, ir.getNErrorsPolicy(iso) > 0 ? Color.red : ir.getNErrors(iso) > 0 ? Color.green : Color.black);
+                }
+                // Warnings
+                pdfParams.y -= 8;
+                pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + col1, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+                if (ir.hasModifiedIso(iso)) {
+                  pdfParams = writeText(pdfParams, ir.getNWarningsPolicy(iso) + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarningsPolicy(iso) > 0 ? Color.orange : ir.getNWarnings(iso) > 0 ? Color.green : Color.black);
+                }
+              }
             }
           }
           if (pdfParams.y < maxy) maxy = pdfParams.y;
