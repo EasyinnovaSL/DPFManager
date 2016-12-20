@@ -411,6 +411,16 @@ public class IndividualReport implements Comparable {
     return warnings.get(key);
   }
 
+  public List<RuleResult> getWarningsPolicy(String key) {
+    List<RuleResult> filtered = new ArrayList<>();
+    for (RuleResult rr : warnings.get(key)){
+      if (modifiedIsos.get(key).contains(rr.getRule().getId())){
+        filtered.add(rr);
+      }
+    }
+    return filtered;
+  }
+
   /**
    * Get errors list.
    *
@@ -421,6 +431,16 @@ public class IndividualReport implements Comparable {
       return new ArrayList<>();
     }
     return errors.get(key);
+  }
+
+  public List<RuleResult> getErrorsPolicy(String key) {
+    List<RuleResult> filtered = new ArrayList<>();
+    for (RuleResult rr : errors.get(key)){
+      if (modifiedIsos.get(key).contains(rr.getRule().getId())){
+        filtered.add(rr);
+      }
+    }
+    return filtered;
   }
 
   /**

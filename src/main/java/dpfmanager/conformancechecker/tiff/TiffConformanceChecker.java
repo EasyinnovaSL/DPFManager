@@ -784,7 +784,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       Validator validation = new Validator(Logger);
       PolicyChecker policy = new PolicyChecker(Logger);
       ValidationResult result = validation.validate(content, path, !check);
-      result = policy.validate(result, config.getModifiedIso(path));
+      result = policy.validate(result, config.getModifiedIso(ImplementationCheckerLoader.getFileName(path)));
       validations.put(ImplementationCheckerLoader.getFileName(path), result);
     }
     return validations;
@@ -803,7 +803,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
    */
   static ArrayList<RuleResult> getPcValidation(String output) {
     ArrayList<RuleResult> valid = new ArrayList<>();
-    int index = output.indexOf("<policyCheckerOutput");
+    int index = output.indexOf("<policy_rules");
     while (true) {
       index = output.indexOf("<error", index);
       if (index == -1) break;
@@ -823,7 +823,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       val.setRuleDescription(test);
       valid.add(val);
     }
-    index = output.indexOf("<policyCheckerOutput");
+    index = output.indexOf("<policy_rules");
     while (true) {
       index = output.indexOf("<warning", index);
       if (index == -1) break;
