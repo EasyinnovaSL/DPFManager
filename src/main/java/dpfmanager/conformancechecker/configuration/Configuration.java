@@ -437,23 +437,28 @@ public class Configuration {
     }
 
     // Read ISOs
-    NodeList isoList = doc.getElementsByTagName("iso");
-    for (int i = 0; i < isoList.getLength(); i++) {
-      Node node = isoList.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE) {
-        Element elem = (Element) node;
-        String iso = elem.getTextContent();
-        if (version == 1) {
-          // Old iso format
-          if (parseOldToNewIso(iso) != null) {
-            isos.add(parseOldToNewIso(iso));
+    NodeList tmpList = doc.getElementsByTagName("isos");
+    if (tmpList.getLength() > 0){
+      Node isosNode = tmpList.item(0);
+      NodeList isoList = isosNode.getChildNodes();
+      for (int i = 0; i < isoList.getLength(); i++) {
+        Node node = isoList.item(i);
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+          Element elem = (Element) node;
+          String iso = elem.getTextContent();
+          if (version == 1) {
+            // Old iso format
+            if (parseOldToNewIso(iso) != null) {
+              isos.add(parseOldToNewIso(iso));
+            }
+          } else if (version >= 2) {
+            // New iso format
+            isos.add(elem.getTextContent());
           }
-        } else if (version >= 2) {
-          // New iso format
-          isos.add(elem.getTextContent());
         }
       }
     }
+
 
     // Read formats
     NodeList formatsList = doc.getElementsByTagName("format");
@@ -715,5 +720,9 @@ public class Configuration {
       return modifiedIsos.get(isoId);
     }
     return new ArrayList<>();
+  }
+
+  public Map<String, List<String>> getModifiedIsos() {
+    return modifiedIsos;
   }
 }

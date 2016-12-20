@@ -181,15 +181,19 @@ public class Wizard2Fragment {
   public void loadIsos(Configuration config) {
     isosBox.getChildren().clear();
     for (String iso : config.getIsos()) {
-      addIsoBox(iso);
+      addIsoBox(iso, config.getModifiedIso(iso).size());
     }
   }
 
-  private void addIsoBox(String iso) {
+  private void addIsoBox(String iso, Integer nRules) {
     HBox hbox = new HBox();
     hbox.setAlignment(Pos.CENTER_LEFT);
 
-    Label label = new Label(ImplementationCheckerLoader.getIsoName(iso));
+    String name = ImplementationCheckerLoader.getIsoName(iso);
+    if (nRules > 0){
+      name += " " + bundle.getString("w2Invalidated").replace("%1", nRules+"");
+    }
+    Label label = new Label(name);
     label.setId("w2" + iso);
     label.getStyleClass().add("checkreport");
     hbox.getChildren().add(label);

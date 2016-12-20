@@ -62,6 +62,8 @@ public class GlobalReport {
    */
   private List<String> isosChecked;
 
+  private double errVal;
+
   /**
    * Instantiates a new global report.
    */
@@ -70,6 +72,7 @@ public class GlobalReport {
     nReportsOk = new HashMap<>();
     isos = new ArrayList<>();
     isosChecked = new ArrayList<>();
+    errVal = 0;
   }
 
   /**
@@ -148,7 +151,8 @@ public class GlobalReport {
     for (IndividualReport ir : reports) {
       boolean ok = true;
       for (String iso : ir.getIsosCheck()) {
-        if (ir.hasValidation(iso) && ir.getErrors(iso).size() > 0) {
+        int size = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
+        if (ir.hasValidation(iso) && size > 0) {
           ok = false;
         }
       }
@@ -169,11 +173,19 @@ public class GlobalReport {
   public int getReportsOk(String iso) {
     int n = 0;
     for (IndividualReport ir : reports) {
-      if (ir.getErrors(iso).size() == 0){
+      int size = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
+      if (size == 0){
         n++;
       }
     }
     return n;
+  }
+
+  public boolean hasModificationIso(String iso) {
+    for (IndividualReport ir : reports) {
+      return ir.hasModifiedIso(iso);
+    }
+    return false;
   }
 
   /**
@@ -183,6 +195,23 @@ public class GlobalReport {
    */
   public List<IndividualReport> getIndividualReports() {
     return reports;
+  }
+
+  public double computeAverageErrors(){
+    if (errVal != 0) return errVal;
+    int maxErrs = 0;
+    for (IndividualReport ir : getIndividualReports()) {
+      int currentErrs = ir.getAllNErrorsPolicy();
+      if (currentErrs > maxErrs) {
+        maxErrs = currentErrs;
+      }
+    }
+    if (maxErrs == 0){
+      errVal = 12.5; // Default
+    } else {
+      errVal = 100.0 / maxErrs;
+    }
+    return errVal;
   }
 
 //  public void computePcChecks() {

@@ -20,7 +20,6 @@
 package dpfmanager.shell.modules.report.core;
 
 import dpfmanager.conformancechecker.tiff.implementation_checker.ValidationResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
@@ -104,6 +103,8 @@ public class IndividualReport implements Comparable {
 
   private boolean error;
 
+  private Map<String, List<String>> modifiedIsos;
+
   /**
    * Error constructor
    */
@@ -134,13 +135,14 @@ public class IndividualReport implements Comparable {
    * @param path      the path
    * @param tiffModel the TIFF model
    */
-  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators) {
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, List<String>> modifiedIsosList) {
     filename = name;
     filepath = path;
     containsData = true;
     reportFilename = rFilename;
     errors = new HashMap<>();
     warnings = new HashMap<>();
+    modifiedIsos = modifiedIsosList;
     generate(tiffModel, validators);
   }
 
@@ -230,8 +232,8 @@ public class IndividualReport implements Comparable {
     warnings.put(key, warningsPc);
   }
 
-  public void addIsosCheck(String iso){
-    if (!isosCheck.contains(iso)){
+  public void addIsosCheck(String iso) {
+    if (!isosCheck.contains(iso)) {
       isosCheck.add(iso);
     }
   }
@@ -348,13 +350,15 @@ public class IndividualReport implements Comparable {
    *
    * @return the int
    */
-  public int calculatePercent() {
+  public int calculatePercent(double errVal) {
     Double rest = 100.0;
     IndividualReport ir = this;
 
     if (isosCheck != null) {
       for (String key : isosCheck) {
-        rest -= ir.getErrors(key).size() * 12.5;
+        int size = ir.hasModifiedIso(key) ? ir.getNErrorsPolicy(key) : ir.getNErrors(key);
+        rest -= size * errVal; // errVal = 12.5 default
+        if (rest < 0 ) break; // Fast break
       }
     }
 
@@ -426,8 +430,8 @@ public class IndividualReport implements Comparable {
    */
   public List<RuleResult> getOnlyWarnings(String key) {
     List<RuleResult> result = new ArrayList<>();
-    for (RuleResult rule : getWarnings(key)){
-      if (rule.getWarning()){
+    for (RuleResult rule : getWarnings(key)) {
+      if (rule.getWarning()) {
         result.add(rule);
       }
     }
@@ -441,8 +445,8 @@ public class IndividualReport implements Comparable {
    */
   public List<RuleResult> getOnlyInfos(String key) {
     List<RuleResult> result = new ArrayList<>();
-    for (RuleResult rule : getWarnings(key)){
-      if (rule.getInfo()){
+    for (RuleResult rule : getWarnings(key)) {
+      if (rule.getInfo()) {
         result.add(rule);
       }
     }
@@ -456,8 +460,20 @@ public class IndividualReport implements Comparable {
    */
   public int getNWarnings(String key) {
     int n = 0;
-    for (RuleResult rule : getWarnings(key)){
+    for (RuleResult rule : getWarnings(key)) {
       if (rule.getWarning()) n++;
+    }
+    return n;
+  }
+
+  public int getNWarningsPolicy(String key) {
+    int n = 0;
+    if (modifiedIsos.containsKey(key)) {
+      for (RuleResult rule : getWarnings(key)) {
+        if (rule.getWarning() && !modifiedIsos.get(key).contains(rule.getRule().getId())) {
+          n++;
+        }
+      }
     }
     return n;
   }
@@ -469,8 +485,20 @@ public class IndividualReport implements Comparable {
    */
   public int getNInfos(String key) {
     int n = 0;
-    for (RuleResult rule :getOnlyInfos(key)){
+    for (RuleResult rule : getOnlyInfos(key)) {
       if (rule.getInfo()) n++;
+    }
+    return n;
+  }
+
+  public int getNInfosPolicy(String key) {
+    int n = 0;
+    if (modifiedIsos.containsKey(key)) {
+      for (RuleResult rule : getWarnings(key)) {
+        if (rule.getInfo() && !modifiedIsos.get(key).contains(rule.getRule().getId())) {
+          n++;
+        }
+      }
     }
     return n;
   }
@@ -484,28 +512,42 @@ public class IndividualReport implements Comparable {
     return getErrors(key).size();
   }
 
-  public int getAllNWarnings() {
+  public int getNErrorsPolicy(String key) {
     int n = 0;
-    for (String key : warnings.keySet()){
-      n += getNWarnings(key);
+    if (modifiedIsos.containsKey(key)) {
+      for (RuleResult rule : getErrors(key)) {
+        if (!modifiedIsos.get(key).contains(rule.getRule().getId())) {
+          n++;
+        }
+      }
     }
     return n;
   }
 
   public List<RuleResult> getAllErrors() {
     List<RuleResult> allErrors = new ArrayList<>();
-    for (String key : errors.keySet()){
-      if (getIsosCheck().contains(key)){
+    for (String key : errors.keySet()) {
+      if (getIsosCheck().contains(key)) {
         allErrors.addAll(errors.get(key));
       }
     }
     return allErrors;
   }
 
+  public int getAllNErrorsPolicy() {
+    int n = 0;
+    for (String key : errors.keySet()) {
+      if (getIsosCheck().contains(key)) {
+        n += hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
+      }
+    }
+    return n;
+  }
+
   public List<RuleResult> getAllWarnings() {
     List<RuleResult> allWarnings = new ArrayList<>();
-    for (String key : warnings.keySet()){
-      if (getIsosCheck().contains(key)){
+    for (String key : warnings.keySet()) {
+      if (getIsosCheck().contains(key)) {
         allWarnings.addAll(warnings.get(key));
       }
     }
@@ -530,12 +572,20 @@ public class IndividualReport implements Comparable {
     tiffModel = model;
   }
 
+  public Map<String, List<String>> getModifiedIsos() {
+    return modifiedIsos;
+  }
+
+  public boolean hasModifiedIso(String iso) {
+    return modifiedIsos.containsKey(iso);
+  }
+
   @Override
   public int compareTo(Object o) {
     if (o instanceof IndividualReport) {
       IndividualReport other = (IndividualReport) o;
-      Integer thisPercent = calculatePercent();
-      Integer otherPercent = other.calculatePercent();
+      Integer thisPercent = calculatePercent(1);
+      Integer otherPercent = other.calculatePercent(1);
       return thisPercent.compareTo(otherPercent);
     } else {
       return -1;

@@ -168,7 +168,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
 
   public void editIsoSuccess(String isoId, List<String> rules){
     getModel().getConfiguration().addModifiedIso(isoId, rules);
-    fragment2.getController().check(isoId);
+    fragment2.getController().loadIsos(getModel().getConfiguration());
     getView().gotoConfig(2);
   }
 

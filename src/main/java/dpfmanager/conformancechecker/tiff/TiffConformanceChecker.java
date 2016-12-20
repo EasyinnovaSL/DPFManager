@@ -74,7 +74,6 @@ import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -100,7 +99,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   public static String POLICY_ISO = "Policy checker";
 
-  public TiffConformanceChecker(ConformanceConfig config, Configuration checkConfig){
+  public static String POLICY_ISO_NAME = "Policy rules";
+
+  public TiffConformanceChecker(ConformanceConfig config, Configuration checkConfig) {
     this.checkConfig = checkConfig;
     setConfig(config);
   }
@@ -349,17 +350,28 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   public static String compressionName(int code) {
     switch (code) {
-      case 1: return "None";
-      case 2: return "CCITT";
-      case 3: return "CCITT GR3";
-      case 4: return "CCITT GR4";
-      case 5: return "LZW";
-      case 6: return "OJPEG";
-      case 7: return "JPEG";
-      case 8: return "DEFLATE Adobe";
-      case 9: return "JBIG BW";
-      case 10: return "JBIG C";
-      case 32773: return "PackBits";
+      case 1:
+        return "None";
+      case 2:
+        return "CCITT";
+      case 3:
+        return "CCITT GR3";
+      case 4:
+        return "CCITT GR4";
+      case 5:
+        return "LZW";
+      case 6:
+        return "OJPEG";
+      case 7:
+        return "JPEG";
+      case 8:
+        return "DEFLATE Adobe";
+      case 9:
+        return "JBIG BW";
+      case 10:
+        return "JBIG C";
+      case 32773:
+        return "PackBits";
     }
     return "Unknown";
   }
@@ -367,61 +379,90 @@ public class TiffConformanceChecker extends ConformanceChecker {
   public static String photometricName(int code) {
     switch (code) {
       case 0:
-      case 1: return "Bilevel";
-      case 2: return "RGB";
-      case 3: return "Palette";
-      case 4: return "Transparency Mask";
-      case 5: return "CMYK";
-      case 6: return "YCbCr";
+      case 1:
+        return "Bilevel";
+      case 2:
+        return "RGB";
+      case 3:
+        return "Palette";
+      case 4:
+        return "Transparency Mask";
+      case 5:
+        return "CMYK";
+      case 6:
+        return "YCbCr";
       case 8:
       case 9:
-      case 10: return "CIELAB";
+      case 10:
+        return "CIELAB";
     }
     return "Unknown";
   }
 
   public static String planarName(int code) {
     switch (code) {
-      case 1: return "Chunky";
-      case 2: return "Planar";
+      case 1:
+        return "Chunky";
+      case 2:
+        return "Planar";
     }
     return "Unknown";
   }
 
   public static int compressionCode(String name) {
     switch (name) {
-      case "None": return 1;
-      case "CCITT": return 2;
-      case "CCITT GR3": return 3;
-      case "CCITT GR4": return 4;
-      case "LZW": return 5;
-      case "OJPEG": return 6;
-      case "JPEG": return 7;
-      case "DEFLATE Adobe": return 8;
-      case "JBIG BW": return 9;
-      case "JBIG C": return 10;
-      case "PackBits": return 32773;
+      case "None":
+        return 1;
+      case "CCITT":
+        return 2;
+      case "CCITT GR3":
+        return 3;
+      case "CCITT GR4":
+        return 4;
+      case "LZW":
+        return 5;
+      case "OJPEG":
+        return 6;
+      case "JPEG":
+        return 7;
+      case "DEFLATE Adobe":
+        return 8;
+      case "JBIG BW":
+        return 9;
+      case "JBIG C":
+        return 10;
+      case "PackBits":
+        return 32773;
     }
     return -1;
   }
 
   public static int photometricCode(String name) {
     switch (name) {
-      case "Bilevel": return 1;
-      case "RGB": return 2;
-      case "Palette": return 3;
-      case "Transparency Mask": return 4;
-      case "CMYK": return 5;
-      case "YCbCr": return 6;
-      case "CIELAB": return 10;
+      case "Bilevel":
+        return 1;
+      case "RGB":
+        return 2;
+      case "Palette":
+        return 3;
+      case "Transparency Mask":
+        return 4;
+      case "CMYK":
+        return 5;
+      case "YCbCr":
+        return 6;
+      case "CIELAB":
+        return 10;
     }
     return -1;
   }
 
   public static int planarCode(String name) {
     switch (name) {
-      case "Chunky": return 1;
-      case "Planar": return 2;
+      case "Chunky":
+        return 1;
+      case "Planar":
+        return 2;
     }
     return -1;
   }
@@ -534,9 +575,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return tiffValidation.getXml();
   }
 
-  private String addXmlReportToPremisSection (String xmlReport, String metsReport){
+  private String addXmlReportToPremisSection(String xmlReport, String metsReport) {
 
-      //FIXME revisar el procediment, cal afegir el contingut del report xml com un node al mets report
+    //FIXME revisar el procediment, cal afegir el contingut del report xml com un node al mets report
     //FIXME el node del mets és el premis:eventOutcomeDetail, aquí dins s'ha de colocar el report
 //    try {
 //      DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
@@ -572,7 +613,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
   public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
 //      Logger.println("Reading Tiff file");
-      if (config == null){
+      if (config == null) {
         config = getDefaultConfiguration();
       }
       TiffReader tr = new TiffReader();
@@ -590,7 +631,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations);
+          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations, config.getModifiedIsos());
           ArrayList<String> isosCheck = new ArrayList<>(config.getIsos());
           Collections.sort(isosCheck, Collator.getInstance());
           ir.setIsosCheck(isosCheck);
@@ -600,14 +641,14 @@ public class TiffConformanceChecker extends ConformanceChecker {
           ir.setConformanceCheckerReport(output);
           if (config.getRules() != null && config.getRules().getRules() != null && config.getRules().getRules().size() > 0) {
             ir.addIsosCheck(POLICY_ISO);
-            ir.addValidation(POLICY_ISO,getPcValidation(output));
+            ir.addValidation(POLICY_ISO, getPcValidation(output));
           }
 
           //Mets report
           MetsReport metsReport = new MetsReport();
           String xmlOutput = output;
           output = metsReport.parseIndividual(ir, config);
-          addXmlReportToPremisSection(xmlOutput,output);
+          addXmlReportToPremisSection(xmlOutput, output);
           ir.setConformanceCheckerReportMets(output);
 
           Fixes fixes = config.getFixes();
@@ -651,7 +692,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
             File dir = new File(outputFolder + "/fixed/");
             if (!dir.exists()) dir.mkdir();
             String pathFixed = outputFolder + "/fixed/" + new File(reportFilename).getName();
-            if (new File(Paths.get(pathFixed).toString()).exists()) new File(Paths.get(pathFixed).toString()).delete();
+            if (new File(Paths.get(pathFixed).toString()).exists())
+              new File(Paths.get(pathFixed).toString()).delete();
 
             TiffInputStream ti = new TiffInputStream(new File(nameOriginalTif));
             TiffWriter tw = new TiffWriter(ti);
@@ -668,7 +710,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");
             name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, validationsFixed);
+            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, validationsFixed, config.getModifiedIsos());
             int ind = reportFilename.lastIndexOf(".tif");
             ir2.setReportPath(reportFilename.substring(0, ind) + "_fixed.tif");
             ir2.setIsosCheck(ir.getIsosCheck());
@@ -734,10 +776,10 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return null;
   }
 
-  private  Map<String, ValidationResult> getValidationResults(TiffReader tr, Configuration config) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+  private Map<String, ValidationResult> getValidationResults(TiffReader tr, Configuration config) throws ParserConfigurationException, IOException, SAXException, JAXBException {
     String content = TiffConformanceChecker.getValidationXmlString(tr);
     Map<String, ValidationResult> validations = new HashMap<>();
-    for (String path : ImplementationCheckerLoader.getPathsList()){
+    for (String path : ImplementationCheckerLoader.getPathsList()) {
       boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
       Validator validation = new Validator(Logger);
       PolicyChecker policy = new PolicyChecker(Logger);
@@ -749,7 +791,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
   }
 
   @Override
-  public Configuration getDefaultConfiguration(){
+  public Configuration getDefaultConfiguration() {
     return checkConfig;
   }
 
@@ -812,7 +854,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       String text = output.substring(output.indexOf("text>", index));
       text = text.substring(text.indexOf(">") + 1);
       text = text.substring(0, text.indexOf("</"));
-      String desc = output.substring(output.indexOf("test=\"@", index)+7);
+      String desc = output.substring(output.indexOf("test=\"@", index) + 7);
       desc = desc.substring(0, desc.indexOf("\""));
       desc = desc.replace("&gt;", ">").replace("&lt;", ">");
       index = output.indexOf("<svrl:failed-assert", index + 1);
@@ -829,7 +871,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       String text = output.substring(output.indexOf("text>", index));
       text = text.substring(text.indexOf(">") + 1);
       text = text.substring(0, text.indexOf("</"));
-      String desc = output.substring(output.indexOf("test=\"@", index)+7);
+      String desc = output.substring(output.indexOf("test=\"@", index) + 7);
       desc = desc.substring(0, desc.indexOf("\""));
       desc = desc.replace("&gt;", ">").replace("&lt;", ">");
       index = output.indexOf("<svrl:successful-report", index + 1);

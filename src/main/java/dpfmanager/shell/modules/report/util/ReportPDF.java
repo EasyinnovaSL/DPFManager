@@ -193,7 +193,7 @@ public class ReportPDF extends ReportGeneric {
           graph_size = 25;
           image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
           g2d = image.createGraphics();
-          doub = (double) ir.calculatePercent();
+          doub = (double) ir.calculatePercent(gr.computeAverageErrors());
           extent = 360d * doub / 100.0;
           g2d.setColor(Color.gray);
           g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));

@@ -102,11 +102,28 @@ public class HtmlReport extends Report {
     /**
      * Table errors / warnings count
      */
+    int modeTh = 1;
+    String thTmpl = "<tr><td></td><td>Errors</td><td>Warnings</td></tr>";
     String rowTmpl = "<tr>\n" +
         "    <td>##TITLE##</td>\n" +
         "    <td class=\"##ERR_CLASS##\">##ERR##</td>\n" +
         "    <td class=\"##WAR_CLASS##\">##WAR##</td>\n" +
         "    </tr>";
+    if (ir.getModifiedIsos().keySet().size() > 0) {
+      thTmpl = "<tr><td></td><td>Standard</td><td>Policy</td></tr>";
+      rowTmpl = "<tr>\n" +
+          "\t\t\t\t\t\t        <td>##TITLE##</td>\n" +
+          "\t\t\t\t\t\t        <td>" +
+          "\t\t\t\t\t\t\t        <p><span class=\"##ERR_CLASS##\">##ERR## errors</span></p>" +
+          "\t\t\t\t\t\t\t        <p><span class=\"##WAR_CLASS##\">##WAR## warnings</span></p>" +
+          "\t\t\t\t\t\t        </td>\n" +
+          "\t\t\t\t\t\t        <td>" +
+          "\t\t\t\t\t\t\t        <p><span class=\"##ERR_CLASS_P##\">##ERR_P## errors</span></p>" +
+          "\t\t\t\t\t\t\t        <p><span class=\"##WAR_CLASS_P##\">##WAR_P## warnings</span></p>" +
+          "\t\t\t\t\t\t        </td>\n" +
+          "\t\t\t\t\t\t    </tr>";
+      modeTh = 2;
+    }
     String rows = "";
     for (String iso : ir.getIsosCheck()) {
       if (ir.hasValidation(iso)) {
@@ -121,15 +138,28 @@ public class HtmlReport extends Report {
         row = StringUtils.replace(row, "##WAR##", "" + warningsCount + difWar);
         row = StringUtils.replace(row, "##ERR_CLASS##", errorsCount > 0 ? "error" : "info");
         row = StringUtils.replace(row, "##WAR_CLASS##", warningsCount > 0 ? "warning" : "info");
+        if (modeTh == 2) {
+          if (!ir.hasModifiedIso(iso)){
+            // Empty
+            row = StringUtils.replace(row, "##ERR_CLASS_P##", "hide");
+            row = StringUtils.replace(row, "##WAR_CLASS_P##", "hide");
+          } else {
+            int errorsCountPolicy = ir.getNErrorsPolicy(iso);
+            int warningsCountPolicy = ir.getNWarningsPolicy(iso);
+            row = StringUtils.replace(row, "##ERR_P##", "" + errorsCountPolicy);
+            row = StringUtils.replace(row, "##WAR_P##", "" + warningsCountPolicy);
+            row = StringUtils.replace(row, "##ERR_CLASS_P##", errorsCountPolicy > 0 ? "error" : (errorsCount > 0 ? "success" : "info"));
+            row = StringUtils.replace(row, "##WAR_CLASS_P##", warningsCountPolicy > 0 ? "warning" : (warningsCount > 0 ? "success" : "info"));
+          }
+        }
         rows += row;
       }
     }
-    htmlBody = StringUtils.replace(htmlBody, "##TABLE_RESUME_ERRORS##", rows);
+    htmlBody = StringUtils.replace(htmlBody, "##TABLE_RESUME_ERRORS##", thTmpl + rows);
 
     /**
      * Errors / Warnings resume
      */
-
     String fullTmpl = "<div class=\"row bot20 fullw\">\n" +
         "\t\t\t\t##CHECK##\n" +
         "\t\t\t\t<div>\n" +
@@ -147,27 +177,18 @@ public class HtmlReport extends Report {
         "\t\t\t\t        </tr>\n" +
         "\t\t\t\t        ##ROWS##\n" +
         "\t\t\t\t\t</table>";
-    String policyTmpl = "<table class=\"CustomTable3 left15\">\n" +
-        "\t\t\t\t        <tr>\n" +
-        "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'>Type</th>\n" +
-        "\t\t\t\t            <th class=\"bold\">Rule</th>\n" +
-        "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
-        "\t\t\t\t        </tr>\n" +
-        "\t\t\t\t        ##ROWS##\n" +
-        "\t\t\t\t\t</table>";
     String tdTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
-    String pcTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##LOC##</td><td>##DESC##</td></tr>";
     rows = "";
     int count = 0;
     for (String iso : ir.getIsosCheck()) {
-      if (ir.hasValidation(iso)) {
+      if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
         String name = ImplementationCheckerLoader.getIsoName(iso);
-        String row = fullTmpl, icon = "exclamation";
+        String row = fullTmpl, icon;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
         int infosCount = ir.getNInfos(iso);
         int addedRows = 0, addedInfos = 0;
-        if (errorsCount > 0){
+        if (errorsCount > 0) {
           icon = "fa-times-circle";
         } else if (warningsCount > 0) {
           icon = "fa-exclamation-circle";
@@ -176,41 +197,23 @@ public class HtmlReport extends Report {
         }
         String content = "";
         if (errorsCount + warningsCount + infosCount > 0) {
-          if (iso.equals(TiffConformanceChecker.POLICY_ISO)) {
-            content += policyTmpl;
-          } else {
-            content += errorsTmpl;
-          }
+          content += errorsTmpl;
           String allRows = "";
           // Errors, Warnings and Infos
           for (RuleResult val : ir.getAllRuleResults(iso)) {
-            String tdRow, display = "", clasz = "", location = "";
-            if (val.getRule() == null) {
-              // Policy value
-              tdRow = pcTmpl;
-              if (!val.ok() && !val.getWarning()) {
-                tdRow = tdRow.replace("##FA_CLASS##", "times");
-              } else if (!val.ok()) {
-                tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
-              }
-              location = val.getRuleDescription();
-            } else {
-              // Rule value
-              tdRow = tdTmpl;
-              if (val.getRule().isError() || val.getRule().isCritical()) {
-                tdRow = tdRow.replace("##FA_CLASS##", "times");
-              } else if (val.getRule().isWarning()) {
-                tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
-              } else if (val.getRule().isInfo()) {
-                tdRow = tdRow.replace("##FA_CLASS##", "info");
-                display = "style='display: none;'";
-                clasz = "class='info##COUNT##'";
-                addedInfos++;
-              }
-              location = val.getLocation();
+            String tdRow = tdTmpl, display = "", clasz = "", location = "";
+            if (val.getRule().isError() || val.getRule().isCritical()) {
+              tdRow = tdRow.replace("##FA_CLASS##", "times");
+            } else if (val.getRule().isWarning()) {
+              tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
+            } else if (val.getRule().isInfo()) {
+              tdRow = tdRow.replace("##FA_CLASS##", "info");
+              display = "style='display: none;'";
+              clasz = "class='info##COUNT##'";
+              addedInfos++;
             }
             tdRow = tdRow.replace("##ID##", val.getRule() != null ? val.getRule().getId() : "");
-            tdRow = tdRow.replace("##LOC##", location);
+            tdRow = tdRow.replace("##LOC##", val.getLocation());
             tdRow = tdRow.replace("##DESC##", val.getDescription());
             tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
             tdRow = tdRow.replace("##DISPLAY##", display);
@@ -234,7 +237,138 @@ public class HtmlReport extends Report {
         rows += row;
       }
     }
-    htmlBody = StringUtils.replace(htmlBody, "##DIVS_ERRORS##", rows);
+    htmlBody = StringUtils.replace(htmlBody, "##DIVS_CONFORMANCE##", rows);
+
+    /**
+     * Policy checker custom rules
+     */
+    String fullTmplPC = "<div class=\"row bot20 fullw\">\n" +
+        "\t\t\t\t<div>\n" +
+        "\t\t\t\t\t<h5 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
+        "\t\t\t\t\t##CONTENT##\n" +
+        "\t\t\t\t</div>\n" +
+        "\t\t\t</div>";
+    String policyTmpl = "<table class=\"CustomTable3 left15\">\n" +
+        "\t\t\t\t        <tr>\n" +
+        "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'>Type</th>\n" +
+        "\t\t\t\t            <th class=\"bold\">Rule</th>\n" +
+        "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
+        "\t\t\t\t        </tr>\n" +
+        "\t\t\t\t        ##ROWS##\n" +
+        "\t\t\t\t\t</table>";
+    String pcTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##LOC##</td><td>##DESC##</td></tr>";
+    rows = "";
+    if (ir.hasValidation(TiffConformanceChecker.POLICY_ISO)) {
+      String name = TiffConformanceChecker.POLICY_ISO_NAME;
+      String row = fullTmplPC, icon, content = "", tdRow, location;
+      String iso = TiffConformanceChecker.POLICY_ISO;
+      int errorsCount = ir.getNErrors(iso);
+      int warningsCount = ir.getNWarnings(iso);
+      int infosCount = ir.getNInfos(iso);
+      if (errorsCount > 0) {
+        icon = "fa-times-circle";
+      } else if (warningsCount > 0) {
+        icon = "fa-exclamation-circle";
+      } else {
+        icon = "fa-check-circle";
+      }
+      int addedRows = 0;
+      content += policyTmpl;
+      if (errorsCount + warningsCount + infosCount > 0) {
+        String allRows = "";
+        // Errors, Warnings and Infos
+        for (RuleResult val : ir.getAllRuleResults(iso)) {
+          // Policy value
+          tdRow = pcTmpl;
+          if (!val.ok() && !val.getWarning()) {
+            tdRow = tdRow.replace("##FA_CLASS##", "times");
+          } else if (!val.ok()) {
+            tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
+          }
+          location = val.getRuleDescription();
+          tdRow = tdRow.replace("##LOC##", location);
+          tdRow = tdRow.replace("##DESC##", val.getDescription());
+          tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
+          addedRows++;
+          allRows += tdRow;
+        }
+        content = StringUtils.replace(content, "##ROWS##", allRows);
+      }
+      if (addedRows == 0) {
+        content = "";
+      }
+      row = StringUtils.replace(row, "##CONTENT##", content);
+      row = StringUtils.replace(row, "##TITLE##", name);
+      row = StringUtils.replace(row, "##ICON##", icon);
+      rows += row;
+    }
+
+    /**
+     * Policy checker custom ISO
+     */
+    String errorsTmplPC = "<table class=\"CustomTable3 left15\">\n" +
+        "\t\t\t\t        <tr>\n" +
+        "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'></th>\n" +
+        "\t\t\t\t            <th class=\"bold\" style='width: 120px;'>ID</th>\n" +
+        "\t\t\t\t            <th class=\"bold\" style='width: 80px;'>Location</th>\n" +
+        "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
+        "\t\t\t\t        </tr>\n" +
+        "\t\t\t\t        ##ROWS##\n" +
+        "\t\t\t\t\t</table>";
+    String tdTmplPC = "<tr ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-minus-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
+    for (String iso : ir.getModifiedIsos().keySet()) {
+      if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String row = fullTmplPC, icon, content = "", tdRow, location;
+        int errorsCount = ir.getNErrorsPolicy(iso);
+        int warningsCount = ir.getNWarningsPolicy(iso);
+        int infosCount = ir.getNInfosPolicy(iso);
+        if (errorsCount > 0) {
+          icon = "fa-times-circle";
+        } else if (warningsCount > 0) {
+          icon = "fa-exclamation-circle";
+        } else {
+          icon = "fa-check-circle";
+        }
+        int addedRows = 0;
+        content += errorsTmplPC;
+        if (errorsCount + warningsCount + infosCount > 0) {
+          String allRows = "";
+          // Errors, Warnings and Infos
+          for (RuleResult val : ir.getAllRuleResults(iso)) {
+            // Skip not invalidated rules
+            if (!ir.getModifiedIsos().get(iso).contains(val.getRule().getId())) continue;
+            tdRow = tdTmplPC;
+            location = val.getLocation();
+            tdRow = tdRow.replace("##ID##", val.getRule() != null ? val.getRule().getId() : "");
+            tdRow = tdRow.replace("##LOC##", location);
+            tdRow = tdRow.replace("##DESC##", val.getDescription());
+            tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
+            addedRows++;
+            allRows += tdRow;
+          }
+          content = StringUtils.replace(content, "##ROWS##", allRows);
+        }
+        if (addedRows == 0) {
+          content = "";
+        }
+        row = StringUtils.replace(row, "##CONTENT##", content);
+        row = StringUtils.replace(row, "##TITLE##", name);
+        row = StringUtils.replace(row, "##ICON##", icon);
+        rows += row;
+      }
+    }
+
+
+    /**
+     * Show / Hide all Policy Block
+     */
+    String displayPolicy = "none";
+    if (!rows.equals("")){
+      displayPolicy = "block";
+    }
+    htmlBody = StringUtils.replace(htmlBody, "##SHOW_POLICY##", displayPolicy);
+    htmlBody = StringUtils.replace(htmlBody, "##DIVS_POLICY##", rows);
 
     /**
      * Tags divs
@@ -591,8 +725,9 @@ public class HtmlReport extends Report {
 //    String tmplWarn = "<div class=\"warning\"><i class=\"fa fa-exclamation-triangle\"></i> ##TITLE##</div>";
     String tmplError = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> ##TITLE##</div>";
     String name = ImplementationCheckerLoader.getIsoName(iso);
-    int err = ir.getNErrors(iso);
-    int war = ir.getNWarnings(iso);
+    name += ir.hasModifiedIso(iso) ? " (with custom policy)" : "";
+    int err = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
+    int war = ir.hasModifiedIso(iso) ? ir.getNWarningsPolicy(iso) : ir.getNWarnings(iso);
     if (err == 0 && war == 0) {
       return StringUtils.replace(tmplPassed, "##TITLE##", name);
     } else if (err == 0 && war > 0) {
