@@ -2,28 +2,24 @@
 	<div class="col-md-2"></div>
 	<div class="col-md-8 individual-in-global">
 		<div class="row hover-row" style="cursor: pointer;" onclick="javascript:location.href='##HREF##'">
-			<div class="col-md-3 vcenter">
+			<div class="col-md-3 vcenter hcenter top10 bot10">
 				<img src="##IMG_PATH##" class="preview-image" alt="preview" />
 			</div><!--
 		 --><div class="col-md-9 vcenter">
 				<div class="row">
-					<div class="col-md-8 vcenter">
+					<div class="col-xs-9 vcenter-xs">
 						<p class="info-dark bold top10 text-center-sm">##IMG_NAME##</p>
 						<table class="center-table CustomTable2">
-						    <tr>
-						        <th colspan="3" class="">Conformance checker</th>
-						        <td width=10px></td>
-						    </tr>
 							##TABLE_RESUME_IMAGE##
 						</table>
 					</div><!--
-		 			--><div class="col-md-4 vcenter">
+		 			--><div class="col-xs-3 vcenter-xs">
 						<div class="chart">
 							<div class="pie" id="pie-##INDEX##" style="max-width: 75px; min-height: 75px;"></div>
-							<div class="pie-info">
-								<div class="##CLASS## bold">##RESULT## <font class="warning bold" style="display: ##DISPLAY_WAR##;">with warnings</font></div>
-								<div class="info-dark bold">Score ##PERCENT##%</div>
-							</div>
+						</div>
+						<div class="pie-info" style="padding: 5px 0px 0px 10px;">
+							<div class="##CLASS## bold">##RESULT## <font class="warning bold" style="display: ##DISPLAY_WAR##;">with warnings</font></div>
+							<div class="info-dark bold">Score ##PERCENT##%</div>
 						</div>
 					</div>
 				</div>

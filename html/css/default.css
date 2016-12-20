@@ -87,7 +87,8 @@ img {
     padding: 5px;
 }
 .CustomTable2 td {
-    padding: 5px 15px 5px 5px;
+    padding: 5px;
+    margin-right: 15px;
     font-family: Roboto Bold, sans-serif;
 }
 .CustomTable2 .c1 {
