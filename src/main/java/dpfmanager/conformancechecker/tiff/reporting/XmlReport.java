@@ -292,81 +292,45 @@ public class XmlReport extends Report {
    * @param warnings the warnings
    */
   private void addErrorsWarnings(Document doc, Element results,
-                                 List<RuleResult> errors, List<RuleResult> warnings) {
+                                 List<RuleResult> errors, List<RuleResult> warnings, boolean policyValue) {
     // errors
     for (int i = 0; i < errors.size(); i++) {
       RuleResult value = errors.get(i);
-      Element error = doc.createElement("rule_result");
-
-      // level
-      Element level = doc.createElement("level");
-      level.setTextContent("error");
-      error.appendChild(level);
-
-      // msg
-      Element msg = doc.createElement("message");
-      msg.setTextContent(value.getDescription());
-      error.appendChild(msg);
-
-      if (value.getNode() != null) {
-        // context
-        msg = doc.createElement("context");
-        msg.setTextContent(value.getContext());
-        error.appendChild(msg);
-
-        // location
-        msg = doc.createElement("location");
-        msg.setTextContent(value.getLocation());
-        error.appendChild(msg);
-      }
-
-      // rule
-      if (value.getRule() != null) {
-        msg = doc.createElement("ruleId");
-        msg.setTextContent(value.getRule().getReferenceText());
-        error.appendChild(msg);
-
-        msg = doc.createElement("ruleTest");
-        msg.setTextContent(value.getRule().getAssert().getTest());
-        error.appendChild(msg);
-
-        msg = doc.createElement("ruleValue");
-        msg.setTextContent(value.getRule().getAssert().getValue());
-        error.appendChild(msg);
-
-        if (value.getReference() != null) {
-          // ISO reference
-          msg = doc.createElement("iso_reference");
-          msg.setTextContent(value.getReference());
-          error.appendChild(msg);
-        }
-      }
-
-      results.appendChild(error);
+      addResult(value, doc, results, true, policyValue);
     }
 
     // warnings
     for (int i = 0; i < warnings.size(); i++) {
       RuleResult warning = warnings.get(i);
       if (!warning.getWarning()) continue;
-      addWarning(warning, doc, results, true);
+      addResult(warning, doc, results, false, policyValue);
     }
 
     // infos
     for (int i = 0; i < warnings.size(); i++) {
       RuleResult warning = warnings.get(i);
       if (!warning.getInfo()) continue;
-      addWarning(warning, doc, results, false);
+      addResult(warning, doc, results, false, policyValue);
     }
   }
 
-  private void addWarning(RuleResult value, Document doc, Element results, boolean bwarning) {
+  private void addResult(RuleResult value, Document doc, Element results, boolean error, boolean policyValue) {
     Element warning = doc.createElement("rule_result");
 
     // level
     Element level = doc.createElement("level");
-    if (bwarning) level.setTextContent("warning");
-    else level.setTextContent("info");
+    String levelStr = "";
+    if (policyValue && value.isRelaxed()){
+      levelStr += "omitted ";
+    }
+    if (error){
+      levelStr += "error";
+    } else if (value.getWarning()){
+      levelStr += "warning";
+    } else {
+      levelStr += "info";
+    }
+    level.setTextContent(levelStr);
     warning.appendChild(level);
 
     // msg
@@ -387,7 +351,7 @@ public class XmlReport extends Report {
     // rule
     if (value.getRule() != null) {
       msg = doc.createElement("ruleId");
-      msg.setTextContent(value.getRule().getReferenceText());
+      msg.setTextContent(value.getRule().getId());
       warning.appendChild(msg);
 
       msg = doc.createElement("ruleTest");
@@ -850,14 +814,62 @@ public class XmlReport extends Report {
         Element name = doc.createElement("name");
         name.setTextContent(title);
         implementationCheck.appendChild(name);
-        addErrorsWarnings(doc, implementationCheck, errors, warnings);
+        addErrorsWarnings(doc, implementationCheck, errors, warnings, false);
         implementationCheckerElement.appendChild(implementationCheck);
       }
       report.appendChild(implementationCheckerElement);
 
+      // Policy checker
+      Element policyCheckerElement = doc.createElement("policy_checkers");
+      for (String iso : ir.getIsosCheck()) {
+        if (!ir.hasModifiedIso(iso)) continue;
+        String title = ImplementationCheckerLoader.getIsoName(iso);
+        List<RuleResult> errors = ir.getErrorsPolicy(iso);
+        List<RuleResult> warnings = ir.getWarningsPolicy(iso);
+        Element implementationCheck = doc.createElement("implementation_check");
+        Element name = doc.createElement("name");
+        name.setTextContent(title);
+        implementationCheck.appendChild(name);
+        addErrorsWarnings(doc, implementationCheck, errors, warnings, true);
+        policyCheckerElement.appendChild(implementationCheck);
+      }
+
+      // Schematron
+      Schematron sch = new Schematron();
+      try {
+        if (rules != null) {
+          Element policyRules = doc.createElement("policy_rules");
+          Validator validation = sch.testXMLnoSchematron(ir.getTiffModel(), rules);
+          for (RuleResult rr : validation.getErrors()) {
+            Element error = doc.createElement("error");
+            Element test = doc.createElement("test");
+            test.setTextContent(rr.getRule().getDescription().getValue());
+            Element message = doc.createElement("message");
+            message.setTextContent(rr.getMessage());
+            error.appendChild(test);
+            error.appendChild(message);
+            policyRules.appendChild(error);
+          }
+          for (RuleResult rr : validation.getWarnings()) {
+            Element warning = doc.createElement("warning");
+            Element test = doc.createElement("test");
+            test.setTextContent(rr.getRule().getDescription().getValue());
+            Element message = doc.createElement("message");
+            message.setTextContent(rr.getMessage());
+            warning.appendChild(test);
+            warning.appendChild(message);
+            policyRules.appendChild(warning);
+          }
+          policyCheckerElement.appendChild(policyRules);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      report.appendChild(policyCheckerElement);
+
       // Total
       Element results = doc.createElement("results");
-      addErrorsWarnings(doc, results, errorsTotal, warningsTotal);
+      addErrorsWarnings(doc, results, errorsTotal, warningsTotal, true);
       implementationCheckerElement.appendChild(results);
     } else {
       try {
@@ -903,31 +915,7 @@ public class XmlReport extends Report {
       transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       StringWriter writer = new StringWriter();
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
-      String output = writer.getBuffer().toString();
-
-      // Schematron
-      Schematron sch = new Schematron();
-      try {
-        if (rules != null) {
-          Validator validation = sch.testXMLnoSchematron(ir.getTiffModel(), rules);
-          String validationString = "<policyCheckerOutput>";
-          for (RuleResult rr : validation.getErrors()) {
-            validationString += "<error><test>" + rr.getRule().getDescription().getValue() + "</test><message>" + rr.getMessage() + "</message></error>";
-          }
-          for (RuleResult rr : validation.getWarnings()) {
-            validationString += "<warning><test>" + rr.getRule().getDescription().getValue() + "</test><message>" + rr.getMessage() + "</message></warning>";
-          }
-          validationString += "</policyCheckerOutput>";
-          String presch = output.substring(0, output.indexOf("</report>"));
-          String postsch = output.substring(output.indexOf("</report>"));
-          output = presch + validationString + postsch;
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-
-      return output;
-
+      return writer.getBuffer().toString();
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (TransformerException tfe) {

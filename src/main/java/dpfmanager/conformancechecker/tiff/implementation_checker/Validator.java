@@ -89,7 +89,7 @@ public class Validator {
   /**
    * Main validate function
    */
-  public void validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public ValidationResult validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     try {
       TiffValidationObject obj = createValidationObjectFromXml(content);
       ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
@@ -99,6 +99,7 @@ public class Validator {
       result = new ValidationResult();
       result.add(rr);
     }
+    return result;
   }
 
   public static TiffValidationObject createValidationObjectFromXml(String content) throws JAXBException, ParserConfigurationException, IOException, SAXException {
@@ -326,6 +327,10 @@ public class Validator {
     }
 
     return ok;
+  }
+
+  public ValidationResult getResult() {
+    return result;
   }
 
   private void printOut(String line) {

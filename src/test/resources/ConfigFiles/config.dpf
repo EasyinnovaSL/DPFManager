@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-  <version>2</version>
+  <version>3</version>
   <isos>
     <iso>TIFF_EP</iso>
     <iso>TiffITP1ProfileChecker</iso>
@@ -9,6 +9,7 @@
     <format>HTML</format>
     <format>PDF</format>
   </formats>
+  <modified-isos/>
   <rules>
     <rule>
       <tag>ImageLength</tag>

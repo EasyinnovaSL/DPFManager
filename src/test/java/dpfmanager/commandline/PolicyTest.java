@@ -73,7 +73,7 @@ public class PolicyTest extends CommandLineTest {
     }
     assertEquals(xml_orig != null, true);
     assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
-    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), true);
+    assertEquals(xml_orig.substring(xml_orig.indexOf("<policy_rules>")).contains("<error>"), true);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -129,7 +129,8 @@ public class PolicyTest extends CommandLineTest {
     }
     assertEquals(xml_orig != null, true);
     assertEquals(xml_orig.contains("Invalid ByteOrder"), false);
-    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), false);
+    int index = xml_orig.indexOf("<policy_rules>") != -1 ? xml_orig.indexOf("<policy_rules>") : xml_orig.indexOf("<policy_rules/>");
+    assertEquals(xml_orig.substring(index).contains("<error>"), false);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -185,7 +186,7 @@ public class PolicyTest extends CommandLineTest {
     }
     assertEquals(xml_orig != null, true);
     assertEquals(xml_orig.contains("Invalid ByteOrder"), true);
-    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), true);
+    assertEquals(xml_orig.substring(xml_orig.indexOf("<policy_rules>")).contains("<error>"), true);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -240,7 +241,7 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), true);
+    assertEquals(xml_orig.substring(xml_orig.indexOf("<policy_rules>")).contains("<error>"), true);
     assertEquals(xml_orig.contains("Invalid ImageWidth"), true);
 
     FileUtils.deleteDirectory(new File(path));
@@ -296,7 +297,8 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), false);
+    int index = xml_orig.indexOf("<policy_rules>") != -1 ? xml_orig.indexOf("<policy_rules>") : xml_orig.indexOf("<policy_rules/>");
+    assertEquals(xml_orig.substring(index).contains("<error>"), false);
 
     FileUtils.deleteDirectory(new File(path));
 
@@ -351,7 +353,7 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), false);
+    assertEquals(xml_orig.substring(xml_orig.indexOf("<policy_rules>")).contains("<error>"), false);
     assertEquals(xml_orig.contains("Warning on ImageWidth"), true);
 
     FileUtils.deleteDirectory(new File(path));
@@ -407,7 +409,7 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), true);
+    assertEquals(xml_orig.substring(xml_orig.indexOf("<policy_rules>")).contains("<error>"), true);
     assertEquals(xml_orig.contains("Invalid NumberImages"), true);
 
     FileUtils.deleteDirectory(new File(path));
@@ -463,7 +465,8 @@ public class PolicyTest extends CommandLineTest {
       }
     }
     assertEquals(xml_orig != null, true);
-    assertEquals(xml_orig.contains("<policyCheckerOutput><error>"), false);
+    int index = xml_orig.indexOf("<policy_rules>") != -1 ? xml_orig.indexOf("<policy_rules>") : xml_orig.indexOf("<policy_rules/>");
+    assertEquals(xml_orig.substring(index).contains("<error>"), false);
     assertEquals(xml_orig.contains("Invalid NumberImages"), false);
 
     FileUtils.deleteDirectory(new File(path));
@@ -528,7 +531,7 @@ public class PolicyTest extends CommandLineTest {
 
     // Policy errors
     for (String tr : trs){
-      if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO + "</td>")){
+      if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO_NAME + "</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(false, tr.contains("<td class=\"error\">"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
@@ -597,7 +600,7 @@ public class PolicyTest extends CommandLineTest {
 
     // Policy errors
     for (String tr : trs){
-      if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO + "</td>")){
+      if (tr.contains("<td>" + TiffConformanceChecker.POLICY_ISO_NAME + "</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"error\">2</td>"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){

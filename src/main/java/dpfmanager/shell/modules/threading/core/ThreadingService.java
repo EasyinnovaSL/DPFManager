@@ -365,25 +365,19 @@ public class ThreadingService extends DpfService {
   private void showToUser(String internal, Configuration config) {
     String name = "";
     String path;
-
     if (config != null) {
       if (config.getFormats().contains("HTML")) {
         name = "report.html";
       } else if (config.getFormats().contains("PDF")) {
         name = "report.pdf";
       }
-    }
 
-    path = internal + name;
-    if (config != null) {
+      path = internal + name;
       if (config.getOutput() != null) {
         path = config.getOutput() + "/" + name;
       }
-    }
-
-    File file = new File(path);
-    if (file.exists()) {
-      if (Desktop.isDesktopSupported()) {
+      File file = new File(path);
+      if (file.exists() && Desktop.isDesktopSupported()) {
         try {
           String fullPath = file.getAbsolutePath();
           fullPath = fullPath.replaceAll("\\\\", "/");

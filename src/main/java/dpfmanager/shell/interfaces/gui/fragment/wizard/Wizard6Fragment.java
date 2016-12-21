@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
@@ -51,6 +52,8 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBContext;
@@ -76,8 +79,6 @@ public class Wizard6Fragment {
   @FXML
   private TextArea textArea;
   @FXML
-  private TextField nameField;
-  @FXML
   private HBox treeViewHBox;
 
   private CheckTreeView<RuleTreeItem> checkTreeView;
@@ -86,29 +87,23 @@ public class Wizard6Fragment {
 
   private ImplementationCheckerObjectType rules;
 
-  private String filePath;
+  private String isoId;
 
   public Wizard6Fragment() {
-    filePath = null;
   }
 
   public void setController(ConfigController controller) {
     this.controller = controller;
   }
 
-  public void edit(String iso, String path) {
-    filePath = path;
+  public void edit(String iso, List<String> deleted) {
     rules = ImplementationCheckerLoader.getRules(iso);
+    isoId = iso;
     labelEditing.setText(bundle.getString("w6Editing").replace("%1", rules.getTitle()));
-    if (filePath == null) {
-      nameField.clear();
-    } else {
-      nameField.setText(rules.getTitle());
-    }
-    addTreeView();
+    addTreeView(deleted);
   }
 
-  private void addTreeView() {
+  private void addTreeView(List<String> deleted) {
     // Root node (my computer)
     CheckBoxTreeItem<RuleTreeItem> rootNode = new CheckBoxTreeItem<>(new RuleTreeItem());
     checkTreeView = new CheckTreeView<>(rootNode);
@@ -118,14 +113,21 @@ public class Wizard6Fragment {
     // Load rules
     for (RulesType rule : rules.getOwnRules()) {
       CheckBoxTreeItem<RuleTreeItem> treeNode = new CheckBoxTreeItem(new RuleTreeItem(rule.getId(), rule.getTitle(), rule.getDescription()));
+      boolean parentSelected = !deleted.contains(rule.getId());
+      if (parentSelected) {
+        treeNode.setSelected(true);
+      }
       for (RuleType childRule : rule.getRule()) {
         RuleTreeItem item = new RuleTreeItem(childRule.getId(), childRule.getTitle().getValue(), childRule.getDescription().getValue());
         item.setReference(childRule.getReferenceText());
         CheckBoxTreeItem<RuleTreeItem> treeNodeChild = new CheckBoxTreeItem(item);
-        treeNodeChild.setSelected(true);
+        if (!deleted.contains(childRule.getId()) && parentSelected) {
+          treeNodeChild.setSelected(true);
+        } else if (parentSelected) {
+          treeNode.setIndeterminate(true);
+        }
         treeNode.getChildren().add(treeNodeChild);
       }
-      treeNode.setSelected(true);
       rootNode.getChildren().add(treeNode);
     }
 
@@ -159,99 +161,40 @@ public class Wizard6Fragment {
     HBox.setHgrow(checkTreeView, Priority.ALWAYS);
   }
 
-  @FXML
-  protected void saveIso() {
-    String isoTitle = nameField.getText();
-    if (isoTitle.isEmpty()) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("w6EnterFilename")));
-      return;
-    }
-    File file = askForFile(isoTitle);
-    if (file == null) {
-      return;
-    }
-
-    // All ok
-    modifyRules(isoTitle);
-    if (saveToFile(file)) {
-      controller.editIsoSuccess(file.getAbsolutePath(), filePath == null);
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("w6ErrorSaving")));
-    }
-  }
-
-  private File askForFile(String initial) {
-    if (filePath == null) {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle(bundle.getString("w6SelectFileg"));
-      fileChooser.setInitialFileName(initial);
-      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML file", "*.xml"));
-      fileChooser.setInitialDirectory(new File(DPFManagerProperties.getIsosDir()));
-      return fileChooser.showSaveDialog(GuiWorkbench.getMyStage());
-    } else {
-      return new File(filePath);
-    }
-  }
-
-  private void modifyRules(String title) {
-    ImplementationCheckerObjectType newRules;
-    if (filePath == null) {
-      newRules = new ImplementationCheckerObjectType();
-      newRules.makeCopy(rules);
-    } else {
-      newRules = rules;
-    }
-    newRules.setTitle(title);
-
+  private List<String> getUnselectedRules() {
+    ImplementationCheckerObjectType newRules = new ImplementationCheckerObjectType();
+    newRules.makeCopy(rules);
+    List<String> unselected = new ArrayList<>();
     for (TreeItem<RuleTreeItem> item : checkTreeView.getRoot().getChildren()) {
       // First Level
       CheckBoxTreeItem<RuleTreeItem> checkItem = (CheckBoxTreeItem<RuleTreeItem>) item;
       String id = item.getValue().getId();
       if (!checkItem.isSelected() && !checkItem.isIndeterminate()) {
-        newRules.removeRule(id);
-      } else {
-        // Second level
-        RulesType rulesType = newRules.getRulesById(id);
-        if (rulesType != null) {
-          for (TreeItem<RuleTreeItem> child : item.getChildren()) {
-            CheckBoxTreeItem<RuleTreeItem> checkChild = (CheckBoxTreeItem<RuleTreeItem>) child;
-            String idChild = checkChild.getValue().getId();
-            if (!checkChild.isSelected()) {
-              rulesType.removeRule(idChild);
-            }
+        unselected.add(id);
+      }
+      // Second level
+      RulesType rulesType = newRules.getRulesById(id);
+      if (rulesType != null) {
+        for (TreeItem<RuleTreeItem> child : item.getChildren()) {
+          CheckBoxTreeItem<RuleTreeItem> checkChild = (CheckBoxTreeItem<RuleTreeItem>) child;
+          String idChild = checkChild.getValue().getId();
+          if (!checkChild.isSelected()) {
+            unselected.add(idChild);
           }
         }
-        if (rulesType.getRule().size() == 0){
-          newRules.removeRule(id);
-        }
+      }
+      if (rulesType.getRule().size() == 0){
+        unselected.add(id);
       }
     }
-    rules = newRules;
+    return unselected;
   }
 
-  private boolean saveToFile(File file) {
-    try {
-      if (file.exists()) {
-        file.delete();
-      }
-
-      ImplementationCheckerObjectType newRules = new ImplementationCheckerObjectType();
-      newRules.makeCopy(rules);
-      newRules.removeIncludedRules();
-
-
-      JAXBContext jaxbContext = JAXBContext.newInstance(ImplementationCheckerObjectType.class);
-      Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-      // output pretty printed
-      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-      jaxbMarshaller.marshal(newRules, file);
-      return true;
-    } catch (JAXBException e) {
-      e.printStackTrace();
-    }
-    return false;
+  @FXML
+  protected void saveIso() {
+    // All ok
+    List<String> rules = getUnselectedRules();
+    controller.editIsoSuccess(isoId, rules);
   }
 
   @FXML

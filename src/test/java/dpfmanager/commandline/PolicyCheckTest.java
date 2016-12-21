@@ -69,11 +69,13 @@ public class PolicyCheckTest extends CommandLineTest {
         html = new String(encoded);
       }
     }
+    System.out.println(html);
     assertEquals(html != null, true);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
-    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO), false);
-    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO), true);
+    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), false);
+    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), true);
+
 
     int index = html.indexOf("<table class=\"center-table CustomTable\">");
     assertEquals(true, index > -1);
@@ -83,7 +85,7 @@ public class PolicyCheckTest extends CommandLineTest {
 
     // 1 Policy error
     for (String tr : trs){
-      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO_NAME+"</td>")){
         assertEquals(true, tr.contains("<td class=\"error\">1</td>"));
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
@@ -101,7 +103,7 @@ public class PolicyCheckTest extends CommandLineTest {
     trs = table.split("</tr>");
 
     for (String tr : trs){
-      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO_NAME+"<")){
         assertEquals(true, tr.contains(">1 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
       } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"<")){
@@ -168,8 +170,8 @@ public class PolicyCheckTest extends CommandLineTest {
     assertEquals(html != null, true);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
-    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO), true);
-    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO), false);
+    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), true);
+    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), false);
 
     int index = html.indexOf("<table class=\"center-table CustomTable\">");
     assertEquals(true, index > -1);
@@ -179,7 +181,7 @@ public class PolicyCheckTest extends CommandLineTest {
 
     // 1 Policy error
     for (String tr : trs){
-      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO_NAME+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"warning\">2</td>"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
@@ -197,7 +199,7 @@ public class PolicyCheckTest extends CommandLineTest {
     trs = table.split("</tr>");
 
     for (String tr : trs){
-      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO_NAME+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">2 warnings<"));
       } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"<")){
@@ -263,8 +265,8 @@ public class PolicyCheckTest extends CommandLineTest {
     assertEquals(html != null, true);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
-    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO), false);
-    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO), true);
+    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), false);
+    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), true);
 
     int index = html.indexOf("<table class=\"center-table CustomTable\">");
     assertEquals(true, index > -1);
@@ -274,7 +276,7 @@ public class PolicyCheckTest extends CommandLineTest {
 
     // 1 Policy error
     for (String tr : trs){
-      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO_NAME+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
         assertEquals(true, tr.contains("<td class=\"error\">1</td>"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
@@ -292,7 +294,7 @@ public class PolicyCheckTest extends CommandLineTest {
     trs = table.split("</tr>");
 
     for (String tr : trs){
-      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO_NAME+"<")){
         assertEquals(true, tr.contains(">1 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
       } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"<")){
@@ -358,8 +360,8 @@ public class PolicyCheckTest extends CommandLineTest {
     assertEquals(html != null, true);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
-    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO), true);
-    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO), false);
+    assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), true);
+    assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), false);
 
     int index = html.indexOf("<table class=\"center-table CustomTable\">");
     assertEquals(true, index > -1);
@@ -369,7 +371,7 @@ public class PolicyCheckTest extends CommandLineTest {
 
     // 1 Policy error
     for (String tr : trs){
-      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO+"</td>")){
+      if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO_NAME+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
       } else if (tr.contains("<td>"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
@@ -386,7 +388,7 @@ public class PolicyCheckTest extends CommandLineTest {
     trs = table.split("</tr>");
 
     for (String tr : trs){
-      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO+"<")){
+      if (tr.contains(">"+ TiffConformanceChecker.POLICY_ISO_NAME+"<")){
         assertEquals(true, tr.contains(">0 errors<"));
         assertEquals(true, tr.contains(">0 warnings<"));
       } else if (tr.contains(">"+ ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")+"<")){

@@ -229,7 +229,7 @@ public class ImplementationCheckerLoader {
 
   public static String getIsoName(String path) {
     if (path.equals(TiffConformanceChecker.POLICY_ISO)){
-      return TiffConformanceChecker.POLICY_ISO;
+      return TiffConformanceChecker.POLICY_ISO_NAME;
     }
     ImplementationCheckerObjectType icRules = ImplementationCheckerLoader.getRules(path);
     if (icRules != null) {

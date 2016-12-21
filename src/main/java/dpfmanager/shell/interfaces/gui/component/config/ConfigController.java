@@ -37,6 +37,7 @@ import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by Adrià Llorens on 07/03/2016.
@@ -126,6 +127,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
         break;
       case 2:
         fragment2.getController().saveRules(getModel().getConfiguration());
+        fragment2.getController().saveIsos(getModel().getConfiguration());
         break;
       case 3:
         fragment3.getController().saveFormats(getModel().getConfiguration());
@@ -143,6 +145,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
         fragment1.getController().loadIsos(getModel().getConfiguration());
         break;
       case 2:
+        fragment2.getController().loadIsos(getModel().getConfiguration());
         fragment2.getController().loadRules(getModel().getConfiguration());
         break;
       case 3:
@@ -158,24 +161,19 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     }
   }
 
-  public void editIso(String iso,String path){
-    fragment6.getController().edit(iso, path);
+  public void editIso(String iso){
+    fragment6.getController().edit(iso, getModel().getConfiguration().getModifiedIso(iso));
     getView().gotoEdit();
   }
 
-  public void editIsoSuccess(String path, boolean needAdd){
-    File isoFile = new File(path);
-    File isoDir = new File(DPFManagerProperties.getIsosDir());
-    if (needAdd && isoFile.getParentFile().getAbsolutePath().equals(isoDir.getAbsolutePath())){
-      fragment1.getController().addConfigCheckBox(isoFile, false);
-    } else if (needAdd) {
-      fragment1.getController().addExternalCheckBox(path, false);
-    }
-    getView().gotoConfig(1);
+  public void editIsoSuccess(String isoId, List<String> rules){
+    getModel().getConfiguration().addModifiedIso(isoId, rules);
+    fragment2.getController().loadIsos(getModel().getConfiguration());
+    getView().gotoConfig(2);
   }
 
   public void editIsoCancelled(){
-    getView().gotoConfig(1);
+    getView().gotoConfig(2);
   }
 
   /**
