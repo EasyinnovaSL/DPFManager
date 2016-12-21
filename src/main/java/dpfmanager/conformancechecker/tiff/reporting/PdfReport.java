@@ -169,7 +169,8 @@ public class PdfReport extends Report {
       pdfParams.y -= (max_image_height + 30);
       int image_pos_y = pdfParams.y;
       BufferedImage thumb = null;
-      if (!ir.getTiffModel().getFatalError()) {
+      //if (!ir.getTiffModel().getFatalError()) {
+      if (ir.getTiffModel() != null) {
         // Get thumbnail
         String fileName = getReportName("", ir.getFilePath(), id);
         String imgPath = "img/" + fileName + ".jpg";

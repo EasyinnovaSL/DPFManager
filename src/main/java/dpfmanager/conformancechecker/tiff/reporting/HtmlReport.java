@@ -73,7 +73,8 @@ public class HtmlReport extends Report {
     // Thumbnail image
     String fileName = getReportName("", ir.getFilePath(), id);
     String imgPath = "img/" + fileName + ".jpg";
-    if (!ir.getTiffModel().getFatalError()) {
+    //if (!ir.getTiffModel().getFatalError()) {
+    if (ir.getTiffModel() != null) {
       try {
         // Make thumbnail
         BufferedImage thumb = tiff2Jpg(ir.getFilePath());
