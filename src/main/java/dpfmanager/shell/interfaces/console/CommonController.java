@@ -90,11 +90,15 @@ public class CommonController {
   }
 
   public void parseFiles(String arg){
+    files.add(parseFile(arg));
+  }
+
+  public String parseFile(String arg){
     String arg_mod = arg;
     if (!new File(arg_mod).isAbsolute() && !new File(arg_mod).exists() && new File("../" + arg_mod).exists()) {
       arg_mod = "../" + arg;
     }
-    files.add(arg_mod);
+    return arg_mod;
   }
 
   public boolean parseOutput(String output) {
@@ -223,6 +227,10 @@ public class CommonController {
    */
   public Map<String, String> getParameters() {
     return parameters;
+  }
+
+  public boolean hasParameter(String key){
+    return parameters.containsKey(key);
   }
 
   public void putParameter(String key, String value){

@@ -101,6 +101,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   public static String POLICY_ISO_NAME = "Policy rules";
 
+  public TiffConformanceChecker() {
+  }
+
   public TiffConformanceChecker(ConformanceConfig config, Configuration checkConfig) {
     this.checkConfig = checkConfig;
     setConfig(config);
