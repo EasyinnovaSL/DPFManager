@@ -37,6 +37,7 @@ import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -166,7 +167,7 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     getView().gotoEdit();
   }
 
-  public void editIsoSuccess(String isoId, List<String> rules){
+  public void editIsoSuccess(String isoId, ArrayList<String> rules){
     getModel().getConfiguration().addModifiedIso(isoId, rules);
     fragment2.getController().loadIsos(getModel().getConfiguration());
     getView().gotoConfig(2);

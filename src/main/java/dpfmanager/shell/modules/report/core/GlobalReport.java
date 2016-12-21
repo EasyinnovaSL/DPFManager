@@ -105,9 +105,8 @@ public class GlobalReport {
    *
    * @param ir the individual report.
    */
-  public void addIndividual(IndividualReport ir) {
-    SmallIndividualReport small = new SmallIndividualReport(ir);
-    reports.add(small);
+  public void addIndividual(SmallIndividualReport ir) {
+    reports.add(ir);
   }
 
   /**

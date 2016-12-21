@@ -104,38 +104,10 @@ public class Report {
    * @return true, if successful
    */
   protected BufferedImage tiff2JpgTimeout(String inputfile) {
-
     ExecutorService executor = Executors.newCachedThreadPool();
     Callable<BufferedImage> task = new Callable<BufferedImage>() {
       public BufferedImage call() {
-
-        try {
-          BufferedImage image = ImageIO.read(new File(inputfile));
-
-          double factor = 1.0;
-
-          // Scale width
-          int width = image.getWidth();
-          int height = image.getHeight();
-          if (width > 500) {
-            factor = 500.0 / width;
-          }
-          height = (int) (height * factor);
-          width = (int) (width * factor);
-
-          // Scale height
-          if (height > 500) {
-            factor = 500.0 / height;
-            height = (int) (height * factor);
-            width = (int) (width * factor);
-          }
-
-          BufferedImage img = scale(image, width, height);
-          return img;
-        } catch (Exception e) {
-          return null;
-        }
-
+        return tiff2Jpg(inputfile);
       }
     };
     Future<BufferedImage> future = executor.submit(task);
@@ -144,16 +116,14 @@ public class Report {
       result = future.get(5, TimeUnit.SECONDS);
     } catch (TimeoutException ex) {
       // handle the timeout
-      return null;
     } catch (InterruptedException e) {
       // handle the interrupts
-      return null;
     } catch (ExecutionException e) {
       // handle other exceptions
-      return null;
     } finally {
-      return result;
+      //future.cancel(true);
     }
+    return result;
   }
 
   BufferedImage scale(BufferedImage src, int w, int h) {
