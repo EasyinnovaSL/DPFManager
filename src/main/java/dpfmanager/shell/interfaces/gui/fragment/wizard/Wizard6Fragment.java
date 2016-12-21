@@ -161,10 +161,10 @@ public class Wizard6Fragment {
     HBox.setHgrow(checkTreeView, Priority.ALWAYS);
   }
 
-  private List<String> getUnselectedRules() {
+  private ArrayList<String> getUnselectedRules() {
     ImplementationCheckerObjectType newRules = new ImplementationCheckerObjectType();
     newRules.makeCopy(rules);
-    List<String> unselected = new ArrayList<>();
+    ArrayList<String> unselected = new ArrayList<>();
     for (TreeItem<RuleTreeItem> item : checkTreeView.getRoot().getChildren()) {
       // First Level
       CheckBoxTreeItem<RuleTreeItem> checkItem = (CheckBoxTreeItem<RuleTreeItem>) item;
@@ -193,7 +193,7 @@ public class Wizard6Fragment {
   @FXML
   protected void saveIso() {
     // All ok
-    List<String> rules = getUnselectedRules();
+    ArrayList<String> rules = getUnselectedRules();
     controller.editIsoSuccess(isoId, rules);
   }
 

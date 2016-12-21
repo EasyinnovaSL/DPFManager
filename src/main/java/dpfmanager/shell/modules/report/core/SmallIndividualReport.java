@@ -21,7 +21,7 @@ public class SmallIndividualReport implements Comparable {
   String reportPath;
   String filePath;
   String fileName;
-  Map<String, List<String>> modifiedIsos;
+  Map<String, ArrayList<String>> modifiedIsos;
   String internalReportFodler;
   Long uuid;
 
@@ -128,7 +128,7 @@ public class SmallIndividualReport implements Comparable {
     return count;
   }
 
-  public Map<String, List<String>> getModifiedIsos() {
+  public Map<String, ArrayList<String>> getModifiedIsos() {
     return modifiedIsos;
   }
 

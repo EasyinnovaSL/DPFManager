@@ -69,6 +69,7 @@ import javax.xml.transform.stream.StreamResult;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "isos",
+    "modifiedIsos",
     "rules",
     "formats",
     "fixes",
@@ -80,7 +81,7 @@ import javax.xml.transform.stream.StreamResult;
 @XmlRootElement(name = "configuration")
 public class Configuration {
   private ArrayList<String> isos;
-  private Map<String, List<String>> modifiedIsos;
+  private Map<String, ArrayList<String>> modifiedIsos;
   private Rules rules;
   private ArrayList<String> formats;
   private Fixes fixes;
@@ -478,7 +479,7 @@ public class Configuration {
         Node node = modificationList.item(i);
         NodeList childs = node.getChildNodes();
         String iso = null;
-        List<String> idsList = new ArrayList<>();
+        ArrayList<String> idsList = new ArrayList<>();
         for (int j = 0; j < childs.getLength(); j++) {
           Node child = childs.item(j);
           if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -701,7 +702,7 @@ public class Configuration {
     return description;
   }
 
-  public void addModifiedIso(String isoId, List<String> deleted) {
+  public void addModifiedIso(String isoId, ArrayList<String> deleted) {
     modifiedIsos.put(isoId, deleted);
   }
 
@@ -723,7 +724,7 @@ public class Configuration {
     return new ArrayList<>();
   }
 
-  public Map<String, List<String>> getModifiedIsos() {
+  public Map<String, ArrayList<String>> getModifiedIsos() {
     return modifiedIsos;
   }
 }

@@ -103,7 +103,7 @@ public class IndividualReport {
 
   private boolean error;
 
-  private Map<String, List<String>> modifiedIsos;
+  private Map<String, ArrayList<String>> modifiedIsos;
 
   /**
    * Error constructor
@@ -135,7 +135,7 @@ public class IndividualReport {
    * @param path      the path
    * @param tiffModel the TIFF model
    */
-  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, List<String>> modifiedIsosList) {
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, ArrayList<String>> modifiedIsosList) {
     filename = name;
     filepath = path;
     containsData = true;
@@ -591,7 +591,7 @@ public class IndividualReport {
     tiffModel = model;
   }
 
-  public Map<String, List<String>> getModifiedIsos() {
+  public Map<String, ArrayList<String>> getModifiedIsos() {
     return modifiedIsos;
   }
 
