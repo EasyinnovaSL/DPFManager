@@ -60,7 +60,7 @@ public class ReportJson extends ReportGeneric {
     // Convert to JSON
     try {
       XmlMapper xmlMapper = new XmlMapper();
-      JsonNode node = xmlMapper.readTree(Charset.forName("UTF-8").encode(xml).array());
+      JsonNode node = xmlMapper.readTree(Charset.forName("UTF-8").encode(xml.replace("&#0;", "")).array());
 
       ObjectMapper jsonMapper = new ObjectMapper();
       String json = jsonMapper.writeValueAsString(node);

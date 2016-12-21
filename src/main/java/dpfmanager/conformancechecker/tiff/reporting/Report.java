@@ -24,6 +24,8 @@ import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -45,6 +47,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.imageio.ImageIO;
 
@@ -62,7 +71,6 @@ public class Report {
   protected BufferedImage tiff2Jpg(String inputfile) {
     try {
       BufferedImage image = ImageIO.read(new File(inputfile));
-      //BufferedImage image = loadImageCrazyFast(new File(inputfile).toURI().toURL());
 
       double factor = 1.0;
 
@@ -85,8 +93,67 @@ public class Report {
       BufferedImage img = scale(image, width, height);
       return img;
     } catch (Exception e) {
+      return null;
     }
-    return null;
+  }
+
+  /**
+   * Tiff 2 jpg.
+   *
+   * @param inputfile  the inputfile
+   * @return true, if successful
+   */
+  protected BufferedImage tiff2JpgTimeout(String inputfile) {
+
+    ExecutorService executor = Executors.newCachedThreadPool();
+    Callable<BufferedImage> task = new Callable<BufferedImage>() {
+      public BufferedImage call() {
+
+        try {
+          BufferedImage image = ImageIO.read(new File(inputfile));
+
+          double factor = 1.0;
+
+          // Scale width
+          int width = image.getWidth();
+          int height = image.getHeight();
+          if (width > 500) {
+            factor = 500.0 / width;
+          }
+          height = (int) (height * factor);
+          width = (int) (width * factor);
+
+          // Scale height
+          if (height > 500) {
+            factor = 500.0 / height;
+            height = (int) (height * factor);
+            width = (int) (width * factor);
+          }
+
+          BufferedImage img = scale(image, width, height);
+          return img;
+        } catch (Exception e) {
+          return null;
+        }
+
+      }
+    };
+    Future<BufferedImage> future = executor.submit(task);
+    BufferedImage result = null;
+    try {
+      result = future.get(5, TimeUnit.SECONDS);
+    } catch (TimeoutException ex) {
+      // handle the timeout
+      return null;
+    } catch (InterruptedException e) {
+      // handle the interrupts
+      return null;
+    } catch (ExecutionException e) {
+      // handle other exceptions
+      return null;
+    } finally {
+      return result;
+    }
   }
 
   BufferedImage scale(BufferedImage src, int w, int h) {

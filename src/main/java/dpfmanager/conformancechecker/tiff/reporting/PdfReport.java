@@ -317,12 +317,15 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 40, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
-            IFD exif = (IFD) tag.tv.getValue().get(0);
-            for (TagValue tv : exif.getTags().getTags()) {
-              pdfParams.y -= 15;
-              pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
-              pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId()+"") ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
-              pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+            abstractTiffType obj = tag.tv.getValue().get(0);
+            if (obj instanceof IFD) {
+              IFD exif = (IFD) obj;
+              for (TagValue tv : exif.getTags().getTags()) {
+                pdfParams.y -= 15;
+                pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
+                pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
+                pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+              }
             }
           }
         }
@@ -337,14 +340,16 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Name", "Value"), margins);
-            abstractTiffType obj = tag.tv.getValue().get(0);
-            if (obj instanceof IPTC) {
-              IPTC iptc = (IPTC) obj;
-              Metadata metadata = iptc.createMetadata();
-              for (String mKey : iptc.createMetadata().keySet()) {
-                pdfParams.y -= 15;
-                pdfParams = writeText(pdfParams, mKey, pos_x + margins[0], font, font_size);
-                pdfParams = writeText(pdfParams, metadata.get(mKey).toString().trim(), pos_x + margins[1], font, font_size);
+            if (tag.tv.getValue().size() > 0) {
+              abstractTiffType obj = tag.tv.getValue().get(0);
+              if (obj instanceof IPTC) {
+                IPTC iptc = (IPTC) obj;
+                Metadata metadata = iptc.createMetadata();
+                for (String mKey : iptc.createMetadata().keySet()) {
+                  pdfParams.y -= 15;
+                  pdfParams = writeText(pdfParams, mKey, pos_x + margins[0], font, font_size);
+                  pdfParams = writeText(pdfParams, metadata.get(mKey).toString().trim(), pos_x + margins[1], font, font_size);
+                }
               }
             }
           }
@@ -361,30 +366,35 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Name", "Value"), margins);
-            XMP xmp = (XMP) tag.tv.getValue().get(0);
-            Metadata metadata = xmp.createMetadata();
-            for (String xKey : metadata.keySet()) {
-              pdfParams.y -= 15;
-              pdfParams = writeText(pdfParams, xKey, pos_x + margins[0], font, font_size);
-              pdfParams = writeText(pdfParams, metadata.get(xKey).toString().trim(), pos_x + margins[1], font, font_size);
-            }
-            // History
-            if (xmp.getHistory() != null) {
-              pdfParams.y -= 40;
-              pdfParams = writeTitle(pdfParams, "History" + index, "images/pdf/tag.png", pos_x, font, 10);
-              pdfParams.y -= 20;
-              pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Attribute", "Value"), margins);
-              int nh = 0;
-              for (Hashtable<String, String> kv : xmp.getHistory()) {
-                // TODO WORKARROUND
-                String hKey = kv.keySet().iterator().next();
-                if (hKey.equals("action") && nh != 0) {
-                  pdfParams.getContentStream().drawLine(pos_x, pdfParams.y-5, pos_x + 490, pdfParams.y-5);
+            if (tag.tv.getValue().size() > 0) {
+              abstractTiffType obj = tag.tv.getValue().get(0);
+              if (obj instanceof XMP) {
+                XMP xmp = (XMP) obj;
+                Metadata metadata = xmp.createMetadata();
+                for (String xKey : metadata.keySet()) {
+                  pdfParams.y -= 15;
+                  pdfParams = writeText(pdfParams, xKey, pos_x + margins[0], font, font_size);
+                  pdfParams = writeText(pdfParams, metadata.get(xKey).toString().trim(), pos_x + margins[1], font, font_size);
                 }
-                pdfParams.y -= 15;
-                pdfParams = writeText(pdfParams, hKey, pos_x + margins[0], font, font_size);
-                pdfParams = writeText(pdfParams, kv.get(hKey).toString().trim(), pos_x + margins[1], font, font_size);
-                nh++;
+                // History
+                if (xmp.getHistory() != null) {
+                  pdfParams.y -= 40;
+                  pdfParams = writeTitle(pdfParams, "History" + index, "images/pdf/tag.png", pos_x, font, 10);
+                  pdfParams.y -= 20;
+                  pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Attribute", "Value"), margins);
+                  int nh = 0;
+                  for (Hashtable<String, String> kv : xmp.getHistory()) {
+                    // TODO WORKARROUND
+                    String hKey = kv.keySet().iterator().next();
+                    if (hKey.equals("action") && nh != 0) {
+                      pdfParams.getContentStream().drawLine(pos_x, pdfParams.y - 5, pos_x + 490, pdfParams.y - 5);
+                    }
+                    pdfParams.y -= 15;
+                    pdfParams = writeText(pdfParams, hKey, pos_x + margins[0], font, font_size);
+                    pdfParams = writeText(pdfParams, kv.get(hKey).toString().trim(), pos_x + margins[1], font, font_size);
+                    nh++;
+                  }
+                }
               }
             }
           }
@@ -405,9 +415,12 @@ public class PdfReport extends Report {
       while (tdifd != null) {
         XMP xmp = null;
         IPTC iptc = null;
-        if (tdifd.containsTagId(TiffTags.getTagId("XMP")))
-          xmp = (XMP) tdifd.getTag("XMP").getValue().get(0);
-        if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) {
+        if (tdifd.containsTagId(TiffTags.getTagId("XMP")) && tdifd.getTag("XMP").getCardinality() > 0) {
+          abstractTiffType obj = tdifd.getTag("XMP").getValue().get(0);
+          if (obj instanceof XMP)
+            xmp = (XMP) obj;
+        }
+        if (tdifd.containsTagId(TiffTags.getTagId("IPTC")) && tdifd.getTag("IPTC").getCardinality() > 0) {
           abstractTiffType obj = tdifd.getTag("IPTC").getValue().get(0);
           if (obj instanceof IPTC) {
             iptc = (IPTC) obj;
@@ -680,13 +693,17 @@ public class PdfReport extends Report {
    */
   private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size, Color color, PDPixelMap image, int imgSize) throws Exception {
     PDPageContentStream contentStream = pdfParams.getContentStream();
+
     try {
       contentStream = pdfParams.checkNewPage();
-
       if (image != null){
         contentStream.drawXObject(image, x - imgSize - 3, pdfParams.y - 1, imgSize, imgSize);
       }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
+    try {
       String stext = text.replace("\n", " ").replaceAll(" +", " ").trim();
       contentStream.beginText();
       contentStream.setFont(font, font_size);

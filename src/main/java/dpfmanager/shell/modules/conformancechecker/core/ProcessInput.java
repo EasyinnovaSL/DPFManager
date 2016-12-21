@@ -149,6 +149,9 @@ public class ProcessInput {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.WARN, bundle.getString("unacceptedFormat").replace("%1", filename)));
       }
     }
+    if (ir == null) {
+      ir = new IndividualReport(true);
+    }
     return ir;
   }
 

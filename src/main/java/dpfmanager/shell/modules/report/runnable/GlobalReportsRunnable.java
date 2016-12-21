@@ -88,27 +88,29 @@ public class GlobalReportsRunnable extends DpfRunnable {
     }
     global.generate();
 
-    // Create it
-    String summaryXmlFile = null;
-    try {
-      summaryXmlFile = generator.makeSummaryReport(internalReportFolder, global, config);
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", internalReportFolder)));
-    } catch (OutOfMemoryError e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorOccurred"), bundle.getString("outOfMemory")));
-    }
-
-    // Send report over FTP
-    try {
-      if (DPFManagerProperties.getFeedback() && summaryXmlFile != null) {
-        sendFtpCamel(summaryXmlFile);
+    if (internalReportFolder != null) {
+      // Create it
+      String summaryXmlFile = null;
+      try {
+        summaryXmlFile = generator.makeSummaryReport(internalReportFolder, global, config);
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", internalReportFolder)));
+      } catch (OutOfMemoryError e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorOccurred"), bundle.getString("outOfMemory")));
       }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), e));
-      e.printStackTrace();
-    }
 
-    // Inform that report has finished
-    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.FINISH, uuid));
+      // Send report over FTP
+      try {
+        if (DPFManagerProperties.getFeedback() && summaryXmlFile != null) {
+          sendFtpCamel(summaryXmlFile);
+        }
+      } catch (Exception e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), e));
+        e.printStackTrace();
+      }
+
+      // Inform that report has finished
+      context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.FINISH, uuid));
+    }
   }
 
   /**

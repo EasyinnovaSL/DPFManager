@@ -401,15 +401,23 @@ public class HtmlReport extends Report {
       if (tag.tv.getId() == 34665) {
         // EXIF
         String mapId = "exi" + tag.index;
-        IFD exif = (IFD) tag.tv.getValue().get(0);
-        for (TagValue tv : exif.getTags().getTags()) {
-          if (tv.getId() == 36864){
-            tv.toString();
+        try {
+          abstractTiffType obj = tag.tv.getValue().get(0);
+          if (obj instanceof IFD) {
+            IFD exif = (IFD) obj;
+            for (TagValue tv : exif.getTags().getTags()) {
+              if (tv.getId() == 36864) {
+                tv.toString();
+              }
+              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>" + tv.getId() + "</td><td>" + (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
+              row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
+              String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
+              tagsMap.put(mapId, rows + row);
+            }
           }
-          row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>"+tv.getId()+"</td><td>" + (tv.getName().equals(tv.getId()+"") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
-          row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
-          String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
-          tagsMap.put(mapId, rows + row);
+        } catch (Exception ex) {
+          ex.toString();
+          //ex.printStackTrace();
         }
         continue;
       }
@@ -466,7 +474,10 @@ public class HtmlReport extends Report {
       row = row.replace("##ICON##", "<i class=\"image-default icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()));
-      row = row.replace("##VALUE##", tag.tv.getDescriptiveValue());
+      String val = tag.tv.getDescriptiveValue();
+      if (val.length() > 200)
+        val = val.substring(0, 200) + "...";
+      row = row.replace("##VALUE##", val);
       String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
       tagsMap.put(mapId, rows + row);
     }

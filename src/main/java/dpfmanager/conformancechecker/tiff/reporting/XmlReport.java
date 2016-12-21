@@ -37,6 +37,7 @@ import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.Rational;
+import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -126,7 +127,7 @@ public class XmlReport extends Report {
     // Photometric
     el = doc.createElement("photometric");
     TagValue tagv = ifd.getMetadata().get("PhotometricInterpretation");
-    if (tagv != null) {
+    if (tagv != null && tagv.getCardinality() > 0) {
       el.setTextContent(tagv.getFirstNumericValue() + "");
     } else {
       el.setTextContent("null");
@@ -191,6 +192,7 @@ public class XmlReport extends Report {
         elchild2.setTextContent(val);
       } else
         elchild2.setTextContent("Array[" + t.getCardinality() + "]");
+
       elchild.appendChild(elchild2);
 
       el.appendChild(elchild);
@@ -547,18 +549,23 @@ public class XmlReport extends Report {
         report.appendChild(infoElement);
 
         String dpi = "";
-        if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))) {
+        if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))
+            && ifd.getTag("XResolution").getValue().size() > 0 && ifd.getTag("YResolution").getValue().size() > 0) {
           try {
             int xres = 1;
             int yres = 1;
-            Rational ratx = (Rational) ifd.getTag("XResolution").getValue().get(0);
-            Rational raty = (Rational) ifd.getTag("YResolution").getValue().get(0);
-            xres = (int) ratx.getFloatValue();
-            yres = (int) raty.getFloatValue();
-            if (xres % 2 != 0 || yres % 2 != 0)
-              dpi = "Uneven";
-            else
-              dpi = "Even";
+            abstractTiffType rx = ifd.getTag("XResolution").getValue().get(0);
+            abstractTiffType ry = ifd.getTag("YResolution").getValue().get(0);
+            if (rx instanceof Rational && ry instanceof Rational) {
+              Rational ratx = (Rational) rx;
+              Rational raty = (Rational) ry;
+              xres = (int) ratx.getFloatValue();
+              yres = (int) raty.getFloatValue();
+              if (xres % 2 != 0 || yres % 2 != 0)
+                dpi = "Uneven";
+              else
+                dpi = "Even";
+            }
           } catch (Exception ex) {
             ex.printStackTrace();
           }
@@ -584,8 +591,13 @@ public class XmlReport extends Report {
 
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("Compression"))) {
           infoElement = doc.createElement("Compression");
-          int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
-          String value = comp > 0 ? TiffConformanceChecker.compressionName(comp) : "Unknown";
+          String value = "Unknown";
+          try {
+            int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
+            value = comp > 0 ? TiffConformanceChecker.compressionName(comp) : "Unknown";
+          } catch (Exception ex) {
+
+          }
           infoElement.setTextContent(value);
           infoElement.setAttribute("Compression", value);
           report.appendChild(infoElement);
@@ -593,8 +605,12 @@ public class XmlReport extends Report {
 
         String value = "Unknown";
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("PhotometricInterpretation"))) {
-          int photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
-          value = TiffConformanceChecker.photometricName(photo);
+          try {
+            int photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
+            value = TiffConformanceChecker.photometricName(photo);
+          } catch (Exception ex) {
+            value = "Unknown";
+          }
         }
         infoElement = doc.createElement("Photometric");
         infoElement.setTextContent(value);
@@ -632,7 +648,11 @@ public class XmlReport extends Report {
         }
         infoElement = doc.createElement("PixelDensity");
         infoElement.setTextContent(pixeldensity);
-        infoElement.setAttribute("PixelDensity", "" + (int) Double.parseDouble(pixeldensity));
+        try {
+          infoElement.setAttribute("PixelDensity", "" + (int) Double.parseDouble(pixeldensity));
+        } catch (Exception ex) {
+          infoElement.setAttribute("PixelDensity", "0");
+        }
         report.appendChild(infoElement);
 
         double percent_blank_pixels = 0.95;
@@ -797,7 +817,7 @@ public class XmlReport extends Report {
           if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
           infoElement = doc.createElement(tagname);
           String val = tag.tv.toString().replaceAll("\\p{C}", "?");
-          ;
+          if (val.length() > 500) val = val.substring(0, 500) + "...";
 
           infoElement.setTextContent(val);
           infoElement.setAttribute(tagname, val);

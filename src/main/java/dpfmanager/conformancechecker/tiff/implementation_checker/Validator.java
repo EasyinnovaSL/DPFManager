@@ -244,6 +244,8 @@ public class Validator {
               String value2 = op2.getValue();
               if (value2 == null)
                 op2.getValue();
+              if (value2 == null)
+                value2 = "";
               if (value.contains("/"))
                 value = Double.parseDouble(value.split("/")[0]) / Double.parseDouble(value.split("/")[1]) + "";
               if (value2.contains("/"))
