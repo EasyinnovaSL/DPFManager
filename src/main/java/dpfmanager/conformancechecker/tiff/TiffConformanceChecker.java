@@ -574,7 +574,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
         config = getDefaultConfiguration();
       }
       TiffReader tr = new TiffReader();
-      int result = tr.readFile(pathToFile, false);
+      int result = tr.readFile(pathToFile);
       switch (result) {
         case -1:
           Logger.println("File '" + pathToFile + "' does not exist");
@@ -627,7 +627,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             String nameOriginalTif = ir.getFilePath();
 
             tr = new TiffReader();
-            tr.readFile(nameOriginalTif, false);
+            tr.readFile(nameOriginalTif);
             ir.setTiffModel(tr.getModel());
 
             for (Fix fix : fixes.getFixes()) {
@@ -658,7 +658,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ti.close();
 
             tr = new TiffReader();
-            tr.readFile(pathFixed, false);
+            tr.readFile(pathFixed);
             TiffDocument to = tr.getModel();
 
             //Logger.println("Validating Tiff");
