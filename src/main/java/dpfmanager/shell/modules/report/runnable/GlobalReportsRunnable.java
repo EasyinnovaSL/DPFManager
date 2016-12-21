@@ -29,6 +29,7 @@ import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
@@ -50,7 +51,7 @@ import java.util.ResourceBundle;
  */
 public class GlobalReportsRunnable extends DpfRunnable {
 
-  private List<IndividualReport> individuals;
+  private List<SmallIndividualReport> individuals;
   private ReportGenerator generator;
   private Configuration config;
 
@@ -63,7 +64,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
   public void handleContext(DpfContext context) {
   }
 
-  public void setParameters(List<IndividualReport> i, Configuration c){
+  public void setParameters(List<SmallIndividualReport> i, Configuration c){
     individuals = i;
     config = c;
   }
@@ -75,7 +76,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
 
     // Generate GlobalReport
     GlobalReport global = new GlobalReport();
-    for (IndividualReport individual : individuals) {
+    for (SmallIndividualReport individual : individuals) {
       global.addIndividual(individual);
       if (individual != null){
         if (internalReportFolder == null){

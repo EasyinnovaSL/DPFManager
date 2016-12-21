@@ -30,6 +30,7 @@ import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
 import dpfmanager.shell.modules.conformancechecker.runnable.ProcessInputRunnable;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.interoperability.core.InteroperabilityService;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
@@ -67,8 +68,12 @@ public class ConformanceCheckerService extends DpfService {
     filesToCheck = new HashMap<>();
   }
 
+  private ReportGenerator generator;
+
   @Override
   protected void handleContext(DpfContext context) {
+    generator = new ReportGenerator();
+    generator.setContext(context);
   }
 
   public Configuration readConfig(String path) {
@@ -161,7 +166,7 @@ public class ConformanceCheckerService extends DpfService {
     int idReport = 1;
     List<ConformanceChecker> list = interService.getConformanceCheckers();
     for (final String filename : files) {
-      ConformanceRunnable run = new ConformanceRunnable(list);
+      ConformanceRunnable run = new ConformanceRunnable(list, generator);
       run.setParameters(filename, idReport, internalReportFolder, config, uuid);
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
       idReport++;
