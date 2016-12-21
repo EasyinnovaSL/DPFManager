@@ -107,8 +107,6 @@ public class Schematron {
       assertObj.setTest(sTest);
       RuleType.Description desc = new RuleType.Description();
       String op = rule.getOperator();
-      if (op.equals("<")) op = "&lt;";
-      else if (op.equals(">")) op = "&gt;";
       desc.setValue(rule.getTag() + " " + op + " " + rule.getValue());
       ruleObj.setDescription(desc);
       if (!rule.getWarning()) assertObj.setValue("Invalid " + rule.getTag());
