@@ -67,33 +67,27 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
     getModel().getConfiguration().setDescription(description);
     // Save to file
     File file = null;
-    String path = getModel().getPath();
-    if (path != null) {
-      // When editing, save directly in same file
-      file = new File(path);
+    String value = GuiWorkbench.getTestParams("saveConfig");
+    if (value != null) {
+      // Save in specified output (TEST)
+      file = new File(value);
     } else {
-      String value = GuiWorkbench.getTestParams("saveConfig");
-      if (value != null) {
-        // Save in specified output (TEST)
-        file = new File(value);
+      // Get save name
+      String name = getView().getSaveFilename();
+      if (name.isEmpty()) {
+        // Empty input
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("enterFilename")));
       } else {
-        // Get save name
-        String name = getView().getSaveFilename();
-        if (name.isEmpty()) {
-          // Empty input
-          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("enterFilename")));
+        name = checkInput(name);
+        if (name == null) {
+          // Alert incorrect name format
+          getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("noEnterPath")));
         } else {
-          name = checkInput(name);
-          if (name == null) {
-            // Alert incorrect name format
-            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("noEnterPath")));
-          } else {
-            file = new File(DPFManagerProperties.getConfigDir() + "/" + name);
-            if (file.exists()) {
-              // Alert name exists
-              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("enterDuplicate")));
-              file = null;
-            }
+          file = new File(DPFManagerProperties.getConfigDir() + "/" + name);
+          if (file.exists() && !getModel().isEditing()) {
+            // Alert name exists
+            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("enterDuplicate")));
+            file = null;
           }
         }
       }
