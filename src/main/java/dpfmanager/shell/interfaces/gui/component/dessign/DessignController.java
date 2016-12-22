@@ -99,10 +99,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       path = getFileByPath(radio.getText()).getAbsolutePath();
     }
     int recursive = getView().getRecursive();
-    ArrayMessage am = new ArrayMessage();
-    am.add(GuiConfig.COMPONENT_BAR, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.TASKS));
-    am.add(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path, recursive));
-    getContext().send(GuiConfig.COMPONENT_BAR, am);
+    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path, recursive, true));
   }
 
   public void selectInputAction() {

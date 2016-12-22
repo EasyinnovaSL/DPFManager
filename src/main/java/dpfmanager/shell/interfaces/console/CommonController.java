@@ -111,10 +111,12 @@ public class CommonController {
     } else if (!tmp.isDirectory()) {
       printOut(bundle.getString("outputMustDirectory"));
       output = null;
-    } else if (tmp.listFiles().length > 0) {
-      printOut(bundle.getString("outputMustEmpty"));
-      output = null;
-    } else if (!tmp.isAbsolute()){
+    }
+//    else if (tmp.listFiles().length > 0) {
+//      printOut(bundle.getString("outputMustEmpty"));
+//      output = null;
+//    }
+    else if (!tmp.isAbsolute()){
       printOut(bundle.getString("outputMustAbsolute"));
       output = null;
     }

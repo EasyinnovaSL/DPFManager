@@ -62,6 +62,15 @@ public class AlertMessage extends DpfMessage {
     target = ta;
   }
 
+  public AlertMessage(Type t, String h, String c, DpfMessage n, String ta){
+    type = t;
+    title = getDefaultTitle(type);
+    header = h;
+    content = c;
+    next = n;
+    target = ta;
+  }
+
   public AlertMessage(Type t, String h, String c){
     type = t;
     title = getDefaultTitle(type);

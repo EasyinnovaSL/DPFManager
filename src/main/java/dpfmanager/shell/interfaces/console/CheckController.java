@@ -22,29 +22,18 @@ package dpfmanager.shell.interfaces.console;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
-import dpfmanager.shell.modules.client.messages.RequestMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -93,19 +82,23 @@ public class CheckController {
         if (idx + 1 < params.size()) {
           String outputFolder = params.get(++idx);
           argsError = !common.parseOutput(outputFolder);
-          if (!argsError){
+          if (!argsError) {
             common.putParameter("-o", outputFolder);
           }
         } else {
           printOutErr(bundle.getString("outputSpecify"));
         }
       }
+      // -w --overwrite
+      else if (arg.equals("-w") || arg.equals("--overwrite")) {
+        common.putParameter("overwrite", "true");
+      }
       // -c --configuration
       else if (arg.equals("-c") || arg.equals("--configuration")) {
         if (idx + 1 < params.size()) {
           String xmlConfig = params.get(++idx);
           argsError = !common.parseConfiguration(xmlConfig);
-          if (!argsError){
+          if (!argsError) {
             common.putParameter("-configuration", xmlConfig);
           }
         } else {
@@ -124,7 +117,7 @@ public class CheckController {
       else if (arg.equals("-r") || arg.equals("--recursive")) {
         if (idx + 1 < params.size()) {
           Integer max = Integer.MAX_VALUE;
-          String recursive = params.get(idx+1);
+          String recursive = params.get(idx + 1);
           if (isNumeric(recursive)) {
             max = Integer.parseInt(recursive);
             idx++;
@@ -236,7 +229,7 @@ public class CheckController {
               desc = nodes.item(j).getTextContent();
             }
           }
-          printOut(bundle.getString("standard").replace("%1",stdName).replace("%2",desc));
+          printOut(bundle.getString("standard").replace("%1", stdName).replace("%2", desc));
         }
       }
       printOut("");
@@ -268,7 +261,7 @@ public class CheckController {
     printOut(bundle.getString("helpSources"));
     printOut("");
     printOut(bundle.getString("helpOptions"));
-    printOptions("helpC", 7);
+    printOptions("helpC", 8);
     exit();
   }
 
