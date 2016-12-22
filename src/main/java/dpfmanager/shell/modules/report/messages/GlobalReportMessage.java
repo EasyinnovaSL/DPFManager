@@ -23,6 +23,7 @@ import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import java.util.List;
 
@@ -32,16 +33,16 @@ import java.util.List;
 public class GlobalReportMessage extends DpfMessage {
 
   private Long uuid;
-  private List<IndividualReport> individuals;
+  private List<SmallIndividualReport> individuals;
   private Configuration config;
 
-  public GlobalReportMessage(Long u, List<IndividualReport> i, Configuration c){
+  public GlobalReportMessage(Long u, List<SmallIndividualReport> i, Configuration c){
     uuid = u;
     individuals = i;
     config = c;
   }
 
-  public List<IndividualReport> getIndividuals() {
+  public List<SmallIndividualReport> getIndividuals() {
     return individuals;
   }
 

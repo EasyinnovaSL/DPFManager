@@ -89,7 +89,7 @@ public class Validator {
   /**
    * Main validate function
    */
-  public void validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+  public ValidationResult validate(String content, String rulesFile, boolean fastBreak) throws JAXBException, ParserConfigurationException, IOException, SAXException {
     try {
       TiffValidationObject obj = createValidationObjectFromXml(content);
       ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(rulesFile);
@@ -99,6 +99,7 @@ public class Validator {
       result = new ValidationResult();
       result.add(rr);
     }
+    return result;
   }
 
   public static TiffValidationObject createValidationObjectFromXml(String content) throws JAXBException, ParserConfigurationException, IOException, SAXException {
@@ -244,6 +245,8 @@ public class Validator {
               String value2 = op2.getValue();
               if (value2 == null)
                 op2.getValue();
+              if (value2 == null)
+                value2 = "";
               if (value.contains("/"))
                 value = Double.parseDouble(value.split("/")[0]) / Double.parseDouble(value.split("/")[1]) + "";
               if (value2.contains("/"))
@@ -324,6 +327,10 @@ public class Validator {
     }
 
     return ok;
+  }
+
+  public ValidationResult getResult() {
+    return result;
   }
 
   private void printOut(String line) {

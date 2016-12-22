@@ -24,6 +24,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.interfaces.console.AppContext;
 import dpfmanager.shell.interfaces.console.CheckController;
+import dpfmanager.shell.interfaces.console.ConfigurationController;
 import dpfmanager.shell.interfaces.console.PeriodicalController;
 import dpfmanager.shell.interfaces.console.RemoteController;
 import dpfmanager.shell.interfaces.console.ServerController;
@@ -134,6 +135,13 @@ public class ConsoleLauncher {
         params.remove(0);
         initServices("CMD");
         ModulesController controller = new ModulesController(context, bundle);
+        controller.parse(params);
+        controller.run();
+        return;
+      } else if (first.equals("config")){
+        params.remove(0);
+        initServices("CMD");
+        ConfigurationController controller = new ConfigurationController(context, bundle);
         controller.parse(params);
         controller.run();
         return;

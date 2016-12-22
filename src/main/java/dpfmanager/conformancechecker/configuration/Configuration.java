@@ -1,13 +1,13 @@
 /**
- * <h1>Configuration.java</h1> <p> This program is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
- * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p> <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU General Public License and the Mozilla Public License for more details. </p>
- * <p> You should have received a copy of the GNU General Public License and the Mozilla Public
- * License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * <h1>Configuration.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
  * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
@@ -43,6 +43,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -66,6 +69,7 @@ import javax.xml.transform.stream.StreamResult;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "isos",
+    "modifiedIsos",
     "rules",
     "formats",
     "fixes",
@@ -77,6 +81,7 @@ import javax.xml.transform.stream.StreamResult;
 @XmlRootElement(name = "configuration")
 public class Configuration {
   private ArrayList<String> isos;
+  private Map<String, ArrayList<String>> modifiedIsos;
   private Rules rules;
   private ArrayList<String> formats;
   private Fixes fixes;
@@ -96,6 +101,7 @@ public class Configuration {
     fixes = new Fixes();
     version = 0;
     bundle = DPFManagerProperties.getBundle();
+    modifiedIsos = new HashMap<>();
   }
 
   /**
@@ -106,6 +112,7 @@ public class Configuration {
     this.rules = rules;
     this.formats = formats;
     this.fixes = fixes;
+    modifiedIsos = new HashMap<>();
   }
 
   /**
@@ -223,6 +230,26 @@ public class Configuration {
       formatsE.appendChild(elem);
     }
     configurationE.appendChild(formatsE);
+    // Modified Isos
+    Element modifiedE = doc.createElement("modified-isos");
+    for (String key : modifiedIsos.keySet()) {
+      List<String> deletedIds = modifiedIsos.get(key);
+      if (deletedIds.size() > 0) {
+        Element modificationE = doc.createElement("modification");
+        Element isoE = doc.createElement("iso");
+        isoE.setTextContent(key);
+        Element rulesE = doc.createElement("rules");
+        for (String id : deletedIds) {
+          Element idE = doc.createElement("rule-id");
+          idE.setTextContent(id);
+          rulesE.appendChild(idE);
+        }
+        modificationE.appendChild(isoE);
+        modificationE.appendChild(rulesE);
+        modifiedE.appendChild(modificationE);
+      }
+    }
+    configurationE.appendChild(modifiedE);
     // Rules
     Element rulesE = doc.createElement("rules");
     if (rules != null) {
@@ -303,8 +330,8 @@ public class Configuration {
     transformer.transform(source, result);
   }
 
-  public StreamResult configurationToDocument (){
-    try{
+  public StreamResult configurationToDocument() {
+    try {
       String filename = "configurationToString.xml";
       SaveFile(filename);
       File fXmlFile = new File(filename);
@@ -412,23 +439,28 @@ public class Configuration {
     }
 
     // Read ISOs
-    NodeList isoList = doc.getElementsByTagName("iso");
-    for (int i = 0; i < isoList.getLength(); i++) {
-      Node node = isoList.item(i);
-      if (node.getNodeType() == Node.ELEMENT_NODE) {
-        Element elem = (Element) node;
-        String iso = elem.getTextContent();
-        if (version == 1){
-          // Old iso format
-          if (parseOldToNewIso(iso) != null) {
-            isos.add(parseOldToNewIso(iso));
+    NodeList tmpList = doc.getElementsByTagName("isos");
+    if (tmpList.getLength() > 0){
+      Node isosNode = tmpList.item(0);
+      NodeList isoList = isosNode.getChildNodes();
+      for (int i = 0; i < isoList.getLength(); i++) {
+        Node node = isoList.item(i);
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+          Element elem = (Element) node;
+          String iso = elem.getTextContent();
+          if (version == 1) {
+            // Old iso format
+            if (parseOldToNewIso(iso) != null) {
+              isos.add(parseOldToNewIso(iso));
+            }
+          } else if (version >= 2) {
+            // New iso format
+            isos.add(elem.getTextContent());
           }
-        } else if (version == 2){
-          // New iso format
-          isos.add(elem.getTextContent());
         }
       }
     }
+
 
     // Read formats
     NodeList formatsList = doc.getElementsByTagName("format");
@@ -437,6 +469,40 @@ public class Configuration {
       if (node.getNodeType() == Node.ELEMENT_NODE) {
         Element elem = (Element) node;
         formats.add(elem.getTextContent());
+      }
+    }
+
+    // Read modified isos
+    if (version >= 3) {
+      NodeList modificationList = doc.getElementsByTagName("modification");
+      for (int i = 0; i < modificationList.getLength(); i++) {
+        Node node = modificationList.item(i);
+        NodeList childs = node.getChildNodes();
+        String iso = null;
+        ArrayList<String> idsList = new ArrayList<>();
+        for (int j = 0; j < childs.getLength(); j++) {
+          Node child = childs.item(j);
+          if (child.getNodeType() == Node.ELEMENT_NODE) {
+            Element elem = (Element) child;
+            if (elem.getTagName().equals("iso")) {
+              iso = elem.getTextContent();
+            } else if (elem.getTagName().equals("rules")) {
+              NodeList grandsons = child.getChildNodes();
+              for (int x = 0; x < grandsons.getLength(); x++) {
+                Node grandson = grandsons.item(x);
+                if (grandson.getNodeType() == Node.ELEMENT_NODE) {
+                  Element elem2 = (Element) grandson;
+                  if (elem2.getTagName().equals("rule-id")) {
+                    idsList.add(elem2.getTextContent());
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (iso != null) {
+          modifiedIsos.put(iso, idsList);
+        }
       }
     }
 
@@ -508,7 +574,7 @@ public class Configuration {
     }
   }
 
-  private String parseOldToNewIso(String old){
+  private String parseOldToNewIso(String old) {
     if (old.equals("Baseline")) return "TIFF_Baseline_Core_6_0";
     if (old.equals("Tiff/EP")) return "TIFF_EP";
     if (old.equals("Tiff/IT")) return "TiffITProfileChecker";
@@ -592,7 +658,7 @@ public class Configuration {
       Fix fix = fixes.getFixes().get(i);
       String val = "";
       String op = fix.getOperator();
-      if (op == null){
+      if (op == null) {
         op = "";
       } else {
         op = bundle.getString(fix.getOperator());
@@ -634,5 +700,51 @@ public class Configuration {
 
   public String getDescription() {
     return description;
+  }
+
+  public void addModifiedIso(String isoId, ArrayList<String> deleted) {
+    modifiedIsos.put(isoId, deleted);
+  }
+
+  public void removeModifiedIso(String isoId) {
+    modifiedIsos.remove(isoId);
+  }
+
+  public boolean hasModifiedIsos(String isoId) {
+    if (modifiedIsos.containsKey(isoId)) {
+      return modifiedIsos.get(isoId).size() > 0;
+    }
+    return false;
+  }
+
+  public List<String> getModifiedIso(String isoId) {
+    if (hasModifiedIsos(isoId)) {
+      return modifiedIsos.get(isoId);
+    }
+    return new ArrayList<>();
+  }
+
+  public Map<String, ArrayList<String>> getModifiedIsos() {
+    return modifiedIsos;
+  }
+
+  public void setFixes(Fixes fixes) {
+    this.fixes = fixes;
+  }
+
+  public void setRules(Rules rules) {
+    this.rules = rules;
+  }
+
+  public void setModifiedIsos(Map<String, ArrayList<String>> modifiedIsos) {
+    this.modifiedIsos = modifiedIsos;
+  }
+
+  public void setIsos(ArrayList<String> isos) {
+    this.isos = isos;
+  }
+
+  public void setFormats(ArrayList<String> formats) {
+    this.formats = formats;
   }
 }

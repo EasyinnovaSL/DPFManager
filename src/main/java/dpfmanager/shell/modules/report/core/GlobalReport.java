@@ -45,12 +45,17 @@ public class GlobalReport {
   /**
    * The list of all individual reports.
    */
-  private List<IndividualReport> reports;
+  private List<SmallIndividualReport> reports;
 
   /**
    * Number of reports ok
    */
   private Map<String, Integer> nReportsOk;
+
+  /**
+   * Number of reports ok with policy
+   */
+  private Map<String, Integer> nReportsOkPolicy;
 
   /**
    * The isos to check
@@ -62,14 +67,18 @@ public class GlobalReport {
    */
   private List<String> isosChecked;
 
+  private double errVal;
+
   /**
    * Instantiates a new global report.
    */
   public GlobalReport() {
     reports = new ArrayList<>();
     nReportsOk = new HashMap<>();
+    nReportsOkPolicy = new HashMap<>();
     isos = new ArrayList<>();
     isosChecked = new ArrayList<>();
+    errVal = 0;
   }
 
   /**
@@ -96,7 +105,7 @@ public class GlobalReport {
    *
    * @param ir the individual report.
    */
-  public void addIndividual(IndividualReport ir) {
+  public void addIndividual(SmallIndividualReport ir) {
     reports.add(ir);
   }
 
@@ -104,19 +113,26 @@ public class GlobalReport {
    * Generate the full report information.
    */
   public void generate() {
-    List<IndividualReport> toDelete = new ArrayList<>();
+    List<SmallIndividualReport> toDelete = new ArrayList<>();
     Collections.sort(reports);
-    for (IndividualReport ir : reports) {
+    for (SmallIndividualReport ir : reports) {
       if (ir.isError()){
         toDelete.add(ir);
       } else {
         for (String iso : ir.getCheckedIsos()){
           if (ir.hasValidation(iso)){
-            if (ir.getErrors(iso).size() == 0){
+            if (ir.getNErrors(iso) == 0){
               if (nReportsOk.containsKey(iso)){
                 nReportsOk.put(iso, nReportsOk.get(iso)+1);
               } else {
                 nReportsOk.put(iso, 1);
+              }
+            }
+            if (ir.getNErrorsPolicy(iso) == 0){
+              if (nReportsOkPolicy.containsKey(iso)){
+                nReportsOkPolicy.put(iso, nReportsOkPolicy.get(iso)+1);
+              } else {
+                nReportsOkPolicy.put(iso, 1);
               }
             }
             if (!isos.contains(iso)) isos.add(iso);
@@ -145,14 +161,33 @@ public class GlobalReport {
    */
   public int getAllReportsOk() {
     int n = 0;
-    for (IndividualReport ir : reports) {
+    for (SmallIndividualReport ir : reports) {
       boolean ok = true;
       for (String iso : ir.getIsosCheck()) {
-        if (ir.hasValidation(iso) && ir.getErrors(iso).size() > 0) {
+        int size = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
+        if (ir.hasValidation(iso) && size > 0) {
           ok = false;
         }
       }
       if (ok) n++;
+    }
+    return n;
+  }
+
+  /**
+   * Get the count of reports with some warning.
+   *
+   * @return nreports warning
+   */
+  public int getAllReportsWarnings() {
+    int n = 0;
+    for (SmallIndividualReport rep : reports) {
+      for (String iso : rep.getIsosCheck()) {
+        if (rep.getNWarnings(iso) > 0) {
+          n++;
+          break;
+        }
+      }
     }
     return n;
   }
@@ -167,13 +202,33 @@ public class GlobalReport {
   }
 
   public int getReportsOk(String iso) {
-    int n = 0;
-    for (IndividualReport ir : reports) {
-      if (ir.getErrors(iso).size() == 0){
-        n++;
-      }
+    return nReportsOk.containsKey(iso) ? nReportsOk.get(iso) : 0;
+//    int n = 0;
+//    for (SmallIndividualReport ir : reports) {
+//      if (ir.getNErrors(iso) == 0){
+//        n++;
+//      }
+//    }
+//    return n;
+  }
+
+  public int getReportsOkPolicy(String iso) {
+    return nReportsOkPolicy.containsKey(iso) ? nReportsOkPolicy.get(iso) : 0;
+//    int n = 0;
+//    for (SmallIndividualReport ir : reports) {
+//      int size = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
+//      if (size == 0){
+//        n++;
+//      }
+//    }
+//    return n;
+  }
+
+  public boolean hasModificationIso(String iso) {
+    for (SmallIndividualReport ir : reports) {
+      return ir.hasModifiedIso(iso);
     }
-    return n;
+    return false;
   }
 
   /**
@@ -181,20 +236,25 @@ public class GlobalReport {
    *
    * @return the individual reports
    */
-  public List<IndividualReport> getIndividualReports() {
+  public List<SmallIndividualReport> getIndividualReports() {
     return reports;
   }
 
-//  public void computePcChecks() {
-//    hasPc = false;
-//    nreportsPcOk = 0;
-//    for (IndividualReport ir : getIndividualReports()) {
-//      if (ir.hasPcValidation()) {
-//        hasPc = true;
-//        if (ir.getPCErrors().size() == 0) {
-//          nreportsPcOk++;
-//        }
-//      }
-//    }
-//  }
+  public double computeAverageErrors(){
+    if (errVal != 0) return errVal;
+    int maxErrs = 0;
+    for (SmallIndividualReport ir : getIndividualReports()) {
+      int currentErrs = ir.getAllNErrorsPolicy();
+      if (currentErrs > maxErrs) {
+        maxErrs = currentErrs;
+      }
+    }
+    if (maxErrs == 0){
+      errVal = 12.5; // Default
+    } else {
+      errVal = 100.0 / maxErrs;
+    }
+    return errVal;
+  }
+
 }

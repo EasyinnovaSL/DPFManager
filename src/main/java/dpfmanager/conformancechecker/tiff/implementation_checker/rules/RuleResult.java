@@ -34,6 +34,7 @@ public class RuleResult {
   boolean warning = false;
   boolean info = false;
   String ruleDescription;
+  boolean relaxed = false;
 
   public RuleResult() {
   }
@@ -136,5 +137,13 @@ public class RuleResult {
 
   public RuleType getRule() {
     return rule;
+  }
+
+  public void setRelaxed(boolean relaxed) {
+    this.relaxed = relaxed;
+  }
+
+  public boolean isRelaxed() {
+    return relaxed;
   }
 }

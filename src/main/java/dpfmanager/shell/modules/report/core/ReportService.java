@@ -77,7 +77,7 @@ public class ReportService extends DpfService {
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(ir.getUuid(), run));
   }
 
-  private void createGlobalReports(Long uuid, List<IndividualReport> individuals, Configuration config) {
+  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config) {
     // Create global runnable
     GlobalReportsRunnable run = new GlobalReportsRunnable(generator);
     run.setParameters(individuals, config);

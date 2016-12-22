@@ -19,7 +19,7 @@
 
 package dpfmanager.shell.modules.report.core;
 
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
+import dpfmanager.conformancechecker.tiff.implementation_checker.ValidationResult;
 import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * The Class IndividualReport.
  */
-public class IndividualReport implements Comparable {
+public class IndividualReport {
 
   /**
    * The file name.
@@ -103,6 +103,10 @@ public class IndividualReport implements Comparable {
 
   private boolean error;
 
+  private Map<String, ArrayList<String>> modifiedIsos;
+
+  private String imagePath = null;
+
   /**
    * Error constructor
    */
@@ -126,6 +130,14 @@ public class IndividualReport implements Comparable {
     warnings = new HashMap<>();
   }
 
+  public String getImagePath() {
+    return imagePath;
+  }
+
+  public void setImagePath(String path) {
+    imagePath = path;
+  }
+
   /**
    * Constructor + generate.
    *
@@ -133,13 +145,14 @@ public class IndividualReport implements Comparable {
    * @param path      the path
    * @param tiffModel the TIFF model
    */
-  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, Validator> validators) {
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, ArrayList<String>> modifiedIsosList) {
     filename = name;
     filepath = path;
     containsData = true;
     reportFilename = rFilename;
     errors = new HashMap<>();
     warnings = new HashMap<>();
+    modifiedIsos = modifiedIsosList;
     generate(tiffModel, validators);
   }
 
@@ -182,8 +195,10 @@ public class IndividualReport implements Comparable {
 
   public List<String> getCheckedIsos() {
     List<String> checked = new ArrayList<>();
-    checked.addAll(errors.keySet());
-    Collections.sort(checked, Collator.getInstance());
+    if (errors != null) {
+      checked.addAll(errors.keySet());
+      Collections.sort(checked, Collator.getInstance());
+    }
     return checked;
   }
 
@@ -229,8 +244,8 @@ public class IndividualReport implements Comparable {
     warnings.put(key, warningsPc);
   }
 
-  public void addIsosCheck(String iso){
-    if (!isosCheck.contains(iso)){
+  public void addIsosCheck(String iso) {
+    if (!isosCheck.contains(iso)) {
       isosCheck.add(iso);
     }
   }
@@ -343,38 +358,17 @@ public class IndividualReport implements Comparable {
   }
 
   /**
-   * Calculate percent.
-   *
-   * @return the int
-   */
-  public int calculatePercent() {
-    Double rest = 100.0;
-    IndividualReport ir = this;
-
-    if (isosCheck != null) {
-      for (String key : isosCheck) {
-        rest -= ir.getErrors(key).size() * 12.5;
-      }
-    }
-
-    if (rest < 0.0) {
-      rest = 0.0;
-    }
-    return rest.intValue();
-  }
-
-  /**
    * Generate the report information.
    *
    * @param tiffModel   the tiff model
    * @param validations the validations
    */
-  public void generate(TiffDocument tiffModel, Map<String, Validator> validations) {
+  public void generate(TiffDocument tiffModel, Map<String, ValidationResult> validations) {
     this.tiffModel = tiffModel;
 
     for (String key : validations.keySet()) {
       errors.put(key, validations.get(key).getErrors());
-      warnings.put(key, validations.get(key).getWarningsAndInfos());
+      warnings.put(key, validations.get(key).getWarnings(true));
     }
   }
 
@@ -406,6 +400,16 @@ public class IndividualReport implements Comparable {
     return warnings.get(key);
   }
 
+  public List<RuleResult> getWarningsPolicy(String key) {
+    List<RuleResult> filtered = new ArrayList<>();
+    for (RuleResult rr : warnings.get(key)) {
+      if (modifiedIsos.get(key).contains(rr.getRule().getId())) {
+        filtered.add(rr);
+      }
+    }
+    return filtered;
+  }
+
   /**
    * Get errors list.
    *
@@ -418,6 +422,16 @@ public class IndividualReport implements Comparable {
     return errors.get(key);
   }
 
+  public List<RuleResult> getErrorsPolicy(String key) {
+    List<RuleResult> filtered = new ArrayList<>();
+    for (RuleResult rr : errors.get(key)) {
+      if (rr.isRelaxed()) {
+        filtered.add(rr);
+      }
+    }
+    return filtered;
+  }
+
   /**
    * Get warnings list.
    *
@@ -425,8 +439,18 @@ public class IndividualReport implements Comparable {
    */
   public List<RuleResult> getOnlyWarnings(String key) {
     List<RuleResult> result = new ArrayList<>();
-    for (RuleResult rule : getWarnings(key)){
-      if (rule.getWarning()){
+    for (RuleResult rule : getWarnings(key)) {
+      if (rule.getWarning()) {
+        result.add(rule);
+      }
+    }
+    return result;
+  }
+
+  public List<RuleResult> getOnlyWarningsPolicy(String key) {
+    List<RuleResult> result = new ArrayList<>();
+    for (RuleResult rule : getWarnings(key)) {
+      if (rule.getWarning() && rule.isRelaxed()) {
         result.add(rule);
       }
     }
@@ -440,8 +464,18 @@ public class IndividualReport implements Comparable {
    */
   public List<RuleResult> getOnlyInfos(String key) {
     List<RuleResult> result = new ArrayList<>();
-    for (RuleResult rule : getWarnings(key)){
-      if (rule.getInfo()){
+    for (RuleResult rule : getWarnings(key)) {
+      if (rule.getInfo()) {
+        result.add(rule);
+      }
+    }
+    return result;
+  }
+
+  public List<RuleResult> getOnlyInfosPolicy(String key) {
+    List<RuleResult> result = new ArrayList<>();
+    for (RuleResult rule : getWarnings(key)) {
+      if (rule.getInfo() && rule.isRelaxed()) {
         result.add(rule);
       }
     }
@@ -455,8 +489,20 @@ public class IndividualReport implements Comparable {
    */
   public int getNWarnings(String key) {
     int n = 0;
-    for (RuleResult rule : getWarnings(key)){
+    for (RuleResult rule : getWarnings(key)) {
       if (rule.getWarning()) n++;
+    }
+    return n;
+  }
+
+  public int getNWarningsPolicy(String key) {
+    int n = 0;
+    if (modifiedIsos.containsKey(key)) {
+      for (RuleResult rule : getWarnings(key)) {
+        if (rule.getWarning() && !modifiedIsos.get(key).contains(rule.getRule().getId())) {
+          n++;
+        }
+      }
     }
     return n;
   }
@@ -468,8 +514,20 @@ public class IndividualReport implements Comparable {
    */
   public int getNInfos(String key) {
     int n = 0;
-    for (RuleResult rule :getOnlyInfos(key)){
+    for (RuleResult rule : getOnlyInfos(key)) {
       if (rule.getInfo()) n++;
+    }
+    return n;
+  }
+
+  public int getNInfosPolicy(String key) {
+    int n = 0;
+    if (modifiedIsos.containsKey(key)) {
+      for (RuleResult rule : getWarnings(key)) {
+        if (rule.getInfo() && !modifiedIsos.get(key).contains(rule.getRule().getId())) {
+          n++;
+        }
+      }
     }
     return n;
   }
@@ -483,28 +541,42 @@ public class IndividualReport implements Comparable {
     return getErrors(key).size();
   }
 
-  public int getAllNWarnings() {
+  public int getNErrorsPolicy(String key) {
     int n = 0;
-    for (String key : warnings.keySet()){
-      n += getNWarnings(key);
+    if (modifiedIsos.containsKey(key)) {
+      for (RuleResult rule : getErrors(key)) {
+        if (!modifiedIsos.get(key).contains(rule.getRule().getId())) {
+          n++;
+        }
+      }
     }
     return n;
   }
 
   public List<RuleResult> getAllErrors() {
     List<RuleResult> allErrors = new ArrayList<>();
-    for (String key : errors.keySet()){
-      if (getIsosCheck().contains(key)){
+    for (String key : errors.keySet()) {
+      if (getIsosCheck().contains(key)) {
         allErrors.addAll(errors.get(key));
       }
     }
     return allErrors;
   }
 
+  public int getAllNErrorsPolicy() {
+    int n = 0;
+    for (String key : errors.keySet()) {
+      if (getIsosCheck().contains(key)) {
+        n += hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
+      }
+    }
+    return n;
+  }
+
   public List<RuleResult> getAllWarnings() {
     List<RuleResult> allWarnings = new ArrayList<>();
-    for (String key : warnings.keySet()){
-      if (getIsosCheck().contains(key)){
+    for (String key : warnings.keySet()) {
+      if (getIsosCheck().contains(key)) {
         allWarnings.addAll(warnings.get(key));
       }
     }
@@ -529,15 +601,12 @@ public class IndividualReport implements Comparable {
     tiffModel = model;
   }
 
-  @Override
-  public int compareTo(Object o) {
-    if (o instanceof IndividualReport) {
-      IndividualReport other = (IndividualReport) o;
-      Integer thisPercent = calculatePercent();
-      Integer otherPercent = other.calculatePercent();
-      return thisPercent.compareTo(otherPercent);
-    } else {
-      return -1;
-    }
+  public Map<String, ArrayList<String>> getModifiedIsos() {
+    return modifiedIsos;
   }
+
+  public boolean hasModifiedIso(String iso) {
+    return modifiedIsos.containsKey(iso);
+  }
+
 }

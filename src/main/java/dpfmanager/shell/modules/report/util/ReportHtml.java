@@ -19,13 +19,13 @@
 
 package dpfmanager.shell.modules.report.util;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -44,27 +44,23 @@ public class ReportHtml extends ReportGeneric {
   public void parseGlobal(String outputfile, GlobalReport gr, ReportGenerator generator) {
     String templatePath = "templates/global.html";
     String imagePath = "templates/image.html";
-    String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
     String imagesBody = "";
     String pieFunctions = "";
 
     // Parse individual Reports
     int index = 0;
-    for (IndividualReport ir : gr.getIndividualReports()) {
-      if (!ir.containsData()) continue;
+    for (SmallIndividualReport ir : gr.getIndividualReports()) {
+      if (!ir.getContainsData()) continue;
       String imageBody;
       imageBody = generator.readFilefromResources(imagePath);
       // Image
-      String imgPath = "html/img/" + new File(ir.getReportPath()).getName() + ".jpg";
-      boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
-      if (!check) {
-        imgPath = "html/img/noise.jpg";
-      }
+      String imgPath = "html/" + ir.getImagePath();
+
       imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", encodeUrl(imgPath));
 
       // Basic
-      int percent = ir.calculatePercent();
+      int percent = ir.calculatePercent(gr.computeAverageErrors());
       imageBody = StringUtils.replace(imageBody, "##PERCENT##", "" + percent);
       imageBody = StringUtils.replace(imageBody, "##INDEX##", "" + index);
       imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());
@@ -72,38 +68,86 @@ public class ReportHtml extends ReportGeneric {
       /**
        * Errors / warnings resume (individual)
        */
-      String rowTmpl =  "<tr>\n" +
+      String thTmpl = "<tr><th colspan=\"3\" style=\"width: 100%;\">Conformance checker</th></tr>";
+      String rowTmpl = "<tr>\n" +
           "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
           "\t\t\t\t\t\t        <td class=\"c2 ##ERR_C##\">##ERR_N## errors</td>\n" +
           "\t\t\t\t\t\t        <td class=\"c2 ##WAR_C##\">##WAR_N## warnings</td>\n" +
           "\t\t\t\t\t\t        <td></td>\n" +
           "\t\t\t\t\t\t    </tr>";
+      int mode = 1;
+      if (ir.getModifiedIsos().keySet().size() > 0) {
+        thTmpl = "<tr><th style=\"width: 100%;\">Conformance checker</th><th class=\"nowrap\">Standard</th><th class=\"nowrap\">Policy</th></tr>";
+        rowTmpl = "<tr>\n" +
+            "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
+            "\t\t\t\t\t\t        <td class=\"c2\">" +
+            "\t\t\t\t\t\t\t        <p><span class=\"##ERR_C##\">##ERR_N## errors</span></p>" +
+            "\t\t\t\t\t\t\t        <p><span class=\"##WAR_C##\">##WAR_N## warnings</span></p>" +
+            "\t\t\t\t\t\t        </td>\n" +
+            "\t\t\t\t\t\t        <td class=\"c2\">" +
+            "\t\t\t\t\t\t\t        <p><span class=\"##ERR_C_P##\">##ERR_N_P## errors</span></p>" +
+            "\t\t\t\t\t\t\t        <p><span class=\"##WAR_C_P##\">##WAR_N_P## warnings</span></p>" +
+            "\t\t\t\t\t\t        </td>\n" +
+            "\t\t\t\t\t\t    </tr>";
+        mode = 2;
+      }
       String rows = "";
       int totalWarnings = 0;
-      for (String iso : ir.getCheckedIsos()){
+      for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso)) {
           String name = ImplementationCheckerLoader.getIsoName(iso);
           String row = rowTmpl;
+
+          // Standard IC
           int errorsCount = ir.getNErrors(iso);
           int warningsCount = ir.getNWarnings(iso);
           totalWarnings += warningsCount;
           row = StringUtils.replace(row, "##NAME##", name);
           row = StringUtils.replace(row, "##ERR_N##", "" + errorsCount);
           row = StringUtils.replace(row, "##WAR_N##", "" + warningsCount);
-          if (errorsCount > 0){
+          if (errorsCount > 0) {
             row = StringUtils.replace(row, "##ERR_C##", "error");
           } else {
             row = StringUtils.replace(row, "##ERR_C##", "");
           }
-          if (warningsCount > 0){
+          if (warningsCount > 0) {
             row = StringUtils.replace(row, "##WAR_C##", "warning");
           } else {
             row = StringUtils.replace(row, "##WAR_C##", "");
           }
+
+          // Standard PC
+          if (mode == 2) {
+            if (!ir.hasModifiedIso(iso)){
+              // Empty
+              row = StringUtils.replace(row, "##ERR_C_P##", "hide");
+              row = StringUtils.replace(row, "##WAR_C_P##", "hide");
+            } else {
+              int errorsCountPolicy = ir.getNErrorsPolicy(iso);
+              int warningsCountPolicy = ir.getNWarningsPolicy(iso);
+              row = StringUtils.replace(row, "##ERR_N_P##", "" + errorsCountPolicy);
+              row = StringUtils.replace(row, "##WAR_N_P##", "" + warningsCountPolicy);
+              if (errorsCountPolicy > 0) {
+                row = StringUtils.replace(row, "##ERR_C_P##", "error");
+              } else if (errorsCount > 0) {
+                row = StringUtils.replace(row, "##ERR_C_P##", "success");
+              } else {
+                row = StringUtils.replace(row, "##ERR_C_P##", "");
+              }
+              if (warningsCountPolicy > 0) {
+                row = StringUtils.replace(row, "##WAR_C_P##", "warning");
+              } else if (warningsCount > 0) {
+                row = StringUtils.replace(row, "##WAR_C_P##", "success");
+              } else {
+                row = StringUtils.replace(row, "##WAR_C_P##", "");
+              }
+            }
+          }
+
           rows += row;
         }
       }
-      imageBody = StringUtils.replace(imageBody, "##TABLE_RESUME_IMAGE##", rows);
+      imageBody = StringUtils.replace(imageBody, "##TABLE_RESUME_IMAGE##", thTmpl + rows);
       imageBody = StringUtils.replace(imageBody, "##HREF##", "html/" + encodeUrl(new File(ir.getReportPath()).getName() + ".html"));
 
       /**
@@ -157,7 +201,7 @@ public class ReportHtml extends ReportGeneric {
      * Conforms table (all)
      */
     String rows = "";
-    for (String iso : gr.getCheckedIsos()){
+    for (String iso : gr.getCheckedIsos()) {
       if (gr.getIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
         rows += makeConformsRow(gr, iso, true);
       }
@@ -206,11 +250,17 @@ public class ReportHtml extends ReportGeneric {
     generator.writeToFile(outputfile, htmlBody);
   }
 
-  private String makeConformsRow(GlobalReport gr, String iso, boolean force){
-    String row = "<tr><td class=\"##TYPE## border-bot\">##OK##</td><td class=\"##TYPE## border-bot\">conforms to ##NAME##</td></tr>";
-    row = StringUtils.replace(row, "##OK##", "" + gr.getReportsOk(iso));
+  private String makeConformsRow(GlobalReport gr, String iso, boolean force) {
+    String row = "<tr><td class=\"##TYPE## border-bot\">##OK##</td><td class=\"##TYPE## border-bot\">Conforms to ##NAME## ##POLICY##</td></tr>";
+    String policy = "";
+    int n = 0;
+    if (gr.hasModificationIso(iso)){
+      policy = gr.getReportsOk(iso) == gr.getReportsOkPolicy(iso) ? "" : " (with custom policy)";
+    }
+    row = StringUtils.replace(row, "##OK##", "" + (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)));
     row = StringUtils.replace(row, "##NAME##", ImplementationCheckerLoader.getIsoName(iso));
-    row = StringUtils.replace(row, "##TYPE##", gr.getReportsOk(iso) == gr.getReportsCount() ? "success" : "error");
+    row = StringUtils.replace(row, "##POLICY##", policy);
+    row = StringUtils.replace(row, "##TYPE##", (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)) == gr.getReportsCount() ? "success" : "error");
     return row;
   }
 
