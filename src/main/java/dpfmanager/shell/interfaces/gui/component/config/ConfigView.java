@@ -156,7 +156,7 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   private void initAllFragments() {
     getContext().getManagedFragmentHandler(Wizard1Fragment.class).getController().init();
-    getContext().getManagedFragmentHandler(Wizard1Fragment.class).getController().setController(getController());
+    getContext().getManagedFragmentHandler(Wizard2Fragment.class).getController().setController(getController());
     getContext().getManagedFragmentHandler(Wizard6Fragment.class).getController().setController(getController());
     getContext().getManagedFragmentHandler(Wizard2Fragment.class).getController().setModel(getModel());
     getContext().getManagedFragmentHandler(Wizard4Fragment.class).getController().setModel(getModel());
@@ -251,9 +251,9 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
 
   public void gotoEdit() {
     showSubConfig(6);
-    setStepsBlue(1);
-    setConfigArrowTranslate(1);
-    changeStepTitle(1);
+    setStepsBlue(2);
+    setConfigArrowTranslate(2);
+    changeStepTitle(2);
     NodeUtil.hideNode(labelW1);
     NodeUtil.hideNode(backButton);
     NodeUtil.hideNode(continueButton);

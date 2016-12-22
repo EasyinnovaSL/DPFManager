@@ -24,6 +24,8 @@ import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -45,6 +47,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.imageio.ImageIO;
 
@@ -52,6 +61,7 @@ import javax.imageio.ImageIO;
  * Created by easy on 06/05/2016.
  */
 public class Report {
+  BufferedImage buffer;
 
   /**
    * Tiff 2 jpg.
@@ -61,14 +71,13 @@ public class Report {
    */
   protected BufferedImage tiff2Jpg(String inputfile) {
     try {
-      BufferedImage image = ImageIO.read(new File(inputfile));
-      //BufferedImage image = loadImageCrazyFast(new File(inputfile).toURI().toURL());
+      buffer = ImageIO.read(new File(inputfile));
 
       double factor = 1.0;
 
       // Scale width
-      int width = image.getWidth();
-      int height = image.getHeight();
+      int width = buffer.getWidth();
+      int height = buffer.getHeight();
       if (width > 500) {
         factor = 500.0 / width;
       }
@@ -82,11 +91,11 @@ public class Report {
         width = (int) (width * factor);
       }
 
-      BufferedImage img = scale(image, width, height);
+      BufferedImage img = scale(buffer, width, height);
       return img;
     } catch (Exception e) {
+      return null;
     }
-    return null;
   }
 
   BufferedImage scale(BufferedImage src, int w, int h) {

@@ -21,43 +21,27 @@ package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.interfaces.gui.component.config.ConfigController;
-import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 
-import org.apache.commons.io.FileUtils;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -77,16 +61,7 @@ public class Wizard1Fragment {
   @FXML
   private VBox vboxRadios;
 
-  private ConfigController controller;
-
-  private Integer count;
-
   public Wizard1Fragment() {
-    count = 0;
-  }
-
-  public void setController(ConfigController controller) {
-    this.controller = controller;
   }
 
   public void init() {
@@ -102,20 +77,6 @@ public class Wizard1Fragment {
       }
     }
 
-    // User configs
-    File folder = new File(DPFManagerProperties.getIsosDir());
-    for (final File fileEntry : folder.listFiles()) {
-      if (fileEntry.isFile()) {
-        if (fileEntry.getName().toLowerCase().endsWith(".xml")) {
-          if (ImplementationCheckerLoader.isValid(fileEntry.getName())) {
-            addConfigCheckBox(fileEntry, false);
-          } else {
-            errors.add(fileEntry.getName());
-          }
-        }
-      }
-    }
-
     // Inform errors
     if (errors.size() == 1) {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("w1errorReadingIso").replace("%1", errors.get(0))));
@@ -125,15 +86,7 @@ public class Wizard1Fragment {
   }
 
   private void addInternalCheckBox(String iso) {
-    addCheckBox(ImplementationCheckerLoader.getFileName(iso), ImplementationCheckerLoader.getIsoName(iso), bundle.getString("w6BuiltIn"),false, false);
-  }
-
-  public void addExternalCheckBox(String path, boolean selected) {
-    addCheckBox(getNextId("external"), path, path, selected, true);
-  }
-
-  public void addConfigCheckBox(File isoFile, boolean selected) {
-    addCheckBox("config" + isoFile.getName(), ImplementationCheckerLoader.getIsoName(isoFile.getName()), isoFile.getAbsolutePath(),selected, true);
+    addCheckBox(ImplementationCheckerLoader.getFileName(iso), ImplementationCheckerLoader.getIsoName(iso), bundle.getString("w6BuiltIn"), false, false);
   }
 
   private void addCheckBox(String id, String name, String path, boolean selected, boolean delete) {
@@ -149,68 +102,7 @@ public class Wizard1Fragment {
     chk.setTooltip(new Tooltip(path));
     hbox.getChildren().add(chk);
 
-    // EDIT
-    Button edit = new Button();
-    edit.getStyleClass().addAll("edit-img", "action-img-16");
-    edit.setCursor(Cursor.HAND);
-    edit.setOnMouseClicked(new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
-        String iso = chk.getId();
-        String path = null;
-        if (iso.startsWith("external")) {
-          iso = chk.getText();
-          path = iso;
-        } else if (chk.getId().startsWith("config")) {
-          iso = chk.getId().replace("config","");
-          path = DPFManagerProperties.getIsosDir() + "/" + iso;
-        }
-        controller.editIso(iso, path);
-      }
-    });
-    hbox.getChildren().add(edit);
-    HBox.setMargin(edit, new Insets(0, 0, 0, 10));
-
-    // DELETE
-    if (delete) {
-      Button icon = new Button();
-      icon.getStyleClass().addAll("delete-img", "action-img-16");
-      icon.setCursor(Cursor.HAND);
-      icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-          if (chk.getId().startsWith("external")) {
-            // Only from gui
-            vboxRadios.getChildren().remove(hbox);
-          } else if (chk.getId().startsWith("config")) {
-            // From system
-            String name = chk.getId().replace("config", "");
-            File file = new File(DPFManagerProperties.getIsosDir() + "/" + name);
-            if (file.exists() && file.isFile() && acceptDelete(file)) {
-              file.delete();
-              vboxRadios.getChildren().remove(hbox);
-            }
-          }
-        }
-      });
-      hbox.getChildren().add(icon);
-      HBox.setMargin(icon, new Insets(0, 0, 0, 10));
-    }
-
     vboxRadios.getChildren().add(hbox);
-  }
-
-  private boolean acceptDelete(File file){
-    String YES = bundle.getString("yes");
-    String NO = bundle.getString("no");
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.setTitle(bundle.getString("w1DeleteISO"));
-    alert.setHeaderText(bundle.getString("w1DeleteConfirmation").replace("%1", file.getName()));
-    alert.setContentText(bundle.getString("deleteInfo"));
-    ButtonType buttonYes = new ButtonType(YES, ButtonBar.ButtonData.YES);
-    ButtonType buttonNo = new ButtonType(NO, ButtonBar.ButtonData.NO);
-    alert.getButtonTypes().setAll(buttonNo, buttonYes);
-    return alert.showAndWait().get().equals(buttonYes);
   }
 
   public void clear() {
@@ -225,7 +117,7 @@ public class Wizard1Fragment {
           delete = chk.getId().startsWith("external");
         }
       }
-      if (delete){
+      if (delete) {
         toDelete.add(hbox);
       }
     }
@@ -236,16 +128,7 @@ public class Wizard1Fragment {
     config.getIsos().clear();
     for (CheckBox chk : getCheckBoxs()) {
       if (chk.isSelected()) {
-        if (chk.getId().startsWith("external")) {
-          // Path
-          config.addISO(chk.getText());
-        } else if (chk.getId().startsWith("config")) {
-          // Config
-          config.addISO(chk.getId().replace("config", ""));
-        } else {
-          // Internal
-          config.addISO(chk.getId());
-        }
+        config.addISO(chk.getId());
       }
     }
   }
@@ -254,20 +137,7 @@ public class Wizard1Fragment {
     for (String iso : config.getIsos()) {
       CheckBox chk = getCheckById(iso);
       if (chk != null) {
-        // Internal
         chk.setSelected(true);
-      } else {
-        // External
-        File file = new File(iso);
-        File fileConf = new File(DPFManagerProperties.getIsosDir() + "/" + iso);
-        if (file.exists() && file.isFile()) {
-          addExternalCheckBox(iso, true);
-        } else if (fileConf.exists() && fileConf.isFile()) {
-          CheckBox chk2 = getCheckById("config" + fileConf.getName());
-          if (chk2 != null) {
-            chk2.setSelected(true);
-          }
-        }
       }
     }
   }
@@ -285,87 +155,11 @@ public class Wizard1Fragment {
     List<CheckBox> boxs = new ArrayList<>();
     for (Node node : vboxRadios.getChildren()) {
       HBox hbox = (HBox) node;
-      if (hbox.getChildren().get(0) instanceof CheckBox){
+      if (hbox.getChildren().get(0) instanceof CheckBox) {
         boxs.add((CheckBox) hbox.getChildren().get(0));
       }
     }
     return boxs;
-  }
-
-  @FXML
-  protected void importIso() {
-    File file;
-    String value = GuiWorkbench.getTestParams("importIso");
-    if (value != null) {
-      //Test mode
-      file = new File(value);
-    } else {
-      //Ask for file
-      String configDir = DPFManagerProperties.getDefaultDirConfig();
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle(bundle.getString("w1Import"));
-      fileChooser.setInitialDirectory(new File(configDir));
-      FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(bundle.getString("w1XmlFiles"), "*.xml");
-      fileChooser.getExtensionFilters().add(extFilter);
-      file = fileChooser.showOpenDialog(GuiWorkbench.getMyStage());
-    }
-
-    addIsoFile(file, true);
-  }
-
-  public void addIsoFile(File file, boolean ask) {
-    if (file == null) {
-      return;
-    }
-
-    // Check valid config
-    ImplementationCheckerObjectType rules = ImplementationCheckerLoader.getRules(file.getPath());
-    if (rules == null) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("w1errorReadingIso").replace("%1", file.getPath())));
-      return;
-    }
-
-    if (ask) {
-      DPFManagerProperties.setDefaultDirConfig(file.getParent());
-      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-      alert.setTitle(bundle.getString("w1copyTitle"));
-      alert.setHeaderText(bundle.getString("w1copyHeader"));
-      alert.setContentText(bundle.getString("w1copyContent"));
-      ButtonType buttonTypeYes = new ButtonType(bundle.getString("yes"));
-      ButtonType buttonTypeNo = new ButtonType(bundle.getString("no"));
-      alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
-
-      Optional<ButtonType> result = alert.showAndWait();
-      if (result.get() == buttonTypeYes) {
-        // Copy the file
-        boolean needAdd = true, error = false;
-        File configFile = new File(DPFManagerProperties.getIsosDir() + "/" + file.getName());
-        if (configFile.exists()) {
-          configFile.delete();
-          needAdd = false;
-        }
-        try {
-          FileUtils.copyFile(file, configFile);
-        } catch (IOException e) {
-          error = true;
-        }
-        if (error) {
-          // Add source file
-          addExternalCheckBox(file.getAbsolutePath(), true);
-          context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.WARNING, bundle.getString("w1errorCopyConfig")));
-        } else if (needAdd) {
-          addConfigCheckBox(configFile, true);
-        }
-      } else {
-        addExternalCheckBox(file.getAbsolutePath(), true);
-      }
-    } else {
-      addExternalCheckBox(file.getAbsolutePath(), true);
-    }
-  }
-
-  private String getNextId(String prefix) {
-    return prefix + (++count);
   }
 
 }

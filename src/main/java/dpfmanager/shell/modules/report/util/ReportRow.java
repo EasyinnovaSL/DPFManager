@@ -358,15 +358,12 @@ public class ReportRow {
       }
 
       // Warnings
-      if (xml.indexOf("<report>") > 0) {
+      if (xml.indexOf("<warnings>") >= 0) {
         try {
-          String[] list = xml.split("<report>");
-          for (int i = 1; i < list.length; i++) {
-            String sub = list[i];
-            if (sub.contains("<level>warning</level>")) {
-              warnings++;
-            }
-          }
+          String sub = xml.substring(xml.indexOf("<warnings>"));
+          sub = sub.substring(sub.indexOf(">") + 1);
+          sub = sub.substring(0, sub.indexOf("<"));
+          warnings = Integer.parseInt(sub);
         } catch (Exception e) {
           warnings = -1;
         }
@@ -489,7 +486,7 @@ public class ReportRow {
       JsonObject jObjRoot = new JsonParser().parse(json).getAsJsonObject();
       String stime = getStime(file.getPath());
       String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".json");
-      JsonObject jObj = jObjRoot.getAsJsonObject("globalreport");
+      JsonObject jObj = jObjRoot;
 
       // Passed
       if (jObj.has("stats")) {
@@ -512,18 +509,15 @@ public class ReportRow {
       }
 
       // Warnings
-      if (jObj.has("individualreports")) {
+      if (jObj.has("stats")) {
         try {
-          JsonArray jArray = ((JsonObject) jObj.get("individualreports")).get("report").getAsJsonArray().getAsJsonArray();
-          for (JsonElement element : jArray) {
-            if (element.toString().contains("\"warning\"")) {
-              warnings++;
-            }
-          }
+          JsonObject jStats = jObj.get("stats").getAsJsonObject();
+          warnings = Integer.parseInt(jStats.get("warnings").getAsString());
         } catch (Exception e) {
           warnings = -1;
         }
       }
+
 
       // Score
       if (n > 0) {

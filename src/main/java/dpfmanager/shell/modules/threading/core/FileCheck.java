@@ -21,6 +21,7 @@ package dpfmanager.shell.modules.threading.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class FileCheck {
   private Configuration config;
   private String internal;
   private String input;
-  private List<IndividualReport> individuals;
+  private List<SmallIndividualReport> individuals;
 
   /** Runnable tasks of this check */
   private List<DpfRunnable> runnables;
@@ -62,10 +63,11 @@ public class FileCheck {
   }
 
   public void addIndividual(IndividualReport ir){
-    individuals.add(ir);
+    SmallIndividualReport small = new SmallIndividualReport(ir);
+    individuals.add(small);
   }
 
-  public List<IndividualReport> getIndividuals() {
+  public List<SmallIndividualReport> getIndividuals() {
     return individuals;
   }
 

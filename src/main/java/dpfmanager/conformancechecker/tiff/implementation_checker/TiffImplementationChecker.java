@@ -179,21 +179,29 @@ public class TiffImplementationChecker {
     // Strips check
     if (ifd.hasStrips()) {
       int pixelSize = 0;
-      
-      for (int i = 0; i < metadata.get("BitsPerSample").getCardinality(); i++) {
-        pixelSize += metadata.get("BitsPerSample").getValue().get(i).toInt();
+
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample"))) {
+        for (int i = 0; i < metadata.get("BitsPerSample").getCardinality(); i++) {
+          pixelSize += metadata.get("BitsPerSample").getValue().get(i).toInt();
+        }
+      } else {
+        tiffIfd.setCorrectStrips(0);
       }
       int id = com.easyinnova.tiff.model.TiffTags.getTagId("StripBYTECount");
-      int nsc = metadata.get(id).getCardinality();
-      if (metadata.get("Compression").getFirstNumericValue() == 1 && pixelSize >= 8) {
-        int calculatedImageLength = 0;
-        for (int i = 0; i < nsc; i++) {
-          calculatedImageLength += metadata.get(id).getValue().get(i).toInt();
+      if (metadata.containsTagId(id) && metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("Compression")) && metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ImageLength")) && metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ImageWidth"))) {
+        int nsc = metadata.get(id).getCardinality();
+        if (metadata.get("Compression").getFirstNumericValue() == 1 && pixelSize >= 8) {
+          int calculatedImageLength = 0;
+          for (int i = 0; i < nsc; i++) {
+            calculatedImageLength += metadata.get(id).getValue().get(i).toInt();
+          }
+          if (calculatedImageLength != metadata.get("ImageLength").getFirstNumericValue()
+              * metadata.get("ImageWidth").getFirstNumericValue() * pixelSize / 8) {
+            tiffIfd.setCorrectStrips(0);
+          }
         }
-        if (calculatedImageLength != metadata.get("ImageLength").getFirstNumericValue()
-            * metadata.get("ImageWidth").getFirstNumericValue() * pixelSize / 8) {
-          tiffIfd.setCorrectStrips(0);
-        }
+      } else {
+        tiffIfd.setCorrectStrips(0);
       }
 
       //long rps = 1;
@@ -207,24 +215,33 @@ public class TiffImplementationChecker {
 
     // Tiles check
     if (ifd.hasTiles()) {
-      long tileLength = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("TileLength")).getFirstNumericValue();;
-      long tileWidth = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("TileWidth")).getFirstNumericValue();;
-      long tilesPerImage =
-          ((metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("ImageWidth")).getFirstNumericValue() + tileWidth - 1) / tileWidth)
-              * ((metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("ImageLength")).getFirstNumericValue() + tileLength - 1) / tileLength);
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("TileLength")) &&
+          metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("TileWidth")) &&
+          metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ImageWidth")) &&
+          metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ImageLength")) &&
+          metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration")) &&
+          metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SamplesPerPixel"))) {
+        long tileLength = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("TileLength")).getFirstNumericValue();
+        long tileWidth = metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("TileWidth")).getFirstNumericValue();
+        long tilesPerImage =
+            ((metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("ImageWidth")).getFirstNumericValue() + tileWidth - 1) / tileWidth)
+                * ((metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("ImageLength")).getFirstNumericValue() + tileLength - 1) / tileLength);
 
-      // Check Plannar Configuration
-      int id = com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration");
-      int idspp = com.easyinnova.tiff.model.TiffTags.getTagId("SamplesPerPixel");
-      if (metadata.containsTagId(id) && metadata.containsTagId(idspp)) {
-        long planar = metadata.get(id).getFirstNumericValue();
-        long spp = metadata.get(idspp).getFirstNumericValue();
-        if (planar == 2) {
-          long spp_tpi = spp * tilesPerImage;
-          if (ifd.getImageTiles().getTiles().size() < spp_tpi) {
-            tiffIfd.setCorrectTiles(0);
+        // Check Plannar Configuration
+        int id = com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration");
+        int idspp = com.easyinnova.tiff.model.TiffTags.getTagId("SamplesPerPixel");
+        if (metadata.containsTagId(id) && metadata.containsTagId(idspp)) {
+          long planar = metadata.get(id).getFirstNumericValue();
+          long spp = metadata.get(idspp).getFirstNumericValue();
+          if (planar == 2) {
+            long spp_tpi = spp * tilesPerImage;
+            if (ifd.getImageTiles().getTiles().size() < spp_tpi) {
+              tiffIfd.setCorrectTiles(0);
+            }
           }
         }
+      } else {
+        tiffIfd.setCorrectTiles(0);
       }
     }
 
@@ -269,7 +286,7 @@ public class TiffImplementationChecker {
       }
 
       // Check photometric casuistic
-      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation"))) {
+      if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")) && metadata.get("PhotometricInterpretation").getCardinality() > 0) {
         int photo = (int) metadata.get("PhotometricInterpretation").getFirstNumericValue();
         if (photo != 6) {
           if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YCbCrCoefficients"))) correctPhotometricCasuistic = false;
@@ -278,7 +295,7 @@ public class TiffImplementationChecker {
           if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("ReferenceBlackWhite"))) correctPhotometricCasuistic = false;
         }
         long spp = 0;
-        if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SamplesPerPixel")))
+        if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SamplesPerPixel")) && metadata.get("SamplesPerPixel").getCardinality() > 0)
           spp = metadata.get("SamplesPerPixel").getFirstNumericValue();
         if (photo == 2 || photo == 3) {
           if (spp != 3) {
@@ -294,6 +311,8 @@ public class TiffImplementationChecker {
             if (!metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("CFAPattern"))) correctPhotometricCasuistic = false;
           }
         }
+      } else {
+        correctPhotometricCasuistic = false;
       }
 
       // Check YcbCr
@@ -338,12 +357,13 @@ public class TiffImplementationChecker {
     }
 
     // Check image type
-    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation"))) {
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")) && metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")).getCardinality() > 0) {
       int photometric = (int) metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")).getFirstNumericValue();
       switch (photometric) {
         case 0:
         case 1:
           if (!metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample"))
+              || metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample")).getCardinality() == 0
               || metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample")).getFirstNumericValue() == 1) {
             tiffIfd.setType("Bilevel");
           } else {
@@ -385,14 +405,19 @@ public class TiffImplementationChecker {
     }
     tiffIfd.setEqualXYResolution(eqxy);
     String dpi = "";
-    if (ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YResolution"))) {
+    if (ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("YResolution"))
+        && ifd.getTag("XResolution").getValue().size() > 0 && ifd.getTag("YResolution").getValue().size() > 0) {
       try {
-        Rational ratx = (Rational) ifd.getTag("XResolution").getValue().get(0);
-        Rational raty = (Rational) ifd.getTag("YResolution").getValue().get(0);
-        int xres = (int) ratx.getFloatValue();
-        int yres = (int) raty.getFloatValue();
-        if (xres % 2 != 0 || yres % 2 != 0) dpi = "Uneven";
-        else dpi = "Even";
+        abstractTiffType rx = ifd.getTag("XResolution").getValue().get(0);
+        abstractTiffType ry = ifd.getTag("YResolution").getValue().get(0);
+        if (rx instanceof Rational && ry instanceof Rational) {
+          Rational ratx = (Rational) rx;
+          Rational raty = (Rational) ry;
+          int xres = (int) ratx.getFloatValue();
+          int yres = (int) raty.getFloatValue();
+          if (xres % 2 != 0 || yres % 2 != 0) dpi = "Uneven";
+          else dpi = "Even";
+        }
       } catch (Exception ex) {
         ex.printStackTrace();
       }
@@ -430,13 +455,13 @@ public class TiffImplementationChecker {
     int bps = -1;
     int planar = -1;
     int comp = -1;
-    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SubfileType"))) {
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("SubfileType")) && metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("SubfileType")).getCardinality() > 0) {
       sft = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("SubfileType")).getFirstNumericValue();
     }
-    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("Compression"))) {
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("Compression")) && metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("Compression")).getCardinality() > 0) {
       comp = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("Compression")).getFirstNumericValue();
     }
-    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation"))) {
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")) && metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")).getCardinality() > 0) {
       photo = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PhotometricInterpretation")).getFirstNumericValue();
     }
     if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("BitsPerSample"))) {
@@ -445,7 +470,7 @@ public class TiffImplementationChecker {
         bps = (int) tv.getFirstNumericValue();
       }
     }
-    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration"))) {
+    if (metadata.containsTagId(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration")) && metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration")).getCardinality() > 0) {
       planar = (int)metadata.get(com.easyinnova.tiff.model.TiffTags.getTagId("PlanarConfiguration")).getFirstNumericValue();
     }
 
@@ -587,27 +612,33 @@ public class TiffImplementationChecker {
     boolean correctTagOrdering = true;
     boolean duplicatedTags = false;
     HashSet tagIds = new HashSet<>();
-    IFD exif = (IFD) tv.getValue().get(0);
-    for (TagValue tvv : exif.getTags().getTags()) {
-      if (tvv.getId() <= prevTagId) {
-        correctTagOrdering = false;
+    if (tv.getValue().size() > 0) {
+      abstractTiffType obj = tv.getValue().get(0);
+      if (obj instanceof IFD) {
+        IFD exif = (IFD) obj;
+        for (TagValue tvv : exif.getTags().getTags()) {
+          if (tvv.getId() <= prevTagId) {
+            correctTagOrdering = false;
+          }
+          if (tagIds.contains(tvv.getId())) {
+            duplicatedTags = true;
+          } else {
+            tagIds.add(tvv.getId());
+          }
+          prevTagId = tvv.getId();
+          tags.add(CreateTiffTag(tvv, 0));
+        }
+        TiffTags tiffTags = new TiffTags();
+        tiffTags.setTagsCount(tags.size());
+        tiffTags.setTags(tags);
+        ifd.setTags(tiffTags);
+        ifd.setTagOrdering(correctTagOrdering ? 1 : 0);
+        ifd.setDuplicateTags(duplicatedTags ? 1 : 0);
+        ifd.setClassElement(nodeName);
+        return ifd;
       }
-      if (tagIds.contains(tvv.getId())) {
-        duplicatedTags = true;
-      } else {
-        tagIds.add(tvv.getId());
-      }
-      prevTagId = tvv.getId();
-      tags.add(CreateTiffTag(tvv, 0));
     }
-    TiffTags tiffTags = new TiffTags();
-    tiffTags.setTagsCount(tags.size());
-    tiffTags.setTags(tags);
-    ifd.setTags(tiffTags);
-    ifd.setTagOrdering(correctTagOrdering ? 1 : 0);
-    ifd.setDuplicateTags(duplicatedTags ? 1 : 0);
-    ifd.setClassElement(nodeName);
-    return ifd;
+    return null;
   }
 
   boolean checkOffsetOverlapped(int offset, int length) {
@@ -669,7 +700,8 @@ public class TiffImplementationChecker {
     if (tv.getId() == 34665) {
       // EXIF
       TiffIfd ifd = createIfdNode(tv, "exif");
-      tt.setExif(ifd);
+      if (ifd != null)
+        tt.setExif(ifd);
     } else if (tv.getId() == 330) {
       // SubIFD
       TiffIfd ifd = CreateIFDValidation((IFD)tv.getValue().get(0), -parentIfd);
@@ -678,7 +710,8 @@ public class TiffImplementationChecker {
     } else if (tv.getId() == 400) {
       // GlobalParametersIFD
       TiffIfd ifd = createIfdNode(tv, "globalparameters");
-      tt.setGlobalParameters(ifd);
+      if (ifd != null)
+        tt.setGlobalParameters(ifd);
     } else if (tv.getId() == 700) {
       // XMP
     } else if (tv.getId() == 33723) {
@@ -695,7 +728,12 @@ public class TiffImplementationChecker {
 
       }
     } else {
-      tt.setValue(tv.toString().replaceAll("\\p{C}", "?"));
+      try {
+        tt.setValue(tv.toString().replaceAll("\\p{C}", "?"));
+      } catch (Exception ex) {
+        tv.toString();
+        ex.toString();
+      }
     }
     return tt;
   }

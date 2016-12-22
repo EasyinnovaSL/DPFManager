@@ -365,27 +365,29 @@ public class ThreadingService extends DpfService {
   private void showToUser(String internal, Configuration config) {
     String name = "";
     String path;
-    if (config.getFormats().contains("HTML")){
-      name = "report.html";
-    } else if (config.getFormats().contains("PDF")) {
-      name = "report.pdf";
-    }
-
-    path = internal + name;
-    if (config.getOutput() != null) {
-      path = config.getOutput() + "/" + name;
-    }
-    File file = new File(path);
-    if (file.exists() && Desktop.isDesktopSupported()) {
-      try {
-        String fullPath = file.getAbsolutePath();
-        fullPath = fullPath.replaceAll("\\\\", "/");
-        Desktop.getDesktop().browse(new URI("file:///" + fullPath.replaceAll(" ", "%20")));
-      } catch (Exception e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("browserError"), e));
+    if (config != null) {
+      if (config.getFormats().contains("HTML")) {
+        name = "report.html";
+      } else if (config.getFormats().contains("PDF")) {
+        name = "report.pdf";
       }
-    } else {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("deskServError")));
+
+      path = internal + name;
+      if (config.getOutput() != null) {
+        path = config.getOutput() + "/" + name;
+      }
+      File file = new File(path);
+      if (file.exists() && Desktop.isDesktopSupported()) {
+        try {
+          String fullPath = file.getAbsolutePath();
+          fullPath = fullPath.replaceAll("\\\\", "/");
+          Desktop.getDesktop().browse(new URI("file:///" + fullPath.replaceAll(" ", "%20")));
+        } catch (Exception e) {
+          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("browserError"), e));
+        }
+      } else {
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("deskServError")));
+      }
     }
   }
 
