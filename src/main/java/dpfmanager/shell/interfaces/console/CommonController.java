@@ -90,11 +90,15 @@ public class CommonController {
   }
 
   public void parseFiles(String arg){
+    files.add(parseFile(arg));
+  }
+
+  public String parseFile(String arg){
     String arg_mod = arg;
     if (!new File(arg_mod).isAbsolute() && !new File(arg_mod).exists() && new File("../" + arg_mod).exists()) {
       arg_mod = "../" + arg;
     }
-    files.add(arg_mod);
+    return arg_mod;
   }
 
   public boolean parseOutput(String output) {
@@ -107,8 +111,13 @@ public class CommonController {
     } else if (!tmp.isDirectory()) {
       printOut(bundle.getString("outputMustDirectory"));
       output = null;
-    } else if (tmp.listFiles().length > 0) {
-      printOut(bundle.getString("outputMustEmpty"));
+    }
+//    else if (tmp.listFiles().length > 0) {
+//      printOut(bundle.getString("outputMustEmpty"));
+//      output = null;
+//    }
+    else if (!tmp.isAbsolute()){
+      printOut(bundle.getString("outputMustAbsolute"));
       output = null;
     }
     if (output != null) {
@@ -223,6 +232,10 @@ public class CommonController {
    */
   public Map<String, String> getParameters() {
     return parameters;
+  }
+
+  public boolean hasParameter(String key){
+    return parameters.containsKey(key);
   }
 
   public void putParameter(String key, String value){

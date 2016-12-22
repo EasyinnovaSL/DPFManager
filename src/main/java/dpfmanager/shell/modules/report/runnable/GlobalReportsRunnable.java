@@ -94,7 +94,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
       String summaryXmlFile = null;
       try {
         summaryXmlFile = generator.makeSummaryReport(internalReportFolder, global, config);
-        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", internalReportFolder)));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", config.getOutput() != null ? config.getOutput() : internalReportFolder)));
       } catch (OutOfMemoryError e) {
         context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorOccurred"), bundle.getString("outOfMemory")));
       }

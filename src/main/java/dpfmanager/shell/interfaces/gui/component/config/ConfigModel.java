@@ -22,6 +22,7 @@ package dpfmanager.shell.interfaces.gui.component.config;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.mvc.DpfModel;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
@@ -60,20 +61,40 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
     path = null;
   }
 
-  public void initEditConfig(String path){
+  public void initEditConfig(String p){
     // Trigger when "Edit" button clicked
     step = 0;
-    try {
-      this.path = path;
-      editingConfig = true;
-      config = new Configuration();
-      config.ReadFile(path);
-    } catch (Exception e) {
-      this.path = null;
+    path = p;
+    editingConfig = true;
+    config = readCheckConfig(path);
+    if (config == null) {
+      path = null;
       editingConfig = false;
       config = new Configuration();
       config.initDefault();
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("readConfigFail"), getBundle().getString("startingNew")));
+    }
+  }
+
+  private Configuration readCheckConfig(String path) {
+    try {
+      Configuration configuration = new Configuration();
+      if (path != null && !path.isEmpty()) {
+        if (!path.contains("/") && !path.contains("\\")) {
+          // Read from configurations folder
+          String pathAux = DPFManagerProperties.getConfigDir() + "/" + path + ".dpf";
+          configuration.ReadFileNew(pathAux);
+        } else {
+          // Read from specified file
+          configuration.ReadFileNew(path);
+        }
+      } else {
+        // Read from jar (default default configuration)
+        configuration.ReadFileNew(DPFManagerProperties.getDefaultBuiltInConfig());
+      }
+      return configuration;
+    } catch (Exception e) {
+      return null;
     }
   }
 

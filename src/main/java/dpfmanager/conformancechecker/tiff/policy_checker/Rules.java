@@ -19,6 +19,7 @@
 
 package dpfmanager.conformancechecker.tiff.policy_checker;
 
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -94,5 +95,20 @@ public class Rules {
     rule.setValue(value);
     rule.setWarning(warning);
     rules.add(rule);
+  }
+
+  public boolean removeRule(String tag, String operator, String value, boolean warning){
+    Rule toDelete = null;
+    for (Rule rule : rules){
+      if (rule.getTag().equals(tag) && rule.getOperator().equals(operator) && rule.getValue().equals(value) && rule.getWarning() == warning){
+        toDelete = rule;
+        break;
+      }
+    }
+    if (toDelete != null){
+      rules.remove(toDelete);
+      return true;
+    }
+    return false;
   }
 }

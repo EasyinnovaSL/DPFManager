@@ -101,6 +101,9 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   public static String POLICY_ISO_NAME = "Policy rules";
 
+  public TiffConformanceChecker() {
+  }
+
   public TiffConformanceChecker(ConformanceConfig config, Configuration checkConfig) {
     this.checkConfig = checkConfig;
     setConfig(config);
@@ -225,7 +228,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       field = doc.createElement("field");
       fields.appendChild(field);
       addElement(doc, field, "name", "EqualXYResolution");
-      addElement(doc, field, "type", "integer");
+      addElement(doc, field, "type", "boolean");
       addElement(doc, field, "description", "XResolution equal to YResolution");
       addElement(doc, field, "operators", "=");
       addElement(doc, field, "values", "False,True");
@@ -233,7 +236,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       //field = doc.createElement("field");
       //fields.appendChild(field);
       //addElement(doc, field, "name", "BlankPage");
-      //addElement(doc, field, "type", "integer");
+      //addElement(doc, field, "type", "boolean");
       //addElement(doc, field, "description", "Page devoid of content (completely white)");
       //addElement(doc, field, "operators", "=");
       //addElement(doc, field, "values", "False,True");
@@ -346,6 +349,34 @@ public class TiffConformanceChecker extends ConformanceChecker {
       fields.add(field);
     }
     return fields;
+  }
+
+  public ArrayList<String> getFixes() {
+    ArrayList<String> fixes = new ArrayList<>();
+    fixes.add("removeTag");
+    fixes.add("addTag");
+    return fixes;
+  }
+
+  public ArrayList<String> getFixFields() {
+    ArrayList<String> fields = new ArrayList<>();
+    fields.add("ImageDescription");
+    fields.add("Copyright");
+    fields.add("Artist");
+    fields.add("DateTime");
+    fields.add("Software");
+    fields.add("Make");
+    fields.add("Model");
+    return fields;
+  }
+
+  public ArrayList<String> getOperators(String name){
+    for (Field field : getConformanceCheckerFields()) {
+      if (field.getName().equals(name)) {
+        return field.getOperators();
+      }
+    }
+    return new ArrayList<>();
   }
 
   public static String compressionName(int code) {
@@ -505,10 +536,19 @@ public class TiffConformanceChecker extends ConformanceChecker {
    * @return the autofixes
    */
   public static ArrayList<String> getAutofixes() {
+    return getAutofixes(false);
+  }
+
+  /**
+   * Gets autofixes with silent option.
+   *
+   * @return the autofixes
+   */
+  public static ArrayList<String> getAutofixes(boolean silent) {
     ArrayList<String> classes = null;
 
     try {
-      Logger.println("Loading autofixes from JAR");
+      if (!silent) Logger.println("Loading autofixes from JAR");
       String path = "DPF Manager-jfx.jar";
       if (new File(path).exists()) {
         ZipInputStream zip = new ZipInputStream(new FileInputStream(path));
@@ -521,14 +561,14 @@ public class TiffConformanceChecker extends ConformanceChecker {
           }
         }
       } else {
-        Logger.println("Jar not found");
+        if (!silent) Logger.println("Jar not found");
       }
     } catch (Exception ex) {
-      Logger.println("Error " + ex.toString());
+      if (!silent) Logger.println("Error " + ex.toString());
     }
 
     if (classes == null) {
-      Logger.println("Loading autofixes through reflection");
+      if (!silent) Logger.println("Loading autofixes through reflection");
       try {
         //Reflections reflections = new Reflections(TiffConformanceChecker.getAutofixesClassPath(), new SubTypesScanner(false));
         //Set<Class<? extends Object>> classesSet = reflections.getSubTypesOf(Object.class);
@@ -544,20 +584,20 @@ public class TiffConformanceChecker extends ConformanceChecker {
           }
         }
       } catch (Exception ex) {
-        Logger.println("Exception getting classes");
+        if (!silent) Logger.println("Exception getting classes");
       }
     }
 
     if (classes == null) {
-      Logger.println("Autofixes loaded manually");
+      if (!silent) Logger.println("Autofixes loaded manually");
       classes = new ArrayList<String>();
       classes.add(clearPrivateData.class.toString());
       classes.add(makeBaselineCompliant.class.toString());
     }
 
-    Logger.println("Found " + classes.size() + " classes:");
+    if (!silent) Logger.println("Found " + classes.size() + " classes:");
     for (String cl : classes) {
-      Logger.println(cl);
+      if (!silent) Logger.println(cl);
     }
 
     return classes;

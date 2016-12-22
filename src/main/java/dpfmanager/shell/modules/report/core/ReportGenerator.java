@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Víctor Muñoz Solà
  * @version 1.0
@@ -32,7 +20,6 @@
 package dpfmanager.shell.modules.report.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -69,6 +56,7 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -82,6 +70,7 @@ public class ReportGenerator {
   private ReportJson reportJson;
   private ReportPDF reportPdf;
   private ReportHtml reportHtml;
+  private ResourceBundle bundle;
 
   public DpfContext getContext() {
     return context;
@@ -100,6 +89,7 @@ public class ReportGenerator {
     reportJson = new ReportJson();
     reportPdf = new ReportPDF();
     reportHtml = new ReportHtml();
+    bundle = DPFManagerProperties.getBundle();
   }
 
   /**
@@ -162,7 +152,9 @@ public class ReportGenerator {
   }
 
   /**
-   * Check if the path exists and if it's a directory, otherwise create the directory with this name.
+   * Check if the path exists and if it's a directory, otherwise create the directory with this
+   * name.
+   *
    * @param path the path
    */
   private static void validateDirectory(String path) {
@@ -409,7 +401,7 @@ public class ReportGenerator {
   /**
    * Extracts a zip entry (file entry).
    *
-   * @param zipIn the zip input stream
+   * @param zipIn    the zip input stream
    * @param filePath the file path
    * @throws IOException exception
    */
@@ -538,14 +530,15 @@ public class ReportGenerator {
    * Parse an individual report to XML format.
    *
    * @param filename the file name.
-   * @param content      the individual report.
+   * @param content  the individual report.
    * @return the content string.
    */
-  public static void writeProcomputedIndividual(String filename, String content) {
+  public void writeProcomputedIndividual(String filename, String content) {
     try {
       PrintWriter out = new PrintWriter(filename);
       out.print(content);
       out.close();
+      getContext().sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("individualReport").replace("%1", filename)));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -567,7 +560,8 @@ public class ReportGenerator {
 
     writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());
     String mets = ir.getConformanceCheckerReportMets();
-    if (mets != null && config.getFormats().contains("XML")) writeProcomputedIndividual(metsFileStr, mets);
+    if (mets != null && config.getFormats().contains("XML"))
+      writeProcomputedIndividual(metsFileStr, mets);
 
     if (config.getFormats().contains("JSON")) {
       reportJson.xmlToJson(ir.getConformanceCheckerReport(), jsonFileStr, this);
@@ -608,7 +602,8 @@ public class ReportGenerator {
       try {
         writeProcomputedIndividual(xmlFileStr, ir2.getConformanceCheckerReport());
         mets = ir2.getConformanceCheckerReportMets();
-        if (mets != null && config.getFormats().contains("XML")) writeProcomputedIndividual(metsFileStr, mets);
+        if (mets != null && config.getFormats().contains("XML"))
+          writeProcomputedIndividual(metsFileStr, mets);
 
         if (config.getFormats().contains("JSON")) {
           reportJson.xmlToJson(ir2.getConformanceCheckerReport(), jsonFileStr, this);
@@ -640,11 +635,11 @@ public class ReportGenerator {
    * Make full report.
    *
    * @param internalReportFolder the internal report folder
-   * @param gr                  the global report
+   * @param gr                   the global report
    * @return the string
    */
   public String makeSummaryReport(String internalReportFolder,
-      GlobalReport gr, Configuration config) {
+                                  GlobalReport gr, Configuration config) {
 
     String xmlFileStr = internalReportFolder + "summary.xml";
     String jsonFileStr = internalReportFolder + "summary.json";

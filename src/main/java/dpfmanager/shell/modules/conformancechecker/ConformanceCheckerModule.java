@@ -25,6 +25,7 @@ import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
@@ -38,6 +39,7 @@ import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.context.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.util.ResourceBundle;
 
 /**
@@ -58,7 +60,11 @@ public class ConformanceCheckerModule extends DpfModule {
   public void handleMessage(DpfMessage dpfMessage) {
     if (dpfMessage.isTypeOf(ConformanceMessage.class)) {
       ConformanceMessage cm = dpfMessage.getTypedMessage(ConformanceMessage.class);
-      if (cm.isGui()) {
+      if (cm.askOverwrite() && checkOverwriteOutput(cm.getPath())) {
+        cm.setAskOverwrite(false);
+        ResourceBundle bundle = DPFManagerProperties.getBundle();
+        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("confirmOverwrite"), bundle.getString("path") + ": " + getOutputFromPath(cm.getPath()), cm, GuiConfig.PERSPECTIVE_DESSIGN + "." + BasicConfig.MODULE_CONFORMANCE));
+      } else if (cm.isGui()) {
         String path = cm.getPath();
         String input = cm.getInput();
         Configuration config = null;
@@ -71,7 +77,7 @@ public class ConformanceCheckerModule extends DpfModule {
         }
         service.initProcessInputRun(input, config, cm.getRecursive());
       }
-    } else if (dpfMessage.isTypeOf(ProcessInputMessage.class)){
+    } else if (dpfMessage.isTypeOf(ProcessInputMessage.class)) {
       service.tractProcessInputMessage(dpfMessage.getTypedMessage(ProcessInputMessage.class));
     }
   }
@@ -81,6 +87,26 @@ public class ConformanceCheckerModule extends DpfModule {
     GuiContext guiContext = new GuiContext(context);
     ConformanceChecker.setLogger(new DpfLogger(guiContext, false));
     service.setContext(guiContext);
+  }
+
+  private boolean checkOverwriteOutput(String path) {
+    String output = getOutputFromPath(path);
+    if (output != null && !output.isEmpty()) {
+      File tmp = new File(output);
+      return tmp.exists() && tmp.isDirectory() && tmp.listFiles().length > 0;
+    } else {
+      return false;
+    }
+  }
+
+  private String getOutputFromPath(String path) {
+    if (path != null && !path.isEmpty()) {
+      Configuration config = service.readConfig(path);
+      if (config != null) {
+        return config.getOutput();
+      }
+    }
+    return null;
   }
 
   @Override

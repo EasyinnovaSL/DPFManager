@@ -99,10 +99,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       path = getFileByPath(radio.getText()).getAbsolutePath();
     }
     int recursive = getView().getRecursive();
-    ArrayMessage am = new ArrayMessage();
-    am.add(GuiConfig.COMPONENT_BAR, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.TASKS));
-    am.add(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path, recursive));
-    getContext().send(GuiConfig.COMPONENT_BAR, am);
+    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path, recursive, true));
   }
 
   public void selectInputAction() {
@@ -164,7 +161,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
     return filters;
   }
 
-  public List<String> getAcceptedExetsniosn(){
+  public List<String> getAcceptedExetsniosn() {
     List<String> extensions = new ArrayList<>();
     for (ConformanceChecker cc : getView().getInterService().getConformanceCheckers(false)) {
       extensions.addAll(cc.getConfig().getExtensions());
@@ -184,15 +181,14 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   public void performEditConfigAction() {
     if (getView().getSelectedConfig() != null) {
       String text = getView().getSelectedConfig().getText();
-      if (!text.equals(getBundle().getString("default"))) {
-        String path = getFileByPath(text).getAbsolutePath();
-        ArrayMessage am = new ArrayMessage();
-        am.add(GuiConfig.PERSPECTIVE_CONFIG, new UiMessage());
-        am.add(GuiConfig.PERSPECTIVE_CONFIG + "." + GuiConfig.COMPONENT_CONFIG, new ConfigMessage(ConfigMessage.Type.EDIT, path));
-        getContext().send(GuiConfig.PERSPECTIVE_CONFIG, am);
-      } else {
-        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertDefaultConfigEdit")));
+      String path = null;
+      if (!text.equals(getBundle().getString("default"))){
+        path = getFileByPath(text).getAbsolutePath();
       }
+      ArrayMessage am = new ArrayMessage();
+      am.add(GuiConfig.PERSPECTIVE_CONFIG, new UiMessage());
+      am.add(GuiConfig.PERSPECTIVE_CONFIG + "." + GuiConfig.COMPONENT_CONFIG, new ConfigMessage(ConfigMessage.Type.EDIT, path));
+      getContext().send(GuiConfig.PERSPECTIVE_CONFIG, am);
     } else {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("alertConfigFile")));
     }

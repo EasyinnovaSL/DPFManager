@@ -37,7 +37,10 @@
                     <Insets left="200.0" />
                 </GridPane.margin>
             </HBox>
-            <Label fx:id="labIsos" styleClass="label-white" GridPane.columnIndex="1" />
+            <Label fx:id="labIsos" styleClass="label-white" wrapText="true" GridPane.columnIndex="1">
+            <GridPane.margin>
+               <Insets right="65.0" />
+            </GridPane.margin></Label>
         </children>
         <VBox.margin>
             <Insets bottom="10.0" top="15.0" />
@@ -70,7 +73,10 @@
                     <Insets left="200.0" />
                 </GridPane.margin>
             </HBox>
-            <Label fx:id="labRules" styleClass="label-white" GridPane.columnIndex="1" />
+            <Label fx:id="labRules" styleClass="label-white" wrapText="true" GridPane.columnIndex="1">
+            <GridPane.margin>
+               <Insets right="65.0" />
+            </GridPane.margin></Label>
         </children>
         <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
@@ -82,7 +88,7 @@
             <Insets left="65.0" right="65.0" />
         </VBox.margin>
     </ImageView>
-    <GridPane>
+    <GridPane prefHeight="25.0" prefWidth="868.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -136,7 +142,10 @@
                     <Insets left="200.0" />
                 </GridPane.margin>
             </HBox>
-            <Label fx:id="labFixes" styleClass="label-white" GridPane.columnIndex="1" />
+            <Label fx:id="labFixes" styleClass="label-white" wrapText="true" GridPane.columnIndex="1">
+            <GridPane.margin>
+               <Insets right="65.0" />
+            </GridPane.margin></Label>
         </children>
         <VBox.margin>
             <Insets bottom="10.0" top="10.0" />

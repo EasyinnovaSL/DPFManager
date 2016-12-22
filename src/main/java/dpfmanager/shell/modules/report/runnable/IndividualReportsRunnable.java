@@ -30,6 +30,8 @@ import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
 import org.apache.logging.log4j.Level;
 
+import java.io.File;
+
 /**
  * Created by Adrià Llorens on 13/04/2016.
  */
@@ -59,7 +61,7 @@ public class IndividualReportsRunnable extends DpfRunnable {
     String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
     generator.generateIndividualReport(outputfile, ir, config);
     // Notify individual report finished
-    context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("individualReport").replace("%1", outputfile)));
+//    context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("individualReport").replace("%1", getOutputFolderFile(config, outputfile))));
     context.send(BasicConfig.MODULE_THREADING, new IndividualStatusMessage(ir, config));
   }
 
