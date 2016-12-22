@@ -514,7 +514,12 @@ public class ReportGenerator {
             jarFolder = targetPath + File.separator;
             File prova = new File(jarFolder + filePath);
             if (!prova.exists()) {
-              prova.createNewFile();
+              try {
+                prova.mkdirs();
+                prova.createNewFile();
+              } catch (Exception ex) {
+                context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", "Error creating file " + jarFolder + filePath, ex));
+              }
             }
             OutputStream resStreamOut = new FileOutputStream(prova, false);
             while ((readBytes = in.read(buffer)) > 0) {
