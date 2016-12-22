@@ -21,28 +21,39 @@ package dpfmanager.shell.modules.conformancechecker.core;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.core.messages.ArrayMessage;
+import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.interfaces.console.AppContext;
+import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
 import dpfmanager.shell.modules.conformancechecker.runnable.ProcessInputRunnable;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.interoperability.core.InteroperabilityService;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
+import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -66,9 +77,11 @@ public class ConformanceCheckerService extends DpfService {
   @PostConstruct
   private void init() {
     filesToCheck = new HashMap<>();
+    bundle = DPFManagerProperties.getBundle();
   }
 
   private ReportGenerator generator;
+  private ResourceBundle bundle;
 
   @Override
   protected void handleContext(DpfContext context) {
@@ -111,7 +124,41 @@ public class ConformanceCheckerService extends DpfService {
       uuid = System.currentTimeMillis();
     }
     ProcessInputRunnable pr = new ProcessInputRunnable(filename, inputStr, internalReportFolder, recursive, config);
-    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.NEW, uuid, pr, inputStr));
+    if (context.isGui()){
+      ArrayMessage am = new ArrayMessage();
+      am.add(GuiConfig.COMPONENT_BAR, new WidgetMessage(WidgetMessage.Action.SHOW, WidgetMessage.Target.TASKS));
+      am.add(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.NEW, uuid, pr, inputStr));
+      getContext().send(GuiConfig.COMPONENT_BAR, am);
+    } else {
+      context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.NEW, uuid, pr, inputStr));
+    }
+  }
+
+  private boolean checkOverwriteOutput(String output){
+    if (output == null || parameters.containsKey("overwrite")){
+      return true;
+    }
+    File tmp = new File(output);
+    if (tmp.exists() && tmp.isDirectory() && tmp.listFiles().length > 0){
+      // Ask for overwrite
+      if (context.isGui()) {
+        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.CONFIRMATION, "HEader", "Contetnt"));
+        return false;
+      } else {
+        context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("confirmOverwrite")));
+        Scanner sc = new Scanner(System.in);
+        String ok = sc.nextLine();
+        sc.close();
+        List<String> accepted = Arrays.asList("YES", "Y", "y", "yes");
+        if (accepted.contains(ok)) {
+          context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, ""));
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   synchronized public void tractProcessInputMessage(ProcessInputMessage pim){

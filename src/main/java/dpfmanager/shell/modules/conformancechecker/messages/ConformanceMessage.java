@@ -35,17 +35,19 @@ public class ConformanceMessage extends DpfMessage {
   private List<String> files;
   private Configuration config;
   private int recursive;
+  private boolean askOverwrite;
 
   private boolean gui = false;
   private boolean console = false;
   private boolean server = false;
 
-  public ConformanceMessage(String i, String p, int r) {
+  public ConformanceMessage(String i, String p, int r, boolean ao) {
     // Gui
     input = i;
     path = p;
     recursive = r;
     gui = true;
+    askOverwrite = ao;
   }
 
   public ConformanceMessage(Long u, String i, String p) {
@@ -91,6 +93,14 @@ public class ConformanceMessage extends DpfMessage {
 
   public int getRecursive() {
     return recursive;
+  }
+
+  public boolean askOverwrite() {
+    return askOverwrite;
+  }
+
+  public void setAskOverwrite(boolean ow){
+    askOverwrite = ow;
   }
 
   public boolean isGui() {
