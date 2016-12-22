@@ -71,6 +71,15 @@ public class Field {
   }
 
   /**
+   * Gets type.
+   *
+   * @return the type
+   */
+  public String getType() {
+    return type;
+  }
+
+  /**
    * Instantiates a new Field.
    */
   public Field() {

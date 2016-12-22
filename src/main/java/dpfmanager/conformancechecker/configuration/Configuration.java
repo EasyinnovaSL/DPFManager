@@ -727,4 +727,24 @@ public class Configuration {
   public Map<String, ArrayList<String>> getModifiedIsos() {
     return modifiedIsos;
   }
+
+  public void setFixes(Fixes fixes) {
+    this.fixes = fixes;
+  }
+
+  public void setRules(Rules rules) {
+    this.rules = rules;
+  }
+
+  public void setModifiedIsos(Map<String, ArrayList<String>> modifiedIsos) {
+    this.modifiedIsos = modifiedIsos;
+  }
+
+  public void setIsos(ArrayList<String> isos) {
+    this.isos = isos;
+  }
+
+  public void setFormats(ArrayList<String> formats) {
+    this.formats = formats;
+  }
 }
