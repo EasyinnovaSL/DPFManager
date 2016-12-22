@@ -20,13 +20,13 @@
 package dpfmanager.conformancechecker.tiff.policy_checker;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
-import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.AssertType;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
 
+import com.easyinnova.implementation_checker.Validator;
+import com.easyinnova.implementation_checker.model.TiffValidationObject;
+import com.easyinnova.implementation_checker.rules.model.AssertType;
+import com.easyinnova.implementation_checker.rules.model.ImplementationCheckerObjectType;
+import com.easyinnova.implementation_checker.rules.model.RuleType;
+import com.easyinnova.implementation_checker.rules.model.RulesType;
 import com.easyinnova.tiff.model.TiffDocument;
 import java.util.ArrayList;
 

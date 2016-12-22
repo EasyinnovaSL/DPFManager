@@ -20,8 +20,8 @@
 package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.rules.RuleResult;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.util.PDFParams;
 

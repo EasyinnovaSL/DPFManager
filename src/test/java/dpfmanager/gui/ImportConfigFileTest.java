@@ -1,6 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;

@@ -21,8 +21,8 @@ package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.implementation_check.ImplementationCheckerType;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
+import com.easyinnova.implementation_checker.implementation_check.ImplementationCheckerType;
+import com.easyinnova.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.METS.niso.*;
 import dpfmanager.conformancechecker.tiff.reporting.METS.premis.Event;

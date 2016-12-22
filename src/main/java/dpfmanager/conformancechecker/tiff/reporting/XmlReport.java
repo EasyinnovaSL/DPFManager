@@ -20,17 +20,15 @@
 package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.IndividualReport;
-import dpfmanager.shell.modules.report.util.ReportHtml;
 
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.Validator;
+import com.easyinnova.implementation_checker.rules.RuleResult;
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -45,17 +43,10 @@ import org.w3c.dom.Node;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -320,12 +311,12 @@ public class XmlReport extends Report {
     // level
     Element level = doc.createElement("level");
     String levelStr = "";
-    if (policyValue && value.isRelaxed()){
+    if (policyValue && value.isRelaxed()) {
       levelStr += "omitted ";
     }
-    if (error){
+    if (error) {
       levelStr += "error";
-    } else if (value.getWarning()){
+    } else if (value.getWarning()) {
       levelStr += "warning";
     } else {
       levelStr += "info";
@@ -802,7 +793,7 @@ public class XmlReport extends Report {
       implementationCheckerElement.setAttribute("ref", "DPF Manager");
       implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
       implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
-      for (String path : ImplementationCheckerLoader.getPathsList()){
+      for (String path : ImplementationCheckerLoader.getPathsList()) {
         String name = ImplementationCheckerLoader.getFileName(path);
         implementationCheckerElement.setAttribute(name, (ir.getErrors(name).size() == 0) + "");
       }

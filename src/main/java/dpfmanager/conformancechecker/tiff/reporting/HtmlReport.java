@@ -20,12 +20,12 @@
 package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.rules.RuleResult;
+import com.easyinnova.implementation_checker.rules.model.RuleType;
 import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -162,7 +162,7 @@ public class HtmlReport extends Report {
         row = StringUtils.replace(row, "##ERR_CLASS##", errorsCount > 0 ? "error" : "info");
         row = StringUtils.replace(row, "##WAR_CLASS##", warningsCount > 0 ? "warning" : "info");
         if (modeTh == 2) {
-          if (!ir.hasModifiedIso(iso)){
+          if (!ir.hasModifiedIso(iso)) {
             // Empty
             row = StringUtils.replace(row, "##ERR_CLASS_P##", "hide");
             row = StringUtils.replace(row, "##WAR_CLASS_P##", "hide");
@@ -387,7 +387,7 @@ public class HtmlReport extends Report {
      * Show / Hide all Policy Block
      */
     String displayPolicy = "none";
-    if (!rows.equals("")){
+    if (!rows.equals("")) {
       displayPolicy = "block";
     }
     htmlBody = StringUtils.replace(htmlBody, "##SHOW_POLICY##", displayPolicy);
@@ -497,7 +497,7 @@ public class HtmlReport extends Report {
       tdifd = tdifd.getNextIFD();
       nifd++;
     }
-    if (rows.isEmpty()){
+    if (rows.isEmpty()) {
       rows = "<tr><td class='tcenter'><i style='font-size: 18px;' class=\"fa fa-check-circle\"></i></td><td>No metadata incoherencies found</td></tr>";
     }
     htmlBody = StringUtils.replace(htmlBody, "##META_ROWS##", rows);
@@ -591,7 +591,7 @@ public class HtmlReport extends Report {
           row = "<tr class='sub" + tag.index + " " + expert + "'><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
           row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
           row = row.replace("##ID##", tv.getId() + "");
-          row = row.replace("##KEY##", (tv.getName().equals(tv.getId()+"") ? "Private tag" : tv.getName()));
+          row = row.replace("##KEY##", (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()));
           row = row.replace("##VALUE##", tv.getDescriptiveValue());
           String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
           tagsMap.put(mapId, rows + row);
@@ -745,10 +745,10 @@ public class HtmlReport extends Report {
       if (val.getReference() != null) {
         description += "<br><i>" + val.getReference() + "</i>";
       }
-      if (rule.getId().equals("RECOMMENDED-TAG-270")){
+      if (rule.getId().equals("RECOMMENDED-TAG-270")) {
         val.toString();
       }
-      description = description.replaceAll("\"","'");
+      description = description.replaceAll("\"", "'");
       return "data-toggle=\"popover\" title=\"" + rule.getTitle().getValue() + "\" data-content=\"" + description + "\" data-placement=\"auto bottom\" data-trigger=\"hover\"";
     }
     return "";
@@ -758,7 +758,7 @@ public class HtmlReport extends Report {
     String tmplPassed = "<div class=\"success\"><i class=\"fa fa-check-circle\"></i> ##TITLE##</div>";
     String tmplError = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> ##TITLE##</div>";
     String name = ImplementationCheckerLoader.getIsoName(iso);
-    if (ir.hasModifiedIso(iso) && ir.getNErrors(iso) != ir.getNErrorsPolicy(iso)){
+    if (ir.hasModifiedIso(iso) && ir.getNErrors(iso) != ir.getNErrorsPolicy(iso)) {
       name += " (with custom policy)";
     }
     int err = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);

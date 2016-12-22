@@ -3,11 +3,11 @@ package dpfmanager.commandline;
 import static junit.framework.TestCase.assertEquals;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
-import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.TiffImplementationChecker;
+import com.easyinnova.implementation_checker.Validator;
+import com.easyinnova.implementation_checker.model.TiffValidationObject;
+import com.easyinnova.implementation_checker.rules.model.ImplementationCheckerObjectType;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;

@@ -65,6 +65,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+import com.easyinnova.implementation_checker.Validator;
+
 import org.controlsfx.control.CheckTreeView;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;

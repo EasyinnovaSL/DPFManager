@@ -22,12 +22,12 @@ package dpfmanager.conformancechecker.tiff;
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ValidationResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
-import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.TiffImplementationChecker;
+import com.easyinnova.implementation_checker.ValidationResult;
+import com.easyinnova.implementation_checker.Validator;
+import com.easyinnova.implementation_checker.model.TiffValidationObject;
+import com.easyinnova.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
@@ -512,7 +512,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
   }
 
   public static String getAutofixesClassPath() {
-    return "dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes";
+    return "com.easyinnova.metadata_fixer.autofixes";
   }
 
   /**
@@ -573,7 +573,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
         //Reflections reflections = new Reflections(TiffConformanceChecker.getAutofixesClassPath(), new SubTypesScanner(false));
         //Set<Class<? extends Object>> classesSet = reflections.getSubTypesOf(Object.class);
 
-        Class cls = Class.forName("dpfmanager.conformancechecker.tiff.TiffConformanceChecker");
+        Class cls = Class.forName("com.easyinnova.TiffConformanceChecker");
         ClassLoader cll = cls.getClassLoader();
         Set<ClassPath.ClassInfo> classesInPackage = ClassPath.from(cll).getTopLevelClassesRecursive(TiffConformanceChecker.getAutofixesClassPath());
 
@@ -821,7 +821,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
     Map<String, ValidationResult> validations = new HashMap<>();
     for (String path : ImplementationCheckerLoader.getPathsList()) {
       boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
-      Validator validation = new Validator(Logger);
+      Validator validation = new Validator();
       PolicyChecker policy = new PolicyChecker(Logger);
       ValidationResult result = validation.validate(content, path, !check);
       result = policy.validate(result, config.getModifiedIso(ImplementationCheckerLoader.getFileName(path)));
