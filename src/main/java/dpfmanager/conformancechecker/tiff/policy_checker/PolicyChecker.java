@@ -64,8 +64,14 @@ public class PolicyChecker {
   }
 
   public ValidationResult validate(ValidationResult result, List<String> removedRulesId){
-    for (RuleResult ruleResult : result.getResult()){
-      ruleResult.setRelaxed(removedRulesId.contains(ruleResult.getRule().getId()));
+    if (removedRulesId.size() > 0) {
+      for (RuleResult ruleResult : result.getResult()) {
+        if (ruleResult.getRule() != null) {
+          ruleResult.setRelaxed(removedRulesId.contains(ruleResult.getRule().getId()));
+        } else {
+          ruleResult.setRelaxed(false);
+        }
+      }
     }
     return result;
   }

@@ -288,7 +288,7 @@ public class MetsReport {
         photometricInterpretation.setYCbCr(ycbcr);
 
         //reference Black and White
-        if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("ReferenceBlackWhite"))) {
+        if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("ReferenceBlackWhite")) && ifd.getMetadata().get("ReferenceBlackWhite").getValue().size() > 0) {
           BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite referenceBlackWhite = new BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ReferenceBlackWhite();
           try {
             if (ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(0) instanceof Rational && ifd.getMetadata().get("ReferenceBlackWhite").getValue().size() > 0 && ifd.getMetadata().get("ReferenceBlackWhite").getValue().get(1) instanceof Rational) {

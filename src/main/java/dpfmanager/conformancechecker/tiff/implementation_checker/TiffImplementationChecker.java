@@ -612,32 +612,33 @@ public class TiffImplementationChecker {
     boolean correctTagOrdering = true;
     boolean duplicatedTags = false;
     HashSet tagIds = new HashSet<>();
-    abstractTiffType obj = tv.getValue().get(0);
-    if (obj instanceof IFD) {
-      IFD exif = (IFD) obj;
-      for (TagValue tvv : exif.getTags().getTags()) {
-        if (tvv.getId() <= prevTagId) {
-          correctTagOrdering = false;
+    if (tv.getValue().size() > 0) {
+      abstractTiffType obj = tv.getValue().get(0);
+      if (obj instanceof IFD) {
+        IFD exif = (IFD) obj;
+        for (TagValue tvv : exif.getTags().getTags()) {
+          if (tvv.getId() <= prevTagId) {
+            correctTagOrdering = false;
+          }
+          if (tagIds.contains(tvv.getId())) {
+            duplicatedTags = true;
+          } else {
+            tagIds.add(tvv.getId());
+          }
+          prevTagId = tvv.getId();
+          tags.add(CreateTiffTag(tvv, 0));
         }
-        if (tagIds.contains(tvv.getId())) {
-          duplicatedTags = true;
-        } else {
-          tagIds.add(tvv.getId());
-        }
-        prevTagId = tvv.getId();
-        tags.add(CreateTiffTag(tvv, 0));
+        TiffTags tiffTags = new TiffTags();
+        tiffTags.setTagsCount(tags.size());
+        tiffTags.setTags(tags);
+        ifd.setTags(tiffTags);
+        ifd.setTagOrdering(correctTagOrdering ? 1 : 0);
+        ifd.setDuplicateTags(duplicatedTags ? 1 : 0);
+        ifd.setClassElement(nodeName);
+        return ifd;
       }
-      TiffTags tiffTags = new TiffTags();
-      tiffTags.setTagsCount(tags.size());
-      tiffTags.setTags(tags);
-      ifd.setTags(tiffTags);
-      ifd.setTagOrdering(correctTagOrdering ? 1 : 0);
-      ifd.setDuplicateTags(duplicatedTags ? 1 : 0);
-      ifd.setClassElement(nodeName);
-      return ifd;
-    } else {
-      return null;
     }
+    return null;
   }
 
   boolean checkOffsetOverlapped(int offset, int length) {
