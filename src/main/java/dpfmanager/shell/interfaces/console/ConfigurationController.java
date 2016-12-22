@@ -28,9 +28,9 @@ import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
-import dpfmanager.shell.modules.interoperability.messages.InteroperabilityMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
@@ -40,7 +40,6 @@ import org.apache.logging.log4j.Level;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +51,7 @@ import java.util.ResourceBundle;
  */
 public class ConfigurationController {
 
-  public enum Action{
+  public enum Action {
     ADD,
     EDIT,
     REMOVE,
@@ -76,11 +75,6 @@ public class ConfigurationController {
   private CommonController common;
 
   /**
-   * The accepted options
-   */
-  private List<String> acceptedOptions = Arrays.asList("-a", "--add", "-e", "--edit", "-r", "--remove", "-l", "--list", "-i", "--info", "-h", "--help", "--enable", "--disable", "--configure", "--parameters", "--extensions");
-
-  /**
    * The errors flag
    */
   private boolean argsError;
@@ -91,12 +85,24 @@ public class ConfigurationController {
   private Action action;
   private File configFile;
   private String path = "";
+  private boolean inDefaultDir;
   private ArrayList<String> isos;
+  private ArrayList<String> formats;
+  private ArrayList<String> autofixes;
   private Fixes fixes;
   private Rules rules;
   private String description;
-  private Map<String, List<String>> modifiedIsos;
+  private Map<String, ArrayList<String>> modifiedIsos;
   private TiffConformanceChecker conformance;
+  private String toShow;
+  private String output;
+
+  /**
+   * Validation objects
+   */
+  private Map<String, Field> validRules;
+  private List<String> validIsos;
+  private List<String> validAutofixes;
 
   public ConfigurationController(ConsoleContext c, ResourceBundle r) {
     context = c;
@@ -104,11 +110,38 @@ public class ConfigurationController {
     argsError = false;
     action = null;
     isos = new ArrayList<>();
+    autofixes = new ArrayList<>();
+    formats = new ArrayList<>();
     modifiedIsos = new HashMap<>();
     fixes = new Fixes();
     rules = new Rules();
     common = new CommonController(context, bundle);
     conformance = new TiffConformanceChecker();
+    initValidationObjects();
+  }
+
+  private void initValidationObjects() {
+    validRules = new HashMap<>();
+    List<Field> fields = conformance.getConformanceCheckerFields();
+    for (Field field : fields) {
+      validRules.put(field.getName(), field);
+    }
+    validIsos = new ArrayList<>();
+    for (String isoFile : ImplementationCheckerLoader.getPathsList()) {
+      validIsos.add(ImplementationCheckerLoader.getFileName(isoFile));
+    }
+    validAutofixes = TiffConformanceChecker.getAutofixes(true);
+  }
+
+  private void preLoadConfiguration(Configuration config) {
+    isos = config.getIsos();
+    modifiedIsos = config.getModifiedIsos();
+    rules = config.getRules();
+    fixes = config.getFixes();
+    description = config.getDescription();
+    autofixes = config.getFixes().getAutofixes();
+    output = config.getOutput();
+    formats = config.getFormats();
   }
 
   /**
@@ -116,75 +149,139 @@ public class ConfigurationController {
    */
   public void parse(List<String> params) {
     int idx = 0;
-    while (idx < params.size() && !argsError) {
-      String arg = params.get(idx);
-      // -a --add
-      if (arg.equals("-a") || arg.equals("--add")) {
-        setAction(Action.ADD);
-      }
-      // -e --edit
-      else if (arg.equals("-e") || arg.equals("--edit")) {
-        setAction(Action.EDIT);
-      }
-      // -r --remove
-      else if (arg.equals("-r") || arg.equals("--remove")) {
-        setAction(Action.REMOVE);
-      }
-      // -l --list
-      else if (arg.equals("-l") || arg.equals("--list")) {
-        setAction(Action.LIST);
-        if (idx + 1 < params.size()) {
-          String type = params.get(++idx);
-          if (!type.equals("tag") && !type.equals("iso")){
-            type = "config";
-          }
-          common.putParameter("-l", type);
+    /**
+     * Actions
+     */
+    String arg = params.get(idx);
+    // -a --add
+    if (arg.equals("-a") || arg.equals("--add")) {
+      if (idx + 1 < params.size()) {
+        String name = params.get(++idx);
+        if (path.isEmpty()) {
+          path = name;
+          setAction(Action.ADD);
         } else {
-          printOutErr(bundle.getString("isoSpecify"));
+          printOutErr(bundle.getString("onlyOnePath"));
         }
+      } else {
+        printOutErr(bundle.getString("pathSpecify").replace("%1", "--add"));
       }
-      // -i --info
-      else if (arg.equals("-i") || arg.equals("--info")) {
-        setAction(Action.INFO);
+    }
+    // -e --edit
+    else if (arg.equals("-e") || arg.equals("--edit")) {
+      if (idx + 1 < params.size()) {
+        String name = params.get(++idx);
+        if (path.isEmpty()) {
+          path = name;
+          setAction(Action.EDIT);
+        } else {
+          printOutErr(bundle.getString("onlyOnePath"));
+        }
+      } else {
+        printOutErr(bundle.getString("pathSpecify").replace("%1", "--edit"));
       }
-      // -h --help
-      else if (arg.equals("-h") || arg.equals("--help")) {
-        displayHelp();
+    }
+    // -r --remove
+    else if (arg.equals("-r") || arg.equals("--remove")) {
+      if (idx + 1 < params.size()) {
+        String name = params.get(++idx);
+        if (path.isEmpty()) {
+          path = name;
+          setAction(Action.REMOVE);
+        } else {
+          printOutErr(bundle.getString("onlyOnePath"));
+        }
+      } else {
+        printOutErr(bundle.getString("pathSpecify").replace("%1", "--remove"));
       }
+    }
+    // -l --list
+    else if (arg.equals("-l") || arg.equals("--list")) {
+      setAction(Action.LIST);
+      if (idx + 1 < params.size()) {
+        String type = params.get(++idx);
+        if (!type.equals("rule") && !type.equals("fix") && !type.equals("iso") && !type.equals("autofix")) {
+          type = "config";
+        }
+        toShow = type;
+      } else {
+        printOutErr(bundle.getString("isoSpecify"));
+      }
+    }
+    // -i --info
+    else if (arg.equals("-i") || arg.equals("--info")) {
+      if (idx + 1 < params.size()) {
+        String name = params.get(++idx);
+        if (path.isEmpty()) {
+          path = name;
+          setAction(Action.INFO);
+        } else {
+          printOutErr(bundle.getString("onlyOnePath"));
+        }
+      } else {
+        printOutErr(bundle.getString("pathSpecify").replace("%1", "--info"));
+      }
+    }
+    // -h --help
+    else if (arg.equals("-h") || arg.equals("--help")) {
+      displayHelp();
+    }
+    // Unrecognised action
+    else {
+      printOut(bundle.getString("unrecognizedAction").replace("%1", arg));
+      displayHelp();
+    }
+    idx++;
+    validatePath();
+    if (action.equals(Action.EDIT)) {
+      validateConfigExists(true);
+      common.parseConfiguration(configFile.getAbsolutePath());
+      preLoadConfiguration(common.getConfig());
+    } else if (action.equals(Action.ADD)) {
+      common.parseConfig();
+    }
+    /**
+     * Options
+     */
+    while (idx < params.size() && !argsError) {
+      arg = params.get(idx);
       // -f --format
-      else if (arg.equals("-f") || arg.equals("--format")) {
+      if (arg.equals("-f") || arg.equals("--format")) {
         if (idx + 1 < params.size()) {
-          argsError = !common.parseFormats(params.get(++idx));
+          validateFormats(params.get(++idx));
         } else {
           printOutErr(bundle.getString("specifyFormat"));
         }
       }
       // -o --output
-      if (arg.equals("-o") || arg.equals("--output")) {
+      else if (arg.equals("-o") || arg.equals("--output")) {
         if (idx + 1 < params.size()) {
           String outputFolder = params.get(++idx);
-          argsError = !common.parseOutput(outputFolder);
-          if (!argsError){
-            common.putParameter("-o", outputFolder);
+          if (outputFolder.equals("DEFAULT")) {
+            output = null;
+          } else {
+            argsError = !common.parseOutput(outputFolder);
+            common.setExplicitOutput(false);
+            output = outputFolder;
           }
         } else {
           printOutErr(bundle.getString("outputSpecify"));
         }
       }
       // -d --description
-      if (arg.equals("-d") || arg.equals("--description")) {
+      else if (arg.equals("-d") || arg.equals("--description")) {
         if (idx + 1 < params.size()) {
           String desc = params.get(++idx);
-          description = desc;
+          description = desc.equals("EMPTY") ? "" : desc;
         } else {
           printOutErr(bundle.getString("descriptionSpecify"));
         }
       }
       // --iso
-      if (arg.equals("--iso")) {
+      else if (arg.equals("--iso")) {
         if (idx + 1 < params.size()) {
           String iso = params.get(++idx);
-          if (validateIso(iso)){
+          if (validateIso(iso, true)) {
             isos.add(iso);
           } else {
             printOutErr(bundle.getString("badIsoName"));
@@ -193,14 +290,29 @@ public class ConfigurationController {
           printOutErr(bundle.getString("isoSpecify"));
         }
       }
-      // --no-iso-rule
-      if (arg.equals("--no-iso-rule")) {
+      // --remove-iso
+      else if (arg.equals("--remove-iso")) {
+        if (idx + 1 < params.size()) {
+          String iso = params.get(++idx);
+          if (validateIso(iso, false)) {
+            if (isos.contains(iso)){
+              isos.remove(iso);
+            } else {
+              printOutErr(bundle.getString("isoNotFound"));
+            }
+          }
+        } else {
+          printOutErr(bundle.getString("isoSpecify"));
+        }
+      }
+      // --disable-iso-rule
+      else if (arg.equals("--disable-iso-rule")) {
         if (idx + 2 < params.size()) {
           String iso = params.get(++idx);
           String ruleId = params.get(++idx);
-          if (validateIso(iso)){
-            List<String> list = new ArrayList<>();
-            if (modifiedIsos.containsKey(iso)){
+          if (validateIso(iso, false)) {
+            ArrayList<String> list = new ArrayList<>();
+            if (modifiedIsos.containsKey(iso)) {
               list = modifiedIsos.get(iso);
             }
             list.add(ruleId);
@@ -212,13 +324,32 @@ public class ConfigurationController {
           printOutErr(bundle.getString("isoSpecify"));
         }
       }
+      // --enable-iso-rule
+      else if (arg.equals("--enable-iso-rule")) {
+        if (idx + 2 < params.size()) {
+          String iso = params.get(++idx);
+          String ruleId = params.get(++idx);
+          if (validateIso(iso, false)) {
+            ArrayList<String> list = new ArrayList<>();
+            if (modifiedIsos.containsKey(iso)) {
+              list = modifiedIsos.get(iso);
+            }
+            list.remove(ruleId);
+            modifiedIsos.put(iso, list);
+          } else {
+            printOutErr(bundle.getString("badIsoName"));
+          }
+        } else {
+          printOutErr(bundle.getString("isoSpecify"));
+        }
+      }
       // --fix
-      if (arg.equals("--fix")) {
+      else if (arg.equals("--fix")) {
         if (idx + 2 < params.size()) {
           String operator = params.get(++idx);
           String tag = params.get(++idx);
           String value = getFixOperatorInt(operator) == 1 ? (idx + 1 < params.size() ? params.get(++idx) : null) : null;
-          if (validateFix(tag, operator, value)){
+          if (validateFix(tag, operator, value)) {
             fixes.addFix(tag, parseFixOperator(operator), value);
           } else {
             printOutErr(bundle.getString("fixMalFormed"));
@@ -227,15 +358,80 @@ public class ConfigurationController {
           printOutErr(bundle.getString("fixSpecify"));
         }
       }
+      // --remove-fix
+      else if (arg.equals("--remove-fix")) {
+        if (idx + 2 < params.size()) {
+          String operator = params.get(++idx);
+          String tag = params.get(++idx);
+          String value = getFixOperatorInt(operator) == 1 ? (idx + 1 < params.size() ? params.get(++idx) : null) : null;
+          if (validateFix(tag, operator, value)) {
+            if (!fixes.removeFix(tag, parseFixOperator(operator), value)){
+              printOutErr(bundle.getString("fixNotFound"));
+            }
+          } else {
+            printOutErr(bundle.getString("fixMalFormed"));
+          }
+        } else {
+          printOutErr(bundle.getString("fixSpecify"));
+        }
+      }
+      // --autofix
+      else if (arg.equals("--autofix")) {
+        if (idx + 1 < params.size()) {
+          String className = params.get(++idx);
+          if (validateAutoFix(className)) {
+            autofixes.add(className);
+            fixes.addAutofix(className);
+          } else {
+            printOutErr(bundle.getString("autoFixMalformed"));
+          }
+        } else {
+          printOutErr(bundle.getString("autoFixSpecify"));
+        }
+      }
+      // --remove-autofix
+      else if (arg.equals("--remove-autofix")) {
+        if (idx + 1 < params.size()) {
+          String className = params.get(++idx);
+          if (validAutofixes.contains(className)) {
+            autofixes.remove(className);
+            if (!fixes.removeAutofix(className)){
+              printOutErr(bundle.getString("autofixNotFound"));
+            }
+          } else {
+            printOutErr(bundle.getString("autoFixMalformed"));
+          }
+        } else {
+          printOutErr(bundle.getString("autoFixSpecify"));
+        }
+      }
       // --rule
-      if (arg.equals("--rule")) {
+      else if (arg.equals("--rule")) {
         if (idx + 4 < params.size()) {
           String type = params.get(++idx);
           String tag = params.get(++idx);
           String operator = params.get(++idx);
           String value = params.get(++idx);
-          if (validateRule(tag, operator, value, type)){
-            rules.addRule(tag, operator, value, type.equals("warning"));
+          if (validateRule(tag, operator, value, type)) {
+            rules.addRule(tag, parseRuleOperator(operator), value, type.equals("warning"));
+          } else {
+            printOutErr(bundle.getString("ruleMalFormed"));
+          }
+        } else {
+          printOutErr(bundle.getString("ruleSpecify"));
+        }
+      }
+      // --remove-rule
+      else if (arg.equals("--remove-rule")) {
+        if (idx + 4 < params.size()) {
+          String type = params.get(++idx);
+          String tag = params.get(++idx);
+          String operator = params.get(++idx);
+          String value = params.get(++idx);
+          if (validateRule(tag, operator, value, type)) {
+            if (!rules.removeRule(tag, parseRuleOperator(operator), value, type.equals("warning"))){
+              printOutErr(bundle.getString("ruleNotFound"));
+            }
           } else {
             printOutErr(bundle.getString("ruleMalFormed"));
           }
@@ -244,23 +440,15 @@ public class ConfigurationController {
         }
       }
       // Unrecognised option
-      else if (arg.startsWith("-")) {
+      else {
         printOut(bundle.getString("unrecognizedOption").replace("%1", arg));
         argsError = true;
-      }
-      // File or directory to process
-      else {
-        if (path.isEmpty()) {
-          path = arg;
-        } else {
-          printOutErr(bundle.getString("onlyOnePath"));
-        }
       }
       idx++;
     }
   }
 
-  private void setAction(Action act){
+  private void setAction(Action act) {
     if (action == null) {
       action = act;
     } else {
@@ -269,8 +457,8 @@ public class ConfigurationController {
     }
   }
 
-  private Integer getFixOperatorInt(String operator){
-    if (operator.equals("add")){
+  private Integer getFixOperatorInt(String operator) {
+    if (operator.equals("add")) {
       return 1;
     } else if (operator.equals("remove")) {
       return 2;
@@ -278,15 +466,26 @@ public class ConfigurationController {
     return 0;
   }
 
-  private String parseFixOperator(String operator){
-    if (operator.equals("add")){
+  private String parseFixOperator(String operator) {
+    if (operator.equals("add")) {
       operator = "addTag";
     } else if (operator.equals("remove")) {
       operator = "removeTag";
     } else {
-      operator = null;
+      operator = "";
     }
     return operator;
+  }
+
+  private String parseRuleOperator(String op) {
+    if (op.equals("GT") || op.equals("gt")) {
+      return ">";
+    } else if (op.equals("LT") || op.equals("lt")) {
+      return "<";
+    } else if (op.equals("EQ") || op.equals("eq")) {
+      return "=";
+    }
+    return "";
   }
 
   /**
@@ -296,88 +495,97 @@ public class ConfigurationController {
     if (argsError) {
       displayHelp();
     } else {
-      validatePath();
-      switch (action){
+      Configuration config;
+      switch (action) {
         case ADD:
-          addOrEditConfiguration();
+          validateConfigExists(false);
+          config = generateConfiguration();
+          try {
+            config.SaveFile(configFile.getAbsolutePath());
+            printOut(bundle.getString("addedConfig"));
+            printOut("");
+            displayConfiguration(configFile);
+          } catch (Exception e) {
+            printOut(bundle.getString("addedConfigError").replace("%1", path));
+          }
           break;
         case EDIT:
-          addOrEditConfiguration();
-          if (configFile.delete()){
-
+          validateConfigExists(true);
+          config = generateConfiguration();
+          if (configFile.delete()) {
+            try {
+              config.SaveFile(configFile.getAbsolutePath());
+              printOut(bundle.getString("editedConfig"));
+              printOut("");
+              displayConfiguration(configFile);
+            } catch (Exception e) {
+              printOut(bundle.getString("editedConfigError").replace("%1", path));
+            }
+          } else {
+            printOut(bundle.getString("editedConfigError").replace("%1", path));
           }
           break;
         case REMOVE:
-          if (configFile.delete()){
+          validateConfigExists(true);
+          if (configFile.delete()) {
             printOut(bundle.getString("deletedConfig"));
+          } else {
+            printOut(bundle.getString("deletedConfigError").replace("%1", path));
           }
           break;
         case INFO:
-          displayConfiguration(configFile, false);
+          validateConfigExists(true);
+          displayConfiguration(configFile);
           break;
         case LIST:
-          if (common.getParameter("-l").equals("config")) {
+          if (toShow.equals("config")) {
             displayConfigurations();
-          } else {
-            // Show tags or iso
-            // TODO
+          } else if (toShow.equals("iso")) {
+            displayIsos();
+          } else if (toShow.equals("rule")) {
+            displayRules();
+          } else if (toShow.equals("fix")) {
+            displayFixes();
+          } else if (toShow.equals("autofix")) {
+            displayAutoFixes();
           }
           break;
       }
     }
   }
 
-  private void addOrEditConfiguration(){
+  private Configuration generateConfiguration() {
     Configuration config = common.getConfig();
+    config.setFormats(formats);
     config.setIsos(isos);
     config.setFixes(fixes);
     config.setRules(rules);
     config.setModifiedIsos(modifiedIsos);
     config.setDescription(description);
-  }
-
-  private void displayConfigurations(){
-    Collection<File> files = FileUtils.listFiles(new File(DPFManagerProperties.getConfigDir()), TrueFileFilter.INSTANCE, FalseFileFilter.INSTANCE);
-    for (File file : files) {
-      if (file.getName().endsWith(".dpf")) {
-        displayConfiguration(file, true);
-        printOut("");
-      }
-    }
-  }
-
-  private void displayConfiguration(File file, boolean onlyName){
-    try {
-      if (onlyName){
-        printOut(file.getName().replace(".dpf",""));
-      } else {
-        printOut(file.getAbsolutePath());
-      }
-      printOut(FileUtils.readFileToString(file));
-    } catch (IOException e) {
-      printOut(bundle.getString("errorReadingConfig"));
-    }
+    config.setOutput(output);
+    return config;
   }
 
   /**
    * Validations
    */
-  private void validatePath(){
-    if (action != Action.LIST){
-      if (!path.isEmpty()){
+  private void validatePath() {
+    if (action != Action.LIST) {
+      if (!path.isEmpty()) {
         File file = new File(path);
         File fileInDir = new File(DPFManagerProperties.getConfigDir() + "/" + (path.endsWith(".dpf") ? path : path + ".dpf"));
-        if (file.exists()){
+        if (file.exists()) {
           configFile = file;
-          common.parseConfiguration(file.getAbsolutePath());
-          common.parseConfig();
+          inDefaultDir = false;
         } else if (fileInDir.exists()) {
-          configFile = file;
-          common.parseConfiguration(fileInDir.getAbsolutePath());
-          common.parseConfig();
+          configFile = fileInDir;
+          inDefaultDir = true;
         } else {
-          printOut(bundle.getString("errorConfigPath"));
-          displayHelp();
+          if (path.contains("/") || path.contains("\\")) {
+            configFile = file;
+          } else {
+            configFile = fileInDir;
+          }
         }
       } else {
         printOut(bundle.getString("errorConfigPath"));
@@ -386,42 +594,100 @@ public class ConfigurationController {
     }
   }
 
-  private boolean validateRule(String tag, String operator, String value, String type){
-    // Tag
-    // TODO
-    // Operator
-    // TODO
-    // Value
-    // TODO
-    // Type
-    if (type.equals("error") || type.equals("warning")) {
-      return false;
+  private void validateConfigExists(boolean exists) {
+    if (exists && !configFile.exists()) {
+      printOut(bundle.getString("errorConfigFileNoExists"));
+      displayHelp();
+    } else if (!exists && configFile.exists()) {
+      printOut(bundle.getString("errorConfigFileExists"));
+      displayHelp();
     }
-    return true;
   }
 
-  private boolean validateFix(String tag, String operator, String value){
-    List<Field> validFixes = conformance.getConformanceCheckerFields();
+  private boolean validateRule(String tag, String operator, String value, String type) {
+    // Type
+    if (!type.equals("error") && !type.equals("warning")) {
+      return false;
+    }
+    // Tag Operator Value
+    if (validRules.containsKey(tag)) {
+      Field field = validRules.get(tag);
+      String op = parseRuleOperator(operator);
+      if (field.getOperators().contains(op)) {
+        if (field.getValues() != null) {
+          // Specific values
+          return field.getValues().contains(value);
+        } else {
+          // Free values
+          if (field.getType().equals("integer")) {
+            return isNumeric(value);
+          } else if (field.getType().equals("boolean")) {
+            return isBoolean(value);
+          } else {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  private boolean validateFix(String tag, String operator, String value) {
     // Tag
-    // TODO
+    if (!conformance.getFixFields().contains(tag)) {
+      return false;
+    }
     // Operator
     String parsedOP = parseFixOperator(operator);
-    if (parsedOP == null){
+    if (!conformance.getFixes().contains(parsedOP)) {
       return false;
     }
     // Value
-    if (parsedOP.equals("addTag") && value == null){
+    if (parsedOP.equals("addTag") && value == null) {
       return false;
     }
     return true;
   }
 
-  private boolean validateIso(String iso){
-    List<String> validIsos = ImplementationCheckerLoader.getPathsList();
-    if (!validIsos.contains(iso) || isos.contains(iso)){
+  private boolean validateAutoFix(String fix) {
+    return validAutofixes.contains(fix) && !autofixes.contains(fix);
+  }
+
+  private boolean validateIso(String iso, boolean checkAlreadyExists) {
+    return validIsos.contains(iso) && (!checkAlreadyExists || !isos.contains(iso));
+  }
+
+  private void validateFormats(String formatsStr){
+    List<String> acceptedFormats = new ArrayList<>();
+    acceptedFormats.add("xml");
+    acceptedFormats.add("json");
+    acceptedFormats.add("html");
+    acceptedFormats.add("pdf");
+    for (String format : formatsStr.split(",")){
+      if (acceptedFormats.contains(format.toLowerCase())){
+        formats.add(format.toUpperCase());
+      } else {
+        printOutErr(bundle.getString("incorrectReportFormat"));
+      }
+    }
+  }
+
+  private boolean isNumeric(String str) {
+    try {
+      Integer.parseInt(str);
+    } catch (NumberFormatException nfe) {
       return false;
     }
     return true;
+  }
+
+  private boolean isBoolean(String str) {
+    try {
+      Boolean.parseBoolean(str);
+    } catch (Exception e) {
+      return false;
+    }
+    return false;
   }
 
   /**
@@ -435,6 +701,63 @@ public class ConfigurationController {
 //    printOptions("helpCO", 11);
     printOut("HELP!!");
     exit();
+  }
+
+  private void displayConfigurations() {
+    Collection<File> files = FileUtils.listFiles(new File(DPFManagerProperties.getConfigDir()), TrueFileFilter.INSTANCE, FalseFileFilter.INSTANCE);
+    for (File file : files) {
+      if (file.getName().endsWith(".dpf")) {
+        displayConfiguration(file);
+        printOut("");
+      }
+    }
+  }
+
+  private void displayConfiguration(File file) {
+    try {
+      if (inDefaultDir) {
+        printOut(file.getName().replace(".dpf", ""));
+      } else {
+        printOut(file.getAbsolutePath());
+      }
+      printOut(FileUtils.readFileToString(file));
+    } catch (IOException e) {
+      printOut(bundle.getString("errorReadingConfig"));
+    }
+  }
+
+  private void displayIsos() {
+    List<String> validIsos = ImplementationCheckerLoader.getPathsList();
+    printOut(bundle.getString("displayIsoHeader"));
+    for (String iso : validIsos) {
+      printOut("  " + ImplementationCheckerLoader.getFileName(iso) + ": " + ImplementationCheckerLoader.getIsoName(iso));
+    }
+  }
+
+  private void displayRules() {
+    printOut(bundle.getString("displayRuleHeader"));
+    for (String tag : validRules.keySet()) {
+      Field field = validRules.get(tag);
+      if (field.getValues() != null) {
+        printOut("  " + field.getName() + " [" + String.join(", ", field.getValues()) + "]");
+      } else {
+        printOut("  " + field.getName() + " (" + field.getType() + ")");
+      }
+    }
+  }
+
+  private void displayFixes() {
+    printOut(bundle.getString("displayFixHeader"));
+    for (String field : conformance.getFixFields()) {
+      printOut("  " + field);
+    }
+  }
+
+  private void displayAutoFixes() {
+    printOut(bundle.getString("displayAutoFixHeader"));
+    for (String autofix : validAutofixes) {
+      printOut("  " + autofix);
+    }
   }
 
   public void printOptions(String prefix, int max) {

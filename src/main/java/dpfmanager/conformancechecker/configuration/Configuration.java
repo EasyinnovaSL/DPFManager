@@ -736,11 +736,15 @@ public class Configuration {
     this.rules = rules;
   }
 
-  public void setModifiedIsos(Map<String, List<String>> modifiedIsos) {
+  public void setModifiedIsos(Map<String, ArrayList<String>> modifiedIsos) {
     this.modifiedIsos = modifiedIsos;
   }
 
   public void setIsos(ArrayList<String> isos) {
     this.isos = isos;
+  }
+
+  public void setFormats(ArrayList<String> formats) {
+    this.formats = formats;
   }
 }

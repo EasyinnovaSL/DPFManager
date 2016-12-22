@@ -114,6 +114,9 @@ public class CommonController {
     } else if (tmp.listFiles().length > 0) {
       printOut(bundle.getString("outputMustEmpty"));
       output = null;
+    } else if (!tmp.isAbsolute()){
+      printOut(bundle.getString("outputMustAbsolute"));
+      output = null;
     }
     if (output != null) {
       setOutputFolder(output);
