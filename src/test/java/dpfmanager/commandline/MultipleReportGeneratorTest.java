@@ -130,7 +130,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
       if (!file.contains(".mets")) n++;
     }
 
-    assertEquals(7, n);
+    assertEquals(8, n);
 
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();

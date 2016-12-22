@@ -52,6 +52,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 /**
  * Created by easy on 05/05/2016.
  */
@@ -63,18 +65,39 @@ public class HtmlReport extends Report {
    * @param ir   the individual report.
    * @param mode the mode (1, 2).
    */
-  public String parseIndividual(IndividualReport ir, int mode, int id) {
+  public String parseIndividual(IndividualReport ir, int mode, int id, String internalReportFolder) {
     String templatePath = "templates/individual.html";
 
     String htmlBody = readFilefromResources(templatePath);
 
-    // Image
+    // Thumbnail image
     String fileName = getReportName("", ir.getFilePath(), id);
     String imgPath = "img/" + fileName + ".jpg";
-    BufferedImage thumb = tiff2Jpg(ir.getFilePath());
-    if (thumb == null) {
+    //if (!ir.getTiffModel().getFatalError()) {
+    if (ir.getTiffModel() != null) {
+      try {
+        // Make thumbnail
+        BufferedImage thumb = tiff2Jpg(ir.getFilePath());
+        if (thumb == null) {
+          imgPath = "img/noise.jpg";
+        } else {
+          // Save thumbnail
+          File outputFile = new File(internalReportFolder + "/html/" + imgPath);
+          outputFile.getParentFile().mkdirs();
+          ImageIO.write(thumb, "jpg", outputFile);
+          buffer.flush();
+          buffer = null;
+          thumb.flush();
+          thumb = null;
+        }
+      } catch (Exception ex) {
+        imgPath = "img/noise.jpg";
+      }
+    } else {
       imgPath = "img/noise.jpg";
     }
+
+    ir.setImagePath(imgPath);
     htmlBody = StringUtils.replace(htmlBody, "##IMG_PATH##", encodeUrl(imgPath));
 
     /**

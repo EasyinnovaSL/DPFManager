@@ -657,7 +657,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
         config = getDefaultConfiguration();
       }
       TiffReader tr = new TiffReader();
-      int result = tr.readFile(pathToFile, false);
+      int result = tr.readFile(pathToFile);
       switch (result) {
         case -1:
           Logger.println("File '" + pathToFile + "' does not exist");
@@ -696,13 +696,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
             int htmlMode = 0;
             if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
             HtmlReport htmlReport = new HtmlReport();
-            output = htmlReport.parseIndividual(ir, htmlMode, id);
+            output = htmlReport.parseIndividual(ir, htmlMode, id, internalReportFolder);
             ir.setConformanceCheckerReportHtml(output);
           }
 
           if (config.getFormats().contains("PDF")) {
             PdfReport pdfReport = new PdfReport();
-            pdfReport.parseIndividual(ir);
+            pdfReport.parseIndividual(ir, id, internalReportFolder);
           }
 
           if (fixes != null && fixes.getFixes().size() > 0) {
@@ -710,7 +710,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             String nameOriginalTif = ir.getFilePath();
 
             tr = new TiffReader();
-            tr.readFile(nameOriginalTif, false);
+            tr.readFile(nameOriginalTif);
             ir.setTiffModel(tr.getModel());
 
             for (Fix fix : fixes.getFixes()) {
@@ -742,7 +742,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ti.close();
 
             tr = new TiffReader();
-            tr.readFile(pathFixed, false);
+            tr.readFile(pathFixed);
             TiffDocument to = tr.getModel();
 
             //Logger.println("Validating Tiff");
@@ -774,13 +774,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
             if (config.getFormats().contains("HTML")) {
               HtmlReport htmlReport = new HtmlReport();
-              output = htmlReport.parseIndividual(ir2, 2, id);
+              output = htmlReport.parseIndividual(ir2, 2, id, internalReportFolder);
               ir2.setConformanceCheckerReportHtml(output);
             }
 
             if (config.getFormats().contains("PDF")) {
               PdfReport pdfReport = new PdfReport();
-              pdfReport.parseIndividual(ir2);
+              pdfReport.parseIndividual(ir2, id, internalReportFolder);
             }
           }
 

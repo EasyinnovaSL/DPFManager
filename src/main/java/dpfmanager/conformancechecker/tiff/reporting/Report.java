@@ -61,6 +61,7 @@ import javax.imageio.ImageIO;
  * Created by easy on 06/05/2016.
  */
 public class Report {
+  BufferedImage buffer;
 
   /**
    * Tiff 2 jpg.
@@ -70,13 +71,13 @@ public class Report {
    */
   protected BufferedImage tiff2Jpg(String inputfile) {
     try {
-      BufferedImage image = ImageIO.read(new File(inputfile));
+      buffer = ImageIO.read(new File(inputfile));
 
       double factor = 1.0;
 
       // Scale width
-      int width = image.getWidth();
-      int height = image.getHeight();
+      int width = buffer.getWidth();
+      int height = buffer.getHeight();
       if (width > 500) {
         factor = 500.0 / width;
       }
@@ -90,40 +91,11 @@ public class Report {
         width = (int) (width * factor);
       }
 
-      BufferedImage img = scale(image, width, height);
+      BufferedImage img = scale(buffer, width, height);
       return img;
     } catch (Exception e) {
       return null;
     }
-  }
-
-  /**
-   * Tiff 2 jpg.
-   *
-   * @param inputfile  the inputfile
-   * @return true, if successful
-   */
-  protected BufferedImage tiff2JpgTimeout(String inputfile) {
-    ExecutorService executor = Executors.newCachedThreadPool();
-    Callable<BufferedImage> task = new Callable<BufferedImage>() {
-      public BufferedImage call() {
-        return tiff2Jpg(inputfile);
-      }
-    };
-    Future<BufferedImage> future = executor.submit(task);
-    BufferedImage result = null;
-    try {
-      result = future.get(5, TimeUnit.SECONDS);
-    } catch (TimeoutException ex) {
-      // handle the timeout
-    } catch (InterruptedException e) {
-      // handle the interrupts
-    } catch (ExecutionException e) {
-      // handle other exceptions
-    } finally {
-      //future.cancel(true);
-    }
-    return result;
   }
 
   BufferedImage scale(BufferedImage src, int w, int h) {

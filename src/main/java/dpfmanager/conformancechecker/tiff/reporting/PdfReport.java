@@ -44,6 +44,8 @@ import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -104,12 +106,34 @@ public class PdfReport extends Report {
     return list;
   }
 
+  static String getFileType(String path) {
+    String fileType = null;
+    fileType = path.substring(path.lastIndexOf('.') + 1).toUpperCase();
+    return fileType;
+  }
+
+  public static String getReportName(String internalReportFolder, String realFilename, int idReport) {
+    String reportName = internalReportFolder + idReport + "-" + new File(realFilename).getName();
+    File file = new File(reportName);
+    int index = 0;
+    while (file.exists()) {
+      index++;
+      String ext = getFileType(reportName);
+      reportName =
+          internalReportFolder + idReport + "-"
+              + new File(realFilename.substring(0, realFilename.lastIndexOf(".")) + index + "." + ext)
+              .getName();
+      file = new File(reportName);
+    }
+    return reportName;
+  }
+
   /**
    * Parse an individual report to PDF.
    *
    * @param ir the individual report.
    */
-  public void parseIndividual(IndividualReport ir) {
+  public void parseIndividual(IndividualReport ir, int id, String internalReportFolder) {
     try {
       PDFParams pdfParams = new PDFParams();
       pdfParams.init(PDPage.PAGE_SIZE_A4);
@@ -144,7 +168,35 @@ public class PdfReport extends Report {
       int max_image_width = 200;
       pdfParams.y -= (max_image_height + 30);
       int image_pos_y = pdfParams.y;
-      BufferedImage thumb = tiff2Jpg(ir.getFilePath());
+      BufferedImage thumb = null;
+      //if (!ir.getTiffModel().getFatalError()) {
+      if (ir.getTiffModel() != null) {
+        // Get thumbnail
+        String fileName = getReportName("", ir.getFilePath(), id);
+        String imgPath = "img/" + fileName + ".jpg";
+        if (!new File(internalReportFolder + "/html/" + imgPath).exists()) {
+          // Create thumbnail
+          thumb = tiff2Jpg(ir.getFilePath());
+          if (thumb == null) {
+            imgPath = "img/noise.jpg";
+          } else {
+            // Save thumbnail
+            File outputFile = new File(internalReportFolder + "/html/" + imgPath);
+            outputFile.getParentFile().mkdirs();
+            ImageIO.write(thumb, "jpg", outputFile);
+            buffer.flush();
+            buffer = null;
+            thumb.flush();
+            thumb = null;
+            if (ir.getImagePath() == null)
+              ir.setImagePath(imgPath);
+          }
+        }
+        // Read thumbnail
+        if (new File(internalReportFolder + "/html/" + imgPath).exists()) {
+          thumb = ImageIO.read(new FileInputStream(internalReportFolder + "/html/" + imgPath));
+        }
+      }
       if (thumb == null) {
         thumb = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
       }

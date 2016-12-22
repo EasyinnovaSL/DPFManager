@@ -44,7 +44,6 @@ public class ReportHtml extends ReportGeneric {
   public void parseGlobal(String outputfile, GlobalReport gr, ReportGenerator generator) {
     String templatePath = "templates/global.html";
     String imagePath = "templates/image.html";
-    String newHtmlFolder = outputfile.substring(0, outputfile.lastIndexOf("/"));
 
     String imagesBody = "";
     String pieFunctions = "";
@@ -56,11 +55,8 @@ public class ReportHtml extends ReportGeneric {
       String imageBody;
       imageBody = generator.readFilefromResources(imagePath);
       // Image
-      String imgPath = "html/img/" + new File(ir.getReportPath()).getName() + ".jpg";
-      boolean check = tiff2Jpg(ir.getFilePath(), newHtmlFolder + "/" + imgPath);
-      if (!check) {
-        imgPath = "html/img/noise.jpg";
-      }
+      String imgPath = "html/" + ir.getImagePath();
+
       imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", encodeUrl(imgPath));
 
       // Basic

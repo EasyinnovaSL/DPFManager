@@ -105,6 +105,8 @@ public class IndividualReport {
 
   private Map<String, ArrayList<String>> modifiedIsos;
 
+  private String imagePath = null;
+
   /**
    * Error constructor
    */
@@ -126,6 +128,14 @@ public class IndividualReport {
     containsData = false;
     errors = new HashMap<>();
     warnings = new HashMap<>();
+  }
+
+  public String getImagePath() {
+    return imagePath;
+  }
+
+  public void setImagePath(String path) {
+    imagePath = path;
   }
 
   /**

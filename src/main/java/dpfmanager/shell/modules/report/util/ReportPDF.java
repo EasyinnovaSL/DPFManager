@@ -40,6 +40,7 @@ import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,15 +134,12 @@ public class ReportPDF extends ReportGeneric {
           int image_width = 100;
 
           // Draw image
-          String imgPath = pdffile + "img.jpg";
-          int ids = 0;
-          while (new File(imgPath).exists()) imgPath = pdffile + "img" + ids++ + ".jpg";
-          boolean check = tiff2Jpg(ir.getFilePath(), imgPath);
+          String imgPath = ir.getInternalReportFodler() + "/html/" + ir.getImagePath();
           BufferedImage bimg;
-          if (!check) {
+          if (!new File(imgPath).exists()) {
             bimg = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
           } else {
-            bimg = ImageIO.read(new File(imgPath));
+            bimg = ImageIO.read(new FileInputStream(imgPath));
           }
           image_width = image_height * bimg.getWidth() / bimg.getHeight();
           if (image_width > 100) {
@@ -164,7 +162,6 @@ public class ReportPDF extends ReportGeneric {
 
           ximage = new PDJpeg(pdfParams.getDocument(), bimg);
           pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
-          if (check) new File(imgPath).delete();
 
           // Values
           image_width = initialx;

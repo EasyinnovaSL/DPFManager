@@ -24,6 +24,7 @@ public class SmallIndividualReport implements Comparable {
   Map<String, ArrayList<String>> modifiedIsos;
   String internalReportFodler;
   Long uuid;
+  String imagePath;
 
   public SmallIndividualReport(IndividualReport ind) {
     this.isError = ind.isError();
@@ -39,6 +40,7 @@ public class SmallIndividualReport implements Comparable {
     this.nErrors = new HashMap<>();
     this.internalReportFodler = ind.getInternalReportFodler();
     this.uuid = ind.getUuid();
+    this.imagePath = ind.getImagePath();
     for (String iso : getCheckedIsos()){
       nErrors.put(iso, ind.getErrors(iso).size());
     }
@@ -58,6 +60,10 @@ public class SmallIndividualReport implements Comparable {
         nWarningsPolicy.put(iso, ind.getNWarningsPolicy(iso));
       }
     }
+  }
+
+  public String getImagePath() {
+    return imagePath;
   }
 
   public String getReportPath() {
