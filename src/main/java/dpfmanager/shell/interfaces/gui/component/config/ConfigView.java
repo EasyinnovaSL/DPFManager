@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.component.config;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.messages.ConfigMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
@@ -51,6 +52,7 @@ import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -129,16 +131,35 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
       gotoConfig(1);
       if (!isEdit) {
         saveDescInput.clear();
+        saveNameInput.clear();
       } else {
+        if (loadName(getModel().getPath())) {
+          File configFile = new File(getModel().getPath());
+          saveNameInput.setText(configFile.getName().replace(".dpf", ""));
+        } else {
+          saveNameInput.clear();
+        }
         saveDescInput.setText(getModel().getConfiguration().getDescription());
       }
     }
     return null;
   }
 
+  private boolean loadName(String path){
+    if (path != null){
+      File tmp1 = new File(path);
+      File tmp2 = new File(DPFManagerProperties.getConfigDir());
+      for (File file : tmp2.listFiles()){
+        if (file.getAbsolutePath().equals(tmp1.getAbsolutePath())){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
-    
     // Set model and controller
     setModel(new ConfigModel());
     setController(new ConfigController());
@@ -324,11 +345,6 @@ public class ConfigView extends DpfView<ConfigModel, ConfigController> {
   public void setContinueButton(int x){
     if (x == 5) {
       NodeUtil.showNode(gridSave);
-      if (isEdit) {
-        NodeUtil.hideNode(hboxName);
-      } else {
-        NodeUtil.showNode(hboxName);
-      }
       continueButton.setText(bundle.getString("configSave"));
     } else {
       NodeUtil.hideNode(gridSave);
