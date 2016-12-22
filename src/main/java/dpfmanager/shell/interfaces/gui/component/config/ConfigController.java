@@ -98,7 +98,8 @@ public class ConfigController extends DpfController<ConfigModel, ConfigView> {
         getModel().saveConfig(file.getAbsolutePath());
         getContext().send(GuiConfig.PERSPECTIVE_DESSIGN, new UiMessage(UiMessage.Type.SHOW));
       } catch (Exception ex) {
-        getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(getBundle().getString("exception"), ex));
+        // Alert incorrect name format
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("invalidFileName")));
       }
     }
   }
