@@ -224,7 +224,7 @@
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tifflibrary4java</artifactId>
-            <version>1.8.4</version>
+            <version>1.8.5</version>
         </dependency>
 
         <dependency>
@@ -551,7 +551,7 @@
                     <plugin>
                         <groupId>com.zenjava</groupId>
                         <artifactId>javafx-maven-plugin</artifactId>
-                        <version>8.4.0</version>
+                        <version>8.7.0</version>
                         <configuration>
                             <mainClass>${gui.class}</mainClass>
                             <verbose>true</verbose>
