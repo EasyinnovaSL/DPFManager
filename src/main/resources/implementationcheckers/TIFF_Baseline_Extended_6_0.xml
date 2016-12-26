@@ -1058,7 +1058,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{type=='SHORT'}">SampleFormat Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
-  <rule id="TAG-339-0002" context="ifd[id=321]" level="error">
+  <rule id="TAG-339-0002" context="ifd[class=image]" level="error">
    <title>SampleFormat valid cardinality</title>
    <description>The cardinality SampleFormat Tag type must be SamplesPerPixel</description>
    <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
@@ -1091,7 +1091,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <assert test="{type=='SHORT'}">SampleFormat Tag type is not valid, a SHORT type is expected</assert>
  </rule>
  -->
- <rule id="TAG-340-0002" context="ifd[id=340]" level="error">
+ <rule id="TAG-340-0002" context="ifd[class=image]" level="error">
   <title>SMinSampleValue valid cardinality</title>
   <description>The cardinality SMinSampleValue Tag type must be SamplesPerPixel</description>
   <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
@@ -1124,7 +1124,7 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
   <assert test="">SampleFormat Tag type is not valid, a SHORT type is expected</assert>
  </rule>
  -->
-  <rule id="TAG-341-0002" context="ifd[id=340]" level="error">
+  <rule id="TAG-341-0002" context="ifd[class=image]" level="error">
    <title>SMaxSampleValue valid cardinality</title>
    <description>The cardinality SMaxSampleValue Tag type must be SamplesPerPixel</description>
    <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
@@ -1157,11 +1157,11 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{type=='RATIONAL'}">WhitePoint Tag type is not valid, a RATIONAL type is expected</assert>
   </rule>
   
-  <rule id="TAG-318-0002" context="ifd[id=318]" level="error">
+  <rule id="TAG-318-0002" context="tag[id=318]" level="error">
    <title>WhitePoint valid cardinality</title>
    <description>The cardinality WhitePoint Tag type must be SamplesPerPixel</description>
    <reference><section>Section 19: Data Sample Format</section><page>80</page></reference>
-   <assert test="{tags.tag[name=WhitePoint].cardinality == 2 }">Invalid cardinality, WhitePoint cardinality should be 2</assert>
+   <assert test="{cardinality == 2 }">Invalid cardinality, WhitePoint cardinality should be 2</assert>
   </rule>
   <!--
   <rule id="TAG-318-0003" context="ifd" level="warning">
@@ -1191,11 +1191,11 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{type=='RATIONAL'}">PrimaryChromaticities Tag type is not valid, a RATIONAL type is expected</assert>
   </rule>
   
-  <rule id="TAG-319-0002" context="ifd[id=319]" level="error">
+  <rule id="TAG-319-0002" context="tag[id=319]" level="error">
    <title>PrimaryChromaticities valid cardinality</title>
    <description>The cardinality PrimaryChromaticities Tag type must be SamplesPerPixel</description>
    <reference><section>Section 20: RGB Image Colorimetry</section><page>83</page></reference>
-   <assert test="{tags.tag[name=WhitePoint].cardinality == 6 }">Invalid cardinality, PrimaryChromaticities cardinality should be 2</assert>
+   <assert test="{cardinality == 6 }">Invalid cardinality, PrimaryChromaticities cardinality should be 2</assert>
   </rule>
   <!--
   <rule id="TAG-319-0003" context="ifd" level="warning">
@@ -1261,11 +1261,11 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{type=='SHORT'}">TransferRange Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
-  <rule id="TAG-342-0002" context="ifd[id=319]" level="error">
+  <rule id="TAG-342-0002" context="tag[id=319]" level="error">
    <title>TransferRange valid cardinality</title>
    <description>The cardinality TransferRange Tag type must be SamplesPerPixel</description>
    <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
-   <assert test="{tags.tag[name=WhitePoint].cardinality == 6 }">Invalid cardinality, TransferRange cardinality should be 6</assert>
+   <assert test="{cardinality == 6 }">Invalid cardinality, TransferRange cardinality should be 6</assert>
   </rule>
   <!--
   <rule id="TAG-342-0003" context="ifd" level="warning">
@@ -1303,11 +1303,11 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{type=='RATIONAL'}">ReferenceBlackWhite Tag type is not valid, a RATIONAL type is expected</assert>
   </rule>
   
-  <rule id="TAG-532-0002" context="ifd[id=532]" level="error">
+  <rule id="TAG-532-0002" context="tag[id=532]" level="error">
    <title>ReferenceBlackWhite valid cardinality</title>
    <description>The cardinality ReferenceBlackWhite Tag type must be 6</description>
    <reference><section>Section 20: RGB Image Colorimetry</section><page>86</page></reference>
-   <assert test="{tags.tag[name=ReferenceBlackWhite].cardinality == 6 }">Invalid cardinality, ReferenceBlackWhite cardinality should be 6</assert>
+   <assert test="{cardinality == 6 }">Invalid cardinality, ReferenceBlackWhite cardinality should be 6</assert>
   </rule>
   <!--
   <rule id="TAG-532-0003" context="ifd" level="warning">
@@ -1389,11 +1389,11 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{type=='RATIONAL'}">YCbCrCoefficients Tag type is not valid, a RATIONAL type is expected</assert>
   </rule>
   
-  <rule id="TAG-529-0002" context="ifd[id=529]" level="error">
+  <rule id="TAG-529-0002" context="tag[id=529]" level="error">
    <title>YCbCrCoefficients valid cardinality</title>
    <description>The cardinality YCbCrCoefficients Tag type must be 3</description>
    <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
-   <assert test="{tags.tag[name=YCbCrCoefficients].cardinality == 3 }">Invalid cardinality, YCbCrCoefficients cardinality should be 3</assert>
+   <assert test="{cardinality == 3 }">Invalid cardinality, YCbCrCoefficients cardinality should be 3</assert>
   </rule>
   
   <rule id="TAG-529-0003" context="ifd" level="warning">
@@ -1450,11 +1450,11 @@ SamplesPerPixel * TilesPerImage for PlanarConfiguration equal to 2</description>
    <assert test="{type=='SHORT'}">YCbCrSubSampling Tag type is not valid, a SHORT type is expected</assert>
   </rule>
   
-  <rule id="TAG-530-0002" context="ifd[id=530]" level="error">
+  <rule id="TAG-530-0002" context="tag[id=530]" level="error">
    <title>YCbCrSubSampling valid cardinality</title>
    <description>The cardinality YCbCrSubSampling Tag type must be 2</description>
    <reference><section>Section 21: YCbCr Images</section><page>90</page></reference>
-   <assert test="{tags.tag[name=YCbCrCoefficients].cardinality == 2}">Invalid cardinality, YCbCrSubSampling cardinality should be 2</assert>
+   <assert test="{cardinality == 2}">Invalid cardinality, YCbCrSubSampling cardinality should be 2</assert>
   </rule>
   
   <rule id="TAG-530-0003" context="ifd" level="warning">

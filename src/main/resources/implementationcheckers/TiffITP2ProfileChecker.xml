@@ -9,30 +9,376 @@
     <version>1.0.0</version>
     <author>Easy Innova</author>
     <date>2016-09-20</date>
-    
-    <include><policyChecker>TIFF_Baseline_Core_6_0.xml</policyChecker></include>
+
+    <include>
+        <policyChecker>TIFF_Baseline_Core_6_0.xml</policyChecker>
+        <excluderules>IFDE-0001</excluderules>
+        <excluderules>TAG-296-0005</excluderules>
+        <excluderules>TAG-254-0003</excluderules>
+        <excluderules>TAG-259-0003</excluderules>
+        <excluderules>TAG-284-0003</excluderules>
+        <excluderules>TAG-284-0004</excluderules>
+        <excluderules>TAG-262-0003</excluderules>
+    </include>
     <include>
         <policyChecker>TiffITProfileChecker.xml</policyChecker>
-        <excluderules>CT-restricted-tags</excluderules>
+        <excluderules>TIFF-IT-CT</excluderules><!--
         <excluderules>LW-restricted-tags</excluderules>
         <excluderules>MP-restricted-tags</excluderules>
         <excluderules>BP-restricted-tags</excluderules>
         <excluderules>BL-restricted-tags</excluderules>
         <excluderules>SD-restricted-tags</excluderules>
-        <excluderules>FP-restricted-tags</excluderules>
+        <excluderules>FP-restricted-tags</excluderules>-->
     </include>
-    <include>
-        <policyChecker>TiffITP1ProfileChecker.xml</policyChecker>
-        <excluderules>CT-restricted-tags</excluderules>
-        <excluderules>LW-restricted-tags</excluderules>
-        <excluderules>HC-restricted-tags</excluderules>
-        <excluderules>MP-restricted-tags</excluderules>
-        <excluderules>BP-restricted-tags</excluderules>
-        <excluderules>BL-restricted-tags</excluderules>
-        <excluderules>SD-restricted-tags</excluderules>
-        <excluderules>FP-restricted-tags</excluderules>
-    </include>
-    
+
+    <rules id="TIFF-IT-P2">
+        <title>Image rules</title>
+        <description></description>
+        <rule id="TIFF-IT-P2-0001" context="ifd[class=image]" level="error">
+            <title>Forbidden DocumentName tag</title>
+            <description>DocumentName tag is forbidden in TIFF/IT P2</description>
+            <reference><section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page></reference>
+            <assert test="{!tags.tag[name=DocumentName]}">DocumentName tag is forbidden in TIFF/IT P2</assert>
+        </rule>
+        <rule id="TIFF-IT-P2-0002" context="ifd[class=image]" level="error">
+            <title>Forbidden Model tag</title>
+            <description>Model tag is forbidden in TIFF/IT P2</description>
+            <reference><section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page></reference>
+            <assert test="{!tags.tag[name=Model]}">Model tag is forbidden in TIFF/IT P2</assert>
+        </rule>
+        <rule id="TIFF-IT-P2-0003" context="ifd[class=image]" level="error">
+            <title>Orientation valid value</title>
+            <description>Orientation valid value is 1</description>
+            <reference><section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page></reference>
+            <assert test="{!tags.tag[name=Orientation] || tags.tag[name=Orientation]==1}">Orientation value must be 1</assert>
+        </rule>
+        <rule id="TIFF-IT-P2-0004" context="ifd[class=image]" level="error">
+            <title>Forbidden PageName tag</title>
+            <description>PageName tag is forbidden in TIFF/IT P1</description>
+            <reference><section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page></reference>
+            <assert test="{!tags.tag[name=PageName]}">PageName tag is forbidden in TIFF/IT P1</assert>
+        </rule>
+        <rule id="TIFF-IT-P2-0005" context="ifd[class=image]" level="error">
+            <title>Forbidden HostComputer tag</title>
+            <description>HostComputer tag is forbidden in TIFF/IT P2</description>
+            <reference><section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page></reference>
+            <assert test="{!tags.tag[name=HostComputer]}">HostComputer tag is forbidden in TIFF/IT P2</assert>
+        </rule>
+        <rule id="TIFF-IT-P2-0006" context="ifd[class=image]" level="error">
+            <title>Forbidden Site tag</title>
+            <description>Site tag is forbidden in TIFF/IT P2</description>
+            <reference><section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page></reference>
+            <assert test="{!tags.tag[name=Site]}">Site tag is forbidden in TIFF/IT P2</assert>
+        </rule>
+        <rule id="TIFF-IT-P2-0007" context="ifd[class=image]" level="error">
+            <title>Forbidden IT8Header tag</title>
+            <description>IT8Header tag is forbidden in TIFF/IT P2</description>
+            <reference><section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page></reference>
+            <assert test="{!tags.tag[name=IT8Header]}">IT8Header tag is forbidden in TIFF/IT P2</assert>
+        </rule>
+    </rules>
+
+    <rules id="TIFF-IT-CT-P2">
+    <title>TIFF/IT-CT/P2 Colour continuous-tone picture</title>
+    <description>There are three formats for describing the pixel structure of colour continuous-tone picture file data:
+        pixel interleaving (also called chunky format).
+        line interleaving (also called row interleaving).
+        colour interleaving (also called planar format).
+
+        TIFF/IT-CT/P2 can be considered as an extension of TIFF/IT-CT/P1. It is possible that TIFF/IT-CT/P2 files will
+        not be readable by typical TIFF 6.0 readers if the CMYKEquivalent tag is used.
+
+        TIFF/IT-CT/P2 permit optional JPEG or Flate compression of image data. TIFF/IT-CT/P1 does not permit any compression of image data.
+
+        NOTE TIFF/IT-CT/P2 do not allow the use of a value 32895 for field 259 (Compression) to indicate the use of raster padding nor do they allow the use of
+        field 34019 (RasterPadding).
+    </description>
+
+        <rule id="TIFF-IT-CT-P2-0001" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 BitsPerSample valid values</title>
+            <description>BitsPerSample on a colour continuous-tone picture (CT) file must be 8,8,8,8</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=InkSet]} || {tags.tag[name=InkSet != 1} || {tags.tag[name=BitsPerSample] == '8,8,8,8'}">Invalid BitsPerSample value. BitsPerSample should be [8,8,8,8]</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0002" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 Compression valid values</title>
+            <description>Compression valid values for colour continuous-tone picture (CT) are:
+                1 = No compression
+                7 = JPEG encoding scheme ('new-style' JPEG)
+                8 = Deflate ('Adobe-style')
+            </description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=Compression] == 1} || {tags.tag[name=Compression] == 7} || {tags.tag[name=Compression] == 8}">Invalid Compression value for colour continuous-tone picture (CT) image</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0003" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 PhotometricInterpretation valid value</title>
+            <description>The only valid value for PhotometricInterpretation in continuous-tone picture (CT) is CMYK</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Invalid PhotometricInterpretation value, Compression should be CMYK (5)</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0004" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 SamplesPerPixel valid values</title>
+            <description>SamplesPerPixel on a colour continuous-tone picture (CT) file must be 4</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=InkSet]} || {tags.tag[name=InkSet != 2} || {tags.tag[name=SamplesPerPixel] == 4}">Invalid SamplesPerPixel. SamplesPerPixel for colour continuous-tone picture (CT) CMYK image without InkSet tag should be 4</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0005" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 PlanarConfiguration valid values </title>
+            <description>PlanarConfiguration on a colour continuous-tone picture (CT) file must be 1</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=PlanarConfiguration] == 1}">Invalid PlanarConfiguration. PlanarConfiguration for colour continuous-tone picture (CT) CMYK should be 1</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0006" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 InkSet valid values </title>
+            <description>InkSet on a colour continuous-tone picture (CT) file must be 1</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=InkSet] == 1}">Invalid InkSet. InkSet for colour continuous-tone picture (CT) CMYK should be 1</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0007" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 NumberOfInks valid value</title>
+            <description>If NumberOfInks tag is used, it must be 4</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=NumberOfInks] == 4}">invalid NumberOfInks. If NumberOfInks tag is used, it must be 4</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0008" context="ifd[filetype=ct]" level="error" experimental="true">
+            <title>TIFF/IT-CT/P2 NumberOfInks match SamplesPerPixel</title>
+            <description>If NumberOfInks tag is used, it must have the same value as the value of SamplesPerPixel</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=NumberOfInks]} || {tags.tag[name=NumberOfInks] == tags.tag[name=SamplesPerPixel]}">invalid NumberOfInks. If NumberOfInks tag is used, it must have the same value as the value of SamplesPerPixel</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0009" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 DotRange valid value</title>
+            <description>If DotRange tag is used, it must be 0,255</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=DotRange] == 0,255}">invalid DotRange. If DotRange tag is used, it must be 0,255</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0010" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 ColorSequence valid values for RGB</title>
+            <description>ColorSequence on a colour continuous-tone picture (CT) file must be CMYK</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=ColorSequence] == 'CMYK'}">Invalid ColorSequence. ColorSequence on a colour continuous-tone picture (CT) file must be CMYK</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-P2-0011" context="ifd[filetype=ct]" level="error">
+            <title>TIFF/IT-CT/P2 RasterPadding is forbidden</title>
+            <description>RasterPadding on a colour continuous-tone picture (CT) TIFF/IT P1 file is forbidden</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=RasterPadding]}">RasterPadding on a colour continuous-tone picture (CT) TIFF/IT P2 file is forbidden</assert>
+        </rule>
+</rules>
+
+    <rules id="TIFF-IT-CT-LW">
+        <title>Colour line-art (LW) file</title>
+        <description>Colour line-art data consists of an image file comprised of the following three parts.The first part consists of
+            one or more blocks of run-length encoded data describing the colour line-art image in terms of colour numbers
+            and run lengths.The second part is a colour table (in the IFD) that defines the colour values for the colour
+            numbers of the first part.The third part is a table describing the separations of the second part.This data
+            structure is similar to binary line-art data with the addition of two colour tables for colour specification.
+
+            IFF/IT-LW/P2 can be considered as an extension of TIFF/IT-LW/P1.
+
+            NOTE TIFF/IT-LW files are not readable by typical TIFF 6.0 readers and cannot be written by typical TIFF 6.0 writers
+            because of the mandatory use of TIFF/IT-specific fields and values and non-traditional interpretations of other TIFF 6.0
+            fields and values (e.g. compression by mandatory run length encoding).
+        </description>
+
+        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW BitsPerSample valid value </title>
+            <description>BitsPerSample valid value on a Colour line-art picture (LW) file must be 8</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=BitsPerSample] == 8"></assert>
+        </rule>
+        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW Compression valid value </title>
+            <description>Compression value on a Colour line-art picture (LW) picture must be IT8 Linework RLE (32896)</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=Compression] == 32896}">Invalid Compression value, Compression should be  IT8 Linework RLE (32896)</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW PhotometricInterpretation valid value </title>
+            <description>PhotometricInterpretation value on a Colour line-art picture (LW) picture must be CMYK (5)</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Invalid PhotometricInterpretation value, Compression should be CMYK (5)</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW SamplesPerPixel valid value </title>
+            <description>SamplesPerPixel value on a Colour line-art picture (LW) picture must be 1</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel value, Compression should be 1</assert>
+        </rule>
+        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-CT ColorTable is mandatory</title>
+            <description>ColorTable is mandatory for on a Colour line-art picture (LW) TIFF/IT P1 </description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=ColorTable]}"></assert>
+        </rule>
+        <rule id="TIFF-IT-CT-TAG-245-0004" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-CT NumberOfInks valid value</title>
+            <description>If NumberOfInks tag is used, it must have the same value as the value of SamplesPerPixel</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=NumberOfInks]} || {tags.tag[name=NumberOfInks] == tags.tag[name=SamplesPerPixel]}"></assert>
+        </rule>
+        <rule id="TIFF-IT-CT-TAG-245-0004" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-CT NumberOfInks valid value</title>
+            <description>If NumberOfInks tag is used, it must have the same value as the value of SamplesPerPixel</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=ColorSequence]} &amp;&amp; {tags.tag[name=InkSet] == 1} || tags.tag[name=ColorSequence]!='CMYK' &amp;&amp; {tags.tag[name=InkSet] == 1} || {tags.tag[name=InkSet] == 2}"></assert>
+        </rule>
+    </rules>
+    <rules id="TIFF-IT-HC-P2">
+    <title>High-resolution continuous-tone (HC) file</title>
+    <description>High-resolution continuous-tone data consist of an image file of one or more blocks of run-length encoded
+        pixel data. The number of lines is defined in the ImageLength field. Each line is made up of pixel runs and
+        starts and ends with a blank pixel run (all zero bytes). Each pixel run is made up of two components: a run
+        length followed by a colour value. The run length is a 16-bit integer as defined in 7.4.2.4.2. The big-endian
+        byte order is used regardless of the order used in the TIFF/IT directories (IFD). The sum of the run lengths in
+        the line shall be the value found in ImageWidth. Run lengths shall not cross line boundaries. The colour value
+        is defined by the values of SamplesPerPixel, BitsPerSample, ColorSequence and DotRange in the same
+        manner that CT colour values are specified, except that a special case of colour value is reserved for a
+        transparent colour, if used.
+
+        TIFF/IT field 34028 is used as the transparency indicator. If transparency is used, colour values of zero
+        become a special case, and signify transparency in that separation of the high-resolution continuous-tone
+        (HC) data. Transparency indicates that the underlying colour picture separation value is used.
+
+        TIFF/IT-HC/P2 is an extension of TIFF/IT-HC/P1.
+
+        NOTE TIFF/IT-HC/P2 is not readable by typical TIFF 6.0 readers and cannot
+        be written by typical TIFF 6.0 writers because of the mandatory use of TIFF/IT-specific fields and values and nontraditional
+        interpretations of other TIFF 6.0 fields and values (e.g. compression by mandatory run-length encoding).
+    </description>
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC Compression valid value </title>
+            <description>Compression valid values for High-resolution continuous-tone data is IT8MP Run-length encoding, used with HC format (32897)</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=Compression] == 32897}"></assert>
+        </rule>
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC PhotometricInterpretation valid value </title>
+            <description>PhotometricInterpretation valid value for High-resolution continuous-tone data is 32897</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}"></assert>
+        </rule>
+    </rules>
+
+    <rules id="TIFF-IT-HC-P2">
+        <title>Binary picture (BP) file</title>
+        <description>For binary pictures, ImageColorValue and BackgroundColorValue may contain the values of the colour
+            components for the image (foreground) and background colour, specified in the sequence as defined in
+            ColorSequence. These colour values apply to the solid image and background colours for binary pictures.
+            The data stream indicates which of the colours, foreground and background, will print. The bits in the data
+            stream function as a switch between the image colour and the background colour. Bitmap fill order is from
+            most significant bit to least significant bit within the byte, the default TIFF fill order. ImageColorIndicator and
+            BackgroundColorIndicator field values shall be used to indicate when, if, and how image and background
+            colours are used, including the use of transparency.
+
+            TIFF/IT-BP/P1 and TIFF/IT-BP/P2 limit the field values to the default
+            value, a single value or a small choice of values. TIFF/IT-BP/P1 and TIFF/IT-BP/P2 also limit the usage of
+            optional fields to the minimum required for reasonable interchange. TIFF/IT-BP/P2 is an extension of TIFF/IT-BP/P1.
+
+            NOTE 2 TIFF/IT-BP/P2 may not be readable by typical TIFF 6.0 readers and writers may not be able to write them
+            because of TIFF/IT specific fields and values and non-traditional interpretations of other TIFF 6.0 fields and values (e.g.
+            Compression tag).
+        </description>
+
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-CT Compression valid value </title>
+            <description>Compression valid values for High-resolution continuous-tone data are 1,2,8</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=Compression] == 1} || tags.tag[name=Compression] == 2 || tags.tag[name=Compression] == 8"></assert>
+        </rule>
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-CT PhotometricInterpretation valid value </title>
+            <description>PhotometricInterpretation valid values for High-resolution continuous-tone data are 1,2,8</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 1}"></assert>
+        </rule>
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-HC InkSet forbidden</title>
+            <description>InkSet tag is forbidden for High-resolution continuous-tone data</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=InkSet]}"></assert>
+        </rule>
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-HC InkNames forbidden</title>
+            <description>InkNames tag is forbidden for High-resolution continuous-tone data</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=InkNames]}"></assert>
+        </rule>
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-HC NumberOfInks forbidden</title>
+            <description>NumberOfInks tag is forbidden for High-resolution continuous-tone data</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=NumberOfInks]}"></assert>
+        </rule>
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-HC NumberOfInks forbidden</title>
+            <description>NumberOfInks tag is forbidden for High-resolution continuous-tone data</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=ColorSequence]}"></assert>
+        </rule>
+        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-HC CMYKEquivalent forbidden</title>
+            <description>CMYKEquivalent tag is forbidden for High-resolution continuous-tone data</description>
+            <reference>
+                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+            </reference>
+            <assert test="{!tags.tag[name=CMYKEquivalent]}"></assert>
+        </rule>
+    </rules>
+
+
     <rules id="CT-restricted-tags">
         <title></title>
         <description></description>
