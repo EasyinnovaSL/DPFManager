@@ -22,20 +22,12 @@ package dpfmanager.conformancechecker.tiff;
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
-import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
-import com.easyinnova.implementation_checker.TiffImplementationChecker;
-import com.easyinnova.implementation_checker.ValidationResult;
-import com.easyinnova.implementation_checker.Validator;
-import com.easyinnova.implementation_checker.model.TiffValidationObject;
-import com.easyinnova.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.fixMetadataInconsistencies;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.makeBaselineCompliant;
-import dpfmanager.conformancechecker.tiff.policy_checker.PolicyChecker;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
 import dpfmanager.conformancechecker.tiff.reporting.MetsReport;
 import dpfmanager.conformancechecker.tiff.reporting.PdfReport;
@@ -48,6 +40,12 @@ import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import com.google.common.reflect.ClassPath;
 
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.TiffImplementationChecker;
+import com.easyinnova.implementation_checker.ValidationResult;
+import com.easyinnova.implementation_checker.Validator;
+import com.easyinnova.implementation_checker.model.TiffValidationObject;
+import com.easyinnova.policy_checker.PolicyChecker;
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -371,7 +369,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return fields;
   }
 
-  public ArrayList<String> getOperators(String name){
+  public ArrayList<String> getOperators(String name) {
     for (Field field : getConformanceCheckerFields()) {
       if (field.getName().equals(name)) {
         return field.getOperators();
@@ -439,64 +437,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
         return "Planar";
     }
     return "Unknown";
-  }
-
-  public static int compressionCode(String name) {
-    switch (name) {
-      case "None":
-        return 1;
-      case "CCITT":
-        return 2;
-      case "CCITT GR3":
-        return 3;
-      case "CCITT GR4":
-        return 4;
-      case "LZW":
-        return 5;
-      case "OJPEG":
-        return 6;
-      case "JPEG":
-        return 7;
-      case "DEFLATE Adobe":
-        return 8;
-      case "JBIG BW":
-        return 9;
-      case "JBIG C":
-        return 10;
-      case "PackBits":
-        return 32773;
-    }
-    return -1;
-  }
-
-  public static int photometricCode(String name) {
-    switch (name) {
-      case "Bilevel":
-        return 1;
-      case "RGB":
-        return 2;
-      case "Palette":
-        return 3;
-      case "Transparency Mask":
-        return 4;
-      case "CMYK":
-        return 5;
-      case "YCbCr":
-        return 6;
-      case "CIELAB":
-        return 10;
-    }
-    return -1;
-  }
-
-  public static int planarCode(String name) {
-    switch (name) {
-      case "Chunky":
-        return 1;
-      case "Planar":
-        return 2;
-    }
-    return -1;
   }
 
   private static Document convertStringToDocument(String xmlStr) {
@@ -816,7 +756,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
   }
 
   private Map<String, ValidationResult> getValidationResults(TiffReader tr, Configuration config) throws ParserConfigurationException, IOException, SAXException, JAXBException {
-    PolicyChecker policy = new PolicyChecker(Logger);
+    PolicyChecker policy = new PolicyChecker();
     String content = TiffConformanceChecker.getValidationXmlString(tr);
     Map<String, ValidationResult> validations = new HashMap<>();
     for (String path : ImplementationCheckerLoader.getPathsList()) {

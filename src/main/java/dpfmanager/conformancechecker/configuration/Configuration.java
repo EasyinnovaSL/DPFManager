@@ -20,10 +20,11 @@
 package dpfmanager.conformancechecker.configuration;
 
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.policy_checker.model.Rule;
+import com.easyinnova.policy_checker.model.Rules;
+
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.DpFManagerConstants;
 
@@ -47,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -198,6 +200,15 @@ public class Configuration {
     return output;
   }
 
+  private void deleteNonCheckedModifiedIsos(){
+    Set<String> keys = modifiedIsos.keySet();
+    for (String key : keys){
+      if (!isos.contains(key)){
+        modifiedIsos.remove(key);
+      }
+    }
+  }
+
   /**
    * Save file.
    *
@@ -205,6 +216,8 @@ public class Configuration {
    * @throws Exception the exception
    */
   public void SaveFile(String filename) throws Exception {
+    deleteNonCheckedModifiedIsos();
+
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
     Document doc = docBuilder.newDocument();

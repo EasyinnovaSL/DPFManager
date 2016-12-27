@@ -181,18 +181,18 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
     // Pre load classes
-//    try {
-//      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.tiff")) {
-//        Class.forName("com.easyinnova.tiff" + "." + className);
-//      }
-//      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.implementation_checker")) {
-//        Class.forName("com.easyinnova.implementation_checker" + "." + className);
-//      }
-//      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.policy_checker")) {
-//        Class.forName("com.easyinnova.policy_checker" + "." + className);
-//      }
-//    } catch (Exception e) {
-//    }
+    try {
+      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.tiff")) {
+        Class.forName("com.easyinnova.tiff" + "." + className);
+      }
+      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.implementation_checker")) {
+        Class.forName("com.easyinnova.implementation_checker" + "." + className);
+      }
+      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.policy_checker")) {
+        Class.forName("com.easyinnova.policy_checker" + "." + className);
+      }
+    } catch (Exception e) {
+    }
 
     // Set model and controller
     setModel(new DessignModel());

@@ -61,7 +61,9 @@ public class Wizard5Fragment {
     for (String iso : config.getIsos()){
       isosStr += ImplementationCheckerLoader.getIsoName(iso) + ", ";
     }
-    isosStr = isosStr.substring(0, isosStr.length()-2);
+    if (!isosStr.isEmpty()) {
+      isosStr = isosStr.substring(0, isosStr.length() - 2);
+    }
     labIsos.setText(isosStr);
     labReports.setText(config.getTxtFormats());
     labRules.setText(config.getTxtRules());
