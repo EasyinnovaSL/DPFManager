@@ -105,6 +105,7 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
 import com.easyinnova.implementation_checker.implementation_check.ImplementationCheckerType;
+import com.easyinnova.policy_checker.PolicyConstants;
 import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -293,7 +294,7 @@ public class MetsReport {
       StringType colorSpace = new StringType();
       colorSpace.setUse("System");
       int photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
-      colorSpace.setValue(TiffConformanceChecker.photometricName(photo));
+      colorSpace.setValue(PolicyConstants.photometricName(photo));
       photometricInterpretation.setColorSpace(colorSpace);
 
       //7.1.3.2.1 Icc profile
@@ -1245,7 +1246,7 @@ public class MetsReport {
           BasicDigitalObjectInformationType.Compression compression = new BasicDigitalObjectInformationType.Compression();
           StringType comprScheme = new StringType();
           comprScheme.setUse("System");
-          comprScheme.setValue(TiffConformanceChecker.compressionName(Integer.parseInt(ifd.getMetadata().get("Compression").toString())));
+          comprScheme.setValue(PolicyConstants.compressionName(Integer.parseInt(ifd.getMetadata().get("Compression").toString())));
           compression.setCompressionScheme(comprScheme);
           digitalObject.setCompression(compression);
         }
@@ -1490,7 +1491,7 @@ public class MetsReport {
         FileType.TransformFile transformFile = new FileType.TransformFile();
         transformFile.setID("T" + ifd.hashCode());
         int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
-        String value = comp > 0 ? TiffConformanceChecker.compressionName(comp) : "Unknown";
+        String value = comp > 0 ? PolicyConstants.compressionName(comp) : "Unknown";
         transformFile.setTRANSFORMALGORITHM(value);
         transformFile.setTRANSFORMTYPE("compression");
         file.setTransformFile(transformFile);

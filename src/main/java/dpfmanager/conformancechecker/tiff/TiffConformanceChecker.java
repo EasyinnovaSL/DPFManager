@@ -21,7 +21,6 @@ package dpfmanager.conformancechecker.tiff;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
@@ -46,6 +45,7 @@ import com.easyinnova.implementation_checker.ValidationResult;
 import com.easyinnova.implementation_checker.Validator;
 import com.easyinnova.implementation_checker.model.TiffValidationObject;
 import com.easyinnova.policy_checker.PolicyChecker;
+import com.easyinnova.policy_checker.model.Field;
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -168,131 +168,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, standard, "description", "TIFF extension for Image Technology");
 
       // Policy checker
-      Element policyChecker = doc.createElement("policyCheckerOptions");
+      Element policyChecker = PolicyChecker.getPolicyCheckerOptions(doc);
       conformenceCheckerElement.appendChild(policyChecker);
-      Element fields = doc.createElement("fields");
-      policyChecker.appendChild(fields);
-      // Image Width
-      Element field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "ImageWidth");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Image Width in pixels");
-      addElement(doc, field, "operators", ">,<,=");
-      // Image Height
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "ImageLength");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Image Height in pixels");
-      addElement(doc, field, "operators", ">,<,=");
-      // Pixel Density
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "PixelDensity");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Pixels per centimeter");
-      addElement(doc, field, "operators", ">,<,=");
-      // Number of images
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "NumberImages");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Number of images in the TIFF");
-      addElement(doc, field, "operators", ">,<,=");
-      // BitDepth
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "BitDepth");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Number of bits per pixel component");
-      addElement(doc, field, "operators", ">,<,=");
-      addElement(doc, field, "values", "1,2,4,8,16,32,64");
-      // DPI
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "DPI");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Dots per Inch");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", "Even,Uneven");
-      // Extra Channels
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "ExtraChannels");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Extra pixel components");
-      addElement(doc, field, "operators", ">,<,=");
-      // XY Resolution
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "EqualXYResolution");
-      addElement(doc, field, "type", "boolean");
-      addElement(doc, field, "description", "XResolution equal to YResolution");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", "False,True");
-      // BlankPage
-      //field = doc.createElement("field");
-      //fields.appendChild(field);
-      //addElement(doc, field, "name", "BlankPage");
-      //addElement(doc, field, "type", "boolean");
-      //addElement(doc, field, "description", "Page devoid of content (completely white)");
-      //addElement(doc, field, "operators", "=");
-      //addElement(doc, field, "values", "False,True");
-      // NumberBlankPage
-      //field = doc.createElement("field");
-      //fields.appendChild(field);
-      //addElement(doc, field, "name", "NumberBlankImages");
-      //addElement(doc, field, "type", "integer");
-      //addElement(doc, field, "description", "Number of Blank Pages");
-      //addElement(doc, field, "operators", ">,<,=");
-      // Compression
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "Compression");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Compression scheme");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", compressionName(1) + "," + compressionName(2) + "," + compressionName(32773) + "," + compressionName(3) + "," + compressionName(4) + "," + compressionName(5) + "," + compressionName(6) + "," + compressionName(7) + "," + compressionName(8) + "," + compressionName(9) + "," + compressionName(10) + "");
-      // Photometric
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "Photometric");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Color space of the image data");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", photometricName(1) + "," + photometricName(2) + "," + photometricName(3) + "," + photometricName(4) + "," + photometricName(5) + "," + photometricName(6) + "," + photometricName(10) + "");
-      // Planar
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "Planar");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "How the pixels components are stored");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", planarName(1) + "," + planarName(2));
-      // Byteorder
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "ByteOrder");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Byte Order (BigEndian, LittleEndian)");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", ByteOrder.BIG_ENDIAN.toString() + "," + ByteOrder.LITTLE_ENDIAN.toString());
-      // FileSize
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "FileSize");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "The file size in bytes");
-      addElement(doc, field, "operators", ">,<,=");
-      // IccProfileClass
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "IccProfileClass");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Class of the device ICC Profile");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", IccProfile.ProfileClass.Abstract + "," + IccProfile.ProfileClass.Input + "," + IccProfile.ProfileClass.Display + "," + IccProfile.ProfileClass.Output + "," + IccProfile.ProfileClass.DeviceLink + "," + IccProfile.ProfileClass.ColorSpace + "," + IccProfile.ProfileClass.NamedColor + "," + IccProfile.ProfileClass.Unknown);
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
@@ -376,67 +253,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
       }
     }
     return new ArrayList<>();
-  }
-
-  public static String compressionName(int code) {
-    switch (code) {
-      case 1:
-        return "None";
-      case 2:
-        return "CCITT";
-      case 3:
-        return "CCITT GR3";
-      case 4:
-        return "CCITT GR4";
-      case 5:
-        return "LZW";
-      case 6:
-        return "OJPEG";
-      case 7:
-        return "JPEG";
-      case 8:
-        return "DEFLATE Adobe";
-      case 9:
-        return "JBIG BW";
-      case 10:
-        return "JBIG C";
-      case 32773:
-        return "PackBits";
-    }
-    return "Unknown";
-  }
-
-  public static String photometricName(int code) {
-    switch (code) {
-      case 0:
-      case 1:
-        return "Bilevel";
-      case 2:
-        return "RGB";
-      case 3:
-        return "Palette";
-      case 4:
-        return "Transparency Mask";
-      case 5:
-        return "CMYK";
-      case 6:
-        return "YCbCr";
-      case 8:
-      case 9:
-      case 10:
-        return "CIELAB";
-    }
-    return "Unknown";
-  }
-
-  public static String planarName(int code) {
-    switch (code) {
-      case 1:
-        return "Chunky";
-      case 2:
-        return "Planar";
-    }
-    return "Unknown";
   }
 
   private static Document convertStringToDocument(String xmlStr) {

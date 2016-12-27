@@ -20,7 +20,7 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
+import com.easyinnova.policy_checker.model.Field;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.util.NumberTextField;
 import dpfmanager.shell.interfaces.gui.component.config.ConfigController;

@@ -25,6 +25,7 @@ import dpfmanager.shell.modules.report.core.IndividualReport;
 
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import com.easyinnova.implementation_checker.rules.RuleResult;
+import com.easyinnova.policy_checker.PolicyConstants;
 import com.easyinnova.policy_checker.model.Rule;
 import com.easyinnova.policy_checker.model.Rules;
 import com.easyinnova.tiff.model.IfdTags;
@@ -547,7 +548,7 @@ public class XmlReport extends Report {
           String value = "Unknown";
           try {
             int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
-            value = comp > 0 ? TiffConformanceChecker.compressionName(comp) : "Unknown";
+            value = comp > 0 ? PolicyConstants.compressionName(comp) : "Unknown";
           } catch (Exception ex) {
 
           }
@@ -560,7 +561,7 @@ public class XmlReport extends Report {
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("PhotometricInterpretation"))) {
           try {
             int photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
-            value = TiffConformanceChecker.photometricName(photo);
+            value = PolicyConstants.photometricName(photo);
           } catch (Exception ex) {
             value = "Unknown";
           }
@@ -573,7 +574,7 @@ public class XmlReport extends Report {
         value = "Unknown";
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("PlanarConfiguration"))) {
           int planar = Integer.parseInt(ifd.getMetadata().get("PlanarConfiguration").toString());
-          value = TiffConformanceChecker.planarName(planar);
+          value = PolicyConstants.planarName(planar);
         }
         infoElement = doc.createElement("Planar");
         infoElement.setTextContent(value);

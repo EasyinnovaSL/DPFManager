@@ -20,10 +20,10 @@
 package dpfmanager.conformancechecker;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
+import com.easyinnova.policy_checker.model.Field;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 
