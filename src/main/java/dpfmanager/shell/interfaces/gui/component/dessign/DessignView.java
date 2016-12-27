@@ -21,6 +21,7 @@ package dpfmanager.shell.interfaces.gui.component.dessign;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.core.adapter.ClassFinder;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
@@ -64,8 +65,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-
-import com.easyinnova.implementation_checker.Validator;
 
 import org.controlsfx.control.CheckTreeView;
 import org.jacpfx.api.annotations.Resource;
@@ -181,6 +180,20 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @PostConstruct
   public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
+    // Pre load classes
+    try {
+      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.tiff")) {
+        Class.forName("com.easyinnova.tiff" + "." + className);
+      }
+      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.implementation_checker")) {
+        Class.forName("com.easyinnova.implementation_checker" + "." + className);
+      }
+      for (String className : ClassFinder.getClassNamesFromPackage("com.easyinnova.policy_checker")) {
+        Class.forName("com.easyinnova.policy_checker" + "." + className);
+      }
+    } catch (Exception e) {
+    }
+
     // Set model and controller
     setModel(new DessignModel());
     setController(new DessignController());
@@ -208,7 +221,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
     available = false;
     NodeUtil.hideNode(vboxAvailable);
 
-    comboChoice.setOnMousePressed(new EventHandler<MouseEvent>(){
+    comboChoice.setOnMousePressed(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
         comboChoice.requestFocus();
@@ -348,7 +361,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       ManagedFragmentHandler<ConformanceBoxFragment> handler = getContext().getManagedFragmentHandler(ConformanceBoxFragment.class);
       handler.getController().load(cc);
       flowPane.getChildren().add(handler.getFragmentNode());
-      if (cc.getConfig().isBuiltIn()){
+      if (cc.getConfig().isBuiltIn()) {
         intCount++;
       } else {
         extCount++;
@@ -361,7 +374,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
       label.setFont(new Font(14));
       flowPane.getChildren().add(label);
       NodeUtil.showNode(vboxAvailable);
-    } else if (intCount > 0 && extCount == 0){
+    } else if (intCount > 0 && extCount == 0) {
       NodeUtil.hideNode(vboxAvailable);
     } else {
       NodeUtil.showNode(vboxAvailable);

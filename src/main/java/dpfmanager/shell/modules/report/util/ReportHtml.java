@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.report.util;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
@@ -94,7 +95,7 @@ public class ReportHtml extends ReportGeneric {
       int totalWarnings = 0;
       for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso)) {
-          String name = ImplementationCheckerLoader.getIsoName(iso);
+          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
           String row = rowTmpl;
 
           // Standard IC
@@ -256,8 +257,9 @@ public class ReportHtml extends ReportGeneric {
     if (gr.hasModificationIso(iso)) {
       policy = gr.getReportsOk(iso) == gr.getReportsOkPolicy(iso) ? "" : " (with custom policy)";
     }
+    String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
     row = StringUtils.replace(row, "##OK##", "" + (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)));
-    row = StringUtils.replace(row, "##NAME##", ImplementationCheckerLoader.getIsoName(iso));
+    row = StringUtils.replace(row, "##NAME##", name);
     row = StringUtils.replace(row, "##POLICY##", policy);
     row = StringUtils.replace(row, "##TYPE##", (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)) == gr.getReportsCount() ? "success" : "error");
     return row;

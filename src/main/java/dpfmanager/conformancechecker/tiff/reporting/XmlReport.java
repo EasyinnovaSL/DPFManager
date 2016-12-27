@@ -798,7 +798,7 @@ public class XmlReport extends Report {
         implementationCheckerElement.setAttribute(name, (ir.getErrors(name).size() == 0) + "");
       }
       for (String iso : ir.getIsosCheck()) {
-        String title = ImplementationCheckerLoader.getIsoName(iso);
+        String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         List<RuleResult> errors = ir.getErrors(iso);
         List<RuleResult> warnings = ir.getWarnings(iso);
         Element implementationCheck = doc.createElement("implementation_check");
@@ -814,7 +814,7 @@ public class XmlReport extends Report {
       Element policyCheckerElement = doc.createElement("policy_checkers");
       for (String iso : ir.getIsosCheck()) {
         if (!ir.hasModifiedIso(iso)) continue;
-        String title = ImplementationCheckerLoader.getIsoName(iso);
+        String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         List<RuleResult> errors = ir.getErrorsPolicy(iso);
         List<RuleResult> warnings = ir.getWarningsPolicy(iso);
         Element implementationCheck = doc.createElement("implementation_check");

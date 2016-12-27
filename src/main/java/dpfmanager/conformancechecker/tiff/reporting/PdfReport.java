@@ -235,7 +235,7 @@ public class PdfReport extends Report {
       font_size = 9;
       for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
-          String name = ImplementationCheckerLoader.getIsoName(iso);
+          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
           pdfParams = makeConformSection(ir.getNErrors(iso), ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : -1, name, pdfParams, pos_x, image_width, font_size, font);
         }
       }
@@ -258,7 +258,7 @@ public class PdfReport extends Report {
 
       for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
-          String name = ImplementationCheckerLoader.getIsoName(iso);
+          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
           pdfParams.y -= 15;
           pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y + 10, pos_x + image_width + 260, pdfParams.y + 10);
           if (mode == 1) {
@@ -589,7 +589,7 @@ public class PdfReport extends Report {
    * @throws Exception the exception
    */
   private PDFParams writeErrorsWarnings(PDFParams pdfParams, PDFont font, IndividualReport ir, String iso, int pos_x, boolean relaxed) throws Exception {
-    String name = ImplementationCheckerLoader.getIsoName(iso);
+    String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
     boolean isPolicy = iso.equals(TiffConformanceChecker.POLICY_ISO);
     List<RuleResult> errors, warnings, infos;
     if (!relaxed) {

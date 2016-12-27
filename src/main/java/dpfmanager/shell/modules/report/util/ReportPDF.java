@@ -20,6 +20,7 @@
 
 package dpfmanager.shell.modules.report.util;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
@@ -88,7 +89,7 @@ public class ReportPDF extends ReportGeneric {
       Color color;
       for (String iso : gr.getCheckedIsos()) {
         if (gr.getIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
-          String name = ImplementationCheckerLoader.getIsoName(iso);
+          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
           String policy = "";
           if (gr.hasModificationIso(iso)) {
             policy = gr.getReportsOk(iso) == gr.getReportsOkPolicy(iso) ? "" : " (with custom policy)";
@@ -183,7 +184,7 @@ public class ReportPDF extends ReportGeneric {
         }
         for (String iso : ir.getCheckedIsos()) {
           if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
-            String name = ImplementationCheckerLoader.getIsoName(iso);
+            String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
             pdfParams.y -= 5;
             if (mode == 1) {
               pdfParams.y -= 10;

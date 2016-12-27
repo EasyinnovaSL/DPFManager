@@ -150,7 +150,7 @@ public class HtmlReport extends Report {
     String rows = "";
     for (String iso : ir.getIsosCheck()) {
       if (ir.hasValidation(iso)) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = rowTmpl;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
@@ -205,7 +205,7 @@ public class HtmlReport extends Report {
     int count = 0;
     for (String iso : ir.getIsosCheck()) {
       if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = fullTmpl, icon;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
@@ -341,7 +341,7 @@ public class HtmlReport extends Report {
     String tdTmplPC = "<tr ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-minus-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
     for (String iso : ir.getModifiedIsos().keySet()) {
       if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = fullTmplPC, icon, content = "", tdRow, location;
         int errorsCount = ir.getNErrorsPolicy(iso);
         int warningsCount = ir.getNWarningsPolicy(iso);
@@ -757,7 +757,7 @@ public class HtmlReport extends Report {
   private String makeConformsText(IndividualReport ir, String iso) {
     String tmplPassed = "<div class=\"success\"><i class=\"fa fa-check-circle\"></i> ##TITLE##</div>";
     String tmplError = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> ##TITLE##</div>";
-    String name = ImplementationCheckerLoader.getIsoName(iso);
+    String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
     if (ir.hasModifiedIso(iso) && ir.getNErrors(iso) != ir.getNErrorsPolicy(iso)) {
       name += " (with custom policy)";
     }
