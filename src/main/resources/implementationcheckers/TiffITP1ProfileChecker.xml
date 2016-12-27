@@ -26,13 +26,13 @@
         <excluderules>TIFF-IT-CT-RGB</excluderules>
         <excluderules>TIFF-IT-CT-CIELAB</excluderules>
         <excluderules>TIFF-IT-LW</excluderules>
-        <!--
-        <excluderules>LW-restricted-tags</excluderules>
-        <excluderules>MP-restricted-tags</excluderules>
-        <excluderules>BP-restricted-tags</excluderules>
-        <excluderules>BL-restricted-tags</excluderules>
-        <excluderules>SD-restricted-tags</excluderules>
-        <excluderules>FP-restricted-tags</excluderules>-->
+        <excluderules>TIFF-IT-HC</excluderules>
+        <excluderules>TIFF-IT-MP</excluderules>
+        <excluderules>TIFF-IT-BP</excluderules>
+        <excluderules>TIFF-IT-BL</excluderules>
+        <excluderules>TIFF-IT-SD</excluderules>
+        <excluderules>TIFF-IT-FP</excluderules>
+
     </include>
 
     <rules id="TIFF-IT-P1">
@@ -132,7 +132,7 @@
             <assert test="{tags.tag[name=SamplesPerPixel] == 4}">Invalid SamplesPerPixel. SamplesPerPixel for colour continuous-tone picture (CT) CMYK should be 4</assert>
         </rule>
         <rule id="TIFF-IT-CT-P1-0005" context="ifd[filetype=ct]" level="error">
-            <title>TIFF/IT-CT/P1 PlanarConfiguration valid values </title>
+            <title>TIFF/IT-CT/P1 PlanarConfiguration valid value </title>
             <description>PlanarConfiguration on a colour continuous-tone picture (CT) file must be 1</description>
             <reference>
                 <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
@@ -242,98 +242,130 @@
             <title>TIFF/IT-LW/P1 BitsPerSample valid value </title>
             <description>BitsPerSample valid value on a Colour line-art picture (LW) file must be 8</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
             <assert test="{tags.tag[name=BitsPerSample] == 8">Invalid BitsPerSample value. BitsPerSample on a Colour line-art picture (LW) file must be 8</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+        <rule id="TIFF-IT-LW-P1-0002" context="ifd[filetype=lw]" level="error">
             <title>TIFF/IT-LW/P1 Compression valid value </title>
             <description>Compression value on a Colour line-art picture (LW) picture must be IT8 Linework RLE (32896)</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
             <assert test="{tags.tag[name=Compression] == 32896}">Invalid Compression value, Compression should be  IT8 Linework RLE (32896)</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+        <rule id="TIFF-IT-LW-P1-0003" context="ifd[filetype=lw]" level="error">
             <title>TIFF/IT-LW/P1 PhotometricInterpretation valid value </title>
             <description>PhotometricInterpretation value on a Colour line-art picture (LW) picture must be CMYK (5)</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Invalid PhotometricInterpretation value, Compression should be CMYK (5)</assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Invalid PhotometricInterpretation value, PhotometricInterpretation should be CMYK (5)</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+        <rule id="TIFF-IT-LW-P1-0004" context="ifd[filetype=lw]" level="error">
             <title>TIFF/IT-LW/P1 SamplesPerPixel valid value </title>
             <description>SamplesPerPixel value on a Colour line-art picture (LW) picture must be 1</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel value, Compression should be 1</assert>
+            <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel value, SamplesPerPixel should be 1</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
-            <title>TIFF/IT-LW/P1 TrapIndicator is forbidden</title>
-            <description>TrapIndicator on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</description>
+        <rule id="TIFF-IT-LW-P1-0005" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 InkSet valid value </title>
+            <description>InkSet value on a Colour line-art picture (LW) picture must be 1</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{!tags.tag[name=TrapIndicator]}"></assert>
+            <assert test="{tags.tag[name=InkSet] == 1}">Invalid InkSet value, InkSet should be 1</assert>
         </rule>
-
-        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
-            <title>TIFF/IT-LW/P1 CMYKEquivalent is forbidden</title>
-            <description>CMYKEquivalent on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</description>
+        <rule id="TIFF-IT-LW-P1-0006" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 InkNames forbidden tag </title>
+            <description>InkNames is forbidden a Colour line-art picture (LW) picture</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{!tags.tag[name=CMYKEquivalent]}"></assert>
+            <assert test="{!tags.tag[name=InkNames]}">InkNames is forbidden a Colour line-art picture (LW) picture</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
-            <title>TIFF/IT-LW/P1 InterColourProfile is forbidden</title>
-            <description>InterColourProfile on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</description>
+        <rule id="TIFF-IT-LW-P1-0007" context="ifd[filetype=lw]" level="error" experimental="true">
+            <title>TIFF/IT-LW/P1 NumberOfInks match SamplesPerPixel</title>
+            <description>If NumberOfInks tag is used on a Colour line-art picture (LW) TIFF/IT P1 file, it must have the same value as the value of SamplesPerPixel</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{!tags.tag[name=InterColourProfile]}"></assert>
+            <assert test="{tags.tag[name=NumberOfInks] == tags.tag[name=SamplesPerPixel]}">NumberOfInks tag on a Colour line-art picture (LW) TIFF/IT P1 file, must have the same value as the value of SamplesPerPixel</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
-            <title>TIFF/IT-LW/P1 ColorTable is mandatory</title>
-            <description>ColorTable is mandatory for on a Colour line-art picture (LW) TIFF/IT P1 </description>
+        <rule id="TIFF-IT-LW-P1-0008" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 NumberOfInks valid value</title>
+            <description>If NumberOfInks tag is used on a Colour line-art picture (LW) TIFF/IT P1 file, it must be 4</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{tags.tag[name=ColorTable]}"></assert>
+            <assert test="{tags.tag[name=NumberOfInks] == 4}">Invalid NumberOfInks. If NumberOfInks tag is used, it must be 4</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0001" context="ifd[filetype=lw]" level="error">
+        <rule id="TIFF-IT-LW-P1-0009" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 DotRange valid value</title>
+            <description>If DotRange tag is used on a Colour line-art picture (LW) TIFF/IT P1 file, it must be 0,255</description>
+            <reference>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
+            </reference>
+            <assert test="{tags.tag[name=DotRange] == 0,255}">Invalid DotRange. If DotRange tag is used, it must be 0,255</assert>
+        </rule>
+        <rule id="TIFF-IT-LW-P1-0010" context="ifd[filetype=lw]" level="error">
             <title>TIFF/IT-LW/P1 ColorSequence is forbidden</title>
             <description>ColorSequence on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{!tags.tag[name=ColorSequence]}"></assert>
+            <assert test="{!tags.tag[name=ColorSequence]}">ColorSequence on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0004" context="ifd[filetype=lw]" level="error">
-            <title>TIFF/IT-LW/P1 NumberOfInks valid value</title>
-            <description>If NumberOfInks tag is used, it must have the same value as the value of SamplesPerPixel</description>
+        <rule id="TIFF-IT-LW-P1-0011" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 BitsPerRunLength valid value</title>
+            <description>BitsPerRunLength on a Colour line-art picture (LW) TIFF/IT P1 file must be 8</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{!tags.tag[name=NumberOfInks]} || {tags.tag[name=NumberOfInks] == tags.tag[name=SamplesPerPixel]}"></assert>
+            <assert test="{tags.tag[name=BitsPerRunLength] == 8}">Invalid BitsPerRunLength. BitsPerRunLength on a Colour line-art picture (LW) TIFF/IT P1 file must be 8</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0004" context="ifd[filetype=ct]" level="error">
-            <title>TIFF/IT-LW/P1 InkNames forbidden tag </title>
-            <description>InkNames is forbidden on a colour continuous-tone picture (CT) </description>
+        <rule id="TIFF-IT-LW-P1-0012" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 BitsPerExtendedRunLength valid value</title>
+            <description>BitsPerExtendedRunLength on a Colour line-art picture (LW) TIFF/IT P1 file must be 16</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{!tags.tag[name=InkNames]}"></assert>
+            <assert test="{tags.tag[name=BitsPerExtendedRunLength] == 16}">Invalid BitsPerExtendedRunLength. BitsPerExtendedRunLength on a Colour line-art picture (LW) TIFF/IT P1 file must be 16</assert>
         </rule>
-        <rule id="TIFF-IT-CT-TAG-245-0004" context="ifd[filetype=lw]" level="error">
-            <title>TIFF/IT-LW/P1 NumberOfInks valid value</title>
-            <description>If NumberOfInks tag is used, it must have the same value as the value of SamplesPerPixel</description>
+        <rule id="TIFF-IT-LW-P1-0013" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 ColorTable is mandatory</title>
+            <description>ColorTable is mandatory for on a Colour line-art picture (LW) TIFF/IT P1 </description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
             </reference>
-            <assert test="{!tags.tag[name=ColorSequence]} &amp;&amp; {tags.tag[name=InkSet] == 1} || tags.tag[name=ColorSequence]!='CMYK' &amp;&amp; {tags.tag[name=InkSet] == 1} || {tags.tag[name=InkSet] == 2}"></assert>
+            <assert test="{tags.tag[name=ColorTable]}">ColorTable is mandatory for on a Colour line-art picture (LW) TIFF/IT P1 </assert>
+        </rule>
+        <rule id="TIFF-IT-LW-P1-0014" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 TrapIndicator is forbidden</title>
+            <description>TrapIndicator on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</description>
+            <reference>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
+            </reference>
+            <assert test="{!tags.tag[name=TrapIndicator]}">TrapIndicator on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+
+        <rule id="TIFF-IT-LW-P1-0015" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 CMYKEquivalent is forbidden</title>
+            <description>CMYKEquivalent on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</description>
+            <reference>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
+            </reference>
+            <assert test="{!tags.tag[name=CMYKEquivalent]}">>CMYKEquivalent on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-LW-P1-0016" context="ifd[filetype=lw]" level="error">
+            <title>TIFF/IT-LW/P1 InterColourProfile is forbidden</title>
+            <description>InterColourProfile on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</description>
+            <reference>
+                <section>Section 7.4.3: TIFF/IT-LW, TIFF/IT-LW/P1 and TIFF/IT-LW/P2 encoding</section><page>31</page>
+            </reference>
+            <assert test="{!tags.tag[name=InterColourProfile]}">InterColourProfile on a Colour line-art picture (LW) TIFF/IT P1 file is forbidden</assert>
         </rule>
     </rules>
 
@@ -360,22 +392,268 @@
         be written by typical TIFF 6.0 writers because of the mandatory use of TIFF/IT-specific fields and values and nontraditional
         interpretations of other TIFF 6.0 fields and values (e.g. compression by mandatory run-length encoding).
     </description>
-
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=hc]" level="error">
-            <title>TIFF/IT-HC Compression valid value </title>
-            <description>Compression valid values for High-resolution continuous-tone data is IT8MP Run-length encoding, used with HC format (32897)</description>
+        <rule id="TIFF-IT-HC-P1-0001" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 BitsPerSample valid values</title>
+            <description>BitsPerSample on a  High-resolution continuous-tone data (HC) file must be [8,8,8,8]</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
             </reference>
-            <assert test="{tags.tag[name=Compression] == 32897}"></assert>
+            <assert test="{tags.tag[name=BitsPerSample] == '8,8,8,8'}">Invalid BitsPerSample value. BitsPerSample should be [8,8,8,8]</assert>
         </rule>
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=hc]" level="error">
-            <title>TIFF/IT-HC PhotometricInterpretation valid value </title>
-            <description>PhotometricInterpretation valid value for High-resolution continuous-tone data is 32897</description>
+        <rule id="TIFF-IT-HC-P1-0002" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 Compression valid value </title>
+            <description>Compression valid values for High-resolution continuous-tone data (HC) is IT8MP Run-length encoding, used with HC format (32897)</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}"></assert>
+            <assert test="{tags.tag[name=Compression] == 32897}">Invalid Compression. Compression for High-resolution continuous-tone data should be IT8MP Run-length encoding (32897)</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0003" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 PhotometricInterpretation valid value</title>
+            <description>PhotometricInterpretation valid value for High-resolution continuous-tone data (HC) is CMYK (5)</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Invalid PhotometricInterpretation value, PhotometricInterpretation should be CMYK (5)</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0004" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 SamplesPerPixel valid value</title>
+            <description>SamplesPerPixel value ofor High-resolution continuous-tone data (HC) must be 4</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{tags.tag[name=SamplesPerPixel] == 4}">Invalid SamplesPerPixel value, SamplesPerPixel should be 4</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0005" context="ifd[filetype=hc]]" level="error">
+            <title>TIFF/IT-HC/P1 PlanarConfiguration valid value</title>
+            <description>PlanarConfiguration  for a High-resolution continuous-tone data (HC) must be 1</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{tags.tag[name=PlanarConfiguration] == 1}">Invalid PlanarConfiguration. PlanarConfiguration for a High-resolution continuous-tone data (HC) should be 1</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0006" context="ifd[filetype=hc]]" level="error">
+            <title>TIFF/IT-HC/P1 InkSet valid value</title>
+            <description>InkSet for a High-resolution continuous-tone data (HC) must be 1</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{tags.tag[name=InkSet] == 1}">Invalid InkSet. InkSet for a High-resolution continuous-tone data (HC) should be 1</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0007" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 InkNames is forbidden</title>
+            <description>InkNames for a High-resolution continuous-tone data (HC) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{!tags.tag[name=InkNames]}">InkNames for a High-resolution continuous-tone data (HC) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0008" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 NumberOfInks valid value</title>
+            <description>SamplesPerPixel value for High-resolution continuous-tone data (HC) must be 4</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{tags.tag[name=NumberOfInks] == 4}">Invalid NumberOfInks value, SamplesPerPixel should be 4</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0009" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 DotRange valid value</title>
+            <description>If DotRange tag is used for High-resolution continuous-tone data (HC) TIFF/IT P1 file, it must be 0,255</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{tags.tag[name=DotRange] == 0,255}">Invalid DotRange. If DotRange tag is used, it must be 0,255</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0010" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 ColorSequence is forbidden</title>
+            <description>ColorSequence for a High-resolution continuous-tone data (HC) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{!tags.tag[name=ColorSequence]}">ColorSequence for a High-resolution continuous-tone data (HC) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0011" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 TrapIndicator is forbidden</title>
+            <description>TrapIndicator for a High-resolution continuous-tone data (HC) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{!tags.tag[name=TrapIndicator]}">TrapIndicator for a High-resolution continuous-tone data (HC) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0012" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 CMYKEquivalent is forbidden</title>
+            <description>CMYKEquivalent for a High-resolution continuous-tone data (HC) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{!tags.tag[name=CMYKEquivalent]}">CMYKEquivalent for a High-resolution continuous-tone data (HC) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-HC-P1-0013" context="ifd[filetype=hc]" level="error">
+            <title>TIFF/IT-HC/P1 ICCProfile is forbidden</title>
+            <description>ICCProfile for a High-resolution continuous-tone data (HC) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.5.3: TIFF/IT-HC, TIFF/IT-HC/P1 and TIFF/IT-HC/P2 encoding</section><page>34</page>
+            </reference>
+            <assert test="{!tags.tag[name=ICCProfile]}">ICCProfile for a High-resolution continuous-tone data (HC) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+    </rules>
+
+    <rules id="TIFF-IT-MP-P1">
+        <title>Monochrome continuous-tone picture (MP) file</title>
+        <description>The image-colour values for a pixel are obtained by combining the colour values for each of the colour
+            components with the pixel-intensity values in the data stream. This applies to foreground colours only.
+            Monochrome continuous-tone pictures do not have background-colour specifications.The scaling of these
+            intensity values is linear with respect to printing-dot percent.
+
+            TIFF/IT-MP/P1 is a simplified image file format profile for monochrome continuous-tone picture image (MP)
+            data and can be considered a constrained subset of TIFF/IT-MP specifically intended for simpler
+            implementation.
+
+            TIFF/IT-MP/P1 does not permit any compression of image data.
+
+            NOTE  TIFF/IT-MP/P1 files can be read by typical TIFF 6.0 readers and be written by typical TIFF 6.0 writers.
+            TIFF/IT-MP/P1 files will be recognized by baseline TIFF 6.0 readers as Grayscale images as described in Section 4 of the
+            TIFF 6.0 specification. As such, all reference to colour specifications will be lost, since those fields describing colour are
+            not recognized by a baseline TIFF 6.0 reader.</description>
+
+        <rule id="TIFF-IT-MP-P1-0001" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 BitsPerSample valid values</title>
+            <description>BitsPerSample on a Monochrome continuous-tone picture (MP) file must be 8</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="tags.tag[name=BitsPerSample] == 8}">Invalid BitsPerSample value. BitsPerSample should be 8</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0002" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 Compression valid values </title>
+            <description>Compression valid value for Monochrome continuous-tone picture (MP) file is:
+                1 = No compression</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{tags.tag[name=Compression] == 1}">Invalid Compression for Monochrome continuous-tone picture (MP) file</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0003" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 PhotometricInterpretation valid values</title>
+            <description>PhotometricInterpretation valid value for  Monochrome continuous-tone picture (MP) is WhiteIsZero (0)</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 0}">Invalid PhotometricInterpretation value, PhotometricInterpretation should be  WhiteIsZero (0)</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0004" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 SamplesPerPixel valid value</title>
+            <description>SamplesPerPixel for Monochrome continuous-tone picture (MP) should be 1</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel. SamplesPerPixel for  Monochrome continuous-tone picture (MP) should be 1</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0005" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 InkSet is forbidden</title>
+            <description>InkSet for Monochrome continuous-tone picture (MP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{!tags.tag[name=InkSet]}">InkSet for a Monochrome continuous-tone picture (MP) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0006" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 InkNames is forbidden</title>
+            <description>InkNames for Monochrome continuous-tone picture (MP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{!tags.tag[name=InkNames]}">InkNames for a Monochrome continuous-tone picture (MP) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0007" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 NumberOfInks is forbidden</title>
+            <description>NumberOfInks for Monochrome continuous-tone picture (MP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{!tags.tag[name=NumberOfInks]}">NumberOfInks for a Monochrome continuous-tone picture (MP) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0008" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 DotRange valid value</title>
+            <description>If DotRange tag is used for Monochrome continuous-tone picture (MP) TIFF/IT P1 file, it must be 0,255</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{tags.tag[name=DotRange] == 0,255}">Invalid DotRange. If DotRange tag is used, it must be 0,255</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0009" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 ColorSequence is forbidden</title>
+            <description>ColorSequence for Monochrome continuous-tone picture (MP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{!tags.tag[name=ColorSequence]}">ColorSequence for a Monochrome continuous-tone picture (MP) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0010" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 RasterPadding is forbidden</title>
+            <description>RasterPadding for Monochrome continuous-tone picture (MP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{!tags.tag[name=RasterPadding]}">RasterPadding for a Monochrome continuous-tone picture (MP) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0011" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 ImageColorValue mandatory</title>
+            <description>In a Monochrome continuous-tone picture (MP) file If ImageColorIndicator value is 1, ImageColorValue is mandatory. </description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageColorIndicator]!=1} || tags.tag[name=ImageColorValue]}">ImageColorValue is mandatory. If ImageColorIndicator is 1 in Monochrome continuous-tone picture (MP) file.</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0012" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 ImageColorValue forbidden</title>
+            <description>In a Monochrome continuous-tone picture (MP) file If ImageColorIndicator value is 0, ImageColorValue is forbidden. </description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageColorIndicator] || tags.tag[name=ImageColorIndicator]!=0} || !tags.tag[name=ImageColorValue]}">ImageColorValue is forbidden if ImageColorIndicator is 0 in Monochrome continuous-tone picture (MP) file.</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0013" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 PixelIntensityRange valid value</title>
+            <description>If PixelIntensityRange tag is used for Monochrome continuous-tone picture (MP) TIFF/IT P1 file, it must be 0,255</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{tags.tag[name=PixelIntensityRange] == 0,255}">Invalid PixelIntensityRange. If PixelIntensityRange tag is used, it must be 0,255</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0014" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 TrapIndicator is forbidden</title>
+            <description>TrapIndicator for Monochrome continuous-tone picture (MP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{!tags.tag[name=TrapIndicator]}">TrapIndicator for a Monochrome continuous-tone picture (MP) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0015" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 CMYKEquivalent is forbidden</title>
+            <description>CMYKEquivalent for Monochrome continuous-tone picture (MP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{!tags.tag[name=CMYKEquivalent]}">CMYKEquivalent for a Monochrome continuous-tone picture (MP) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0016" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 ICCProfile is forbidden</title>
+            <description>ICCProfile for Monochrome continuous-tone picture (MP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{!tags.tag[name=ICCProfile]}">ICCProfile for a Monochrome continuous-tone picture (MP) TIFF/IT P1 file is forbidden</assert>
+        </rule>
+        <rule id="TIFF-IT-MP-P1-0017" context="ifd[filetype=mp]" level="error">
+            <title>TIFF/IT-MP/P1 ImageColorIndicator valid values</title>
+            <description>In a Monochrome continuous-tone picture (MP) file ImageColorIndicator valid values are:
+                0 = image/background colour not defined (default value);
+                1 = image/background colour defined;</description>
+            <reference>
+                <section>Section 7.6.3: TIFF/IT-MP, TIFF/IT-MP/P1 and TIFF/IT-MP/P2 encoding</section><page>36</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageColorIndicator] == 1}  || tags.tag[name=ImageColorIndicator] == 0} ">Invalid ImageColorIndicator value. ImageColorIndicator in Monochrome continuous-tone picture (MP) file should be 0 or 1.</assert>
         </rule>
     </rules>
 
@@ -400,924 +678,329 @@
             to colour specifications will be lost since those fields describing colour are not recognized by a baseline TIFF 6.0 reader.
         </description>
 
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=hc]" level="error">
-            <title>TIFF/IT-HC Compression valid value </title>
-            <description>Compression valid values for High-resolution continuous-tone data is 1</description>
+        <rule id="TIFF-IT-BP-P1-0001" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 BitsPerSample valid values</title>
+            <description>BitsPerSample on a Binary picture (BP) file must be 1</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
             </reference>
-            <assert test="{tags.tag[name=Compression] == 1}"></assert>
+            <assert test="tags.tag[name=BitsPerSample] == 1}">Invalid BitsPerSample value. BitsPerSample should be 1</assert>
         </rule>
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=hc]" level="error">
-            <title>TIFF/IT-HC PhotometricInterpretation valid value </title>
-            <description>PhotometricInterpretation valid values for High-resolution continuous-tone data are 1,2,8</description>
+        <rule id="TIFF-IT-BP-P1-0002" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 Compression valid values </title>
+            <description>Compression valid values for  Binary picture (BP) file is:
+                1 = No compression</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
             </reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 0}"></assert>
+            <assert test="{tags.tag[name=Compression] == 1}}">Invalid Compression for Binary picture (BP) file</assert>
         </rule>
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
-            <title>TIFF/IT-HC InkSet forbidden</title>
-            <description>InkSet tag is forbidden for High-resolution continuous-tone data</description>
+        <rule id="TIFF-IT-BP-P1-0003" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 PhotometricInterpretation valid value</title>
+            <description>PhotometricInterpretation valid value for Binary picture (BP) is WhiteIsZero</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
             </reference>
-            <assert test="{!tags.tag[name=InkSet]}"></assert>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 0}">Invalid PhotometricInterpretation value, PhotometricInterpretation should be  WhiteIsZero (0)</assert>
         </rule>
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
-            <title>TIFF/IT-HC InkNames forbidden</title>
-            <description>InkNames tag is forbidden for High-resolution continuous-tone data</description>
+        <rule id="TIFF-IT-BP-P1-0004" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 SamplesPerPixel valid value</title>
+            <description>SamplesPerPixel for Binary picture (BP) should be 1</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
             </reference>
-            <assert test="{!tags.tag[name=InkNames]}"></assert>
+            <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel. SamplesPerPixel for Binary picture (BP) should be 1</assert>
         </rule>
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
-            <title>TIFF/IT-HC NumberOfInks forbidden</title>
-            <description>NumberOfInks tag is forbidden for High-resolution continuous-tone data</description>
+        <rule id="TIFF-IT-BP-P1-0005" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 InkSet is forbidden</title>
+            <description>InkSet for Binary picture (BP) P1 is forbidden</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
             </reference>
-            <assert test="{!tags.tag[name=NumberOfInks]}"></assert>
+            <assert test="{!tags.tag[name=InkSet]}">InkSet for a Binary picture (BP) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
-            <title>TIFF/IT-HC NumberOfInks forbidden</title>
-            <description>NumberOfInks tag is forbidden for High-resolution continuous-tone data</description>
+        <rule id="TIFF-IT-BP-P1-0006" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 InkNames is forbidden</title>
+            <description>InkNames for Binary picture (BP) P1 is forbidden</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
             </reference>
-            <assert test="{!tags.tag[name=ColorSequence]}"></assert>
+            <assert test="{!tags.tag[name=InkNames]}">InkNames for a Binary picture (BP) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
-            <title>TIFF/IT-HC TrapIndicator forbidden</title>
-            <description>TrapIndicator tag is forbidden for High-resolution continuous-tone data</description>
+        <rule id="TIFF-IT-BP-P1-0007" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 NumberOfInks is forbidden</title>
+            <description>NumberOfInks for Binary picture (BP) P1 is forbidden</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
             </reference>
-            <assert test="{!tags.tag[name=TrapIndicator]}"></assert>
+            <assert test="{!tags.tag[name=NumberOfInks]}">NumberOfInks for a Binary picture (BP) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="TIFF-IT-HC-0001" context="ifd[filetype=bp]" level="error">
-            <title>TIFF/IT-HC CMYKEquivalent forbidden</title>
-            <description>CMYKEquivalent tag is forbidden for High-resolution continuous-tone data</description>
+        <rule id="TIFF-IT-BP-P1-0008" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 DotRange valid value</title>
+            <description>If DotRange tag is used forBinary picture (BP) TIFF/IT P1 file, it must be 0,255</description>
             <reference>
-                <section>Section 7.3.3: TIFF/IT-CT encoding</section><page>23</page>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
             </reference>
-            <assert test="{!tags.tag[name=CMYKEquivalent]}"></assert>
+            <assert test="{tags.tag[name=DotRange] == 0,255}">Invalid DotRange. If DotRange tag is used, it must be 0,255</assert>
         </rule>
-
-    </rules>
-
-
-    <!-- -->
-    <rules id="CT-restricted-tags">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-1" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for BitsPerSample tag</title><description>Check valid value for BitsPerSample tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample] == 8}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-BP-P1-0009" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 ColorSequence is forbidden</title>
+            <description>ColorSequence for Binary picture (BP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
+            </reference>
+            <assert test="{!tags.tag[name=ColorSequence]}">ColorSequence for a Binary picture (BP) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="it-p1-2" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check mandatory tag Compression exists</title><description>Check mandatory tag Compression exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
+        <rule id="TIFF-IT-BP-P1-0010" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 ImageColorValue mandatory</title>
+            <description>In a  Binary picture (BP) file If ImageColorIndicator value is 1, ImageColorValue is mandatory. </description>
+            <reference>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageColorIndicator]!=1} || tags.tag[name=ImageColorValue]}">ImageColorValue is mandatory. If ImageColorIndicator is 1 in Binary picture (BP) file.</assert>
         </rule>
-        <rule id="it-p1-3" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag Compression</title><description>Check valid cardinality for tag Compression</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
+        <rule id="TIFF-IT-BP-P1-0011" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 ImageColorValue forbidden</title>
+            <description>In a  Binary picture (BP) file If ImageColorIndicator value is 0, ImageColorValue is forbidden. </description>
+            <reference>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageColorIndicator] || tags.tag[name=ImageColorIndicator]!=0} || !tags.tag[name=ImageColorValue]}">ImageColorValue is forbidden if ImageColorIndicator is 0 in Binary picture (BP) file.</assert>
         </rule>
-        <rule id="it-p1-4" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for Compression tag</title><description>Check valid value for Compression tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=Compression] == 1}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-BP-P1-0012" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 BackgroundColorValue mandatory</title>
+            <description>In a  Binary picture (BP) file If BackgroundColorIndicator value is 1, BackgroundColorValue is mandatory. </description>
+            <reference>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
+            </reference>
+            <assert test="{tags.tag[name=BackgroundColorIndicator]!=1} || tags.tag[name=BackgroundColorValue]}">BackgroundColorValue is mandatory. If BackgroundColorIndicator is 1 in Binary picture (BP) file.</assert>
         </rule>
-        <rule id="it-p1-5" context="ifd[filetype=ct]" level="error">
-            <title>Check valid cardinality for tag PhotometricInterpretation</title><description>Check valid cardinality for tag PhotometricInterpretation</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
+        <rule id="TIFF-IT-BP-P1-0013" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 BackgroundColorValue forbidden</title>
+            <description>In a  Binary picture (BP) file If BackgroundColorIndicator value is 0, BackgroundColorValue is forbidden. </description>
+            <reference>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
+            </reference>
+            <assert test="{tags.tag[name=BackgroundColorIndicator] || tags.tag[name=BackgroundColorIndicator]!=0} || !tags.tag[name=BackgroundColorValue]}">BackgroundColorValue is forbidden if BackgroundColorIndicator is 0 in Binary picture (BP) file.</assert>
         </rule>
-        <rule id="it-p1-6" context="ifd[filetype=ct]" level="error">
-            <title>Check valid value for tag PhotometricInterpretation</title><description>Check valid value for tag PhotometricInterpretation</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 5}">Photometric interpretation must be 5</assert>
+        <rule id="TIFF-IT-BP-P1-0014" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 TrapIndicator is forbidden</title>
+            <description>TrapIndicator for Binary picture (BP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
+            </reference>
+            <assert test="{!tags.tag[name=TrapIndicator]}">TrapIndicator for a Binary picture (BP) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="it-p1-7" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check mandatory tag ResolutionUnit exists</title><description>Check mandatory tag ResolutionUnit exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-8" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag ResolutionUnit</title><description>Check valid cardinality for tag ResolutionUnit</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-9" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for ResolutionUnit tag</title><description>Check valid value for ResolutionUnit tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit] == 2} || {tags.tag[name=ResolutionUnit] == 3}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-10" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check mandatory tag InkSet exists</title><description>Check mandatory tag InkSet exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=InkSet]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-11" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag InkSet</title><description>Check valid cardinality for tag InkSet</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=InkSet].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-12" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for InkSet tag</title><description>Check valid value for InkSet tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=InkSet] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-13" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check mandatory tag NumberOfInks exists</title><description>Check mandatory tag NumberOfInks exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-14" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag NumberOfInks</title><description>Check valid cardinality for tag NumberOfInks</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-15" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for NumberOfInks tag</title><description>Check valid value for NumberOfInks tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks] == 4}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-16" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag DotRange</title><description>Check valid cardinality for tag DotRange</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=DotRange].cardinality == 2}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-17" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for DotRange tag</title><description>Check valid value for DotRange tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=DotRange] == 0} || {tags.tag[name=DotRange] == 255}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-18" context="ifd[filetype=ct,imgtype=rgb]" level="error">
-            <title>Check mandatory tag PlanarConfiguration exists</title><description>Check mandatory tag PlanarConfiguration exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-19" context="ifd[filetype=ct,imgtype=rgb]" level="error">
-            <title>Check valid cardinality for tag PlanarConfiguration</title><description>Check valid cardinality for tag PlanarConfiguration</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-20" context="ifd[filetype=ct,imgtype=rgb]" level="error">
-            <title>Check valid value for PlanarConfiguration tag</title><description>Check valid value for PlanarConfiguration tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration] == 1} || {tags.tag[name=PlanarConfiguration] == 2} || {tags.tag[name=PlanarConfiguration] == 32768}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-21" context="ifd[filetype=ct,imgtype=lab]" level="error">
-            <title>Check mandatory tag PlanarConfiguration exists</title><description>Check mandatory tag PlanarConfiguration exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-22" context="ifd[filetype=ct,imgtype=lab]" level="error">
-            <title>Check valid cardinality for tag PlanarConfiguration</title><description>Check valid cardinality for tag PlanarConfiguration</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-23" context="ifd[filetype=ct,imgtype=lab]" level="error">
-            <title>Check valid value for PlanarConfiguration tag</title><description>Check valid value for PlanarConfiguration tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration] == 1} || {tags.tag[name=PlanarConfiguration] == 2} || {tags.tag[name=PlanarConfiguration] == 32768}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-24" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check mandatory tag PlanarConfiguration exists</title><description>Check mandatory tag PlanarConfiguration exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-25" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag PlanarConfiguration</title><description>Check valid cardinality for tag PlanarConfiguration</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-26" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for PlanarConfiguration tag</title><description>Check valid value for PlanarConfiguration tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=PlanarConfiguration] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-27" context="ifd[filetype=ct]" level="error">
-            <title>Check mandatory tag XResolution exists</title><description>Check mandatory tag XResolution exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=XResolution]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-28" context="ifd[filetype=ct]" level="error">
-            <title>Check valid cardinality for tag XResolution</title><description>Check valid cardinality for tag XResolution</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=XResolution].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-29" context="ifd[filetype=ct]" level="error">
-            <title>Check mandatory tag YResolution exists</title><description>Check mandatory tag YResolution exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=YResolution]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-30" context="ifd[filetype=ct]" level="error">
-            <title>Check valid cardinality for tag YResolution</title><description>Check valid cardinality for tag YResolution</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=YResolution].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-31" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check mandatory tag Orientation exists</title><description>Check mandatory tag Orientation exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-32" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag Orientation</title><description>Check valid cardinality for tag Orientation</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-33" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for Orientation tag</title><description>Check valid value for Orientation tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=Orientation] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-34" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag SamplesPerPixel</title><description>Check valid cardinality for tag SamplesPerPixel</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-35" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for SamplesPerPixel tag</title><description>Check valid value for SamplesPerPixel tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=SamplesPerPixel] == 4}">Incorrect tag value</assert>
-        </rule>
-    </rules>
-    
-    <rules id="CT-newsbufiletype-check">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-36" context="ifd[filetype=ct,imgtype=rgb]" level="error">
-            <title>Check mandatory tag NewSubfileType exists</title><description>Check mandatory tag NewSubfileType exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-37" context="ifd[filetype=ct,imgtype=rgb]" level="error">
-            <title>Check valid cardinality for tag NewSubfileType</title><description>Check valid cardinality for tag NewSubfileType</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-38" context="ifd[filetype=ct,imgtype=rgb]" level="error">
-            <title>Check valid value for NewSubfileType tag</title><description>Check valid value for NewSubfileType tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType] == 0}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-39" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check mandatory tag NewSubfileType exists</title><description>Check mandatory tag NewSubfileType exists</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-40" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid cardinality for tag NewSubfileType</title><description>Check valid cardinality for tag NewSubfileType</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-41" context="ifd[filetype=ct,imgtype=norgblab]" level="error">
-            <title>Check valid value for NewSubfileType tag</title><description>Check valid value for NewSubfileType tag</description>
-            <reference><section></section><page>24</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType] == 0}">Incorrect tag value</assert>
-        </rule>
-    </rules>
-    
-    <rules id="LW-restricted-tags">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-42" context="ifd[filetype=lw]" level="error">
-            <title>Check mandatory tag NewSubfileType exists</title><description>Check mandatory tag NewSubfileType exists</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-43" context="ifd[filetype=lw]" level="error">
-            <title>Check valid cardinality for tag NewSubfileType</title><description>Check valid cardinality for tag NewSubfileType</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-44" context="ifd[filetype=lw]" level="error">
-            <title>Check valid value for NewSubfileType tag</title><description>Check valid value for NewSubfileType tag</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType] == 0}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-45" context="ifd[filetype=lw]" level="error">
-            <title>Check mandatory tag BitsPerSample exists</title><description>Check mandatory tag BitsPerSample exists</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-46" context="ifd[filetype=lw]" level="error">
-            <title>Check valid cardinality for tag BitsPerSample</title><description>Check valid cardinality for tag BitsPerSample</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-47" context="ifd[filetype=lw]" level="error">
-            <title>Check valid value for BitsPerSample tag</title><description>Check valid value for BitsPerSample tag</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample] == 8}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-48" context="ifd[filetype=lw]" level="error">
-            <title>Check mandatory tag Orientation exists</title><description>Check mandatory tag Orientation exists</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-49" context="ifd[filetype=lw]" level="error">
-            <title>Check valid cardinality for tag Orientation</title><description>Check valid cardinality for tag Orientation</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-50" context="ifd[filetype=lw]" level="error">
-            <title>Check valid value for Orientation tag</title><description>Check valid value for Orientation tag</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=Orientation] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-51" context="ifd[filetype=lw]" level="error">
-            <title>Check mandatory tag ResolutionUnit exists</title><description>Check mandatory tag ResolutionUnit exists</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-52" context="ifd[filetype=lw]" level="error">
-            <title>Check valid cardinality for tag ResolutionUnit</title><description>Check valid cardinality for tag ResolutionUnit</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-53" context="ifd[filetype=lw]" level="error">
-            <title>Check valid value for ResolutionUnit tag</title><description>Check valid value for ResolutionUnit tag</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit] == 2} || {tags.tag[name=ResolutionUnit] == 3}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-54" context="ifd[filetype=lw]" level="error">
-            <title>Check mandatory tag InkSet exists</title><description>Check mandatory tag InkSet exists</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=InkSet]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-55" context="ifd[filetype=lw]" level="error">
-            <title>Check valid cardinality for tag InkSet</title><description>Check valid cardinality for tag InkSet</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=InkSet].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-56" context="ifd[filetype=lw]" level="error">
-            <title>Check valid value for InkSet tag</title><description>Check valid value for InkSet tag</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=InkSet] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-57" context="ifd[filetype=lw]" level="error">
-            <title>Check mandatory tag NumberOfInks exists</title><description>Check mandatory tag NumberOfInks exists</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-58" context="ifd[filetype=lw]" level="error">
-            <title>Check valid cardinality for tag NumberOfInks</title><description>Check valid cardinality for tag NumberOfInks</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-59" context="ifd[filetype=lw]" level="error">
-            <title>Check valid value for NumberOfInks tag</title><description>Check valid value for NumberOfInks tag</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks] == 4}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-60" context="ifd[filetype=lw]" level="error">
-            <title>Check mandatory tag DotRange exists</title><description>Check mandatory tag DotRange exists</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=DotRange]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-61" context="ifd[filetype=lw]" level="error">
-            <title>Check valid cardinality for tag DotRange</title><description>Check valid cardinality for tag DotRange</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=DotRange].cardinality == 2}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-62" context="ifd[filetype=lw]" level="error">
-            <title>Check valid value for DotRange tag</title><description>Check valid value for DotRange tag</description>
-            <reference><section></section><page>31</page></reference>
-            <assert test="{tags.tag[name=DotRange] == 0} || {tags.tag[name=DotRange] == 255}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-BP-P1-0015" context="ifd[filetype=bp]" level="error">
+            <title>TIFF/IT-BP/P1 CMYKEquivalent is forbidden</title>
+            <description>CMYKEquivalent for Binary picture (BP) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.7.3: TIFF/IT-BP, TIFF/IT-BP/P1 and TIFF/IT-BP/P2 encoding</section><page>38</page>
+            </reference>
+            <assert test="{!tags.tag[name=CMYKEquivalent]}">CMYKEquivalent for a Binary picture (BP) TIFF/IT P1 file is forbidden</assert>
         </rule>
     </rules>
 
-    <rules id="HC-restricted-tags">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-63" context="ifd[filetype=hc]" level="error">
-            <title>Check mandatory tag NewSubfileType exists</title><description>Check mandatory tag NewSubfileType exists</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-64" context="ifd[filetype=hc]" level="error">
-            <title>Check valid cardinality for tag NewSubfileType</title><description>Check valid cardinality for tag NewSubfileType</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-65" context="ifd[filetype=hc]" level="error">
-            <title>Check valid value for NewSubfileType tag</title><description>Check valid value for NewSubfileType tag</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType] == 0}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-66" context="ifd[filetype=hc]" level="error">
-            <title>Check mandatory tag BitsPerSample exists</title><description>Check mandatory tag BitsPerSample exists</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-67" context="ifd[filetype=hc]" level="error">
-            <title>Check valid cardinality for tag BitsPerSample</title><description>Check valid cardinality for tag BitsPerSample</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample].cardinality == 4}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-68" context="ifd[filetype=hc]" level="error">
-            <title>Check valid value for BitsPerSample tag</title><description>Check valid value for BitsPerSample tag</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample] == 8}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-69" context="ifd[filetype=hc]" level="error">
-            <title>Check mandatory tag Orientation exists</title><description>Check mandatory tag Orientation exists</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-70" context="ifd[filetype=hc]" level="error">
-            <title>Check valid cardinality for tag Orientation</title><description>Check valid cardinality for tag Orientation</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-71" context="ifd[filetype=hc]" level="error">
-            <title>Check valid value for Orientation tag</title><description>Check valid value for Orientation tag</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=Orientation] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-72" context="ifd[filetype=hc]" level="error">
-            <title>Check mandatory tag SamplesPerPixel exists</title><description>Check mandatory tag SamplesPerPixel exists</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=SamplesPerPixel]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-73" context="ifd[filetype=hc]" level="error">
-            <title>Check valid cardinality for tag SamplesPerPixel</title><description>Check valid cardinality for tag SamplesPerPixel</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-74" context="ifd[filetype=hc]" level="error">
-            <title>Check valid value for SamplesPerPixel tag</title><description>Check valid value for SamplesPerPixel tag</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-75" context="ifd[filetype=hc]" level="error">
-            <title>Check mandatory tag ResolutionUnit exists</title><description>Check mandatory tag ResolutionUnit exists</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-76" context="ifd[filetype=hc]" level="error">
-            <title>Check valid cardinality for tag ResolutionUnit</title><description>Check valid cardinality for tag ResolutionUnit</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-77" context="ifd[filetype=hc]" level="error">
-            <title>Check valid value for ResolutionUnit tag</title><description>Check valid value for ResolutionUnit tag</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit] == 2} || {tags.tag[name=ResolutionUnit] == 3}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-78" context="ifd[filetype=hc]" level="error">
-            <title>Check mandatory tag InkSet exists</title><description>Check mandatory tag InkSet exists</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=InkSet]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-79" context="ifd[filetype=hc]" level="error">
-            <title>Check valid cardinality for tag InkSet</title><description>Check valid cardinality for tag InkSet</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=InkSet].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-80" context="ifd[filetype=hc]" level="error">
-            <title>Check valid value for InkSet tag</title><description>Check valid value for InkSet tag</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=InkSet] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-81" context="ifd[filetype=hc]" level="error">
-            <title>Check mandatory tag NumberOfInks exists</title><description>Check mandatory tag NumberOfInks exists</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-82" context="ifd[filetype=hc]" level="error">
-            <title>Check valid cardinality for tag NumberOfInks</title><description>Check valid cardinality for tag NumberOfInks</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-83" context="ifd[filetype=hc]" level="error">
-            <title>Check valid value for NumberOfInks tag</title><description>Check valid value for NumberOfInks tag</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks] == 4}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-84" context="ifd[filetype=hc]" level="error">
-            <title>Check mandatory tag DotRange exists</title><description>Check mandatory tag DotRange exists</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=DotRange]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-85" context="ifd[filetype=hc]" level="error">
-            <title>Check valid cardinality for tag DotRange</title><description>Check valid cardinality for tag DotRange</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=DotRange].cardinality == 2}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-86" context="ifd[filetype=hc]" level="error">
-            <title>Check valid value for DotRange tag</title><description>Check valid value for DotRange tag</description>
-            <reference><section></section><page>34</page></reference>
-            <assert test="{tags.tag[name=DotRange] == 0} || {tags.tag[name=DotRange] == 255}">Incorrect tag value</assert>
-        </rule>
-        
-    </rules>
+    <rules id="TIFF-IT-BL-P1">
+        <title>Binary line-art (BL) file</title>
+        <description>Each line of data shall be encoded as a sequence of pairs of background and image run lengths. Each new
+            scan line shall start with a background run. In the case where a continuous background or an image section of
+            a scan line has to be encoded by more than one run length pair, a zero run-length of the “opposite” colour
+            shall be inserted.
+            For binary line-art, the data stream indicates which of the colours, foreground or background, will print. The
+            decoded run lengths of the data stream function as a switch between the image (foreground) colour and the
+            background colour.
 
-    <rules id="MP-restricted-tags">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-87" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag NewSubfileType exists</title><description>Check mandatory tag NewSubfileType exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType]}">Tag is required</assert>
+            TIFF/IT-BL/P1 limits the field values to the default value, a single value
+            or a small choice of values. TIFF/IT-BL/P1 also limits the usage of optional fields to the minimum required for
+            reasonable interchange.
+
+            NOTE TIFF/IT-BL/P1 files are not readable by typical TIFF 6.0 readers and neither can be written
+            by typical TIFF 6.0 writers because of the mandatory use of TIFF/IT-specific fields and values, and non-traditional
+            interpretations of other TIFF 6.0 fields and values (e.g., compression by mandatory run length encoding). It is possible to
+            write filters for DTP applications that need to read and write TIFF/IT-BL/P1 files.The filters for
+            TIFF/IT-BL/P1, as it is a simplified profile, are easier to implement than for TIFF/IT-BL. </description>
+
+        <rule id="TIFF-IT-BL-P1-0001" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 BitsPerSample valid values</title>
+            <description>BitsPerSample on a Binary line-art (BL) file must be 1</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="tags.tag[name=BitsPerSample] == 1}">Invalid BitsPerSample value. BitsPerSample should be 1</assert>
         </rule>
-        <rule id="it-p1-88" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag NewSubfileType</title><description>Check valid cardinality for tag NewSubfileType</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType].cardinality == 1}">Incorrect tag cardinality</assert>
+        <rule id="TIFF-IT-BL-P1-0002" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 Compression valid values </title>
+            <description>Compression valid value on a Binary line-art (BL) is:
+                32895 = IT8CTPAD</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{tags.tag[name=Compression] == 32895}">Invalid Compression on a Binary line-art (BL) file. compression should be IT8CTPAD</assert>
         </rule>
-        <rule id="it-p1-89" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for NewSubfileType tag</title><description>Check valid value for NewSubfileType tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType] == 0}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-BL-P1-0003" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 PhotometricInterpretation valid values</title>
+            <description>PhotometricInterpretation valid value on a Binary line-art (BL) es WhiteIsZero (0)</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{tags.tag[name=PhotometricInterpretation] == 0} || {tags.tag[name=PhotometricInterpretation] == 1}">Invalid PhotometricInterpretation value, PhotometricInterpretation should be WhiteIsZero (0)</assert>
         </rule>
-        <rule id="it-p1-90" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag BitsPerSample exists</title><description>Check mandatory tag BitsPerSample exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample]}">Tag is required</assert>
+        <rule id="TIFF-IT-BL-P1-0004" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 SamplesPerPixel valid value</title>
+            <description>SamplesPerPixel on a Binary line-art (BL) should be 1</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Invalid SamplesPerPixel. SamplesPerPixel on a Binary line-art (BL) should be 1</assert>
         </rule>
-        <rule id="it-p1-91" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag BitsPerSample</title><description>Check valid cardinality for tag BitsPerSample</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample].cardinality == 1}">Incorrect tag cardinality</assert>
+        <rule id="TIFF-IT-BL-P1-0005" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 InkSet is forbidden</title>
+            <description>InkSet on a Binary line-art (BL) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{!tags.tag[name=InkSet]}">InkSet on a Binary line-art (BL) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="it-p1-92" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for BitsPerSample tag</title><description>Check valid value for BitsPerSample tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=BitsPerSample] == 8} || {tags.tag[name=BitsPerSample] == 16}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-BL-P1-0006" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 InkNames is forbidden</title>
+            <description>InkNames on a Binary line-art (BL) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{!tags.tag[name=InkNames]}">InkNames on a Binary line-art (BL) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="it-p1-93" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag Compression exists</title><description>Check mandatory tag Compression exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
+        <rule id="TIFF-IT-BL-P1-0007" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 NumberOfInks is forbidden</title>
+            <description>NumberOfInks on a Binary line-art (BL) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{!tags.tag[name=NumberOfInks]}">NumberOfInks on a Binary line-art (BL) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="it-p1-94" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag Compression</title><description>Check valid cardinality for tag Compression</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
+        <rule id="TIFF-IT-BL-P1-0008" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 DotRange valid value</title>
+            <description>If DotRange tag is used on a Binary line-art (BL) TIFF/IT P1 file, it must be 0,255</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{tags.tag[name=DotRange] == 0,255}">Invalid DotRange. If DotRange tag is used, it must be 0,255</assert>
         </rule>
-        <rule id="it-p1-95" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for Compression tag</title><description>Check valid value for Compression tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=Compression] == 1}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-BL-P1-0009" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 ColorSequence is forbidden</title>
+            <description>ColorSequence on a Binary line-art (BL) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{!tags.tag[name=ColorSequence]}">ColorSequence on a Binary line-art (BL) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="it-p1-96" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag PhotometricInterpretation exists</title><description>Check mandatory tag PhotometricInterpretation exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
+        <rule id="TIFF-IT-BL-P1-0010" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 ImageColorValue mandatory</title>
+            <description>On a Binary line-art (BL) file If ImageColorIndicator value is 1, ImageColorValue is mandatory. </description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageColorIndicator]!=1} || tags.tag[name=ImageColorValue]}">ImageColorValue is mandatory. If ImageColorIndicator is 1 on a Binary line-art (BL) file.</assert>
         </rule>
-        <rule id="it-p1-97" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag PhotometricInterpretation</title><description>Check valid cardinality for tag PhotometricInterpretation</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
+        <rule id="TIFF-IT-BL-P1-0011" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 ImageColorValue forbidden</title>
+            <description>>On a Binary line-art (BL) file If ImageColorIndicator value is 0, ImageColorValue is forbidden. </description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageColorIndicator] || tags.tag[name=ImageColorIndicator]!=0} || !tags.tag[name=ImageColorValue]}">ImageColorValue is forbidden if ImageColorIndicator is 0 on a Binary line-art (BL) file.</assert>
         </rule>
-        <rule id="it-p1-98" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for PhotometricInterpretation tag</title><description>Check valid value for PhotometricInterpretation tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 0}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-BL-P1-0012" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 BackgroundColorValue mandatory</title>
+            <description>>On a Binary line-art (BL) file If BackgroundColorIndicator value is 1, BackgroundColorValue is mandatory. </description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{tags.tag[name=BackgroundColorIndicator]!=1} || tags.tag[name=BackgroundColorValue]}">BackgroundColorValue is mandatory. If BackgroundColorIndicator is 1 on a Binary line-art (BL) file.</assert>
         </rule>
-        <rule id="it-p1-99" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag Orientation exists</title><description>Check mandatory tag Orientation exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
+        <rule id="TIFF-IT-BL-P1-0013" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 BackgroundColorValue forbidden</title>
+            <description>>On a Binary line-art (BL) file If BackgroundColorIndicator value is 0, BackgroundColorValue is forbidden. </description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{tags.tag[name=BackgroundColorIndicator] || tags.tag[name=BackgroundColorIndicator]!=0} || !tags.tag[name=BackgroundColorValue]}">BackgroundColorValue is forbidden if BackgroundColorIndicator is 0 on a Binary line-art (BL) file.</assert>
         </rule>
-        <rule id="it-p1-100" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag Orientation</title><description>Check valid cardinality for tag Orientation</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
+        <rule id="TIFF-IT-BL-P1-0014" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 TrapIndicator is forbidden</title>
+            <description>TrapIndicator on a Binary line-art (BL) P1 is forbidden</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{!tags.tag[name=TrapIndicator]}">TrapIndicator on a Binary line-art (BL) TIFF/IT P1 file is forbidden</assert>
         </rule>
-        <rule id="it-p1-101" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for Orientation tag</title><description>Check valid value for Orientation tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=Orientation] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-102" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag SamplesPerPixel exists</title><description>Check mandatory tag SamplesPerPixel exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=SamplesPerPixel]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-103" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag SamplesPerPixel</title><description>Check valid cardinality for tag SamplesPerPixel</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=SamplesPerPixel].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-104" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for SamplesPerPixel tag</title><description>Check valid value for SamplesPerPixel tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=SamplesPerPixel] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-105" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag ResolutionUnit exists</title><description>Check mandatory tag ResolutionUnit exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-106" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag ResolutionUnit</title><description>Check valid cardinality for tag ResolutionUnit</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-107" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for ResolutionUnit tag</title><description>Check valid value for ResolutionUnit tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit] == 2} || {tags.tag[name=ResolutionUnit] == 3}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-108" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag DotRange exists</title><description>Check mandatory tag DotRange exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=DotRange]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-109" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag DotRange</title><description>Check valid cardinality for tag DotRange</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=DotRange].cardinality == 2}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-110" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for DotRange tag</title><description>Check valid value for DotRange tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=DotRange] == 0} || {tags.tag[name=DotRange] == 255}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-111" context="ifd[filetype=mp]" level="error">
-            <title>Check mandatory tag PixelIntensityRange exists</title><description>Check mandatory tag PixelIntensityRange exists</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=PixelIntensityRange]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-112" context="ifd[filetype=mp]" level="error">
-            <title>Check valid cardinality for tag PixelIntensityRange</title><description>Check valid cardinality for tag PixelIntensityRange</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=PixelIntensityRange].cardinality == 2}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-113" context="ifd[filetype=mp]" level="error">
-            <title>Check valid value for PixelIntensityRange tag</title><description>Check valid value for PixelIntensityRange tag</description>
-            <reference><section></section><page>36</page></reference>
-            <assert test="{tags.tag[name=PixelIntensityRange] == 0} || {tags.tag[name=PixelIntensityRange] == 255}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-BL-P1-0015" context="ifd[filetype=bl]" level="error">
+            <title>TIFF/IT-BL/P1 CMYKEquivalent is forbidden</title>
+            <description>CMYKEquivalent on a Binary line-art (BL) P2 is forbidden</description>
+            <reference>
+                <section>Section 7.8.3: TIFF/IT-BL and TIFF/IT-BL/P1 encoding</section><page>41</page>
+            </reference>
+            <assert test="{!tags.tag[name=CMYKEquivalent]}">CMYKEquivalent on a Binary line-art (BL) TIFF/IT P1 file is forbidden</assert>
         </rule>
     </rules>
 
-    <rules id="BP-restricted-tags">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-114" context="ifd[filetype=bp]" level="error">
-            <title>Check mandatory tag NewSubfileType exists</title><description>Check mandatory tag NewSubfileType exists</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType]}">Tag is required</assert>
+    <rules id="TIFF-IT-FP-P1">
+        <title>Final page (FP) file</title>
+        <description>Typically, a final page, ready for exposure on an output recorder, consists of more than one of the CT, MP, SD,
+            LW, BL, BP and HC raster formats described in this International Standard. TIFF/IT-FP provides a mechanism
+            for associating image files of the different types that make up a final page.
+
+            By default, it is assumed that, for each image type, the page assembly processes have combined all the pageinput
+            components of that data type into one output file: the single-component image file of that data type for
+            the page, though this is a requirement only for both TIFF/IT-P1 and TIFF/IT-P2 conformance.
+
+            The component-image files of a final page may be of any one of the TIFF/IT, TIFF/IT-P1, or TIFF/IT-P2
+            conformance levels. The final page is considered to be TIFF/IT-P1-conformant only if all of its component files
+            are TIFF/IT-P1-conformant and its own fields are TIFF/IT-FP/P1-conformant as specified in 7.10.2.5. The final
+            page is considered to be TIFF/IT-P2-conformant only if all of its component files are TIFF/IT-P1- or
+            TIFF/IT-P2-conformant and its own fields are TIFF/IT-FP/P2-conformant as specified in 7.10.2.5.</description>
+
+        <rule id="TIFF-IT-FP-P1-0001" context="ifd[filetype=fp]" level="error">
+            <title>TIFF/IT-FP/P1 NewSubfileType valid value</title>
+            <description>NewSubfileType on Final page (FP) file should be bigger than 7</description>
+            <reference>
+                <section>Section 7.10.3: TIFF/IT-FP, TIFF/IT-FP and TIFF/IT-FP/P2 encoding</section><page>48</page>
+            </reference>
+            <assert test="{tags.tag[name=NewSubfileType] &gt; 7}">Invalid NewSubfileType. NewSubfileType value on Final page (FP) file should be bigger than 7</assert>
         </rule>
-        <rule id="it-p1-115" context="ifd[filetype=bp]" level="error">
-            <title>Check valid cardinality for tag NewSubfileType</title><description>Check valid cardinality for tag NewSubfileType</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType].cardinality == 1}">Incorrect tag cardinality</assert>
+        <rule id="TIFF-IT-FP-P1-0002" context="ifd[filetype=fp]" level="error" experimental="true">
+            <title>TIFF/IT-FP/P1 ImageWidth valid value</title>
+            <description>ImageWidth on Final page (FP) file must be any  value  such that ImageWidth divided by XResolution equals the exact actual page width in ResolutionUnits.</description>
+            <reference>
+                <section>Section 7.10.3: TIFF/IT-FP, TIFF/IT-FP and TIFF/IT-FP/P2 encoding</section><page>48</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageWidth] % {tags.tag[name=XResolution] == 0}">Invalid ImageWidth. ImageWidth value on Final page (FP)must be any  value  such that ImageWidth divided by XResolution equals the exact actual page width in ResolutionUnits</assert>
         </rule>
-        <rule id="it-p1-116" context="ifd[filetype=bp]" level="error">
-            <title>Check valid value for NewSubfileType tag</title><description>Check valid value for NewSubfileType tag</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType] == 0}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-FP-P1-0003" context="ifd[filetype=fp]" level="error" experimental="true">
+            <title>TIFF/IT-FP/P1 ImageLength valid value</title>
+            <description>ImageLength on Final page (FP) file must be any  value  such that ImageWidth divided by YResolution equals the exact actual page width in ResolutionUnits.</description>
+            <reference>
+                <section>Section 7.10.3: TIFF/IT-FP, TIFF/IT-FP and TIFF/IT-FP/P2 encoding</section><page>48</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageLength] % {tags.tag[name=YResolution] == 0}">Invalid ImageLength. ImageLength value on Final page (FP)must be any  value  such that ImageLength divided by YResolution equals the exact actual page width in ResolutionUnits</assert>
         </rule>
-        <rule id="it-p1-117" context="ifd[filetype=bp]" level="error">
-            <title>Check mandatory tag Compression exists</title><description>Check mandatory tag Compression exists</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=Compression]}">Tag is required</assert>
+        <rule id="TIFF-IT-FP-P1-0004" context="ifd[filetype=fp]" level="error" experimental="true">
+            <title>TIFF/IT-FP/P1 ImageDescription mandatory</title>
+            <description>ImageDescription on Final page (FP) file is mandatory and must contain the name of the FP file at creation time, in order to facilitate identifying it in case of a subsequent rename.</description>
+            <reference>
+                <section>Section 7.10.3: TIFF/IT-FP, TIFF/IT-FP and TIFF/IT-FP/P2 encoding</section><page>48</page>
+            </reference>
+            <assert test="{tags.tag[name=ImageDescription]}">ImageDescription on Final page (FP) file is mandatory and must contain the name of the FP file at creation time, in order to facilitate identifying it in case of a subsequent rename</assert>
         </rule>
-        <rule id="it-p1-118" context="ifd[filetype=bp]" level="error">
-            <title>Check valid cardinality for tag Compression</title><description>Check valid cardinality for tag Compression</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=Compression].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-119" context="ifd[filetype=bp]" level="error">
-            <title>Check valid value for Compression tag</title><description>Check valid value for Compression tag</description>
-            <reference><section></section><page>38</page></reference><assert test="{tags.tag[name=Compression] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-120" context="ifd[filetype=bp]" level="error">
-            <title>Check mandatory tag PhotometricInterpretation exists</title><description>Check mandatory tag PhotometricInterpretation exists</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-121" context="ifd[filetype=bp]" level="error">
-            <title>Check valid cardinality for tag PhotometricInterpretation</title><description>Check valid cardinality for tag PhotometricInterpretation</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-122" context="ifd[filetype=bp]" level="error">
-            <title>Check valid value for PhotometricInterpretation tag</title><description>Check valid value for PhotometricInterpretation tag</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 0}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-123" context="ifd[filetype=bp]" level="error">
-            <title>Check mandatory tag Orientation exists</title><description>Check mandatory tag Orientation exists</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-124" context="ifd[filetype=bp]" level="error">
-            <title>Check valid cardinality for tag Orientation</title><description>Check valid cardinality for tag Orientation</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-125" context="ifd[filetype=bp]" level="error">
-            <title>Check valid value for Orientation tag</title><description>Check valid value for Orientation tag</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=Orientation] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-126" context="ifd[filetype=bp]" level="error">
-            <title>Check mandatory tag ResolutionUnit exists</title><description>Check mandatory tag ResolutionUnit exists</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-127" context="ifd[filetype=bp]" level="error">
-            <title>Check valid cardinality for tag ResolutionUnit</title><description>Check valid cardinality for tag ResolutionUnit</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-128" context="ifd[filetype=bp]" level="error">
-            <title>Check valid value for ResolutionUnit tag</title><description>Check valid value for ResolutionUnit tag</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit] == 2} || {tags.tag[name=ResolutionUnit] == 3}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-129" context="ifd[filetype=bp]" level="error">
-            <title>Check mandatory tag DotRange exists</title><description>Check mandatory tag DotRange exists</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=DotRange]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-130" context="ifd[filetype=bp]" level="error">
-            <title>Check valid cardinality for tag DotRange</title><description>Check valid cardinality for tag DotRange</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=DotRange].cardinality == 2}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-131" context="ifd[filetype=bp]" level="error">
-            <title>Check valid value for DotRange tag</title><description>Check valid value for DotRange tag</description>
-            <reference><section></section><page>38</page></reference>
-            <assert test="{tags.tag[name=DotRange] == 0} || {tags.tag[name=DotRange] == 255}">Incorrect tag value</assert>
+        <rule id="TIFF-IT-FP-P1-0005" context="ifd[filetype=fp]" level="error" experimental="true">
+            <title>TIFF/IT-FP/P1 PlanarConfiguration valid value</title>
+            <description>PlanarConfiguration on Final page (FP) file must be chunky (1).</description>
+            <reference>
+                <section>Section 7.10.3: TIFF/IT-FP, TIFF/IT-FP and TIFF/IT-FP/P2 encoding</section><page>48</page>
+            </reference>
+            <assert test="{tags.tag[name=PlanarConfiguration] == 1}">Invalid PlanarConfiguration. PlanarConfiguration on Final page (FP) file should be chunky (1)</assert>
         </rule>
     </rules>
 
-    <rules id="BL-restricted-tags">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-132" context="ifd[filetype=bl]" level="error">
-            <title>Check mandatory tag NewSubfileType exists</title><description>Check mandatory tag NewSubfileType exists</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-133" context="ifd[filetype=bl]" level="error">
-            <title>Check valid cardinality for tag NewSubfileType</title><description>Check valid cardinality for tag NewSubfileType</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-134" context="ifd[filetype=bl]" level="error">
-            <title>Check valid value for NewSubfileType tag</title><description>Check valid value for NewSubfileType tag</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=NewSubfileType] == 0}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-135" context="ifd[filetype=bl]" level="error">
-            <title>Check mandatory tag PhotometricInterpretation exists</title><description>Check mandatory tag PhotometricInterpretation exists</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-136" context="ifd[filetype=bl]" level="error">
-            <title>Check valid cardinality for tag PhotometricInterpretation</title><description>Check valid cardinality for tag PhotometricInterpretation</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-137" context="ifd[filetype=bl]" level="error">
-            <title>Check valid value for PhotometricInterpretation tag</title><description>Check valid value for PhotometricInterpretation tag</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=PhotometricInterpretation] == 0}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-138" context="ifd[filetype=bl]" level="error">
-            <title>Check mandatory tag Orientation exists</title><description>Check mandatory tag Orientation exists</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-139" context="ifd[filetype=bl]" level="error">
-            <title>Check valid cardinality for tag Orientation</title><description>Check valid cardinality for tag Orientation</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-140" context="ifd[filetype=bl]" level="error">
-            <title>Check valid value for Orientation tag</title><description>Check valid value for Orientation tag</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=Orientation] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-141" context="ifd[filetype=bl]" level="error">
-            <title>Check mandatory tag ResolutionUnit exists</title><description>Check mandatory tag ResolutionUnit exists</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-142" context="ifd[filetype=bl]" level="error">
-            <title>Check valid cardinality for tag ResolutionUnit</title><description>Check valid cardinality for tag ResolutionUnit</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-143" context="ifd[filetype=bl]" level="error">
-            <title>Check valid value for ResolutionUnit tag</title><description>Check valid value for ResolutionUnit tag</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit] == 2} || {tags.tag[name=ResolutionUnit] == 3}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-144" context="ifd[filetype=bl]" level="error">
-            <title>Check mandatory tag DotRange exists</title><description>Check mandatory tag DotRange exists</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=DotRange]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-145" context="ifd[filetype=bl]" level="error">
-            <title>Check valid cardinality for tag DotRange</title><description>Check valid cardinality for tag DotRange</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=DotRange].cardinality == 2}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-146" context="ifd[filetype=bl]" level="error">
-            <title>Check valid value for DotRange tag</title><description>Check valid value for DotRange tag</description>
-            <reference><section></section><page>41</page></reference>
-            <assert test="{tags.tag[name=DotRange] == 0} || {tags.tag[name=DotRange] == 255}">Incorrect tag value</assert>
-        </rule>
-    </rules>
-    
-    <rules id="SD-restricted-tags">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-147" context="ifd[filetype=sd]" level="error">
-            <title>Check mandatory tag Orientation exists</title><description>Check mandatory tag Orientation exists</description>
-            <reference><section></section><page>43</page></reference>
-            <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-148" context="ifd[filetype=sd]" level="error">
-            <title>Check valid cardinality for tag Orientation</title><description>Check valid cardinality for tag Orientation</description>
-            <reference><section></section><page>43</page></reference>
-            <assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-149" context="ifd[filetype=sd]" level="error">
-            <title>Check valid value for Orientation tag</title><description>Check valid value for Orientation tag</description>
-            <reference><section></section><page>43</page></reference>
-            <assert test="{tags.tag[name=Orientation] == 1}">Incorrect tag value</assert>
-        </rule>
-    </rules>
-
-    <rules id="FP-restricted-tags">
-        <title></title>
-        <description></description>
-        <rule id="it-p1-150" context="ifd[filetype=fp]" level="error">
-            <title>Check mandatory tag StripOffsets exists</title><description>Check mandatory tag StripOffsets exists</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=StripOffsets]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-151" context="ifd[filetype=fp]" level="error">
-            <title>Check valid cardinality for tag StripOffsets</title><description>Check valid cardinality for tag StripOffsets</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=StripOffsets].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-152" context="ifd[filetype=fp]" level="error">
-            <title>Check valid value for StripOffsets tag</title><description>Check valid value for StripOffsets tag</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=StripOffsets] == 0}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-153" context="ifd[filetype=fp]" level="error">
-            <title>Check mandatory tag Orientation exists</title><description>Check mandatory tag Orientation exists</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=Orientation]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-154" context="ifd[filetype=fp]" level="error">
-            <title>Check valid cardinality for tag Orientation</title><description>Check valid cardinality for tag Orientation</description>
-            <reference><section></section><page>48</page></reference><assert test="{tags.tag[name=Orientation].cardinality == 1}">Incorrect tag cardinality</assert>
-
-        </rule>
-        <rule id="it-p1-155" context="ifd[filetype=fp]" level="error">
-            <title>Check valid value for Orientation tag</title><description>Check valid value for Orientation tag</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=Orientation] == 1}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-156" context="ifd[filetype=fp]" level="error">
-            <title>Check mandatory tag ResolutionUnit exists</title><description>Check mandatory tag ResolutionUnit exists</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-157" context="ifd[filetype=fp]" level="error">
-            <title>Check valid cardinality for tag ResolutionUnit</title><description>Check valid cardinality for tag ResolutionUnit</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-158" context="ifd[filetype=fp]" level="error">
-            <title>Check valid value for ResolutionUnit tag</title><description>Check valid value for ResolutionUnit tag</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=ResolutionUnit] == 2} || {tags.tag[name=ResolutionUnit] == 3}">Incorrect tag value</assert>
-        </rule>
-        <rule id="it-p1-159" context="ifd[filetype=fp]" level="error">
-            <title>Check mandatory tag NumberOfInks exists</title><description>Check mandatory tag NumberOfInks exists</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks]}">Tag is required</assert>
-        </rule>
-        <rule id="it-p1-160" context="ifd[filetype=fp]" level="error">
-            <title>Check valid cardinality for tag NumberOfInks</title><description>Check valid cardinality for tag NumberOfInks</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks].cardinality == 1}">Incorrect tag cardinality</assert>
-        </rule>
-        <rule id="it-p1-161" context="ifd[filetype=fp]" level="error">
-            <title>Check valid value for NumberOfInks tag</title><description>Check valid value for NumberOfInks tag</description>
-            <reference><section></section><page>48</page></reference>
-            <assert test="{tags.tag[name=NumberOfInks] == 4}">Incorrect tag value</assert>
-        </rule>
-    </rules>
-    
 </implementationCheckerObject>
 
