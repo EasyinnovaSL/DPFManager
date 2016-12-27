@@ -148,6 +148,10 @@ public class ConfigurationController {
    * Main parse parameters function
    */
   public void parse(List<String> params) {
+    if (params.size() == 0){
+      displayHelp();
+    }
+
     int idx = 0;
     /**
      * Actions
@@ -694,13 +698,57 @@ public class ConfigurationController {
    * Displays help
    */
   private void displayHelp() {
-//    printOut("");
-//    printOut(bundle.getString("helpCO0"));
-//    printOut("");
-//    printOut(bundle.getString("helpOptions"));
-//    printOptions("helpCO", 11);
-    printOut("HELP!!");
+    printOut("");
+    printOut(bundle.getString("helpCF0"));
+    printOut("");
+    // Actions
+    printOut(bundle.getString("helpCF1"));
+    printOptions("helpCF1", 5, "");
+    printOptions("helpCF15", 5, "    ");
+    printOptions("helpCF1", 6, 6);
+    printOut("");
+    // Options
+    printOut(bundle.getString("helpOptions"));
+    printOptions("helpCF2", 13, "");
+    printOut("");
+    // Rule specification
+    printOut(bundle.getString("helpCF3"));
+    printSpecifications("helpCF3", 3, "");
+    printSpecifications("helpCF33", 2, "    ");
+    printOut("");
+    // Fix specification
+    printOut(bundle.getString("helpCF4"));
+    printSpecifications("helpCF4", 3, "");
+    printSpecifications("helpCF43", 2, "    ");
+    printOut("");
     exit();
+  }
+
+  public void printSpecifications(String prefix, int max, String prespace) {
+    for (int i = 1; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      printOut("    " + prespace + msg);
+    }
+  }
+
+  public void printOptions(String prefix, int max, int min) {
+    for (int i = min; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.indexOf(":") + 1);
+      String post = msg.substring(msg.indexOf(":") + 1);
+      String line = String.format("%-40s%s", pre, post);
+      printOut("    " + line);
+    }
+  }
+
+  public void printOptions(String prefix, int max, String prespace) {
+    for (int i = 1; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.indexOf(":") + 1);
+      String post = msg.substring(msg.indexOf(":") + 1);
+      String line = String.format("%-40s%s", prespace + pre, post);
+      printOut("    " + line);
+    }
   }
 
   private void displayConfigurations() {
@@ -757,16 +805,6 @@ public class ConfigurationController {
     printOut(bundle.getString("displayAutoFixHeader"));
     for (String autofix : validAutofixes) {
       printOut("  " + autofix);
-    }
-  }
-
-  public void printOptions(String prefix, int max) {
-    for (int i = 1; i <= max; i++) {
-      String msg = bundle.getString(prefix + i);
-      String pre = msg.substring(0, msg.indexOf(":") + 1);
-      String post = msg.substring(msg.indexOf(":") + 1);
-      String line = String.format("%-40s%s", pre, post);
-      printOut("    " + line);
     }
   }
 
