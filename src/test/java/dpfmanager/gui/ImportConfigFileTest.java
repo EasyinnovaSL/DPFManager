@@ -1,6 +1,6 @@
 package dpfmanager.gui;
 
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
@@ -93,7 +93,7 @@ public class ImportConfigFileTest extends ApplicationTest {
 
     //Go to summary and compare
     clickOnAndReload("#step5");
-    FxAssert.verifyThat("#labIsos", NodeMatchers.hasText(ImplementationCheckerLoader.getIsoName("TIFF_EP") + ", " + ImplementationCheckerLoader.getIsoName("TiffITP1ProfileChecker")));
+    FxAssert.verifyThat("#labIsos", NodeMatchers.hasText(ImplementationCheckerLoader.getIsoName("TiffITP1ProfileChecker") + ", " + ImplementationCheckerLoader.getIsoName("TIFF_EP")));
     FxAssert.verifyThat("#labRules", NodeMatchers.hasText("ImageLength < 1000"));
     FxAssert.verifyThat("#labReports", NodeMatchers.hasText("HTML, PDF"));
     FxAssert.verifyThat("#labFixes", NodeMatchers.hasText("Add Tag Artist 'EasyTest'"));

@@ -2,8 +2,8 @@
 <configuration>
   <version>3</version>
   <isos>
-    <iso>TIFF_EP</iso>
     <iso>TiffITP1ProfileChecker</iso>
+    <iso>TIFF_EP</iso>
   </isos>
   <formats>
     <format>HTML</format>

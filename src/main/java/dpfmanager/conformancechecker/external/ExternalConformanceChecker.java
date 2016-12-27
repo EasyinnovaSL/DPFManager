@@ -21,10 +21,10 @@ package dpfmanager.conformancechecker.external;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.shell.modules.interoperability.core.ConformanceConfig;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
+import com.easyinnova.policy_checker.model.Field;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 
@@ -55,7 +55,7 @@ public class ExternalConformanceChecker extends ConformanceChecker {
   }
 
   @Override
-  public Configuration getDefaultConfiguration(){
+  public Configuration getDefaultConfiguration() {
     return null;
   }
 
@@ -120,12 +120,12 @@ public class ExternalConformanceChecker extends ConformanceChecker {
     return null;
   }
 
-  private List<String> parseParams(String input){
+  private List<String> parseParams(String input) {
     List<String> parsedParams = new ArrayList<>();
-    for (String param : params){
-      if (param.equals("%input%")){
+    for (String param : params) {
+      if (param.equals("%input%")) {
         parsedParams.add(input);
-      } else if (param.equals("%config%")){
+      } else if (param.equals("%config%")) {
         parsedParams.add(getDefaultConfigurationPath());
       } else {
         parsedParams.add(param);

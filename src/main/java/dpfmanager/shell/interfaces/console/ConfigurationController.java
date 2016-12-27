@@ -20,17 +20,18 @@
 package dpfmanager.shell.interfaces.console;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
-import edu.emory.mathcs.backport.java.util.Arrays;
+
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.policy_checker.PolicyChecker;
+import com.easyinnova.policy_checker.model.Field;
+import com.easyinnova.policy_checker.model.Rules;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
@@ -122,7 +123,7 @@ public class ConfigurationController {
 
   private void initValidationObjects() {
     validRules = new HashMap<>();
-    List<Field> fields = conformance.getConformanceCheckerFields();
+    List<Field> fields = PolicyChecker.getPolicyCheckerFields();
     for (Field field : fields) {
       validRules.put(field.getName(), field);
     }
@@ -295,7 +296,7 @@ public class ConfigurationController {
         if (idx + 1 < params.size()) {
           String iso = params.get(++idx);
           if (validateIso(iso, false)) {
-            if (isos.contains(iso)){
+            if (isos.contains(iso)) {
               isos.remove(iso);
             } else {
               printOutErr(bundle.getString("isoNotFound"));
@@ -365,7 +366,7 @@ public class ConfigurationController {
           String tag = params.get(++idx);
           String value = getFixOperatorInt(operator) == 1 ? (idx + 1 < params.size() ? params.get(++idx) : null) : null;
           if (validateFix(tag, operator, value)) {
-            if (!fixes.removeFix(tag, parseFixOperator(operator), value)){
+            if (!fixes.removeFix(tag, parseFixOperator(operator), value)) {
               printOutErr(bundle.getString("fixNotFound"));
             }
           } else {
@@ -395,7 +396,7 @@ public class ConfigurationController {
           String className = params.get(++idx);
           if (validAutofixes.contains(className)) {
             autofixes.remove(className);
-            if (!fixes.removeAutofix(className)){
+            if (!fixes.removeAutofix(className)) {
               printOutErr(bundle.getString("autofixNotFound"));
             }
           } else {
@@ -429,7 +430,7 @@ public class ConfigurationController {
           String operator = params.get(++idx);
           String value = params.get(++idx);
           if (validateRule(tag, operator, value, type)) {
-            if (!rules.removeRule(tag, parseRuleOperator(operator), value, type.equals("warning"))){
+            if (!rules.removeRule(tag, parseRuleOperator(operator), value, type.equals("warning"))) {
               printOutErr(bundle.getString("ruleNotFound"));
             }
           } else {
@@ -657,14 +658,14 @@ public class ConfigurationController {
     return validIsos.contains(iso) && (!checkAlreadyExists || !isos.contains(iso));
   }
 
-  private void validateFormats(String formatsStr){
+  private void validateFormats(String formatsStr) {
     List<String> acceptedFormats = new ArrayList<>();
     acceptedFormats.add("xml");
     acceptedFormats.add("json");
     acceptedFormats.add("html");
     acceptedFormats.add("pdf");
-    for (String format : formatsStr.split(",")){
-      if (acceptedFormats.contains(format.toLowerCase())){
+    for (String format : formatsStr.split(",")) {
+      if (acceptedFormats.contains(format.toLowerCase())) {
         formats.add(format.toUpperCase());
       } else {
         printOutErr(bundle.getString("incorrectReportFormat"));

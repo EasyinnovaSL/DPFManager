@@ -2,10 +2,10 @@ package dpfmanager.implementationchecker;
 
 import static java.io.File.separator;
 
-import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
-import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import com.easyinnova.implementation_checker.TiffImplementationChecker;
+import com.easyinnova.implementation_checker.Validator;
+import com.easyinnova.implementation_checker.model.TiffValidationObject;
+import com.easyinnova.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.ValidationResult;

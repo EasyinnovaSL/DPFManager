@@ -3,7 +3,7 @@ package dpfmanager.commandline;
 import static junit.framework.TestCase.assertEquals;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 
@@ -69,13 +69,11 @@ public class PolicyCheckTest extends CommandLineTest {
         html = new String(encoded);
       }
     }
-    System.out.println(html);
     assertEquals(html != null, true);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), true);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + ImplementationCheckerLoader.getIsoName("TIFF_Baseline_Core_6_0")), false);
     assertEquals(html.contains("<i class=\"fa fa-check-circle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), false);
     assertEquals(html.contains("<i class=\"fa fa-exclamation-triangle\"></i> " + TiffConformanceChecker.POLICY_ISO_NAME), true);
-
 
     int index = html.indexOf("<table class=\"center-table CustomTable\">");
     assertEquals(true, index > -1);

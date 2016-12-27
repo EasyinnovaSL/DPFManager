@@ -20,7 +20,7 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.core.config.GuiConfig;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -61,7 +61,9 @@ public class Wizard5Fragment {
     for (String iso : config.getIsos()){
       isosStr += ImplementationCheckerLoader.getIsoName(iso) + ", ";
     }
-    isosStr = isosStr.substring(0, isosStr.length()-2);
+    if (!isosStr.isEmpty()) {
+      isosStr = isosStr.substring(0, isosStr.length() - 2);
+    }
     labIsos.setText(isosStr);
     labReports.setText(config.getTxtFormats());
     labRules.setText(config.getTxtRules());
