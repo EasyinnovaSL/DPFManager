@@ -20,7 +20,7 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;

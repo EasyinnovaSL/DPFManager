@@ -3,7 +3,7 @@ package dpfmanager.commandline;
 import static junit.framework.TestCase.assertEquals;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 

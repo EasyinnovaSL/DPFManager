@@ -21,9 +21,6 @@ package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.configuration.Field;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.util.NumberTextField;
 import dpfmanager.shell.interfaces.gui.component.config.ConfigController;
@@ -42,12 +39,15 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.policy_checker.model.Rule;
+import com.easyinnova.policy_checker.model.Rules;
 
 import org.controlsfx.control.CheckComboBox;
 import org.jacpfx.api.annotations.Resource;
@@ -190,8 +190,8 @@ public class Wizard2Fragment {
     hbox.setAlignment(Pos.CENTER_LEFT);
 
     String name = ImplementationCheckerLoader.getIsoName(iso);
-    if (nRules > 0){
-      name += " " + bundle.getString("w2Invalidated").replace("%1", nRules+"");
+    if (nRules > 0) {
+      name += " " + bundle.getString("w2Invalidated").replace("%1", nRules + "");
     }
     Label label = new Label(name);
     label.setId("w2" + iso);
@@ -217,7 +217,7 @@ public class Wizard2Fragment {
 
   public void check(String iso) {
     for (CheckBox chk : getCheckBoxs()) {
-      if (chk.getId().equals("w2"+iso)) {
+      if (chk.getId().equals("w2" + iso)) {
         chk.setSelected(true);
       }
     }
