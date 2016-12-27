@@ -135,10 +135,12 @@ public class ReportPDF extends ReportGeneric {
         // Draw image
         String imgPath = ir.getInternalReportFodler() + "/html/" + ir.getImagePath();
         BufferedImage bimg;
+        FileInputStream fis = null;
         if (!new File(imgPath).exists()) {
           bimg = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
         } else {
-          bimg = ImageIO.read(new FileInputStream(imgPath));
+          fis = new FileInputStream(imgPath);
+          bimg = ImageIO.read(fis);
         }
         image_width = image_height * bimg.getWidth() / bimg.getHeight();
         if (image_width > 100) {
@@ -161,6 +163,7 @@ public class ReportPDF extends ReportGeneric {
 
         ximage = new PDJpeg(pdfParams.getDocument(), bimg);
         pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
+        if (fis != null) fis.close();
 
         // Values
         image_width = initialx;

@@ -169,6 +169,7 @@ public class PdfReport extends Report {
       pdfParams.y -= (max_image_height + 30);
       int image_pos_y = pdfParams.y;
       BufferedImage thumb = null;
+      FileInputStream fis = null;
       if (!ir.getTiffModel().getFatalError()) {
       //if (ir.getTiffModel() != null) {
         // Get thumbnail
@@ -194,7 +195,8 @@ public class PdfReport extends Report {
         }
         // Read thumbnail
         if (new File(internalReportFolder + "/html/" + imgPath).exists()) {
-          thumb = ImageIO.read(new FileInputStream(internalReportFolder + "/html/" + imgPath));
+          fis = new FileInputStream(internalReportFolder + "/html/" + imgPath);
+          thumb = ImageIO.read(fis);
         }
       }
       if (thumb == null) {
@@ -213,6 +215,7 @@ public class PdfReport extends Report {
       ximage = new PDJpeg(pdfParams.getDocument(), thumb);
       pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
       image_width = max_image_width;
+      if (fis != null) fis.close();
 
       /**
        * Image name and path

@@ -94,7 +94,7 @@ public class CommandLineTest {
       }
     } catch (Exception e) {
       e.printStackTrace();
-      //Assert.assertEquals(1, 0);
+      Assert.assertEquals(1, 0);
     }
   }
 
