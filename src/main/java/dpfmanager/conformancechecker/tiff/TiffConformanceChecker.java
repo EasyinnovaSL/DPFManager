@@ -145,27 +145,17 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, magicNumber, "offset", "0");
       addElement(doc, magicNumber, "signature", "\\x4D\\x4D\\x00\\x2A");
 
-      // ISOS
+      // Implementation Checker
       Element implementationChecker = doc.createElement("implementationCheckerOptions");
       conformenceCheckerElement.appendChild(implementationChecker);
       Element standards = doc.createElement("standards");
       implementationChecker.appendChild(standards);
-
-      // Baseline 6
-      Element standard = doc.createElement("standard");
-      standards.appendChild(standard);
-      addElement(doc, standard, "name", "TIFF");
-      addElement(doc, standard, "description", "TIFF Baseline 6.0");
-      // Tiff/EP
-      standard = doc.createElement("standard");
-      standards.appendChild(standard);
-      addElement(doc, standard, "name", "TIFF/EP");
-      addElement(doc, standard, "description", "TIFF extension for Electronic Photography");
-      // Tiff/IT
-      standard = doc.createElement("standard");
-      standards.appendChild(standard);
-      addElement(doc, standard, "name", "TIFF/IT");
-      addElement(doc, standard, "description", "TIFF extension for Image Technology");
+      for (String path : ImplementationCheckerLoader.getPathsList()) {
+        Element standard = doc.createElement("standard");
+        standards.appendChild(standard);
+        addElement(doc, standard, "name", ImplementationCheckerLoader.getIsoName(path));
+        addElement(doc, standard, "description", ImplementationCheckerLoader.getIsoName(path));
+      }
 
       // Policy checker
       Element policyChecker = doc.createElement("policyCheckerOptions");
