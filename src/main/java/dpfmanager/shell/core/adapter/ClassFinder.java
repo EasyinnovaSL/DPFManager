@@ -22,7 +22,6 @@ public class ClassFinder {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     URL packageURL;
     ArrayList<String> names = new ArrayList<String>();
-    ;
 
     packageName = packageName.replace(".", "/");
     packageURL = classLoader.getResource(packageName);

@@ -279,7 +279,7 @@ public class HtmlReport extends Report {
         "\t\t\t\t        </tr>\n" +
         "\t\t\t\t        ##ROWS##\n" +
         "\t\t\t\t\t</table>";
-    String pcTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##LOC##</td><td>##DESC##</td></tr>";
+    String pcTmpl = "<tr ##CLASS## ##DISPLAY##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##RULE##</td><td>##DESC##</td></tr>";
     rows = "";
     if (ir.hasValidation(TiffConformanceChecker.POLICY_ISO)) {
       String name = TiffConformanceChecker.POLICY_ISO_NAME;
@@ -308,10 +308,8 @@ public class HtmlReport extends Report {
           } else if (!val.ok()) {
             tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
           }
-          location = val.getRuleDescription();
-          tdRow = tdRow.replace("##LOC##", location);
+          tdRow = tdRow.replace("##RULE##", val.getRule().getDescription().getValue());
           tdRow = tdRow.replace("##DESC##", val.getDescription());
-          tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
           addedRows++;
           allRows += tdRow;
         }

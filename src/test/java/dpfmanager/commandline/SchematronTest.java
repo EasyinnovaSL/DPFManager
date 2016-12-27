@@ -2,27 +2,18 @@ package dpfmanager.commandline;
 
 import static junit.framework.TestCase.assertEquals;
 
-import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import org.junit.Test;
-import com.easyinnova.tiff.reader.TiffReader;
-
-import junit.framework.TestCase;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Scanner;
 
 /**
  * Created by easy on 01/10/2015.
@@ -93,7 +84,7 @@ public class SchematronTest extends CommandLineTest {
       }
     }
     assertEquals(xml != null, true);
-    Schematron sch = new Schematron();
+//    RulesValidator sch = new RulesValidator();
 
     String sch2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<schema xmlns=\"http://purl.oclc.org/dsdl/schematron\">\n" +

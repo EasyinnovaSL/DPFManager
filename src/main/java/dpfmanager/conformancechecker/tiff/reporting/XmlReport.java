@@ -22,12 +22,10 @@ package dpfmanager.conformancechecker.tiff.reporting;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
 import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
-import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
-import com.easyinnova.implementation_checker.Validator;
 import com.easyinnova.implementation_checker.rules.RuleResult;
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
@@ -825,36 +823,30 @@ public class XmlReport extends Report {
         policyCheckerElement.appendChild(implementationCheck);
       }
 
-      // Schematron
-      Schematron sch = new Schematron();
-      try {
-        if (rules != null) {
-          Element policyRules = doc.createElement("policy_rules");
-          Validator validation = sch.testXMLnoSchematron(ir.getTiffModel(), rules);
-          for (RuleResult rr : validation.getErrors()) {
-            Element error = doc.createElement("error");
-            Element test = doc.createElement("test");
-            test.setTextContent(rr.getRule().getDescription().getValue());
-            Element message = doc.createElement("message");
-            message.setTextContent(rr.getMessage());
-            error.appendChild(test);
-            error.appendChild(message);
-            policyRules.appendChild(error);
-          }
-          for (RuleResult rr : validation.getWarnings()) {
-            Element warning = doc.createElement("warning");
-            Element test = doc.createElement("test");
-            test.setTextContent(rr.getRule().getDescription().getValue());
-            Element message = doc.createElement("message");
-            message.setTextContent(rr.getMessage());
-            warning.appendChild(test);
-            warning.appendChild(message);
-            policyRules.appendChild(warning);
-          }
-          policyCheckerElement.appendChild(policyRules);
+      // Policy rules
+      Element policyRules = doc.createElement("policy_rules");
+      if (rules != null) {
+        for (RuleResult rr : ir.getErrors(TiffConformanceChecker.POLICY_ISO)) {
+          Element error = doc.createElement("error");
+          Element test = doc.createElement("test");
+          test.setTextContent(rr.getRule().getDescription().getValue());
+          Element message = doc.createElement("message");
+          message.setTextContent(rr.getMessage());
+          error.appendChild(test);
+          error.appendChild(message);
+          policyRules.appendChild(error);
         }
-      } catch (Exception e) {
-        e.printStackTrace();
+        for (RuleResult rr : ir.getWarnings(TiffConformanceChecker.POLICY_ISO)) {
+          Element warning = doc.createElement("warning");
+          Element test = doc.createElement("test");
+          test.setTextContent(rr.getRule().getDescription().getValue());
+          Element message = doc.createElement("message");
+          message.setTextContent(rr.getMessage());
+          warning.appendChild(test);
+          warning.appendChild(message);
+          policyRules.appendChild(warning);
+        }
+        policyCheckerElement.appendChild(policyRules);
       }
       report.appendChild(policyCheckerElement);
 

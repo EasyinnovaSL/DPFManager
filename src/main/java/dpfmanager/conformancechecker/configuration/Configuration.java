@@ -747,4 +747,8 @@ public class Configuration {
   public void setFormats(ArrayList<String> formats) {
     this.formats = formats;
   }
+
+  public boolean hasRules(){
+    return rules != null && rules.getRules() != null && rules.getRules().size() > 0;
+  }
 }
