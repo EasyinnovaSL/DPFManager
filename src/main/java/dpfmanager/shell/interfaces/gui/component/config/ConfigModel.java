@@ -20,12 +20,13 @@
 package dpfmanager.shell.interfaces.gui.component.config;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.mvc.DpfModel;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+
+import com.easyinnova.policy_checker.model.Field;
 
 import java.util.ArrayList;
 

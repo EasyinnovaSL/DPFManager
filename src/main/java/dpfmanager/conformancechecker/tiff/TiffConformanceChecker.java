@@ -21,20 +21,12 @@ package dpfmanager.conformancechecker.tiff;
 
 import dpfmanager.conformancechecker.ConformanceChecker;
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.TiffImplementationChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ValidationResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
-import dpfmanager.conformancechecker.tiff.implementation_checker.model.TiffValidationObject;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.autofix;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.clearPrivateData;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.fixMetadataInconsistencies;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.autofixes.makeBaselineCompliant;
-import dpfmanager.conformancechecker.tiff.policy_checker.PolicyChecker;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
 import dpfmanager.conformancechecker.tiff.reporting.MetsReport;
 import dpfmanager.conformancechecker.tiff.reporting.PdfReport;
@@ -47,6 +39,13 @@ import dpfmanager.shell.modules.report.core.ReportGenerator;
 
 import com.google.common.reflect.ClassPath;
 
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.TiffImplementationChecker;
+import com.easyinnova.implementation_checker.ValidationResult;
+import com.easyinnova.implementation_checker.Validator;
+import com.easyinnova.implementation_checker.model.TiffValidationObject;
+import com.easyinnova.policy_checker.PolicyChecker;
+import com.easyinnova.policy_checker.model.Field;
 import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
@@ -146,154 +145,21 @@ public class TiffConformanceChecker extends ConformanceChecker {
       addElement(doc, magicNumber, "offset", "0");
       addElement(doc, magicNumber, "signature", "\\x4D\\x4D\\x00\\x2A");
 
-      // ISOS
+      // Implementation Checker
       Element implementationChecker = doc.createElement("implementationCheckerOptions");
       conformenceCheckerElement.appendChild(implementationChecker);
       Element standards = doc.createElement("standards");
       implementationChecker.appendChild(standards);
-
-      // Baseline 6
-      Element standard = doc.createElement("standard");
-      standards.appendChild(standard);
-      addElement(doc, standard, "name", "TIFF");
-      addElement(doc, standard, "description", "TIFF Baseline 6.0");
-      // Tiff/EP
-      standard = doc.createElement("standard");
-      standards.appendChild(standard);
-      addElement(doc, standard, "name", "TIFF/EP");
-      addElement(doc, standard, "description", "TIFF extension for Electronic Photography");
-      // Tiff/IT
-      standard = doc.createElement("standard");
-      standards.appendChild(standard);
-      addElement(doc, standard, "name", "TIFF/IT");
-      addElement(doc, standard, "description", "TIFF extension for Image Technology");
+      for (String path : ImplementationCheckerLoader.getPathsList()) {
+        Element standard = doc.createElement("standard");
+        standards.appendChild(standard);
+        addElement(doc, standard, "name", ImplementationCheckerLoader.getIsoName(path));
+        addElement(doc, standard, "description", ImplementationCheckerLoader.getIsoName(path));
+      }
 
       // Policy checker
-      Element policyChecker = doc.createElement("policyCheckerOptions");
+      Element policyChecker = PolicyChecker.getPolicyCheckerOptions(doc);
       conformenceCheckerElement.appendChild(policyChecker);
-      Element fields = doc.createElement("fields");
-      policyChecker.appendChild(fields);
-      // Image Width
-      Element field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "ImageWidth");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Image Width in pixels");
-      addElement(doc, field, "operators", ">,<,=");
-      // Image Height
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "ImageLength");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Image Height in pixels");
-      addElement(doc, field, "operators", ">,<,=");
-      // Pixel Density
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "PixelDensity");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Pixels per centimeter");
-      addElement(doc, field, "operators", ">,<,=");
-      // Number of images
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "NumberImages");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Number of images in the TIFF");
-      addElement(doc, field, "operators", ">,<,=");
-      // BitDepth
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "BitDepth");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Number of bits per pixel component");
-      addElement(doc, field, "operators", ">,<,=");
-      addElement(doc, field, "values", "1,2,4,8,16,32,64");
-      // DPI
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "DPI");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Dots per Inch");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", "Even,Uneven");
-      // Extra Channels
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "ExtraChannels");
-      addElement(doc, field, "type", "integer");
-      addElement(doc, field, "description", "Extra pixel components");
-      addElement(doc, field, "operators", ">,<,=");
-      // XY Resolution
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "EqualXYResolution");
-      addElement(doc, field, "type", "boolean");
-      addElement(doc, field, "description", "XResolution equal to YResolution");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", "False,True");
-      // BlankPage
-      //field = doc.createElement("field");
-      //fields.appendChild(field);
-      //addElement(doc, field, "name", "BlankPage");
-      //addElement(doc, field, "type", "boolean");
-      //addElement(doc, field, "description", "Page devoid of content (completely white)");
-      //addElement(doc, field, "operators", "=");
-      //addElement(doc, field, "values", "False,True");
-      // NumberBlankPage
-      //field = doc.createElement("field");
-      //fields.appendChild(field);
-      //addElement(doc, field, "name", "NumberBlankImages");
-      //addElement(doc, field, "type", "integer");
-      //addElement(doc, field, "description", "Number of Blank Pages");
-      //addElement(doc, field, "operators", ">,<,=");
-      // Compression
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "Compression");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Compression scheme");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", compressionName(1) + "," + compressionName(2) + "," + compressionName(32773) + "," + compressionName(3) + "," + compressionName(4) + "," + compressionName(5) + "," + compressionName(6) + "," + compressionName(7) + "," + compressionName(8) + "," + compressionName(9) + "," + compressionName(10) + "");
-      // Photometric
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "Photometric");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Color space of the image data");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", photometricName(1) + "," + photometricName(2) + "," + photometricName(3) + "," + photometricName(4) + "," + photometricName(5) + "," + photometricName(6) + "," + photometricName(10) + "");
-      // Planar
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "Planar");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "How the pixels components are stored");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", planarName(1) + "," + planarName(2));
-      // Byteorder
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "ByteOrder");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Byte Order (BigEndian, LittleEndian)");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", ByteOrder.BIG_ENDIAN.toString() + "," + ByteOrder.LITTLE_ENDIAN.toString());
-      // FileSize
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "FileSize");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "The file size in bytes");
-      addElement(doc, field, "operators", ">,<,=");
-      // IccProfileClass
-      field = doc.createElement("field");
-      fields.appendChild(field);
-      addElement(doc, field, "name", "IccProfileClass");
-      addElement(doc, field, "type", "string");
-      addElement(doc, field, "description", "Class of the device ICC Profile");
-      addElement(doc, field, "operators", "=");
-      addElement(doc, field, "values", IccProfile.ProfileClass.Abstract + "," + IccProfile.ProfileClass.Input + "," + IccProfile.ProfileClass.Display + "," + IccProfile.ProfileClass.Output + "," + IccProfile.ProfileClass.DeviceLink + "," + IccProfile.ProfileClass.ColorSpace + "," + IccProfile.ProfileClass.NamedColor + "," + IccProfile.ProfileClass.Unknown);
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
@@ -370,132 +236,13 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return fields;
   }
 
-  public ArrayList<String> getOperators(String name){
+  public ArrayList<String> getOperators(String name) {
     for (Field field : getConformanceCheckerFields()) {
       if (field.getName().equals(name)) {
         return field.getOperators();
       }
     }
     return new ArrayList<>();
-  }
-
-  public static String compressionName(int code) {
-    switch (code) {
-      case 1:
-        return "None";
-      case 2:
-        return "CCITT";
-      case 3:
-        return "CCITT GR3";
-      case 4:
-        return "CCITT GR4";
-      case 5:
-        return "LZW";
-      case 6:
-        return "OJPEG";
-      case 7:
-        return "JPEG";
-      case 8:
-        return "DEFLATE Adobe";
-      case 9:
-        return "JBIG BW";
-      case 10:
-        return "JBIG C";
-      case 32773:
-        return "PackBits";
-    }
-    return "Unknown";
-  }
-
-  public static String photometricName(int code) {
-    switch (code) {
-      case 0:
-      case 1:
-        return "Bilevel";
-      case 2:
-        return "RGB";
-      case 3:
-        return "Palette";
-      case 4:
-        return "Transparency Mask";
-      case 5:
-        return "CMYK";
-      case 6:
-        return "YCbCr";
-      case 8:
-      case 9:
-      case 10:
-        return "CIELAB";
-    }
-    return "Unknown";
-  }
-
-  public static String planarName(int code) {
-    switch (code) {
-      case 1:
-        return "Chunky";
-      case 2:
-        return "Planar";
-    }
-    return "Unknown";
-  }
-
-  public static int compressionCode(String name) {
-    switch (name) {
-      case "None":
-        return 1;
-      case "CCITT":
-        return 2;
-      case "CCITT GR3":
-        return 3;
-      case "CCITT GR4":
-        return 4;
-      case "LZW":
-        return 5;
-      case "OJPEG":
-        return 6;
-      case "JPEG":
-        return 7;
-      case "DEFLATE Adobe":
-        return 8;
-      case "JBIG BW":
-        return 9;
-      case "JBIG C":
-        return 10;
-      case "PackBits":
-        return 32773;
-    }
-    return -1;
-  }
-
-  public static int photometricCode(String name) {
-    switch (name) {
-      case "Bilevel":
-        return 1;
-      case "RGB":
-        return 2;
-      case "Palette":
-        return 3;
-      case "Transparency Mask":
-        return 4;
-      case "CMYK":
-        return 5;
-      case "YCbCr":
-        return 6;
-      case "CIELAB":
-        return 10;
-    }
-    return -1;
-  }
-
-  public static int planarCode(String name) {
-    switch (name) {
-      case "Chunky":
-        return 1;
-      case "Planar":
-        return 2;
-    }
-    return -1;
   }
 
   private static Document convertStringToDocument(String xmlStr) {
@@ -588,11 +335,12 @@ public class TiffConformanceChecker extends ConformanceChecker {
       }
     }
 
-    if (classes == null) {
+    if (classes == null || classes.size() == 0) {
       if (!silent) Logger.println("Autofixes loaded manually");
       classes = new ArrayList<String>();
-      classes.add(clearPrivateData.class.toString());
-      classes.add(makeBaselineCompliant.class.toString());
+      classes.add(clearPrivateData.class.toString().substring(clearPrivateData.class.toString().lastIndexOf(".") + 1));
+      classes.add(makeBaselineCompliant.class.toString().substring(makeBaselineCompliant.class.toString().lastIndexOf(".") + 1));
+      classes.add(fixMetadataInconsistencies.class.toString().substring(fixMetadataInconsistencies.class.toString().lastIndexOf(".") + 1));
     }
 
     if (!silent) Logger.println("Found " + classes.size() + " classes:");
@@ -666,7 +414,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
           Logger.println("IO Exception in file '" + pathToFile + "'");
           break;
         case 0:
-          //Logger.println("Validating Tiff");
+          // Validate ISOs + filter invalidated rules
           Map<String, ValidationResult> validations = getValidationResults(tr, config);
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
@@ -675,14 +423,12 @@ public class TiffConformanceChecker extends ConformanceChecker {
           ArrayList<String> isosCheck = new ArrayList<>(config.getIsos());
           Collections.sort(isosCheck, Collator.getInstance());
           ir.setIsosCheck(isosCheck);
-          Rules rules = config.getRules();
+          if (config.hasRules()) {
+            ir.addIsosCheck(TiffConformanceChecker.POLICY_ISO);
+          }
           XmlReport xmlReport = new XmlReport();
           String output = xmlReport.parseIndividual(ir, config.getRules());
           ir.setConformanceCheckerReport(output);
-          if (config.getRules() != null && config.getRules().getRules() != null && config.getRules().getRules().size() > 0) {
-            ir.addIsosCheck(POLICY_ISO);
-            ir.addValidation(POLICY_ISO, getPcValidation(output));
-          }
 
           //Mets report
           MetsReport metsReport = new MetsReport();
@@ -760,9 +506,8 @@ public class TiffConformanceChecker extends ConformanceChecker {
             ir2.setFileName(new File(nameOriginalTif).getName() + " Fixed");
 
             //Make report
-            output = xmlReport.parseIndividual(ir2, rules);
+            output = xmlReport.parseIndividual(ir2, config.getRules());
             ir2.setConformanceCheckerReport(output);
-            ir2.addValidation(POLICY_ISO, getPcValidation(output));
             ir.setCompareReport(ir2);
             ir2.setCompareReport(ir);
 
@@ -817,15 +562,19 @@ public class TiffConformanceChecker extends ConformanceChecker {
   }
 
   private Map<String, ValidationResult> getValidationResults(TiffReader tr, Configuration config) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    PolicyChecker policy = new PolicyChecker();
     String content = TiffConformanceChecker.getValidationXmlString(tr);
     Map<String, ValidationResult> validations = new HashMap<>();
     for (String path : ImplementationCheckerLoader.getPathsList()) {
       boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
-      Validator validation = new Validator(Logger);
-      PolicyChecker policy = new PolicyChecker(Logger);
+      Validator validation = new Validator();
       ValidationResult result = validation.validate(content, path, !check);
-      result = policy.validate(result, config.getModifiedIso(ImplementationCheckerLoader.getFileName(path)));
+      result = policy.filterISOs(result, config.getModifiedIso(ImplementationCheckerLoader.getFileName(path)));
       validations.put(ImplementationCheckerLoader.getFileName(path), result);
+    }
+    if (config.hasRules()) {
+      ValidationResult rulesResult = policy.validateRules(content, config.getRules());
+      validations.put(TiffConformanceChecker.POLICY_ISO, rulesResult);
     }
     return validations;
   }
@@ -833,96 +582,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
   @Override
   public Configuration getDefaultConfiguration() {
     return checkConfig;
-  }
-
-  /**
-   * Gets pc validation.
-   *
-   * @param output the output
-   * @return the pc validation
-   */
-  static ArrayList<RuleResult> getPcValidation(String output) {
-    ArrayList<RuleResult> valid = new ArrayList<>();
-    int index = output.indexOf("<policy_rules");
-    while (true) {
-      index = output.indexOf("<error", index);
-      if (index == -1) break;
-      index = output.indexOf(">", index) + 1;
-      index = output.indexOf("<test", index);
-      index = output.indexOf(">", index) + 1;
-      String test = output.substring(index);
-      test = test.substring(0, test.indexOf("</"));
-      index = output.indexOf("<message", index);
-      index = output.indexOf(">", index) + 1;
-      String text = output.substring(index);
-      text = text.substring(0, text.indexOf("</"));
-      RuleResult val = new RuleResult();
-      val.setWarning(false);
-      val.setMessage(text);
-      val.setLocation("Policy checker");
-      val.setRuleDescription(test);
-      valid.add(val);
-    }
-    index = output.indexOf("<policy_rules");
-    while (true) {
-      index = output.indexOf("<warning", index);
-      if (index == -1) break;
-      index = output.indexOf(">", index) + 1;
-      index = output.indexOf("<test", index);
-      index = output.indexOf(">", index) + 1;
-      String test = output.substring(index);
-      test = test.substring(0, test.indexOf("</"));
-      index = output.indexOf("<message", index);
-      index = output.indexOf(">", index) + 1;
-      String text = output.substring(index);
-      text = text.substring(0, text.indexOf("</"));
-      RuleResult val = new RuleResult();
-      val.setWarning(true);
-      val.setMessage(text);
-      val.setLocation("Policy checker");
-      val.setRuleDescription(test);
-      valid.add(val);
-    }
-    return valid;
-  }
-
-  static ArrayList<RuleResult> getPcValidationOld(String output) {
-    ArrayList<RuleResult> valid = new ArrayList<>();
-    // Errors
-    int index = output.indexOf("<svrl:failed-assert");
-    while (index > -1) {
-      String text = output.substring(output.indexOf("text>", index));
-      text = text.substring(text.indexOf(">") + 1);
-      text = text.substring(0, text.indexOf("</"));
-      String desc = output.substring(output.indexOf("test=\"@", index) + 7);
-      desc = desc.substring(0, desc.indexOf("\""));
-      desc = desc.replace("&gt;", ">").replace("&lt;", ">");
-      index = output.indexOf("<svrl:failed-assert", index + 1);
-      RuleResult val = new RuleResult();
-      val.setWarning(false);
-      val.setMessage(text);
-      val.setRuleDescription(desc);
-      val.setLocation("Policy checker");
-      valid.add(val);
-    }
-    // Warnings
-    index = output.indexOf("<svrl:successful-report");
-    while (index > -1) {
-      String text = output.substring(output.indexOf("text>", index));
-      text = text.substring(text.indexOf(">") + 1);
-      text = text.substring(0, text.indexOf("</"));
-      String desc = output.substring(output.indexOf("test=\"@", index) + 7);
-      desc = desc.substring(0, desc.indexOf("\""));
-      desc = desc.replace("&gt;", ">").replace("&lt;", ">");
-      index = output.indexOf("<svrl:successful-report", index + 1);
-      RuleResult val = new RuleResult();
-      val.setWarning(true);
-      val.setMessage(text);
-      val.setRuleDescription(desc);
-      val.setLocation("Policy checker");
-      valid.add(val);
-    }
-    return valid;
   }
 
   /**

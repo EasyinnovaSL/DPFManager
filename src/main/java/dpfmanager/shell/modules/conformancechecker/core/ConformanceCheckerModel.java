@@ -20,20 +20,14 @@
 package dpfmanager.shell.modules.conformancechecker.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.core.mvc.DpfModel;
 import dpfmanager.shell.interfaces.gui.component.dessign.DessignController;
 import dpfmanager.shell.interfaces.gui.component.dessign.DessignView;
 
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
+import com.easyinnova.policy_checker.model.Field;
 
-import java.io.StringReader;
 import java.util.ArrayList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by Adrià Llorens on 24/03/2016.
@@ -68,7 +62,7 @@ public class ConformanceCheckerModel extends DpfModel<DessignView, DessignContro
     return fields;
   }
 
-  public void setConfig(Configuration c){
+  public void setConfig(Configuration c) {
     config = c;
   }
 

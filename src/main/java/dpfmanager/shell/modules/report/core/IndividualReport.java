@@ -19,8 +19,8 @@
 
 package dpfmanager.shell.modules.report.core;
 
-import dpfmanager.conformancechecker.tiff.implementation_checker.ValidationResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
+import com.easyinnova.implementation_checker.ValidationResult;
+import com.easyinnova.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.TiffDocument;
 

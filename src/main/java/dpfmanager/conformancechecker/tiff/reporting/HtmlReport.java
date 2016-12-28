@@ -20,12 +20,12 @@
 package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.rules.RuleResult;
+import com.easyinnova.implementation_checker.rules.model.RuleType;
 import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -150,7 +150,7 @@ public class HtmlReport extends Report {
     String rows = "";
     for (String iso : ir.getIsosCheck()) {
       if (ir.hasValidation(iso)) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = rowTmpl;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
@@ -162,7 +162,7 @@ public class HtmlReport extends Report {
         row = StringUtils.replace(row, "##ERR_CLASS##", errorsCount > 0 ? "error" : "info");
         row = StringUtils.replace(row, "##WAR_CLASS##", warningsCount > 0 ? "warning" : "info");
         if (modeTh == 2) {
-          if (!ir.hasModifiedIso(iso)){
+          if (!ir.hasModifiedIso(iso)) {
             // Empty
             row = StringUtils.replace(row, "##ERR_CLASS_P##", "hide");
             row = StringUtils.replace(row, "##WAR_CLASS_P##", "hide");
@@ -205,7 +205,7 @@ public class HtmlReport extends Report {
     int count = 0;
     for (String iso : ir.getIsosCheck()) {
       if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = fullTmpl, icon;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
@@ -279,7 +279,7 @@ public class HtmlReport extends Report {
         "\t\t\t\t        </tr>\n" +
         "\t\t\t\t        ##ROWS##\n" +
         "\t\t\t\t\t</table>";
-    String pcTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##LOC##</td><td>##DESC##</td></tr>";
+    String pcTmpl = "<tr ##CLASS## ##DISPLAY##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##RULE##</td><td>##DESC##</td></tr>";
     rows = "";
     if (ir.hasValidation(TiffConformanceChecker.POLICY_ISO)) {
       String name = TiffConformanceChecker.POLICY_ISO_NAME;
@@ -308,10 +308,8 @@ public class HtmlReport extends Report {
           } else if (!val.ok()) {
             tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
           }
-          location = val.getRuleDescription();
-          tdRow = tdRow.replace("##LOC##", location);
+          tdRow = tdRow.replace("##RULE##", val.getRule().getDescription().getValue());
           tdRow = tdRow.replace("##DESC##", val.getDescription());
-          tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
           addedRows++;
           allRows += tdRow;
         }
@@ -341,7 +339,7 @@ public class HtmlReport extends Report {
     String tdTmplPC = "<tr ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-minus-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
     for (String iso : ir.getModifiedIsos().keySet()) {
       if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
-        String name = ImplementationCheckerLoader.getIsoName(iso);
+        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = fullTmplPC, icon, content = "", tdRow, location;
         int errorsCount = ir.getNErrorsPolicy(iso);
         int warningsCount = ir.getNWarningsPolicy(iso);
@@ -387,7 +385,7 @@ public class HtmlReport extends Report {
      * Show / Hide all Policy Block
      */
     String displayPolicy = "none";
-    if (!rows.equals("")){
+    if (!rows.equals("")) {
       displayPolicy = "block";
     }
     htmlBody = StringUtils.replace(htmlBody, "##SHOW_POLICY##", displayPolicy);
@@ -497,7 +495,7 @@ public class HtmlReport extends Report {
       tdifd = tdifd.getNextIFD();
       nifd++;
     }
-    if (rows.isEmpty()){
+    if (rows.isEmpty()) {
       rows = "<tr><td class='tcenter'><i style='font-size: 18px;' class=\"fa fa-check-circle\"></i></td><td>No metadata incoherencies found</td></tr>";
     }
     htmlBody = StringUtils.replace(htmlBody, "##META_ROWS##", rows);
@@ -591,7 +589,7 @@ public class HtmlReport extends Report {
           row = "<tr class='sub" + tag.index + " " + expert + "'><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
           row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
           row = row.replace("##ID##", tv.getId() + "");
-          row = row.replace("##KEY##", (tv.getName().equals(tv.getId()+"") ? "Private tag" : tv.getName()));
+          row = row.replace("##KEY##", (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()));
           row = row.replace("##VALUE##", tv.getDescriptiveValue());
           String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
           tagsMap.put(mapId, rows + row);
@@ -745,10 +743,10 @@ public class HtmlReport extends Report {
       if (val.getReference() != null) {
         description += "<br><i>" + val.getReference() + "</i>";
       }
-      if (rule.getId().equals("RECOMMENDED-TAG-270")){
+      if (rule.getId().equals("RECOMMENDED-TAG-270")) {
         val.toString();
       }
-      description = description.replaceAll("\"","'");
+      description = description.replaceAll("\"", "'");
       return "data-toggle=\"popover\" title=\"" + rule.getTitle().getValue() + "\" data-content=\"" + description + "\" data-placement=\"auto bottom\" data-trigger=\"hover\"";
     }
     return "";
@@ -757,8 +755,8 @@ public class HtmlReport extends Report {
   private String makeConformsText(IndividualReport ir, String iso) {
     String tmplPassed = "<div class=\"success\"><i class=\"fa fa-check-circle\"></i> ##TITLE##</div>";
     String tmplError = "<div class=\"error\"><i class=\"fa fa-exclamation-triangle\"></i> ##TITLE##</div>";
-    String name = ImplementationCheckerLoader.getIsoName(iso);
-    if (ir.hasModifiedIso(iso) && ir.getNErrors(iso) != ir.getNErrorsPolicy(iso)){
+    String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+    if (ir.hasModifiedIso(iso) && ir.getNErrors(iso) != ir.getNErrorsPolicy(iso)) {
       name += " (with custom policy)";
     }
     int err = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);

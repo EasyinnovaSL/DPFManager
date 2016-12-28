@@ -20,17 +20,14 @@
 package dpfmanager.conformancechecker.tiff.reporting;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.Validator;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.RuleResult;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rule;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
-import dpfmanager.conformancechecker.tiff.policy_checker.Schematron;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.IndividualReport;
-import dpfmanager.shell.modules.report.util.ReportHtml;
 
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.rules.RuleResult;
+import com.easyinnova.policy_checker.PolicyConstants;
+import com.easyinnova.policy_checker.model.Rule;
+import com.easyinnova.policy_checker.model.Rules;
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
@@ -45,17 +42,10 @@ import org.w3c.dom.Node;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -320,12 +310,12 @@ public class XmlReport extends Report {
     // level
     Element level = doc.createElement("level");
     String levelStr = "";
-    if (policyValue && value.isRelaxed()){
+    if (policyValue && value.isRelaxed()) {
       levelStr += "omitted ";
     }
-    if (error){
+    if (error) {
       levelStr += "error";
-    } else if (value.getWarning()){
+    } else if (value.getWarning()) {
       levelStr += "warning";
     } else {
       levelStr += "info";
@@ -558,7 +548,7 @@ public class XmlReport extends Report {
           String value = "Unknown";
           try {
             int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
-            value = comp > 0 ? TiffConformanceChecker.compressionName(comp) : "Unknown";
+            value = comp > 0 ? PolicyConstants.compressionName(comp) : "Unknown";
           } catch (Exception ex) {
 
           }
@@ -571,7 +561,7 @@ public class XmlReport extends Report {
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("PhotometricInterpretation"))) {
           try {
             int photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
-            value = TiffConformanceChecker.photometricName(photo);
+            value = PolicyConstants.photometricName(photo);
           } catch (Exception ex) {
             value = "Unknown";
           }
@@ -584,7 +574,7 @@ public class XmlReport extends Report {
         value = "Unknown";
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("PlanarConfiguration"))) {
           int planar = Integer.parseInt(ifd.getMetadata().get("PlanarConfiguration").toString());
-          value = TiffConformanceChecker.planarName(planar);
+          value = PolicyConstants.planarName(planar);
         }
         infoElement = doc.createElement("Planar");
         infoElement.setTextContent(value);
@@ -802,12 +792,12 @@ public class XmlReport extends Report {
       implementationCheckerElement.setAttribute("ref", "DPF Manager");
       implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
       implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
-      for (String path : ImplementationCheckerLoader.getPathsList()){
+      for (String path : ImplementationCheckerLoader.getPathsList()) {
         String name = ImplementationCheckerLoader.getFileName(path);
         implementationCheckerElement.setAttribute(name, (ir.getErrors(name).size() == 0) + "");
       }
       for (String iso : ir.getIsosCheck()) {
-        String title = ImplementationCheckerLoader.getIsoName(iso);
+        String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         List<RuleResult> errors = ir.getErrors(iso);
         List<RuleResult> warnings = ir.getWarnings(iso);
         Element implementationCheck = doc.createElement("implementation_check");
@@ -823,7 +813,7 @@ public class XmlReport extends Report {
       Element policyCheckerElement = doc.createElement("policy_checkers");
       for (String iso : ir.getIsosCheck()) {
         if (!ir.hasModifiedIso(iso)) continue;
-        String title = ImplementationCheckerLoader.getIsoName(iso);
+        String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         List<RuleResult> errors = ir.getErrorsPolicy(iso);
         List<RuleResult> warnings = ir.getWarningsPolicy(iso);
         Element implementationCheck = doc.createElement("implementation_check");
@@ -834,36 +824,30 @@ public class XmlReport extends Report {
         policyCheckerElement.appendChild(implementationCheck);
       }
 
-      // Schematron
-      Schematron sch = new Schematron();
-      try {
-        if (rules != null) {
-          Element policyRules = doc.createElement("policy_rules");
-          Validator validation = sch.testXMLnoSchematron(ir.getTiffModel(), rules);
-          for (RuleResult rr : validation.getErrors()) {
-            Element error = doc.createElement("error");
-            Element test = doc.createElement("test");
-            test.setTextContent(rr.getRule().getDescription().getValue());
-            Element message = doc.createElement("message");
-            message.setTextContent(rr.getMessage());
-            error.appendChild(test);
-            error.appendChild(message);
-            policyRules.appendChild(error);
-          }
-          for (RuleResult rr : validation.getWarnings()) {
-            Element warning = doc.createElement("warning");
-            Element test = doc.createElement("test");
-            test.setTextContent(rr.getRule().getDescription().getValue());
-            Element message = doc.createElement("message");
-            message.setTextContent(rr.getMessage());
-            warning.appendChild(test);
-            warning.appendChild(message);
-            policyRules.appendChild(warning);
-          }
-          policyCheckerElement.appendChild(policyRules);
+      // Policy rules
+      Element policyRules = doc.createElement("policy_rules");
+      if (rules != null) {
+        for (RuleResult rr : ir.getErrors(TiffConformanceChecker.POLICY_ISO)) {
+          Element error = doc.createElement("error");
+          Element test = doc.createElement("test");
+          test.setTextContent(rr.getRule().getDescription().getValue());
+          Element message = doc.createElement("message");
+          message.setTextContent(rr.getMessage());
+          error.appendChild(test);
+          error.appendChild(message);
+          policyRules.appendChild(error);
         }
-      } catch (Exception e) {
-        e.printStackTrace();
+        for (RuleResult rr : ir.getWarnings(TiffConformanceChecker.POLICY_ISO)) {
+          Element warning = doc.createElement("warning");
+          Element test = doc.createElement("test");
+          test.setTextContent(rr.getRule().getDescription().getValue());
+          Element message = doc.createElement("message");
+          message.setTextContent(rr.getMessage());
+          warning.appendChild(test);
+          warning.appendChild(message);
+          policyRules.appendChild(warning);
+        }
+        policyCheckerElement.appendChild(policyRules);
       }
       report.appendChild(policyCheckerElement);
 

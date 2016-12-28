@@ -20,17 +20,18 @@
 package dpfmanager.shell.interfaces.console;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.configuration.Field;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
-import dpfmanager.conformancechecker.tiff.policy_checker.Rules;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
-import edu.emory.mathcs.backport.java.util.Arrays;
+
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.policy_checker.PolicyChecker;
+import com.easyinnova.policy_checker.model.Field;
+import com.easyinnova.policy_checker.model.Rules;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
@@ -122,7 +123,7 @@ public class ConfigurationController {
 
   private void initValidationObjects() {
     validRules = new HashMap<>();
-    List<Field> fields = conformance.getConformanceCheckerFields();
+    List<Field> fields = PolicyChecker.getPolicyCheckerFields();
     for (Field field : fields) {
       validRules.put(field.getName(), field);
     }
@@ -148,6 +149,10 @@ public class ConfigurationController {
    * Main parse parameters function
    */
   public void parse(List<String> params) {
+    if (params.size() == 0){
+      displayHelp();
+    }
+
     int idx = 0;
     /**
      * Actions
@@ -295,7 +300,7 @@ public class ConfigurationController {
         if (idx + 1 < params.size()) {
           String iso = params.get(++idx);
           if (validateIso(iso, false)) {
-            if (isos.contains(iso)){
+            if (isos.contains(iso)) {
               isos.remove(iso);
             } else {
               printOutErr(bundle.getString("isoNotFound"));
@@ -365,7 +370,7 @@ public class ConfigurationController {
           String tag = params.get(++idx);
           String value = getFixOperatorInt(operator) == 1 ? (idx + 1 < params.size() ? params.get(++idx) : null) : null;
           if (validateFix(tag, operator, value)) {
-            if (!fixes.removeFix(tag, parseFixOperator(operator), value)){
+            if (!fixes.removeFix(tag, parseFixOperator(operator), value)) {
               printOutErr(bundle.getString("fixNotFound"));
             }
           } else {
@@ -395,7 +400,7 @@ public class ConfigurationController {
           String className = params.get(++idx);
           if (validAutofixes.contains(className)) {
             autofixes.remove(className);
-            if (!fixes.removeAutofix(className)){
+            if (!fixes.removeAutofix(className)) {
               printOutErr(bundle.getString("autofixNotFound"));
             }
           } else {
@@ -429,7 +434,7 @@ public class ConfigurationController {
           String operator = params.get(++idx);
           String value = params.get(++idx);
           if (validateRule(tag, operator, value, type)) {
-            if (!rules.removeRule(tag, parseRuleOperator(operator), value, type.equals("warning"))){
+            if (!rules.removeRule(tag, parseRuleOperator(operator), value, type.equals("warning"))) {
               printOutErr(bundle.getString("ruleNotFound"));
             }
           } else {
@@ -657,14 +662,14 @@ public class ConfigurationController {
     return validIsos.contains(iso) && (!checkAlreadyExists || !isos.contains(iso));
   }
 
-  private void validateFormats(String formatsStr){
+  private void validateFormats(String formatsStr) {
     List<String> acceptedFormats = new ArrayList<>();
     acceptedFormats.add("xml");
     acceptedFormats.add("json");
     acceptedFormats.add("html");
     acceptedFormats.add("pdf");
-    for (String format : formatsStr.split(",")){
-      if (acceptedFormats.contains(format.toLowerCase())){
+    for (String format : formatsStr.split(",")) {
+      if (acceptedFormats.contains(format.toLowerCase())) {
         formats.add(format.toUpperCase());
       } else {
         printOutErr(bundle.getString("incorrectReportFormat"));
@@ -694,13 +699,57 @@ public class ConfigurationController {
    * Displays help
    */
   private void displayHelp() {
-//    printOut("");
-//    printOut(bundle.getString("helpCO0"));
-//    printOut("");
-//    printOut(bundle.getString("helpOptions"));
-//    printOptions("helpCO", 11);
-    printOut("HELP!!");
+    printOut("");
+    printOut(bundle.getString("helpCF0"));
+    printOut("");
+    // Actions
+    printOut(bundle.getString("helpCF1"));
+    printOptions("helpCF1", 5, "");
+    printOptions("helpCF15", 5, "    ");
+    printOptions("helpCF1", 6, 6);
+    printOut("");
+    // Options
+    printOut(bundle.getString("helpOptions"));
+    printOptions("helpCF2", 13, "");
+    printOut("");
+    // Rule specification
+    printOut(bundle.getString("helpCF3"));
+    printSpecifications("helpCF3", 3, "");
+    printSpecifications("helpCF33", 2, "    ");
+    printOut("");
+    // Fix specification
+    printOut(bundle.getString("helpCF4"));
+    printSpecifications("helpCF4", 3, "");
+    printSpecifications("helpCF43", 2, "    ");
+    printOut("");
     exit();
+  }
+
+  public void printSpecifications(String prefix, int max, String prespace) {
+    for (int i = 1; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      printOut("    " + prespace + msg);
+    }
+  }
+
+  public void printOptions(String prefix, int max, int min) {
+    for (int i = min; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.indexOf(":") + 1);
+      String post = msg.substring(msg.indexOf(":") + 1);
+      String line = String.format("%-40s%s", pre, post);
+      printOut("    " + line);
+    }
+  }
+
+  public void printOptions(String prefix, int max, String prespace) {
+    for (int i = 1; i <= max; i++) {
+      String msg = bundle.getString(prefix + i);
+      String pre = msg.substring(0, msg.indexOf(":") + 1);
+      String post = msg.substring(msg.indexOf(":") + 1);
+      String line = String.format("%-40s%s", prespace + pre, post);
+      printOut("    " + line);
+    }
   }
 
   private void displayConfigurations() {
@@ -757,16 +806,6 @@ public class ConfigurationController {
     printOut(bundle.getString("displayAutoFixHeader"));
     for (String autofix : validAutofixes) {
       printOut("  " + autofix);
-    }
-  }
-
-  public void printOptions(String prefix, int max) {
-    for (int i = 1; i <= max; i++) {
-      String msg = bundle.getString(prefix + i);
-      String pre = msg.substring(0, msg.indexOf(":") + 1);
-      String post = msg.substring(msg.indexOf(":") + 1);
-      String line = String.format("%-40s%s", pre, post);
-      printOut("    " + line);
     }
   }
 

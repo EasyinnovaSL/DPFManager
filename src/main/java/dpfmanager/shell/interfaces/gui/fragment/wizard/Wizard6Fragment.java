@@ -20,10 +20,10 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.ImplementationCheckerObjectType;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RuleType;
-import dpfmanager.conformancechecker.tiff.implementation_checker.rules.model.RulesType;
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import com.easyinnova.implementation_checker.rules.model.ImplementationCheckerObjectType;
+import com.easyinnova.implementation_checker.rules.model.RuleType;
+import com.easyinnova.implementation_checker.rules.model.RulesType;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;

@@ -20,12 +20,12 @@
 package dpfmanager.shell.modules.report.util;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.conformancechecker.tiff.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.modules.report.core.GlobalReport;
-import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
+
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -95,7 +95,7 @@ public class ReportHtml extends ReportGeneric {
       int totalWarnings = 0;
       for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso)) {
-          String name = ImplementationCheckerLoader.getIsoName(iso);
+          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
           String row = rowTmpl;
 
           // Standard IC
@@ -118,7 +118,7 @@ public class ReportHtml extends ReportGeneric {
 
           // Standard PC
           if (mode == 2) {
-            if (!ir.hasModifiedIso(iso)){
+            if (!ir.hasModifiedIso(iso)) {
               // Empty
               row = StringUtils.replace(row, "##ERR_C_P##", "hide");
               row = StringUtils.replace(row, "##WAR_C_P##", "hide");
@@ -254,11 +254,12 @@ public class ReportHtml extends ReportGeneric {
     String row = "<tr><td class=\"##TYPE## border-bot\">##OK##</td><td class=\"##TYPE## border-bot\">Conforms to ##NAME## ##POLICY##</td></tr>";
     String policy = "";
     int n = 0;
-    if (gr.hasModificationIso(iso)){
+    if (gr.hasModificationIso(iso)) {
       policy = gr.getReportsOk(iso) == gr.getReportsOkPolicy(iso) ? "" : " (with custom policy)";
     }
+    String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
     row = StringUtils.replace(row, "##OK##", "" + (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)));
-    row = StringUtils.replace(row, "##NAME##", ImplementationCheckerLoader.getIsoName(iso));
+    row = StringUtils.replace(row, "##NAME##", name);
     row = StringUtils.replace(row, "##POLICY##", policy);
     row = StringUtils.replace(row, "##TYPE##", (gr.hasModificationIso(iso) ? gr.getReportsOkPolicy(iso) : gr.getReportsOk(iso)) == gr.getReportsCount() ? "success" : "error");
     return row;
