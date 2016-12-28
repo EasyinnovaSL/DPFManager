@@ -2,7 +2,6 @@ package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;

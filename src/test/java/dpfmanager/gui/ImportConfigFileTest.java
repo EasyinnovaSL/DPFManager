@@ -4,16 +4,12 @@ import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.matcher.base.NodeMatchers;

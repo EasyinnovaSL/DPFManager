@@ -1,10 +1,6 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
-import javafx.application.Platform;
-import javafx.event.EventType;
-import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import org.junit.Assert;

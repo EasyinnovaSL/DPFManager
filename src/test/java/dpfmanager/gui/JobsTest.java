@@ -10,8 +10,6 @@ import javafx.stage.Stage;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.testfx.api.FxAssert;
-import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 
 /**

@@ -1,20 +1,13 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
-import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.util.ReportRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.testfx.api.FxAssert;
-import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 
 /**
