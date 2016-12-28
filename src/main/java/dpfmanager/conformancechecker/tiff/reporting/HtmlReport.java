@@ -94,6 +94,7 @@ public class HtmlReport extends Report {
         imgPath = "img/noise.jpg";
       }
     } else {
+      System.out.println("Cannot generate thumbnail for image " + fileName + ". Reason: " + ir.getTiffModel().getFatalErrorMEssage());
       imgPath = "img/noise.jpg";
     }
 

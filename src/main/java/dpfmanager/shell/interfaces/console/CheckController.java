@@ -200,7 +200,6 @@ public class CheckController {
         }
       }
 
-      printOut(bundle.getString("extensions"));
       NodeList extensions = doc.getElementsByTagName("extension");
       String extensionsStr = "";
       if (extensions != null && extensions.getLength() > 0) {
@@ -214,7 +213,7 @@ public class CheckController {
           }
         }
       }
-      printOut(extensionsStr);
+      printOut(bundle.getString("extensions") + " " + extensionsStr);
 
       NodeList standards = doc.getElementsByTagName("standard");
       if (standards != null && standards.getLength() > 0) {

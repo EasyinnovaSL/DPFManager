@@ -48,7 +48,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -447,51 +449,48 @@ public class ReportGenerator {
       // Look in JAR
       CodeSource src = ReportGenerator.class.getProtectionDomain().getCodeSource();
       if (src != null) {
-        String jarFolder;
         try {
-          Class cls = ReportGenerator.class;
-          ClassLoader cLoader = cls.getClassLoader();
           List<String> arrayFiles = new ArrayList<>();
           List<File> arrayFolders = new ArrayList<>();
 
           //files in js folder
-          arrayFiles.add("html" + File.separator + "js" + File.separator + "bootstrap.min.js");
-          arrayFiles.add("html" + File.separator + "js" + File.separator + "jquery-1.9.1.min.js");
-          arrayFiles.add("html" + File.separator + "js" + File.separator + "jquery.flot.pie.min.js");
-          arrayFiles.add("html" + File.separator + "js" + File.separator + "jquery.flot.min.js");
+          arrayFiles.add("html/js/bootstrap.min.js");
+          arrayFiles.add("html/js/jquery-1.9.1.min.js");
+          arrayFiles.add("html/js/jquery.flot.pie.min.js");
+          arrayFiles.add("html/js/jquery.flot.min.js");
 
           //files in img folder
-          arrayFiles.add("html" + File.separator + "img" + File.separator + "noise.jpg");
-          arrayFiles.add("html" + File.separator + "img" + File.separator + "logo.png");
-          arrayFiles.add("html" + File.separator + "img" + File.separator + "logo - copia.png");
-          arrayFiles.add("html" + File.separator + "img" + File.separator + "check_radio_sheet.png");
+          arrayFiles.add("html/img/noise.jpg");
+          arrayFiles.add("html/img/logo.png");
+          arrayFiles.add("html/img/logo - copia.png");
+          arrayFiles.add("html/img/check_radio_sheet.png");
 
           //files in fonts folder
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.woff2");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.woff");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.ttf");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.svg");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontawesome-webfont.eot");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.woff2");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.woff");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.ttf");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.svg");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "fontello.eot");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "FontAwesome.otf");
-          arrayFiles.add("html" + File.separator + "fonts" + File.separator + "Roboto-Bold.ttf");
+          arrayFiles.add("html/fonts/fontawesome-webfont.woff2");
+          arrayFiles.add("html/fonts/fontawesome-webfont.woff");
+          arrayFiles.add("html/fonts/fontawesome-webfont.ttf");
+          arrayFiles.add("html/fonts/fontawesome-webfont.svg");
+          arrayFiles.add("html/fonts/fontawesome-webfont.eot");
+          arrayFiles.add("html/fonts/fontello.woff2");
+          arrayFiles.add("html/fonts/fontello.woff");
+          arrayFiles.add("html/fonts/fontello.ttf");
+          arrayFiles.add("html/fonts/fontello.svg");
+          arrayFiles.add("html/fonts/fontello.eot");
+          arrayFiles.add("html/fonts/FontAwesome.otf");
+          arrayFiles.add("html/fonts/Roboto-Bold.ttf");
 
           //files in css folder
-          arrayFiles.add("html" + File.separator + "css" + File.separator + "font-awesome.css");
-          arrayFiles.add("html" + File.separator + "css" + File.separator + "default.css");
-          arrayFiles.add("html" + File.separator + "css" + File.separator + "bootstrap.css");
-          arrayFiles.add("html" + File.separator + "css" + File.separator + "fontello.css");
+          arrayFiles.add("html/css/font-awesome.css");
+          arrayFiles.add("html/css/default.css");
+          arrayFiles.add("html/css/bootstrap.css");
+          arrayFiles.add("html/css/fontello.css");
 
-          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "js" + File.separator + ""));
-          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "img" + File.separator + ""));
-          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "fonts" + File.separator + ""));
-          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "css" + File.separator + ""));
+          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "js" + File.separator));
+          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "img" + File.separator));
+          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "fonts" + File.separator));
+          arrayFolders.add(new File(targetPath + File.separator + "html" + File.separator + "css" + File.separator));
 
-          //if originals folders not exists
+          //if originals folders does not exist
           for (File item : arrayFolders) {
             if (!item.exists()) {
               item.mkdirs();
@@ -499,28 +498,24 @@ public class ReportGenerator {
           }
 
           //copy files
+          Class cls = ReportGenerator.class;
+          ClassLoader cLoader = cls.getClassLoader();
           for (String filePath : arrayFiles) {
             InputStream in = cLoader.getResourceAsStream(filePath);
-            int readBytes;
-            byte[] buffer = new byte[4096];
-            jarFolder = targetPath + File.separator;
-            File prova = new File(jarFolder + filePath);
-            if (!prova.exists()) {
-              try {
-                prova.mkdirs();
-                prova.createNewFile();
-              } catch (Exception ex) {
-                context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", "Error creating file " + jarFolder + filePath, ex));
+            if(in == null) {
+              //context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", "Cannot find file " + filePath, new Exception()));
+            } else {
+              int readBytes;
+              byte[] buffer = new byte[4096];
+              OutputStream resStreamOut = new FileOutputStream(targetPath + "/" + filePath);
+              while ((readBytes = in.read(buffer)) > 0) {
+                resStreamOut.write(buffer, 0, readBytes);
               }
-            }
-            OutputStream resStreamOut = new FileOutputStream(prova, false);
-            while ((readBytes = in.read(buffer)) > 0) {
-              resStreamOut.write(buffer, 0, readBytes);
             }
           }
 
-        } catch (IOException e) {
-          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", e));
+        } catch (Exception e) {
+          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception", e));
         }
       }
     }
