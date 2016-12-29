@@ -196,7 +196,7 @@ public class ConsoleLauncher {
     printOut(bundle.getString("helpSources"));
     printOut("");
     printOut(bundle.getString("help1"));
-    printOptions("help1", 6);
+    printOptions("help1", 7);
     printOut("");
     printOut(bundle.getString("help3"));
     printOptions("help3", 3);
