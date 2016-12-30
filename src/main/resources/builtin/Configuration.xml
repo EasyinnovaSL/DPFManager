@@ -6,7 +6,7 @@
     </isos>
     <formats>
         <format>HTML</format>
-        <format>PDF</format>
+        <format>XML</format>
     </formats>
     <rules/>
     <fixes/>
