@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -31,7 +31,7 @@ import org.jacpfx.rcp.component.FXComponent;
 import org.jacpfx.rcp.componentLayout.PerspectiveLayout;
 
 /**
- * Created by Adrià Llorens on 07/03/2016.
+ * Created by Adria Llorens on 07/03/2016.
  */
 public abstract class DpfView<M extends DpfModel, C extends DpfController> extends DpfSimpleView implements ViewInterface<M, C> {
 

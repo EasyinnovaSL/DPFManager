@@ -1,7 +1,7 @@
 package dpfmanager.shell.interfaces.gui.fragment.wizard;
 
 /**
- * Created by Adrià Llorens on 24/10/2016.
+ * Created by Adria Llorens on 24/10/2016.
  */
 public class RuleTreeItem {
 

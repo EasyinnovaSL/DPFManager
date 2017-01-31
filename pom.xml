@@ -7,7 +7,7 @@
     <groupId>com.easyinnova</groupId>
     <artifactId>dpf_manager</artifactId>
     <packaging>jar</packaging>
-    <version>3.1</version>
+    <version>3.1.1</version>
 
     <!--Properties-->
     <properties>
@@ -15,6 +15,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!--Build properties-->
         <main.class>dpfmanager.shell.core.app.MainApp</main.class>
         <gui.class>dpfmanager.shell.core.app.MainGuiApp</gui.class>
@@ -27,6 +28,7 @@
     <description>Dpf manager</description>
     <url>http://www.dpfmanager.org</url>
     <inceptionYear>2015</inceptionYear>
+
     <licenses>
         <license>
             <name>GNU General Public License, Version 3.0</name>
@@ -45,26 +47,26 @@
     </organization>
     <developers>
         <developer>
-            <name>Xavier Tarrés</name>
+            <name>Xavier Tarres Bonet</name>
             <email>xavitarres@easyinnova.com</email>
             <organization>Easy Innova</organization>
             <url>https://github.com/XaviTarres</url>
             <id>XaviTarres</id>
         </developer>
         <developer>
-            <name>Víctor Muñoz Solà</name>
+            <name>Víctor Muñoz Sola</name>
             <email>victormunoz@easyinnova.com</email>
             <organization>Easy Innova</organization>
             <organizationUrl>http://www.easyinnova.com</organizationUrl>
         </developer>
         <developer>
-            <name>Adrià Llorens Martinez</name>
+            <name>Adria Llorens Martinez</name>
             <email>adriallorens@easyinnova.com</email>
             <organization>Easy Innova</organization>
             <url>https://github.com/Adri7</url>
         </developer>
         <developer>
-            <name>Carlos García Rubio</name>
+            <name>Carlos Garcia Rubio</name>
             <email>carlosgarcia@easyinnova.com</email>
             <organization>Easy Innova</organization>
             <url>https://github.com/SteinerX</url>
@@ -230,13 +232,13 @@
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tiffimplementationchecker</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tiffpolicychecker</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>
@@ -342,6 +344,22 @@
 
     <!--Common Build Plugins-->
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.17</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.4.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
         <plugins>
             <!-- Resources -->
             <plugin>

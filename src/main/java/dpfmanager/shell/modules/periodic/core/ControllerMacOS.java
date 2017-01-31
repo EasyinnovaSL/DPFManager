@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Created by Adrià Llorens on 07/07/2016.
+ * Created by Adria Llorens on 07/07/2016.
  */
 public class ControllerMacOS extends Controller {
 

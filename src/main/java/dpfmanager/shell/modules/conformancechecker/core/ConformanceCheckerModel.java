@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -30,7 +30,7 @@ import com.easyinnova.policy_checker.model.Field;
 import java.util.ArrayList;
 
 /**
- * Created by Adrià Llorens on 24/03/2016.
+ * Created by Adria Llorens on 24/03/2016.
  */
 public class ConformanceCheckerModel extends DpfModel<DessignView, DessignController> {
   private String txtFile;

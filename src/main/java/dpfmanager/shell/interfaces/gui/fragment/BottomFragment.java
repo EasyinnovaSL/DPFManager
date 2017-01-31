@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Adrià Llorens on 03/03/2016.
+ * Created by Adria Llorens on 03/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_BOTTOM,
     viewLocation = "/fxml/fragments/bottom.fxml",

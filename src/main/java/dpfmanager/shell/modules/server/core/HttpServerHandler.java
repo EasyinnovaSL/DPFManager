@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -36,7 +36,7 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import java.util.List;
 
 /**
- * Created by Adrià Llorens on 25/05/2016.
+ * Created by Adria Llorens on 25/05/2016.
  */
 public class HttpServerHandler extends ByteToMessageDecoder {
 

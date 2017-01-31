@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -25,7 +25,7 @@ import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.timer.core.DpfTask;
 
 /**
- * Created by Adrià Llorens on 25/04/2016.
+ * Created by Adria Llorens on 25/04/2016.
  */
 public class JobsStatusTask extends DpfTask {
 
