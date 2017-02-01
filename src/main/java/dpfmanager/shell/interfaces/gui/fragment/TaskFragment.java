@@ -217,7 +217,7 @@ public class TaskFragment {
   }
 
   private String getReadableData(Long time) {
-    SimpleDateFormat sdf = new SimpleDateFormat("mm:ss"); //MMM dd,yyyy HH:mm:ss
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss"); //MMM dd,yyyy HH:mm:ss
     return sdf.format(new Date(time));
   }
 
