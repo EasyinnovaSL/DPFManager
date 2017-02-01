@@ -24,7 +24,7 @@
  * © 2015 Easy Innova, SL
  * </p>
  *
- * @author Adrià Llorens Martinez
+ * @author Adria Llorens Martinez
  * @version 1.0
  * @since 23/6/2015
  */
@@ -71,7 +71,6 @@ public class ReportXml extends ReportGeneric {
    *
    * @param xmlfile the file name.
    * @param gr      the global report.
-   * @return the XML string generated
    */
   public void parseGlobal(String xmlfile, GlobalReport gr) {
     try {

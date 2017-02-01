@@ -25,7 +25,7 @@
                       <children>
                         <Label fx:id="inputLabel" styleClass="label-task" text="Input" />
                         <Separator opacity="0.0" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="timeLabel" minWidth="40.0" styleClass="label-task" text="Time" />
+                        <Label fx:id="timeLabel" minWidth="60.0" styleClass="label-task" text="Time" />
                       </children>
                       <VBox.margin>
                          <Insets bottom="2.0" left="2.0" right="2.0" />

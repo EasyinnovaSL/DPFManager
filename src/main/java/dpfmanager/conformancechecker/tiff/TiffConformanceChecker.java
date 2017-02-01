@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Víctor Muñoz Solà
+ * @author Víctor Muñoz Sola
  * @version 1.0
  * @since 23/7/2015
  */
@@ -123,7 +123,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
       doc.appendChild(conformenceCheckerElement);
 
       addElement(doc, conformenceCheckerElement, "name", "TIFF conformance checker");
-      addElement(doc, conformenceCheckerElement, "author", "Víctor Muñoz Solà");
+      addElement(doc, conformenceCheckerElement, "author", "Víctor Muñoz Sola");
       addElement(doc, conformenceCheckerElement, "version", "0.1");
       addElement(doc, conformenceCheckerElement, "company", "Easy Innova");
       addElement(doc, conformenceCheckerElement, "media_type", "image/tiff");

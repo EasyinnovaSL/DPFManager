@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -34,7 +34,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 /**
- * Created by Adrià Llorens on 21/03/2016.
+ * Created by Adria Llorens on 21/03/2016.
  */
 @Plugin(name = "TextAreaAppender", category = "Core", elementType = "appender", printObject = true)
 public class TextAreaAppender extends AbstractAppender {

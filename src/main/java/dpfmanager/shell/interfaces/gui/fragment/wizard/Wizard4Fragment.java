@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -52,7 +52,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Created by Adrià Llorens on 08/03/2016.
+ * Created by Adria Llorens on 08/03/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_WIZARD_4,
     viewLocation = "/fxml/config/subconfig4.fxml",

@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -49,7 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Adrià Llorens on 18/04/2016.
+ * Created by Adria Llorens on 18/04/2016.
  */
 @Fragment(id = GuiConfig.FRAGMENT_TASK,
     viewLocation = "/fxml/fragments/task.fxml",
@@ -217,7 +217,7 @@ public class TaskFragment {
   }
 
   private String getReadableData(Long time) {
-    SimpleDateFormat sdf = new SimpleDateFormat("mm:ss"); //MMM dd,yyyy HH:mm:ss
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss"); //MMM dd,yyyy HH:mm:ss
     return sdf.format(new Date(time));
   }
 

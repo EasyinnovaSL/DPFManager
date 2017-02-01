@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -35,7 +35,7 @@ import org.springframework.stereotype.Controller;
 import javax.annotation.PostConstruct;
 
 /**
- * Created by Adrià Llorens on 20/04/2016.
+ * Created by Adria Llorens on 20/04/2016.
  */
 @Controller(BasicConfig.MODULE_PERIODICAL)
 public class PeriodicController extends DpfSpringController {

@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 13/10/2016
  */
@@ -41,7 +41,7 @@ import java.util.ResourceBundle;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Created by Adrià Llorens on 14/10/2016.
+ * Created by Adria Llorens on 14/10/2016.
  */
 public class CommonController {
 

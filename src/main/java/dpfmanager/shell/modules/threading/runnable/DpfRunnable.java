@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
 import javax.xml.bind.SchemaOutputResolver;
 
 /**
- * Created by Adrià Llorens on 13/04/2016.
+ * Created by Adria Llorens on 13/04/2016.
  */
 public abstract class DpfRunnable implements Runnable {
 

@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Víctor Muñoz Solà
+ * @author Víctor Muñoz Sola
  * @version 1.0
  * @since 23/7/2015
  */

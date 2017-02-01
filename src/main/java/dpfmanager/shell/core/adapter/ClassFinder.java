@@ -13,7 +13,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * Created by Adrià Llorens on 22/12/2016.
+ * Created by Adria Llorens on 22/12/2016.
  */
 public class ClassFinder {
 

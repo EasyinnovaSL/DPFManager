@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -46,7 +46,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
- * Created by Adrià Llorens on 25/02/2016.
+ * Created by Adria Llorens on 25/02/2016.
  */
 @Perspective(id = GuiConfig.PERSPECTIVE_DESSIGN,
     name = GuiConfig.PERSPECTIVE_DESSIGN,

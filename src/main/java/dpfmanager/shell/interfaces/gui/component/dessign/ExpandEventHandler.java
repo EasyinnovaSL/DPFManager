@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -29,7 +29,7 @@ import javafx.scene.image.ImageView;
 import org.controlsfx.control.CheckTreeView;
 
 /**
- * Created by Adrià Llorens on 23/06/2016.
+ * Created by Adria Llorens on 23/06/2016.
  */
 public class ExpandEventHandler implements EventHandler {
 

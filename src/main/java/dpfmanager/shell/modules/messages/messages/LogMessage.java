@@ -12,7 +12,7 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Adrià Llorens
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
@@ -25,7 +25,7 @@ import javafx.scene.control.TextArea;
 import org.apache.logging.log4j.Level;
 
 /**
- * Created by Adrià Llorens on 21/03/2016.
+ * Created by Adria Llorens on 21/03/2016.
  */
 public class LogMessage extends DpfMessage {
 
