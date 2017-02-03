@@ -38,6 +38,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -209,6 +210,12 @@ public class Wizard4Fragment {
         comboBox.setValue(bundle.getString(action));
       }
     }
+    comboBox.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        comboBox.requestFocus();
+      }
+    });
 
     // Add remove button
     Button remove = new Button();
@@ -229,6 +236,13 @@ public class Wizard4Fragment {
         addTag(item, hbox, remove, null, null);
       }
     });
+    comboBox.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        comboBox.requestFocus();
+      }
+    });
+
 
     //Add to view
     hbox.getChildren().addAll(comboBox, remove);
@@ -263,6 +277,13 @@ public class Wizard4Fragment {
       if (tagLoad != null) {
         comboOp.setValue(tagLoad);
       }
+      comboOp.setOnMousePressed(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+          comboOp.requestFocus();
+        }
+      });
+
       hbox.getChildren().add(comboOp);
     }
 
