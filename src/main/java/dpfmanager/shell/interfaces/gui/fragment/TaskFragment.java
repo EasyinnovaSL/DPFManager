@@ -47,6 +47,7 @@ import org.jacpfx.rcp.context.Context;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Adria Llorens on 18/04/2016.
@@ -216,9 +217,13 @@ public class TaskFragment {
     }
   }
 
-  private String getReadableData(Long time) {
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss"); //MMM dd,yyyy HH:mm:ss
-    return sdf.format(new Date(time));
+  private String getReadableData(Long millis) {
+    return String.format("%02d:%02d:%02d",
+        TimeUnit.MILLISECONDS.toHours(millis),
+        TimeUnit.MILLISECONDS.toMinutes(millis) -
+            TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+        TimeUnit.MILLISECONDS.toSeconds(millis) -
+            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
   }
 
   private String getReadableInput(String input){
