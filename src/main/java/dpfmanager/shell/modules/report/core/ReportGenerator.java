@@ -478,6 +478,7 @@ public class ReportGenerator {
           arrayFiles.add("html/fonts/fontello.eot");
           arrayFiles.add("html/fonts/FontAwesome.otf");
           arrayFiles.add("html/fonts/Roboto-Bold.ttf");
+          arrayFiles.add("html/fonts/Roboto-Regular.ttf");
 
           //files in css folder
           arrayFiles.add("html/css/font-awesome.css");
