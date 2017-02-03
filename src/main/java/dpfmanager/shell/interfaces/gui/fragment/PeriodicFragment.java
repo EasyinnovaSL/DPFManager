@@ -31,6 +31,7 @@ import dpfmanager.shell.modules.periodic.core.Periodicity;
 import dpfmanager.shell.modules.periodic.messages.PeriodicMessage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -39,6 +40,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
@@ -151,6 +153,32 @@ public class PeriodicFragment {
     hideLoading();
     NodeUtil.hideNode(gridView);
     NodeUtil.showNode(gridEdit);
+
+    weekDay.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        weekDay.requestFocus();
+      }
+    });
+    monthDay.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        monthDay.requestFocus();
+      }
+    });
+    comboChoice.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        comboChoice.requestFocus();
+      }
+    });
+    configChoice.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        configChoice.requestFocus();
+      }
+    });
+
   }
 
   public void init(PeriodicCheck check) {
@@ -360,6 +388,8 @@ public class PeriodicFragment {
 
     // Add select from disk
     configChoice.getItems().add(bundle.getString("selectFromDisk"));
+
+
   }
 
   private void loadPeriodicity() {
@@ -382,6 +412,7 @@ public class PeriodicFragment {
       HBox.setMargin(weekDay, new Insets(0, 0, 0, 5));
       weekDay.getItems().addAll(bundle.getString("monday"), bundle.getString("tuesday"), bundle.getString("wednesday"), bundle.getString("thursday"), bundle.getString("friday"), bundle.getString("saturday"), bundle.getString("sunday"));
       hboxWeekly.getChildren().add(weekDay);
+
     }
 
     if (monthDay.getItems().isEmpty()) {

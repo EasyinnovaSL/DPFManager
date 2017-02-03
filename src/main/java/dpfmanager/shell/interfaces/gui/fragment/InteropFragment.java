@@ -30,6 +30,7 @@ import dpfmanager.shell.modules.interoperability.messages.InteroperabilityRespon
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -37,6 +38,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 
@@ -325,6 +327,14 @@ public class InteropFragment {
     } else {
       Platform.runLater(() -> configChoice.getSelectionModel().clearSelection());
     }
+
+    configChoice.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        configChoice.requestFocus();
+      }
+    });
+
   }
 
   private void showBuildInFields() {

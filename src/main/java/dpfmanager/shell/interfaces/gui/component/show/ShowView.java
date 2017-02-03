@@ -25,10 +25,12 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
 
 import org.jacpfx.api.annotations.Resource;
@@ -86,6 +88,14 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     setController(new ShowController());
 
     hideAll();
+
+    comboIndividuals.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        comboIndividuals.requestFocus();
+      }
+    });
+
   }
 
   @Override

@@ -26,9 +26,11 @@ import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import org.jacpfx.api.annotations.Resource;
@@ -97,6 +99,13 @@ public class BarFragment {
     }
     Collections.sort(comboBox.getItems());
     comboBox.setValue(upperFirstLetter(Locale.getDefault().getDisplayName()));
+
+    comboBox.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        comboBox.requestFocus();
+      }
+    });
   }
 
   private String upperFirstLetter(String word) {

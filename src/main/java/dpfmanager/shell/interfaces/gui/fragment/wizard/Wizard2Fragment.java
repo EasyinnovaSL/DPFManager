@@ -257,6 +257,13 @@ public class Wizard2Fragment {
     if (tag != null) {
       comboBox.setValue(tag);
     }
+    comboBox.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        comboBox.requestFocus();
+      }
+    });
+
     comboBox.setCellFactory(param -> {
       return new ListCell<String>() {
 
@@ -329,6 +336,13 @@ public class Wizard2Fragment {
       }
       hbox.getChildren().add(comboOp);
 
+      comboOp.setOnMousePressed(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+          comboOp.requestFocus();
+        }
+      });
+
       // Combo Box listener
       comboOp.valueProperty().addListener(new ChangeListener<String>() {
         @Override
@@ -360,6 +374,13 @@ public class Wizard2Fragment {
           comboVal.getCheckModel().check(comboVal.getCheckModel().getItemIndex(valueLoad1));
         }
       }
+      comboVal.setOnMousePressed(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+          comboVal.requestFocus();
+        }
+      });
+
       hbox.getChildren().add(comboVal);
     }
 
