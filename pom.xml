@@ -748,7 +748,8 @@
                                         <argument>-outfile</argument>
                                         <argument>${project.name}</argument>
                                         <!--Runtime-->
-                                        <argument>-Bruntime=C:\Program Files\Zulu\zulu-8\jre</argument>
+                                        <!--<argument>-Bruntime=C:\Program Files\Zulu\zulu-8\jre</argument>-->
+                                        <argument>-Bruntime=D:\Zulu\zulu-8\jre</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

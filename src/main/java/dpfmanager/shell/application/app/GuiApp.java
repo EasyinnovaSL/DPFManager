@@ -39,6 +39,7 @@ import java.util.Locale;
 public class GuiApp extends GuiLauncher {
 
   public static void main(String[] args) {
+    System.setProperty("glass.accessible.force", "false");
     Application.launch(args);
   }
 

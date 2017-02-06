@@ -30,6 +30,7 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.interfaces.gui.component.config.ConfigController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Label;
@@ -40,6 +41,7 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
@@ -152,6 +154,13 @@ public class Wizard6Fragment {
           }
         };
         return cell;
+      }
+    });
+
+    checkTreeView.setOnMousePressed(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        checkTreeView.requestFocus();
       }
     });
 

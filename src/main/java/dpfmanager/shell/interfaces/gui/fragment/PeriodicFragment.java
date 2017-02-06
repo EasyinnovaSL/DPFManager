@@ -412,7 +412,6 @@ public class PeriodicFragment {
       HBox.setMargin(weekDay, new Insets(0, 0, 0, 5));
       weekDay.getItems().addAll(bundle.getString("monday"), bundle.getString("tuesday"), bundle.getString("wednesday"), bundle.getString("thursday"), bundle.getString("friday"), bundle.getString("saturday"), bundle.getString("sunday"));
       hboxWeekly.getChildren().add(weekDay);
-
     }
 
     if (monthDay.getItems().isEmpty()) {

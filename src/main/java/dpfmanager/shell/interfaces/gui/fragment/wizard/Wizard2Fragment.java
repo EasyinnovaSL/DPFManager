@@ -374,14 +374,15 @@ public class Wizard2Fragment {
           comboVal.getCheckModel().check(comboVal.getCheckModel().getItemIndex(valueLoad1));
         }
       }
+
+      hbox.getChildren().add(comboVal);
+
       comboVal.setOnMousePressed(new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
           comboVal.requestFocus();
         }
       });
-
-      hbox.getChildren().add(comboVal);
     }
 
     // Add remove button
