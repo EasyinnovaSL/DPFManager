@@ -22,6 +22,7 @@ package dpfmanager.conformancechecker.tiff.reporting;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
+import jdk.jfr.events.ExceptionThrownEvent;
 
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import com.easyinnova.implementation_checker.rules.RuleResult;
@@ -106,6 +107,16 @@ public class HtmlReport extends Report {
      */
     htmlBody = StringUtils.replace(htmlBody, "##IMG_NAME##", ir.getFileName());
     htmlBody = StringUtils.replace(htmlBody, "##IMG_FILEPATH##", ir.getFilePath());
+    try {
+      long isize = new File(ir.getFilePath()).length();
+      String ssize = isize + " bytes";
+      if (isize > 1024) ssize = (isize / 1024) + " Kb";
+      if (isize > 1024 * 1024) ssize = (isize / (1024 * 1024)) + " Mb";
+
+      htmlBody = StringUtils.replace(htmlBody, "##IMG_FILESIZE##", "Size: " + ssize);
+    } catch (Exception e) {
+      htmlBody = StringUtils.replace(htmlBody, "##IMG_FILESIZE##", "");
+    }
     String divs = "";
     for (String iso : ir.getCheckedIsos()) {
       if (ir.hasValidation(iso) || ir.getErrors(iso).isEmpty()) {
@@ -408,13 +419,14 @@ public class HtmlReport extends Report {
     if (ifd != null && ifd.hasNextIFD()) {
       hasIFDList = ifd.hasNextIFD();
     }
+    int ifdIndex = 0;
     while (ifd != null) {
       String typ = " - Main image";
       if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) {
         typ = " - Thumbnail";
       }
       String aIni = "";
-      String aBody = " " + ifd.toString() + typ;
+      String aBody = " " + ifd.toString() +  ifdIndex + typ;
       String aEnd = "";
       String bold = "";
       if (index == 0) {
@@ -726,13 +738,28 @@ public class HtmlReport extends Report {
     String tmpl = "<tr><td class='tcenter'><i style='font-size: 18px;' class=\"fa fa-times-circle\"></i></td><td>##TEXT##</td></tr>";
     String incoherencies = "";
     if (valueTag != null && valueIptc != null && !valueTag.equals(valueIptc)) {
-      incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG and IPTC in IFD " + nifd + " (" + valueTag + ", " + valueIptc + ")");
+      if (valueTag.trim().length() == 0)
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC (" + valueIptc + ") does not match with " + name + " on TAG, which is empty, in IFD " + nifd);
+      else if (valueIptc.trim().length() == 0)
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG (" + valueTag + ") does not match with " + name + " on IPTC, which is empty, in IFD " + nifd);
+      else
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG (" + valueTag + ") does not match with " + name + " on IPTC (" + valueIptc + ") in IFD " + nifd);
     }
     if (valueTag != null && valueXmp != null && !valueTag.equals(valueXmp)) {
-      incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG and XMP in IFD " + nifd + " (" + valueTag + ", " + valueXmp + ")");
+      if (valueTag.trim().length() == 0)
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on XMP (" + valueXmp + ") does not match with " + name + " on TAG, which is empty, in IFD " + nifd);
+      else if (valueXmp.trim().length() == 0)
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP, which is empty, in IFD " + nifd);
+      else
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP (" + valueXmp + ") in IFD " + nifd);
     }
     if (valueIptc != null && valueXmp != null && !valueIptc.equals(valueXmp)) {
-      incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC and XMP in IFD " + nifd + " (" + valueIptc + ", " + valueXmp + ")");
+      if (valueIptc.trim().length() == 0)
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on XMP (" + valueXmp + ") does not match with " + name + " on IPTC, which is empty, in IFD " + nifd);
+      else if (valueXmp.trim().length() == 0)
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP, which is empty, in IFD " + nifd);
+      else
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP (" + valueXmp + ") in IFD " + nifd);
     }
     return incoherencies;
   }
