@@ -34,6 +34,7 @@ import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -95,13 +96,28 @@ public class PdfReport extends Report {
   private List<String> detectIncoherency(String valueTag, String valueIptc, String valueXmp, String name, int nifd) {
     List<String> list = new ArrayList<>();
     if (valueTag != null && valueIptc != null && !valueTag.equals(valueIptc)) {
-      list.add(name + " on TAG and IPTC in IFD " + nifd + " (" + valueTag + ", " + valueIptc + ")");
+      if (valueTag.trim().length() == 0)
+        list.add(name + " on IPTC (" + valueIptc + ") does not match with " + name + " on TAG, which is empty, in IFD " + nifd);
+      else if (valueIptc.trim().length() == 0)
+        list.add(name + " on TAG (" + valueTag + ") does not match with " + name + " on IPTC, which is empty, in IFD " + nifd);
+      else
+        list.add(name + " on TAG (" + valueTag + ") does not match with " + name + " on IPTC (" + valueIptc + ") in IFD " + nifd);
     }
     if (valueTag != null && valueXmp != null && !valueTag.equals(valueXmp)) {
-      list.add(name + " on TAG and XMP in IFD " + nifd + " (" + valueTag + ", " + valueXmp + ")");
+      if (valueTag.trim().length() == 0)
+        list.add(name + " on XMP field dc:creator (" + valueXmp + ") does not match with " + name + " on TAG, which is empty, in IFD " + nifd);
+      else if (valueXmp.trim().length() == 0)
+        list.add(name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP field dc:creator, which is empty, in IFD " + nifd);
+      else
+        list.add(name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP field dc:creator (" + valueXmp + ") in IFD " + nifd);
     }
     if (valueIptc != null && valueXmp != null && !valueIptc.equals(valueXmp)) {
-      list.add(name + " on IPTC and XMP in IFD " + nifd + " (" + valueIptc + ", " + valueXmp + ")");
+      if (valueIptc.trim().length() == 0)
+        list.add(name + " on XMP field dc:creator (" + valueXmp + ") does not match with " + name + " on IPTC, which is empty, in IFD " + nifd);
+      else if (valueXmp.trim().length() == 0)
+        list.add(name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP field dc:creator, which is empty, in IFD " + nifd);
+      else
+        list.add(name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP field dc:creator (" + valueXmp + ") in IFD " + nifd);
     }
     return list;
   }

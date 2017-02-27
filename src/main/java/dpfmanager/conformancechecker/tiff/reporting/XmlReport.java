@@ -36,6 +36,7 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.Rational;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -391,8 +392,12 @@ public class XmlReport extends Report {
     nameElement.setTextContent(ir.getFileName());
     Element pathElement = doc.createElement("fullpath");
     pathElement.setTextContent(ir.getFilePath());
+    Element sizeElement = doc.createElement("filesize");
+    sizeElement.setTextContent(new File(ir.getFilePath()).length() + "");
     fileInfoStructure.appendChild(nameElement);
     fileInfoStructure.appendChild(pathElement);
+    fileInfoStructure.appendChild(sizeElement);
+
     report.appendChild(fileInfoStructure);
 
     if (ir.containsData()) {
