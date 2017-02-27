@@ -539,7 +539,7 @@ public class HtmlReport extends Report {
           try {
             Metadata metadata = xmp.createMetadata();
             for (String key : metadata.keySet()) {
-              row = "<tr class='xmp" + tag.index + "'><td>" + key + "</td><td>" + metadata.get(key).toString().trim() + "</td></tr>";
+              row = "<tr class='xmp" + tag.index + "'><td>" + key + "</td><td>" + metadata.getMetadataObject(key).getSchema() + "</td><td>" + metadata.get(key).toString().trim() + "</td></tr>";
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
             }
@@ -574,9 +574,6 @@ public class HtmlReport extends Report {
           if (obj instanceof IFD) {
             IFD exif = (IFD) obj;
             for (TagValue tv : exif.getTags().getTags()) {
-              if (tv.getId() == 36864) {
-                tv.toString();
-              }
               row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>" + tv.getId() + "</td><td>" + (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
               row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
@@ -688,6 +685,7 @@ public class HtmlReport extends Report {
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
         "\t\t\t\t            <th class=\"bold\">Name</th>\n" +
+        "\t\t\t\t            <th class=\"bold\">Schema</th>\n" +
         "\t\t\t\t            <th class=\"bold\">Value</th>\n" +
         "\t\t\t\t        </tr>\n" +
         "\t\t\t\t        ##ROWS##\n" +
@@ -747,19 +745,19 @@ public class HtmlReport extends Report {
     }
     if (valueTag != null && valueXmp != null && !valueTag.equals(valueXmp)) {
       if (valueTag.trim().length() == 0)
-        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on XMP (" + valueXmp + ") does not match with " + name + " on TAG, which is empty, in IFD " + nifd);
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on XMP field dc:creator (" + valueXmp + ") does not match with " + name + " on TAG, which is empty, in IFD " + nifd);
       else if (valueXmp.trim().length() == 0)
-        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP, which is empty, in IFD " + nifd);
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP field dc:creator, which is empty, in IFD " + nifd);
       else
-        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP (" + valueXmp + ") in IFD " + nifd);
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP field dc:creator (" + valueXmp + ") in IFD " + nifd);
     }
     if (valueIptc != null && valueXmp != null && !valueIptc.equals(valueXmp)) {
       if (valueIptc.trim().length() == 0)
-        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on XMP (" + valueXmp + ") does not match with " + name + " on IPTC, which is empty, in IFD " + nifd);
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on XMP field dc:creator (" + valueXmp + ") does not match with " + name + " on IPTC, which is empty, in IFD " + nifd);
       else if (valueXmp.trim().length() == 0)
-        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP, which is empty, in IFD " + nifd);
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP field dc:creator, which is empty, in IFD " + nifd);
       else
-        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP (" + valueXmp + ") in IFD " + nifd);
+        incoherencies += StringUtils.replace(tmpl, "##TEXT##", name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP field dc:creator (" + valueXmp + ") in IFD " + nifd);
     }
     return incoherencies;
   }

@@ -105,19 +105,19 @@ public class PdfReport extends Report {
     }
     if (valueTag != null && valueXmp != null && !valueTag.equals(valueXmp)) {
       if (valueTag.trim().length() == 0)
-        list.add(name + " on XMP (" + valueXmp + ") does not match with " + name + " on TAG, which is empty, in IFD " + nifd);
+        list.add(name + " on XMP field dc:creator (" + valueXmp + ") does not match with " + name + " on TAG, which is empty, in IFD " + nifd);
       else if (valueXmp.trim().length() == 0)
-        list.add(name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP, which is empty, in IFD " + nifd);
+        list.add(name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP field dc:creator, which is empty, in IFD " + nifd);
       else
-        list.add(name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP (" + valueXmp + ") in IFD " + nifd);
+        list.add(name + " on TAG (" + valueTag + ") does not match with " + name + " on XMP field dc:creator (" + valueXmp + ") in IFD " + nifd);
     }
     if (valueIptc != null && valueXmp != null && !valueIptc.equals(valueXmp)) {
       if (valueIptc.trim().length() == 0)
-        list.add(name + " on XMP (" + valueXmp + ") does not match with " + name + " on IPTC, which is empty, in IFD " + nifd);
+        list.add(name + " on XMP field dc:creator (" + valueXmp + ") does not match with " + name + " on IPTC, which is empty, in IFD " + nifd);
       else if (valueXmp.trim().length() == 0)
-        list.add(name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP, which is empty, in IFD " + nifd);
+        list.add(name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP field dc:creator, which is empty, in IFD " + nifd);
       else
-        list.add(name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP (" + valueXmp + ") in IFD " + nifd);
+        list.add(name + " on IPTC (" + valueIptc + ") does not match with " + name + " on XMP field dc:creator (" + valueXmp + ") in IFD " + nifd);
     }
     return list;
   }
