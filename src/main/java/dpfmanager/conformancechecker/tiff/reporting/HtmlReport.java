@@ -22,7 +22,6 @@ package dpfmanager.conformancechecker.tiff.reporting;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import jdk.jfr.events.ExceptionThrownEvent;
 
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import com.easyinnova.implementation_checker.rules.RuleResult;
