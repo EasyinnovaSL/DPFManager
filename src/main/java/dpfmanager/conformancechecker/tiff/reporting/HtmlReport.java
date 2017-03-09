@@ -45,6 +45,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -719,7 +720,15 @@ public class HtmlReport extends Report {
       tmpl = StringUtils.replace(tmpl, "##EXPERT##", expert);
       tmpl = StringUtils.replace(tmpl, "##INDEX##", key);
       tmpl = StringUtils.replace(tmpl, "##DISPLAY##", display);
-      tmpl = StringUtils.replace(tmpl, "##ROWS##", tagsMap.get(key));
+      if (key.startsWith("ipt")) {
+        try {
+          tmpl = StringUtils.replace(tmpl, "##ROWS##", new String(tagsMap.get(key).getBytes(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+          tmpl = StringUtils.replace(tmpl, "##ROWS##", tagsMap.get(key));
+        }
+      } else {
+        tmpl = StringUtils.replace(tmpl, "##ROWS##", tagsMap.get(key));
+      }
       if (type.equals("xmp") && tagsMap.containsKey(key + "h")) {
         tmpl = StringUtils.replace(tmpl, "##ROWSH##", tagsMap.get(key + "h"));
         tmpl = StringUtils.replace(tmpl, "##DISH##", "block");
