@@ -426,7 +426,7 @@ public class HtmlReport extends Report {
         typ = " - Thumbnail";
       }
       String aIni = "";
-      String aBody = " " + ifd.toString() +  ifdIndex + typ;
+      String aBody = " " + ifd.toString() +  ifdIndex++ + typ;
       String aEnd = "";
       String bold = "";
       if (index == 0) {
