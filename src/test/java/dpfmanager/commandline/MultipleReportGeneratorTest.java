@@ -152,7 +152,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
   private void sendFtpCamel(String summaryXmlFile)
       throws NoSuchAlgorithmException, IOException {
-    String summaryXml = FileUtils.readFileToString(new File(summaryXmlFile), "utf-8");
+    byte[] summaryXml = FileUtils.readFileToByteArray(new File(summaryXmlFile));
     String ftp = "84.88.145.109";
     String user = "preformaapp";
     String password = "2.eX#lh>";
