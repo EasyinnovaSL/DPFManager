@@ -24,7 +24,7 @@ public class CommandLineTest {
   public void PreTest() {
     // Save feedback
     feedback = DPFManagerProperties.getFeedback();
-    DPFManagerProperties.setFeedback(false);
+    DPFManagerProperties.setFeedback(true);
     // Last report
     lastReport = ReportGenerator.getLastReportPath();
     // Backup conformance checkers configuration
