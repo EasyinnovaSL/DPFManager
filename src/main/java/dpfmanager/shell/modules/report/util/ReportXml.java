@@ -120,6 +120,20 @@ public class ReportXml extends ReportGeneric {
       el = doc.createElement("warnings");
       el.setTextContent("" + gr.getAllReportsWarnings());
       stats.appendChild(el);
+      Element duration = doc.createElement("duration");
+      el = doc.createElement("hours");
+      el.setTextContent("" + gr.getDurationHours());
+      duration.appendChild(el);
+      el = doc.createElement("minutes");
+      el.setTextContent("" + gr.getDurationMinutes());
+      duration.appendChild(el);
+      el = doc.createElement("seconds");
+      el.setTextContent("" + gr.getDurationSeconds());
+      duration.appendChild(el);
+      el = doc.createElement("milliseconds");
+      el.setTextContent("" + gr.getDurationMillis());
+      duration.appendChild(el);
+      stats.appendChild(duration);
 
       // write the content into xml file
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
