@@ -4,13 +4,23 @@ import static junit.framework.TestCase.assertEquals;
 
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.app.MainConsoleApp;
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -132,11 +142,35 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     assertEquals(8, n);
 
+    sendFtpCamel(path + "/report.pdf");
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
     //assertEquals(22, l.size());
     assertEquals(2, l.size());
     doc.close();
+  }
+
+  private void sendFtpCamel(String summaryXmlFile)
+      throws NoSuchAlgorithmException, IOException {
+    String summaryXml = FileUtils.readFileToString(new File(summaryXmlFile), "utf-8");
+    String ftp = "84.88.145.109";
+    String user = "preformaapp";
+    String password = "2.eX#lh>";
+    CamelContext contextcc = new DefaultCamelContext();
+
+    try {
+      contextcc.addRoutes(new RouteBuilder() {
+        public void configure() {
+          from("direct:sendFtp").to("sftp://" + user + "@" + ftp + "/?password=" + password);
+        }
+      });
+      ProducerTemplate template = contextcc.createProducerTemplate();
+      contextcc.start();
+      template.sendBody("direct:sendFtp", summaryXml);
+      contextcc.stop();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   private String getPath() {
