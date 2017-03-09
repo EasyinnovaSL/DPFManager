@@ -13,7 +13,7 @@ matrix:
   include:
     # Custom builds
     - env: TOKEN=cmd
-      script: mvn test -B -Dtest=commandline/MultipleReportGeneratorTestTest.java -DfailIfNoTests=false
+      script: mvn test -B -Dtest=commandline/MultipleReportGeneratorTest.java -DfailIfNoTests=false
     #- env: TOKEN=gui
     #  script: travis_wait 20 mvn test -B -Dtest=gui/*Test.java -DfailIfNoTests=false
     #- env: TOKEN=server
