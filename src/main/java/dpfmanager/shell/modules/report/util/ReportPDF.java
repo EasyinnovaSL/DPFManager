@@ -176,7 +176,7 @@ public class ReportPDF extends ReportGeneric {
         // Values
         image_width = initialx;
         pdfParams.y = initialy - 5;
-        if (maxHeight == 65) {
+        if (maxHeight == 75) {
           pdfParams.y -= 5;
         }
         pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size, Color.gray);
@@ -271,13 +271,14 @@ public class ReportPDF extends ReportGeneric {
 
   private int getMaxHeight(SmallIndividualReport ir, int image_height) {
     int height = 22;
+    int link = 10;
     for (String iso : ir.getCheckedIsos()) {
       if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
         height += 15;
       }
     }
-    if (image_height > height) {
-      height = image_height;
+    if (image_height + link > height) {
+      height = image_height + link;
     }
     return height;
   }
@@ -358,7 +359,9 @@ public class ReportPDF extends ReportGeneric {
 
   private PDFParams writeLink(PDFParams pdfParams, String text, String link, int pos_x, PDFont font, int font_size) throws Exception {
     PDGamma blueColor = new PDGamma();
-    blueColor.setB(1);
+    blueColor.setR(0.192156f);
+    blueColor.setG(0.290196f);
+    blueColor.setB(0.592157f);
     PDBorderStyleDictionary borderULine = new PDBorderStyleDictionary();
     borderULine.setStyle(PDBorderStyleDictionary.STYLE_UNDERLINE);
     PDAnnotationLink txtLink = new PDAnnotationLink();
