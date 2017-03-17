@@ -31,17 +31,23 @@ import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.color.PDGamma;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionURI;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -149,16 +155,18 @@ public class ReportPDF extends ReportGeneric {
         }
 
         // Check if we need new page before draw image
-        int maxHeight = getMaxHeight(ir.getIsosCheck().size(), image_height);
+        int maxHeight = getMaxHeight(ir, image_height);
         if (newPageNeeded(pdfParams.y - maxHeight)) {
-          pdfParams.setContentStream(newPage(pdfParams.getContentStream(), pdfParams.getDocument()));
+          PDPage page = newPage(pdfParams.getContentStream(), pdfParams.getDocument());
+          pdfParams.setPage(page);
+          pdfParams.setContentStream( new PDPageContentStream(pdfParams.getDocument(), pdfParams.getPage()));
           pdfParams.y = init_posy;
         }
 
         int initialy = pdfParams.y;
         int initialx = 100;
 
-        pdfParams.y -= maxHeight;
+        pdfParams.y -= image_height;
         int maxy = pdfParams.y;
 
         ximage = new PDJpeg(pdfParams.getDocument(), bimg);
@@ -167,9 +175,9 @@ public class ReportPDF extends ReportGeneric {
 
         // Values
         image_width = initialx;
-        pdfParams.y = initialy;
-        if (maxHeight == 65) {
-          pdfParams.y -= 10;
+        pdfParams.y = initialy - 5;
+        if (maxHeight == 75) {
+          pdfParams.y -= 5;
         }
         pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size, Color.gray);
         font_size = 6;
@@ -177,8 +185,37 @@ public class ReportPDF extends ReportGeneric {
         pdfParams = writeText(pdfParams, "Conformance Checker", pos_x + image_width + 10, font, font_size, Color.black);
         pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, pos_x + image_width + 170, pdfParams.y - 5);
         pdfParams.y -= 2;
+        int preChart = pdfParams.y;
+
+        // Chart
+        pdfParams.y = initialy;
+        pdfParams.y -= 10;
+        pdfParams.y -= 10;
+        graph_size = 25;
+        image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
+        g2d = image.createGraphics();
+        doub = (double) ir.calculatePercent(gr.computeAverageErrors());
+        extent = 360d * doub / 100.0;
+        g2d.setColor(Color.gray);
+        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
+        g2d.setColor(Color.red);
+        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
+        ximage = new PDJpeg(pdfParams.getDocument(), image);
+        pdfParams.getContentStream().drawXObject(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
+        pdfParams.y += graph_size - 10;
+        if (doub < 100) {
+          pdfParams.y = pdfParams.y - 10 - graph_size / 2;
+          pdfParams = writeText(pdfParams, "Failed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.red);
+        } else {
+          pdfParams.y = pdfParams.y - 10 - graph_size / 2;
+          pdfParams = writeText(pdfParams, "Passed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.green);
+        }
+        pdfParams.y = pdfParams.y - 10;
+        pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
+        if (pdfParams.y < maxy) maxy = pdfParams.y;
 
         // Isos table
+        pdfParams.y = preChart;
         int mode = 1, col1 = 100, col2 = 140;
         if (ir.getModifiedIsos().size() != 0) {
           pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
@@ -214,66 +251,34 @@ public class ReportPDF extends ReportGeneric {
         }
         if (pdfParams.y < maxy) maxy = pdfParams.y;
 
-        // Chart
-        pdfParams.y = initialy;
-        pdfParams.y -= 10;
-        pdfParams.y -= 10;
-        graph_size = 25;
-        image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
-        g2d = image.createGraphics();
-        doub = (double) ir.calculatePercent(gr.computeAverageErrors());
-        extent = 360d * doub / 100.0;
-        g2d.setColor(Color.gray);
-        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
-        g2d.setColor(Color.red);
-        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
-        ximage = new PDJpeg(pdfParams.getDocument(), image);
-        pdfParams.getContentStream().drawXObject(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
-        pdfParams.y += graph_size - 10;
-        if (doub < 100) {
-          pdfParams.y = pdfParams.y - 10 - graph_size / 2;
-          pdfParams = writeText(pdfParams, "Failed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.red);
-        }
-        pdfParams.y = pdfParams.y - 10 - graph_size / 2;
-        pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
-        if (pdfParams.y < maxy) maxy = pdfParams.y;
+        // Link to individual PDF
+        pdfParams.y = initialy - image_height - 10;
+        pdfParams = writeLink(pdfParams, "View the full individual report.", ir.getReportPath() + ".pdf", pos_x, font, font_size);
 
-        pdfParams.y = maxy - 10;
+        if (pdfParams.y > maxy) pdfParams.y = maxy;
+        pdfParams.y =  pdfParams.y - 15;
       }
-
-      // Full individual reports
-      /*ArrayList<PDDocument> toClose = new ArrayList<PDDocument>();
-      for (SmallIndividualReport ir : gr.getIndividualReports()) {
-
-        if (!ir.getContainsData()) continue;
-
-        PDDocument doc = PDDocument.load(new File(ir.getReportPath() + ".pdf"));
-        if (doc != null) {
-          List<PDPage> l = doc.getDocumentCatalog().getAllPages();
-          for (PDPage pag : l) {
-            pdfParams.getDocument().addPage(pag);
-          }
-          toClose.add(doc);
-        }
-      }*/
 
       pdfParams.getContentStream().close();
 
       pdfParams.getDocument().save(pdffile);
       pdfParams.getDocument().close();
 
-      /*for (PDDocument doc : toClose) {
-        doc.close();
-      }*/
     } catch (Exception tfe) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", tfe));
     }
   }
 
-  private int getMaxHeight(int nIsos, int image_height) {
-    int height = 15 + nIsos * 10;
-    if (image_height > height) {
-      height = image_height;
+  private int getMaxHeight(SmallIndividualReport ir, int image_height) {
+    int height = 22;
+    int link = 10;
+    for (String iso : ir.getCheckedIsos()) {
+      if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+        height += 15;
+      }
+    }
+    if (image_height + link > height) {
+      height = image_height + link;
     }
     return height;
   }
@@ -296,11 +301,11 @@ public class ReportPDF extends ReportGeneric {
    * @return the pd page content stream
    * @throws Exception the exception
    */
-  PDPageContentStream newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
+  PDPage newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
     contentStream.close();
     PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
     document.addPage(page);
-    return new PDPageContentStream(document, page);
+    return page;
   }
 
   /**
@@ -332,7 +337,9 @@ public class ReportPDF extends ReportGeneric {
     PDPageContentStream contentStream = pdfParams.getContentStream();
     try {
       if (newPageNeeded(pdfParams.y)) {
-        contentStream = newPage(contentStream, pdfParams.getDocument());
+        PDPage page = newPage(contentStream, pdfParams.getDocument());
+        pdfParams.setPage(page);
+        contentStream = new PDPageContentStream(pdfParams.getDocument(), pdfParams.getPage());
         pdfParams.y = init_posy;
       }
 
@@ -348,5 +355,38 @@ public class ReportPDF extends ReportGeneric {
       pdfParams.setContentStream(contentStream);
       return pdfParams;
     }
+  }
+
+  private PDFParams writeLink(PDFParams pdfParams, String text, String link, int pos_x, PDFont font, int font_size) throws Exception {
+    PDGamma blueColor = new PDGamma();
+    blueColor.setR(0.192156f);
+    blueColor.setG(0.290196f);
+    blueColor.setB(0.592157f);
+    PDBorderStyleDictionary borderULine = new PDBorderStyleDictionary();
+    borderULine.setStyle(PDBorderStyleDictionary.STYLE_UNDERLINE);
+    PDAnnotationLink txtLink = new PDAnnotationLink();
+    txtLink.setBorderStyle(borderULine);
+    txtLink.setColour(blueColor);
+
+    // add an action
+    PDActionURI action = new PDActionURI();
+    action.setURI("file:///"+link);
+    txtLink.setAction(action);
+
+    // print it
+    pdfParams = writeText(pdfParams, text, pos_x, font, font_size, Color.blue);
+    PDRectangle position = new PDRectangle();
+    position.setLowerLeftX(pos_x);
+    position.setLowerLeftY(pdfParams.y + 8);
+    position.setUpperRightX(pos_x + getSize(font_size, font, text));
+    position.setUpperRightY(pdfParams.y-2);
+    txtLink.setRectangle(position);
+    pdfParams.getPage().getAnnotations().add(txtLink);
+
+    return pdfParams;
+  }
+
+  private float getSize(int font_size, PDFont font, String text) throws IOException {
+    return font_size * font.getStringWidth(text) / 1000;
   }
 }

@@ -14,9 +14,9 @@ matrix:
     # Custom builds
     - env: TOKEN=cmd
       script: mvn test -B -Dtest=commandline/*Test.java,implementationchecker/*Test.java -DfailIfNoTests=false
-    - env: TOKEN=gui
+    #- env: TOKEN=gui
       script: travis_wait 20 mvn test -B -Dtest=gui/*Test.java -DfailIfNoTests=false
-    - env: TOKEN=server
+    #- env: TOKEN=server
       script: mvn test -B -Dtest=server/*Test.java -DfailIfNoTests=false
   exclude:
     # Exclude default build

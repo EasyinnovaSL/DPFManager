@@ -42,6 +42,11 @@ public class PDFParams {
   private PDDocument document;
 
   /**
+   * The Pdf current page
+   */
+  private PDPage page;
+
+  /**
    * Actual Y position
    */
   public Integer y;
@@ -52,7 +57,7 @@ public class PDFParams {
 
   public void init(PDRectangle pageType) throws IOException{
     document = new PDDocument();
-    PDPage page = new PDPage(pageType);
+    page = new PDPage(pageType);
     document.addPage(page);
     contentStream = new PDPageContentStream(document, page);
   }
@@ -82,6 +87,14 @@ public class PDFParams {
    */
   public PDDocument getDocument() {
     return document;
+  }
+
+  public void setPage(PDPage page) {
+    this.page = page;
+  }
+
+  public PDPage getPage() {
+    return page;
   }
 
   public PDPageContentStream checkNewPage() throws Exception {

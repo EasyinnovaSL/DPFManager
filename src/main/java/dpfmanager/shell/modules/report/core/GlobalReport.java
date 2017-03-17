@@ -239,7 +239,19 @@ public class GlobalReport {
    * @return the individual reports
    */
   public List<SmallIndividualReport> getIndividualReports() {
-    return reports;
+    List<SmallIndividualReport> returned = new ArrayList<>();
+    SmallIndividualReport last = null;
+    for (SmallIndividualReport report : reports){
+      if (report.getFileName().endsWith("Bilevel.tif")){
+        last = report;
+      } else {
+        returned.add(report);
+      }
+    }
+    if (last != null){
+      returned.add(last);
+    }
+    return returned;
   }
 
   public double computeAverageErrors() {

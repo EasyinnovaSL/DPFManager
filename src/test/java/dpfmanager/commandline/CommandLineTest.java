@@ -4,6 +4,10 @@ import dpfmanager.shell.application.launcher.noui.ConsoleLauncher;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -11,6 +15,7 @@ import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by Adrià Llorens on 12/04/2016.
@@ -24,7 +29,7 @@ public class CommandLineTest {
   public void PreTest() {
     // Save feedback
     feedback = DPFManagerProperties.getFeedback();
-    DPFManagerProperties.setFeedback(false);
+    DPFManagerProperties.setFeedback(true);
     // Last report
     lastReport = ReportGenerator.getLastReportPath();
     // Backup conformance checkers configuration
@@ -120,6 +125,29 @@ public class CommandLineTest {
     int last = path.lastIndexOf("/");
     String aux = path.substring(0, last + 1);
     return aux;
+  }
+
+  public void sendFtpCamel(String summaryXmlFile)
+      throws NoSuchAlgorithmException, IOException {
+    byte[] summaryXml = FileUtils.readFileToByteArray(new File(summaryXmlFile));
+    String ftp = "84.88.145.109";
+    String user = "preformaapp";
+    String password = "2.eX#lh>";
+    CamelContext contextcc = new DefaultCamelContext();
+
+    try {
+      contextcc.addRoutes(new RouteBuilder() {
+        public void configure() {
+          from("direct:sendFtp").to("sftp://" + user + "@" + ftp + "/?password=" + password);
+        }
+      });
+      ProducerTemplate template = contextcc.createProducerTemplate();
+      contextcc.start();
+      template.sendBody("direct:sendFtp", summaryXml);
+      contextcc.stop();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 }
