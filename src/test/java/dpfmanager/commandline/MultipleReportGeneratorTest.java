@@ -137,40 +137,15 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains(".mets")) n++;
+      if (file.endsWith(".pdf")) n++;
     }
 
-    assertEquals(8, n);
+    assertEquals(7, n);
 
-    sendFtpCamel(path + "/report.pdf");
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
-    //assertEquals(22, l.size());
     assertEquals(2, l.size());
     doc.close();
-  }
-
-  private void sendFtpCamel(String summaryXmlFile)
-      throws NoSuchAlgorithmException, IOException {
-    byte[] summaryXml = FileUtils.readFileToByteArray(new File(summaryXmlFile));
-    String ftp = "84.88.145.109";
-    String user = "preformaapp";
-    String password = "2.eX#lh>";
-    CamelContext contextcc = new DefaultCamelContext();
-
-    try {
-      contextcc.addRoutes(new RouteBuilder() {
-        public void configure() {
-          from("direct:sendFtp").to("sftp://" + user + "@" + ftp + "/?password=" + password);
-        }
-      });
-      ProducerTemplate template = contextcc.createProducerTemplate();
-      contextcc.start();
-      template.sendBody("direct:sendFtp", summaryXml);
-      contextcc.stop();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   private String getPath() {

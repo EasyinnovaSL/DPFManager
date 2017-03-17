@@ -155,7 +155,7 @@ public class ReportPDF extends ReportGeneric {
         }
 
         // Check if we need new page before draw image
-        int maxHeight = getMaxHeight(ir.getIsosCheck().size(), image_height);
+        int maxHeight = getMaxHeight(ir, image_height);
         if (newPageNeeded(pdfParams.y - maxHeight)) {
           PDPage page = newPage(pdfParams.getContentStream(), pdfParams.getDocument());
           pdfParams.setPage(page);
@@ -166,7 +166,7 @@ public class ReportPDF extends ReportGeneric {
         int initialy = pdfParams.y;
         int initialx = 100;
 
-        pdfParams.y -= maxHeight;
+        pdfParams.y -= image_height;
         int maxy = pdfParams.y;
 
         ximage = new PDJpeg(pdfParams.getDocument(), bimg);
@@ -175,9 +175,9 @@ public class ReportPDF extends ReportGeneric {
 
         // Values
         image_width = initialx;
-        pdfParams.y = initialy;
+        pdfParams.y = initialy - 5;
         if (maxHeight == 65) {
-          pdfParams.y -= 10;
+          pdfParams.y -= 5;
         }
         pdfParams = writeText(pdfParams, ir.getFileName(), pos_x + image_width + 10, font, font_size, Color.gray);
         font_size = 6;
@@ -185,8 +185,37 @@ public class ReportPDF extends ReportGeneric {
         pdfParams = writeText(pdfParams, "Conformance Checker", pos_x + image_width + 10, font, font_size, Color.black);
         pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, pos_x + image_width + 170, pdfParams.y - 5);
         pdfParams.y -= 2;
+        int preChart = pdfParams.y;
+
+        // Chart
+        pdfParams.y = initialy;
+        pdfParams.y -= 10;
+        pdfParams.y -= 10;
+        graph_size = 25;
+        image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
+        g2d = image.createGraphics();
+        doub = (double) ir.calculatePercent(gr.computeAverageErrors());
+        extent = 360d * doub / 100.0;
+        g2d.setColor(Color.gray);
+        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
+        g2d.setColor(Color.red);
+        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
+        ximage = new PDJpeg(pdfParams.getDocument(), image);
+        pdfParams.getContentStream().drawXObject(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
+        pdfParams.y += graph_size - 10;
+        if (doub < 100) {
+          pdfParams.y = pdfParams.y - 10 - graph_size / 2;
+          pdfParams = writeText(pdfParams, "Failed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.red);
+        } else {
+          pdfParams.y = pdfParams.y - 10 - graph_size / 2;
+          pdfParams = writeText(pdfParams, "Passed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.green);
+        }
+        pdfParams.y = pdfParams.y - 10;
+        pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
+        if (pdfParams.y < maxy) maxy = pdfParams.y;
 
         // Isos table
+        pdfParams.y = preChart;
         int mode = 1, col1 = 100, col2 = 140;
         if (ir.getModifiedIsos().size() != 0) {
           pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
@@ -222,35 +251,12 @@ public class ReportPDF extends ReportGeneric {
         }
         if (pdfParams.y < maxy) maxy = pdfParams.y;
 
-        // Chart
-        pdfParams.y = initialy;
-        pdfParams.y -= 10;
-        pdfParams.y -= 10;
-        graph_size = 25;
-        image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
-        g2d = image.createGraphics();
-        doub = (double) ir.calculatePercent(gr.computeAverageErrors());
-        extent = 360d * doub / 100.0;
-        g2d.setColor(Color.gray);
-        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
-        g2d.setColor(Color.red);
-        g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
-        ximage = new PDJpeg(pdfParams.getDocument(), image);
-        pdfParams.getContentStream().drawXObject(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
-        pdfParams.y += graph_size - 10;
-        if (doub < 100) {
-          pdfParams.y = pdfParams.y - 10 - graph_size / 2;
-          pdfParams = writeText(pdfParams, "Failed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.red);
-        }
-        pdfParams.y = pdfParams.y - 10 - graph_size / 2;
-        pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
-        if (pdfParams.y < maxy) maxy = pdfParams.y;
-
-        pdfParams.y = maxy - 10;
-
         // Link to individual PDF
+        pdfParams.y = initialy - image_height - 10;
         pdfParams = writeLink(pdfParams, "View the full individual report.", ir.getReportPath() + ".pdf", pos_x, font, font_size);
-        pdfParams.y =  pdfParams.y - 10;
+
+        if (pdfParams.y > maxy) pdfParams.y = maxy;
+        pdfParams.y =  pdfParams.y - 15;
       }
 
       pdfParams.getContentStream().close();
@@ -263,8 +269,13 @@ public class ReportPDF extends ReportGeneric {
     }
   }
 
-  private int getMaxHeight(int nIsos, int image_height) {
-    int height = 15 + nIsos * 10;
+  private int getMaxHeight(SmallIndividualReport ir, int image_height) {
+    int height = 22;
+    for (String iso : ir.getCheckedIsos()) {
+      if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+        height += 15;
+      }
+    }
     if (image_height > height) {
       height = image_height;
     }
