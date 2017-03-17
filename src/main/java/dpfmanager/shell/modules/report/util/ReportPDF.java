@@ -187,6 +187,50 @@ public class ReportPDF extends ReportGeneric {
         pdfParams.y -= 2;
         int preChart = pdfParams.y;
 
+        // Isos table
+        pdfParams.y = preChart;
+        int mode = 1, col1 = 100, col2 = 140;
+        if (ir.getModifiedIsos().size() != 0) {
+          pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
+          pdfParams = writeText(pdfParams, "Policy", pos_x + image_width + col2, font, font_size);
+          mode = 2;
+        }
+        int totalWarnings = 0;
+        for (String iso : ir.getCheckedIsos()) {
+          if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+            String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+            pdfParams.y -= 5;
+            if (mode == 1) {
+              pdfParams.y -= 10;
+              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
+              pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
+              pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+              if (ir.getNWarnings(iso) > 0) {
+                totalWarnings++;
+              }
+            } else {
+              pdfParams.y -= 15;
+              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
+              pdfParams.y += 5;
+              // Errors
+              pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
+              if (ir.hasModifiedIso(iso)) {
+                pdfParams = writeText(pdfParams, ir.getNErrorsPolicy(iso) + " errors", pos_x + image_width + col2, font, font_size, ir.getNErrorsPolicy(iso) > 0 ? Color.red : ir.getNErrors(iso) > 0 ? Color.green : Color.black);
+              }
+              // Warnings
+              pdfParams.y -= 8;
+              pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + col1, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+              if (ir.hasModifiedIso(iso)) {
+                pdfParams = writeText(pdfParams, ir.getNWarningsPolicy(iso) + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarningsPolicy(iso) > 0 ? Color.orange : ir.getNWarnings(iso) > 0 ? Color.green : Color.black);
+              }
+              if (ir.getNWarnings(iso) > 0) {
+                totalWarnings++;
+              }
+            }
+          }
+        }
+        if (pdfParams.y < maxy) maxy = pdfParams.y;
+
         // Chart
         pdfParams.y = initialy;
         pdfParams.y -= 10;
@@ -209,46 +253,13 @@ public class ReportPDF extends ReportGeneric {
         } else {
           pdfParams.y = pdfParams.y - 10 - graph_size / 2;
           pdfParams = writeText(pdfParams, "Passed", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.green);
+          if (totalWarnings > 0 ) {
+            int size = (int) getSize(font_size, font, "Passed");
+            pdfParams = writeText(pdfParams, " with warnings", pos_x + image_width + 180 + graph_size + 10 + size, font, font_size, Color.orange);
+          }
         }
         pdfParams.y = pdfParams.y - 10;
         pdfParams = writeText(pdfParams, "Score " + doub + "%", pos_x + image_width + 180 + graph_size + 10, font, font_size, Color.gray);
-        if (pdfParams.y < maxy) maxy = pdfParams.y;
-
-        // Isos table
-        pdfParams.y = preChart;
-        int mode = 1, col1 = 100, col2 = 140;
-        if (ir.getModifiedIsos().size() != 0) {
-          pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
-          pdfParams = writeText(pdfParams, "Policy", pos_x + image_width + col2, font, font_size);
-          mode = 2;
-        }
-        for (String iso : ir.getCheckedIsos()) {
-          if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
-            String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
-            pdfParams.y -= 5;
-            if (mode == 1) {
-              pdfParams.y -= 10;
-              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
-              pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
-              pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
-            } else {
-              pdfParams.y -= 15;
-              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
-              pdfParams.y += 5;
-              // Errors
-              pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
-              if (ir.hasModifiedIso(iso)) {
-                pdfParams = writeText(pdfParams, ir.getNErrorsPolicy(iso) + " errors", pos_x + image_width + col2, font, font_size, ir.getNErrorsPolicy(iso) > 0 ? Color.red : ir.getNErrors(iso) > 0 ? Color.green : Color.black);
-              }
-              // Warnings
-              pdfParams.y -= 8;
-              pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + col1, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
-              if (ir.hasModifiedIso(iso)) {
-                pdfParams = writeText(pdfParams, ir.getNWarningsPolicy(iso) + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarningsPolicy(iso) > 0 ? Color.orange : ir.getNWarnings(iso) > 0 ? Color.green : Color.black);
-              }
-            }
-          }
-        }
         if (pdfParams.y < maxy) maxy = pdfParams.y;
 
         // Link to individual PDF

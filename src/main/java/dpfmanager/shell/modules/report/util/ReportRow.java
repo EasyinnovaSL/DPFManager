@@ -29,6 +29,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.util.PDFTextStripper;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.charset.Charset;
@@ -542,12 +546,43 @@ public class ReportRow {
   public static ReportRow createRowFromPdf(String reportDay, File file, ResourceBundle bundle) {
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
-      String n = "?";
-      String passed = "?", errors = "?", warnings = "?", score = "?";
+      int mWarns = 0;
+      String n = "?", passed = "?", errors = "?", score = "?";
       String stime = getStime(file.getPath());
       String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".pdf");
 
-      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1", errors), bundle.getString("warnings").replace("%1", warnings), bundle.getString("passed").replace("%1", passed), score + "%", file.getAbsolutePath());
+      //Reads in pdf document
+      PDDocument document = PDDocument.load(file);
+      PDFTextStripper pdfStripper = new PDFTextStripper();
+      String text = pdfStripper.getText(document);
+      int lastWarns = 0;
+      for (String line : text.split("\n")){
+        line = line.replace("\r","");
+        if (line.startsWith("Processed files:")){
+          n = line.replace("Processed files: ", "");
+        } else if (line.startsWith("Global score")){
+          score = line.replace("Global score ", "");
+        } else if (line.endsWith("passed")){
+          passed = line.split(" ")[0];
+        } else if (line.endsWith("failed")) {
+          errors = line.split(" ")[0];
+        } else if (!line.contains("with") && line.endsWith("warnings")) {
+          String middle = line.substring(line.indexOf("errors"), line.indexOf("warnings"));
+          String strWarn = middle.split(" ")[1];
+          if (Integer.parseInt(strWarn) > 0){
+            lastWarns++;
+          }
+        }
+        if (line.startsWith("View the full individual")){
+          if (lastWarns > 0){
+            mWarns++;
+          }
+          lastWarns = 0;
+        }
+      }
+      document.close();
+
+      ReportRow row = new ReportRow(sdate, stime, input, n, bundle.getString("errors").replace("%1", errors), bundle.getString("warnings").replace("%1", "" + mWarns), bundle.getString("passed").replace("%1", passed), score + "%", file.getAbsolutePath());
       return row;
     } catch (Exception e) {
       return null;
