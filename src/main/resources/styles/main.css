@@ -566,6 +566,12 @@
 .delete-img:hover{
     -fx-background-image: url('../images/periodic/trash-red.png');
 }
+.folder-img{
+    -fx-background-image: url('../images/periodic/folder-gray.png');
+}
+.folder-img:hover{
+    -fx-background-image: url('../images/periodic/folder-blue.png');
+}
 .edit-img{
     -fx-background-image: url('../images/periodic/edit-grey.png');
 }
