@@ -27,7 +27,6 @@ import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
-import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
@@ -43,8 +42,8 @@ import org.apache.logging.log4j.Level;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Created by Adria Llorens on 13/04/2016.
@@ -54,8 +53,9 @@ public class GlobalReportsRunnable extends DpfRunnable {
   private List<SmallIndividualReport> individuals;
   private ReportGenerator generator;
   private Configuration config;
+  private Date start;
 
-  public GlobalReportsRunnable(ReportGenerator g){
+  public GlobalReportsRunnable(ReportGenerator g) {
     // No context yet
     generator = g;
   }
@@ -64,9 +64,10 @@ public class GlobalReportsRunnable extends DpfRunnable {
   public void handleContext(DpfContext context) {
   }
 
-  public void setParameters(List<SmallIndividualReport> i, Configuration c){
+  public void setParameters(List<SmallIndividualReport> i, Configuration c, Date s) {
     individuals = i;
     config = c;
+    start = s;
   }
 
   @Override
@@ -78,16 +79,16 @@ public class GlobalReportsRunnable extends DpfRunnable {
     GlobalReport global = new GlobalReport();
     for (SmallIndividualReport individual : individuals) {
       global.addIndividual(individual);
-      if (individual != null){
-        if (internalReportFolder == null){
+      if (individual != null) {
+        if (internalReportFolder == null) {
           internalReportFolder = individual.getInternalReportFodler();
         }
-        if (uuid == null){
+        if (uuid == null) {
           uuid = individual.getUuid();
         }
       }
     }
-    global.generate();
+    global.generate(start);
 
     if (internalReportFolder != null) {
       // Create it
@@ -95,6 +96,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
       try {
         summaryXmlFile = generator.makeSummaryReport(internalReportFolder, global, config);
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", config.getOutput() != null ? config.getOutput() : internalReportFolder)));
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("durationReport").replace("%1", global.prettyPrintDuration())));
       } catch (OutOfMemoryError e) {
         context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorOccurred"), bundle.getString("outOfMemory")));
       }

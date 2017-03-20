@@ -47,7 +47,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystem;
@@ -530,8 +532,10 @@ public class ReportGenerator {
    */
   public void writeProcomputedIndividual(String filename, String content) {
     try {
-      PrintWriter out = new PrintWriter(filename);
-      out.print(content);
+      //PrintWriter out = new PrintWriter(filename);
+      //out.print(content);
+      Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
+      out.write(content);
       out.close();
       getContext().sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("individualReport").replace("%1", filename)));
     } catch (Exception e) {

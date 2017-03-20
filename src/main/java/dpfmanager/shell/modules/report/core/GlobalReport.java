@@ -1,28 +1,16 @@
 /**
- * <h1>ReportGenerator.java</h1>
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version; or, at your choice, under the terms of the
- * Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
- * </p>
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License and the Mozilla Public License for more details.
- * </p>
- * <p>
- * You should have received a copy of the GNU General Public License and the Mozilla Public License
- * along with this program. If not, see <a
- * href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a> and at <a
- * href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> .
- * </p>
- * <p>
- * NB: for the © statement, include Easy Innova SL or other company/Person contributing the code.
- * </p>
- * <p>
- * © 2015 Easy Innova, SL
- * </p>
+ * <h1>ReportGenerator.java</h1> <p> This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
+ * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
+ * <p> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License and the Mozilla Public License for more details. </p> <p> You should
+ * have received a copy of the GNU General Public License and the Mozilla Public License along with
+ * this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>
+ * and at <a href="http://mozilla.org/MPL/2.0">http://mozilla.org/MPL/2.0</a> . </p> <p> NB: for the
+ * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
+ * 2015 Easy Innova, SL </p>
  *
  * @author Adria Llorens Martinez
  * @version 1.0
@@ -31,16 +19,29 @@
 
 package dpfmanager.shell.modules.report.core;
 
+import org.apache.tools.ant.taskdefs.Local;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The Class GlobalReport.
  */
 public class GlobalReport {
+
+  /**
+   * The isos to check
+   */
+  private Long duration;
 
   /**
    * The list of all individual reports.
@@ -112,25 +113,26 @@ public class GlobalReport {
   /**
    * Generate the full report information.
    */
-  public void generate() {
+  public void generate(Date start) {
+    duration = (new Date()).getTime() - start.getTime();
     List<SmallIndividualReport> toDelete = new ArrayList<>();
     Collections.sort(reports);
     for (SmallIndividualReport ir : reports) {
-      if (ir.isError()){
+      if (ir.isError()) {
         toDelete.add(ir);
       } else {
-        for (String iso : ir.getCheckedIsos()){
-          if (ir.hasValidation(iso)){
-            if (ir.getNErrors(iso) == 0){
-              if (nReportsOk.containsKey(iso)){
-                nReportsOk.put(iso, nReportsOk.get(iso)+1);
+        for (String iso : ir.getCheckedIsos()) {
+          if (ir.hasValidation(iso)) {
+            if (ir.getNErrors(iso) == 0) {
+              if (nReportsOk.containsKey(iso)) {
+                nReportsOk.put(iso, nReportsOk.get(iso) + 1);
               } else {
                 nReportsOk.put(iso, 1);
               }
             }
-            if (ir.getNErrorsPolicy(iso) == 0){
-              if (nReportsOkPolicy.containsKey(iso)){
-                nReportsOkPolicy.put(iso, nReportsOkPolicy.get(iso)+1);
+            if (ir.getNErrorsPolicy(iso) == 0) {
+              if (nReportsOkPolicy.containsKey(iso)) {
+                nReportsOkPolicy.put(iso, nReportsOkPolicy.get(iso) + 1);
               } else {
                 nReportsOkPolicy.put(iso, 1);
               }
@@ -237,10 +239,22 @@ public class GlobalReport {
    * @return the individual reports
    */
   public List<SmallIndividualReport> getIndividualReports() {
-    return reports;
+    List<SmallIndividualReport> returned = new ArrayList<>();
+    SmallIndividualReport last = null;
+    for (SmallIndividualReport report : reports){
+      if (report.getFileName().endsWith("Bilevel.tif")){
+        last = report;
+      } else {
+        returned.add(report);
+      }
+    }
+    if (last != null){
+      returned.add(last);
+    }
+    return returned;
   }
 
-  public double computeAverageErrors(){
+  public double computeAverageErrors() {
     if (errVal != 0) return errVal;
     int maxErrs = 0;
     for (SmallIndividualReport ir : getIndividualReports()) {
@@ -249,12 +263,38 @@ public class GlobalReport {
         maxErrs = currentErrs;
       }
     }
-    if (maxErrs == 0){
+    if (maxErrs == 0) {
       errVal = 12.5; // Default
     } else {
       errVal = 100.0 / maxErrs;
     }
     return errVal;
+  }
+
+  public String prettyPrintDuration() {
+    String out = String.format("%02d:%02d:%02d.%02d",
+        getDurationHours(),
+        getDurationMinutes(),
+        getDurationSeconds(),
+        getDurationMillis()
+    );
+    return out;
+  }
+
+  public Long getDurationHours(){
+    return TimeUnit.MILLISECONDS.toHours(duration);
+  }
+
+  public Long getDurationMinutes(){
+    return TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(duration));
+  }
+
+  public Long getDurationSeconds(){
+    return TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration));
+  }
+
+  public Long getDurationMillis(){
+    return TimeUnit.MILLISECONDS.toMillis(duration)- TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(duration));
   }
 
 }

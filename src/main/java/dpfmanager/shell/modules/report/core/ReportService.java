@@ -32,6 +32,7 @@ import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -66,7 +67,7 @@ public class ReportService extends DpfService {
 
   // Main function
   public void tractGlobalMessage(GlobalReportMessage message) {
-    createGlobalReports(message.getUuid(), message.getIndividuals(), message.getConfig());
+    createGlobalReports(message.getUuid(), message.getIndividuals(), message.getConfig(), message.getStart());
     config = message.getConfig();
   }
 
@@ -77,10 +78,10 @@ public class ReportService extends DpfService {
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(ir.getUuid(), run));
   }
 
-  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config) {
+  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config, Date start) {
     // Create global runnable
     GlobalReportsRunnable run = new GlobalReportsRunnable(generator);
-    run.setParameters(individuals, config);
+    run.setParameters(individuals, config, start);
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
   }
 

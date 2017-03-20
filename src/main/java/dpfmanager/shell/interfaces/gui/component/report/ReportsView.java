@@ -74,6 +74,7 @@ import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -224,7 +225,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     );
 
     colDelete = new TableColumn(bundle.getString("colDelete"));
-    setMinMaxWidth(colDelete, 30);
+    setMinMaxWidth(colDelete, 50);
     colDelete.setVisible(true);
     colDelete.setCellValueFactory(new PropertyValueFactory<>("delete"));
 
@@ -426,6 +427,34 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
               box.setSpacing(3);
               box.setAlignment(Pos.CENTER_LEFT);
 
+              // Open folder burron
+              Button iconFolder = new Button();
+              iconFolder.setMinHeight(20);
+              iconFolder.setPrefHeight(20);
+              iconFolder.setMaxHeight(20);
+              iconFolder.setMinWidth(20);
+              iconFolder.setPrefWidth(20);
+              iconFolder.setMaxWidth(20);
+              iconFolder.getStyleClass().addAll("folder-img", "periodic-img");
+              iconFolder.setCursor(Cursor.HAND);
+              iconFolder.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                  // Open folder
+                  File file = new File(path);
+                  File dir = new File(file.getParent());
+                  try {
+                    if (Desktop.isDesktopSupported()) {
+                      Desktop.getDesktop().open(dir);
+                    }
+                  } catch (IOException e) {
+                    e.printStackTrace();
+                  }
+                }
+              });
+              box.getChildren().add(iconFolder);
+
+              // Trash button
               Button icon = new Button();
               icon.setMinHeight(20);
               icon.setPrefHeight(20);
@@ -451,8 +480,9 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
                   addData();
                 }
               });
-
               box.getChildren().add(icon);
+
+              // Add both
               setGraphic(box);
             }
           }

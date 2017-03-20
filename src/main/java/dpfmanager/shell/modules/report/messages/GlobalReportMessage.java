@@ -21,10 +21,9 @@ package dpfmanager.shell.modules.report.messages;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.report.core.GlobalReport;
-import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,11 +34,13 @@ public class GlobalReportMessage extends DpfMessage {
   private Long uuid;
   private List<SmallIndividualReport> individuals;
   private Configuration config;
+  private Date start;
 
-  public GlobalReportMessage(Long u, List<SmallIndividualReport> i, Configuration c){
+  public GlobalReportMessage(Long u, List<SmallIndividualReport> i, Configuration c, Date s) {
     uuid = u;
     individuals = i;
     config = c;
+    start = s;
   }
 
   public List<SmallIndividualReport> getIndividuals() {
@@ -52,5 +53,9 @@ public class GlobalReportMessage extends DpfMessage {
 
   public Long getUuid() {
     return uuid;
+  }
+
+  public Date getStart() {
+    return start;
   }
 }
