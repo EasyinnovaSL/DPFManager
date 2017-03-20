@@ -494,7 +494,7 @@ public class PolicyTest extends CommandLineTest {
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
         "FORMAT\tHTML\n" +
-        "RULE\tDPI,=,Even\n" +
+        "RULE\tEvenness,=,Even\n" +
         "RULE\tEqualXYResolution,=,True\n");
     bw.close();
 
@@ -563,7 +563,7 @@ public class PolicyTest extends CommandLineTest {
     PrintWriter bw = new PrintWriter(configfile);
     bw.write("ISO\tBaseline\n" +
         "FORMAT\tHTML\n" +
-        "RULE\tDPI,=,Uneven\n" +
+        "RULE\tEvenness,=,Uneven\n" +
         "RULE\tEqualXYResolution,=,False\n");
     bw.close();
 

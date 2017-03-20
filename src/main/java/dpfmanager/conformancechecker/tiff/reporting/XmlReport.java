@@ -507,7 +507,7 @@ public class XmlReport extends Report {
         infoElement.setAttribute("EqualXYResolution", eqxy);
         report.appendChild(infoElement);
 
-        String dpi = "";
+        String evenness = "";
         if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))
             && ifd.getTag("XResolution").getValue().size() > 0 && ifd.getTag("YResolution").getValue().size() > 0) {
           try {
@@ -521,17 +521,17 @@ public class XmlReport extends Report {
               xres = (int) ratx.getFloatValue();
               yres = (int) raty.getFloatValue();
               if (xres % 2 != 0 || yres % 2 != 0)
-                dpi = "Uneven";
+                evenness = "Uneven";
               else
-                dpi = "Even";
+                evenness = "Even";
             }
           } catch (Exception ex) {
             ex.printStackTrace();
           }
         }
-        infoElement = doc.createElement("DPI");
-        infoElement.setTextContent(dpi);
-        infoElement.setAttribute("DPI", dpi);
+        infoElement = doc.createElement("Evenness");
+        infoElement.setTextContent(evenness);
+        infoElement.setAttribute("Evenness", evenness);
         report.appendChild(infoElement);
 
         infoElement = doc.createElement("FileSize");
