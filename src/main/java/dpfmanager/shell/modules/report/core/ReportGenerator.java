@@ -274,9 +274,10 @@ public class ReportGenerator {
     try {
       File output = new File(outputfile);
       output.getParentFile().mkdirs();
-      BufferedWriter writer = new BufferedWriter(new FileWriter(outputfile));
-      writer.write(body);
-      writer.close();
+      Writer out = new BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream(outputfile), "UTF-8"));
+        out.write(body);
+        out.close();
     } catch (IOException e) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", e));
     }
