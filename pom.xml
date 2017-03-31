@@ -956,7 +956,7 @@
                                     <additionalAppResources>${project.basedir}/package/resources
                                     </additionalAppResources>
                                     <bundleArguments>
-                                        <runtime>-Bruntime=${runtime}</runtime>
+                                        <runtime>${runtime}</runtime>
                                     </bundleArguments>
                                 </configuration>
                             </execution>
