@@ -22,6 +22,11 @@ package dpfmanager.shell.modules.database.core;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.database.tables.Jobs;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Collection;
@@ -48,8 +53,8 @@ public class DatabaseCache {
     Long current = System.currentTimeMillis();
     Jobs job = new Jobs();
     job.setId(uuid);
-    //job.setHash(DigestUtils.sha256Hex(uuid.toString()));
-    job.setHash(uuid.toString());
+    String hash = Hashing.sha256().newHasher().putString(uuid.toString(), Charsets.UTF_8).hash().toString();
+    job.setHash(hash);
     job.setState(state);
     job.setTotalFiles(total);
     job.setProcessedFiles(0);
