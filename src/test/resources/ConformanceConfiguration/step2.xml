@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tns:ListOutput xmlns:tns="http://www.preforma-project/interoperability" xmlns:schemaLocation="http://www.preforma-project/interoperability preformainteroperability.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ConformanceCheckers>
+    <conformanceChecker>
+      <uuid>1</uuid>
+      <name>DPF Manager</name>
+      <location>built-in</location>
+      <parameters/>
+      <state>disabled</state>
+      <defaultConfiguration/>
+      <extensions>
+        <extension>tif</extension>
+        <extension>tiff</extension>
+      </extensions>
+    </conformanceChecker>
+    <conformanceChecker>
+      <uuid>1477565502078</uuid>
+      <name>RandomName789</name>
+      <location>src/test/resources/Small/RGB.tif</location>
+      <parameters>%input% -configuration %config%</parameters>
+      <state>enabled</state>
+      <defaultConfiguration>src/test/resources/ConfigFiles/SimpleJson.dpf</defaultConfiguration>
+      <extensions>
+        <extension>jpg</extension>
+        <extension>gif</extension>
+      </extensions>
+    </conformanceChecker>
+  </ConformanceCheckers>
+</tns:ListOutput>

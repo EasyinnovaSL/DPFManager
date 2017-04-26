@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+  <version>3</version>
+  <isos>
+    <iso>TiffITP1ProfileChecker</iso>
+    <iso>TIFF_EP</iso>
+  </isos>
+  <formats>
+    <format>HTML</format>
+    <format>PDF</format>
+  </formats>
+  <modified-isos/>
+  <rules>
+    <rule>
+      <tag>ImageLength</tag>
+      <operator>&lt;</operator>
+      <value>1000</value>
+    </rule>
+  </rules>
+  <fixes>
+    <fix>
+      <tag>Artist</tag>
+      <operator>addTag</operator>
+      <value>EasyTest</value>
+    </fix>
+  </fixes>
+  <description/>
+</configuration>

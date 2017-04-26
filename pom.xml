@@ -157,12 +157,12 @@
             <version>8.40.12</version>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
-        </dependency>-->
+        </dependency>
 
         <!--<dependency>
             <groupId>org.json</groupId>
@@ -271,13 +271,13 @@
             <scope>test</scope>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit</artifactId>
             <version>4.0.1-alpha</version>
             <type>jar</type>
             <scope>test</scope>
-        </dependency>-->
+        </dependency>
         <!--End Test Gui dependencies-->
 
         <!--JacpFX-->
