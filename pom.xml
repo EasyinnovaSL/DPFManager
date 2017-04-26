@@ -21,6 +21,7 @@
         <gui.class>dpfmanager.shell.core.app.MainGuiApp</gui.class>
         <console.class>dpfmanager.shell.core.app.MainConsoleApp</console.class>
         <version.util.class>dpfmanager.shell.core.util.VersionUtil</version.util.class>
+        <runtime></runtime>
     </properties>
 
     <!-- More Project Information -->
@@ -156,12 +157,12 @@
             <version>8.40.12</version>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
 
         <!--<dependency>
             <groupId>org.json</groupId>
@@ -270,13 +271,13 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit</artifactId>
             <version>4.0.1-alpha</version>
             <type>jar</type>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
         <!--End Test Gui dependencies-->
 
         <!--JacpFX-->
@@ -518,7 +519,7 @@
 
     <profiles>
 
-        <!-- Windows Profile Only Jar-->
+        <!-- Windows Profile  - Only Jar-->
         <profile>
             <id>windows</id>
             <activation>
@@ -562,7 +563,7 @@
             </build>
         </profile>
 
-        <!-- Windows Profile Installers -->
+        <!-- Windows Profile - Installers -->
         <profile>
             <id>windows-installers</id>
             <activation>
@@ -748,8 +749,7 @@
                                         <argument>-outfile</argument>
                                         <argument>${project.name}</argument>
                                         <!--Runtime-->
-                                        <argument>-Bruntime=C:\Program Files\Zulu\zulu-8\jre</argument>
-                                        <!--<argument>-Bruntime=D:\Zulu\zulu-8\jre</argument>-->
+                                        <argument>-Bruntime=${runtime}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -760,7 +760,7 @@
             </build>
         </profile>
 
-        <!-- NOT Windows Profile Only Jar-->
+        <!-- NOT Windows Profile - Only Jar-->
         <profile>
             <id>not-win-deploy</id>
             <activation>
@@ -835,7 +835,7 @@
             </build>
         </profile>
 
-        <!-- NOT Windows Profile Installers -->
+        <!-- NOT Windows Profile - Installers -->
         <profile>
             <id>not-win-deploy-installers</id>
             <activation>
@@ -880,6 +880,7 @@
                         <version>8.7.0</version>
                         <executions>
                             <execution>
+                                <!-- Create JAR -->
                                 <id>create-jfxjar</id>
                                 <phase>package</phase>
                                 <goals>
@@ -904,6 +905,7 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <!--Create Light Version-->
                                 <id>create-native</id>
                                 <phase>package</phase>
                                 <goals>
@@ -931,6 +933,7 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <!--Create Java Version-->
                                 <id>create-native-java</id>
                                 <phase>package</phase>
                                 <goals>
@@ -952,6 +955,9 @@
                                     <appName>${project.name}</appName>
                                     <additionalAppResources>${project.basedir}/package/resources
                                     </additionalAppResources>
+                                    <bundleArguments>
+                                        <runtime>${runtime}</runtime>
+                                    </bundleArguments>
                                 </configuration>
                             </execution>
                         </executions>
