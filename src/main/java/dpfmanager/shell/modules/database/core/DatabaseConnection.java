@@ -294,7 +294,7 @@ public class DatabaseConnection {
   synchronized public void updateJobs(Collection<Jobs> jobs) {
     if (blockConnection()) {
       try {
-        globalConnection.setAutoCommit(false);
+        //globalConnection.setAutoCommit(false);
         for (Jobs job : jobs) {
           String updateSql = "UPDATE " + Jobs.TABLE + " SET " +
               Jobs.STATE + " = " + job.getState() + ", " +
@@ -309,8 +309,8 @@ public class DatabaseConnection {
           stmt.execute(updateSql);
           stmt.close();
         }
-        globalConnection.commit();
-        globalConnection.setAutoCommit(true);
+        //globalConnection.commit();
+        //globalConnection.setAutoCommit(true);
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorUpdateJob")));
