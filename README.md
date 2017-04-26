@@ -20,13 +20,13 @@ CI Status
 
 Getting DPF Manager software
 ------------------------
-####Download release version
+#### Download release version
 You can download an installer for the latest DPF Manager GUI release [from our download site](http://dpfmanager.org/#download).
 
-####Download latest development version
+#### Download latest development version
 If you want to try the latest development version you can obtain it from our [development download site](http://dpfmanager.org/community.html).
 
-####Run DPF Manager
+#### Run DPF Manager
 You can run the DPF Manager in two modes, GUI and CLI. To start the software in GUI mode just double-click the GUI executable. A manual for the GUI can be found in [our download site](http://dpfmanager.org/Downloads/User%20Manual.pdf).
 
 For using the CLI in non-windows operating systems use the terminal and enter the following command which will explain the available parameters.
@@ -37,20 +37,20 @@ For Windows operating systems use the CLI executable named dpf-manager-console.e
 
 Building the DPF Manager from Source
 ----------------------------------------
-###Pre-requisites
+### Pre-requisites
 If you want to build the code from source you'll require:
 
  * Java 8, which can be downloaded [from Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
  * [Maven v3+](https://maven.apache.org/)
 
-####Downloading the latest release source
+#### Downloading the latest release source
 You can use [Git](https://git-scm.com/) to download the source code.
 ```
 git clone https://github.com/EasyinnovaSL/DPFManager.git
 ```
 or download the latest release from [GitHub] (https://github.com/EasyinnovaSL/DPFManager/releases).
 
-####Use Maven to compile the source
+#### Use Maven to compile the source
 Move to the downloaded project directory and call Maven install:
 
     cd DPFManager
@@ -58,7 +58,7 @@ Move to the downloaded project directory and call Maven install:
 
 The executable and the installer will be generated under the directory target/jfx.
 
-###Compiling with OpenJDK instead of OracleJDK
+### Compiling with OpenJDK instead of OracleJDK
 We recommend to compile the DPF Manager using the OracleJDK, since compiling the project with it, is straightforward.
 
 However, if you want to use OpenJDK instead of OracleJDK, you will need to build with the [open version of OpenJDK that includes JavaFX](https://wiki.openjdk.java.net/display/OpenJFX/Building+OpenJFX) completely from source.
