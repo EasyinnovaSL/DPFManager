@@ -130,7 +130,7 @@ public class PeriodicalController {
           String xmlConfig = params.get(++idx);
           argsError = !common.parseConfiguration(xmlConfig);
           if (!argsError) {
-            common.putParameter("-configuration", xmlConfig);
+            common.putParameter(CommonController.configuration, xmlConfig);
           }
         } else {
           printOutErr(bundle.getString("specifyConfig"));

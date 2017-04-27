@@ -98,7 +98,7 @@ public class RemoteController {
           String outputFolder = params.get(++idx);
           argsError = !common.parseOutput(outputFolder);
           if (!argsError) {
-            common.putParameter("-o", outputFolder);
+            common.putParameter(CommonController.output, outputFolder);
           }
         } else {
           printOutErr(bundle.getString("outputSpecify"));
@@ -110,7 +110,7 @@ public class RemoteController {
           String xmlConfig = params.get(++idx);
           argsError = !common.parseConfiguration(xmlConfig);
           if (!argsError) {
-            common.putParameter("-configuration", xmlConfig);
+            common.putParameter(CommonController.configuration, xmlConfig);
           }
         } else {
           printOutErr(bundle.getString("specifyConfig"));

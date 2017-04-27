@@ -26,6 +26,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.interfaces.console.AppContext;
+import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.modules.threading.core.ThreadingService;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
 import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
@@ -63,8 +64,8 @@ public class ThreadingController extends DpfSpringController {
       service.finishIndividual(sm.getIndividual(), sm.getUuid(), sm.getConfig());
     } else if (dpfMessage.isTypeOf(GlobalStatusMessage.class)) {
       GlobalStatusMessage gm = dpfMessage.getTypedMessage(GlobalStatusMessage.class);
-      boolean silence = parameters.containsKey("-s") || parameters.get("mode").equals("SERVER");
-      service.handleGlobalStatus(gm, silence);
+      boolean noOpen = !parameters.containsKey(CheckController.showReport) || parameters.get("mode").equals("SERVER");
+      service.handleGlobalStatus(gm, noOpen);
       // Now close application only if it is not server mode
       if (gm.isFinish() && parameters.get("mode").equals("CMD")) {
         AppContext.close();

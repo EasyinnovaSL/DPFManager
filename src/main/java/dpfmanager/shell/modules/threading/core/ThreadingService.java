@@ -27,6 +27,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
@@ -58,6 +59,7 @@ import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 
 /**
  * Created by Adria Llorens on 07/04/2016.
@@ -85,7 +87,11 @@ public class ThreadingService extends DpfService {
   private Queue<FileCheck> pendingChecks;
 
   private boolean needReload;
+  private boolean initialized;
   private int totalChecks;
+
+  @Resource(name = "parameters")
+  private Map<String, String> parameters;
 
   @PostConstruct
   public void init() {
@@ -95,6 +101,7 @@ public class ThreadingService extends DpfService {
     pendingChecks = new LinkedList<>();
     needReload = true;
     totalChecks = 0;
+    initialized = false;
   }
 
   @PreDestroy
@@ -105,25 +112,25 @@ public class ThreadingService extends DpfService {
 
   @Override
   protected void handleContext(DpfContext context) {
-    cores = Runtime.getRuntime().availableProcessors() - 1;
-    if (cores < 1) {
-      cores = 1;
+
+  }
+
+  private void initThreads(){
+    if (initialized) return;
+    initialized = true;
+
+    int maxCores = Runtime.getRuntime().availableProcessors() - 1;
+    if (maxCores < 1) {
+      maxCores = 1;
     }
 
-    // Check for the -t option for tests
-    if (GuiWorkbench.getAppParams() != null) {
-      for (String param : GuiWorkbench.getAppParams().getRaw()) {
-        if (param.startsWith("-t") && param.length() == 3) {
-          String number = param.substring(2);
-          int threads = Integer.valueOf(number);
-          if (threads < cores && threads > 1) {
-            cores = threads;
-          }
-          break;
-        }
-      }
+    // Check for the -t option
+    int specificCores = 0;
+    if (parameters.containsKey(CheckController.threads)){
+      specificCores = Integer.parseInt(parameters.get(CheckController.threads));
     }
 
+    cores = (specificCores >= 1 && specificCores <= maxCores) ? specificCores : maxCores;
     myExecutor = new DpfExecutor(cores);
     myExecutor.handleContext(context);
   }
@@ -196,6 +203,7 @@ public class ThreadingService extends DpfService {
   }
 
   public void handleGlobalStatus(GlobalStatusMessage gm, boolean silence) {
+    initThreads();
     if (gm.isNew()) {
       // New file check
       Long uuid = gm.getUuid();

@@ -28,6 +28,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.modules.conformancechecker.core.ConformanceCheckerService;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
@@ -74,8 +75,8 @@ public class ConformanceCheckerController extends DpfSpringController {
       if (cm.isConsole()) {
         // From console
         Integer recursive = 1;
-        if (parameters.containsKey("-r")) {
-          recursive = Integer.parseInt(parameters.get("-r"));
+        if (parameters.containsKey(CheckController.recursive)) {
+          recursive = Integer.parseInt(parameters.get(CheckController.recursive));
         }
         if (checkOverwriteOutput(cm.getConfig().getOutput())) {
           service.initMultiProcessInputRun(cm.getFiles(), cm.getConfig(), recursive);
@@ -115,7 +116,7 @@ public class ConformanceCheckerController extends DpfSpringController {
       // Ask for overwrite
       String ok = "yes";
       ResourceBundle bundle = DPFManagerProperties.getBundle();
-      if (!parameters.containsKey("overwrite")) {
+      if (!parameters.containsKey(CheckController.overwrite)) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("confirmOverwrite") + " Y/N"));
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "(" + bundle.getString("path") + ": " + output + ")"));
         Scanner sc = new Scanner(System.in);

@@ -24,6 +24,7 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.interfaces.console.CommonController;
 import dpfmanager.shell.modules.client.messages.RequestMessage;
 import dpfmanager.shell.modules.client.messages.ResponseMessage;
 import dpfmanager.shell.modules.client.upload.HttpClient;
@@ -218,8 +219,8 @@ public class ClientService extends DpfService {
   private void unZipReport(File file) {
     // Output folder
     String output = "";
-    if (parameters.containsKey("-o")) {
-      output = parameters.get("-o");
+    if (parameters.containsKey(CommonController.output)) {
+      output = parameters.get(CommonController.output);
     } else {
       // Default folder
       output = ReportGenerator.createReportPath();
