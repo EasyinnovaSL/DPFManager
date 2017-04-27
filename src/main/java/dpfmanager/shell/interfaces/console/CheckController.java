@@ -93,6 +93,14 @@ public class CheckController {
       else if (arg.equals("-w") || arg.equals("--overwrite")) {
         common.putParameter("overwrite", "true");
       }
+      // -t --threads
+      else if (arg.equals("-t") || arg.equals("--threads")) {
+        if (idx + 1 < params.size()) {
+          common.putParameter("-t", params.get(++idx));
+        } else {
+          printOutErr(bundle.getString("threadsSpecify"));
+        }
+      }
       // -c --configuration
       else if (arg.equals("-c") || arg.equals("--configuration")) {
         if (idx + 1 < params.size()) {
