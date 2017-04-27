@@ -29,6 +29,7 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.interfaces.console.AppContext;
+import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ProcessInputMessage;
 import dpfmanager.shell.modules.conformancechecker.runnable.ConformanceRunnable;
@@ -135,7 +136,7 @@ public class ConformanceCheckerService extends DpfService {
   }
 
   private boolean checkOverwriteOutput(String output){
-    if (output == null || parameters.containsKey("overwrite")){
+    if (output == null || parameters.containsKey(CheckController.overwrite)){
       return true;
     }
     File tmp = new File(output);

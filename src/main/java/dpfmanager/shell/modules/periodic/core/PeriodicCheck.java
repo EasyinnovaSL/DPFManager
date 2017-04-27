@@ -23,6 +23,7 @@ package dpfmanager.shell.modules.periodic.core;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.interfaces.console.CommonController;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
 import org.apache.logging.log4j.Level;
@@ -86,8 +87,8 @@ public class PeriodicCheck {
 
     // Configuration
     String configuration = "";
-    if (parameters.containsKey("-configuration")){
-      configuration = getOnlyNameIfPossible(parameters.get("-configuration"));
+    if (parameters.containsKey(CommonController.configuration)){
+      configuration = getOnlyNameIfPossible(parameters.get(CommonController.configuration));
     } else {
       printOut(context, bundle.getString("specifyConfiguration"));
       return false;

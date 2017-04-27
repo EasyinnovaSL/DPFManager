@@ -46,6 +46,12 @@ import java.util.zip.ZipOutputStream;
 public class CommonController {
 
   /**
+   * Parameters contants
+   */
+  public static String configuration = "configuration";
+  public static String output = "output";
+
+  /**
    * The Dpf Context
    */
   private ConsoleContext context;

@@ -23,6 +23,7 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.interfaces.gui.workbench.DpfCloseEvent;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
@@ -65,11 +66,15 @@ public class MessagesService extends DpfService {
   public void logMessage(LogMessage lm){
     if (lm.getLevel().equals(Level.DEBUG) && !isServer()) {
       // Log in console
-      systemOut(lm.getMessage());
+      if (!parameters.containsKey(CheckController.silence)){
+        systemOut(lm.getMessage());
+      }
     } else if (isServer()) {
       if (lm.isForceConsole()) {
         // Log in console
-        systemOut(lm.getMessage());
+        if (!parameters.containsKey(CheckController.silence)){
+          systemOut(lm.getMessage());
+        }
       } else {
         // Default pattern
         LogManager.getLogger("").log(Level.INFO, lm.getMessage());

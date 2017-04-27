@@ -27,6 +27,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
@@ -125,8 +126,8 @@ public class ThreadingService extends DpfService {
 
     // Check for the -t option
     int specificCores = 0;
-    if (parameters.containsKey("-t")){
-      specificCores = Integer.parseInt(parameters.get("-t"));
+    if (parameters.containsKey(CheckController.threads)){
+      specificCores = Integer.parseInt(parameters.get(CheckController.threads));
     }
 
     cores = (specificCores >= 1 && specificCores <= maxCores) ? specificCores : maxCores;
