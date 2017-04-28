@@ -44,6 +44,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class CheckController {
 
   /**
+   * Parameters contants
+   */
+  public static String threads = "threads";
+  public static String silence = "silence";
+  public static String showReport = "showReport";
+  public static String overwrite = "overwrite";
+  public static String recursive = "recursive";
+
+  /**
    * The Dpf Context
    */
   private ConsoleContext context;
@@ -83,7 +92,7 @@ public class CheckController {
           String outputFolder = params.get(++idx);
           argsError = !common.parseOutput(outputFolder);
           if (!argsError) {
-            common.putParameter("-o", outputFolder);
+            common.putParameter(CommonController.output, outputFolder);
           }
         } else {
           printOutErr(bundle.getString("outputSpecify"));
@@ -91,7 +100,15 @@ public class CheckController {
       }
       // -w --overwrite
       else if (arg.equals("-w") || arg.equals("--overwrite")) {
-        common.putParameter("overwrite", "true");
+        common.putParameter(CheckController.overwrite, "true");
+      }
+      // -t --threads
+      else if (arg.equals("-t") || arg.equals("--threads")) {
+        if (idx + 1 < params.size()) {
+          common.putParameter(CheckController.threads, params.get(++idx));
+        } else {
+          printOutErr(bundle.getString("threadsSpecify"));
+        }
       }
       // -c --configuration
       else if (arg.equals("-c") || arg.equals("--configuration")) {
@@ -99,7 +116,7 @@ public class CheckController {
           String xmlConfig = params.get(++idx);
           argsError = !common.parseConfiguration(xmlConfig);
           if (!argsError) {
-            common.putParameter("-configuration", xmlConfig);
+            common.putParameter(CommonController.configuration, xmlConfig);
           }
         } else {
           printOutErr(bundle.getString("specifyConfig"));
@@ -122,14 +139,18 @@ public class CheckController {
             max = Integer.parseInt(recursive);
             idx++;
           }
-          common.putParameter("-r", max.toString());
+          common.putParameter(CheckController.recursive, max.toString());
         } else {
           printOutErr(bundle.getString("specifyRecursive"));
         }
       }
+      // -n --no-open
+      else if (arg.equals("--show-report")) {
+        common.putParameter(CheckController.showReport, "true");
+      }
       // -s --silence
       else if (arg.equals("-s") || arg.equals("--silence")) {
-        common.putParameter("-s", "true");
+        common.putParameter(CheckController.silence, "true");
       }
       // -h --help
       else if (arg.equals("-h") || arg.equals("--help")) {
@@ -260,7 +281,7 @@ public class CheckController {
     printOut(bundle.getString("helpSources"));
     printOut("");
     printOut(bundle.getString("helpOptions"));
-    printOptions("helpC", 8);
+    printOptions("helpC", 9);
     exit();
   }
 

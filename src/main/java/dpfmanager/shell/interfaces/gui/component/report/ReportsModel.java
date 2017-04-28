@@ -20,18 +20,14 @@
 package dpfmanager.shell.interfaces.gui.component.report;
 
 import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.core.adapter.DpfService;
-import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.mvc.DpfModel;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import dpfmanager.shell.modules.report.util.ReportRow;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import dpfmanager.shell.modules.report.util.ReportGui;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Level;
+import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
@@ -40,132 +36,111 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by Adria Llorens on 04/03/2016.
  */
 public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
 
-  private boolean all_reports_loaded = false;
-  public static int reports_loaded = 25;
-  private ObservableList<ReportRow> data;
-  private boolean reload;
   private Context context;
   private ResourceBundle bundle;
 
-  public ReportsModel(Context context) {
-    this.context = context;
+  private SortedSet<ReportGui> data;
+  private List<ManagedFragmentHandler<ReportFragment>> reportsFragments;
+
+  private int reports_loaded = 0;
+  public static int reports_to_load = 25;
+
+  /**
+   * Constructor
+   */
+  public ReportsModel(Context ctx) {
+    context = ctx;
     bundle = DPFManagerProperties.getBundle();
-    reload = true;
-    data = FXCollections.observableArrayList(new ArrayList<>());
+    data = new TreeSet<>();
+    reportsFragments = new ArrayList<>();
+    loadReportsFromDir();
   }
 
-  public void readIfNeed() {
-    if (reload) {
-      clearData();
-      readReports();
-      reload = false;
-    }
+  public void addReportFragment(ManagedFragmentHandler<ReportFragment> handler) {
+    reportsFragments.add(handler);
   }
 
-  public void readReports() {
-    int start = getData().size() - 1;
-    if (start < 0) {
-      start = 0;
-    }
-    int count = reports_loaded;
+  public void removeReportFragment(ManagedFragmentHandler<ReportFragment> handler) {
+    reportsFragments.remove(handler);
+  }
 
-    ObservableList<ReportRow> rows = FXCollections.observableArrayList(new ArrayList<>());
+  public ManagedFragmentHandler<ReportFragment> getReportGuiByUuid(String uuid) {
+    for (ManagedFragmentHandler<ReportFragment> handler : reportsFragments) {
+      if (handler.getController().getUuid().equals(uuid)) {
+        return handler;
+      }
+    }
+    return null;
+  }
+
+  public void loadReportsFromDir() {
     String baseDir = ReportGenerator.getReportsFolder();
     File reportsDir = new File(baseDir);
     if (reportsDir.exists()) {
       String[] directories = reportsDir.list((current, name) -> new File(current, name).isDirectory());
-      Arrays.sort(directories, Collections.reverseOrder());
-      int index = 0;
-      for (int i = 0; i < directories.length; i++) {
+      for (int i = directories.length - 1; i >= 0; i--) {
         String reportDay = directories[i];
-        File reportsDay = new File(baseDir + "/" + reportDay);
-        String[] directories2 = reportsDay.list((current, name) -> new File(current, name).isDirectory());
-
-        // Convert to ints for ordering
-        Integer[] int_directories = new Integer[directories2.length];
-        for (int j = 0; j < directories2.length; j++) {
-          try {
-            int_directories[j] = Integer.parseInt(directories2[j]);
-          } catch (Exception ex) {
-            context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("incorrectReport") + ": " + directories2[j]));
-            int_directories[j] = -1;
+        File reportDayFile = new File(baseDir + "/" + reportDay);
+        String[] directoriesDay = reportDayFile.list((current, name) -> new File(current, name).isDirectory());
+        for (int j = directoriesDay.length - 1; j >= 0; j--) {
+          String reportDir = directoriesDay[j];
+          ReportGui rg = new ReportGui(baseDir,reportDay,reportDir);
+          if (rg.exists() && !data.contains(rg)){
+            data.add(rg);
           }
-        }
-        Arrays.sort(int_directories, Collections.reverseOrder());
-
-        if (index + directories2.length >= start) {
-          String[] available_formats = {"html", "xml", "json", "pdf"};
-          for (int j = 0; j < int_directories.length; j++) {
-            if (int_directories[j] < 0) continue;
-            String reportDir = String.valueOf(int_directories[j]);
-            if (index >= start && index < start + count) {
-              ReportRow rr = null;
-              File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-              File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
-              File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-              File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
-
-              if (reportXml.exists() && reportXml.length() > 0) {
-                rr = ReportRow.createRowFromXml(reportDay, reportXml, getBundle());
-              }
-              if (rr == null && reportJson.exists() && reportJson.length() > 0) {
-                rr = ReportRow.createRowFromJson(reportDay, reportJson, getBundle());
-              }
-              if (rr == null && reportHtml.exists() && reportHtml.length() > 0) {
-                rr = ReportRow.createRowFromHtml(reportDay, reportHtml, getBundle());
-              }
-              if (rr == null && reportPdf.exists() && reportPdf.length() > 0) {
-                rr = ReportRow.createRowFromPdf(reportDay, reportPdf, getBundle());
-              }
-
-              if (rr != null) {
-                // Add formats
-                for (String format : available_formats) {
-                  File report;
-                  if (format == "json" || format == "xml") {
-                    report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary." + format);
-                  } else {
-                    report = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report." + format);
-                  }
-                  if (report.exists() && report.length() > 0) {
-                    rr.addFormat(format, report.getPath());
-                  }
-                }
-                // Add mets
-                File folder = new File(baseDir + "/" + reportDay + "/" + reportDir + "/");
-                if (folder.exists() && folder.isDirectory()) {
-                  String[] filter = {"mets.xml"};
-                  Collection<File> childs = FileUtils.listFiles(folder, filter, false);
-                  if (childs.size() > 0) {
-                    rr.addFormat("mets", folder.getPath());
-                  }
-                }
-                rows.add(rr);
-                index++;
-              }
-
-              // Check if all done
-              if (i == directories.length - 1 && j == directories2.length - 1) {
-                all_reports_loaded = true;
-              }
-            } else {
-              index++;
-            }
-          }
-
-        } else {
-          index += directories2.length;
         }
       }
     }
-    data.addAll(rows);
+  }
+
+  public void printReports() {
+    printReports(0, reports_to_load);
+  }
+
+  public void printMoreReports(){
+    printReports(reports_loaded, reports_loaded + reports_to_load);
+  }
+
+  public void printReports(int from, int to) {
+    int index = 0;
+    int loaded = 0;
+    for (ReportGui rg : data){
+      if (index >= from && index < to) {
+        getView().getContext().send(new ReportsMessage(ReportsMessage.Type.ADD, rg));
+        reports_loaded++;
+        loaded++;
+      }
+      index++;
+    }
+    if (loaded == 0){
+      getView().hideLoading();
+    }
+  }
+
+  public boolean isAllReportsLoaded(){
+    return reports_loaded == data.size();
+  }
+
+  public boolean isEmpty() {
+    return data.isEmpty();
+  }
+
+  public void clearData(){
+    data.clear();
+  }
+
+  public void clearReportsLoaded(){
+    reports_loaded = 0;
   }
 
   public String getReportsSize() {
@@ -178,40 +153,6 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
     int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
     return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-  }
-
-  public void setReload(boolean r) {
-    reload = r;
-    all_reports_loaded = false;
-  }
-
-  public void clearData() {
-    data.clear();
-  }
-
-  public ObservableList<ReportRow> getData() {
-    return data;
-  }
-
-  public boolean isAllReportsLoaded() {
-    return all_reports_loaded;
-  }
-
-  public boolean isEmpty() {
-    return data.isEmpty();
-  }
-
-  public void removeItem(String search) {
-    data.remove(getItemById(search));
-  }
-
-  public ReportRow getItemById(String search) {
-    for (ReportRow rr : data) {
-      if (rr.getUuid().equals(search)) {
-        return rr;
-      }
-    }
-    return null;
   }
 
 }

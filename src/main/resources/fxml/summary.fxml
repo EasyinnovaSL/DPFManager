@@ -39,14 +39,59 @@
                     <Insets bottom="30.0" left="65.0" right="65.0" top="10.0" />
                 </VBox.margin>
             </ImageView>
-            <TableView fx:id="tabReports" minHeight="50.0" prefWidth="916.0" styleClass="dpf-bar" VBox.vgrow="NEVER">
-                <VBox.margin>
-                    <Insets left="65.0" right="65.0" />
-                </VBox.margin>
-                <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                </columnResizePolicy>
-            </TableView>
+            <!--Simulate table-->
+            <VBox fx:id="vboxReports" prefWidth="840.0" maxWidth="840.0" minWidth="840.0">
+                <AnchorPane>
+                    <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="165.0" minWidth="165.0" prefWidth="165.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <children>
+                            <Label styleClass="periodicHeader" text="%colDate" />
+                            <Label styleClass="periodicHeader" text="%colTime" GridPane.columnIndex="1" />
+                            <Label styleClass="periodicHeader" text="%colN" GridPane.columnIndex="2" />
+                            <Label styleClass="periodicHeader" text="%colFile" GridPane.columnIndex="3" />
+                            <Label styleClass="periodicHeader" text="%colErrors" GridPane.columnIndex="4" />
+                            <Label styleClass="periodicHeader" text="%colWarnings" GridPane.columnIndex="5" />
+                            <Label styleClass="periodicHeader" text="%colPassed" GridPane.columnIndex="6" />
+                            <Label styleClass="periodicHeader" text="%colScore" GridPane.columnIndex="7" />
+                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="8" />
+                            <Label styleClass="periodicHeader" text="%colDelete" GridPane.columnIndex="9" />
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" />
+                        </VBox.margin>
+                    </GridPane>
+                </AnchorPane>
+                <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0"
+                           prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic"/>
+                <ScrollPane hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0"
+                            minWidth="840.0" prefWidth="840.0">
+                    <content>
+                        <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0"/>
+                    </content>
+                    <VBox.margin>
+                        <Insets bottom="10.0"/>
+                    </VBox.margin>
+                    <styleClass>
+                        <String fx:value="periodical-scroll"/>
+                        <String fx:value="dpf-bar"/>
+                    </styleClass>
+                </ScrollPane>
+            </VBox>
+            <!--End simulate table-->
             <ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">
                 <VBox.margin>
                     <Insets top="20.0" />

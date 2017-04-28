@@ -84,10 +84,10 @@ public class ConfigModel extends DpfModel<ConfigView, ConfigController> {
         if (!path.contains("/") && !path.contains("\\")) {
           // Read from configurations folder
           String pathAux = DPFManagerProperties.getConfigDir() + "/" + path + ".dpf";
-          configuration.ReadFileNew(pathAux);
+          configuration.ReadFile(pathAux);
         } else {
           // Read from specified file
-          configuration.ReadFileNew(path);
+          configuration.ReadFile(path);
         }
       } else {
         // Read from jar (default default configuration)

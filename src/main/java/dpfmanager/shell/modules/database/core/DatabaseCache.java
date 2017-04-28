@@ -83,6 +83,7 @@ public class DatabaseCache {
     Jobs job = jobs.get(uuid);
     if (job != null) {
       job.setProcessedFiles(job.getProcessedFiles() + 1);
+      job.setLastUpdate(System.currentTimeMillis());
     }
   }
 

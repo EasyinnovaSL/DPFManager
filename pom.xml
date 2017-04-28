@@ -7,7 +7,7 @@
     <groupId>com.easyinnova</groupId>
     <artifactId>dpf_manager</artifactId>
     <packaging>jar</packaging>
-    <version>3.2</version>
+    <version>3.2.1</version>
 
     <!--Properties-->
     <properties>
@@ -539,7 +539,7 @@
                         <artifactId>javafx-maven-plugin</artifactId>
                         <version>8.7.0</version>
                         <configuration>
-                            <mainClass>${gui.class}</mainClass>
+                            <mainClass>${main.class}</mainClass>
                             <verbose>true</verbose>
                             <jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
                             <jfxMainAppJarName>${project.name}-jfx.jar</jfxMainAppJarName>
@@ -584,7 +584,7 @@
                         <artifactId>javafx-maven-plugin</artifactId>
                         <version>8.7.0</version>
                         <configuration>
-                            <mainClass>${gui.class}</mainClass>
+                            <mainClass>${main.class}</mainClass>
                             <verbose>true</verbose>
                             <jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
                             <jfxMainAppJarName>${project.name}-jfx.jar</jfxMainAppJarName>
@@ -695,7 +695,7 @@
                                         <argument>-embedjnlp</argument>
                                         <argument>-v</argument>
                                         <argument>-appclass</argument>
-                                        <argument>${gui.class}</argument>
+                                        <argument>${main.class}</argument>
                                         <!--Customize params-->
                                         <argument>-name</argument>
                                         <argument>${project.name}</argument>
@@ -732,7 +732,7 @@
                                         <argument>-embedjnlp</argument>
                                         <argument>-v</argument>
                                         <argument>-appclass</argument>
-                                        <argument>${gui.class}</argument>
+                                        <argument>${main.class}</argument>
                                         <!--Customize params-->
                                         <argument>-name</argument>
                                         <argument>${project.name}</argument>

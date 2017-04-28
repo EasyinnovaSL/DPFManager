@@ -151,19 +151,8 @@ public class DatabaseConnection {
   }
 
   public boolean showJob(Jobs job) {
-    // Jobs initiated after this app
-    if (job.getInit() != null && job.getInit() > initTime) {
-      return true;
-    }
-    // Jobs running when the app open
-    if (job.getInit() != null && job.getFinish() == null) {
-      return true;
-    }
-    // Pending jobs
-    if (job.getState() == 0) {
-      return true;
-    }
-    return false;
+    // Jobs updated after this app
+    return (job.getLastUpdate() != null && job.getLastUpdate() > initTime);
   }
 
   /**
@@ -303,7 +292,8 @@ public class DatabaseConnection {
               Jobs.INIT + " = " + job.getInit() + ", " +
               Jobs.FINISH + " = " + job.getFinish() + ", " +
               Jobs.OUTPUT + " = '" + job.getOutput() + "', " +
-              Jobs.TIME + " = " + job.getTime() + "" +
+              Jobs.TIME + " = " + job.getTime() + ", " +
+              Jobs.LAST_UPDATE + " = " + job.getLastUpdate() +
               " WHERE " + Jobs.ID + " = " + job.getId();
           Statement stmt = globalConnection.createStatement();
           stmt.execute(updateSql);
