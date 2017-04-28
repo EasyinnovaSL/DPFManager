@@ -53,7 +53,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
   private List<ManagedFragmentHandler<ReportFragment>> reportsFragments;
 
   private int reports_loaded = 0;
-  public static int reports_to_load = 10;
+  public static int reports_to_load = 25;
 
   /**
    * Constructor
@@ -68,7 +68,6 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
 
   public void addReportFragment(ManagedFragmentHandler<ReportFragment> handler) {
     reportsFragments.add(handler);
-    reports_loaded++;
   }
 
   public void removeReportFragment(ManagedFragmentHandler<ReportFragment> handler) {
@@ -96,7 +95,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
         for (int j = directoriesDay.length - 1; j >= 0; j--) {
           String reportDir = directoriesDay[j];
           ReportGui rg = new ReportGui(baseDir,reportDay,reportDir);
-          if (!data.contains(rg)){
+          if (rg.exists() && !data.contains(rg)){
             data.add(rg);
           }
         }
@@ -118,6 +117,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     for (ReportGui rg : data){
       if (index >= from && index < to) {
         getView().getContext().send(new ReportsMessage(ReportsMessage.Type.ADD, rg));
+        reports_loaded++;
         loaded++;
       }
       index++;
@@ -139,6 +139,9 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     data.clear();
   }
 
+  public void clearReportsLoaded(){
+    reports_loaded = 0;
+  }
 
   public String getReportsSize() {
     Long bytes = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));

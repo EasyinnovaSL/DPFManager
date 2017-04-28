@@ -79,6 +79,26 @@ public class ReportGui implements Comparable<ReportGui>{
     this.error = true;
   }
 
+  public boolean exists(){
+    File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
+    File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
+    File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
+    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
+    if (reportXml.exists() && reportXml.length() > 0) {
+      return true;
+    }
+    if (reportJson.exists() && reportJson.length() > 0) {
+      return true;
+    }
+    if (reportHtml.exists() && reportHtml.length() > 0) {
+      return true;
+    }
+    if (reportPdf.exists() && reportPdf.length() > 0) {
+      return true;
+    }
+    return false;
+  }
+
   public void load() {
     if (loaded) return;
 

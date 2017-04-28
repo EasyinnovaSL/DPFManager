@@ -121,6 +121,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       if (rMessage.isReload()) {
         showLoading();
         mainVBox.getChildren().clear();
+        getModel().clearReportsLoaded();
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
       } else if (rMessage.isRead()) {
         recalculateSize();
@@ -145,12 +146,17 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public void addReportGui(ReportGui row) {
     ManagedFragmentHandler<ReportFragment> handler = getModel().getReportGuiByUuid(row.getUuid());
     if (handler == null){
-      handler = context.getManagedFragmentHandler(ReportFragment.class);
-      getModel().addReportFragment(handler);
-      handler.getController().init(row);
+      row.load();
+      if (row.isLoaded()){
+        handler = context.getManagedFragmentHandler(ReportFragment.class);
+        getModel().addReportFragment(handler);
+        handler.getController().init(row);
+      }
     }
-    mainVBox.getChildren().add(handler.getFragmentNode());
-    hideLoading();
+    if (row.isLoaded()) {
+      mainVBox.getChildren().add(handler.getFragmentNode());
+      hideLoading();
+    }
   }
 
   private void deleteReportGui(String uuid) {
