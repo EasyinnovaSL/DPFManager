@@ -39,17 +39,6 @@ public class ReportsController extends DpfController<ReportsModel, ReportsView> 
 
   }
 
-  public void loadMoreReports() {
-    try {
-      getModel().readReports();
-      if (getModel().isAllReportsLoaded()) {
-        getView().hideLoadMore();
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
   public boolean clearReports(LocalDate date) {
     try {
       File reports = new File(DPFManagerProperties.getReportsDir());

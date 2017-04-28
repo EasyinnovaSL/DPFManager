@@ -58,7 +58,7 @@ public class JobsTest extends ApplicationTest {
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitForTable("#tabReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    org.junit.Assert.assertEquals("Reports table rows", Math.min(nReports, ReportsModel.reports_loaded), table.getItems().size());
+    org.junit.Assert.assertEquals("Reports table rows", Math.min(nReports, ReportsModel.reports_to_load), table.getItems().size());
 
     /**
      * Pause checks test

@@ -63,7 +63,7 @@ public class ReportParserTest extends ApplicationTest {
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitForTable("#tabReports");
     TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_loaded), table.getItems().size());
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_to_load), table.getItems().size());
     checkValidRow(table.getItems().get(0), "XML");  //Xml
     checkValidRow(table.getItems().get(1), "JSON"); //Json
     checkValidRow(table.getItems().get(2), "HTML"); //Html

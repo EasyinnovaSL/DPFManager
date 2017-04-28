@@ -19,19 +19,38 @@
 
 package dpfmanager.shell.core.messages;
 
+import dpfmanager.shell.modules.report.util.ReportGui;
+
 /**
  * Created by Adria Llorens on 04/03/2016.
  */
 public class ReportsMessage extends DpfMessage {
   public enum Type {
     RELOAD,
-    READ
+    READ,
+    DELETE,
+    ADD
   }
 
   private Type type;
+  private String uuid;
+  private ReportGui report;
 
+  // READ & RELOAD
   public ReportsMessage(Type t) {
     type = t;
+  }
+
+  // DELETE
+  public ReportsMessage(Type t, String u) {
+    type = t;
+    uuid = u;
+  }
+
+  // ADD
+  public ReportsMessage(Type t, ReportGui r) {
+    type = t;
+    report = r;
   }
 
   public Type getType() {
@@ -46,4 +65,19 @@ public class ReportsMessage extends DpfMessage {
     return type.equals(Type.READ);
   }
 
+  public boolean isDelete() {
+    return type.equals(Type.DELETE);
+  }
+
+  public boolean isAdd() {
+    return type.equals(Type.ADD);
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public ReportGui getReportGui() {
+    return report;
+  }
 }
