@@ -55,6 +55,7 @@ public class ReportGui implements Comparable<ReportGui>{
   private String baseDir;
   private String reportDay;
   private String reportDir;
+  private Long timestamp;
   private boolean loaded;
   private boolean error;
 
@@ -77,6 +78,27 @@ public class ReportGui implements Comparable<ReportGui>{
     this.uuid = reportDay + reportDir;
     this.loaded = false;
     this.error = true;
+    readTime();
+  }
+
+  public void readTime(){
+    File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
+    File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
+    File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
+    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
+    timestamp = 0L;
+    if (reportXml.exists() && reportXml.length() > 0) {
+      timestamp = getTimestamp(reportXml.getPath());
+    }
+    if (reportJson.exists() && reportJson.length() > 0) {
+      timestamp = getTimestamp(reportJson.getPath());
+    }
+    if (reportHtml.exists() && reportHtml.length() > 0) {
+      timestamp = getTimestamp(reportHtml.getPath());
+    }
+    if (reportPdf.exists() && reportPdf.length() > 0) {
+      timestamp = getTimestamp(reportPdf.getPath());
+    }
   }
 
   public boolean exists(){
@@ -187,7 +209,7 @@ public class ReportGui implements Comparable<ReportGui>{
       File parent = new File(file.getParent());
       int n = countFiles(parent, ".xml") - 1 - countFiles(parent, "_fixed.xml") - countFiles(parent, "mets.xml");
       String xml = readFullFile(file.getPath(), Charset.defaultCharset());
-      String stime = getStime(file.getPath());
+      String stime = getStime(timestamp);
       int passed = 0, errors = 0, warnings = 0, score = 0;
       String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".xml");
 
@@ -251,7 +273,7 @@ public class ReportGui implements Comparable<ReportGui>{
       int n = countFiles(parent, ".html") - countFiles(parent, "_fixed.html");
       String html = readFullFile(file.getPath(), Charset.defaultCharset());
       int passed = 0, errors = 0, warnings = 0, score = 0;
-      String stime = getStime(file.getPath());
+      String stime = getStime(timestamp);
       File folder = new File(file.getParentFile().getAbsolutePath() + "/html");
       String input = parseInputFiles(folder, file.getAbsolutePath(), ".html");
 
@@ -340,7 +362,7 @@ public class ReportGui implements Comparable<ReportGui>{
       int passed = 0, errors = 0, warnings = 0, score = 0;
       String json = readFullFile(file.getPath(), Charset.defaultCharset());
       JsonObject jObjRoot = new JsonParser().parse(json).getAsJsonObject();
-      String stime = getStime(file.getPath());
+      String stime = getStime(timestamp);
       String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".json");
       JsonObject jObj = jObjRoot;
 
@@ -399,7 +421,7 @@ public class ReportGui implements Comparable<ReportGui>{
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       int mWarns = 0;
       Integer n = 0, passed = 0, errors = 0, score = 0;
-      String stime = getStime(file.getPath());
+      String stime = getStime(timestamp);
       String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".pdf");
 
       //Reads in pdf document
@@ -535,13 +557,17 @@ public class ReportGui implements Comparable<ReportGui>{
     this.delete = delete;
   }
 
-  private static String getStime(String path) {
+  private static String getStime(Long milis) {
+    DateFormat locDf = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault());
+    return locDf.format(milis);
+  }
+
+  private Long getTimestamp(String path) {
     try {
       BasicFileAttributes attr = Files.readAttributes(Paths.get(path), BasicFileAttributes.class);
-      DateFormat locDf = DateFormat.getTimeInstance(DateFormat.DEFAULT, Locale.getDefault());
-      return locDf.format(attr.creationTime().toMillis());
+      return attr.creationTime().toMillis();
     } catch (Exception e) {
-      return "";
+      return 0L;
     }
   }
 
@@ -611,8 +637,7 @@ public class ReportGui implements Comparable<ReportGui>{
 
   @Override
   public int compareTo(ReportGui other) {
-    int dayCompare = other.reportDay.compareTo(this.reportDay);
-    return (dayCompare == 0) ? other.reportDir.compareTo(this.reportDir) : dayCompare;
+    return other.timestamp.compareTo(this.timestamp);
   }
 
   @Override

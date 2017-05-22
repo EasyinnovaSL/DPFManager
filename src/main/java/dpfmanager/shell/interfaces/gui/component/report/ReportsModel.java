@@ -88,11 +88,11 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     File reportsDir = new File(baseDir);
     if (reportsDir.exists()) {
       String[] directories = reportsDir.list((current, name) -> new File(current, name).isDirectory());
-      for (int i = directories.length - 1; i >= 0; i--) {
+      for (int i = 0; i < directories.length; i++) {
         String reportDay = directories[i];
         File reportDayFile = new File(baseDir + "/" + reportDay);
         String[] directoriesDay = reportDayFile.list((current, name) -> new File(current, name).isDirectory());
-        for (int j = directoriesDay.length - 1; j >= 0; j--) {
+        for (int j = 0; j < directoriesDay.length; j++) {
           String reportDir = directoriesDay[j];
           ReportGui rg = new ReportGui(baseDir,reportDay,reportDir);
           if (rg.exists() && !data.contains(rg)){
