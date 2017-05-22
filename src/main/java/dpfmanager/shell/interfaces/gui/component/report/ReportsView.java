@@ -47,6 +47,7 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
@@ -110,6 +111,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       if (rMessage.isRead()) {
         getModel().loadReportsFromDir();
         getModel().printReports();
+      } else if (rMessage.isSize()) {
+        getModel().readReportsSize();
       }
     }
   }
@@ -124,7 +127,9 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         getModel().clearReportsLoaded();
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
       } else if (rMessage.isRead()) {
-        recalculateSize();
+        loadReportsSize();
+      } else if (rMessage.isSize()) {
+        printSize(getModel().getReportsSize());
       } else if (rMessage.isDelete()) {
         deleteReportGui(rMessage.getUuid());
       } else if (rMessage.isAdd()) {
@@ -170,8 +175,20 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   /**
    * Keep functions
    */
-  private void recalculateSize(){
-    labelSize.setText(bundle.getString("folderSize").replace("%1", getModel().getReportsSize()));
+  private void loadReportsSize(){
+    labelSize.setText(bundle.getString("folderSize").replace("%1", bundle.getString("loading")));
+    getContext().send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.SIZE));
+  }
+
+  private void printSize(Long size){
+    labelSize.setText(bundle.getString("folderSize").replace("%1", readableFileSize(size)));
+  }
+
+  private String readableFileSize(long size) {
+    if (size <= 0) return "0";
+    final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+    int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+    return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
   }
 
   public void showClearOptions(){

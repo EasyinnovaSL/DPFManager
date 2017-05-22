@@ -143,16 +143,14 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     reports_loaded = 0;
   }
 
-  public String getReportsSize() {
-    Long bytes = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
-    return readableFileSize(bytes);
+  private Long reportsSize;
+
+  public void readReportsSize() {
+    reportsSize = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
   }
 
-  private String readableFileSize(long size) {
-    if (size <= 0) return "0";
-    final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
-    int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-    return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+  public Long getReportsSize() {
+    return reportsSize;
   }
 
 }

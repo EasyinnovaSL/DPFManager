@@ -29,12 +29,14 @@ public class ReportsMessage extends DpfMessage {
     RELOAD,
     READ,
     DELETE,
-    ADD
+    ADD,
+    SIZE
   }
 
   private Type type;
   private String uuid;
   private ReportGui report;
+  private Long size;
 
   // READ & RELOAD
   public ReportsMessage(Type t) {
@@ -52,6 +54,13 @@ public class ReportsMessage extends DpfMessage {
     type = t;
     report = r;
   }
+
+  // SIZE
+  public ReportsMessage(Type t, Long s) {
+    type = t;
+    size = s;
+  }
+
 
   public Type getType() {
     return type;
@@ -73,11 +82,19 @@ public class ReportsMessage extends DpfMessage {
     return type.equals(Type.ADD);
   }
 
+  public boolean isSize() {
+    return type.equals(Type.SIZE);
+  }
+
   public String getUuid() {
     return uuid;
   }
 
   public ReportGui getReportGui() {
     return report;
+  }
+
+  public Long getSize() {
+    return size;
   }
 }
