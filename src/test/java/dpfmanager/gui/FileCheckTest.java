@@ -4,8 +4,12 @@ import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.util.ReportRow;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import com.google.gson.JsonObject;
@@ -56,29 +60,28 @@ public class FileCheckTest extends ApplicationTest {
     clickOnAndReloadBot("#taskBut");
 
     //Check table view
-    clickOnAndReloadTop("#butReports","#pane-reports");
-    waitForTable("#tabReports");
-    TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    ReportRow row = table.getItems().get(0);
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), table.getItems().size());
-    Assert.assertEquals("Report row N files", "3", row.getNfiles());
-    //Assert.assertEquals("Report row N passed", "1 passed", row.getPassed());
-    //Assert.assertEquals("Report row N errors", "2 errors", row.getErrors());
-    Assert.assertEquals("Report row N passed", "3 passed", row.getPassed());
-    Assert.assertEquals("Report row N errors", "0 errors", row.getErrors());
-    Assert.assertEquals("Report row N warnings", "0 warnings", row.getWarnings());
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    waitUntilExists("#lastReportRow");
+    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), mainVBox.getChildren().size());
+    AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
+    GridPane grid = (GridPane) row.getChildren().get(0);
+    Assert.assertEquals("Report row N files", "3", ((Label) grid.getChildren().get(2)).getText());
+    Assert.assertEquals("Report row N passed", "3 passed", ((Label) grid.getChildren().get(6)).getText());
+    Assert.assertEquals("Report row N errors", "0 errors", ((Label) grid.getChildren().get(4)).getText());
+    Assert.assertEquals("Report row N warnings", "0 warnings", ((Label) grid.getChildren().get(5)).getText());
 
     //Check html && pdf exists
     reloadScene();
-    waitUntilExists("#tabReports #buthtml");
-    FxAssert.verifyThat("#tabReports #buthtml", NodeMatchers.isNotNull());
-    clickOnAndReload("#tabReports #buthtml", "#pane-show");
+    waitUntilExists("#mainVBox #buthtml");
+    FxAssert.verifyThat("#mainVBox #buthtml", NodeMatchers.isNotNull());
+    clickOnAndReload("#mainVBox #buthtml", "#pane-show");
     waitUntilExists("#webView");
     FxAssert.verifyThat("#webView", NodeMatchers.isNotNull());
 
     //Check xml
     clickOnAndReloadTop("#butReports", "#pane-reports");
-    clickOnAndReload("#tabReports #butxml", "#pane-show");
+    clickOnAndReload("#mainVBox #butxml", "#pane-show");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     TextArea textArea = (TextArea) scene.lookup("#textArea");
     String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"";
@@ -87,7 +90,7 @@ public class FileCheckTest extends ApplicationTest {
 
     //Check json
     clickOnAndReloadTop("#butReports", "#pane-reports");
-    clickOnAndReload("#tabReports #butjson", "#pane-show");
+    clickOnAndReload("#mainVBox #butjson", "#pane-show");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     textArea = (TextArea) scene.lookup("#textArea");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();

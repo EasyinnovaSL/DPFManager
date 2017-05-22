@@ -4,7 +4,11 @@ import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.util.ReportRow;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.junit.Assert;
@@ -50,12 +54,13 @@ public class MultiFileCheckTest extends ApplicationTest {
 
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");
-    waitForTable("#tabReports");
-    TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    ReportRow row = table.getItems().get(0);
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), table.getItems().size());
-    Assert.assertEquals("Report row N files", "4", row.getNfiles());
-    Assert.assertEquals("Report row N passed", "4 passed", row.getPassed());
+    waitUntilExists("#lastReportRow");
+    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), mainVBox.getChildren().size());
+    GridPane grid = (GridPane) row.getChildren().get(0);
+    Assert.assertEquals("Report row N files", "4", ((Label) grid.getChildren().get(2)).getText());
+    Assert.assertEquals("Report row N passed", "4 passed", ((Label) grid.getChildren().get(6)).getText());
   }
 }
 

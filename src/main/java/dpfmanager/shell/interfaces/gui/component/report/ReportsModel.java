@@ -31,11 +31,8 @@ import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
@@ -114,8 +111,11 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
   public void printReports(int from, int to) {
     int index = 0;
     int loaded = 0;
-    for (ReportGui rg : data){
+    Iterator<ReportGui> it = data.iterator();
+    while (it.hasNext()) {
+      ReportGui rg = it.next();
       if (index >= from && index < to) {
+        rg.setLast(!it.hasNext() || index == to -1);
         getView().getContext().send(new ReportsMessage(ReportsMessage.Type.ADD, rg));
         reports_loaded++;
         loaded++;
@@ -125,6 +125,20 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     if (loaded == 0){
       getView().hideLoading();
     }
+
+//    int index = 0;
+//    int loaded = 0;
+//    for (ReportGui rg : data){
+//      if (index >= from && index < to) {
+//        getView().getContext().send(new ReportsMessage(ReportsMessage.Type.ADD, rg));
+//        reports_loaded++;
+//        loaded++;
+//      }
+//      index++;
+//    }
+//    if (loaded == 0){
+//      getView().hideLoading();
+//    }
   }
 
   public boolean isAllReportsLoaded(){

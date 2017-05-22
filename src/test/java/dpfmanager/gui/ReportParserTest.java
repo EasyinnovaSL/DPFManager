@@ -4,7 +4,11 @@ import dpfmanager.shell.application.app.GuiApp;
 import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.util.ReportRow;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.junit.Assert;
@@ -61,20 +65,22 @@ public class ReportParserTest extends ApplicationTest {
 
     // Go to reports and check them
     clickOnAndReloadTop("#butReports", "#pane-reports");
-    waitForTable("#tabReports");
-    TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_to_load), table.getItems().size());
-    checkValidRow(table.getItems().get(0), "XML");  //Xml
-    checkValidRow(table.getItems().get(1), "JSON"); //Json
-    checkValidRow(table.getItems().get(2), "HTML"); //Html
+    waitUntilExists("#lastReportRow");
+    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), mainVBox.getChildren().size());
+    AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
+    checkValidRow((GridPane) row.getChildren().get(0), "XML");  //Xml
+    row = (AnchorPane) mainVBox.getChildren().get(1);
+    checkValidRow((GridPane) row.getChildren().get(0), "JSON"); //Json
+    row = (AnchorPane) mainVBox.getChildren().get(2);
+    checkValidRow((GridPane) row.getChildren().get(0), "HTML"); //Html
   }
 
-  private void checkValidRow(ReportRow row, String type) {
-    Assert.assertEquals("Report row N files (" + type + ")", "2", row.getNfiles());
-    Assert.assertEquals("Report row N passed (" + type + ")", "1 passed", row.getPassed());
-    Assert.assertEquals("Report row N errors (" + type + ")", "1 errors", row.getErrors());
-    Assert.assertEquals("Report row N warnings (" + type + ")", "1 warnings", row.getWarnings());
-    Assert.assertEquals("Report row score (" + type + ")", "50%", row.getScore());
+  private void checkValidRow(GridPane grid, String type) {
+    Assert.assertEquals("Report row N files (" + type + ")", "2", ((Label) grid.getChildren().get(2)).getText());
+    Assert.assertEquals("Report row N passed (" + type + ")", "1 passed", ((Label) grid.getChildren().get(6)).getText());
+    Assert.assertEquals("Report row N errors (" + type + ")", "1 errors", ((Label) grid.getChildren().get(4)).getText());
+    Assert.assertEquals("Report row N warnings (" + type + ")", "1 warnings", ((Label) grid.getChildren().get(5)).getText());
   }
 }
 

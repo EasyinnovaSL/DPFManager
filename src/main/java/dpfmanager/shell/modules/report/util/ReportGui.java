@@ -58,6 +58,7 @@ public class ReportGui implements Comparable<ReportGui>{
   private Long timestamp;
   private boolean loaded;
   private boolean error;
+  private boolean last;
 
   private String date;
   private Integer nfiles;
@@ -629,6 +630,14 @@ public class ReportGui implements Comparable<ReportGui>{
 
   public void setNfiles(Integer nfiles) {
     this.nfiles = nfiles;
+  }
+
+  public boolean isLast() {
+    return last;
+  }
+
+  public void setLast(boolean last) {
+    this.last = last;
   }
 
   /**

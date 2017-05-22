@@ -6,6 +6,7 @@ import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.util.ReportRow;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.junit.Assert;
@@ -56,9 +57,9 @@ public class JobsTest extends ApplicationTest {
     // Wait for cancel request and check that there isn't the report
     waitForCancelChecks();
     clickOnAndReloadTop("#butReports", "#pane-reports");
-    waitForTable("#tabReports");
-    TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    org.junit.Assert.assertEquals("Reports table rows", Math.min(nReports, ReportsModel.reports_to_load), table.getItems().size());
+    waitForTable("#lastReportRow");
+    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    Assert.assertEquals("Reports table rows", Math.min(nReports, ReportsModel.reports_to_load), mainVBox.getChildren().size());
 
     /**
      * Pause checks test

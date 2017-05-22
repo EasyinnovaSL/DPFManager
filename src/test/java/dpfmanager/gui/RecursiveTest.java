@@ -1,9 +1,14 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.util.ReportRow;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.junit.Assert;
@@ -56,10 +61,15 @@ public class RecursiveTest extends ApplicationTest {
 
     //Check table view
     clickOnAndReloadTop("#butReports", "#pane-reports");
-    waitForTable("#tabReports");
-    TableView<ReportRow> table = (TableView) scene.lookup("#tabReports");
-    int n1 = Integer.parseInt(table.getItems().get(0).getNfiles());
-    int n2 = Integer.parseInt(table.getItems().get(1).getNfiles());
+    waitUntilExists("#lastReportRow");
+
+    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    AnchorPane row1 = (AnchorPane) mainVBox.getChildren().get(0);
+    GridPane grid1 = (GridPane) row1.getChildren().get(0);
+    AnchorPane row2 = (AnchorPane) mainVBox.getChildren().get(1);
+    GridPane grid2 = (GridPane) row2.getChildren().get(0);
+    int n1 = Integer.parseInt(((Label) grid1.getChildren().get(2)).getText());
+    int n2 = Integer.parseInt(((Label) grid2.getChildren().get(2)).getText());
     Assert.assertEquals("Reports count doesn't match ("+n1+", "+n2+")", true, (n1 == 2 || n2 == 2) && (n1 == 4 || n2 == 4));
   }
 }
