@@ -26,6 +26,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
+import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -70,7 +71,7 @@ public class ReportsPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
-    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.RELOAD));
+    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
   }
 
   @PostConstruct
