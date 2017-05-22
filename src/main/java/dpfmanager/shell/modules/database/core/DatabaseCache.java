@@ -104,6 +104,11 @@ public class DatabaseCache {
     job.setState(3);
   }
 
+  public void emptyJob(Long uuid) {
+    Jobs job = jobs.get(uuid);
+    job.setState(5);
+  }
+
   public void pauseJob(Long uuid) {
     Jobs job = jobs.get(uuid);
     job.setState(4);

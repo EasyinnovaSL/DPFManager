@@ -27,7 +27,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 public class JobsMessage extends DpfMessage {
 
   public enum Type {
-    NEW, INIT, UPDATE, FINISH, GET, RESUME, CANCEL, PAUSE, START
+    NEW, INIT, UPDATE, FINISH, GET, RESUME, CANCEL, PAUSE, START, EMPTY
   }
 
   private Type type;
@@ -54,7 +54,7 @@ public class JobsMessage extends DpfMessage {
   }
 
   public JobsMessage(Type type, Long uuid) {
-    // Update && Finish && Resume && Cancel && Pause && Start
+    // Update && Finish && Resume && Cancel && Pause && Start && Empty
     this.type = type;
     this.uuid = uuid;
   }
@@ -90,6 +90,10 @@ public class JobsMessage extends DpfMessage {
 
   public boolean isCancel(){
     return type.equals(Type.CANCEL);
+  }
+
+  public boolean isEmpty(){
+    return type.equals(Type.EMPTY);
   }
 
   public boolean isPause(){
