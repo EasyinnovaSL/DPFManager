@@ -121,18 +121,27 @@ public abstract class Controller {
 
   protected String buildCommandArguments(PeriodicCheck check){
     String parsedInput = parseInput(check.getInput());
-    String configPath = asString(getConfigurationPath(check.getConfiguration()));
-    return "check -s -c " + configPath + " " + parsedInput;
+    String configuration = check.getConfiguration();
+    if (configuration != null){
+      String configPath = asString(getConfigurationPath(check.getConfiguration()));
+      return "check -s -c " + configPath + " " + parsedInput;
+    }
+    return "check -s " + parsedInput;
   }
 
   protected String getInputFromArguments(String arguments){
     String input = "";
-    String aux = arguments.substring(12); // Skip -s -configuration
+    String aux = arguments.substring(9); // Skip check -s
+    boolean hasConfig = false;
+    if (aux.startsWith("-c")){
+      aux = arguments.substring(3); // Skip -c
+      hasConfig = true;
+    }
     String[] files = aux.split("\"");
     boolean first = true;
     for (String file : files) {
       if (!file.replaceAll(" ", "").isEmpty()) {
-        if (first) {
+        if (first && hasConfig) {
           // Configuration
           first = false;
         } else {
@@ -149,12 +158,16 @@ public abstract class Controller {
   }
 
   protected String getConfigurationFromArguments(String arguments){
-    String aux = arguments.substring(arguments.indexOf("\"")); // Skip -s -configuration
+    String aux = arguments.substring(arguments.indexOf("\"")); // Skip -s -<
     String[] files = aux.split("\"");
     for (String file : files) {
       if (!file.replaceAll(" ", "").isEmpty()) {
         // Configuration
-        return file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".dpf"));
+        if (file.indexOf(".dpf") > 0) {
+          return file.substring(file.lastIndexOf("/") + 1, file.lastIndexOf(".dpf"));
+        } else {
+          return "";
+        }
       }
     }
     return "";
