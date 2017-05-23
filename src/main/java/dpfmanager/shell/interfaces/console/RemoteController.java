@@ -143,19 +143,19 @@ public class RemoteController {
       idx++;
     }
 
+    // Url always needed
+    if (!common.containsParameter("-url")) {
+      printOutErr(bundle.getString("urlNeed"));
+    }
+
     // No files
     if (common.getFiles().size() == 0 && !common.containsParameter("-job") ) {
-      printOutErr(bundle.getString("noFilesSpecified"));
+      printOutErr(bundle.getString("noFilesSpecifiedRemote"));
     }
 
     // No params
     if (params.size() == 0) {
       argsError = true;
-    }
-
-    // Job needs url
-    if (common.containsParameter("-job") && !common.containsParameter("-url")) {
-      printOutErr(bundle.getString("jobNeedUrl"));
     }
   }
 
@@ -187,14 +187,16 @@ public class RemoteController {
     printOut("");
     printOut(bundle.getString("helpOptions"));
     printOptions("helpR", 7);
+    printOut(bundle.getString("helpMandatory"));
+    printOut("    -u, --url");
     exit();
   }
 
   public void printOptions(String prefix, int max) {
     for (int i = 1; i <= max; i++) {
       String msg = bundle.getString(prefix + i);
-      String pre = msg.substring(0, msg.lastIndexOf(":") + 1);
-      String post = msg.substring(msg.lastIndexOf(":") + 1);
+      String pre = msg.substring(0, msg.indexOf(":") + 1);
+      String post = msg.substring(msg.indexOf(":") + 1);
       String line = String.format("%-38s%s", pre, post);
       printOut("    " + line);
     }
