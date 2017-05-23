@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.report.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,10 +10,14 @@ import java.util.Map;
 /**
  * Created by easy on 13/12/2016.
  */
-public class SmallIndividualReport implements Comparable {
+public class SmallIndividualReport implements Comparable, Serializable {
+
+  /**
+   * Do not modify!
+   */
+  private static final long serialVersionUID = 7845L;
+
   boolean isError;
-  List<String> checkedIsos;
-  HashSet<String> isosCheck;
   Map<String, Integer> nErrors;
   Map<String, Integer> nWarnings;
   Map<String, Integer> nErrorsPolicy;
@@ -21,45 +26,42 @@ public class SmallIndividualReport implements Comparable {
   String reportPath;
   String filePath;
   String fileName;
-  Map<String, ArrayList<String>> modifiedIsos;
   String internalReportFodler;
   Long uuid;
   String imagePath;
+  int percentOne;
+  int percent;
 
   public SmallIndividualReport(IndividualReport ind) {
     this.isError = ind.isError();
-    this.checkedIsos = new ArrayList<>();
-    this.checkedIsos.addAll(ind.getCheckedIsos());
-    this.isosCheck = new HashSet<>();
-    this.isosCheck.addAll(ind.getIsosCheck());
     this.reportPath = ind.getReportPath();
     this.filePath = ind.getFilePath();
     this.fileName = ind.getFileName();
     this.containsData = ind.containsData();
-    this.modifiedIsos = ind.getModifiedIsos();
     this.nErrors = new HashMap<>();
     this.internalReportFodler = ind.getInternalReportFodler();
     this.uuid = ind.getUuid();
     this.imagePath = ind.getImagePath();
-    for (String iso : getCheckedIsos()){
-      nErrors.put(iso, ind.getErrors(iso).size());
-    }
+  }
+
+  public void generate(IndividualReport ind){
+    this.nErrors = new HashMap<>();
     this.nWarnings = new HashMap<>();
-    for (String iso : getCheckedIsos()){
-      nWarnings.put(iso, ind.getOnlyWarnings(iso).size());
-    }
     this.nErrorsPolicy = new HashMap<>();
-    for (String iso : getCheckedIsos()){
+    this.nWarningsPolicy = new HashMap<>();
+    for (String iso : ind.getCheckedIsos()){
+      nErrors.put(iso, ind.getErrors(iso).size());
+      nWarnings.put(iso, ind.getOnlyWarnings(iso).size());
       if (ind.hasModifiedIso(iso)){
         nErrorsPolicy.put(iso, ind.getNErrorsPolicy(iso));
-      }
-    }
-    this.nWarningsPolicy = new HashMap<>();
-    for (String iso : getCheckedIsos()){
-      if (ind.hasModifiedIso(iso)){
         nWarningsPolicy.put(iso, ind.getNWarningsPolicy(iso));
       }
     }
+  }
+
+  public void computePercent(GlobalReport global){
+    this.percent = calculatePercent(global, global.getErrorValue());
+    this.percentOne = calculatePercent(global, 1.0);
   }
 
   public String getImagePath() {
@@ -84,18 +86,6 @@ public class SmallIndividualReport implements Comparable {
 
   public boolean isError() {
     return isError;
-  }
-
-  public List<String> getCheckedIsos() {
-    return checkedIsos;
-  }
-
-  public HashSet<String> getIsosCheck() {
-    return isosCheck;
-  }
-
-  public boolean hasValidation(String key) {
-    return isosCheck.contains(key);
   }
 
   public int getNErrors(String iso) {
@@ -134,12 +124,8 @@ public class SmallIndividualReport implements Comparable {
     return count;
   }
 
-  public Map<String, ArrayList<String>> getModifiedIsos() {
-    return modifiedIsos;
-  }
-
-  public boolean hasModifiedIso(String iso) {
-    return modifiedIsos.containsKey(iso);
+  public int getPercent() {
+    return percent;
   }
 
   /**
@@ -147,15 +133,13 @@ public class SmallIndividualReport implements Comparable {
    *
    * @return the int
    */
-  public int calculatePercent(double errVal) {
+  private int calculatePercent(GlobalReport global, double errVal) {
     Double rest = 100.0;
 
-    if (isosCheck != null) {
-      for (String key : isosCheck) {
-        int size = hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
-        rest -= size * errVal; // errVal = 12.5 default
-        if (rest < 0 ) break; // Fast break
-      }
+    for (String key : global.getSelectedIsos()) {
+      int size = global.hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
+      rest -= size * errVal; // errVal = 12.5 default
+      if (rest < 0 ) break; // Fast break
     }
 
     if (rest < 0.0) {
@@ -168,9 +152,7 @@ public class SmallIndividualReport implements Comparable {
   public int compareTo(Object o) {
     if (o instanceof SmallIndividualReport) {
       SmallIndividualReport other = (SmallIndividualReport) o;
-      Integer thisPercent = calculatePercent(1);
-      Integer otherPercent = other.calculatePercent(1);
-      return Integer.compare(thisPercent, otherPercent);
+      return Integer.compare(this.percent, other.percent);
     } else {
       return -1;
     }

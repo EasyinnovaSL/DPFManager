@@ -35,12 +35,14 @@ public class GlobalReportMessage extends DpfMessage {
   private List<SmallIndividualReport> individuals;
   private Configuration config;
   private Date start;
+  private List<String> checkedIsos;
 
-  public GlobalReportMessage(Long u, List<SmallIndividualReport> i, Configuration c, Date s) {
+  public GlobalReportMessage(Long u, List<SmallIndividualReport> i, Configuration c, Date s, List<String> ci) {
     uuid = u;
     individuals = i;
     config = c;
     start = s;
+    checkedIsos = ci;
   }
 
   public List<SmallIndividualReport> getIndividuals() {
@@ -57,5 +59,9 @@ public class GlobalReportMessage extends DpfMessage {
 
   public Date getStart() {
     return start;
+  }
+
+  public List<String> getCheckedIsos() {
+    return checkedIsos;
   }
 }

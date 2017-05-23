@@ -160,7 +160,7 @@ public class HtmlReport extends Report {
       modeTh = 2;
     }
     String rows = "";
-    for (String iso : ir.getIsosCheck()) {
+    for (String iso : ir.getCheckedIsos()) {
       if (ir.hasValidation(iso)) {
         String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = rowTmpl;
@@ -215,7 +215,7 @@ public class HtmlReport extends Report {
     String tdTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
     rows = "";
     int count = 0;
-    for (String iso : ir.getIsosCheck()) {
+    for (String iso : ir.getCheckedIsos()) {
       if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
         String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = fullTmpl, icon;

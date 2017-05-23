@@ -40,8 +40,9 @@ public class FileCheck {
   private Configuration config;
   private String internal;
   private String input;
-  private List<SmallIndividualReport> individuals;
   private Date start;
+
+  private List<SmallIndividualReport> individuals;
 
   /** Runnable tasks of this check */
   private List<DpfRunnable> runnables;
@@ -66,6 +67,7 @@ public class FileCheck {
 
   public void addIndividual(IndividualReport ir) {
     SmallIndividualReport small = new SmallIndividualReport(ir);
+    small.generate(ir);
     individuals.add(small);
   }
 
@@ -124,4 +126,5 @@ public class FileCheck {
   public Date getStart() {
     return start;
   }
+
 }

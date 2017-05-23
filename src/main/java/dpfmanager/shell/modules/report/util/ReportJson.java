@@ -21,8 +21,10 @@ package dpfmanager.shell.modules.report.util;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
+import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

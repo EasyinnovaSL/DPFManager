@@ -19,13 +19,19 @@
 
 package dpfmanager.shell.modules.report.core;
 
+import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
+
 import com.easyinnova.implementation_checker.ValidationResult;
 import com.easyinnova.implementation_checker.rules.RuleResult;
 
+import com.easyinnova.tiff.model.IfdTags;
+import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.types.IFD;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +42,12 @@ import java.util.Map;
 /**
  * The Class IndividualReport.
  */
-public class IndividualReport {
+public class IndividualReport extends ReportSerializable {
+
+  /**
+   * Do not modify!
+   */
+  private static final long serialVersionUID = 2946L;
 
   /**
    * The file name.
@@ -71,7 +82,7 @@ public class IndividualReport {
   /**
    * The isos to check.
    */
-  private List<String> isosCheck;
+  private List<String> checkedIsos;
 
   /**
    * The Tiff Document object.
@@ -82,15 +93,18 @@ public class IndividualReport {
 
   private String document;
 
-  private PDDocument pdf;
-
   private boolean containsData;
 
-  private String conformanceCheckerReport = null;
+  /**
+   * Data precomputed for write
+   */
+  private transient PDDocument pdf;
 
-  private String conformanceCheckerReportHtml = null;
+  private transient String conformanceCheckerReport = null;
 
-  private String conformanceCheckerReportMets = null;
+  private transient String conformanceCheckerReportHtml = null;
+
+  private transient String conformanceCheckerReportMets = null;
 
   /**
    * Extra check information
@@ -185,12 +199,12 @@ public class IndividualReport {
   }
 
   public void setIsosCheck(List<String> isosCheck) {
-    this.isosCheck = isosCheck;
+    this.checkedIsos = isosCheck;
   }
 
-  public List<String> getIsosCheck() {
-    if (isosCheck == null) return new ArrayList<>();
-    return isosCheck;
+  public List<String> getSelectedIsos() {
+    if (checkedIsos == null) return new ArrayList<>();
+    return checkedIsos;
   }
 
   public List<String> getCheckedIsos() {
@@ -245,8 +259,8 @@ public class IndividualReport {
   }
 
   public void addIsosCheck(String iso) {
-    if (!isosCheck.contains(iso)) {
-      isosCheck.add(iso);
+    if (!checkedIsos.contains(iso)) {
+      checkedIsos.add(iso);
     }
   }
 
@@ -378,7 +392,7 @@ public class IndividualReport {
    * @return the boolean
    */
   public boolean hasValidation(String key) {
-    return isosCheck.contains(key);
+    return checkedIsos.contains(key);
   }
 
   public List<RuleResult> getAllRuleResults(String key) {
@@ -556,7 +570,7 @@ public class IndividualReport {
   public List<RuleResult> getAllErrors() {
     List<RuleResult> allErrors = new ArrayList<>();
     for (String key : errors.keySet()) {
-      if (getIsosCheck().contains(key)) {
+      if (getCheckedIsos().contains(key)) {
         allErrors.addAll(errors.get(key));
       }
     }
@@ -566,7 +580,7 @@ public class IndividualReport {
   public int getAllNErrorsPolicy() {
     int n = 0;
     for (String key : errors.keySet()) {
-      if (getIsosCheck().contains(key)) {
+      if (getCheckedIsos().contains(key)) {
         n += hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
       }
     }
@@ -576,7 +590,7 @@ public class IndividualReport {
   public List<RuleResult> getAllWarnings() {
     List<RuleResult> allWarnings = new ArrayList<>();
     for (String key : warnings.keySet()) {
-      if (getIsosCheck().contains(key)) {
+      if (getCheckedIsos().contains(key)) {
         allWarnings.addAll(warnings.get(key));
       }
     }

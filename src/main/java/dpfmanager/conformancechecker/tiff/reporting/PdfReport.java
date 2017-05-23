@@ -570,7 +570,7 @@ public class PdfReport extends Report {
       pdfParams.y -= 40;
       font_size = 10;
       pdfParams = writeTitle(pdfParams, "Conformance checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
-      for (String iso : ir.getIsosCheck()) {
+      for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
           pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, false);
         }
@@ -582,7 +582,7 @@ public class PdfReport extends Report {
       pdfParams.y -= 40;
       font_size = 10;
       pdfParams = writeTitle(pdfParams, "Policy checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
-      for (String iso : ir.getIsosCheck()) {
+      for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso) && ir.hasModifiedIso(iso)) {
           pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, true);
         }

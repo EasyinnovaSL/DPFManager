@@ -227,7 +227,7 @@
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tifflibrary4java</artifactId>
-            <version>1.8.6</version>
+            <version>1.8.7</version>
         </dependency>
 
         <dependency>
