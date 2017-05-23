@@ -115,7 +115,8 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     while (it.hasNext()) {
       ReportGui rg = it.next();
       if (index >= from && index < to) {
-        rg.setLast(!it.hasNext() || index == to -1);
+        rg.load();
+        rg.setLast(!it.hasNext() || index == to - 1);
         getView().getContext().send(new ReportsMessage(ReportsMessage.Type.ADD, rg));
         reports_loaded++;
         loaded++;
@@ -125,20 +126,6 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     if (loaded == 0){
       getView().hideLoading();
     }
-
-//    int index = 0;
-//    int loaded = 0;
-//    for (ReportGui rg : data){
-//      if (index >= from && index < to) {
-//        getView().getContext().send(new ReportsMessage(ReportsMessage.Type.ADD, rg));
-//        reports_loaded++;
-//        loaded++;
-//      }
-//      index++;
-//    }
-//    if (loaded == 0){
-//      getView().hideLoading();
-//    }
   }
 
   public boolean isAllReportsLoaded(){

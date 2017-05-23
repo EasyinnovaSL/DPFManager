@@ -22,6 +22,7 @@ package dpfmanager.shell.modules.report.core;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -304,4 +306,14 @@ public class GlobalReport extends ReportSerializable {
     return TimeUnit.MILLISECONDS.toMillis(duration) - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(duration));
   }
 
+  public String getInputString(){
+    String name = "";
+    int index = 0;
+    Iterator<SmallIndividualReport> it = reports.iterator();
+    while (it.hasNext() && index < 10){
+      SmallIndividualReport individual = it.next();
+      name = (name.length() > 0) ? name + ", " + individual.getFileName() : individual.getFileName();
+    }
+    return name;
+  }
 }

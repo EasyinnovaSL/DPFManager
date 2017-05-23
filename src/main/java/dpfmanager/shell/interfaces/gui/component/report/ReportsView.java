@@ -151,7 +151,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public void addReportGui(ReportGui row) {
     ManagedFragmentHandler<ReportFragment> handler = getModel().getReportGuiByUuid(row.getUuid());
     if (handler == null){
-      row.load();
       if (row.isLoaded()){
         handler = context.getManagedFragmentHandler(ReportFragment.class);
         getModel().addReportFragment(handler);
