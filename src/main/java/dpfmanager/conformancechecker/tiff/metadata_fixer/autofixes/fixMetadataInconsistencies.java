@@ -26,6 +26,8 @@ import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.IPTC;
 
+import java.util.Date;
+
 /**
  * Created by easy on 11/10/2016.
  */
@@ -89,7 +91,8 @@ public class fixMetadataInconsistencies implements autofix {
       creatorIptc = iptc.getCreator();
       descriptionIptc = iptc.getDescription();
       copyrightIptc = iptc.getCopyright();
-      dateIptc = iptc.getDatetime().toString();
+      Date d = iptc.getDatetime();
+      dateIptc = d != null ? d.toString() : null;
     }
 
     if (exif != null) {
