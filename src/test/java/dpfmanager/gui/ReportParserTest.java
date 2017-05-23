@@ -57,18 +57,15 @@ public class ReportParserTest extends ApplicationTest {
       clickOnImportedConfig(configFile);
       writeText("#inputText", inputFiles);
       clickOnAndReload("#checkFilesButton");
-      sleep(5000);
     }
 
     // Now wait for the 3 checks
     waitForCheckFiles(3);
     clickOnAndReloadBot("#taskBut");
-    sleep(20000);
 
     // Go to reports and check them
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitUntilExists("#lastReportRow");
-    sleep(10000);
     VBox mainVBox = (VBox) scene.lookup("#mainVBox");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 3, ReportsModel.reports_to_load), mainVBox.getChildren().size());
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
