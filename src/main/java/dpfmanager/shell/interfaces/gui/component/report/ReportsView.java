@@ -28,6 +28,7 @@ import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
+import dpfmanager.shell.modules.stadistics.messages.StatisticsMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -226,6 +227,11 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
     }
+  }
+
+  @FXML
+  protected void generateStadistics(ActionEvent event) throws Exception {
+    getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
   }
 
   @FXML

@@ -23,6 +23,7 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.mvc.DpfModel;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
+import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.util.ReportGui;
 
@@ -91,8 +92,8 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
         String[] directoriesDay = reportDayFile.list((current, name) -> new File(current, name).isDirectory());
         for (int j = 0; j < directoriesDay.length; j++) {
           String reportDir = directoriesDay[j];
-          ReportGui rg = new ReportGui(baseDir,reportDay,reportDir);
-          if (rg.exists() && !data.contains(rg)){
+          ReportGui rg = new ReportGui(baseDir, reportDay, reportDir);
+          if (rg.exists() && !data.contains(rg)) {
             data.add(rg);
           }
         }
@@ -104,7 +105,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     printReports(0, reports_to_load);
   }
 
-  public void printMoreReports(){
+  public void printMoreReports() {
     printReports(reports_loaded, reports_loaded + reports_to_load);
   }
 
@@ -123,12 +124,12 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
       }
       index++;
     }
-    if (loaded == 0){
+    if (loaded == 0) {
       getView().hideLoading();
     }
   }
 
-  public boolean isAllReportsLoaded(){
+  public boolean isAllReportsLoaded() {
     return reports_loaded == data.size();
   }
 
@@ -136,11 +137,11 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     return data.isEmpty();
   }
 
-  public void clearData(){
+  public void clearData() {
     data.clear();
   }
 
-  public void clearReportsLoaded(){
+  public void clearReportsLoaded() {
     reports_loaded = 0;
   }
 

@@ -73,6 +73,8 @@ public class ReportGui implements Comparable<ReportGui>{
   private String delete;
   private String deletePath;
 
+  private GlobalReport globalReport;
+
   public ReportGui(String baseDir, String reportDay, String reportDir) {
     this.baseDir = baseDir;
     this.reportDay = reportDay;
@@ -213,7 +215,12 @@ public class ReportGui implements Comparable<ReportGui>{
     try {
       String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
       GlobalReport gr = (GlobalReport) GlobalReport.read(file.getAbsolutePath());
+      if (gr == null) {
+        error = true;
+        return;
+      }
 
+      globalReport = gr;
       int n = gr.getReportsCount();
       String stime = getStime(timestamp);
       String input = gr.getInputString();
@@ -669,6 +676,10 @@ public class ReportGui implements Comparable<ReportGui>{
 
   public void setLast(boolean last) {
     this.last = last;
+  }
+
+  public GlobalReport getGlobalReport() {
+    return globalReport;
   }
 
   /**

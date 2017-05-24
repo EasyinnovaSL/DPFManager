@@ -57,7 +57,8 @@ import java.util.ResourceBundle;
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
         BasicConfig.MODULE_MESSAGE,
-        BasicConfig.MODULE_THREADING
+        BasicConfig.MODULE_THREADING,
+        BasicConfig.MODULE_STATISTICS
     }
 )
 public class ReportsPerspective extends DpfAbstractPerspective {

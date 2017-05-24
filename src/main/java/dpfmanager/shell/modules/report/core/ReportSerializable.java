@@ -1,5 +1,7 @@
 package dpfmanager.shell.modules.report.core;
 
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,7 +49,9 @@ public class ReportSerializable implements Serializable {
       gis.close();
       fis.close();
     } catch(Exception ioe) {
+      System.err.println("Error in file: "+file);
       ioe.printStackTrace();
+      obj = null;
     }
     return obj;
   }

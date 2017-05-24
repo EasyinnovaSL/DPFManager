@@ -219,7 +219,7 @@ public class XmlReport extends Report {
           if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
             tag.dif = 1;
         }
-        if (!showTag(tv)) tag.expert = true;
+        if (!ir.showTag(tv)) tag.expert = true;
         list.add(tag);
       }
       if (ifdcomp != null) {
@@ -229,7 +229,7 @@ public class XmlReport extends Report {
             tag.index = index;
             tag.tv = tv;
             tag.dif = -1;
-            if (!showTag(tv)) tag.expert = true;
+            if (!ir.showTag(tv)) tag.expert = true;
             list.add(tag);
           }
         }
@@ -239,39 +239,6 @@ public class XmlReport extends Report {
       index++;
     }
     return list;
-  }
-
-  /**
-   * Show Tag.
-   *
-   * @param tv The tag value
-   * @return true, if successful
-   */
-  protected boolean showTag(TagValue tv) {
-    HashSet<String> showableTags = readShowableTags();
-    /*showableTags.add("ImageWidth");
-    showableTags.add("ImageLength");
-    showableTags.add("BitsPerSample");
-    showableTags.add("Compression");
-    showableTags.add("PhotometricInterpretation");
-    showableTags.add("ImageDescription");
-    showableTags.add("Make");
-    showableTags.add("Model");
-    showableTags.add("Orientation");
-    showableTags.add("SamplesPerPixel");
-    showableTags.add("XResolution");
-    showableTags.add("YResolution");
-    showableTags.add("ResolutionUnit");
-    showableTags.add("PlanarConfiguration");
-    showableTags.add("Software");
-    showableTags.add("DateTime");
-    showableTags.add("Artist");
-    showableTags.add("Copyright");
-    showableTags.add("DateTimeOriginal");
-    showableTags.add("Flash");
-    showableTags.add("TIFFEPStandardID");*/
-    //if (tv.getFileName().equals(""+tv.getId())) return false;
-    return showableTags.contains(tv.getName());
   }
 
   /**
@@ -669,7 +636,7 @@ public class XmlReport extends Report {
       report.appendChild(infoElement);
 
       // tags
-      for (ReportTag tag : getTags(ir)) {
+      for (ReportTag tag : ir.getTags()) {
         try {
           if (tag.tv.getName().equals("Compression")) continue;
 
@@ -775,7 +742,7 @@ public class XmlReport extends Report {
           String tagname = tag.tv.getName().replace(" ", "");
           if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
           infoElement = doc.createElement(tagname);
-          String val = tag.tv.toString().replaceAll("\\p{C}", "?");
+          String val = tag.tv.getReadValue().get(0).toString().replaceAll("\\p{C}", "?");
           if (val.length() > 500) val = val.substring(0, 500) + "...";
 
           infoElement.setTextContent(val);

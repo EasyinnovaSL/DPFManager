@@ -235,4 +235,7 @@ public class ReportFragment {
     return info.getUuid();
   }
 
+  public ReportGui getInfo() {
+    return info;
+  }
 }

@@ -85,9 +85,12 @@ public class ConformanceRunnable extends DpfRunnable {
       ir.setIdReport(id);
       ir.setInternalReportFolder(internalReportFolder);
       ir.setUuid(uuid);
+
       // Serialize it
       String filenameNorm = filename.replaceAll("\\\\", "/");
       ir.write(internalReportFolder + "/serialized", filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser");
+//      IndividualReport irRead = (IndividualReport) IndividualReport.read(internalReportFolder + "/serialized/" + filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser");
+
       // Create report
       IndividualReportsRunnable run = new IndividualReportsRunnable(generator);
       run.setContext(context);
