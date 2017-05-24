@@ -17,51 +17,34 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.modules.report.messages;
+package dpfmanager.shell.modules.stadistics.messages;
 
-import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.report.core.SmallIndividualReport;
-
-import java.util.Date;
-import java.util.List;
+import dpfmanager.shell.modules.stadistics.core.StatisticsObject;
 
 /**
  * Created by Adria Llorens on 24/03/2016.
  */
-public class GlobalReportMessage extends DpfMessage {
+public class StatisticsMessage extends DpfMessage {
 
-  private Long uuid;
-  private List<SmallIndividualReport> individuals;
-  private Configuration config;
-  private Date start;
-  private List<String> checkedIsos;
-
-  public GlobalReportMessage(Long u, List<SmallIndividualReport> i, Configuration c, Date s, List<String> ci) {
-    uuid = u;
-    individuals = i;
-    config = c;
-    start = s;
-    checkedIsos = ci;
+  public enum Type {
+    GENERATE, RENDER
   }
 
-  public List<SmallIndividualReport> getIndividuals() {
-    return individuals;
+  private Type type;
+  private StatisticsObject object;
+
+  public StatisticsMessage(Type t) {
+    type = t;
   }
 
-  public Configuration getConfig() {
-    return config;
+  public StatisticsMessage(Type t, StatisticsObject o) {
+    type = t;
+    object = o;
   }
 
-  public Long getUuid() {
-    return uuid;
+  public boolean isGenerate() {
+    return type.equals(Type.GENERATE);
   }
 
-  public Date getStart() {
-    return start;
-  }
-
-  public List<String> getCheckedIsos() {
-    return checkedIsos;
-  }
 }

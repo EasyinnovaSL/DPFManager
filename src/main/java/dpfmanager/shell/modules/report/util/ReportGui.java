@@ -20,6 +20,7 @@
 package dpfmanager.shell.modules.report.util;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.modules.report.core.GlobalReport;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 
@@ -71,6 +72,8 @@ public class ReportGui implements Comparable<ReportGui>{
   private Map<String, String> formats;
   private String delete;
   private String deletePath;
+
+  private GlobalReport globalReport;
 
   public ReportGui(String baseDir, String reportDay, String reportDir) {
     this.baseDir = baseDir;
@@ -129,8 +132,12 @@ public class ReportGui implements Comparable<ReportGui>{
     File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
     File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
     File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
+    File reportSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
 
-    if (reportXml.exists() && reportXml.length() > 0) {
+    if (reportSer.exists() && reportSer.length() > 0) {
+      createRowFromSer(reportDay, reportSer);
+    }
+    if (error && reportXml.exists() && reportXml.length() > 0) {
       createRowFromXml(reportDay, reportXml);
     }
     if (error && reportJson.exists() && reportJson.length() > 0) {
@@ -194,6 +201,37 @@ public class ReportGui implements Comparable<ReportGui>{
       return new String(encoded, encoding);
     } catch (Exception e) {
       return "";
+    }
+  }
+
+  /**
+   * Create report row from serialized GlobalReport Object
+   *
+   * @param reportDay the report day
+   * @param file      the file
+   * @return the report row
+   */
+  private void createRowFromSer(String reportDay, File file) {
+    try {
+      String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
+      GlobalReport gr = (GlobalReport) GlobalReport.read(file.getAbsolutePath());
+      if (gr == null) {
+        error = true;
+        return;
+      }
+
+      globalReport = gr;
+      int n = gr.getReportsCount();
+      String stime = getStime(timestamp);
+      String input = gr.getInputString();
+      int passed = gr.getAllReportsOk();
+      int errors = gr.getAllReportsKo();
+      int warnings = gr.getAllReportsWarnings();
+      int score = (n > 0) ? passed * 100 / n : 0;
+
+      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath());
+    } catch (Exception e) {
+      error = true;
     }
   }
 
@@ -638,6 +676,10 @@ public class ReportGui implements Comparable<ReportGui>{
 
   public void setLast(boolean last) {
     this.last = last;
+  }
+
+  public GlobalReport getGlobalReport() {
+    return globalReport;
   }
 
   /**

@@ -28,6 +28,7 @@ import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
+import dpfmanager.shell.modules.stadistics.messages.StatisticsMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -151,7 +152,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public void addReportGui(ReportGui row) {
     ManagedFragmentHandler<ReportFragment> handler = getModel().getReportGuiByUuid(row.getUuid());
     if (handler == null){
-      row.load();
       if (row.isLoaded()){
         handler = context.getManagedFragmentHandler(ReportFragment.class);
         getModel().addReportFragment(handler);
@@ -227,6 +227,11 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
     }
+  }
+
+  @FXML
+  protected void generateStadistics(ActionEvent event) throws Exception {
+    getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
   }
 
   @FXML

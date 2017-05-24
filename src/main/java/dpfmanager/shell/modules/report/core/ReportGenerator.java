@@ -645,17 +645,19 @@ public class ReportGenerator {
     String jsonFileStr = internalReportFolder + "summary.json";
     String htmlFileStr = internalReportFolder + "report.html";
     String pdfFileStr = internalReportFolder + "report.pdf";
-    reportXml.parseGlobal(xmlFileStr, gr);
 
+    gr.write(internalReportFolder, "summary.ser");
+
+    reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
     if (config.getFormats().contains("JSON")) {
       reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
     }
     if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
-      reportHtml.parseGlobal(htmlFileStr, gr, this);
+      reportHtml.parseGlobal(htmlFileStr, gr, gr.getIndividualReports(), this);
     }
     if (config.getFormats().contains("PDF")) {
-      reportPdf.parseGlobal(pdfFileStr, gr);
+      reportPdf.parseGlobal(pdfFileStr, gr, gr.getIndividualReports());
     }
     if (!config.getFormats().contains("XML")) {
       deleteFileOrFolder(new File(xmlFileStr));

@@ -19,16 +19,18 @@
 
 package dpfmanager.shell.modules.report.core;
 
-import org.apache.tools.ant.taskdefs.Local;
+import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +38,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * The Class GlobalReport.
  */
-public class GlobalReport {
+public class GlobalReport extends ReportSerializable {
+
+  /**
+   * Do not modify!
+   */
+  private static final long serialVersionUID = 7845L;
 
   /**
    * The isos to check
@@ -59,16 +66,24 @@ public class GlobalReport {
   private Map<String, Integer> nReportsOkPolicy;
 
   /**
-   * The isos to check
-   */
-  private List<String> isos;
-
-  /**
    * The isos checked
    */
-  private List<String> isosChecked;
+  private List<String> checkedIsos;
 
-  private double errVal;
+  /**
+   * The isos selected by configuration
+   */
+  private List<String> selectedIsos;
+
+  /**
+   * The invalidated rules for isos
+   */
+  private Map<String, ArrayList<String>> modifiedIsos;
+
+  /**
+   * The average error value
+   */
+  private double errVal = 12.5;
 
   /**
    * Instantiates a new global report.
@@ -77,18 +92,18 @@ public class GlobalReport {
     reports = new ArrayList<>();
     nReportsOk = new HashMap<>();
     nReportsOkPolicy = new HashMap<>();
-    isos = new ArrayList<>();
-    isosChecked = new ArrayList<>();
+    selectedIsos = new ArrayList<>();
+    checkedIsos = new ArrayList<>();
     errVal = 0;
   }
 
-  /**
-   * Gets isos.
-   *
-   * @return the isos
-   */
-  public List<String> getIsos() {
-    return isos;
+  public void init(Configuration c, List<String> ci) {
+    this.modifiedIsos = c.getModifiedIsos();
+    this.selectedIsos = c.getIsos();
+    if (c.hasRules()) {
+      selectedIsos.add(TiffConformanceChecker.POLICY_ISO);
+    }
+    this.checkedIsos = ci;
   }
 
   /**
@@ -97,9 +112,29 @@ public class GlobalReport {
    * @return the isos
    */
   public List<String> getCheckedIsos() {
-    return isosChecked;
+    return checkedIsos;
   }
 
+  /**
+   * Gets checked isos.
+   *
+   * @return the isos
+   */
+  public List<String> getSelectedIsos() {
+    return selectedIsos;
+  }
+
+  public boolean hasValidation(String key) {
+    return selectedIsos.contains(key);
+  }
+
+  public Map<String, ArrayList<String>> getModifiedIsos() {
+    return modifiedIsos;
+  }
+
+  public boolean hasModifiedIso(String iso) {
+    return modifiedIsos.containsKey(iso);
+  }
 
   /**
    * Add an individual report.
@@ -121,30 +156,31 @@ public class GlobalReport {
       if (ir.isError()) {
         toDelete.add(ir);
       } else {
-        for (String iso : ir.getCheckedIsos()) {
-          if (ir.hasValidation(iso)) {
-            if (ir.getNErrors(iso) == 0) {
-              if (nReportsOk.containsKey(iso)) {
-                nReportsOk.put(iso, nReportsOk.get(iso) + 1);
-              } else {
-                nReportsOk.put(iso, 1);
-              }
+        for (String iso : getCheckedIsos()) {
+          if (ir.getNErrors(iso) == 0) {
+            if (nReportsOk.containsKey(iso)) {
+              nReportsOk.put(iso, nReportsOk.get(iso) + 1);
+            } else {
+              nReportsOk.put(iso, 1);
             }
-            if (ir.getNErrorsPolicy(iso) == 0) {
-              if (nReportsOkPolicy.containsKey(iso)) {
-                nReportsOkPolicy.put(iso, nReportsOkPolicy.get(iso) + 1);
-              } else {
-                nReportsOkPolicy.put(iso, 1);
-              }
-            }
-            if (!isos.contains(iso)) isos.add(iso);
           }
-          if (!isosChecked.contains(iso)) isosChecked.add(iso);
+          if (ir.getNErrorsPolicy(iso) == 0) {
+            if (nReportsOkPolicy.containsKey(iso)) {
+              nReportsOkPolicy.put(iso, nReportsOkPolicy.get(iso) + 1);
+            } else {
+              nReportsOkPolicy.put(iso, 1);
+            }
+          }
         }
       }
     }
     // Delete reports with error
     reports.removeAll(toDelete);
+    // Error value and percent
+    errVal = computeAverageErrors();
+    for (SmallIndividualReport ir : reports) {
+      ir.computePercent(this);
+    }
   }
 
   /**
@@ -165,9 +201,9 @@ public class GlobalReport {
     int n = 0;
     for (SmallIndividualReport ir : reports) {
       boolean ok = true;
-      for (String iso : ir.getIsosCheck()) {
-        int size = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
-        if (ir.hasValidation(iso) && size > 0) {
+      for (String iso : getCheckedIsos()) {
+        int size = hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
+        if (hasValidation(iso) && size > 0) {
           ok = false;
         }
       }
@@ -184,7 +220,7 @@ public class GlobalReport {
   public int getAllReportsWarnings() {
     int n = 0;
     for (SmallIndividualReport rep : reports) {
-      for (String iso : rep.getIsosCheck()) {
+      for (String iso : getCheckedIsos()) {
         if (rep.getNWarnings(iso) > 0) {
           n++;
           break;
@@ -205,32 +241,14 @@ public class GlobalReport {
 
   public int getReportsOk(String iso) {
     return nReportsOk.containsKey(iso) ? nReportsOk.get(iso) : 0;
-//    int n = 0;
-//    for (SmallIndividualReport ir : reports) {
-//      if (ir.getNErrors(iso) == 0){
-//        n++;
-//      }
-//    }
-//    return n;
   }
 
   public int getReportsOkPolicy(String iso) {
     return nReportsOkPolicy.containsKey(iso) ? nReportsOkPolicy.get(iso) : 0;
-//    int n = 0;
-//    for (SmallIndividualReport ir : reports) {
-//      int size = ir.hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
-//      if (size == 0){
-//        n++;
-//      }
-//    }
-//    return n;
   }
 
   public boolean hasModificationIso(String iso) {
-    for (SmallIndividualReport ir : reports) {
-      return ir.hasModifiedIso(iso);
-    }
-    return false;
+    return hasModifiedIso(iso);
   }
 
   /**
@@ -239,23 +257,11 @@ public class GlobalReport {
    * @return the individual reports
    */
   public List<SmallIndividualReport> getIndividualReports() {
-    List<SmallIndividualReport> returned = new ArrayList<>();
-    SmallIndividualReport last = null;
-    for (SmallIndividualReport report : reports){
-      if (report.getFileName().endsWith("Bilevel.tif")){
-        last = report;
-      } else {
-        returned.add(report);
-      }
-    }
-    if (last != null){
-      returned.add(last);
-    }
-    return returned;
+    Collections.sort(reports);
+    return reports;
   }
 
   public double computeAverageErrors() {
-    if (errVal != 0) return errVal;
     int maxErrs = 0;
     for (SmallIndividualReport ir : getIndividualReports()) {
       int currentErrs = ir.getAllNErrorsPolicy();
@@ -271,30 +277,43 @@ public class GlobalReport {
     return errVal;
   }
 
+  public double getErrorValue(){
+    return errVal;
+  }
+
   public String prettyPrintDuration() {
-    String out = String.format("%02d:%02d:%02d.%02d",
+    return String.format("%02d:%02d:%02d.%02d",
         getDurationHours(),
         getDurationMinutes(),
         getDurationSeconds(),
         getDurationMillis()
     );
-    return out;
   }
 
-  public Long getDurationHours(){
+  public Long getDurationHours() {
     return TimeUnit.MILLISECONDS.toHours(duration);
   }
 
-  public Long getDurationMinutes(){
+  public Long getDurationMinutes() {
     return TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(duration));
   }
 
-  public Long getDurationSeconds(){
+  public Long getDurationSeconds() {
     return TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration));
   }
 
-  public Long getDurationMillis(){
-    return TimeUnit.MILLISECONDS.toMillis(duration)- TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(duration));
+  public Long getDurationMillis() {
+    return TimeUnit.MILLISECONDS.toMillis(duration) - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(duration));
   }
 
+  public String getInputString(){
+    String name = "";
+    int index = 0;
+    Iterator<SmallIndividualReport> it = reports.iterator();
+    while (it.hasNext() && index < 10){
+      SmallIndividualReport individual = it.next();
+      name = (name.length() > 0) ? name + ", " + individual.getFileName() : individual.getFileName();
+    }
+    return name;
+  }
 }

@@ -51,6 +51,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -160,7 +161,7 @@ public class HtmlReport extends Report {
       modeTh = 2;
     }
     String rows = "";
-    for (String iso : ir.getIsosCheck()) {
+    for (String iso : ir.getCheckedIsos()) {
       if (ir.hasValidation(iso)) {
         String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = rowTmpl;
@@ -215,7 +216,7 @@ public class HtmlReport extends Report {
     String tdTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
     rows = "";
     int count = 0;
-    for (String iso : ir.getIsosCheck()) {
+    for (String iso : ir.getCheckedIsos()) {
       if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
         String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
         String row = fullTmpl, icon;
@@ -422,7 +423,7 @@ public class HtmlReport extends Report {
     int ifdIndex = 0;
     while (ifd != null) {
       String typ = " - Main image";
-      if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize()) {
+      if (ifd.isThumbnail()) {
         typ = " - Thumbnail";
       }
       String aIni = "";
@@ -437,7 +438,7 @@ public class HtmlReport extends Report {
       ul += "<li><i class=\"fa fa-file-image-o\"></i>" + aIni + aBody + aEnd;
       if (ifd.getsubIFD() != null) {
         typ = "";
-        if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Main image";
+        if (!ifd.getsubIFD().isThumbnail()) typ = " - Main image";
         else typ = " - Thumbnail";
         ul += "<ul><li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick=\"showTagsDiv('sub" + index + "')\" id='lisub" + index + "'>SubIFD" + typ + "</a></li></ul>";
       }
@@ -482,14 +483,14 @@ public class HtmlReport extends Report {
       IPTC iptc = null;
       if (tdifd.containsTagId(TiffTags.getTagId("XMP"))) {
         try {
-          xmp = (XMP) tdifd.getTag("XMP").getValue().get(0);
+          xmp = (XMP) tdifd.getTag("XMP").getReadValue().get(0);
         } catch (Exception ex) {
           xmp = null;
         }
       }
       if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) {
         try {
-          iptc = (IPTC) tdifd.getTag("IPTC").getValue().get(0);
+          iptc = (IPTC) tdifd.getTag("IPTC").getReadValue().get(0);
         } catch (Exception ex) {
           iptc = null;
         }
@@ -529,12 +530,12 @@ public class HtmlReport extends Report {
     /**
      * Parse TAGs
      */
-    for (ReportTag tag : getTags(ir)) {
+    for (ReportTag tag : ir.getTags()) {
       if (tag.tv.getId() == 700) {
         String mapId = "xmp" + tag.index;
         String mapIdH = "xmp" + tag.index + "h";
         // XMP
-        for (abstractTiffType to : tag.tv.getValue()) {
+        for (abstractTiffType to : tag.tv.getReadValue()) {
           XMP xmp = (XMP) to;
           try {
             Metadata metadata = xmp.createMetadata();
@@ -570,11 +571,11 @@ public class HtmlReport extends Report {
         // EXIF
         String mapId = "exi" + tag.index;
         try {
-          abstractTiffType obj = tag.tv.getValue().get(0);
+          abstractTiffType obj = tag.tv.getReadValue().get(0);
           if (obj instanceof IFD) {
             IFD exif = (IFD) obj;
             for (TagValue tv : exif.getTags().getTags()) {
-              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>" + tv.getId() + "</td><td>" + (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getDescriptiveValue() + "</td></tr>";
+              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>" + tv.getId() + "</td><td>" + (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getReadValue().get(0) + "</td></tr>";
               row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
@@ -589,10 +590,10 @@ public class HtmlReport extends Report {
       if (tag.tv.getId() == 330) {
         // Sub IFD
         String mapId = "sub" + tag.index;
-        IFD sub = (IFD) tag.tv.getValue().get(0);
+        IFD sub = (IFD) tag.tv.getReadValue().get(0);
         for (TagValue tv : sub.getTags().getTags()) {
           String expert = "";
-          if (!showTag(tv)) {
+          if (!ir.showTag(tv)) {
             expert = "expert";
             hasExpert.put(mapId, true);
           }
@@ -600,7 +601,7 @@ public class HtmlReport extends Report {
           row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
           row = row.replace("##ID##", tv.getId() + "");
           row = row.replace("##KEY##", (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()));
-          row = row.replace("##VALUE##", tv.getDescriptiveValue());
+          row = row.replace("##VALUE##", tv.getFirstTextReadValue());
           String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
           tagsMap.put(mapId, rows + row);
         }
@@ -609,7 +610,7 @@ public class HtmlReport extends Report {
       if (tag.tv.getId() == 33723) {
         String mapId = "ipt" + tag.index;
         // IPTC
-        for (abstractTiffType to : tag.tv.getValue()) {
+        for (abstractTiffType to : tag.tv.getReadValue()) {
           try {
             IPTC iptc = (IPTC) to;
             Metadata metadata = iptc.createMetadata();
@@ -639,7 +640,7 @@ public class HtmlReport extends Report {
       row = row.replace("##ICON##", "<i class=\"image-default icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()));
-      String val = tag.tv.getDescriptiveValue();
+      String val = tag.tv.getFirstTextReadValue();
       if (val.length() > 200)
         val = val.substring(0, 200) + "...";
       row = row.replace("##VALUE##", val);

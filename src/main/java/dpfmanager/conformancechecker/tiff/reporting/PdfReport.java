@@ -377,7 +377,7 @@ public class PdfReport extends Report {
             else if (tag.dif > 0) sDif = "(+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
             pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId() + "") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
-            pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+            pdfParams = writeText(pdfParams, tag.tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
           }
         }
         /**
@@ -396,7 +396,7 @@ public class PdfReport extends Report {
             else if (tag.dif > 0) sDif = "(+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
             pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId() + "") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
-            pdfParams = writeText(pdfParams, tag.tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+            pdfParams = writeText(pdfParams, tag.tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
           }
         }
         /**
@@ -409,12 +409,12 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 40, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
-            IFD sub = (IFD) tag.tv.getValue().get(0);
+            IFD sub = (IFD) tag.tv.getReadValue().get(0);
             for (TagValue tv : sub.getTags().getTags()) {
               pdfParams.y -= 15;
               pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
               pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
-              pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+              pdfParams = writeText(pdfParams, tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
             }
           }
         }
@@ -429,15 +429,15 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 40, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
-            if (tag.tv.getValue().size() > 0) {
-              abstractTiffType obj = tag.tv.getValue().get(0);
+            if (tag.tv.getReadValue().size() > 0) {
+              abstractTiffType obj = tag.tv.getReadValue().get(0);
               if (obj instanceof IFD) {
                 IFD exif = (IFD) obj;
                 for (TagValue tv : exif.getTags().getTags()) {
                   pdfParams.y -= 15;
                   pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
                   pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
-                  pdfParams = writeText(pdfParams, tv.getDescriptiveValue(), pos_x + margins[2], font, font_size);
+                  pdfParams = writeText(pdfParams, tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
                 }
               }
             }
@@ -454,8 +454,8 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Name", "Value"), margins);
-            if (tag.tv.getValue().size() > 0) {
-              abstractTiffType obj = tag.tv.getValue().get(0);
+            if (tag.tv.getReadValue().size() > 0) {
+              abstractTiffType obj = tag.tv.getReadValue().get(0);
               if (obj instanceof IPTC) {
                 IPTC iptc = (IPTC) obj;
                 Metadata metadata = iptc.createMetadata();
@@ -480,8 +480,8 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("Name", "Value"), margins);
-            if (tag.tv.getValue().size() > 0) {
-              XMP xmp = (XMP) tag.tv.getValue().get(0);
+            if (tag.tv.getReadValue().size() > 0) {
+              XMP xmp = (XMP) tag.tv.getReadValue().get(0);
               Metadata metadata = xmp.createMetadata();
               for (String xKey : metadata.keySet()) {
                 pdfParams.y -= 15;
@@ -570,7 +570,7 @@ public class PdfReport extends Report {
       pdfParams.y -= 40;
       font_size = 10;
       pdfParams = writeTitle(pdfParams, "Conformance checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
-      for (String iso : ir.getIsosCheck()) {
+      for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
           pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, false);
         }
@@ -582,7 +582,7 @@ public class PdfReport extends Report {
       pdfParams.y -= 40;
       font_size = 10;
       pdfParams = writeTitle(pdfParams, "Policy checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
-      for (String iso : ir.getIsosCheck()) {
+      for (String iso : ir.getCheckedIsos()) {
         if (ir.hasValidation(iso) && ir.hasModifiedIso(iso)) {
           pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, true);
         }
