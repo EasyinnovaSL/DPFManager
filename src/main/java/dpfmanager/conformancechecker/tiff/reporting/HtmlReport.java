@@ -601,7 +601,7 @@ public class HtmlReport extends Report {
           row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
           row = row.replace("##ID##", tv.getId() + "");
           row = row.replace("##KEY##", (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()));
-          row = row.replace("##VALUE##", tv.getReadValue().get(0).toString());
+          row = row.replace("##VALUE##", tv.getFirstTextReadValue());
           String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
           tagsMap.put(mapId, rows + row);
         }
@@ -640,7 +640,7 @@ public class HtmlReport extends Report {
       row = row.replace("##ICON##", "<i class=\"image-default icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()));
-      String val = tag.tv.getReadValue().get(0).toString();
+      String val = tag.tv.getFirstTextReadValue();
       if (val.length() > 200)
         val = val.substring(0, 200) + "...";
       row = row.replace("##VALUE##", val);

@@ -742,7 +742,7 @@ public class XmlReport extends Report {
           String tagname = tag.tv.getName().replace(" ", "");
           if (tagname.equals(tag.tv.getId() + "")) tagname = "Undefined" + tagname;
           infoElement = doc.createElement(tagname);
-          String val = tag.tv.getReadValue().get(0).toString().replaceAll("\\p{C}", "?");
+          String val = tag.tv.getFirstTextReadValue().replaceAll("\\p{C}", "?");
           if (val.length() > 500) val = val.substring(0, 500) + "...";
 
           infoElement.setTextContent(val);

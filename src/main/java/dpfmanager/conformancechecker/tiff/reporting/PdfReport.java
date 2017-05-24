@@ -377,7 +377,7 @@ public class PdfReport extends Report {
             else if (tag.dif > 0) sDif = "(+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
             pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId() + "") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
-            pdfParams = writeText(pdfParams, tag.tv.getReadValue().get(0).toString(), pos_x + margins[2], font, font_size);
+            pdfParams = writeText(pdfParams, tag.tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
           }
         }
         /**
@@ -396,7 +396,7 @@ public class PdfReport extends Report {
             else if (tag.dif > 0) sDif = "(+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
             pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId() + "") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
-            pdfParams = writeText(pdfParams, tag.tv.getReadValue().get(0).toString(), pos_x + margins[2], font, font_size);
+            pdfParams = writeText(pdfParams, tag.tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
           }
         }
         /**
@@ -414,7 +414,7 @@ public class PdfReport extends Report {
               pdfParams.y -= 15;
               pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
               pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
-              pdfParams = writeText(pdfParams, tv.getReadValue().get(0).toString(), pos_x + margins[2], font, font_size);
+              pdfParams = writeText(pdfParams, tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
             }
           }
         }
@@ -437,7 +437,7 @@ public class PdfReport extends Report {
                   pdfParams.y -= 15;
                   pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
                   pdfParams = writeText(pdfParams, (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()), pos_x + margins[1], font, font_size);
-                  pdfParams = writeText(pdfParams, tv.getReadValue().get(0).toString(), pos_x + margins[2], font, font_size);
+                  pdfParams = writeText(pdfParams, tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
                 }
               }
             }
