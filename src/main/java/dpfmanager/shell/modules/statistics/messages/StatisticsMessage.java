@@ -17,10 +17,10 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.modules.stadistics.messages;
+package dpfmanager.shell.modules.statistics.messages;
 
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.stadistics.core.StatisticsObject;
+import dpfmanager.shell.modules.statistics.core.StatisticsObject;
 
 /**
  * Created by Adria Llorens on 24/03/2016.
@@ -43,8 +43,16 @@ public class StatisticsMessage extends DpfMessage {
     object = o;
   }
 
+  public StatisticsObject getStatisticsObject() {
+    return object;
+  }
+
   public boolean isGenerate() {
     return type.equals(Type.GENERATE);
+  }
+
+  public boolean isRender() {
+    return type.equals(Type.RENDER);
   }
 
 }

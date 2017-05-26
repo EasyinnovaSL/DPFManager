@@ -697,15 +697,15 @@ public class IndividualReport extends ReportSerializable {
     if (tag.tv.getId() == 34665) {
       // EXIF
       try {
-        abstractTiffType obj = tag.tv.getValue().get(0);
+        abstractTiffType obj = tag.tv.getReadValue().get(0);
         if (obj instanceof IFD) {
           IFD exif = (IFD) obj;
           for (TagValue tv : exif.getTags().getTags()) {
             ReportTag rTag = new ReportTag();
-            tag.index = index;
-            tag.tv = tv;
-            tag.thumbnail = isThumbnail;
-            if (!showTag(tv)) tag.expert = true;
+            rTag.index = index;
+            rTag.tv = tv;
+            rTag.thumbnail = isThumbnail;
+            if (!showTag(tv)) rTag.expert = true;
             subTagsList.add(rTag);
           }
         }
@@ -715,14 +715,14 @@ public class IndividualReport extends ReportSerializable {
       }
     } else if (tag.tv.getId() == 330) {
       // Sub IFD
-      IFD sub = (IFD) tag.tv.getValue().get(0);
+      IFD sub = (IFD) tag.tv.getReadValue().get(0);
       boolean isThumbnailSub = sub.isThumbnail();
       for (TagValue tv : sub.getTags().getTags()) {
         ReportTag rTag = new ReportTag();
-        tag.index = index;
-        tag.tv = tv;
-        tag.thumbnail = isThumbnailSub;
-        if (!showTag(tv)) tag.expert = true;
+        rTag.index = index;
+        rTag.tv = tv;
+        rTag.thumbnail = isThumbnailSub;
+        if (!showTag(tv)) rTag.expert = true;
         subTagsList.add(rTag);
       }
     }

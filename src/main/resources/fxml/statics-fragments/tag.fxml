@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import java.lang.String?>
+
+<AnchorPane fx:id="mainPane" prefWidth="840.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+          <GridPane fx:id="gridPane" hgap="2.0" onMouseClicked="#onGridPaneClicked">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+              </rowConstraints>
+              <children>
+                  <Label fx:id="tagId" styleClass="lightgrey" text="Tag ID" />
+                  <Label fx:id="tagName" styleClass="lightgrey" text="Tag Name" GridPane.columnIndex="1" />
+                  <GridPane GridPane.columnIndex="2">
+                      <columnConstraints>
+                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                      <children>
+                          <Label fx:id="tagMain" styleClass="lightgrey" text="Count Main" />
+                          <Label fx:id="tagMainPercent" styleClass="lightgrey" text="Percent Main" GridPane.columnIndex="1" />
+                          <ProgressBar fx:id="progressMain" progress="0.0" GridPane.columnIndex="2">
+                              <styleClass>
+                                  <String fx:value="dpf-progress-bar" />
+                                  <String fx:value="light-bar" />
+                              </styleClass>
+                          </ProgressBar>
+                      </children>
+                  </GridPane>
+                  <GridPane GridPane.columnIndex="3">
+                      <columnConstraints>
+                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                      <children>
+                          <Label fx:id="tagThumb" styleClass="lightgrey" text="Count Thumb" />
+                          <Label fx:id="tagThumbPercent" styleClass="lightgrey" text="Percent Main" GridPane.columnIndex="1" />
+                          <ProgressBar fx:id="progressThumb" progress="0.0" GridPane.columnIndex="2">
+                              <styleClass>
+                                  <String fx:value="dpf-progress-bar" />
+                                  <String fx:value="light-bar" />
+                              </styleClass>
+                          </ProgressBar>
+                      </children>
+                  </GridPane>
+              </children>
+            <padding>
+               <Insets left="5.0" right="5.0" />
+            </padding>
+          </GridPane>
+          <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" />
+      </children>
+   </VBox>
+</AnchorPane>
