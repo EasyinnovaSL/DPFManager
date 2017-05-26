@@ -1,4 +1,4 @@
-package dpfmanager.shell.modules.stadistics.model;
+package dpfmanager.shell.modules.statistics.model;
 
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 
@@ -7,17 +7,16 @@ import com.easyinnova.tiff.model.TagValue;
 /**
  * Created by Adrià Llorens on 23/05/2017.
  */
-public class HistogramTag {
+public class StatisticsIso {
 
-  public TagValue tv;
+  public Integer errors;
+  public Integer warnings;
   public Integer count;
 
-  public HistogramTag(ReportTag tag){
-    tv = tag.tv;
+  public StatisticsIso(){
+    errors = 0;
+    warnings = 0;
     count = 0;
   }
 
-  public void increaseCount(){
-    count++;
-  }
 }

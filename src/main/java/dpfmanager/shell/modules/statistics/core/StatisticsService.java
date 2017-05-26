@@ -17,14 +17,16 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.modules.stadistics.core;
+package dpfmanager.shell.modules.statistics.core;
 
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -56,7 +58,7 @@ public class StatisticsService extends DpfService {
     for (IndividualReport ir : loadIndividualReportsFromDir()) {
       so.parseIndividualReport(ir);
     }
-    so.printResults();
+    getContext().send(GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.RENDER, so));
   }
 
   private List<GlobalReport> loadGlobalReportsFromDir() {
@@ -95,12 +97,12 @@ public class StatisticsService extends DpfService {
           String reportDir = directoriesDay[j];
           File reportDirFile = new File(baseDir + "/" + reportDay + "/" + reportDir + "/serialized");
           String[] serializedReports = reportDirFile.list((current, name) -> new File(current, name).isFile());
+          if (serializedReports == null) continue;
           for (int k = 0; k < serializedReports.length; k++) {
             String reportSer = serializedReports[k];
             IndividualReport ir = (IndividualReport) IndividualReport.read(baseDir + "/" + reportDay + "/" + reportDir + "/serialized/" + reportSer);
             if (ir != null) {
               irList.add(ir);
-              System.out.println("Load");
             }
           }
         }

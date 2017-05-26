@@ -23,12 +23,15 @@ import dpfmanager.shell.core.adapter.DpfSimpleView;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.interfaces.gui.fragment.statics.StatisticsFragment;
 import javafx.event.Event;
 import javafx.scene.Node;
 
+import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.message.Message;
 import org.jacpfx.rcp.component.FXComponent;
 import org.jacpfx.rcp.componentLayout.PerspectiveLayout;
+import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 
 /**
  * Created by Adria Llorens on 07/03/2016.

@@ -30,6 +30,7 @@ public class GuiConfig {
     public static final String PERSPECTIVE_SHOW = "p006";
     public static final String PERSPECTIVE_PERIODICAL = "p007";
     public static final String PERSPECTIVE_INTEROPERABILITY  = "p008";
+    public static final String PERSPECTIVE_STATISTICS  = "p009";
 
     /** Components */
     public static final String COMPONENT_TOP = "id001";
@@ -43,6 +44,7 @@ public class GuiConfig {
     public static final String COMPONENT_BAR = "id009";
     public static final String COMPONENT_PERIODICAL = "id010";
     public static final String COMPONENT_INTEROPERABILITY = "id011";
+    public static final String COMPONENT_STATISTICS = "id012";
 
     /** Target containers */
     public static final String TARGET_CONTAINER_TOP = "tc001";
@@ -56,6 +58,7 @@ public class GuiConfig {
     public static final String TARGET_CONTAINER_BAR = "tc009";
     public static final String TARGET_CONTAINER_PERIODICAL = "tc010";
     public static final String TARGET_CONTAINER_INTEROPERABILITY = "tc011";
+    public static final String TARGET_CONTAINER_STATISTICS = "tc012";
 
     /** Fragments */
     public static final String FRAGMENT_BOTTOM = "f001";
@@ -72,4 +75,7 @@ public class GuiConfig {
     public static final String FRAGMENT_CCBOX = "f012";
     public static final String FRAGMENT_WIZARD_6 = "f013";
     public static final String FRAGMENT_REPORT = "f014";
+    public static final String FRAGMENT_STATISTICS = "f015";
+    public static final String FRAGMENT_TAG = "f016";
+    public static final String FRAGMENT_AVERAGE = "f017";
 }

@@ -17,15 +17,15 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.modules.stadistics;
+package dpfmanager.shell.modules.statistics;
 
 import dpfmanager.shell.core.adapter.DpfSpringController;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.stadistics.core.StatisticsService;
-import dpfmanager.shell.modules.stadistics.messages.StatisticsMessage;
+import dpfmanager.shell.modules.statistics.core.StatisticsService;
+import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

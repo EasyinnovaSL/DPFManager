@@ -26,9 +26,12 @@ import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
+import dpfmanager.shell.interfaces.gui.fragment.statics.TagFragment;
+import dpfmanager.shell.interfaces.gui.fragment.statics.StatisticsFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
-import dpfmanager.shell.modules.stadistics.messages.StatisticsMessage;
+import dpfmanager.shell.modules.statistics.core.StatisticsObject;
+import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -38,6 +41,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -71,12 +75,16 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   // New view elements
   @FXML
   private VBox mainVBox;
+  @FXML
+  private AnchorPane paneStatistics;
 
   // View elements
   @FXML
   private VBox reportsVbox;
   @FXML
   private Button loadMore;
+  @FXML
+  private Button genStatistics;
   @FXML
   private VBox vboxReports;
   @FXML
@@ -207,6 +215,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     NodeUtil.hideNode(vboxReports);
     NodeUtil.hideNode(labelEmpty);
     NodeUtil.hideNode(loadMore);
+    NodeUtil.hideNode(genStatistics);
     NodeUtil.hideNode(hboxSize);
   }
 
@@ -218,14 +227,17 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(labelEmpty);
       NodeUtil.hideNode(hboxSize);
+      NodeUtil.hideNode(genStatistics);
     } else if (getModel().isAllReportsLoaded()) {
       NodeUtil.hideNode(labelEmpty);
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(hboxSize);
+      NodeUtil.showNode(genStatistics);
     } else {
       NodeUtil.showNode(loadMore);
       NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
+      NodeUtil.showNode(genStatistics);
     }
   }
 
