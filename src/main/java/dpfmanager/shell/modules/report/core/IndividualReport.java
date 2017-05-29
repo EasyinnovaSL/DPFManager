@@ -110,13 +110,13 @@ public class IndividualReport extends ReportSerializable {
   /**
    * Data precomputed for write
    */
-  private PDDocument pdf;
+  private transient PDDocument pdf;
 
-  private String conformanceCheckerReport = null;
+  private transient String conformanceCheckerReport = null;
 
-  private String conformanceCheckerReportHtml = null;
+  private transient String conformanceCheckerReportHtml = null;
 
-  private String conformanceCheckerReportMets = null;
+  private transient String conformanceCheckerReportMets = null;
 
   /**
    * Extra check information

@@ -59,7 +59,7 @@ public class IsosTest extends CommandLineTest {
 
       String path = ReportGenerator.createReportPath(true);
       File directori = new File(path);
-      assertEquals(2, directori.list().length);
+      assertEquals(4, directori.list().length);
 
       // Conforms table
       byte[] encoded = Files.readAllBytes(Paths.get(path + "/report.html"));
