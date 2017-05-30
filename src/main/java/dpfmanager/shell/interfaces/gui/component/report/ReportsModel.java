@@ -126,6 +126,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     }
     if (loaded == 0) {
       getView().hideLoading();
+      getView().calculateMinHeight();
     }
   }
 

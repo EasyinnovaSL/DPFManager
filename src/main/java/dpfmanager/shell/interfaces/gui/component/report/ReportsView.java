@@ -37,6 +37,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -74,6 +75,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   private VBox mainVBox;
   @FXML
   private AnchorPane paneStatistics;
+  @FXML
+  private ScrollPane scrollPane;
 
   // View elements
   @FXML
@@ -165,6 +168,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       mainVBox.getChildren().add(handler.getFragmentNode());
       hideLoading();
     }
+    calculateMinHeight();
   }
 
   private void deleteReportGui(String uuid) {
@@ -230,6 +234,15 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
     }
+  }
+
+  public void calculateMinHeight(){
+    int currentRows = mainVBox.getChildren().size();
+    int rows = (currentRows > 16) ? 16 : currentRows;
+    int height = 2 + rows * 30;
+    scrollPane.setMinHeight(height);
+    scrollPane.setMaxHeight(height);
+    scrollPane.setPrefHeight(height);
   }
 
   @FXML
