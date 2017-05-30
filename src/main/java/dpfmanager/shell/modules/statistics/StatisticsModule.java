@@ -52,7 +52,7 @@ public class StatisticsModule extends DpfModule {
   public void handleMessage(DpfMessage dpfMessage) {
     StatisticsMessage message = dpfMessage.getTypedMessage(StatisticsMessage.class);
     if (message.isGenerate()){
-      service.generateStadistics();
+      service.generateStatistics(message.getFrom(), message.getTo(), message.getPath());
     }
   }
 

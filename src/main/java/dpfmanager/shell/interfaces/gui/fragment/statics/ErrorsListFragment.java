@@ -24,6 +24,7 @@ import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.statistics.StatisticsView;
 import dpfmanager.shell.modules.statistics.model.StatisticsError;
 import dpfmanager.shell.modules.statistics.model.StatisticsIsoErrors;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -35,6 +36,7 @@ import javafx.scene.layout.VBox;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
+import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
 import java.util.List;
@@ -59,6 +61,8 @@ public class ErrorsListFragment {
   @FXML
   private VBox vboxRows;
   @FXML
+  private ScrollPane scrollPane;
+  @FXML
   private Label labelTitle;
 
   /** the internal Statistics Error object */
@@ -69,6 +73,24 @@ public class ErrorsListFragment {
     labelTitle.setText(sIsoErrors.name);
     vboxRows.getChildren().addAll(rows);
     hide();
+  }
+
+  public void calculateMinHeight() {
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        Double maxHeight = 2.0;
+        int count = 0;
+        for (Node node : vboxRows.getChildren()){
+          if (count > StatisticsView.MAX_ROWS_ERRORS) break;
+          AnchorPane anchor = (AnchorPane) node;
+          maxHeight += anchor.getHeight();
+          count++;
+        }
+        scrollPane.setMinHeight(maxHeight);
+        scrollPane.setMaxHeight(maxHeight);
+      }
+    });
   }
 
   public void show(){

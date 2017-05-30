@@ -87,8 +87,8 @@ public class TagFragment {
 
   public void init(HistogramTag h, Integer mainImages, Integer thumbnails) {
     hTag = h;
-    Double mainPercentOne = (1.0 * hTag.getMainCount()) / (1.0 * mainImages);
-    Double thumbPercentOne = (1.0 * hTag.getThumbCount()) / (1.0 * thumbnails);
+    Double mainPercentOne = (mainImages > 0) ? (1.0 * hTag.getMainCount()) / (1.0 * mainImages) : 0.0;
+    Double thumbPercentOne = (thumbnails > 0) ? (1.0 * hTag.getThumbCount()) / (1.0 * thumbnails) : 0.0;
 
     tagId.setText(String.valueOf(hTag.getValue().getId()));
     tagName.setText(hTag.getValue().getName());

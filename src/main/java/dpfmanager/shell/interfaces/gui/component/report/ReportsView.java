@@ -81,8 +81,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   @FXML
   private Button loadMore;
   @FXML
-  private Button genStatistics;
-  @FXML
   private VBox vboxReports;
   @FXML
   private Label labelEmpty;
@@ -212,7 +210,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     NodeUtil.hideNode(vboxReports);
     NodeUtil.hideNode(labelEmpty);
     NodeUtil.hideNode(loadMore);
-    NodeUtil.hideNode(genStatistics);
     NodeUtil.hideNode(hboxSize);
   }
 
@@ -224,23 +221,15 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(labelEmpty);
       NodeUtil.hideNode(hboxSize);
-      NodeUtil.hideNode(genStatistics);
     } else if (getModel().isAllReportsLoaded()) {
       NodeUtil.hideNode(labelEmpty);
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(hboxSize);
-      NodeUtil.showNode(genStatistics);
     } else {
       NodeUtil.showNode(loadMore);
       NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
-      NodeUtil.showNode(genStatistics);
     }
-  }
-
-  @FXML
-  protected void generateStadistics(ActionEvent event) throws Exception {
-    getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
   }
 
   @FXML

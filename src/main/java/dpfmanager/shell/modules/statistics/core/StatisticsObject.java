@@ -68,6 +68,11 @@ public class StatisticsObject {
   private Integer thumbnailsCount;
 
   /**
+   * The files total size
+   */
+  private Long totalSize;
+
+  /**
    * Statistics per ISOs
    */
   private Map<String, StatisticsIso> isos;
@@ -96,6 +101,7 @@ public class StatisticsObject {
     thumbnailsCount = 0;
     reportsCount = 0;
     tiffsCount = 0;
+    totalSize = 0L;
     // Load tags from dictionary
     try{
       TiffTags.getTiffTags();
@@ -110,6 +116,7 @@ public class StatisticsObject {
     mainImagesCount += ir.getTiffModel().getMainImagesCount();
     thumbnailsCount += ir.getTiffModel().getThumbnailsImagesCount();
     tiffsCount++;
+    totalSize += ir.getTiffModel().getSize();
   }
 
   private void parseErrors(IndividualReport ir){
@@ -136,7 +143,9 @@ public class StatisticsObject {
   private void parseIsoErrors(IndividualReport ir, String isoId, StatisticsIso sIso){
     StatisticsIsoErrors sIsoErrors = sIso.getIsoErrors();
     for (RuleResult rr : ir.getKORuleResults(isoId)) {
-      sIsoErrors.addError(rr);
+      if (!rr.getInfo()) {
+        sIsoErrors.addError(rr);
+      }
     }
     isoErrors.put(isoId, sIsoErrors);
   }
@@ -212,6 +221,10 @@ public class StatisticsObject {
 
   public Map<String, StatisticsIsoErrors> getIsoErrors() {
     return isoErrors;
+  }
+
+  public Long getTotalSize() {
+    return totalSize;
   }
 
   /**

@@ -54,10 +54,6 @@
                 <padding>
                     <Insets left="5.0" right="5.0" />
                 </padding>
-            <styleClass>
-               <String fx:value="hoverRow" />
-               <String fx:value="clickable" />
-            </styleClass>
             </GridPane>
             <StackPane fx:id="line" maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" />
         </children>

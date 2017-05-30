@@ -27,7 +27,14 @@ public class ReportSerializable implements Serializable {
    */
   private static final long serialVersionUID = 6625L;
 
+  private Integer version;
+
+  public Integer getVersion(){
+    return version;
+  }
+
   public void write(String internal, String filename){
+    version = 1;
     try {
       File internalFile = new File(internal);
       if (!internalFile.exists()) internalFile.mkdirs();

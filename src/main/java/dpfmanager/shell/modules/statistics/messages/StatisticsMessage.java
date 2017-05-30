@@ -22,6 +22,8 @@ package dpfmanager.shell.modules.statistics.messages;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.statistics.core.StatisticsObject;
 
+import java.time.LocalDate;
+
 /**
  * Created by Adria Llorens on 24/03/2016.
  */
@@ -33,11 +35,19 @@ public class StatisticsMessage extends DpfMessage {
 
   private Type type;
   private StatisticsObject object;
+  private LocalDate from;
+  private LocalDate to;
+  private String path;
 
-  public StatisticsMessage(Type t) {
+  // Generate
+  public StatisticsMessage(Type t, LocalDate f, LocalDate t2, String p) {
     type = t;
+    from = f;
+    to = t2;
+    path = p;
   }
 
+  // Render
   public StatisticsMessage(Type t, StatisticsObject o) {
     type = t;
     object = o;
@@ -45,6 +55,18 @@ public class StatisticsMessage extends DpfMessage {
 
   public StatisticsObject getStatisticsObject() {
     return object;
+  }
+
+  public LocalDate getFrom() {
+    return from;
+  }
+
+  public LocalDate getTo() {
+    return to;
+  }
+
+  public String getPath() {
+    return path;
   }
 
   public boolean isGenerate() {

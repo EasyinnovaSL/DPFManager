@@ -26,12 +26,20 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +52,8 @@ import javax.annotation.PostConstruct;
 @Scope("singleton")
 public class StatisticsService extends DpfService {
 
+  private List<String> repeatedList;
+
   @PostConstruct
   public void init() {
     // No context yet
@@ -53,16 +63,17 @@ public class StatisticsService extends DpfService {
   protected void handleContext(DpfContext context) {
   }
 
-  public void generateStadistics() {
+  public void generateStatistics(LocalDate from, LocalDate to, String path) {
+    repeatedList = new ArrayList<>();
     StatisticsObject so = new StatisticsObject();
-    so.setReportsCount(countGlobalReportsFromDir());
-    for (IndividualReport ir : loadIndividualReportsFromDir()) {
+    so.setReportsCount(countGlobalReportsFromDir(from, to, path));
+    for (IndividualReport ir : loadIndividualReportsFromDir(from, to, path)) {
       so.parseIndividualReport(ir);
     }
     getContext().send(GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.RENDER, so));
   }
 
-  private Integer countGlobalReportsFromDir() {
+  private Integer countGlobalReportsFromDir(LocalDate from, LocalDate to, String search) {
     int count = 0;
     String baseDir = ReportGenerator.getReportsFolder();
     File reportsDir = new File(baseDir);
@@ -75,8 +86,11 @@ public class StatisticsService extends DpfService {
         for (int j = 0; j < directoriesDay.length; j++) {
           String reportDir = directoriesDay[j];
           File serializedGlobalFile = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
-          if (serializedGlobalFile.exists()){
-            count++;
+          if (serializedGlobalFile.exists() && complainsDate(serializedGlobalFile, from, to)){
+            GlobalReport gr = (GlobalReport) GlobalReport.read(serializedGlobalFile.getAbsolutePath());
+            if (gr != null && complainsPath(gr, search)) {
+              count++;
+            }
           }
         }
       }
@@ -84,7 +98,7 @@ public class StatisticsService extends DpfService {
     return count;
   }
 
-  private List<IndividualReport> loadIndividualReportsFromDir() {
+  private List<IndividualReport> loadIndividualReportsFromDir(LocalDate from, LocalDate to, String search) {
     List<IndividualReport> irList = new ArrayList<>();
     String baseDir = ReportGenerator.getReportsFolder();
     File reportsDir = new File(baseDir);
@@ -101,15 +115,65 @@ public class StatisticsService extends DpfService {
           if (serializedReports == null) continue;
           for (int k = 0; k < serializedReports.length; k++) {
             String reportSer = serializedReports[k];
-            IndividualReport ir = (IndividualReport) IndividualReport.read(baseDir + "/" + reportDay + "/" + reportDir + "/serialized/" + reportSer);
-            if (ir != null) {
-              irList.add(ir);
+            File serializedIndividualFile = new File(baseDir + "/" + reportDay + "/" + reportDir + "/serialized/" + reportSer);
+            if (serializedIndividualFile.exists() && complainsDate(serializedIndividualFile, from, to)){
+              IndividualReport ir = (IndividualReport) IndividualReport.read(baseDir + "/" + reportDay + "/" + reportDir + "/serialized/" + reportSer);
+              if (ir != null && complainsPath(ir, search) && complainsRepeated(ir)) {
+                irList.add(ir);
+              }
             }
           }
         }
       }
     }
     return irList;
+  }
+
+  private Long getTimestamp(File file) {
+    try {
+      BasicFileAttributes attr = Files.readAttributes(Paths.get(file.getPath()), BasicFileAttributes.class);
+      return attr.creationTime().toMillis();
+    } catch (Exception e) {
+      return 0L;
+    }
+  }
+
+  /**
+   * Filters
+   */
+  private boolean complainsDate(File file, LocalDate from, LocalDate to){
+    Long timestamp = getTimestamp(file);
+    LocalDate date = Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDate();
+    return (to == null || date.isBefore(to) || date.isEqual(to))
+        && (from == null || date.isAfter(from) || date.isEqual(from));
+  }
+
+  private boolean complainsPath(GlobalReport gr, String search){
+    for(SmallIndividualReport ir : gr.getIndividualReports()){
+      String path = ir.getFilePath();
+      if (complainsPath(path, search)) return true;
+    }
+    return false;
+  }
+
+  private boolean complainsPath(IndividualReport ir, String search){
+    String path = ir.getFilePath();
+    return complainsPath(path, search);
+  }
+
+  private boolean complainsPath(String path, String search){
+    if (search == null) return true;
+    String normalizedPath = path.replaceAll("\\\\","/");
+    String normalizedSearch = search.replaceAll("\\\\", "/");
+    return normalizedPath.contains(normalizedSearch);
+  }
+
+  private boolean complainsRepeated(IndividualReport ir){
+    if (repeatedList.contains(ir.getFilePath())){
+      return false;
+    }
+    repeatedList.add(ir.getFilePath());
+    return true;
   }
 
 }

@@ -36,6 +36,10 @@ public class StatisticsIsoErrors {
     if (sError.count > max) max = sError.count;
   }
 
+  public boolean hasErrors(){
+    return !errorsMap.isEmpty();
+  }
+
   public List<StatisticsError> getErrorsList() {
     List<StatisticsError> list = new ArrayList<>(errorsMap.values());
     list.sort(new Comparator<StatisticsError>() {
