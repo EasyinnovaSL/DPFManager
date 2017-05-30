@@ -48,6 +48,16 @@ public class StatisticsObject {
   private Map<Integer, HistogramTag> tags;
 
   /**
+   * Global reports count
+   */
+  private Integer reportsCount;
+
+  /**
+   * Tiffs count
+   */
+  private Integer tiffsCount;
+
+  /**
    * Main images count
    */
   private Integer mainImagesCount;
@@ -84,6 +94,8 @@ public class StatisticsObject {
     isoErrors = new HashMap<>();
     mainImagesCount = 0;
     thumbnailsCount = 0;
+    reportsCount = 0;
+    tiffsCount = 0;
     // Load tags from dictionary
     try{
       TiffTags.getTiffTags();
@@ -97,6 +109,7 @@ public class StatisticsObject {
     parseErrors(ir);
     mainImagesCount += ir.getTiffModel().getMainImagesCount();
     thumbnailsCount += ir.getTiffModel().getThumbnailsImagesCount();
+    tiffsCount++;
   }
 
   private void parseErrors(IndividualReport ir){
@@ -162,11 +175,23 @@ public class StatisticsObject {
     }
   }
 
+  public void setReportsCount(Integer reportsCount) {
+    this.reportsCount = reportsCount;
+  }
+
   /**
    * Getters
    */
   public Map<Integer, HistogramTag> getTags() {
     return tags;
+  }
+
+  public Integer getReportsCount() {
+    return reportsCount;
+  }
+
+  public Integer getTiffsCount() {
+    return tiffsCount;
   }
 
   public Integer getMainImagesCount() {

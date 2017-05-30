@@ -47,6 +47,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
@@ -91,8 +92,18 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   private ProgressIndicator indicator;
 
   // General
+  private Integer reportsCount;
+  private Integer tiffsCount;
   private Integer mainImagesCount;
   private Integer thumbnailsCount;
+  @FXML
+  private Label labelNReports;
+  @FXML
+  private Label labelNTiffs;
+  @FXML
+  private Label labelNMain;
+  @FXML
+  private Label labelNThumb;
 
   // Tags
   @FXML
@@ -185,9 +196,11 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
 
   private void readStatistics(StatisticsObject so) {
     // Test
-    so.printResults();
+//    so.printResults();
 
     // General
+    reportsCount = so.getReportsCount();
+    tiffsCount = so.getTiffsCount();
     mainImagesCount = so.getMainImagesCount();
     thumbnailsCount = so.getThumbnailsCount();
 
@@ -205,10 +218,18 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   }
 
   private void renderStatistics() {
+    renderGeneral();
     renderTags();
     renderIsos(true);
     renderPolicy();
     calculateMinHeight();
+  }
+
+  private void renderGeneral(){
+    labelNReports.setText(reportsCount+"");
+    labelNTiffs.setText(tiffsCount+"");
+    labelNMain.setText(mainImagesCount+"");
+    labelNThumb.setText(thumbnailsCount+"");
   }
 
   private void renderTags() {

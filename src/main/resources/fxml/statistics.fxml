@@ -4,7 +4,6 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -12,13 +11,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import java.lang.String?>
 
 <AnchorPane id="pane-statistics" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
@@ -55,6 +48,63 @@
             </Button>
 
             <VBox fx:id="mainVBoxStatics" maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+
+                <!--START: SUMMARY-->
+                <HBox alignment="CENTER_LEFT">
+                    <ImageView focusTraversable="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../images/statistics/check-circle-blue.png" />
+                        </image>
+                        <HBox.margin>
+                            <Insets right="10" />
+                        </HBox.margin>
+                    </ImageView>
+                    <Label styleClass="config-title" text="%summaryTitle" />
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                </HBox>
+                <ImageView focusTraversable="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/line.png" />
+                    </image>
+                    <VBox.margin>
+                        <Insets bottom="5.0" top="3.0" />
+                    </VBox.margin>
+                </ImageView>
+                <GridPane>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <VBox spacing="2.0">
+                            <children>
+                                <Label styleClass="periodicHeader" text="%sumRow1" />
+                                <Label styleClass="periodicHeader" text="%sumRow2" />
+                                <Label styleClass="periodicHeader" text="%sumRow3" />
+                                <Label styleClass="periodicHeader" text="%sumRow4" />
+                            </children>
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin>
+                        </VBox>
+                        <VBox spacing="2.0" GridPane.columnIndex="1">
+                            <children>
+                                <Label fx:id="labelNReports" styleClass="lightgrey" text="Undefined" />
+                                <Label fx:id="labelNTiffs" styleClass="lightgrey" text="Undefined" />
+                                <Label fx:id="labelNMain" styleClass="lightgrey" text="Undefined" />
+                                <Label fx:id="labelNThumb" styleClass="lightgrey" text="Undefined" />
+                            </children>
+                        </VBox>
+                    </children>
+                </GridPane>
+                <!--END: SUMMARY-->
+
                 <!--START: TAGS-->
                 <HBox alignment="CENTER_LEFT">
                     <ImageView focusTraversable="true" preserveRatio="true">
@@ -67,7 +117,7 @@
                     </ImageView>
                     <Label styleClass="config-title" text="%tagsTitle" />
                     <VBox.margin>
-                        <Insets />
+                        <Insets top="30.0" />
                     </VBox.margin>
                 </HBox>
                 <ImageView focusTraversable="true" preserveRatio="true">
@@ -273,9 +323,9 @@
                         <VBox.margin>
                             <Insets top="10.0" />
                         </VBox.margin>
-                  <padding>
-                     <Insets top="2.0" />
-                  </padding>
+                        <padding>
+                            <Insets top="2.0" />
+                        </padding>
                     </GridPane>
                 </AnchorPane>
                 <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" />
@@ -299,7 +349,7 @@
                 <HBox alignment="CENTER_LEFT">
                     <ImageView focusTraversable="true" preserveRatio="true">
                         <image>
-                            <Image url="@../images/statistics/thumb-up-blue.png" />
+                            <Image url="@../images/statistics/check-circle-blue.png" />
                         </image>
                         <HBox.margin>
                             <Insets right="10" />
@@ -332,23 +382,25 @@
                         </rowConstraints>
                         <children>
                             <Label onMouseClicked="#sortPolicyName" text="%colRName">
-                        <styleClass>
-                           <String fx:value="periodicHeader" />
-                           <String fx:value="clickable" />
-                        </styleClass></Label>
+                                <styleClass>
+                                    <String fx:value="periodicHeader" />
+                                    <String fx:value="clickable" />
+                                </styleClass>
+                            </Label>
                             <Label styleClass="periodicHeader" text="%colRType" GridPane.columnIndex="1" />
                             <Label onMouseClicked="#sortPolicyFiles" text="%colRTotal" GridPane.columnIndex="2">
-                        <styleClass>
-                           <String fx:value="periodicHeader" />
-                           <String fx:value="clickable" />
-                        </styleClass></Label>
+                                <styleClass>
+                                    <String fx:value="periodicHeader" />
+                                    <String fx:value="clickable" />
+                                </styleClass>
+                            </Label>
                             <VBox GridPane.columnIndex="3">
                                 <children>
                                     <!--<Label onMouseClicked="#sortPolicyFailed" text="%colRError">-->
-                                        <!--<styleClass>-->
-                                            <!--<String fx:value="periodicHeader" />-->
-                                            <!--<String fx:value="clickable" />-->
-                                        <!--</styleClass>-->
+                                    <!--<styleClass>-->
+                                    <!--<String fx:value="periodicHeader" />-->
+                                    <!--<String fx:value="clickable" />-->
+                                    <!--</styleClass>-->
                                     <!--</Label>-->
                                     <GridPane>
                                         <columnConstraints>
@@ -384,9 +436,9 @@
                         <VBox.margin>
                             <Insets top="10.0" />
                         </VBox.margin>
-                  <padding>
-                     <Insets top="2.0" />
-                  </padding>
+                        <padding>
+                            <Insets top="2.0" />
+                        </padding>
                     </GridPane>
                 </AnchorPane>
                 <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" />
