@@ -22,6 +22,7 @@ package dpfmanager.shell.interfaces.gui.component.statistics;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.ScrollMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.statistics.comparators.IsoComparator;
@@ -141,6 +142,9 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
       // Select only current row
       for (ManagedFragmentHandler<IsoFragment> handler : isosListHandlers) {
         handler.getController().setSelected(handler.getController().getId().equals(sMessage.getIsoId()) && sMessage.isShow());
+      }
+      if (sMessage.isShow()){
+        context.send(GuiConfig.PERSPECTIVE_STATISTICS, new ScrollMessage(vboxErrors));
       }
     }
   }
