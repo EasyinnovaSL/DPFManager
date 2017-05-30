@@ -30,6 +30,7 @@ import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * The Class ReportHtml.
@@ -41,7 +42,7 @@ public class ReportHtml extends ReportGeneric {
    * @param outputfile the output file.
    * @param gr         the global report.
    */
-  public void parseGlobal(String outputfile, GlobalReport gr, ReportGenerator generator) {
+  public void parseGlobal(String outputfile, GlobalReport gr, List<SmallIndividualReport> reports, ReportGenerator generator) {
     String templatePath = "templates/global.html";
     String imagePath = "templates/image.html";
 
@@ -50,7 +51,7 @@ public class ReportHtml extends ReportGeneric {
 
     // Parse individual Reports
     int index = 0;
-    for (SmallIndividualReport ir : gr.getIndividualReports()) {
+    for (SmallIndividualReport ir : reports) {
       if (!ir.getContainsData()) continue;
       String imageBody;
       imageBody = generator.readFilefromResources(imagePath);
@@ -60,7 +61,7 @@ public class ReportHtml extends ReportGeneric {
       imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", encodeUrl(imgPath));
 
       // Basic
-      int percent = ir.calculatePercent(gr.computeAverageErrors());
+      int percent = ir.getPercent();
       imageBody = StringUtils.replace(imageBody, "##PERCENT##", "" + percent);
       imageBody = StringUtils.replace(imageBody, "##INDEX##", "" + index);
       imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());
@@ -76,7 +77,7 @@ public class ReportHtml extends ReportGeneric {
           "\t\t\t\t\t\t        <td></td>\n" +
           "\t\t\t\t\t\t    </tr>";
       int mode = 1;
-      if (ir.getModifiedIsos().keySet().size() > 0) {
+      if (gr.getModifiedIsos().keySet().size() > 0) {
         thTmpl = "<tr><th style=\"width: 100%;\">Conformance checker</th><th class=\"nowrap\">Standard</th><th class=\"nowrap\">Policy</th></tr>";
         rowTmpl = "<tr>\n" +
             "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
@@ -93,8 +94,8 @@ public class ReportHtml extends ReportGeneric {
       }
       String rows = "";
       int totalWarnings = 0;
-      for (String iso : ir.getCheckedIsos()) {
-        if (ir.hasValidation(iso)) {
+      for (String iso : gr.getCheckedIsos()) {
+        if (gr.hasValidation(iso)) {
           String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
           String row = rowTmpl;
 
@@ -118,7 +119,7 @@ public class ReportHtml extends ReportGeneric {
 
           // Standard PC
           if (mode == 2) {
-            if (!ir.hasModifiedIso(iso)) {
+            if (!gr.hasModifiedIso(iso)) {
               // Empty
               row = StringUtils.replace(row, "##ERR_C_P##", "hide");
               row = StringUtils.replace(row, "##WAR_C_P##", "hide");
@@ -202,7 +203,7 @@ public class ReportHtml extends ReportGeneric {
      */
     String rows = "";
     for (String iso : gr.getCheckedIsos()) {
-      if (gr.getIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
+      if (gr.getSelectedIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
         rows += makeConformsRow(gr, iso, true);
       }
     }

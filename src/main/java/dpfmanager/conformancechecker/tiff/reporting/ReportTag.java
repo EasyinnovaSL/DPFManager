@@ -29,14 +29,24 @@ public class ReportTag {
    * The Index.
    */
   public int index;
+
   /**
    * The Tv.
    */
   public TagValue tv;
+
   /**
    * The Dif.
    */
   public int dif = 0;
 
+  /**
+   * show only expert
+   */
   public boolean expert = false;
+
+  /**
+   * Is thumbnail.
+   */
+  public boolean thumbnail = false;
 }

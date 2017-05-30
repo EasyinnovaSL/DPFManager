@@ -90,6 +90,8 @@ public class DatabaseService extends DpfService {
       resumeJob(dm);
     } else if (dm.isCancel()) {
       cancelJob(dm);
+    } else if (dm.isEmpty()) {
+      emptyJob(dm);
     } else if (dm.isPause()) {
       pauseJob(dm);
     } else if (dm.isStart()) {
@@ -145,6 +147,13 @@ public class DatabaseService extends DpfService {
       cache.cancelJob(dm.getUuid());
       forceSyncDatabase();
       cache.clearJob(dm.getUuid());
+    }
+  }
+
+  public void emptyJob(JobsMessage dm) {
+    if (cache.containsJob(dm.getUuid())) {
+      cache.emptyJob(dm.getUuid());
+      forceSyncDatabase();
     }
   }
 

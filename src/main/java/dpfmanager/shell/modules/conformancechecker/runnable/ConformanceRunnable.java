@@ -26,7 +26,6 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.conformancechecker.core.ProcessInput;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
 import dpfmanager.shell.modules.report.runnable.IndividualReportsRunnable;
 import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
@@ -46,7 +45,7 @@ public class ConformanceRunnable extends DpfRunnable {
   private long uuid;
   private ReportGenerator generator;
 
-  public ConformanceRunnable(List<ConformanceChecker> list, ReportGenerator gen){
+  public ConformanceRunnable(List<ConformanceChecker> list, ReportGenerator gen) {
     // No context yet
     pi = new ProcessInput(list);
     generator = gen;
@@ -57,7 +56,7 @@ public class ConformanceRunnable extends DpfRunnable {
     pi.setContext(context);
   }
 
-  public void setParameters(String name, int i, String internal, Configuration conf, long u){
+  public void setParameters(String name, int i, String internal, Configuration conf, long u) {
     filename = name;
     id = i;
     internalReportFolder = internal;
@@ -68,14 +67,14 @@ public class ConformanceRunnable extends DpfRunnable {
   @Override
   public void runTask() {
     // if config is null, get the default one
-    if (config == null){
+    if (config == null) {
       config = pi.getDefaultConfigurationFromFile(filename);
     }
-    if (config == null){
+    if (config == null) {
       config = pi.getDefaultConfigurationFromFile("a.tif");
     }
     // If no default one, create one
-    if (config == null){
+    if (config == null) {
       config = new Configuration();
       config.addFormat("XML");
     }
@@ -86,14 +85,20 @@ public class ConformanceRunnable extends DpfRunnable {
       ir.setIdReport(id);
       ir.setInternalReportFolder(internalReportFolder);
       ir.setUuid(uuid);
+
+      // Serialize it
+      String filenameNorm = filename.replaceAll("\\\\", "/");
+      ir.write(internalReportFolder + "/serialized", filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser");
+//      IndividualReport irRead = (IndividualReport) IndividualReport.read(internalReportFolder + "/serialized/" + filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser");
+
       // Create report
       IndividualReportsRunnable run = new IndividualReportsRunnable(generator);
       run.setContext(context);
       run.setParameters(ir, config);
       run.runTask();
-    } else{
+    } else {
       // Tell multi threading that one report fail (no wait for it)
-      if (ir != null){
+      if (ir != null) {
         ir.setIdReport(id);
         ir.setInternalReportFolder(internalReportFolder);
         ir.setUuid(uuid);

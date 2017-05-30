@@ -800,8 +800,16 @@
     -fx-background-insets: 3;
     -fx-padding: 9px;
 }
+.dpf-progress-bar.light-bar > .track {
+    -fx-background-color: lightgrey;
+}
+.dpf-progress-bar.green-bar-background > .track {
+    -fx-background-color: yellowgreen;
+}
 .dpf-progress-bar.green-bar > .bar { -fx-accent: #04c500;  }
 .dpf-progress-bar.blue-bar > .bar { -fx-accent: #31C2F3; }
+.dpf-progress-bar.red-bar > .bar { -fx-accent: red;  }
+.dpf-progress-bar.orange-bar > .bar { -fx-accent: orange;  }
 
 .background-tasks{
     -fx-background-color: #F2F2F2;
@@ -830,4 +838,84 @@
     -fx-border-width: 3;
     -fx-border-radius: 3;
     -fx-border-insets: -2;
+}
+
+/**
+ * Statistics
+ */
+.white-axis,
+.chart-legend-item{
+    -fx-text-fill: white;
+    -fx-tick-label-fill: white;
+    -fx-tick-label-font-size: 12;
+}
+
+.chart-plot-background{
+    -fx-background-color: #333;
+    -fx-border-color: lightgrey;
+    -fx-border-width: 1;
+}
+.chart-legend {
+    -fx-background-color: #333;
+    -fx-border-color: lightgrey;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+}
+
+.chart-value{
+    -fx-padding: 5 10 5 10;
+    -fx-border-radius: 50;
+    -fx-background-radius: 50;
+    -fx-border-width: 2;
+    -fx-font-weight: BOLD;
+    -fx-font-size: 14;
+}
+
+/* Bar Colors */
+.bar-color-1 {
+    -fx-bar-fill: #f2612d;
+}
+.chart-value.color-1 {
+    -fx-background-color: #f2612d;
+    -fx-border-color: #9F441F;
+    -fx-text-fill: white;
+}
+
+.bar-color-2 {
+    -fx-bar-fill: #F9A41A;
+}
+.chart-value.color-2 {
+    -fx-background-color: #F9A41A;
+    -fx-border-color: #976213;
+    -fx-text-fill: white;
+}
+
+.chart-horizontal-grid-lines,
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+.title-statistics {
+    -fx-text-fill: #31C2F3;
+    -fx-font-size: 15;
+    -fx-font-weight: BOLD;
+}
+
+.clickable:hover {
+    -fx-cursor: hand;
+}
+.hoverRow.active,
+.hoverRow:hover{
+    -fx-cursor: hand;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.round-left{
+    -fx-background-radius: 3px 0 0 3px;
+}
+.round-right{
+    -fx-background-radius: 0 3px 3px 0;
+}
+.round-both{
+    -fx-background-radius: 3px;
 }

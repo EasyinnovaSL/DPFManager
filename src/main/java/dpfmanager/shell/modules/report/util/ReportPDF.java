@@ -67,7 +67,7 @@ public class ReportPDF extends ReportGeneric {
    * @param pdffile the file name.
    * @param gr      the global report.
    */
-  public void parseGlobal(String pdffile, GlobalReport gr) {
+  public void parseGlobal(String pdffile, GlobalReport gr, java.util.List<SmallIndividualReport> reports) {
     try {
       PDFParams pdfParams = new PDFParams();
       pdfParams.init(PDPage.PAGE_SIZE_A4);
@@ -86,7 +86,7 @@ public class ReportPDF extends ReportGeneric {
       pdfParams = writeText(pdfParams, "MULTIPLE REPORT", pos_x, font, font_size);
       pdfParams.y -= 30;
       font_size = 15;
-      pdfParams = writeText(pdfParams, "Processed files: " + gr.getIndividualReports().size(), pos_x, font, font_size, Color.cyan);
+      pdfParams = writeText(pdfParams, "Processed files: " + gr.getReportsCount(), pos_x, font, font_size, Color.cyan);
 
       // Conforms table
       pos_x = 100;
@@ -94,7 +94,7 @@ public class ReportPDF extends ReportGeneric {
       font_size = 8;
       Color color;
       for (String iso : gr.getCheckedIsos()) {
-        if (gr.getIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
+        if (gr.getSelectedIsos().contains(iso) || gr.getReportsOk(iso) == gr.getReportsCount()) {
           String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
           String policy = "";
           if (gr.hasModificationIso(iso)) {
@@ -134,7 +134,7 @@ public class ReportPDF extends ReportGeneric {
        */
       pos_x = 100;
       pdfParams.y -= 50;
-      for (SmallIndividualReport ir : gr.getIndividualReports()) {
+      for (SmallIndividualReport ir : reports) {
         int image_height = 65;
         int image_width = 100;
 
@@ -155,7 +155,7 @@ public class ReportPDF extends ReportGeneric {
         }
 
         // Check if we need new page before draw image
-        int maxHeight = getMaxHeight(ir, image_height);
+        int maxHeight = getMaxHeight(ir, gr, image_height);
         if (newPageNeeded(pdfParams.y - maxHeight)) {
           PDPage page = newPage(pdfParams.getContentStream(), pdfParams.getDocument());
           pdfParams.setPage(page);
@@ -190,14 +190,14 @@ public class ReportPDF extends ReportGeneric {
         // Isos table
         pdfParams.y = preChart;
         int mode = 1, col1 = 100, col2 = 140;
-        if (ir.getModifiedIsos().size() != 0) {
+        if (gr.getModifiedIsos().size() != 0) {
           pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
           pdfParams = writeText(pdfParams, "Policy", pos_x + image_width + col2, font, font_size);
           mode = 2;
         }
         int totalWarnings = 0;
-        for (String iso : ir.getCheckedIsos()) {
-          if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+        for (String iso : gr.getCheckedIsos()) {
+          if (gr.hasValidation(iso) || ir.getNErrors(iso) == 0) {
             String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
             pdfParams.y -= 5;
             if (mode == 1) {
@@ -214,13 +214,13 @@ public class ReportPDF extends ReportGeneric {
               pdfParams.y += 5;
               // Errors
               pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
-              if (ir.hasModifiedIso(iso)) {
+              if (gr.hasModifiedIso(iso)) {
                 pdfParams = writeText(pdfParams, ir.getNErrorsPolicy(iso) + " errors", pos_x + image_width + col2, font, font_size, ir.getNErrorsPolicy(iso) > 0 ? Color.red : ir.getNErrors(iso) > 0 ? Color.green : Color.black);
               }
               // Warnings
               pdfParams.y -= 8;
               pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + " warnings", pos_x + image_width + col1, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
-              if (ir.hasModifiedIso(iso)) {
+              if (gr.hasModifiedIso(iso)) {
                 pdfParams = writeText(pdfParams, ir.getNWarningsPolicy(iso) + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarningsPolicy(iso) > 0 ? Color.orange : ir.getNWarnings(iso) > 0 ? Color.green : Color.black);
               }
               if (ir.getNWarnings(iso) > 0) {
@@ -238,7 +238,7 @@ public class ReportPDF extends ReportGeneric {
         graph_size = 25;
         image = new BufferedImage(graph_size * 10, graph_size * 10, BufferedImage.TYPE_INT_ARGB);
         g2d = image.createGraphics();
-        doub = (double) ir.calculatePercent(gr.computeAverageErrors());
+        doub = (double) ir.getPercent();
         extent = 360d * doub / 100.0;
         g2d.setColor(Color.gray);
         g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
@@ -280,11 +280,11 @@ public class ReportPDF extends ReportGeneric {
     }
   }
 
-  private int getMaxHeight(SmallIndividualReport ir, int image_height) {
+  private int getMaxHeight(SmallIndividualReport ir, GlobalReport gr, int image_height) {
     int height = 22;
     int link = 10;
-    for (String iso : ir.getCheckedIsos()) {
-      if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+    for (String iso : gr.getCheckedIsos()) {
+      if (gr.hasValidation(iso) || ir.getNErrors(iso) == 0) {
         height += 15;
       }
     }

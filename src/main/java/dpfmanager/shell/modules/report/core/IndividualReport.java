@@ -19,24 +19,48 @@
 
 package dpfmanager.shell.modules.report.core;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
+import dpfmanager.shell.modules.report.util.ReportHtml;
+
 import com.easyinnova.implementation_checker.ValidationResult;
 import com.easyinnova.implementation_checker.rules.RuleResult;
 
+import com.easyinnova.tiff.model.IfdTags;
+import com.easyinnova.tiff.model.Metadata;
+import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.types.IFD;
+import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 /**
  * The Class IndividualReport.
  */
-public class IndividualReport {
+public class IndividualReport extends ReportSerializable {
+
+  /**
+   * Do not modify!
+   */
+  private static final long serialVersionUID = 2946L;
 
   /**
    * The file name.
@@ -69,9 +93,14 @@ public class IndividualReport {
   private Map<String, List<RuleResult>> warnings;
 
   /**
+   * The passed rules list (only for policy).
+   */
+  private Map<String, List<RuleResult>> passed;
+
+  /**
    * The isos to check.
    */
-  private List<String> isosCheck;
+  private List<String> checkedIsos;
 
   /**
    * The Tiff Document object.
@@ -82,15 +111,18 @@ public class IndividualReport {
 
   private String document;
 
-  private PDDocument pdf;
-
   private boolean containsData;
 
-  private String conformanceCheckerReport = null;
+  /**
+   * Data precomputed for write
+   */
+  private transient PDDocument pdf;
 
-  private String conformanceCheckerReportHtml = null;
+  private transient String conformanceCheckerReport = null;
 
-  private String conformanceCheckerReportMets = null;
+  private transient String conformanceCheckerReportHtml = null;
+
+  private transient String conformanceCheckerReportMets = null;
 
   /**
    * Extra check information
@@ -152,6 +184,7 @@ public class IndividualReport {
     reportFilename = rFilename;
     errors = new HashMap<>();
     warnings = new HashMap<>();
+    passed = new HashMap<>();
     modifiedIsos = modifiedIsosList;
     generate(tiffModel, validators);
   }
@@ -185,12 +218,12 @@ public class IndividualReport {
   }
 
   public void setIsosCheck(List<String> isosCheck) {
-    this.isosCheck = isosCheck;
+    this.checkedIsos = isosCheck;
   }
 
-  public List<String> getIsosCheck() {
-    if (isosCheck == null) return new ArrayList<>();
-    return isosCheck;
+  public List<String> getSelectedIsos() {
+    if (checkedIsos == null) return new ArrayList<>();
+    return checkedIsos;
   }
 
   public List<String> getCheckedIsos() {
@@ -245,8 +278,8 @@ public class IndividualReport {
   }
 
   public void addIsosCheck(String iso) {
-    if (!isosCheck.contains(iso)) {
-      isosCheck.add(iso);
+    if (!checkedIsos.contains(iso)) {
+      checkedIsos.add(iso);
     }
   }
 
@@ -369,6 +402,9 @@ public class IndividualReport {
     for (String key : validations.keySet()) {
       errors.put(key, validations.get(key).getErrors());
       warnings.put(key, validations.get(key).getWarnings(true));
+      if (key.equals(TiffConformanceChecker.POLICY_ISO)){
+        passed.put(key, validations.get(key).getPassed());
+      }
     }
   }
 
@@ -378,13 +414,21 @@ public class IndividualReport {
    * @return the boolean
    */
   public boolean hasValidation(String key) {
-    return isosCheck.contains(key);
+    return checkedIsos.contains(key);
+  }
+
+  public List<RuleResult> getKORuleResults(String key) {
+    List<RuleResult> all = new ArrayList<>();
+    all.addAll(getErrors(key));
+    all.addAll(getWarnings(key));
+    return all;
   }
 
   public List<RuleResult> getAllRuleResults(String key) {
     List<RuleResult> all = new ArrayList<>();
     all.addAll(getErrors(key));
     all.addAll(getWarnings(key));
+    all.addAll(getPassed(key));
     return all;
   }
 
@@ -455,6 +499,18 @@ public class IndividualReport {
       }
     }
     return result;
+  }
+
+  /**
+   * Get passed list.
+   *
+   * @return the warnings
+   */
+  public List<RuleResult> getPassed(String key) {
+    if (!passed.containsKey(key)) {
+      return new ArrayList<>();
+    }
+    return passed.get(key);
   }
 
   /**
@@ -556,7 +612,7 @@ public class IndividualReport {
   public List<RuleResult> getAllErrors() {
     List<RuleResult> allErrors = new ArrayList<>();
     for (String key : errors.keySet()) {
-      if (getIsosCheck().contains(key)) {
+      if (getCheckedIsos().contains(key)) {
         allErrors.addAll(errors.get(key));
       }
     }
@@ -566,7 +622,7 @@ public class IndividualReport {
   public int getAllNErrorsPolicy() {
     int n = 0;
     for (String key : errors.keySet()) {
-      if (getIsosCheck().contains(key)) {
+      if (getCheckedIsos().contains(key)) {
         n += hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
       }
     }
@@ -576,7 +632,7 @@ public class IndividualReport {
   public List<RuleResult> getAllWarnings() {
     List<RuleResult> allWarnings = new ArrayList<>();
     for (String key : warnings.keySet()) {
-      if (getIsosCheck().contains(key)) {
+      if (getCheckedIsos().contains(key)) {
         allWarnings.addAll(warnings.get(key));
       }
     }
@@ -609,4 +665,165 @@ public class IndividualReport {
     return modifiedIsos.containsKey(iso);
   }
 
+  public ArrayList<ReportTag> getTags() {
+    return getTags(false);
+  }
+
+  /**
+   * Gets tags.
+   *
+   * @return the tags
+   */
+  public ArrayList<ReportTag> getTags(boolean subTags) {
+    ArrayList<ReportTag> list = new ArrayList<ReportTag>();
+    TiffDocument td = getTiffModel();
+    IFD ifd = td.getFirstIFD();
+    IFD ifdcomp = null;
+    if (getCompareReport() != null) {
+      ifdcomp = getCompareReport().getTiffModel().getFirstIFD();
+    }
+    td.getFirstIFD();
+    int index = 0;
+    while (ifd != null) {
+      IfdTags meta = ifd.getMetadata();
+      boolean isThumbnail = ifd.isThumbnail();
+      for (TagValue tv : meta.getTags()) {
+        ReportTag tag = new ReportTag();
+        tag.index = index;
+        tag.tv = tv;
+        tag.thumbnail = isThumbnail;
+        if (ifdcomp != null) {
+          if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
+            tag.dif = 1;
+        }
+        if (!showTag(tv)) tag.expert = true;
+        if (subTags) list.addAll(getSubTags(tag, index, isThumbnail));
+        list.add(tag);
+      }
+      if (ifdcomp != null) {
+        boolean isThumbnailComp = ifdcomp.isThumbnail();
+        for (TagValue tv : ifdcomp.getMetadata().getTags()) {
+          if (!meta.containsTagId(tv.getId())) {
+            ReportTag tag = new ReportTag();
+            tag.index = index;
+            tag.tv = tv;
+            tag.thumbnail = isThumbnailComp;
+            tag.dif = -1;
+            if (!showTag(tv)) tag.expert = true;
+            if (subTags) list.addAll(getSubTags(tag, index, isThumbnailComp));
+            list.add(tag);
+          }
+        }
+      }
+      ifd = ifd.getNextIFD();
+      if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
+      index++;
+    }
+    return list;
+  }
+
+  private ArrayList<ReportTag> getSubTags(ReportTag tag, int index, boolean isThumbnail){
+    ArrayList<ReportTag> subTagsList = new ArrayList<>();
+    if (tag.tv.getId() == 34665) {
+      // EXIF
+      try {
+        abstractTiffType obj = tag.tv.getReadValue().get(0);
+        if (obj instanceof IFD) {
+          IFD exif = (IFD) obj;
+          for (TagValue tv : exif.getTags().getTags()) {
+            ReportTag rTag = new ReportTag();
+            rTag.index = index;
+            rTag.tv = tv;
+            rTag.thumbnail = isThumbnail;
+            if (!showTag(tv)) rTag.expert = true;
+            subTagsList.add(rTag);
+          }
+        }
+      } catch (Exception ex) {
+        ex.toString();
+        //ex.printStackTrace();
+      }
+    } else if (tag.tv.getId() == 330) {
+      // Sub IFD
+      IFD sub = (IFD) tag.tv.getReadValue().get(0);
+      boolean isThumbnailSub = sub.isThumbnail();
+      for (TagValue tv : sub.getTags().getTags()) {
+        ReportTag rTag = new ReportTag();
+        rTag.index = index;
+        rTag.tv = tv;
+        rTag.thumbnail = isThumbnailSub;
+        if (!showTag(tv)) rTag.expert = true;
+        subTagsList.add(rTag);
+      }
+    }
+    return subTagsList;
+  }
+
+  /**
+   * Show Tag.
+   *
+   * @param tv The tag value
+   * @return true, if successful
+   */
+  public boolean showTag(TagValue tv) {
+    if (IndividualReport.showableTags == null) {
+      IndividualReport.showableTags = readShowableTags();
+    }
+    return IndividualReport.showableTags.contains(tv.getName());
+  }
+
+  public static HashSet<String> showableTags = null;
+
+  /**
+   * Read showable tags file.
+   *
+   * @return hashset of tags
+   */
+  protected synchronized HashSet<String> readShowableTags() {
+    HashSet<String> hs = new HashSet<>();
+    try {
+      Path path = Paths.get("./src/main/resources/");
+      if (Files.exists(path)) {
+        // Look in current dir
+        FileReader fr = new FileReader("./src/main/resources/htmltags.txt");
+        BufferedReader br = new BufferedReader(fr);
+        String line = br.readLine();
+        while (line != null) {
+          String[] fields = line.split("\t");
+          if (fields.length == 1) {
+            hs.add(fields[0]);
+          }
+          line = br.readLine();
+        }
+        br.close();
+        fr.close();
+      } else {
+        // Look in JAR
+        String resource = "htmltags.txt";
+        Class cls = ReportHtml.class;
+        ClassLoader cLoader = cls.getClassLoader();
+        InputStream in = cLoader.getResourceAsStream(resource);
+        //CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
+        if (in != null) {
+          try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String line = br.readLine();
+            while (line != null) {
+              String[] fields = line.split("\t");
+              if (fields.length == 1) {
+                hs.add(fields[0]);
+              }
+              line = br.readLine();
+            }
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
+        } else {
+          throw new Exception("InputStream is null");
+        }
+      }
+    } catch (Exception ex) {
+    }
+    return hs;
+  }
 }

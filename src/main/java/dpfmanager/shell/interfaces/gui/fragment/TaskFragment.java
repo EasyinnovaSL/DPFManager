@@ -110,6 +110,9 @@ public class TaskFragment {
     } else if (job.getState() == 4){
       // Paused job
       showPausedJob();
+    } else if (job.getState() == 5){
+      // Empty Job
+      showEmptyJob();
     }
     NodeUtil.hideNode(loadingCancel);
     NodeUtil.hideNode(loadingPause);
@@ -136,6 +139,9 @@ public class TaskFragment {
     if (lastJob.getState() != 2 && job.getState() == 2) {
       // From other to done
       showDoneJob();
+    } else if (lastJob.getState() != 5 && job.getState() == 5){
+      // From other to empty
+      showEmptyJob();
     } else if (lastJob.getState() == 0 && job.getState() != 0) {
       // From pending to other
       mainVbox.setOpacity(1.0);
@@ -178,6 +184,17 @@ public class TaskFragment {
       NodeUtil.hideNode(taskImage);
     }
     progress.setProgress(job.getProgress());
+    progress.getStyleClass().remove("blue-bar");
+    progress.getStyleClass().add("green-bar");
+  }
+
+  private void showEmptyJob(){
+    getReportsInfo();
+    NodeUtil.hideNode(resumePauseImage);
+    NodeUtil.hideNode(cancelImage);
+    NodeUtil.hideNode(taskImage);
+    timeLabel.setText(getReadableData(0L));
+    progress.setProgress(1.0);
     progress.getStyleClass().remove("blue-bar");
     progress.getStyleClass().add("green-bar");
   }

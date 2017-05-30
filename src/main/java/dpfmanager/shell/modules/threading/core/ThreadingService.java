@@ -278,7 +278,7 @@ public class ThreadingService extends DpfService {
       // Check if all finished
       if (fc.allFinished()) {
         // Tell reports module
-        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig(), fc.getStart()));
+        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig(), fc.getStart(), ir.getCheckedIsos()));
       }
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.UPDATE, uuid));
     }

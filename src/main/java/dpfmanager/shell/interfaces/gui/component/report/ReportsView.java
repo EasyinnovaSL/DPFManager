@@ -28,6 +28,7 @@ import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
+import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -37,6 +38,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -47,6 +49,7 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
@@ -69,12 +72,16 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   // New view elements
   @FXML
   private VBox mainVBox;
+  @FXML
+  private AnchorPane paneStatistics;
 
   // View elements
   @FXML
   private VBox reportsVbox;
   @FXML
   private Button loadMore;
+  @FXML
+  private Button genStatistics;
   @FXML
   private VBox vboxReports;
   @FXML
@@ -110,6 +117,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       if (rMessage.isRead()) {
         getModel().loadReportsFromDir();
         getModel().printReports();
+      } else if (rMessage.isSize()) {
+        getModel().readReportsSize();
       }
     }
   }
@@ -124,7 +133,9 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         getModel().clearReportsLoaded();
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
       } else if (rMessage.isRead()) {
-        recalculateSize();
+        loadReportsSize();
+      } else if (rMessage.isSize()) {
+        printSize(getModel().getReportsSize());
       } else if (rMessage.isDelete()) {
         deleteReportGui(rMessage.getUuid());
       } else if (rMessage.isAdd()) {
@@ -146,7 +157,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public void addReportGui(ReportGui row) {
     ManagedFragmentHandler<ReportFragment> handler = getModel().getReportGuiByUuid(row.getUuid());
     if (handler == null){
-      row.load();
       if (row.isLoaded()){
         handler = context.getManagedFragmentHandler(ReportFragment.class);
         getModel().addReportFragment(handler);
@@ -170,8 +180,20 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   /**
    * Keep functions
    */
-  private void recalculateSize(){
-    labelSize.setText(bundle.getString("folderSize").replace("%1", getModel().getReportsSize()));
+  private void loadReportsSize(){
+    labelSize.setText(bundle.getString("folderSize").replace("%1", bundle.getString("loading")));
+    getContext().send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.SIZE));
+  }
+
+  private void printSize(Long size){
+    labelSize.setText(bundle.getString("folderSize").replace("%1", readableFileSize(size)));
+  }
+
+  private String readableFileSize(long size) {
+    if (size <= 0) return "0";
+    final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+    int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+    return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
   }
 
   public void showClearOptions(){
@@ -190,6 +212,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     NodeUtil.hideNode(vboxReports);
     NodeUtil.hideNode(labelEmpty);
     NodeUtil.hideNode(loadMore);
+    NodeUtil.hideNode(genStatistics);
     NodeUtil.hideNode(hboxSize);
   }
 
@@ -201,15 +224,23 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(labelEmpty);
       NodeUtil.hideNode(hboxSize);
+      NodeUtil.hideNode(genStatistics);
     } else if (getModel().isAllReportsLoaded()) {
       NodeUtil.hideNode(labelEmpty);
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(hboxSize);
+      NodeUtil.showNode(genStatistics);
     } else {
       NodeUtil.showNode(loadMore);
       NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
+      NodeUtil.showNode(genStatistics);
     }
+  }
+
+  @FXML
+  protected void generateStadistics(ActionEvent event) throws Exception {
+    getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
   }
 
   @FXML

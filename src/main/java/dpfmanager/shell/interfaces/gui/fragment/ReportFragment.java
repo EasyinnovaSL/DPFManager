@@ -42,6 +42,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 import org.apache.commons.io.FileUtils;
@@ -111,6 +112,7 @@ public class ReportFragment {
     addChartScore(info.getScore());
     addFormatIcons(info.getFormats());
     addActionsIcons(info.getDelete());
+    addLastItem(info.isLast());
   }
 
   private void addChartScore(Integer scoreInt) {
@@ -219,8 +221,21 @@ public class ReportFragment {
     actionsBox.getChildren().add(icon);
   }
 
+  public void addLastItem(boolean isLast){
+    if (isLast){
+      StackPane stack = new StackPane();
+      stack.setMaxWidth(0.0);
+      stack.setMaxHeight(0.0);
+      stack.setId("lastReportRow");
+      actionsBox.getChildren().add(stack);
+    }
+  }
+
   public String getUuid() {
     return info.getUuid();
   }
 
+  public ReportGui getInfo() {
+    return info;
+  }
 }

@@ -148,7 +148,7 @@ public class Jobs {
   public double getProgress() {
     if (state == 0) {
       return 0.0;
-    } else if (state == 2) {
+    } else if (state == 2 || state == 5) {
       return 1.0;
     } else {
       return (processedFiles * 1.0) / (totalFiles + 1.0);

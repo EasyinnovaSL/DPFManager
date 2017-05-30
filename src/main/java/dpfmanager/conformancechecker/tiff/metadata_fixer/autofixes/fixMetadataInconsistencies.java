@@ -25,6 +25,9 @@ import com.easyinnova.tiff.model.types.ExifIFD;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.abstractTiffType;
+
+import java.util.Date;
 
 /**
  * Created by easy on 11/10/2016.
@@ -54,13 +57,16 @@ public class fixMetadataInconsistencies implements autofix {
     IFD exif = null;
 
     if (ifd != null && ifd.containsTagId(TiffTags.getTagId("XMP"))) {
-      xmp = (XMP) ifd.getTag("XMP").getValue().get(0);
+      abstractTiffType obj = ifd.getTag("XMP").getValue().get(0);
+      if (obj instanceof XMP) xmp = (XMP)obj;
     }
     if (ifd != null && ifd.containsTagId(TiffTags.getTagId("IPTC"))) {
-      iptc = (IPTC)ifd.getTag("IPTC").getValue().get(0);
+      abstractTiffType obj = ifd.getTag("IPTC").getValue().get(0);
+      if (obj instanceof IPTC) iptc = (IPTC)obj;
     }
     if (ifd != null && ifd.containsTagId(TiffTags.getTagId("ExifIFD"))) {
-      exif = (IFD) ifd.getTag("ExifIFD").getValue().get(0);
+      abstractTiffType obj = ifd.getTag("ExifIFD").getValue().get(0);
+      if (obj instanceof IFD) exif = (IFD)obj;
     }
 
     String creatorXmp = null;
@@ -89,7 +95,8 @@ public class fixMetadataInconsistencies implements autofix {
       creatorIptc = iptc.getCreator();
       descriptionIptc = iptc.getDescription();
       copyrightIptc = iptc.getCopyright();
-      dateIptc = iptc.getDatetime().toString();
+      Date d = iptc.getDatetime();
+      dateIptc = d != null ? d.toString() : null;
     }
 
     if (exif != null) {

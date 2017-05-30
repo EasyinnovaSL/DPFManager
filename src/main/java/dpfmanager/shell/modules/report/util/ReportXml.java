@@ -32,25 +32,13 @@
 package dpfmanager.shell.modules.report.util;
 
 import dpfmanager.shell.modules.report.core.GlobalReport;
-import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -72,7 +60,7 @@ public class ReportXml extends ReportGeneric {
    * @param xmlfile the file name.
    * @param gr      the global report.
    */
-  public void parseGlobal(String xmlfile, GlobalReport gr) {
+  public void parseGlobal(String xmlfile, GlobalReport gr, java.util.List<SmallIndividualReport> reports) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -84,7 +72,7 @@ public class ReportXml extends ReportGeneric {
       globalreport.appendChild(individualreports);
 
       // Individual reports
-      for (SmallIndividualReport ir : gr.getIndividualReports()) {
+      for (SmallIndividualReport ir : reports) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         try {

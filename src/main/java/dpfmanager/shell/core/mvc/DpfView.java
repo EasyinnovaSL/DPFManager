@@ -20,15 +20,6 @@
 package dpfmanager.shell.core.mvc;
 
 import dpfmanager.shell.core.adapter.DpfSimpleView;
-import dpfmanager.shell.core.messages.ArrayMessage;
-import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
-import javafx.event.Event;
-import javafx.scene.Node;
-
-import org.jacpfx.api.message.Message;
-import org.jacpfx.rcp.component.FXComponent;
-import org.jacpfx.rcp.componentLayout.PerspectiveLayout;
 
 /**
  * Created by Adria Llorens on 07/03/2016.

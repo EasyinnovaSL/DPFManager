@@ -67,7 +67,7 @@ public class ReportService extends DpfService {
 
   // Main function
   public void tractGlobalMessage(GlobalReportMessage message) {
-    createGlobalReports(message.getUuid(), message.getIndividuals(), message.getConfig(), message.getStart());
+    createGlobalReports(message.getUuid(), message.getIndividuals(), message.getConfig(), message.getStart(), message.getCheckedIsos());
     config = message.getConfig();
   }
 
@@ -78,10 +78,10 @@ public class ReportService extends DpfService {
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(ir.getUuid(), run));
   }
 
-  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config, Date start) {
+  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config, Date start, List<String> checkedIsos) {
     // Create global runnable
     GlobalReportsRunnable run = new GlobalReportsRunnable(generator);
-    run.setParameters(individuals, config, start);
+    run.setParameters(individuals, config, start, checkedIsos);
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
   }
 

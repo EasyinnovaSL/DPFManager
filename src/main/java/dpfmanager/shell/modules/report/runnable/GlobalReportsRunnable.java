@@ -54,6 +54,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
   private ReportGenerator generator;
   private Configuration config;
   private Date start;
+  private List<String> checkedIsos;
 
   public GlobalReportsRunnable(ReportGenerator g) {
     // No context yet
@@ -64,10 +65,11 @@ public class GlobalReportsRunnable extends DpfRunnable {
   public void handleContext(DpfContext context) {
   }
 
-  public void setParameters(List<SmallIndividualReport> i, Configuration c, Date s) {
+  public void setParameters(List<SmallIndividualReport> i, Configuration c, Date s, List<String> ci) {
     individuals = i;
     config = c;
     start = s;
+    checkedIsos = ci;
   }
 
   @Override
@@ -77,6 +79,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
 
     // Generate GlobalReport
     GlobalReport global = new GlobalReport();
+    global.init(config, checkedIsos);
     for (SmallIndividualReport individual : individuals) {
       global.addIndividual(individual);
       if (individual != null) {

@@ -158,146 +158,12 @@ public class Report {
     return fis;
   }
 
-  /**
-   * Read showable tags file.
-   *
-   * @return hashset of tags
-   */
-  protected HashSet<String> readShowableTags() {
-    HashSet<String> hs = new HashSet<String>();
-    try {
-      Path path = Paths.get("./src/main/resources/");
-      if (Files.exists(path)) {
-        // Look in current dir
-        FileReader fr = new FileReader("./src/main/resources/htmltags.txt");
-        BufferedReader br = new BufferedReader(fr);
-        String line = br.readLine();
-        while (line != null) {
-          String[] fields = line.split("\t");
-          if (fields.length == 1) {
-            hs.add(fields[0]);
-          }
-          line = br.readLine();
-        }
-        br.close();
-        fr.close();
-      } else {
-        // Look in JAR
-        String resource = "htmltags.txt";
-        Class cls = ReportHtml.class;
-        ClassLoader cLoader = cls.getClassLoader();
-        InputStream in = cLoader.getResourceAsStream(resource);
-        //CodeSource src = ReportHtml.class.getProtectionDomain().getCodeSource();
-        if (in != null) {
-          try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String line = br.readLine();
-            while (line != null) {
-              String[] fields = line.split("\t");
-              if (fields.length == 1) {
-                hs.add(fields[0]);
-              }
-              line = br.readLine();
-            }
-          } catch (Exception ex) {
-            ex.printStackTrace();
-          }
-        } else {
-          throw new Exception("InputStream is null");
-        }
-      }
-    } catch (Exception ex) {
-    }
-    return hs;
-  }
-
-  /**
-   * Show Tag.
-   *
-   * @param tv The tag value
-   * @return true, if successful
-   */
-  protected boolean showTag(TagValue tv) {
-    HashSet<String> showableTags = readShowableTags();
-    /*showableTags.add("ImageWidth");
-    showableTags.add("ImageLength");
-    showableTags.add("BitsPerSample");
-    showableTags.add("Compression");
-    showableTags.add("PhotometricInterpretation");
-    showableTags.add("ImageDescription");
-    showableTags.add("Make");
-    showableTags.add("Model");
-    showableTags.add("Orientation");
-    showableTags.add("SamplesPerPixel");
-    showableTags.add("XResolution");
-    showableTags.add("YResolution");
-    showableTags.add("ResolutionUnit");
-    showableTags.add("PlanarConfiguration");
-    showableTags.add("Software");
-    showableTags.add("DateTime");
-    showableTags.add("Artist");
-    showableTags.add("Copyright");
-    showableTags.add("DateTimeOriginal");
-    showableTags.add("Flash");
-    showableTags.add("TIFFEPStandardID");*/
-    //if (tv.getFileName().equals(""+tv.getId())) return false;
-    return showableTags.contains(tv.getName());
-  }
-
-  /**
-   * Gets tags.
-   *
-   * @param ir the ir
-   * @return the tags
-   */
-  protected ArrayList<ReportTag> getTags(IndividualReport ir) {
-    ArrayList<ReportTag> list = new ArrayList<ReportTag>();
-    TiffDocument td = ir.getTiffModel();
-    IFD ifd = td.getFirstIFD();
-    IFD ifdcomp = null;
-    if (ir.getCompareReport() != null) {
-      ifdcomp = ir.getCompareReport().getTiffModel().getFirstIFD();
-    }
-    td.getFirstIFD();
-    int index = 0;
-    while (ifd != null) {
-      IfdTags meta = ifd.getMetadata();
-      for (TagValue tv : meta.getTags()) {
-        ReportTag tag = new ReportTag();
-        tag.index = index;
-        tag.tv = tv;
-        if (ifdcomp != null) {
-          if (!ifdcomp.getMetadata().containsTagId(tv.getId()))
-            tag.dif = 1;
-        }
-        if (!showTag(tv)) tag.expert = true;
-        list.add(tag);
-      }
-      if (ifdcomp != null) {
-        for (TagValue tv : ifdcomp.getMetadata().getTags()) {
-          if (!meta.containsTagId(tv.getId())) {
-            ReportTag tag = new ReportTag();
-            tag.index = index;
-            tag.tv = tv;
-            tag.dif = -1;
-            if (!showTag(tv)) tag.expert = true;
-            list.add(tag);
-          }
-        }
-      }
-      ifd = ifd.getNextIFD();
-      if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
-      index++;
-    }
-    return list;
-  }
-
   protected Map<String, List<ReportTag>> parseTags(IndividualReport ir) {
     /**
      * Parse Tags
      */
     Map<String, List<ReportTag>> tags = new HashMap<>();
-    for (ReportTag tag : getTags(ir)) {
+    for (ReportTag tag : ir.getTags()) {
       String mapId;
       List<ReportTag> list = null;
       if (tag.tv.getId() == 700) {
@@ -311,7 +177,7 @@ public class Report {
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else if (tag.tv.getId() == 330) {
         mapId = "sub" + tag.index;
-        IFD sub = (IFD) tag.tv.getValue().get(0);
+        IFD sub = (IFD) tag.tv.getReadValue().get(0);
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else if (tag.expert) {
         mapId = "ifd" + tag.index + "e";

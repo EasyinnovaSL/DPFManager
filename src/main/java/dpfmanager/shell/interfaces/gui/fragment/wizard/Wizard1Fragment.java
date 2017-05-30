@@ -86,20 +86,18 @@ public class Wizard1Fragment {
   }
 
   private void addInternalCheckBox(String iso) {
-    addCheckBox(ImplementationCheckerLoader.getFileName(iso), ImplementationCheckerLoader.getIsoName(iso), bundle.getString("w6BuiltIn"), false, false);
-  }
+    String id = ImplementationCheckerLoader.getFileName(iso);
+    String name = ImplementationCheckerLoader.getIsoName(iso);
 
-  private void addCheckBox(String id, String name, String path, boolean selected, boolean delete) {
     HBox hbox = new HBox();
     hbox.setAlignment(Pos.CENTER_LEFT);
 
     CheckBox chk = new CheckBox(name);
     chk.setId(id);
     chk.getStyleClass().add("checkreport");
-    chk.setSelected(selected);
+    chk.setSelected(false);
     chk.setEllipsisString(" ... ");
     chk.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
-    chk.setTooltip(new Tooltip(path));
     hbox.getChildren().add(chk);
 
     vboxRadios.getChildren().add(hbox);

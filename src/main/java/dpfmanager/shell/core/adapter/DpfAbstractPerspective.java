@@ -24,6 +24,7 @@ import static javafx.scene.layout.Priority.ALWAYS;
 import dpfmanager.shell.core.DpFManagerConstants;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.ScrollMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.util.NodeUtil;
@@ -72,6 +73,7 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
   protected StackPane bottomPane;
   protected SplitPane mainSplit;
   protected StackPane bottomBar;
+  protected ScrollPane scrollPane;
 
   protected ManagedFragmentHandler<BarFragment> fragmentBar;
 
@@ -106,9 +108,12 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
       } else if (um.isReload()){
         onReload();
       }
-    }else if (dpfMessage.isTypeOf(WidgetMessage.class)) {
+    } else if (dpfMessage.isTypeOf(WidgetMessage.class)) {
       WidgetMessage wm = dpfMessage.getTypedMessage(WidgetMessage.class);
       showHideBottomPane(wm.isShow());
+    } else if (dpfMessage.isTypeOf(ScrollMessage.class)) {
+      ScrollMessage sm = dpfMessage.getTypedMessage(ScrollMessage.class);
+      ensureVisible(sm.getNdoe());
     } else{
       handleMessage(dpfMessage, perspectiveLayout);
     }
@@ -152,7 +157,7 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
   protected ScrollPane constructScrollPane(Node content) {
     content.getStyleClass().add("background-main");
 
-    ScrollPane scrollPane = new ScrollPane();
+    scrollPane = new ScrollPane();
     scrollPane.setFitToHeight(true);
     scrollPane.setFitToWidth(true);
     scrollPane.getStyleClass().add("background-main");
@@ -254,5 +259,20 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
       }
       NodeUtil.hideNode(getDivider());
     }
+  }
+
+  private void ensureVisible(Node node) {
+    double width = scrollPane.getContent().getBoundsInLocal().getWidth();
+    double height = scrollPane.getContent().getBoundsInLocal().getHeight();
+
+    double x = node.getBoundsInParent().getMaxX();
+    double y = node.getBoundsInParent().getMaxY();
+
+    // scrolling values range from 0 to 1
+    scrollPane.setVvalue(y/height);
+    scrollPane.setHvalue(x / width);
+
+    // just for usability
+    node.requestFocus();
   }
 }

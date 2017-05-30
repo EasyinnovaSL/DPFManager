@@ -23,6 +23,7 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.mvc.DpfModel;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
+import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.util.ReportGui;
 
@@ -31,11 +32,8 @@ import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
@@ -88,14 +86,14 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     File reportsDir = new File(baseDir);
     if (reportsDir.exists()) {
       String[] directories = reportsDir.list((current, name) -> new File(current, name).isDirectory());
-      for (int i = directories.length - 1; i >= 0; i--) {
+      for (int i = 0; i < directories.length; i++) {
         String reportDay = directories[i];
         File reportDayFile = new File(baseDir + "/" + reportDay);
         String[] directoriesDay = reportDayFile.list((current, name) -> new File(current, name).isDirectory());
-        for (int j = directoriesDay.length - 1; j >= 0; j--) {
+        for (int j = 0; j < directoriesDay.length; j++) {
           String reportDir = directoriesDay[j];
-          ReportGui rg = new ReportGui(baseDir,reportDay,reportDir);
-          if (rg.exists() && !data.contains(rg)){
+          ReportGui rg = new ReportGui(baseDir, reportDay, reportDir);
+          if (rg.exists() && !data.contains(rg)) {
             data.add(rg);
           }
         }
@@ -107,27 +105,31 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     printReports(0, reports_to_load);
   }
 
-  public void printMoreReports(){
+  public void printMoreReports() {
     printReports(reports_loaded, reports_loaded + reports_to_load);
   }
 
   public void printReports(int from, int to) {
     int index = 0;
     int loaded = 0;
-    for (ReportGui rg : data){
+    Iterator<ReportGui> it = data.iterator();
+    while (it.hasNext()) {
+      ReportGui rg = it.next();
       if (index >= from && index < to) {
+        rg.load();
+        rg.setLast(!it.hasNext() || index == to - 1);
         getView().getContext().send(new ReportsMessage(ReportsMessage.Type.ADD, rg));
         reports_loaded++;
         loaded++;
       }
       index++;
     }
-    if (loaded == 0){
+    if (loaded == 0) {
       getView().hideLoading();
     }
   }
 
-  public boolean isAllReportsLoaded(){
+  public boolean isAllReportsLoaded() {
     return reports_loaded == data.size();
   }
 
@@ -135,24 +137,22 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     return data.isEmpty();
   }
 
-  public void clearData(){
+  public void clearData() {
     data.clear();
   }
 
-  public void clearReportsLoaded(){
+  public void clearReportsLoaded() {
     reports_loaded = 0;
   }
 
-  public String getReportsSize() {
-    Long bytes = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
-    return readableFileSize(bytes);
+  private Long reportsSize;
+
+  public void readReportsSize() {
+    reportsSize = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
   }
 
-  private String readableFileSize(long size) {
-    if (size <= 0) return "0";
-    final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
-    int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-    return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+  public Long getReportsSize() {
+    return reportsSize;
   }
 
 }

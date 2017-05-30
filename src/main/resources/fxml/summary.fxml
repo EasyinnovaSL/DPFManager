@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -17,8 +15,9 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-
+<?import java.lang.String?>
 <AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -40,7 +39,7 @@
                 </VBox.margin>
             </ImageView>
             <!--Simulate table-->
-            <VBox fx:id="vboxReports" prefWidth="840.0" maxWidth="840.0" minWidth="840.0">
+            <VBox fx:id="vboxReports" maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
                 <AnchorPane>
                     <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
                         <columnConstraints>
@@ -75,23 +74,22 @@
                         </VBox.margin>
                     </GridPane>
                 </AnchorPane>
-                <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0"
-                           prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic"/>
-                <ScrollPane hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0"
-                            minWidth="840.0" prefWidth="840.0">
+                <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
+                <ScrollPane hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
                     <content>
-                        <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0"/>
+                        <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
                     </content>
                     <VBox.margin>
-                        <Insets bottom="10.0"/>
+                        <Insets bottom="10.0" />
                     </VBox.margin>
                     <styleClass>
-                        <String fx:value="periodical-scroll"/>
-                        <String fx:value="dpf-bar"/>
+                        <String fx:value="periodical-scroll" />
+                        <String fx:value="dpf-bar" />
                     </styleClass>
                 </ScrollPane>
             </VBox>
             <!--End simulate table-->
+
             <ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">
                 <VBox.margin>
                     <Insets top="20.0" />
@@ -102,7 +100,7 @@
                     <Insets top="15.0" />
                 </VBox.margin>
             </Label>
-            <GridPane>
+            <GridPane maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
@@ -112,7 +110,10 @@
                     <RowConstraints valignment="TOP" vgrow="ALWAYS" />
                 </rowConstraints>
                 <children>
-                    <Button fx:id="loadMore" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" prefWidth="125.0" styleClass="secondary-button" text="%loadMore" textFill="WHITE" GridPane.columnIndex="1" />
+                    <Button fx:id="loadMore" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" styleClass="secondary-button" text="%loadMore" textFill="WHITE" GridPane.columnIndex="1">
+                  <padding>
+                     <Insets left="20.0" right="20.0" />
+                  </padding></Button>
                <VBox alignment="TOP_RIGHT" spacing="10.0" GridPane.columnIndex="2">
                   <children>
                           <HBox fx:id="hboxSize" alignment="CENTER_RIGHT">
@@ -173,10 +174,14 @@
                      <Insets right="10.0" />
                   </padding>
                </VBox>
+               <Button fx:id="genStatistics" mnemonicParsing="false" onAction="#generateStadistics" prefHeight="25.0" styleClass="secondary-button" text="%showStadistics" textFill="WHITE">
+                  <opaqueInsets>
+                     <Insets />
+                  </opaqueInsets>
+                  <padding>
+                     <Insets left="20.0" right="20.0" />
+                  </padding></Button>
                 </children>
-                <padding>
-                    <Insets left="65.0" right="65.0" />
-                </padding>
                 <VBox.margin>
                     <Insets bottom="30.0" top="15.0" />
                 </VBox.margin>

@@ -301,6 +301,7 @@ public class PeriodicFragment {
       info.setConfiguration(txtFile);
       importedConfigs.add(txtFile);
       configChoice.getItems().clear();
+      configChoice.getItems().add(bundle.getString("default"));
       configChoice.getItems().addAll(currentConfigs);
       configChoice.getItems().addAll(importedConfigs);
       configChoice.getItems().add(bundle.getString("selectFromDisk"));
@@ -360,6 +361,12 @@ public class PeriodicFragment {
   }
 
   private void loadConfigurations() {
+    // Clear
+    configChoice.getItems().clear();
+
+    // Default configuration
+    configChoice.getItems().add(bundle.getString("default"));
+
     // Read configurations
     currentConfigs.clear();
     File folder = new File(DPFManagerProperties.getConfigDir());
@@ -373,23 +380,24 @@ public class PeriodicFragment {
     }
 
     // Add current configs
-    configChoice.getItems().clear();
     configChoice.getItems().addAll(currentConfigs);
 
     // Selected one
     if (info.getConfiguration() != null) {
-      if (!currentConfigs.contains(info.getConfiguration())) {
-        // Add config from disk
-        importedConfigs.add(info.getConfiguration());
-        configChoice.getItems().add(info.getConfiguration());
+      String selectedConfig = info.getConfiguration();
+      if (selectedConfig.isEmpty()) {
+        selectedConfig = bundle.getString("default");
       }
-      configChoice.setValue(info.getConfiguration());
+      if (!currentConfigs.contains(selectedConfig)) {
+        // Add config from disk
+        importedConfigs.add(selectedConfig);
+        configChoice.getItems().add(selectedConfig);
+      }
+      configChoice.setValue(selectedConfig);
     }
 
     // Add select from disk
     configChoice.getItems().add(bundle.getString("selectFromDisk"));
-
-
   }
 
   private void loadPeriodicity() {
@@ -455,6 +463,8 @@ public class PeriodicFragment {
     if (value == null || value.isEmpty()) {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertConfigFile")));
       return false;
+    } else if (value.equals(bundle.getString("default"))){
+      info.setConfiguration(null);
     } else {
       info.setConfiguration(value);
     }
@@ -494,7 +504,7 @@ public class PeriodicFragment {
 
   private void printViewMode() {
     viewInput.setText(info.getInput());
-    viewConfig.setText(info.getConfiguration());
+    viewConfig.setText((info.getConfiguration().isEmpty()) ? bundle.getString("default") : info.getConfiguration());
     if (info.getPeriodicity() != null) {
       viewPeriod.setText(info.getPeriodicity().toString(bundle));
     } else {
