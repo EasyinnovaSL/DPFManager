@@ -47,7 +47,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains(".mets")) n++;
+      if (!file.contains(".mets") && !file.contains("serialized") && !file.contains(".ser")) n++;
     }
 
     assertEquals(7, n);
@@ -73,7 +73,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains("Mets") && !file.contains(".ser") && !file.equals("serialized")) n++;
     }
 
     assertEquals(2, n);
@@ -105,7 +105,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets")) n++;
+      if (!file.contains("Mets") && !file.contains(".ser") && !file.equals("serialized")) n++;
     }
 
     assertEquals(2, n);

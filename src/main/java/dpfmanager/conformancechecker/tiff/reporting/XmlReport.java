@@ -545,8 +545,13 @@ public class XmlReport extends Report {
 
         value = "Unknown";
         if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("PlanarConfiguration"))) {
-          int planar = Integer.parseInt(ifd.getMetadata().get("PlanarConfiguration").toString());
-          value = PolicyConstants.planarName(planar);
+          try {
+            String val = ifd.getMetadata().get("PlanarConfiguration").toString();
+            int planar = Integer.parseInt(val);
+            value = PolicyConstants.planarName(planar);
+          } catch (Exception ex) {
+            value = "Unknown";
+          }
         }
         infoElement = doc.createElement("Planar");
         infoElement.setTextContent(value);
