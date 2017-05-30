@@ -7,7 +7,7 @@
     <groupId>com.easyinnova</groupId>
     <artifactId>dpf_manager</artifactId>
     <packaging>jar</packaging>
-    <version>3.2.1</version>
+    <version>3.3</version>
 
     <!--Properties-->
     <properties>
@@ -227,7 +227,7 @@
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tifflibrary4java</artifactId>
-            <version>1.8.7</version>
+            <version>1.9</version>
         </dependency>
 
         <dependency>
