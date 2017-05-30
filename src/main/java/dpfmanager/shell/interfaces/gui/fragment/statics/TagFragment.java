@@ -21,18 +21,14 @@ package dpfmanager.shell.interfaces.gui.fragment.statics;
 
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.component.statistics.comparators.TagsThumbComparator;
-import dpfmanager.shell.modules.statistics.core.StatisticsObject;
 import dpfmanager.shell.modules.statistics.model.HistogramTag;
+import dpfmanager.shell.modules.statistics.model.ValueTag;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
@@ -40,8 +36,9 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -61,6 +58,8 @@ public class TagFragment {
 
   @FXML
   private AnchorPane mainPane;
+  @FXML
+  private StackPane line;
 
   @FXML
   private Label tagId;
@@ -90,18 +89,48 @@ public class TagFragment {
     hTag = h;
     Double mainPercentOne = (1.0 * hTag.getMainCount()) / (1.0 * mainImages);
     Double thumbPercentOne = (1.0 * hTag.getThumbCount()) / (1.0 * thumbnails);
+
     tagId.setText(String.valueOf(hTag.getValue().getId()));
     tagName.setText(hTag.getValue().getName());
+
     tagMain.setText(String.valueOf(hTag.getMainCount()));
-    tagMainPercent.setText(String.valueOf(mainPercentOne * 100));
-    tagThumb.setText(String.valueOf(hTag.getThumbCount()));
-    tagThumbPercent.setText(String.valueOf(thumbPercentOne * 100));
+    tagMainPercent.setText(getPrettyPercent(mainPercentOne));
     progressMain.setProgress(mainPercentOne);
+
+    tagThumb.setText(String.valueOf(hTag.getThumbCount()));
+    tagThumbPercent.setText(getPrettyPercent(thumbPercentOne));
     progressThumb.setProgress(thumbPercentOne);
   }
 
-  public void initTagValue(){
+  public void initChild(HistogramTag h, ValueTag valueTag){
+    Double mainPercentOne = (h.getMainCount() > 0) ? (1.0 * valueTag.main) / (1.0 * h.getMainCount()) : 0.0;
+    Double thumbPercentOne = (h.getThumbCount() > 0) ? (1.0 * valueTag.thumb) / (1.0 * h.getThumbCount()) : 0.0;
 
+    tagId.setText("");
+    tagName.setText(valueTag.value);
+
+    tagMain.setText(String.valueOf(valueTag.main));
+    tagMainPercent.setText(getPrettyPercent(mainPercentOne));
+    progressMain.setProgress(mainPercentOne);
+
+    tagThumb.setText(String.valueOf(valueTag.thumb));
+    tagThumbPercent.setText(getPrettyPercent(thumbPercentOne));
+    progressThumb.setProgress(thumbPercentOne);
+
+    hide();
+    hideLine();
+//    mainPane.setStyle("-fx-background-color: white;");
+//    tagName.setStyle("-fx-text-fill: black;");
+//    tagMain.setStyle("-fx-text-fill: black;");
+//    tagMainPercent.setStyle("-fx-text-fill: black;");
+//    tagThumb.setStyle("-fx-text-fill: black;");
+//    tagThumbPercent.setStyle("-fx-text-fill: black;");
+  }
+
+  private String getPrettyPercent(Double mainPercentOne){
+    NumberFormat nf = DecimalFormat.getInstance();
+    nf.setMaximumFractionDigits(0);
+    return nf.format(mainPercentOne*100) + "%";
   }
 
   public void addChild(ManagedFragmentHandler<TagFragment> child){
@@ -115,6 +144,10 @@ public class TagFragment {
 
   public void hide(){
     NodeUtil.hideNode(mainPane);
+  }
+
+  public void hideLine(){
+    NodeUtil.hideNode(line);
   }
 
   @FXML

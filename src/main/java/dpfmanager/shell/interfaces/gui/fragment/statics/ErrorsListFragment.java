@@ -20,34 +20,34 @@
 package dpfmanager.shell.interfaces.gui.fragment.statics;
 
 import dpfmanager.shell.core.config.GuiConfig;
-import dpfmanager.shell.modules.statistics.core.StatisticsObject;
+import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.component.statistics.StatisticsView;
+import dpfmanager.shell.modules.statistics.model.StatisticsError;
+import dpfmanager.shell.modules.statistics.model.StatisticsIsoErrors;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
-import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
  * Created by Adria Llorens on 18/04/2016.
  */
-@Fragment(id = GuiConfig.FRAGMENT_STATISTICS,
-    viewLocation = "/fxml/statics-fragments/statistics.fxml",
+@Fragment(id = GuiConfig.FRAGMENT_ERRORS_LIST,
+    viewLocation = "/fxml/statics-fragments/errors-list.fxml",
     resourceBundleLocation = "bundles.language",
     scope = Scope.PROTOTYPE)
-public class StatisticsFragment {
+public class ErrorsListFragment {
 
   @Resource
   private Context context;
@@ -55,25 +55,40 @@ public class StatisticsFragment {
   private ResourceBundle bundle;
 
   @FXML
-  private VBox mainVBoxStatics;
+  private VBox mainVBox;
+  @FXML
+  private VBox vboxRows;
+  @FXML
+  private Label labelTitle;
 
-  public void addChild(String title, Node node) {
-    HBox hbox = new HBox();
-    hbox.setAlignment(Pos.TOP_LEFT);
+  /** the internal Statistics Error object */
+  private StatisticsIsoErrors sIsoErrors;
 
-    ImageView imageView = new ImageView();
-    imageView.setImage(new Image("file:src/main/resources/images/tab-buttons/tab-1-blue.png"));
+  public void init(StatisticsIsoErrors s, List<Node> rows) {
+    sIsoErrors = s;
+    labelTitle.setText(sIsoErrors.name);
+    vboxRows.getChildren().addAll(rows);
+    hide();
+  }
 
-    Label label = new Label(title);
-    label.getStyleClass().add("config-title");
+  public void show(){
+    NodeUtil.showNode(mainVBox);
+  }
 
-    hbox.getChildren().addAll(imageView, label);
-    HBox.setMargin(imageView, new Insets(0, 10, 0, 0));
+  public void hide(){
+    NodeUtil.hideNode(mainVBox);
+  }
 
-    ImageView line = new ImageView(new Image("file:src/main/resources/images/line.png"));
-    VBox.setMargin(line, new Insets(3,0,5,0));
+  public void setVisible(boolean show){
+    if (show){
+      NodeUtil.showNode(mainVBox);
+    } else {
+      NodeUtil.hideNode(mainVBox);
+    }
+  }
 
-    mainVBoxStatics.getChildren().addAll(hbox, line, node);
+  public String getId() {
+    return sIsoErrors.iso;
   }
 
 }

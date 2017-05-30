@@ -803,10 +803,13 @@
 .dpf-progress-bar.light-bar > .track {
     -fx-background-color: lightgrey;
 }
+.dpf-progress-bar.green-bar-background > .track {
+    -fx-background-color: yellowgreen;
+}
 .dpf-progress-bar.green-bar > .bar { -fx-accent: #04c500;  }
-.dpf-progress-bar.blue-bar > .bar,
-.dpf-progress-bar.light-bar > .bar
-{ -fx-accent: #31C2F3; }
+.dpf-progress-bar.blue-bar > .bar { -fx-accent: #31C2F3; }
+.dpf-progress-bar.red-bar > .bar { -fx-accent: red;  }
+.dpf-progress-bar.orange-bar > .bar { -fx-accent: orange;  }
 
 .background-tasks{
     -fx-background-color: #F2F2F2;
@@ -905,4 +908,14 @@
 .hoverRow:hover{
     -fx-cursor: hand;
     -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.round-left{
+    -fx-background-radius: 3px 0 0 3px;
+}
+.round-right{
+    -fx-background-radius: 0 3px 3px 0;
+}
+.round-both{
+    -fx-background-radius: 3px;
 }

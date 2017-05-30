@@ -23,12 +23,16 @@ import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.statistics.model.HistogramTag;
+import dpfmanager.shell.modules.statistics.model.StatisticsError;
 import dpfmanager.shell.modules.statistics.model.StatisticsIso;
+import dpfmanager.shell.modules.statistics.model.StatisticsIsoErrors;
+import dpfmanager.shell.modules.statistics.model.StatisticsRule;
 
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import com.easyinnova.implementation_checker.rules.RuleResult;
 import com.easyinnova.tiff.model.TiffTags;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,19 +58,30 @@ public class StatisticsObject {
   private Integer thumbnailsCount;
 
   /**
-   * Averages per ISOs
+   * Statistics per ISOs
    */
   private Map<String, StatisticsIso> isos;
 
   /**
-   * Averages per ISOs
+   * ISO errors
    */
-  private Map<String, StatisticsIso> policys;
+  private Map<String, StatisticsIsoErrors> isoErrors;
+
+  /**
+   * Policy Rules
+   */
+  private Map<String, StatisticsRule> policys;
+
+  /**
+   * Expandable tags
+   */
+  private final List<String> expandableTagNames = Arrays.asList("PhotometricInterpretation", "Orientation", "Compression", "BitsPerSample", "NewSubfileType", "SamplesPerPixel", "PlanarConfiguration", "ResolutionUnit", "Make", "Model", "Software", "Copyright");
 
   public StatisticsObject(){
     tags = new HashMap<>();
     isos = new HashMap<>();
     policys = new HashMap<>();
+    isoErrors = new HashMap<>();
     mainImagesCount = 0;
     thumbnailsCount = 0;
     // Load tags from dictionary
@@ -89,24 +104,38 @@ public class StatisticsObject {
       if (iso.equals(TiffConformanceChecker.POLICY_ISO)){
         parsePolicyErrors(ir);
       } else {
-        iso = ImplementationCheckerLoader.getIsoName(iso);
-        StatisticsIso sIso = (isos.containsKey(iso)) ? isos.get(iso) : new StatisticsIso();
+        String isoName = ImplementationCheckerLoader.getIsoName(iso);
+        StatisticsIso sIso = (isos.containsKey(iso)) ? isos.get(iso) : new StatisticsIso(isoName, iso);
         sIso.count++;
-        sIso.errors += ir.getNErrors(iso);
-        sIso.warnings += ir.getNWarnings(iso);
+        if (ir.getNErrors(iso) > 0){
+          sIso.errors ++;
+        } else if (ir.getNWarnings(iso) > 0) {
+          sIso.warnings ++;
+        } else {
+          sIso.passed ++;
+        }
+        parseIsoErrors(ir, iso, sIso);
         isos.put(iso, sIso);
       }
     }
   }
 
+  private void parseIsoErrors(IndividualReport ir, String isoId, StatisticsIso sIso){
+    StatisticsIsoErrors sIsoErrors = sIso.getIsoErrors();
+    for (RuleResult rr : ir.getKORuleResults(isoId)) {
+      sIsoErrors.addError(rr);
+    }
+    isoErrors.put(isoId, sIsoErrors);
+  }
+
   private void parsePolicyErrors(IndividualReport ir){
     for (RuleResult rr : ir.getAllRuleResults(TiffConformanceChecker.POLICY_ISO)) {
-      String iso = rr.getRule().getDescription().getValue();
-      StatisticsIso sIso = (policys.containsKey(iso)) ? policys.get(iso) : new StatisticsIso();
-      sIso.count++;
-      if (!rr.ok() && !rr.getWarning()) sIso.errors++;
-      if (!rr.ok() && rr.getWarning()) sIso.warnings++;
-      policys.put(iso, sIso);
+      String name = rr.getRule().getDescription().getValue();
+      String id = name + String.valueOf(rr.getWarning());
+      StatisticsRule sRule = (policys.containsKey(id)) ? policys.get(id) : new StatisticsRule(name, rr.getWarning());
+      sRule.total++;
+      if (!rr.ok()) sRule.count++;
+      policys.put(id, sRule);
     }
   }
 
@@ -118,8 +147,14 @@ public class StatisticsObject {
         HistogramTag hTag = tags.get(tag.tv.getId());
         if (!tag.thumbnail) {
           hTag.increaseMainCount();
+          if (expandableTagNames.contains(hTag.getValue().getName())){
+            hTag.addMainValue(tag.tv.getFirstTextReadValue());
+          }
         } else {
           hTag.increaseThumbCount();
+          if (expandableTagNames.contains(hTag.getValue().getName())){
+            hTag.addThumbValue(tag.tv.getFirstTextReadValue());
+          }
         }
       }
     } catch (Exception e){
@@ -142,6 +177,18 @@ public class StatisticsObject {
     return thumbnailsCount;
   }
 
+  public Map<String, StatisticsIso> getIsos() {
+    return isos;
+  }
+
+  public Map<String, StatisticsRule> getPolicys() {
+    return policys;
+  }
+
+  public Map<String, StatisticsIsoErrors> getIsoErrors() {
+    return isoErrors;
+  }
+
   /**
    * Test Only
    */
@@ -156,11 +203,9 @@ public class StatisticsObject {
 
     System.out.println("TAGS   (main / thumbnail)");
     for(HistogramTag hTag : tags.values()){
-      System.out.println("  " + hTag.tv.getName() + ": " + hTag.main + " / " + hTag.thumb + " (" + getMainImagesCount() + " / " + getThumbnailsCount() + ")");
+      System.out.println("  " + hTag.tv.getName() + ": " + hTag.main + " / " + hTag.thumb);
     }
     System.out.println("");
-
-    if (true) return;
 
     System.out.println("TOTAL ERRORS ISOs");
     for(String iso : isos.keySet()){
@@ -168,15 +213,17 @@ public class StatisticsObject {
       System.out.println("  " + iso + ":");
       System.out.println("    Err - " + sIso.errors);
       System.out.println("    War - " + sIso.warnings);
+      System.out.println("    Pas - " + sIso.passed);
     }
     System.out.println("");
 
     System.out.println("TOTAL ERRORS POLICY");
-    for(String iso : policys.keySet()){
-      StatisticsIso sIso = policys.get(iso);
-      System.out.println("  " + iso + ":");
-      System.out.println("    Err - " + sIso.errors);
-      System.out.println("    War - " + sIso.warnings);
+    for(String key : policys.keySet()){
+      StatisticsRule sRule = policys.get(key);
+      System.out.println("  " + sRule.name + ":");
+      System.out.println("    Type - " + sRule.type);
+      System.out.println("    Count - " + sRule.count);
+      System.out.println("    Total - " + sRule.total);
     }
     System.out.println("");
   }

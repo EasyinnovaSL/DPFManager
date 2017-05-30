@@ -236,7 +236,7 @@ public class HtmlReport extends Report {
           content += errorsTmpl;
           String allRows = "";
           // Errors, Warnings and Infos
-          for (RuleResult val : ir.getAllRuleResults(iso)) {
+          for (RuleResult val : ir.getKORuleResults(iso)) {
             String tdRow = tdTmpl, display = "", clasz = "", location = "";
             if (val.getRule().isError() || val.getRule().isCritical()) {
               tdRow = tdRow.replace("##FA_CLASS##", "times");
@@ -313,7 +313,7 @@ public class HtmlReport extends Report {
       if (errorsCount + warningsCount + infosCount > 0) {
         String allRows = "";
         // Errors, Warnings and Infos
-        for (RuleResult val : ir.getAllRuleResults(iso)) {
+        for (RuleResult val : ir.getKORuleResults(iso)) {
           // Policy value
           tdRow = pcTmpl;
           if (!val.ok() && !val.getWarning()) {
@@ -369,7 +369,7 @@ public class HtmlReport extends Report {
         if (errorsCount + warningsCount + infosCount > 0) {
           String allRows = "";
           // Errors, Warnings and Infos
-          for (RuleResult val : ir.getAllRuleResults(iso)) {
+          for (RuleResult val : ir.getKORuleResults(iso)) {
             // Skip not invalidated rules
             if (!ir.getModifiedIsos().get(iso).contains(val.getRule().getId())) continue;
             tdRow = tdTmplPC;

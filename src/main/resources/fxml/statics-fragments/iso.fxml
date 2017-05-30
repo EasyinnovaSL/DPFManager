@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="mainPane" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <children>
+            <GridPane fx:id="gridPane" hgap="2.0" onMouseClicked="#onGridPaneClicked">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                    <Label fx:id="isoName" styleClass="lightgrey" text="ISO" textFill="LIGHTGREY" />
+                    <Label fx:id="isoN" styleClass="lightgrey" text="Nº" textFill="LIGHTGREY" GridPane.columnIndex="1" />
+
+                    <Label fx:id="isoErr" text="Errors" textFill="RED" GridPane.columnIndex="2" />
+                    <Label fx:id="isoWar" text="Warnings" textFill="ORANGE" GridPane.columnIndex="3" />
+                    <Label fx:id="isoOk" text="Passed" textFill="GREENYELLOW" GridPane.columnIndex="4" />
+                    <GridPane fx:id="gridPercent" style="-fx-padding: 9px;" GridPane.columnIndex="5">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="60.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="10.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="30.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <children>
+                            <StackPane fx:id="paneErr" style="-fx-background-color: red;" />
+                            <StackPane fx:id="paneWar" style="-fx-background-color: orange;" GridPane.columnIndex="1" />
+                            <StackPane fx:id="panePas" style="-fx-background-color: yellowgreen;" GridPane.columnIndex="2" />
+                        </children>
+                    </GridPane>
+                </children>
+                <padding>
+                    <Insets left="5.0" right="5.0" />
+                </padding>
+            <styleClass>
+               <String fx:value="hoverRow" />
+               <String fx:value="clickable" />
+            </styleClass>
+            </GridPane>
+            <StackPane fx:id="line" maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" />
+        </children>
+    </VBox>
+</AnchorPane>
