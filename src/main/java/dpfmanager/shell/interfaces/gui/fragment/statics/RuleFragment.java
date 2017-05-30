@@ -20,38 +20,29 @@
 package dpfmanager.shell.interfaces.gui.fragment.statics;
 
 import dpfmanager.shell.core.config.GuiConfig;
-import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.modules.statistics.core.StatisticsObject;
-import dpfmanager.shell.modules.statistics.model.HistogramTag;
-import javafx.event.EventHandler;
+import dpfmanager.shell.modules.statistics.model.StatisticsRule;
 import javafx.fxml.FXML;
-import javafx.geometry.Side;
-import javafx.scene.Node;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.paint.Color;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ResourceBundle;
 
 /**
  * Created by Adria Llorens on 18/04/2016.
  */
-@Fragment(id = GuiConfig.FRAGMENT_AVERAGE,
-    viewLocation = "/fxml/statics-fragments/empty.fxml",
+@Fragment(id = GuiConfig.FRAGMENT_RULE,
+    viewLocation = "/fxml/statics-fragments/rule.fxml",
     resourceBundleLocation = "bundles.language",
     scope = Scope.PROTOTYPE)
-public class AverageFragment {
+public class RuleFragment {
 
   @Resource
   private Context context;
@@ -59,19 +50,35 @@ public class AverageFragment {
   private ResourceBundle bundle;
 
   @FXML
-  private AnchorPane mainPane;
+  private Label ruleName;
+  @FXML
+  private Label ruleType;
+  @FXML
+  private Label ruleFiles;
+  @FXML
+  private Label ruleKO;
+  @FXML
+  private Label ruleKOPercent;
+  @FXML
+  private ProgressBar ruleProgress;
 
-  private VBox vboxPane = new VBox();
+  /** the internal Statistics Rule object */
+  private StatisticsRule sRule;
 
-  public void init(StatisticsObject so) {
+  public void init(StatisticsRule s) {
+    sRule = s;
+    ruleName.setText(s.name);
+    ruleType.setText((s.type == StatisticsRule.Type.ERROR) ? bundle.getString("ruleError") : bundle.getString("ruleWarning"));
+    ruleFiles.setText(s.total + "");
+    ruleKO.setText(s.count + "");
+    ruleKOPercent.setText(getPrettyPercent(s.computePercentageOne()));
+    ruleProgress.setProgress(s.computePercentageOne());
+  }
 
-
-    // Add VBox to view
-    mainPane.getChildren().add(vboxPane);
-    AnchorPane.setBottomAnchor(vboxPane, 0.0);
-    AnchorPane.setLeftAnchor(vboxPane, 0.0);
-    AnchorPane.setRightAnchor(vboxPane, 0.0);
-    AnchorPane.setTopAnchor(vboxPane, 0.0);
+  private String getPrettyPercent(Double mainPercentOne){
+    NumberFormat nf = DecimalFormat.getInstance();
+    nf.setMaximumFractionDigits(0);
+    return nf.format(mainPercentOne*100) + "%";
   }
 
 }

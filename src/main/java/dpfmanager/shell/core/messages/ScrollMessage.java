@@ -1,5 +1,5 @@
 /**
- * <h1>DpfView.java</h1> <p> This program is free software: you can redistribute it
+ * <h1>ReportsMessage.java</h1> <p> This program is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
@@ -17,43 +17,23 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.core.mvc;
+package dpfmanager.shell.core.messages;
 
-import dpfmanager.shell.core.adapter.DpfSimpleView;
+import javafx.scene.Node;
 
 /**
- * Created by Adria Llorens on 07/03/2016.
+ * Created by Adria Llorens on 04/03/2016.
  */
-public abstract class DpfView<M extends DpfModel, C extends DpfController> extends DpfSimpleView implements ViewInterface<M, C> {
+public class ScrollMessage extends DpfMessage {
 
-  private M model = null;
-  private C controller = null;
+  private Node ndoe;
 
-  public DpfView(){
+  // SIZE
+  public ScrollMessage(Node n) {
+    ndoe = n;
   }
 
-  @Override
-  public M getModel() {
-    return model;
+  public Node getNdoe() {
+    return ndoe;
   }
-
-  @Override
-  public C getController() {
-    return controller;
-  }
-
-  @Override
-  public void setModel(M m) {
-    model = m;
-    model.setView(this);
-    model.setContext(getContext());
-  }
-
-  @Override
-  public void setController(C c) {
-    controller = c;
-    controller.setView(this);
-    controller.setContext(getContext());
-  }
-
 }

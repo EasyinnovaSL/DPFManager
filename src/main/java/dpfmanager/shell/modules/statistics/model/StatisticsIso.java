@@ -9,14 +9,26 @@ import com.easyinnova.tiff.model.TagValue;
  */
 public class StatisticsIso {
 
+  public String iso;
+  public String id;
+  public Integer count;
   public Integer errors;
   public Integer warnings;
-  public Integer count;
+  public Integer passed;
 
-  public StatisticsIso(){
+  private StatisticsIsoErrors isoErrors;
+
+  public StatisticsIso(String i, String d){
+    iso = i;
+    id = d;
     errors = 0;
     warnings = 0;
+    passed = 0;
     count = 0;
+    isoErrors = new StatisticsIsoErrors(iso, id);
   }
 
+  public StatisticsIsoErrors getIsoErrors() {
+    return isoErrors;
+  }
 }

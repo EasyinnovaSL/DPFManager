@@ -55,14 +55,15 @@ public class StatisticsService extends DpfService {
 
   public void generateStadistics() {
     StatisticsObject so = new StatisticsObject();
+    so.setReportsCount(countGlobalReportsFromDir());
     for (IndividualReport ir : loadIndividualReportsFromDir()) {
       so.parseIndividualReport(ir);
     }
     getContext().send(GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.RENDER, so));
   }
 
-  private List<GlobalReport> loadGlobalReportsFromDir() {
-    List<GlobalReport> grList = new ArrayList<>();
+  private Integer countGlobalReportsFromDir() {
+    int count = 0;
     String baseDir = ReportGenerator.getReportsFolder();
     File reportsDir = new File(baseDir);
     if (reportsDir.exists()) {
@@ -73,14 +74,14 @@ public class StatisticsService extends DpfService {
         String[] directoriesDay = reportDayFile.list((current, name) -> new File(current, name).isDirectory());
         for (int j = 0; j < directoriesDay.length; j++) {
           String reportDir = directoriesDay[j];
-          GlobalReport globalReport = (GlobalReport) GlobalReport.read(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
-          if (globalReport != null) {
-            grList.add(globalReport);
+          File serializedGlobalFile = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
+          if (serializedGlobalFile.exists()){
+            count++;
           }
         }
       }
     }
-    return grList;
+    return count;
   }
 
   private List<IndividualReport> loadIndividualReportsFromDir() {

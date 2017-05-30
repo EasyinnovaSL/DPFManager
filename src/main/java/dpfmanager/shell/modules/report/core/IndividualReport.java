@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.report.core;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
 import dpfmanager.shell.modules.report.util.ReportHtml;
 
@@ -90,6 +91,11 @@ public class IndividualReport extends ReportSerializable {
    * The warnings list.
    */
   private Map<String, List<RuleResult>> warnings;
+
+  /**
+   * The passed rules list (only for policy).
+   */
+  private Map<String, List<RuleResult>> passed;
 
   /**
    * The isos to check.
@@ -178,6 +184,7 @@ public class IndividualReport extends ReportSerializable {
     reportFilename = rFilename;
     errors = new HashMap<>();
     warnings = new HashMap<>();
+    passed = new HashMap<>();
     modifiedIsos = modifiedIsosList;
     generate(tiffModel, validators);
   }
@@ -395,6 +402,9 @@ public class IndividualReport extends ReportSerializable {
     for (String key : validations.keySet()) {
       errors.put(key, validations.get(key).getErrors());
       warnings.put(key, validations.get(key).getWarnings(true));
+      if (key.equals(TiffConformanceChecker.POLICY_ISO)){
+        passed.put(key, validations.get(key).getPassed());
+      }
     }
   }
 
@@ -407,10 +417,18 @@ public class IndividualReport extends ReportSerializable {
     return checkedIsos.contains(key);
   }
 
+  public List<RuleResult> getKORuleResults(String key) {
+    List<RuleResult> all = new ArrayList<>();
+    all.addAll(getErrors(key));
+    all.addAll(getWarnings(key));
+    return all;
+  }
+
   public List<RuleResult> getAllRuleResults(String key) {
     List<RuleResult> all = new ArrayList<>();
     all.addAll(getErrors(key));
     all.addAll(getWarnings(key));
+    all.addAll(getPassed(key));
     return all;
   }
 
@@ -481,6 +499,18 @@ public class IndividualReport extends ReportSerializable {
       }
     }
     return result;
+  }
+
+  /**
+   * Get passed list.
+   *
+   * @return the warnings
+   */
+  public List<RuleResult> getPassed(String key) {
+    if (!passed.containsKey(key)) {
+      return new ArrayList<>();
+    }
+    return passed.get(key);
   }
 
   /**

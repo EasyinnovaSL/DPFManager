@@ -22,33 +22,35 @@ package dpfmanager.shell.interfaces.gui.component.statistics;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.core.messages.ScrollMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.component.statistics.comparators.TagsIdComparator;
-import dpfmanager.shell.interfaces.gui.component.statistics.comparators.TagsMainComparator;
-import dpfmanager.shell.interfaces.gui.component.statistics.comparators.TagsNameComparator;
-import dpfmanager.shell.interfaces.gui.component.statistics.comparators.TagsThumbComparator;
-import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
-import dpfmanager.shell.interfaces.gui.fragment.statics.StatisticsFragment;
+import dpfmanager.shell.interfaces.gui.component.statistics.comparators.IsoComparator;
+import dpfmanager.shell.interfaces.gui.component.statistics.comparators.PolicyComparator;
+import dpfmanager.shell.interfaces.gui.component.statistics.comparators.TagsComparator;
+import dpfmanager.shell.interfaces.gui.component.statistics.comparators.ValueTagsComparator;
+import dpfmanager.shell.interfaces.gui.component.statistics.messages.ShowHideErrorsMessage;
+import dpfmanager.shell.interfaces.gui.fragment.statics.ErrorFragment;
+import dpfmanager.shell.interfaces.gui.fragment.statics.ErrorsListFragment;
+import dpfmanager.shell.interfaces.gui.fragment.statics.IsoFragment;
+import dpfmanager.shell.interfaces.gui.fragment.statics.RuleFragment;
 import dpfmanager.shell.interfaces.gui.fragment.statics.TagFragment;
-import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.statistics.core.StatisticsObject;
 import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 import dpfmanager.shell.modules.statistics.model.HistogramTag;
+import dpfmanager.shell.modules.statistics.model.StatisticsError;
+import dpfmanager.shell.modules.statistics.model.StatisticsIso;
+import dpfmanager.shell.modules.statistics.model.StatisticsIsoErrors;
+import dpfmanager.shell.modules.statistics.model.StatisticsRule;
+import dpfmanager.shell.modules.statistics.model.ValueTag;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import org.jacpfx.api.annotations.Resource;
@@ -58,13 +60,7 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
-import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -79,6 +75,10 @@ import java.util.ResourceBundle;
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_STATISTICS)
 public class StatisticsView extends DpfView<StatisticsModel, StatisticsController> {
 
+  public final Integer MAX_ROWS_TAGS = 10;
+  public final Integer MAX_ROWS_ISO = 7;
+  public final Integer MAX_ROWS_POLICY = 7;
+
   @Resource
   private Context context;
   @Resource
@@ -92,27 +92,45 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   private ProgressIndicator indicator;
 
   // General
+  private Integer reportsCount;
+  private Integer tiffsCount;
   private Integer mainImagesCount;
   private Integer thumbnailsCount;
+  @FXML
+  private Label labelNReports;
+  @FXML
+  private Label labelNTiffs;
+  @FXML
+  private Label labelNMain;
+  @FXML
+  private Label labelNThumb;
 
   // Tags
   @FXML
   private VBox vboxTags;
+  @FXML
+  private ScrollPane scrollTags;
   private List<HistogramTag> tagsList;
 
   // Isos
   @FXML
   private VBox vboxIsos;
+  @FXML
+  private ScrollPane scrollIsos;
+  private List<StatisticsIso> isosList;
+  private List<ManagedFragmentHandler<IsoFragment>> isosListHandlers;
+
+  // Iso errors
+  @FXML
+  private VBox vboxErrors;
+  private List<ManagedFragmentHandler<ErrorsListFragment>> isoErrorsHandlers;
 
   // Policys
   @FXML
   private VBox vboxPolicys;
-
-  /**
-   * Clickable Tags Names
-   */
-  private final List<String> clickableTagNames = Arrays.asList("PhotometricInterpretation", "Orientation", "Compression", "BitsPerSample", "NewSubfileType", "SamplesPerPixel", "PlanarConfiguration", "ResolutionUnit", "Make", "Model", "Software", "Copyright");
-
+  @FXML
+  private ScrollPane scrollPolicys;
+  private List<StatisticsRule> policyList;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -126,6 +144,19 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
       if (sMessage.isRender()) {
         readStatistics(sMessage.getStatisticsObject());
       }
+    } else if (message != null && message.isTypeOf(ShowHideErrorsMessage.class)) {
+      ShowHideErrorsMessage sMessage = message.getTypedMessage(ShowHideErrorsMessage.class);
+      // Show / Hide errors lists
+      for (ManagedFragmentHandler<ErrorsListFragment> handler : isoErrorsHandlers) {
+        handler.getController().setVisible(handler.getController().getId().equals(sMessage.getIsoId()) && sMessage.isShow());
+      }
+      // Select only current row
+      for (ManagedFragmentHandler<IsoFragment> handler : isosListHandlers) {
+        handler.getController().setSelected(handler.getController().getId().equals(sMessage.getIsoId()) && sMessage.isShow());
+      }
+      if (sMessage.isShow()){
+        context.send(GuiConfig.PERSPECTIVE_STATISTICS, new ScrollMessage(vboxErrors));
+      }
     }
   }
 
@@ -136,6 +167,9 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
       if (sMessage.isRender()) {
         hideLoading();
         renderStatistics();
+      } else if (sMessage.isGenerate()) {
+        showLoading();
+        getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
       }
     }
     return null;
@@ -147,10 +181,6 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     setModel(new StatisticsModel(context));
     setController(new StatisticsController());
     getModel().setResourcebundle(bundle);
-
-    // Show / Hide
-    showLoading();
-    getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
   }
 
   @Override
@@ -164,47 +194,138 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
   }
 
-  private void readStatistics(StatisticsObject so){
+  private void readStatistics(StatisticsObject so) {
     // Test
-    so.printResults();
+//    so.printResults();
 
     // General
+    reportsCount = so.getReportsCount();
+    tiffsCount = so.getTiffsCount();
     mainImagesCount = so.getMainImagesCount();
     thumbnailsCount = so.getThumbnailsCount();
 
     // Tags Histogram
     tagsList = new ArrayList<>(so.getTags().values());
-    tagsList.sort(new TagsMainComparator());
+    tagsList.sort(new TagsComparator(TagsComparator.Mode.MAIN));
+
+    // Isos
+    isosList = new ArrayList<>(so.getIsos().values());
+    isosList.sort(new IsoComparator(IsoComparator.Mode.NAME));
+
+    // Policy
+    policyList = new ArrayList<>(so.getPolicys().values());
+    policyList.sort(new PolicyComparator(PolicyComparator.Mode.PERCENTAGE));
   }
 
-  private void renderStatistics(){
+  private void renderStatistics() {
+    renderGeneral();
+    renderTags();
+    renderIsos(true);
+    renderPolicy();
+    calculateMinHeight();
+  }
+
+  private void renderGeneral(){
+    labelNReports.setText(reportsCount+"");
+    labelNTiffs.setText(tiffsCount+"");
+    labelNMain.setText(mainImagesCount+"");
+    labelNThumb.setText(thumbnailsCount+"");
+  }
+
+  private void renderTags() {
     // Tags Histogram
     vboxTags.getChildren().clear();
+    boolean first = true;
     for (HistogramTag hTag : tagsList) {
       ManagedFragmentHandler<TagFragment> handler = getContext().getManagedFragmentHandler(TagFragment.class);
       handler.getController().init(hTag, mainImagesCount, thumbnailsCount);
-      if (clickableTagNames.contains(hTag.getValue().getName())) {
+      vboxTags.getChildren().add(handler.getFragmentNode());
+      if (first) {
+        handler.getController().hideLine();
+        first = false;
+      }
+      if (hTag.hasSpecificValues()) {
         renderTagValues(hTag, handler);
       }
-      vboxTags.getChildren().add(handler.getFragmentNode());
     }
   }
 
-  private void renderTagValues(HistogramTag hTag, ManagedFragmentHandler<TagFragment> parent){
-//    for (String value : hTag.getPossibleValues().keySet()){
-//      Integer count =
-//      ManagedFragmentHandler<TagFragment> child = getContext().getManagedFragmentHandler(TagFragment.class);
-//      child.getController().initTagValue(hTag);
-//      parent.getController().addChild(child);
-//      vboxTags.getChildren().add(child.getFragmentNode());
-//    }
+  private void renderTagValues(HistogramTag hTag, ManagedFragmentHandler<TagFragment> parent) {
+    List<ValueTag> valueTags = new ArrayList<>(hTag.getPossibleValues().values());
+    valueTags.sort(new ValueTagsComparator());
+    for (ValueTag valueTag : valueTags) {
+      ManagedFragmentHandler<TagFragment> child = getContext().getManagedFragmentHandler(TagFragment.class);
+      child.getController().initChild(hTag, valueTag);
+      parent.getController().addChild(child);
+      vboxTags.getChildren().add(child.getFragmentNode());
+    }
   }
 
-  public void show(){
+  private void renderIsos(boolean plusErrors) {
+    vboxIsos.getChildren().clear();
+    isosListHandlers = new ArrayList<>();
+    if (plusErrors) {
+      vboxErrors.getChildren().clear();
+      isoErrorsHandlers = new ArrayList<>();
+    }
+    for (StatisticsIso sIso : isosList) {
+      ManagedFragmentHandler<IsoFragment> handler = getContext().getManagedFragmentHandler(IsoFragment.class);
+      handler.getController().init(sIso);
+      if (plusErrors) renderIsosErrors(sIso);
+      isosListHandlers.add(handler);
+      vboxIsos.getChildren().add(handler.getFragmentNode());
+    }
+  }
+
+  private void renderIsosErrors(StatisticsIso sIso) {
+    StatisticsIsoErrors sIsoErrors = sIso.getIsoErrors();
+    ManagedFragmentHandler<ErrorsListFragment> handler = getContext().getManagedFragmentHandler(ErrorsListFragment.class);
+    List<Node> rows = new ArrayList<>();
+    // Errors rows
+    for (StatisticsError sError : sIsoErrors.getErrorsList()) {
+      ManagedFragmentHandler<ErrorFragment> handlerChild = getContext().getManagedFragmentHandler(ErrorFragment.class);
+      handlerChild.getController().init(sError, sIsoErrors.max);
+      rows.add(handlerChild.getFragmentNode());
+    }
+    handler.getController().init(sIsoErrors, rows);
+    isoErrorsHandlers.add(handler);
+    vboxErrors.getChildren().add(handler.getFragmentNode());
+  }
+
+  private void renderPolicy() {
+    vboxPolicys.getChildren().clear();
+    for (StatisticsRule sRule : policyList) {
+      ManagedFragmentHandler<RuleFragment> handler = getContext().getManagedFragmentHandler(RuleFragment.class);
+      handler.getController().init(sRule);
+      vboxPolicys.getChildren().add(handler.getFragmentNode());
+    }
+  }
+
+  private void calculateMinHeight() {
+    // Tags
+    int currentRows = vboxTags.getChildren().size();
+    int height = 1 + ((currentRows > MAX_ROWS_TAGS) ? MAX_ROWS_TAGS : currentRows) * 31;
+    scrollTags.setMinHeight(height);
+    scrollTags.setMaxHeight(height);
+
+    // ISOs
+    currentRows = vboxIsos.getChildren().size();
+    height = 2 + ((currentRows > MAX_ROWS_ISO) ? MAX_ROWS_ISO : currentRows) * 31;
+    scrollIsos.setMinHeight(height);
+    scrollIsos.setMaxHeight(height);
+
+    // Policy
+    currentRows = vboxPolicys.getChildren().size();
+    height = 2 + ((currentRows > MAX_ROWS_POLICY) ? MAX_ROWS_POLICY : currentRows) * 31;
+    scrollPolicys.setMinHeight(height);
+    scrollPolicys.setMaxHeight(height);
+  }
+
+  public void show() {
 
   }
 
-  public void hide(){
+  public void hide() {
 
   }
 
@@ -213,25 +334,88 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
    */
   @FXML
   protected void sortId(MouseEvent event) throws Exception {
-    tagsList.sort(new TagsIdComparator());
-    renderStatistics();
+    tagsList.sort(new TagsComparator(TagsComparator.Mode.ID));
+    renderTags();
   }
 
   @FXML
   protected void sortName(MouseEvent event) throws Exception {
-    tagsList.sort(new TagsNameComparator());
-    renderStatistics();
+    tagsList.sort(new TagsComparator(TagsComparator.Mode.NAME));
+    renderTags();
   }
+
   @FXML
   protected void sortMain(MouseEvent event) throws Exception {
-    tagsList.sort(new TagsMainComparator());
-    renderStatistics();
+    tagsList.sort(new TagsComparator(TagsComparator.Mode.MAIN));
+    renderTags();
   }
+
   @FXML
   protected void sortThumb(MouseEvent event) throws Exception {
-    tagsList.sort(new TagsThumbComparator());
-    renderStatistics();
+    tagsList.sort(new TagsComparator(TagsComparator.Mode.THUMB));
+    renderTags();
   }
+
+  /**
+   * ISO Headers Click
+   */
+  @FXML
+  protected void sortIsoErrors(MouseEvent event) throws Exception {
+    isosList.sort(new IsoComparator(IsoComparator.Mode.ERRORS));
+    renderIsos(false);
+  }
+
+  @FXML
+  protected void sortIsoWarnings(MouseEvent event) throws Exception {
+    isosList.sort(new IsoComparator(IsoComparator.Mode.WARNINGS));
+    renderIsos(false);
+  }
+
+  @FXML
+  protected void sortIsoPassed(MouseEvent event) throws Exception {
+    isosList.sort(new IsoComparator(IsoComparator.Mode.PASSED));
+    renderIsos(false);
+  }
+
+  @FXML
+  protected void sortIsoName(MouseEvent event) throws Exception {
+    isosList.sort(new IsoComparator(IsoComparator.Mode.NAME));
+    renderIsos(false);
+  }
+
+  @FXML
+  protected void sortIsoCount(MouseEvent event) throws Exception {
+    isosList.sort(new IsoComparator(IsoComparator.Mode.COUNT));
+    renderIsos(false);
+  }
+
+  /**
+   * Policy Headers Click
+   */
+  @FXML
+  protected void sortPolicyName(MouseEvent event) throws Exception {
+    policyList.sort(new PolicyComparator(PolicyComparator.Mode.NAME));
+    renderPolicy();
+  }
+
+  @FXML
+  protected void sortPolicyFiles(MouseEvent event) throws Exception {
+    policyList.sort(new PolicyComparator(PolicyComparator.Mode.TOTAL));
+    renderPolicy();
+  }
+
+  @FXML
+  protected void sortPolicyFailed(MouseEvent event) throws Exception {
+    policyList.sort(new PolicyComparator(PolicyComparator.Mode.FAILED));
+    renderPolicy();
+  }
+
+  @FXML
+  protected void sortPolicyPercent(MouseEvent event) throws Exception {
+    policyList.sort(new PolicyComparator(PolicyComparator.Mode.PERCENTAGE));
+    renderPolicy();
+  }
+
 
   /**
    * Loading

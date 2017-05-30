@@ -201,7 +201,7 @@ public class GlobalReport extends ReportSerializable {
     int n = 0;
     for (SmallIndividualReport ir : reports) {
       boolean ok = true;
-      for (String iso : getCheckedIsos()) {
+      for (String iso : getSelectedIsos()) {
         int size = hasModifiedIso(iso) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
         if (hasValidation(iso) && size > 0) {
           ok = false;
@@ -220,7 +220,7 @@ public class GlobalReport extends ReportSerializable {
   public int getAllReportsWarnings() {
     int n = 0;
     for (SmallIndividualReport rep : reports) {
-      for (String iso : getCheckedIsos()) {
+      for (String iso : getSelectedIsos()) {
         if (rep.getNWarnings(iso) > 0) {
           n++;
           break;
