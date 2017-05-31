@@ -19,16 +19,22 @@
 
 package dpfmanager.shell.modules.statistics.core;
 
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
+import dpfmanager.shell.modules.statistics.model.HistogramTag;
+import dpfmanager.shell.modules.statistics.model.StatisticsIso;
+import dpfmanager.shell.modules.statistics.model.StatisticsRule;
 
+import org.apache.logging.log4j.Level;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +43,15 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 
@@ -54,23 +64,26 @@ public class StatisticsService extends DpfService {
 
   private List<String> repeatedList;
 
+  private ResourceBundle bundle;
+  
   @PostConstruct
   public void init() {
     // No context yet
+    bundle = DPFManagerProperties.getBundle();
   }
 
   @Override
   protected void handleContext(DpfContext context) {
   }
 
-  public void generateStatistics(LocalDate from, LocalDate to, String path) {
+  public StatisticsObject generateStatistics(LocalDate from, LocalDate to, String path) {
     repeatedList = new ArrayList<>();
     StatisticsObject so = new StatisticsObject();
     so.setReportsCount(countGlobalReportsFromDir(from, to, path));
     for (IndividualReport ir : loadIndividualReportsFromDir(from, to, path)) {
       so.parseIndividualReport(ir);
     }
-    getContext().send(GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.RENDER, so));
+    return so;
   }
 
   private Integer countGlobalReportsFromDir(LocalDate from, LocalDate to, String search) {
@@ -176,4 +189,106 @@ public class StatisticsService extends DpfService {
     return true;
   }
 
+  /**
+   * Print Statistics in console
+   */
+  public void printResults(StatisticsObject so){
+    printOut("");
+
+    // EMPTY
+    if (so.getReportsCount() == 0){
+      printOut(bundle.getString("emptyStatistics"));
+      return;
+    }
+
+    // SUMMARY
+    printOut(bundle.getString("summaryTitle").toUpperCase());
+    int max0 = getMaxLength(bundle.getString("sumRow11"), bundle.getString("sumRow21"), bundle.getString("sumRow31"), bundle.getString("sumRow41"),
+        bundle.getString("sumRow12"), bundle.getString("sumRow22"), bundle.getString("sumRow32"));
+    printOut("  " + String.format("%-" + String.valueOf(max0) + "s%s", bundle.getString("sumRow11"), "  " + so.getReportsCount()));
+    printOut("  " + String.format("%-" + String.valueOf(max0) + "s%s", bundle.getString("sumRow21"), "  " + so.getTiffsCount()));
+    Double tiffsPerReport = (so.getReportsCount() == 0) ? 0 : (so.getTiffsCount() * 1.0) / (so.getReportsCount() * 1.0);
+    printOut("  " + String.format("%-" + String.valueOf(max0) + "s%s", bundle.getString("sumRow31"), "  " + parseDouble(tiffsPerReport, 1)));
+    Long averageSize = (so.getTiffsCount() == 0) ? 0 : so.getTotalSize() / so.getTiffsCount();
+    printOut("  " + String.format("%-" + String.valueOf(max0) + "s%s", bundle.getString("sumRow41"), "  " + readableFileSize(averageSize)));
+    printOut("  " + String.format("%-" + String.valueOf(max0) + "s%s", bundle.getString("sumRow12"), "  " + so.getMainImagesCount()));
+    Double mainIfdPerTiff = (so.getTiffsCount() == 0) ? 0 : (so.getMainImagesCount() * 1.0) / (so.getTiffsCount() * 1.0);
+    printOut("  " + String.format("%-" + String.valueOf(max0) + "s%s", bundle.getString("sumRow22"), "  " + parseDouble(mainIfdPerTiff, 1)));
+    printOut("  " + String.format("%-" + String.valueOf(max0) + "s%s", bundle.getString("sumRow32"), "  " + so.getThumbnailsCount()));
+    printOut("");
+
+
+    // TAGS
+    if (so.getTags().size() == 0){
+      printOut(bundle.getString("tagsTitle").toUpperCase());
+      printOut("  " + bundle.getString("emptyTags"));
+    } else {
+      printOut(bundle.getString("tagsTitle").toUpperCase() + " " + bundle.getString("tagsInMain") );
+      for(HistogramTag hTag : so.getTags().values()){
+        if (hTag.main > 0) printOut("  " + hTag.tv.getName() + ":  " + hTag.main);
+      }
+      printOut("");
+      printOut(bundle.getString("tagsTitle").toUpperCase() + " " + bundle.getString("tagsInThumb") );
+      for(HistogramTag hTag : so.getTags().values()){
+        if (hTag.thumb > 0) printOut("  " + hTag.tv.getName() + ":  " + hTag.thumb);
+      }
+      printOut("");
+    }
+
+    // ISOS
+    int max = getMaxLength(bundle.getString("colErrors"), bundle.getString("colWarnings"), bundle.getString("colPassed")) + 2;
+    printOut(bundle.getString("isosTitle").toUpperCase());
+    for(String iso : so.getIsos().keySet()){
+      StatisticsIso sIso = so.getIsos().get(iso);
+      printOut("  " + sIso.iso + ":");
+      printOut("    " + String.format("%-" + String.valueOf(max) + "s%s", bundle.getString("colErrors") + ": ", sIso.errors));
+      printOut("    " + String.format("%-" + String.valueOf(max) + "s%s", bundle.getString("colWarnings") + ": ", sIso.warnings));
+      printOut("    " + String.format("%-" + String.valueOf(max) + "s%s", bundle.getString("colPassed") + ": ", sIso.passed));
+    }
+    if (so.getIsos().size() == 0){
+      printOut("  " + bundle.getString("emptyIsos"));
+    }
+    printOut("");
+
+    // Policy checkers
+    int max2 = getMaxLength(bundle.getString("colRType"), bundle.getString("colRTotal"), bundle.getString("colRError")) + 2;
+    printOut(bundle.getString("policyTitle").toUpperCase());
+    for(String key : so.getPolicys().keySet()){
+      StatisticsRule sRule = so.getPolicys().get(key);
+      printOut("  " + sRule.name + ":");
+      printOut("    " + String.format("%-" + String.valueOf(max2) + "s%s", bundle.getString("colRType") + ": ", sRule.type));
+      printOut("    " + String.format("%-" + String.valueOf(max2) + "s%s", bundle.getString("colRTotal") + ": ", sRule.total));
+      printOut("    " + String.format("%-" + String.valueOf(max2) + "s%s", bundle.getString("colRError") + ": ", sRule.count));
+    }
+    if (so.getPolicys().size() == 0){
+      printOut("  " + bundle.getString("emptyPolicy"));
+    }
+    printOut("");
+  }
+
+  private void printOut(String message) {
+    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message));
+  }
+
+  private String parseDouble(Double val, int max){
+    NumberFormat nf = DecimalFormat.getInstance();
+    nf.setMaximumFractionDigits(max);
+    return nf.format(val);
+  }
+
+  private String readableFileSize(long size) {
+    if (size <= 0) return "0";
+    final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+    int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+    return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+  }
+
+  private int getMaxLength(String... strs){
+    int max = 0;
+    for (String str : strs){
+      int current = str.length();
+      if (current > max) max = current;
+    }
+    return max;
+  }
 }

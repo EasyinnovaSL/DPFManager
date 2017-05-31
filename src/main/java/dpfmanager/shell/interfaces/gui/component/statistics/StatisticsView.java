@@ -221,9 +221,6 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   }
 
   private void readStatistics(StatisticsObject so) {
-    // Test
-//    so.printResults();
-
     // General
     reportsCount = so.getReportsCount();
     tiffsCount = so.getTiffsCount();
@@ -256,14 +253,14 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   private void renderGeneral(){
     labelNReports.setText(reportsCount + "");
     labelNTiffs.setText(tiffsCount + "");
-    labelNMain.setText(mainImagesCount + "");
-    labelNThumb.setText(thumbnailsCount + "");
     Double tiffsPerReport = (reportsCount == 0) ? 0 : (tiffsCount * 1.0) / (reportsCount * 1.0);
     labelATiffs.setText(parseDouble(tiffsPerReport, 1) + "");
-    Double mainIfdPerTiff = (tiffsCount == 0) ? 0 : (mainImagesCount * 1.0) / (tiffsCount * 1.0);
-    labelAMain.setText(parseDouble(mainIfdPerTiff, 1) + "");
     Long averageSize = (tiffsCount == 0) ? 0 : totalSize / tiffsCount;
     labelASize.setText(readableFileSize(averageSize));
+    labelNMain.setText(mainImagesCount + "");
+    Double mainIfdPerTiff = (tiffsCount == 0) ? 0 : (mainImagesCount * 1.0) / (tiffsCount * 1.0);
+    labelAMain.setText(parseDouble(mainIfdPerTiff, 1) + "");
+    labelNThumb.setText(thumbnailsCount + "");
   }
 
   private void renderTags() {
