@@ -91,6 +91,8 @@ public class Wizard6Fragment {
 
   private String isoId;
 
+  private String isoName;
+
   public Wizard6Fragment() {
   }
 
@@ -101,16 +103,30 @@ public class Wizard6Fragment {
   public void edit(String iso, List<String> deleted) {
     rules = ImplementationCheckerLoader.getRules(iso);
     isoId = iso;
+    isoName = ImplementationCheckerLoader.getIsoName(iso);
     labelEditing.setText(bundle.getString("w6Editing").replace("%1", rules.getTitle()));
     addTreeView(deleted);
   }
 
   private void addTreeView(List<String> deleted) {
     // Root node (my computer)
-    CheckBoxTreeItem<RuleTreeItem> rootNode = new CheckBoxTreeItem<>(new RuleTreeItem());
+    CheckBoxTreeItem<RuleTreeItem> rootNode = new CheckBoxTreeItem<>(new RuleTreeItem(isoName));
     checkTreeView = new CheckTreeView<>(rootNode);
-    checkTreeView.setShowRoot(false);
+    checkTreeView.setShowRoot(true);
     rootNode.setExpanded(true);
+
+    // Pre count rules
+    int countRules = 0;
+    for (RulesType rule : rules.getOwnRules()) {
+      countRules += 1 + rule.getRule().size();
+    }
+    if (deleted.size() == countRules) {
+      rootNode.setSelected(false);
+    } else if (deleted.size() == 0) {
+      rootNode.setSelected(true);
+    } else {
+      rootNode.setIndeterminate(true);
+    }
 
     // Load rules
     for (RulesType rule : rules.getOwnRules()) {
@@ -129,8 +145,10 @@ public class Wizard6Fragment {
           treeNode.setIndeterminate(true);
         }
         treeNode.getChildren().add(treeNodeChild);
+        countRules++;
       }
       rootNode.getChildren().add(treeNode);
+      countRules++;
     }
 
     // Initialize tooltip
@@ -142,7 +160,7 @@ public class Wizard6Fragment {
           public void updateItem(RuleTreeItem item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty) {
-              setText(item.getId() + ": " + item.getName());
+              setText((item.getId().isEmpty()) ? item.getName() : item.getId() + ": " + item.getName());
               String description = item.getDescription();
               if (item.getReference() != null){
                 description += "\n" + item.getReference();
