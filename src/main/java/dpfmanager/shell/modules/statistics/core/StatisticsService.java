@@ -104,11 +104,11 @@ public class StatisticsService extends DpfService {
     File reportsDir = new File(baseDir);
     if (reportsDir.exists()) {
       String[] directories = reportsDir.list((current, name) -> new File(current, name).isDirectory());
-      for (int i = 0; i < directories.length; i++) {
+      for (int i = directories.length-1; i >= 0; i--) {
         String reportDay = directories[i];
         File reportDayFile = new File(baseDir + "/" + reportDay);
         String[] directoriesDay = reportDayFile.list((current, name) -> new File(current, name).isDirectory());
-        for (int j = 0; j < directoriesDay.length; j++) {
+        for (int j =  directoriesDay.length-1; j >= 0; j--) {
           String reportDir = directoriesDay[j];
           File reportDirFile = new File(baseDir + "/" + reportDay + "/" + reportDir + "/serialized");
           String[] serializedReports = reportDirFile.list((current, name) -> new File(current, name).isFile());
@@ -163,8 +163,8 @@ public class StatisticsService extends DpfService {
 
   private boolean complainsPath(String path, String search){
     if (search == null) return true;
-    String normalizedPath = path.replaceAll("\\\\","/");
-    String normalizedSearch = search.replaceAll("\\\\", "/");
+    String normalizedPath = path.replaceAll("\\\\","/").toUpperCase();
+    String normalizedSearch = search.replaceAll("\\\\", "/").toUpperCase();
     return normalizedPath.contains(normalizedSearch);
   }
 

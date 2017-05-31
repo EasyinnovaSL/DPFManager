@@ -49,14 +49,29 @@
                 <children>
                     <VBox alignment="TOP_RIGHT" GridPane.columnIndex="1">
                         <children>
-                            <Button fx:id="buttonFilters" mnemonicParsing="false" onAction="#showFilters" styleClass="button-trans-clear" text="%showFilters" GridPane.columnIndex="1">
-                                <VBox.margin>
-                                    <Insets bottom="5.0" />
-                                </VBox.margin>
-                                <padding>
-                                    <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
-                                </padding>
-                            </Button>
+                            <HBox fx:id="hboxShowFilters" alignment="TOP_RIGHT">
+                                <children>
+                                    <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#generateStatistics" styleClass="button-trans-clear" text="%generateStatistics" GridPane.columnIndex="1">
+                                        <VBox.margin>
+                                            <Insets bottom="5.0" />
+                                        </VBox.margin>
+                                        <padding>
+                                            <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+                                        </padding>
+                                    </Button>
+                                    <Button fx:id="buttonFilters" mnemonicParsing="false" onAction="#showFilters" styleClass="button-trans-clear" text="%showFilters" GridPane.columnIndex="1">
+                                        <VBox.margin>
+                                            <Insets bottom="5.0" />
+                                        </VBox.margin>
+                                        <padding>
+                                            <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+                                        </padding>
+                              <HBox.margin>
+                                 <Insets left="10.0" />
+                              </HBox.margin>
+                                    </Button>
+                                </children>
+                            </HBox>
                             <VBox fx:id="vboxFilters" styleClass="border-box-light">
                                 <children>
                                     <HBox alignment="CENTER_LEFT">
@@ -105,7 +120,7 @@
 
                                     <HBox alignment="TOP_CENTER">
                                         <children>
-                                            <Button fx:id="genStatisticsButton" mnemonicParsing="false" onAction="#generateStatisticsClicked" styleClass="button-trans-clear" text="%generateStatistics">
+                                            <Button fx:id="genStatisticsButton" mnemonicParsing="false" onAction="#generateStatisticsClicked" styleClass="button-trans-clear" text="%applyFilters">
                                                 <padding>
                                                     <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
                                                 </padding>

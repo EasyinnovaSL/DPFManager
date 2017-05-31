@@ -57,6 +57,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
@@ -125,7 +126,7 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   @FXML
   private Button genStatisticsButton;
   @FXML
-  private Button buttonFilters;
+  private HBox hboxShowFilters;
   @FXML
   private VBox vboxFilters;
   @FXML
@@ -261,7 +262,7 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     labelATiffs.setText(parseDouble(tiffsPerReport, 1) + "");
     Double mainIfdPerTiff = (tiffsCount == 0) ? 0 : (mainImagesCount * 1.0) / (tiffsCount * 1.0);
     labelAMain.setText(parseDouble(mainIfdPerTiff, 1) + "");
-    Long averageSize = totalSize / tiffsCount;
+    Long averageSize = (tiffsCount == 0) ? 0 : totalSize / tiffsCount;
     labelASize.setText(readableFileSize(averageSize));
   }
 
@@ -426,6 +427,10 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     hideFilters();
   }
 
+  @FXML
+  protected void generateStatistics(ActionEvent event) throws Exception {
+    context.send(GuiConfig.PERSPECTIVE_STATISTICS + "." + GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE, null, null, null));
+  }
 
   /**
    * Tags Headers click
@@ -538,12 +543,12 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
 
   private void showFilters() {
     NodeUtil.showNode(vboxFilters);
-    NodeUtil.hideNode(buttonFilters);
+    NodeUtil.hideNode(hboxShowFilters);
   }
 
   public void hideFilters() {
     NodeUtil.hideNode(vboxFilters);
-    NodeUtil.showNode(buttonFilters);
+    NodeUtil.showNode(hboxShowFilters);
   }
 
   public void hideAll() {
