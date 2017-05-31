@@ -70,7 +70,7 @@ public class StatisticsPerspective extends DpfAbstractPerspective {
   @Override
   public void onShowCustom() {
     // Generate Statistics
-    context.send(GuiConfig.PERSPECTIVE_STATISTICS + "." + GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
+//    context.send(GuiConfig.PERSPECTIVE_STATISTICS + "." + GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
   }
 
   @PostConstruct

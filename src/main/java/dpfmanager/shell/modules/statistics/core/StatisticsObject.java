@@ -21,6 +21,9 @@ package dpfmanager.shell.modules.statistics.core;
 
 import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.statistics.model.HistogramTag;
 import dpfmanager.shell.modules.statistics.model.StatisticsError;
@@ -32,10 +35,13 @@ import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import com.easyinnova.implementation_checker.rules.RuleResult;
 import com.easyinnova.tiff.model.TiffTags;
 
+import org.apache.logging.log4j.Level;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * The Class IndividualReport.
@@ -68,6 +74,11 @@ public class StatisticsObject {
   private Integer thumbnailsCount;
 
   /**
+   * The files total size
+   */
+  private Long totalSize;
+
+  /**
    * Statistics per ISOs
    */
   private Map<String, StatisticsIso> isos;
@@ -96,6 +107,7 @@ public class StatisticsObject {
     thumbnailsCount = 0;
     reportsCount = 0;
     tiffsCount = 0;
+    totalSize = 0L;
     // Load tags from dictionary
     try{
       TiffTags.getTiffTags();
@@ -107,9 +119,14 @@ public class StatisticsObject {
   public void parseIndividualReport(IndividualReport ir){
     parseTags(ir);
     parseErrors(ir);
-    mainImagesCount += ir.getTiffModel().getMainImagesCount();
-    thumbnailsCount += ir.getTiffModel().getThumbnailsImagesCount();
+    try {
+      mainImagesCount += ir.getTiffModel().getMainImagesCount();
+      thumbnailsCount += ir.getTiffModel().getThumbnailsImagesCount();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
     tiffsCount++;
+    totalSize += ir.getTiffModel().getSize();
   }
 
   private void parseErrors(IndividualReport ir){
@@ -136,7 +153,9 @@ public class StatisticsObject {
   private void parseIsoErrors(IndividualReport ir, String isoId, StatisticsIso sIso){
     StatisticsIsoErrors sIsoErrors = sIso.getIsoErrors();
     for (RuleResult rr : ir.getKORuleResults(isoId)) {
-      sIsoErrors.addError(rr);
+      if (!rr.getInfo()) {
+        sIsoErrors.addError(rr);
+      }
     }
     isoErrors.put(isoId, sIsoErrors);
   }
@@ -214,42 +233,8 @@ public class StatisticsObject {
     return isoErrors;
   }
 
-  /**
-   * Test Only
-   */
-  public void printResults(){
-    System.out.println("");
-
-    System.out.println("GENERAL");
-    System.out.println("  Total images: "+getMainImagesCount());
-    System.out.println("  Total thumbnails: "+getThumbnailsCount());
-    System.out.println("");
-
-
-    System.out.println("TAGS   (main / thumbnail)");
-    for(HistogramTag hTag : tags.values()){
-      System.out.println("  " + hTag.tv.getName() + ": " + hTag.main + " / " + hTag.thumb);
-    }
-    System.out.println("");
-
-    System.out.println("TOTAL ERRORS ISOs");
-    for(String iso : isos.keySet()){
-      StatisticsIso sIso = isos.get(iso);
-      System.out.println("  " + iso + ":");
-      System.out.println("    Err - " + sIso.errors);
-      System.out.println("    War - " + sIso.warnings);
-      System.out.println("    Pas - " + sIso.passed);
-    }
-    System.out.println("");
-
-    System.out.println("TOTAL ERRORS POLICY");
-    for(String key : policys.keySet()){
-      StatisticsRule sRule = policys.get(key);
-      System.out.println("  " + sRule.name + ":");
-      System.out.println("    Type - " + sRule.type);
-      System.out.println("    Count - " + sRule.count);
-      System.out.println("    Total - " + sRule.total);
-    }
-    System.out.println("");
+  public Long getTotalSize() {
+    return totalSize;
   }
+
 }

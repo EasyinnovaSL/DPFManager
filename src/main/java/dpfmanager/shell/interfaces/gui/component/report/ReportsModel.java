@@ -101,6 +101,12 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     }
   }
 
+  public void removeReport(ReportGui rg) {
+    if (data.contains(rg)) {
+      data.remove(rg);
+    }
+  }
+
   public void printReports() {
     printReports(0, reports_to_load);
   }
@@ -126,6 +132,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     }
     if (loaded == 0) {
       getView().hideLoading();
+      getView().calculateMinHeight();
     }
   }
 

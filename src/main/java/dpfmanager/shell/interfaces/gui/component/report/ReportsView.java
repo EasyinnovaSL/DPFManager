@@ -37,6 +37,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -74,14 +75,14 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   private VBox mainVBox;
   @FXML
   private AnchorPane paneStatistics;
+  @FXML
+  private ScrollPane scrollPane;
 
   // View elements
   @FXML
   private VBox reportsVbox;
   @FXML
   private Button loadMore;
-  @FXML
-  private Button genStatistics;
   @FXML
   private VBox vboxReports;
   @FXML
@@ -167,12 +168,14 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       mainVBox.getChildren().add(handler.getFragmentNode());
       hideLoading();
     }
+    calculateMinHeight();
   }
 
   private void deleteReportGui(String uuid) {
     ManagedFragmentHandler<ReportFragment> toDelete = getModel().getReportGuiByUuid(uuid);
     if (toDelete != null) {
       mainVBox.getChildren().remove(toDelete.getFragmentNode());
+      getModel().removeReport(toDelete.getController().getInfo());
       getModel().removeReportFragment(toDelete);
     }
   }
@@ -212,7 +215,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     NodeUtil.hideNode(vboxReports);
     NodeUtil.hideNode(labelEmpty);
     NodeUtil.hideNode(loadMore);
-    NodeUtil.hideNode(genStatistics);
     NodeUtil.hideNode(hboxSize);
   }
 
@@ -224,23 +226,24 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(labelEmpty);
       NodeUtil.hideNode(hboxSize);
-      NodeUtil.hideNode(genStatistics);
     } else if (getModel().isAllReportsLoaded()) {
       NodeUtil.hideNode(labelEmpty);
       NodeUtil.hideNode(loadMore);
       NodeUtil.showNode(hboxSize);
-      NodeUtil.showNode(genStatistics);
     } else {
       NodeUtil.showNode(loadMore);
       NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
-      NodeUtil.showNode(genStatistics);
     }
   }
 
-  @FXML
-  protected void generateStadistics(ActionEvent event) throws Exception {
-    getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
+  public void calculateMinHeight(){
+    int currentRows = mainVBox.getChildren().size();
+    int rows = (currentRows > 16) ? 16 : currentRows;
+    int height = 2 + rows * 30;
+    scrollPane.setMinHeight(height);
+    scrollPane.setMaxHeight(height);
+    scrollPane.setPrefHeight(height);
   }
 
   @FXML

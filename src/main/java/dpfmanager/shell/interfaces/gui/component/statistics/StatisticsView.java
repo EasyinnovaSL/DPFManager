@@ -35,6 +35,7 @@ import dpfmanager.shell.interfaces.gui.fragment.statics.ErrorsListFragment;
 import dpfmanager.shell.interfaces.gui.fragment.statics.IsoFragment;
 import dpfmanager.shell.interfaces.gui.fragment.statics.RuleFragment;
 import dpfmanager.shell.interfaces.gui.fragment.statics.TagFragment;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.statistics.core.StatisticsObject;
 import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 import dpfmanager.shell.modules.statistics.model.HistogramTag;
@@ -43,15 +44,22 @@ import dpfmanager.shell.modules.statistics.model.StatisticsIso;
 import dpfmanager.shell.modules.statistics.model.StatisticsIsoErrors;
 import dpfmanager.shell.modules.statistics.model.StatisticsRule;
 import dpfmanager.shell.modules.statistics.model.ValueTag;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
@@ -60,6 +68,10 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -75,9 +87,10 @@ import java.util.ResourceBundle;
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_STATISTICS)
 public class StatisticsView extends DpfView<StatisticsModel, StatisticsController> {
 
-  public final Integer MAX_ROWS_TAGS = 10;
-  public final Integer MAX_ROWS_ISO = 7;
-  public final Integer MAX_ROWS_POLICY = 7;
+  public static final Integer MAX_ROWS_TAGS = 7;
+  public static final Integer MAX_ROWS_ISO = 7;
+  public static final Integer MAX_ROWS_POLICY = 7;
+  public static final Integer MAX_ROWS_ERRORS = 7;
 
   @Resource
   private Context context;
@@ -87,8 +100,6 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   @FXML
   private VBox mainVBoxStatics;
   @FXML
-  private Button genStatistics;
-  @FXML
   private ProgressIndicator indicator;
 
   // General
@@ -96,40 +107,56 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   private Integer tiffsCount;
   private Integer mainImagesCount;
   private Integer thumbnailsCount;
+  private Long totalSize;
+  @FXML private Label labelNReports;
+  @FXML private Label labelNTiffs;
+  @FXML private Label labelATiffs;
+  @FXML private Label labelASize;
+  @FXML private Label labelNMain;
+  @FXML private Label labelAMain;
+  @FXML private Label labelNThumb;
+
+  // Filter
   @FXML
-  private Label labelNReports;
+  private TextField pathField;
   @FXML
-  private Label labelNTiffs;
+  private DatePicker datePickerFrom;
   @FXML
-  private Label labelNMain;
+  private DatePicker datePickerTo;
   @FXML
-  private Label labelNThumb;
+  private Button genStatisticsButton;
+  @FXML
+  private HBox hboxShowFilters;
+  @FXML
+  private VBox vboxFilters;
+  @FXML
+  private Label labelEmpty;
 
   // Tags
-  @FXML
-  private VBox vboxTags;
-  @FXML
-  private ScrollPane scrollTags;
+  @FXML private VBox vboxTags;
+  @FXML private ScrollPane scrollTags;
+  @FXML private AnchorPane tagsHeaders;
+  @FXML private Label tagsEmpty;
   private List<HistogramTag> tagsList;
 
   // Isos
-  @FXML
-  private VBox vboxIsos;
-  @FXML
-  private ScrollPane scrollIsos;
+  @FXML private VBox vboxIsos;
+  @FXML private ScrollPane scrollIsos;
+  @FXML private AnchorPane isosHeaders;
+  @FXML private Label isosEmpty;
   private List<StatisticsIso> isosList;
   private List<ManagedFragmentHandler<IsoFragment>> isosListHandlers;
+  private String isoSelected = null;
 
   // Iso errors
-  @FXML
-  private VBox vboxErrors;
+  @FXML private VBox vboxErrors;
   private List<ManagedFragmentHandler<ErrorsListFragment>> isoErrorsHandlers;
 
   // Policys
-  @FXML
-  private VBox vboxPolicys;
-  @FXML
-  private ScrollPane scrollPolicys;
+  @FXML private VBox vboxPolicys;
+  @FXML private ScrollPane scrollPolicys;
+  @FXML private AnchorPane policyHeaders;
+  @FXML private Label policyEmpty;
   private List<StatisticsRule> policyList;
 
   @Override
@@ -146,6 +173,7 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
       }
     } else if (message != null && message.isTypeOf(ShowHideErrorsMessage.class)) {
       ShowHideErrorsMessage sMessage = message.getTypedMessage(ShowHideErrorsMessage.class);
+      isoSelected = (sMessage.isShow()) ? sMessage.getIsoId() : null;
       // Show / Hide errors lists
       for (ManagedFragmentHandler<ErrorsListFragment> handler : isoErrorsHandlers) {
         handler.getController().setVisible(handler.getController().getId().equals(sMessage.getIsoId()) && sMessage.isShow());
@@ -165,11 +193,11 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     if (message != null && message.isTypeOf(StatisticsMessage.class)) {
       StatisticsMessage sMessage = message.getTypedMessage(StatisticsMessage.class);
       if (sMessage.isRender()) {
-        hideLoading();
         renderStatistics();
+        hideLoading();
       } else if (sMessage.isGenerate()) {
         showLoading();
-        getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
+        getContext().send(BasicConfig.MODULE_STATISTICS, sMessage);
       }
     }
     return null;
@@ -181,6 +209,10 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     setModel(new StatisticsModel(context));
     setController(new StatisticsController());
     getModel().setResourcebundle(bundle);
+    hideAll();
+
+    // Generate Statistics
+    context.send(GuiConfig.PERSPECTIVE_STATISTICS + "." + GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE, null, null, null));
   }
 
   @Override
@@ -188,21 +220,13 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     return context;
   }
 
-  @FXML
-  protected void generateStadistics(ActionEvent event) throws Exception {
-    showLoading();
-    getContext().send(BasicConfig.MODULE_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE));
-  }
-
   private void readStatistics(StatisticsObject so) {
-    // Test
-//    so.printResults();
-
     // General
     reportsCount = so.getReportsCount();
     tiffsCount = so.getTiffsCount();
     mainImagesCount = so.getMainImagesCount();
     thumbnailsCount = so.getThumbnailsCount();
+    totalSize = so.getTotalSize();
 
     // Tags Histogram
     tagsList = new ArrayList<>(so.getTags().values());
@@ -223,13 +247,20 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     renderIsos(true);
     renderPolicy();
     calculateMinHeight();
+    genStatisticsButton.setDisable(false);
   }
 
   private void renderGeneral(){
-    labelNReports.setText(reportsCount+"");
-    labelNTiffs.setText(tiffsCount+"");
-    labelNMain.setText(mainImagesCount+"");
-    labelNThumb.setText(thumbnailsCount+"");
+    labelNReports.setText(reportsCount + "");
+    labelNTiffs.setText(tiffsCount + "");
+    Double tiffsPerReport = (reportsCount == 0) ? 0 : (tiffsCount * 1.0) / (reportsCount * 1.0);
+    labelATiffs.setText(parseDouble(tiffsPerReport, 1) + "");
+    Long averageSize = (tiffsCount == 0) ? 0 : totalSize / tiffsCount;
+    labelASize.setText(readableFileSize(averageSize));
+    labelNMain.setText(mainImagesCount + "");
+    Double mainIfdPerTiff = (tiffsCount == 0) ? 0 : (mainImagesCount * 1.0) / (tiffsCount * 1.0);
+    labelAMain.setText(parseDouble(mainIfdPerTiff, 1) + "");
+    labelNThumb.setText(thumbnailsCount + "");
   }
 
   private void renderTags() {
@@ -247,6 +278,14 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
       if (hTag.hasSpecificValues()) {
         renderTagValues(hTag, handler);
       }
+    }
+    // Empty
+    if (vboxTags.getChildren().size() == 0){
+      NodeUtil.hideNode(tagsHeaders);
+      NodeUtil.showNode(tagsEmpty);
+    } else {
+      NodeUtil.showNode(tagsHeaders);
+      NodeUtil.hideNode(tagsEmpty);
     }
   }
 
@@ -271,14 +310,24 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     for (StatisticsIso sIso : isosList) {
       ManagedFragmentHandler<IsoFragment> handler = getContext().getManagedFragmentHandler(IsoFragment.class);
       handler.getController().init(sIso);
+      handler.getController().setSelected(sIso.id.equals(isoSelected));
       if (plusErrors) renderIsosErrors(sIso);
       isosListHandlers.add(handler);
       vboxIsos.getChildren().add(handler.getFragmentNode());
+    }
+    // Empty
+    if (vboxIsos.getChildren().size() == 0){
+      NodeUtil.hideNode(isosHeaders);
+      NodeUtil.showNode(isosEmpty);
+    } else {
+      NodeUtil.showNode(isosHeaders);
+      NodeUtil.hideNode(isosEmpty);
     }
   }
 
   private void renderIsosErrors(StatisticsIso sIso) {
     StatisticsIsoErrors sIsoErrors = sIso.getIsoErrors();
+    if (!sIsoErrors.hasErrors()) return;
     ManagedFragmentHandler<ErrorsListFragment> handler = getContext().getManagedFragmentHandler(ErrorsListFragment.class);
     List<Node> rows = new ArrayList<>();
     // Errors rows
@@ -298,6 +347,14 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
       ManagedFragmentHandler<RuleFragment> handler = getContext().getManagedFragmentHandler(RuleFragment.class);
       handler.getController().init(sRule);
       vboxPolicys.getChildren().add(handler.getFragmentNode());
+    }
+    // Empty
+    if (vboxPolicys.getChildren().size() == 0){
+      NodeUtil.hideNode(policyHeaders);
+      NodeUtil.showNode(policyEmpty);
+    } else {
+      NodeUtil.showNode(policyHeaders);
+      NodeUtil.hideNode(policyEmpty);
     }
   }
 
@@ -319,14 +376,57 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     height = 2 + ((currentRows > MAX_ROWS_POLICY) ? MAX_ROWS_POLICY : currentRows) * 31;
     scrollPolicys.setMinHeight(height);
     scrollPolicys.setMaxHeight(height);
+
+    // Errors
+    for (ManagedFragmentHandler<ErrorsListFragment> handler : isoErrorsHandlers){
+      handler.getController().calculateMinHeight();
+    }
   }
 
-  public void show() {
-
+  /**
+   * Buttons click
+   */
+  @FXML
+  protected void selectPathClicked(ActionEvent event) throws Exception {
+    DirectoryChooser folderChooser = new DirectoryChooser();
+    folderChooser.setTitle(bundle.getString("openFolder"));
+    File directory = folderChooser.showDialog(GuiWorkbench.getMyStage());
+    if (directory != null) {
+      pathField.setText(directory.getPath());
+    }
   }
 
-  public void hide() {
+  @FXML
+  protected void generateStatisticsClicked(ActionEvent event) throws Exception {
+    genStatisticsButton.setDisable(true);
 
+    // Filter by date
+    LocalDate from = datePickerFrom.getValue();
+    LocalDate to = datePickerTo.getValue();
+
+    // Filter by path
+    String path = null;
+    if (!pathField.getText().isEmpty()) {
+      path = pathField.getText();
+    }
+
+    // Generate Statistics
+    context.send(GuiConfig.PERSPECTIVE_STATISTICS + "." + GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE, from, to, path));
+  }
+
+  @FXML
+  protected void showFilters(ActionEvent event) throws Exception {
+    showFilters();
+  }
+
+  @FXML
+  protected void hideFilters(ActionEvent event) throws Exception {
+    hideFilters();
+  }
+
+  @FXML
+  protected void generateStatistics(ActionEvent event) throws Exception {
+    context.send(GuiConfig.PERSPECTIVE_STATISTICS + "." + GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.GENERATE, null, null, null));
   }
 
   /**
@@ -416,7 +516,6 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     renderPolicy();
   }
 
-
   /**
    * Loading
    */
@@ -424,12 +523,48 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     indicator.setProgress(-1.0);
     NodeUtil.showNode(indicator);
     NodeUtil.hideNode(mainVBoxStatics);
-    NodeUtil.hideNode(genStatistics);
+    NodeUtil.hideNode(labelEmpty);
   }
 
   public void hideLoading() {
     NodeUtil.hideNode(indicator);
-    NodeUtil.hideNode(genStatistics);
     NodeUtil.showNode(mainVBoxStatics);
+    if (reportsCount == 0) {
+      NodeUtil.showNode(labelEmpty);
+      NodeUtil.hideNode(mainVBoxStatics);
+    } else {
+      NodeUtil.hideNode(labelEmpty);
+      NodeUtil.showNode(mainVBoxStatics);
+    }
+  }
+
+  private void showFilters() {
+    NodeUtil.showNode(vboxFilters);
+    NodeUtil.hideNode(hboxShowFilters);
+  }
+
+  public void hideFilters() {
+    NodeUtil.hideNode(vboxFilters);
+    NodeUtil.showNode(hboxShowFilters);
+  }
+
+  public void hideAll() {
+    NodeUtil.hideNode(indicator);
+    NodeUtil.hideNode(mainVBoxStatics);
+    NodeUtil.hideNode(labelEmpty);
+    hideFilters();
+  }
+
+  private String parseDouble(Double val, int max){
+    NumberFormat nf = DecimalFormat.getInstance();
+    nf.setMaximumFractionDigits(max);
+    return nf.format(val);
+  }
+
+  private String readableFileSize(long size) {
+    if (size <= 0) return "0";
+    final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+    int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+    return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
   }
 }

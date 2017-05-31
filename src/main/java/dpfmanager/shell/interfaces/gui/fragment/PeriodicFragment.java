@@ -361,11 +361,13 @@ public class PeriodicFragment {
   }
 
   private void loadConfigurations() {
+    String defaultConfig = bundle.getString("default");
+
     // Clear
     configChoice.getItems().clear();
 
     // Default configuration
-    configChoice.getItems().add(bundle.getString("default"));
+    configChoice.getItems().add(defaultConfig);
 
     // Read configurations
     currentConfigs.clear();
@@ -386,9 +388,9 @@ public class PeriodicFragment {
     if (info.getConfiguration() != null) {
       String selectedConfig = info.getConfiguration();
       if (selectedConfig.isEmpty()) {
-        selectedConfig = bundle.getString("default");
+        selectedConfig = defaultConfig;
       }
-      if (!currentConfigs.contains(selectedConfig)) {
+      if (!configChoice.getItems().contains(selectedConfig)) {
         // Add config from disk
         importedConfigs.add(selectedConfig);
         configChoice.getItems().add(selectedConfig);
@@ -464,7 +466,7 @@ public class PeriodicFragment {
       context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, bundle.getString("alertConfigFile")));
       return false;
     } else if (value.equals(bundle.getString("default"))){
-      info.setConfiguration(null);
+      info.setConfiguration("");
     } else {
       info.setConfiguration(value);
     }

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
@@ -18,6 +23,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import java.lang.String?>
+
 <AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -75,7 +81,7 @@
                     </GridPane>
                 </AnchorPane>
                 <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
-                <ScrollPane hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
+                <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
                     <content>
                         <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
                     </content>
@@ -174,13 +180,6 @@
                      <Insets right="10.0" />
                   </padding>
                </VBox>
-               <Button fx:id="genStatistics" mnemonicParsing="false" onAction="#generateStadistics" prefHeight="25.0" styleClass="secondary-button" text="%showStadistics" textFill="WHITE">
-                  <opaqueInsets>
-                     <Insets />
-                  </opaqueInsets>
-                  <padding>
-                     <Insets left="20.0" right="20.0" />
-                  </padding></Button>
                 </children>
                 <VBox.margin>
                     <Insets bottom="30.0" top="15.0" />

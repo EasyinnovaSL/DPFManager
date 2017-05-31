@@ -24,6 +24,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.ConsoleContext;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.statistics.core.StatisticsObject;
 import dpfmanager.shell.modules.statistics.core.StatisticsService;
 import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 
@@ -50,7 +51,8 @@ public class StatisticsController extends DpfSpringController {
     if (dpfMessage.isTypeOf(StatisticsMessage.class)) {
       StatisticsMessage message = dpfMessage.getTypedMessage(StatisticsMessage.class);
       if (message.isGenerate()){
-        service.generateStadistics();
+        StatisticsObject so = service.generateStatistics(message.getFrom(), message.getTo(), message.getPath());
+        service.printResults(so);
       }
     }
   }

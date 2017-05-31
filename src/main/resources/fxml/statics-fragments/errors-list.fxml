@@ -83,7 +83,4 @@
             <String fx:value="dpf-bar" />
         </styleClass>
     </ScrollPane>
-    <VBox.margin>
-        <Insets bottom="30.0" />
-    </VBox.margin>
 </VBox>

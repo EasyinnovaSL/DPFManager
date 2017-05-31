@@ -262,17 +262,17 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
   }
 
   private void ensureVisible(Node node) {
-    double width = scrollPane.getContent().getBoundsInLocal().getWidth();
-    double height = scrollPane.getContent().getBoundsInLocal().getHeight();
-
-    double x = node.getBoundsInParent().getMaxX();
-    double y = node.getBoundsInParent().getMaxY();
-
-    // scrolling values range from 0 to 1
-    scrollPane.setVvalue(y/height);
-    scrollPane.setHvalue(x / width);
-
-    // just for usability
-    node.requestFocus();
+//    double width = scrollPane.getContent().getBoundsInLocal().getWidth();
+//    double height = scrollPane.getContent().getBoundsInLocal().getHeight();
+//
+//    double x = node.getBoundsInParent().getMaxX();
+//    double y = node.getBoundsInParent().getMaxY();
+//
+//    // scrolling values range from 0 to 1
+//    scrollPane.setVvalue(y/height);
+//    scrollPane.setHvalue(x / width);
+//
+//    // just for usability
+//    node.requestFocus();
   }
 }

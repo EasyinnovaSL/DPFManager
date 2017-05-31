@@ -699,6 +699,11 @@
     -fx-border-color: #1cc2ff;
     -fx-border-radius: 5;
 }
+.border-box-light{
+    -fx-border-width: 1;
+    -fx-border-color: lightgrey;
+    -fx-border-radius: 0;
+}
 
 /* Scroll Bars */
 .dpf-bar .scroll-bar,
@@ -918,4 +923,15 @@
 }
 .round-both{
     -fx-background-radius: 3px;
+}
+.header-statistics{
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1cc2ff;
+    -fx-alignment: CENTER-LEFT;
+}
+.body-statistics{
+    -fx-font-size: 12px;
+    -fx-text-fill: lightgrey;
+    -fx-alignment: CENTER-LEFT;
 }

@@ -84,6 +84,9 @@ public class IsoFragment {
     isoWar.setText(s.warnings + "");
     isoOk.setText(s.passed + "");
     calculatePercentages();
+    if (sIso.getIsoErrors().hasErrors()){
+      gridPane.getStyleClass().addAll("hoverRow","clickable");
+    }
   }
 
   private void calculatePercentages(){
