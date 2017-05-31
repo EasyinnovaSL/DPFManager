@@ -122,7 +122,7 @@ public abstract class Controller {
   protected String buildCommandArguments(PeriodicCheck check){
     String parsedInput = parseInput(check.getInput());
     String configuration = check.getConfiguration();
-    if (configuration != null){
+    if (configuration != null && !configuration.isEmpty()){
       String configPath = asString(getConfigurationPath(check.getConfiguration()));
       return "check -s -c " + configPath + " " + parsedInput;
     }

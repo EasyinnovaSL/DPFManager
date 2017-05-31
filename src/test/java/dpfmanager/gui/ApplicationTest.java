@@ -323,7 +323,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       reloadScene();
       node = scene.lookup(id);
     }
-    sleep(250);
+    sleep(500);
   }
 
   /**

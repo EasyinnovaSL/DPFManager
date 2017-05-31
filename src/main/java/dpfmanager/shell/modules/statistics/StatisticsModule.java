@@ -21,8 +21,10 @@ package dpfmanager.shell.modules.statistics;
 
 import dpfmanager.shell.core.adapter.DpfModule;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.statistics.core.StatisticsObject;
 import dpfmanager.shell.modules.statistics.core.StatisticsService;
 import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 
@@ -52,7 +54,8 @@ public class StatisticsModule extends DpfModule {
   public void handleMessage(DpfMessage dpfMessage) {
     StatisticsMessage message = dpfMessage.getTypedMessage(StatisticsMessage.class);
     if (message.isGenerate()){
-      service.generateStatistics(message.getFrom(), message.getTo(), message.getPath());
+      StatisticsObject so = service.generateStatistics(message.getFrom(), message.getTo(), message.getPath());
+      context.send(GuiConfig.COMPONENT_STATISTICS, new StatisticsMessage(StatisticsMessage.Type.RENDER, so));
     }
   }
 

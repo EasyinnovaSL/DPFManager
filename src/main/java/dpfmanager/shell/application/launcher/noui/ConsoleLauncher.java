@@ -29,6 +29,7 @@ import dpfmanager.shell.interfaces.console.PeriodicalController;
 import dpfmanager.shell.interfaces.console.RemoteController;
 import dpfmanager.shell.interfaces.console.ServerController;
 import dpfmanager.shell.interfaces.console.ModulesController;
+import dpfmanager.shell.interfaces.console.StatisticsController;
 import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 
@@ -138,6 +139,13 @@ public class ConsoleLauncher {
         controller.parse(params);
         controller.run();
         return;
+      } else if (first.equals("statistics")){
+        params.remove(0);
+        initServices("CMD");
+        StatisticsController controller = new StatisticsController(context, bundle);
+        controller.parse(params);
+        controller.run();
+        return;
       } else if (first.equals("config")){
         params.remove(0);
         initServices("CMD");
@@ -196,7 +204,7 @@ public class ConsoleLauncher {
     printOut(bundle.getString("helpSources"));
     printOut("");
     printOut(bundle.getString("help1"));
-    printOptions("help1", 7);
+    printOptions("help1", 8);
     printOut("");
     printOut(bundle.getString("help3"));
     printOptions("help3", 3);
