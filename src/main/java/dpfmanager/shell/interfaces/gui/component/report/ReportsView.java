@@ -175,6 +175,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     ManagedFragmentHandler<ReportFragment> toDelete = getModel().getReportGuiByUuid(uuid);
     if (toDelete != null) {
       mainVBox.getChildren().remove(toDelete.getFragmentNode());
+      getModel().removeReport(toDelete.getController().getInfo());
       getModel().removeReportFragment(toDelete);
     }
   }
