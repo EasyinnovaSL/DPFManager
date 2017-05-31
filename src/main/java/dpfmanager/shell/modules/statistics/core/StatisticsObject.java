@@ -113,8 +113,12 @@ public class StatisticsObject {
   public void parseIndividualReport(IndividualReport ir){
     parseTags(ir);
     parseErrors(ir);
-    mainImagesCount += ir.getTiffModel().getMainImagesCount();
-    thumbnailsCount += ir.getTiffModel().getThumbnailsImagesCount();
+    try {
+      mainImagesCount += ir.getTiffModel().getMainImagesCount();
+      thumbnailsCount += ir.getTiffModel().getThumbnailsImagesCount();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
     tiffsCount++;
     totalSize += ir.getTiffModel().getSize();
   }
