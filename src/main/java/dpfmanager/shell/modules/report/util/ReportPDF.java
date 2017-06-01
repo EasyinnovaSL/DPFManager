@@ -184,23 +184,25 @@ public class ReportPDF extends ReportGeneric {
         pdfParams.y -= 10;
         pdfParams = writeText(pdfParams, "Conformance Checker", pos_x + image_width + 10, font, font_size, Color.black);
         pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, pos_x + image_width + 170, pdfParams.y - 5);
-        pdfParams.y -= 2;
         int preChart = pdfParams.y;
 
         // Isos table
         pdfParams.y = preChart;
-        int mode = 1, col1 = 100, col2 = 140;
-        if (gr.getModifiedIsos().size() != 0) {
+        int mode = (gr.getModifiedIsos().size() != 0) ? 2 : 1;
+        int col1 = 100, col2 = 140;
+        if (!ir.isQuick() && mode == 2) {
           pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
           pdfParams = writeText(pdfParams, "Policy", pos_x + image_width + col2, font, font_size);
-          mode = 2;
+        } else if (ir.isQuick()) {
+          pdfParams = writeText(pdfParams, "Result", pos_x + image_width + col2, font, font_size);
         }
+        pdfParams.y -= 2;
         int totalWarnings = 0;
         for (String iso : gr.getCheckedIsos()) {
           if (gr.hasValidation(iso) || ir.getNErrors(iso) == 0) {
             String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
             pdfParams.y -= 5;
-            if (mode == 1) {
+            if (!ir.isQuick() && mode == 1) {
               pdfParams.y -= 10;
               pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
               pdfParams = writeText(pdfParams, ir.getNErrors(iso) + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
@@ -208,7 +210,7 @@ public class ReportPDF extends ReportGeneric {
               if (ir.getNWarnings(iso) > 0) {
                 totalWarnings++;
               }
-            } else {
+            } else if (!ir.isQuick() && mode == 2) {
               pdfParams.y -= 15;
               pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
               pdfParams.y += 5;
@@ -225,6 +227,23 @@ public class ReportPDF extends ReportGeneric {
               }
               if (ir.getNWarnings(iso) > 0) {
                 totalWarnings++;
+              }
+            } else if (ir.isQuick()){
+              int modeSpecific = (gr.hasModificationIso(iso)) ? 2 : 1;
+              int errorsCount = (modeSpecific == 1) ? ir.getNErrors(iso) : ir.getNErrorsPolicy(iso);
+              String resultName = (errorsCount == 0) ? "Passed" : "Failed";
+              pdfParams.y -= 10;
+              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size, Color.black);
+
+              if (modeSpecific == 2) {
+                pdfParams.y -= 8;
+                pdfParams = writeText(pdfParams, "with custom policy", pos_x + image_width + 10, font, font_size, Color.black);
+                pdfParams.y += 4;
+              }
+
+              pdfParams = writeText(pdfParams, resultName, pos_x + image_width + col2, font, font_size,  (errorsCount == 0) ? Color.green : Color.red);
+              if (modeSpecific == 2) {
+                pdfParams.y -= 4;
               }
             }
           }

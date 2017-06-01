@@ -50,7 +50,6 @@ import com.easyinnova.tiff.io.TiffInputStream;
 import com.easyinnova.tiff.model.ReadIccConfigIOException;
 import com.easyinnova.tiff.model.ReadTagsIOException;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.types.IccProfile;
 import com.easyinnova.tiff.reader.TiffReader;
 import com.easyinnova.tiff.writer.TiffWriter;
 
@@ -67,7 +66,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.Collator;
@@ -419,7 +417,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations, config.getModifiedIsos());
+          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations, config.getModifiedIsos(), config.isQuick());
           ArrayList<String> isosCheck = new ArrayList<>(config.getIsos());
           Collections.sort(isosCheck, Collator.getInstance());
           ir.setIsosCheck(isosCheck);
@@ -496,7 +494,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");
             name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, validationsFixed, config.getModifiedIsos());
+            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, validationsFixed, config.getModifiedIsos(), config.isQuick());
             int ind = reportFilename.lastIndexOf(".tif");
             ir2.setReportPath(reportFilename.substring(0, ind) + "_fixed.tif");
             ir2.setIsosCheck(ir.getCheckedIsos());
@@ -566,11 +564,18 @@ public class TiffConformanceChecker extends ConformanceChecker {
     String content = TiffConformanceChecker.getValidationXmlString(tr);
     Map<String, ValidationResult> validations = new HashMap<>();
     for (String path : ImplementationCheckerLoader.getPathsList()) {
-      boolean check = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
+      boolean selected = config.getIsos().contains(ImplementationCheckerLoader.getFileName(path));
       Validator validation = new Validator();
-      ValidationResult result = validation.validate(content, path, !check);
-      result = policy.filterISOs(result, config.getModifiedIso(ImplementationCheckerLoader.getFileName(path)));
-      validations.put(ImplementationCheckerLoader.getFileName(path), result);
+      ValidationResult result = null;
+      if (!config.isQuick()){
+        result = validation.validate(content, path, !selected);
+      } else if (selected) {
+        result = validation.validate(content, path, true);
+      }
+      if (result != null){
+        result = policy.filterISOs(result, config.getModifiedIso(ImplementationCheckerLoader.getFileName(path)));
+        validations.put(ImplementationCheckerLoader.getFileName(path), result);
+      }
     }
     if (config.hasRules()) {
       ValidationResult rulesResult = policy.validateRules(content, config.getRules());

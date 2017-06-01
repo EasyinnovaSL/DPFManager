@@ -527,7 +527,9 @@ h5 i {
 .success {
     color: #66CC66;
 }
-
+.no-bold {
+    font-family: Roboto, sans-serif;
+}
 .hover-row:hover {
     background-color: rgba(0, 106, 255, 0.08);;
 }

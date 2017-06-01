@@ -53,6 +53,8 @@ public class ReportHtml extends ReportGeneric {
     int index = 0;
     for (SmallIndividualReport ir : reports) {
       if (!ir.getContainsData()) continue;
+
+      int percent = ir.getPercent();
       String imageBody;
       imageBody = generator.readFilefromResources(imagePath);
       // Image
@@ -61,7 +63,6 @@ public class ReportHtml extends ReportGeneric {
       imageBody = StringUtils.replace(imageBody, "##IMG_PATH##", encodeUrl(imgPath));
 
       // Basic
-      int percent = ir.getPercent();
       imageBody = StringUtils.replace(imageBody, "##PERCENT##", "" + percent);
       imageBody = StringUtils.replace(imageBody, "##INDEX##", "" + index);
       imageBody = StringUtils.replace(imageBody, "##IMG_NAME##", "" + ir.getFileName());
@@ -69,86 +70,117 @@ public class ReportHtml extends ReportGeneric {
       /**
        * Errors / warnings resume (individual)
        */
-      String thTmpl = "<tr><th colspan=\"3\" style=\"width: 100%;\">Conformance checker</th></tr>";
-      String rowTmpl = "<tr>\n" +
-          "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
-          "\t\t\t\t\t\t        <td class=\"c2 ##ERR_C##\">##ERR_N## errors</td>\n" +
-          "\t\t\t\t\t\t        <td class=\"c2 ##WAR_C##\">##WAR_N## warnings</td>\n" +
-          "\t\t\t\t\t\t        <td></td>\n" +
-          "\t\t\t\t\t\t    </tr>";
-      int mode = 1;
-      if (gr.getModifiedIsos().keySet().size() > 0) {
-        thTmpl = "<tr><th style=\"width: 100%;\">Conformance checker</th><th class=\"nowrap\">Standard</th><th class=\"nowrap\">Policy</th></tr>";
-        rowTmpl = "<tr>\n" +
-            "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
-            "\t\t\t\t\t\t        <td class=\"c2\">" +
-            "\t\t\t\t\t\t\t        <p><span class=\"##ERR_C##\">##ERR_N## errors</span></p>" +
-            "\t\t\t\t\t\t\t        <p><span class=\"##WAR_C##\">##WAR_N## warnings</span></p>" +
-            "\t\t\t\t\t\t        </td>\n" +
-            "\t\t\t\t\t\t        <td class=\"c2\">" +
-            "\t\t\t\t\t\t\t        <p><span class=\"##ERR_C_P##\">##ERR_N_P## errors</span></p>" +
-            "\t\t\t\t\t\t\t        <p><span class=\"##WAR_C_P##\">##WAR_N_P## warnings</span></p>" +
-            "\t\t\t\t\t\t        </td>\n" +
-            "\t\t\t\t\t\t    </tr>";
-        mode = 2;
-      }
-      String rows = "";
       int totalWarnings = 0;
-      for (String iso : gr.getCheckedIsos()) {
-        if (gr.hasValidation(iso)) {
-          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
-          String row = rowTmpl;
+      if (!ir.isQuick()) {
+        /**
+         * Full Check
+         */
+        String thTmpl = "<tr><th colspan=\"3\" style=\"width: 100%;\">Conformance checker</th></tr>";
+        String rowTmpl = "<tr>\n" +
+            "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
+            "\t\t\t\t\t\t        <td class=\"c2 ##ERR_C##\">##ERR_N## errors</td>\n" +
+            "\t\t\t\t\t\t        <td class=\"c2 ##WAR_C##\">##WAR_N## warnings</td>\n" +
+            "\t\t\t\t\t\t        <td></td>\n" +
+            "\t\t\t\t\t\t    </tr>";
+        int mode = 1;
+        if (gr.getModifiedIsos().keySet().size() > 0) {
+          thTmpl = "<tr><th style=\"width: 100%;\">Conformance checker</th><th class=\"nowrap\">Standard</th><th class=\"nowrap\">Policy</th></tr>";
+          rowTmpl = "<tr>\n" +
+              "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
+              "\t\t\t\t\t\t        <td class=\"c2\">" +
+              "\t\t\t\t\t\t\t        <p><span class=\"##ERR_C##\">##ERR_N## errors</span></p>" +
+              "\t\t\t\t\t\t\t        <p><span class=\"##WAR_C##\">##WAR_N## warnings</span></p>" +
+              "\t\t\t\t\t\t        </td>\n" +
+              "\t\t\t\t\t\t        <td class=\"c2\">" +
+              "\t\t\t\t\t\t\t        <p><span class=\"##ERR_C_P##\">##ERR_N_P## errors</span></p>" +
+              "\t\t\t\t\t\t\t        <p><span class=\"##WAR_C_P##\">##WAR_N_P## warnings</span></p>" +
+              "\t\t\t\t\t\t        </td>\n" +
+              "\t\t\t\t\t\t    </tr>";
+          mode = 2;
+        }
+        String rows = "";
+        for (String iso : gr.getCheckedIsos()) {
+          if (gr.hasValidation(iso)) {
+            String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+            String row = rowTmpl;
 
-          // Standard IC
-          int errorsCount = ir.getNErrors(iso);
-          int warningsCount = ir.getNWarnings(iso);
-          totalWarnings += warningsCount;
-          row = StringUtils.replace(row, "##NAME##", name);
-          row = StringUtils.replace(row, "##ERR_N##", "" + errorsCount);
-          row = StringUtils.replace(row, "##WAR_N##", "" + warningsCount);
-          if (errorsCount > 0) {
-            row = StringUtils.replace(row, "##ERR_C##", "error");
-          } else {
-            row = StringUtils.replace(row, "##ERR_C##", "");
-          }
-          if (warningsCount > 0) {
-            row = StringUtils.replace(row, "##WAR_C##", "warning");
-          } else {
-            row = StringUtils.replace(row, "##WAR_C##", "");
-          }
-
-          // Standard PC
-          if (mode == 2) {
-            if (!gr.hasModifiedIso(iso)) {
-              // Empty
-              row = StringUtils.replace(row, "##ERR_C_P##", "hide");
-              row = StringUtils.replace(row, "##WAR_C_P##", "hide");
+            // Standard IC
+            int errorsCount = ir.getNErrors(iso);
+            int warningsCount = ir.getNWarnings(iso);
+            totalWarnings += warningsCount;
+            row = StringUtils.replace(row, "##NAME##", name);
+            row = StringUtils.replace(row, "##ERR_N##", "" + errorsCount);
+            row = StringUtils.replace(row, "##WAR_N##", "" + warningsCount);
+            if (errorsCount > 0) {
+              row = StringUtils.replace(row, "##ERR_C##", "error");
             } else {
-              int errorsCountPolicy = ir.getNErrorsPolicy(iso);
-              int warningsCountPolicy = ir.getNWarningsPolicy(iso);
-              row = StringUtils.replace(row, "##ERR_N_P##", "" + errorsCountPolicy);
-              row = StringUtils.replace(row, "##WAR_N_P##", "" + warningsCountPolicy);
-              if (errorsCountPolicy > 0) {
-                row = StringUtils.replace(row, "##ERR_C_P##", "error");
-              } else if (errorsCount > 0) {
-                row = StringUtils.replace(row, "##ERR_C_P##", "success");
+              row = StringUtils.replace(row, "##ERR_C##", "");
+            }
+            if (warningsCount > 0) {
+              row = StringUtils.replace(row, "##WAR_C##", "warning");
+            } else {
+              row = StringUtils.replace(row, "##WAR_C##", "");
+            }
+
+            // Standard PC
+            if (mode == 2) {
+              if (!gr.hasModifiedIso(iso)) {
+                // Empty
+                row = StringUtils.replace(row, "##ERR_C_P##", "hide");
+                row = StringUtils.replace(row, "##WAR_C_P##", "hide");
               } else {
-                row = StringUtils.replace(row, "##ERR_C_P##", "");
-              }
-              if (warningsCountPolicy > 0) {
-                row = StringUtils.replace(row, "##WAR_C_P##", "warning");
-              } else if (warningsCount > 0) {
-                row = StringUtils.replace(row, "##WAR_C_P##", "success");
-              } else {
-                row = StringUtils.replace(row, "##WAR_C_P##", "");
+                int errorsCountPolicy = ir.getNErrorsPolicy(iso);
+                int warningsCountPolicy = ir.getNWarningsPolicy(iso);
+                row = StringUtils.replace(row, "##ERR_N_P##", "" + errorsCountPolicy);
+                row = StringUtils.replace(row, "##WAR_N_P##", "" + warningsCountPolicy);
+                if (errorsCountPolicy > 0) {
+                  row = StringUtils.replace(row, "##ERR_C_P##", "error");
+                } else if (errorsCount > 0) {
+                  row = StringUtils.replace(row, "##ERR_C_P##", "success");
+                } else {
+                  row = StringUtils.replace(row, "##ERR_C_P##", "");
+                }
+                if (warningsCountPolicy > 0) {
+                  row = StringUtils.replace(row, "##WAR_C_P##", "warning");
+                } else if (warningsCount > 0) {
+                  row = StringUtils.replace(row, "##WAR_C_P##", "success");
+                } else {
+                  row = StringUtils.replace(row, "##WAR_C_P##", "");
+                }
               }
             }
+            rows += row;
           }
-
-          rows += row;
         }
+        imageBody = StringUtils.replace(imageBody, "##TABLE_RESUME_IMAGE##", thTmpl + rows);
+      } else {
+        /**
+         * Quick check
+         */
+        String thTmpl = "<tr><th style=\"width: 70%;\">Conformance checker</th><th class=\"nowrap\" style=\"width: 30%;\">Result</th></tr>";
+        String rowTmpl = "<tr>\n" +
+            "\t\t\t\t\t\t        <td class=\"c1\">##NAME##</td>\n" +
+            "\t\t\t\t\t\t        <td class=\"c2 ##RESULT_COLOR##\">##RESULT_NAME##</td>\n" +
+            "\t\t\t\t\t\t    </tr>";
+        String policySpan = "<span class=\"no-bold\">with custom policy</span>";
+        String rows = "";
+        for (String iso : gr.getCheckedIsos()) {
+          if (gr.hasValidation(iso)) {
+            int mode = (gr.getModifiedIsos().containsKey(iso)) ? 2 : 1;
+            int errorsCount = (mode == 1) ? ir.getNErrors(iso) : ir.getNErrorsPolicy(iso);
+            String row = rowTmpl;
+            String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+            String resultName = (errorsCount == 0) ? "Passed" : "Failed";
+            String resultColor = (errorsCount == 0) ? "success" : "error";
+            String nameTd = (mode == 1) ? name : name + "<br>" + policySpan;
+            row = StringUtils.replace(row, "##NAME##", nameTd);
+            row = StringUtils.replace(row, "##RESULT_NAME##", resultName);
+            row = StringUtils.replace(row, "##RESULT_COLOR##", resultColor);
+            rows += row;
+          }
+        }
+        imageBody = StringUtils.replace(imageBody, "##TABLE_RESUME_IMAGE##", thTmpl + rows);
       }
-      imageBody = StringUtils.replace(imageBody, "##TABLE_RESUME_IMAGE##", thTmpl + rows);
       imageBody = StringUtils.replace(imageBody, "##HREF##", "html/" + encodeUrl(new File(ir.getReportPath()).getName() + ".html"));
 
       /**
@@ -171,15 +203,40 @@ public class ReportHtml extends ReportGeneric {
       /**
        * Percent chart
        */
-      int angle = percent * 360 / 100;
-      int reverseAngle = 360 - angle;
-      String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
-      if (percent < 100) {
-        functionPie += ", '#CCCCCC', 'red'); ";
+
+      /** Bug Java 1.8_91*/
+      if (percent > 50){
+        int angle = percent * 360 / 100;
+        int reverseAngle = 360 - angle;
+        String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
+        if (percent < 100) {
+          functionPie += ", '#CCCCCC', 'red'); ";
+        } else {
+          functionPie += ", '#66CC66', '#66CC66'); ";
+        }
+        pieFunctions += functionPie;
       } else {
-        functionPie += ", '#66CC66', '#66CC66'); ";
+        int reverseAngle = percent * 360 / 100;
+        int angle = 360 - reverseAngle;
+        String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
+        if (percent < 100) {
+          functionPie += ", 'red', '#CCCCCC'); ";
+        } else {
+          functionPie += ", '#66CC66', '#66CC66'); ";
+        }
+        pieFunctions += functionPie;
       }
-      pieFunctions += functionPie;
+
+      /** Java 1.8_121*/
+//      int reverseAngle = percent * 360 / 100;
+//      int angle = 360 - reverseAngle;
+//      String functionPie = "plotPie('pie-" + index + "', " + angle + ", " + reverseAngle;
+//      if (percent < 100) {
+//        functionPie += ", 'red', '#CCCCCC'); ";
+//      } else {
+//        functionPie += ", '#66CC66', '#66CC66'); ";
+//      }
+//      pieFunctions += functionPie;
 
       imagesBody += imageBody;
       index++;

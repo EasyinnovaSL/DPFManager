@@ -135,6 +135,8 @@ public class IndividualReport extends ReportSerializable {
 
   private boolean error;
 
+  private boolean quick;
+
   private Map<String, ArrayList<String>> modifiedIsos;
 
   private String imagePath = null;
@@ -153,13 +155,14 @@ public class IndividualReport extends ReportSerializable {
    * @param path           the path
    * @param reportFilename the path
    */
-  public IndividualReport(String name, String path, String reportFilename) {
+  public IndividualReport(String name, String path, String reportFilename, boolean q) {
     filename = name;
     filepath = path;
     this.reportFilename = reportFilename;
     containsData = false;
     errors = new HashMap<>();
     warnings = new HashMap<>();
+    quick = q;
   }
 
   public String getImagePath() {
@@ -177,7 +180,7 @@ public class IndividualReport extends ReportSerializable {
    * @param path      the path
    * @param tiffModel the TIFF model
    */
-  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, ArrayList<String>> modifiedIsosList) {
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, ArrayList<String>> modifiedIsosList, boolean q) {
     filename = name;
     filepath = path;
     containsData = true;
@@ -186,6 +189,7 @@ public class IndividualReport extends ReportSerializable {
     warnings = new HashMap<>();
     passed = new HashMap<>();
     modifiedIsos = modifiedIsosList;
+    quick = q;
     generate(tiffModel, validators);
   }
 
@@ -825,5 +829,9 @@ public class IndividualReport extends ReportSerializable {
     } catch (Exception ex) {
     }
     return hs;
+  }
+
+  public boolean isQuick() {
+    return quick;
   }
 }

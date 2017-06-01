@@ -260,52 +260,54 @@ public class PdfReport extends Report {
       }
       pdfParams.y -= 10;
 
-      /**
-       * Summary table
-       */
-      font_size = 8;
-      String dif = "";
-      int mode = 1, col1 = 160, col2 = 210;
-      if (ir.getModifiedIsos().size() == 0) {
-        pdfParams = writeText(pdfParams, "Errors", pos_x + image_width + col1, font, font_size);
-        pdfParams = writeText(pdfParams, "Warnings", pos_x + image_width + col2, font, font_size);
-      } else {
-        pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
-        pdfParams = writeText(pdfParams, "Policy", pos_x + image_width + col2, font, font_size);
-        mode = 2;
-      }
+      if (!ir.isQuick()) {
+        /**
+         * Summary table
+         */
+        font_size = 8;
+        String dif = "";
+        int mode = 1, col1 = 160, col2 = 210;
+        if (ir.getModifiedIsos().size() == 0) {
+          pdfParams = writeText(pdfParams, "Errors", pos_x + image_width + col1, font, font_size);
+          pdfParams = writeText(pdfParams, "Warnings", pos_x + image_width + col2, font, font_size);
+        } else {
+          pdfParams = writeText(pdfParams, "Standard", pos_x + image_width + col1, font, font_size);
+          pdfParams = writeText(pdfParams, "Policy", pos_x + image_width + col2, font, font_size);
+          mode = 2;
+        }
 
-      for (String iso : ir.getCheckedIsos()) {
-        if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
-          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
-          pdfParams.y -= 15;
-          pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y + 10, pos_x + image_width + 260, pdfParams.y + 10);
-          if (mode == 1) {
-            // Standard
-            pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size);
-            dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrors(iso), ir.getNErrors(iso)) : "";
-            pdfParams = writeText(pdfParams, ir.getNErrors(iso) + dif, pos_x + image_width + 170, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
-            dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarnings(iso), ir.getNWarnings(iso)) : "";
-            pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + dif, pos_x + image_width + 230, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
-          } else {
-            // With policy
-            pdfParams.y -= 5;
-            pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size);
-            pdfParams.y += 5;
-            // Errors
-            dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrors(iso), ir.getNErrors(iso)) : "";
-            pdfParams = writeText(pdfParams, ir.getNErrors(iso) + dif + " errors" , pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
-            if (ir.hasModifiedIso(iso)) {
-              dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrorsPolicy(iso), ir.getNErrorsPolicy(iso)) : "";
-              pdfParams = writeText(pdfParams, ir.getNErrorsPolicy(iso) + dif + " errors", pos_x + image_width + col2, font, font_size, ir.getNErrorsPolicy(iso) > 0 ? Color.red : ir.getNErrors(iso) > 0 ? Color.green : Color.black);
-            }
-            // Warnings
-            pdfParams.y -= 10;
-            dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarnings(iso), ir.getNWarnings(iso)) : "";
-            pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + dif + " warnings", pos_x + image_width + col1, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
-            if (ir.hasModifiedIso(iso)) {
-              dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarningsPolicy(iso), ir.getNWarningsPolicy(iso)) : "";
-              pdfParams = writeText(pdfParams, ir.getNWarningsPolicy(iso) + dif + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarningsPolicy(iso) > 0 ? Color.orange : ir.getNWarningsPolicy(iso) > 0 ? Color.green : Color.black);
+        for (String iso : ir.getCheckedIsos()) {
+          if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
+            String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+            pdfParams.y -= 15;
+            pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y + 10, pos_x + image_width + 260, pdfParams.y + 10);
+            if (mode == 1) {
+              // Standard
+              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size);
+              dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrors(iso), ir.getNErrors(iso)) : "";
+              pdfParams = writeText(pdfParams, ir.getNErrors(iso) + dif, pos_x + image_width + 170, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
+              dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarnings(iso), ir.getNWarnings(iso)) : "";
+              pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + dif, pos_x + image_width + 230, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+            } else {
+              // With policy
+              pdfParams.y -= 5;
+              pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size);
+              pdfParams.y += 5;
+              // Errors
+              dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrors(iso), ir.getNErrors(iso)) : "";
+              pdfParams = writeText(pdfParams, ir.getNErrors(iso) + dif + " errors", pos_x + image_width + col1, font, font_size, ir.getNErrors(iso) > 0 ? Color.red : Color.black);
+              if (ir.hasModifiedIso(iso)) {
+                dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrorsPolicy(iso), ir.getNErrorsPolicy(iso)) : "";
+                pdfParams = writeText(pdfParams, ir.getNErrorsPolicy(iso) + dif + " errors", pos_x + image_width + col2, font, font_size, ir.getNErrorsPolicy(iso) > 0 ? Color.red : ir.getNErrors(iso) > 0 ? Color.green : Color.black);
+              }
+              // Warnings
+              pdfParams.y -= 10;
+              dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarnings(iso), ir.getNWarnings(iso)) : "";
+              pdfParams = writeText(pdfParams, ir.getNWarnings(iso) + dif + " warnings", pos_x + image_width + col1, font, font_size, ir.getNWarnings(iso) > 0 ? Color.orange : Color.black);
+              if (ir.hasModifiedIso(iso)) {
+                dif = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarningsPolicy(iso), ir.getNWarningsPolicy(iso)) : "";
+                pdfParams = writeText(pdfParams, ir.getNWarningsPolicy(iso) + dif + " warnings", pos_x + image_width + col2, font, font_size, ir.getNWarningsPolicy(iso) > 0 ? Color.orange : ir.getNWarningsPolicy(iso) > 0 ? Color.green : Color.black);
+              }
             }
           }
         }
@@ -512,84 +514,88 @@ public class PdfReport extends Report {
         }
       }
 
-      /**
-       * Metadata incoherencies
-       */
-      pdfParams.y -= 40;
-      pdfParams = writeTitle(pdfParams, "Metadata analysis", "images/pdf/metadata.png", pos_x, font, 10);
-      pdfParams.y -= 20;
-      Integer[] margins = {2, 30};
-      pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("", "Description"), margins);
-      IFD tdifd = td.getFirstIFD();
-      int nifd = 1;
-      List<String> rows = new ArrayList<>();
-      while (tdifd != null) {
-        XMP xmp = null;
-        IPTC iptc = null;
-        if (tdifd.containsTagId(TiffTags.getTagId("XMP")) && tdifd.getTag("XMP").getCardinality() > 0) {
-          abstractTiffType obj = tdifd.getTag("XMP").getValue().get(0);
-          if (obj instanceof XMP)
-            xmp = (XMP) obj;
+      if (!ir.isQuick()) {
+        /**
+         * Metadata incoherencies
+         */
+        pdfParams.y -= 40;
+        pdfParams = writeTitle(pdfParams, "Metadata analysis", "images/pdf/metadata.png", pos_x, font, 10);
+        pdfParams.y -= 20;
+        Integer[] margins = {2, 30};
+        pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("", "Description"), margins);
+        IFD tdifd = td.getFirstIFD();
+        int nifd = 1;
+        List<String> rows = new ArrayList<>();
+        while (tdifd != null) {
+          XMP xmp = null;
+          IPTC iptc = null;
+          if (tdifd.containsTagId(TiffTags.getTagId("XMP")) && tdifd.getTag("XMP").getCardinality() > 0) {
+            abstractTiffType obj = tdifd.getTag("XMP").getValue().get(0);
+            if (obj instanceof XMP)
+              xmp = (XMP) obj;
+          }
+          if (tdifd.containsTagId(TiffTags.getTagId("IPTC")) && tdifd.getTag("IPTC").getCardinality() > 0) {
+            abstractTiffType obj = tdifd.getTag("IPTC").getValue().get(0);
+            if (obj instanceof IPTC) {
+              iptc = (IPTC) obj;
+            }
+          }
+
+          // Author
+          String authorTag = null;
+          if (tdifd.containsTagId(TiffTags.getTagId("Artist")))
+            authorTag = tdifd.getTag("Artist").toString();
+          String authorIptc = null;
+          if (iptc != null) authorIptc = iptc.getCreator();
+          String authorXmp = null;
+          if (xmp != null) authorXmp = xmp.getCreator();
+
+          rows.addAll(detectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd));
+          tdifd = tdifd.getNextIFD();
+          nifd++;
         }
-        if (tdifd.containsTagId(TiffTags.getTagId("IPTC")) && tdifd.getTag("IPTC").getCardinality() > 0) {
-          abstractTiffType obj = tdifd.getTag("IPTC").getValue().get(0);
-          if (obj instanceof IPTC) {
-            iptc = (IPTC) obj;
+        if (rows.isEmpty()) {
+          pdfParams.y -= 15;
+          PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/check.png")));
+          pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
+          pdfParams = writeText(pdfParams, "No metadata incoherencies found", pos_x + margins[1], font, font_size);
+        }
+        for (String row : rows) {
+          pdfParams.y -= 15;
+          PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/error.png")));
+          pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
+          pdfParams = writeText(pdfParams, row, pos_x + margins[1], font, font_size);
+        }
+      }
+
+      if (!ir.isQuick()) {
+        /**
+         * Conformance checkers
+         */
+        pdfParams.y -= 40;
+        font_size = 10;
+        pdfParams = writeTitle(pdfParams, "Conformance checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
+        for (String iso : ir.getCheckedIsos()) {
+          if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+            pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, false);
           }
         }
 
-        // Author
-        String authorTag = null;
-        if (tdifd.containsTagId(TiffTags.getTagId("Artist")))
-          authorTag = tdifd.getTag("Artist").toString();
-        String authorIptc = null;
-        if (iptc != null) authorIptc = iptc.getCreator();
-        String authorXmp = null;
-        if (xmp != null) authorXmp = xmp.getCreator();
-
-        rows.addAll(detectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd));
-        tdifd = tdifd.getNextIFD();
-        nifd++;
-      }
-      if (rows.isEmpty()) {
-        pdfParams.y -= 15;
-        PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/check.png")));
-        pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
-        pdfParams = writeText(pdfParams, "No metadata incoherencies found", pos_x + margins[1], font, font_size);
-      }
-      for (String row : rows) {
-        pdfParams.y -= 15;
-        PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/error.png")));
-        pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
-        pdfParams = writeText(pdfParams, row, pos_x + margins[1], font, font_size);
-      }
-
-      /**
-       * Conformance checkers
-       */
-      pdfParams.y -= 40;
-      font_size = 10;
-      pdfParams = writeTitle(pdfParams, "Conformance checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
-      for (String iso : ir.getCheckedIsos()) {
-        if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+        /**
+         * Policy checkers
+         */
+        pdfParams.y -= 40;
+        font_size = 10;
+        pdfParams = writeTitle(pdfParams, "Policy checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
+        for (String iso : ir.getCheckedIsos()) {
+          if (ir.hasValidation(iso) && ir.hasModifiedIso(iso)) {
+            pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, true);
+          }
+        }
+        if (ir.hasValidation(TiffConformanceChecker.POLICY_ISO)) {
+          String iso = TiffConformanceChecker.POLICY_ISO;
           pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, false);
         }
-      }
-
-      /**
-       * Policy checkers
-       */
-      pdfParams.y -= 40;
-      font_size = 10;
-      pdfParams = writeTitle(pdfParams, "Policy checkers", "images/pdf/thumbs.png", pos_x, font, font_size);
-      for (String iso : ir.getCheckedIsos()) {
-        if (ir.hasValidation(iso) && ir.hasModifiedIso(iso)) {
-          pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, true);
-        }
-      }
-      if (ir.hasValidation(TiffConformanceChecker.POLICY_ISO)){
-        String iso = TiffConformanceChecker.POLICY_ISO;
-        pdfParams = writeErrorsWarnings(pdfParams, font, ir, iso, pos_x, false);
       }
 
       pdfParams.getContentStream().close();
