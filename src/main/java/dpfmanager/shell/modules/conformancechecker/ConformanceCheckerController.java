@@ -78,8 +78,11 @@ public class ConformanceCheckerController extends DpfSpringController {
         if (parameters.containsKey(CheckController.recursive)) {
           recursive = Integer.parseInt(parameters.get(CheckController.recursive));
         }
+        boolean quick = parameters.containsKey(CheckController.quick);
         if (checkOverwriteOutput(cm.getConfig().getOutput())) {
-          service.initMultiProcessInputRun(cm.getFiles(), cm.getConfig(), recursive);
+          Configuration config = cm.getConfig();
+          config.setQuick(quick);
+          service.initMultiProcessInputRun(cm.getFiles(), config, recursive);
         }
       } else if (cm.isServer()) {
         // From server

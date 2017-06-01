@@ -70,6 +70,7 @@ public class ConformanceCheckerModule extends DpfModule {
         Configuration config = null;
         if (!path.isEmpty()) {
           config = service.readConfig(path);
+          config.setQuick(cm.isQuick());
           if (config == null) {
             getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
             return;

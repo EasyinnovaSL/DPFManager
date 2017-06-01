@@ -55,6 +55,7 @@ import java.util.zip.ZipInputStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -90,6 +91,9 @@ public class Configuration {
   private String output = null;
   private String description = null;
   private int version;
+
+  @XmlTransient
+  private boolean quick;
 
   private ResourceBundle bundle;
 
@@ -763,5 +767,13 @@ public class Configuration {
 
   public boolean hasRules(){
     return rules != null && rules.getRules() != null && rules.getRules().size() > 0;
+  }
+
+  public boolean isQuick() {
+    return quick;
+  }
+
+  public void setQuick(boolean quick) {
+    this.quick = quick;
   }
 }

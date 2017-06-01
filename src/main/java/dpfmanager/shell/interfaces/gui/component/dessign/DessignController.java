@@ -58,7 +58,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class DessignController extends DpfController<DessignModel, DessignView> {
 
-  public void mainCheckFiles() {
+  public void mainFullCheck(){
+    mainCheckFiles(false);
+  }
+
+  public void mainQuickCheck(){
+    mainCheckFiles(true);
+  }
+
+  public void mainCheckFiles(boolean isQuick) {
     if (!getView().isAvailable()) {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, getBundle().getString("alertConformances"), new UiMessage(UiMessage.Type.SHOW), GuiConfig.PERSPECTIVE_INTEROPERABILITY));
       return;
@@ -99,7 +107,7 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
       path = getFileByPath(radio.getText()).getAbsolutePath();
     }
     int recursive = getView().getRecursive();
-    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path, recursive, true));
+    getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(input, path, recursive, true, isQuick));
   }
 
   public void selectInputAction() {
