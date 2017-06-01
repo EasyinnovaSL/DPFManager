@@ -30,25 +30,19 @@ import dpfmanager.shell.core.messages.WidgetMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.fragment.BarFragment;
 import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
-import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
-
-import com.sun.javafx.scene.control.skin.TableColumnHeader;
 
 import org.jacpfx.api.message.Message;
 import org.jacpfx.rcp.componentLayout.PerspectiveLayout;
@@ -58,8 +52,6 @@ import org.jacpfx.rcp.perspective.FXPerspective;
 import org.jacpfx.rcp.util.LayoutUtil;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * Created by Adria Llorens on 03/03/2016.
@@ -163,7 +155,7 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
     scrollPane.getStyleClass().add("background-main");
     scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    scrollPane.setMaxWidth(DpFManagerConstants.WIDTH);
+//    scrollPane.setMaxWidth(DpFManagerConstants.WIDTH);
 
     // Center content
     scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
@@ -183,7 +175,24 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
       }
     });
 
-    scrollPane.setContent(content);
+    // Grid pane for center the scroll
+    GridPane gridpane = new GridPane();
+    gridpane.getStyleClass().add("background-main");
+    ColumnConstraints col1 = new ColumnConstraints();
+    col1.setHgrow(Priority.SOMETIMES);
+    ColumnConstraints col2 = new ColumnConstraints();
+    col2.setMinWidth(DpFManagerConstants.WIDTH);
+    col2.setPrefWidth(DpFManagerConstants.WIDTH);
+    col2.setMaxWidth(DpFManagerConstants.WIDTH);
+    ColumnConstraints col3 = new ColumnConstraints();
+    col3.setHgrow(Priority.SOMETIMES);
+    gridpane.getColumnConstraints().addAll(col1, col2, col3);
+
+
+    gridpane.getChildren().addAll(content);
+    GridPane.setColumnIndex(content, 1);
+
+    scrollPane.setContent(gridpane);
     return scrollPane;
   }
 
