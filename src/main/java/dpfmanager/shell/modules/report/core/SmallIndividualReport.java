@@ -139,7 +139,8 @@ public class SmallIndividualReport implements Comparable, Serializable {
     if (isQuick()){
       int nErrors = 0;
       for (String key : global.getSelectedIsos()) {
-        nErrors += global.hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
+        int errors = global.hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
+        if (errors > 0) nErrors++;
       }
       int size = global.getSelectedIsos().size();
       int nPassed = size - nErrors;

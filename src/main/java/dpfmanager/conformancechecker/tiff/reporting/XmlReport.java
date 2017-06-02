@@ -368,7 +368,9 @@ public class XmlReport extends Report {
     report.appendChild(fileInfoStructure);
 
     if (ir.containsData()) {
-      // tiff structure
+      /**
+       * tiff structure
+       */
       Element tiffStructureElement = doc.createElement("tiff_structure");
       Element ifdTree = doc.createElement("ifdTree");
       int index = 0;
@@ -382,7 +384,9 @@ public class XmlReport extends Report {
       tiffStructureElement.appendChild(ifdTree);
       report.appendChild(tiffStructureElement);
 
-      // basic info
+      /**
+       * Tags
+       */
       Element infoElement;
       infoElement = doc.createElement("ByteOrder");
       String endianess = "none";
@@ -760,78 +764,118 @@ public class XmlReport extends Report {
         }
       }
 
-      // Implementation Checker
+      /**
+       * Implementation Checker
+       */
       List<RuleResult> errorsTotal = ir.getAllErrors();
       List<RuleResult> warningsTotal = ir.getAllWarnings();
-
       Element implementationCheckerElement = doc.createElement("implementation_checker");
       implementationCheckerElement.setAttribute("version", DPFManagerProperties.getVersion());
       implementationCheckerElement.setAttribute("ref", "DPF Manager");
-      implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
-      implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
-      for (String path : ImplementationCheckerLoader.getPathsList()) {
-        String name = ImplementationCheckerLoader.getFileName(path);
-        implementationCheckerElement.setAttribute(name, (ir.getErrors(name).size() == 0) + "");
-      }
-      for (String iso : ir.getCheckedIsos()) {
-        String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
-        List<RuleResult> errors = ir.getErrors(iso);
-        List<RuleResult> warnings = ir.getWarnings(iso);
-        Element implementationCheck = doc.createElement("implementation_check");
-        Element name = doc.createElement("name");
-        name.setTextContent(title);
-        implementationCheck.appendChild(name);
-        addErrorsWarnings(doc, implementationCheck, errors, warnings, false);
-        implementationCheckerElement.appendChild(implementationCheck);
+      if (!ir.isQuick()){
+        implementationCheckerElement.setAttribute("totalErrors", errorsTotal.size() + "");
+        implementationCheckerElement.setAttribute("totalWarnings", warningsTotal.size() + "");
+        for (String path : ImplementationCheckerLoader.getPathsList()) {
+          String name = ImplementationCheckerLoader.getFileName(path);
+          implementationCheckerElement.setAttribute(name, (ir.getErrors(name).size() == 0) + "");
+        }
+        for (String iso : ir.getCheckedIsos()) {
+          String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+          List<RuleResult> errors = ir.getErrors(iso);
+          List<RuleResult> warnings = ir.getWarnings(iso);
+          Element implementationCheck = doc.createElement("implementation_check");
+          Element name = doc.createElement("name");
+          name.setTextContent(title);
+          implementationCheck.appendChild(name);
+          addErrorsWarnings(doc, implementationCheck, errors, warnings, false);
+          implementationCheckerElement.appendChild(implementationCheck);
+        }
+      } else {
+        for (String iso : ir.getCheckedIsos()) {
+          if (!ir.hasModifiedIso(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+            int errorsCount = ir.getNErrors(iso);
+            String title = ImplementationCheckerLoader.getIsoName(iso);
+            String resultName = (errorsCount == 0) ? "Passed" : "Failed";
+            Element implementationCheck = doc.createElement("implementation_check");
+            Element name = doc.createElement("name");
+            name.setTextContent(title);
+            implementationCheck.appendChild(name);
+            Element result = doc.createElement("result");
+            result.setTextContent(resultName);
+            implementationCheck.appendChild(result);
+            implementationCheckerElement.appendChild(implementationCheck);
+          }
+        }
       }
       report.appendChild(implementationCheckerElement);
 
-      // Policy checker
+      /**
+       * Policy checker
+       */
       Element policyCheckerElement = doc.createElement("policy_checkers");
-      for (String iso : ir.getCheckedIsos()) {
-        if (!ir.hasModifiedIso(iso)) continue;
-        String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
-        List<RuleResult> errors = ir.getErrorsPolicy(iso);
-        List<RuleResult> warnings = ir.getWarningsPolicy(iso);
-        Element implementationCheck = doc.createElement("implementation_check");
-        Element name = doc.createElement("name");
-        name.setTextContent(title);
-        implementationCheck.appendChild(name);
-        addErrorsWarnings(doc, implementationCheck, errors, warnings, true);
-        policyCheckerElement.appendChild(implementationCheck);
-      }
-
-      // Policy rules
-      Element policyRules = doc.createElement("policy_rules");
-      if (rules != null) {
-        for (RuleResult rr : ir.getErrors(TiffConformanceChecker.POLICY_ISO)) {
-          Element error = doc.createElement("error");
-          Element test = doc.createElement("test");
-          test.setTextContent(rr.getRule().getDescription().getValue());
-          Element message = doc.createElement("message");
-          message.setTextContent(rr.getMessage());
-          error.appendChild(test);
-          error.appendChild(message);
-          policyRules.appendChild(error);
+      if (!ir.isQuick()){
+        for (String iso : ir.getCheckedIsos()) {
+          if (!ir.hasModifiedIso(iso)) continue;
+          String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+          List<RuleResult> errors = ir.getErrorsPolicy(iso);
+          List<RuleResult> warnings = ir.getWarningsPolicy(iso);
+          Element implementationCheck = doc.createElement("implementation_check");
+          Element name = doc.createElement("name");
+          name.setTextContent(title);
+          implementationCheck.appendChild(name);
+          addErrorsWarnings(doc, implementationCheck, errors, warnings, true);
+          policyCheckerElement.appendChild(implementationCheck);
         }
-        for (RuleResult rr : ir.getWarnings(TiffConformanceChecker.POLICY_ISO)) {
-          Element warning = doc.createElement("warning");
-          Element test = doc.createElement("test");
-          test.setTextContent(rr.getRule().getDescription().getValue());
-          Element message = doc.createElement("message");
-          message.setTextContent(rr.getMessage());
-          warning.appendChild(test);
-          warning.appendChild(message);
-          policyRules.appendChild(warning);
+        // Policy rules
+        Element policyRules = doc.createElement("policy_rules");
+        if (rules != null) {
+          for (RuleResult rr : ir.getErrors(TiffConformanceChecker.POLICY_ISO)) {
+            Element error = doc.createElement("error");
+            Element test = doc.createElement("test");
+            test.setTextContent(rr.getRule().getDescription().getValue());
+            Element message = doc.createElement("message");
+            message.setTextContent(rr.getMessage());
+            error.appendChild(test);
+            error.appendChild(message);
+            policyRules.appendChild(error);
+          }
+          for (RuleResult rr : ir.getWarnings(TiffConformanceChecker.POLICY_ISO)) {
+            Element warning = doc.createElement("warning");
+            Element test = doc.createElement("test");
+            test.setTextContent(rr.getRule().getDescription().getValue());
+            Element message = doc.createElement("message");
+            message.setTextContent(rr.getMessage());
+            warning.appendChild(test);
+            warning.appendChild(message);
+            policyRules.appendChild(warning);
+          }
+          policyCheckerElement.appendChild(policyRules);
         }
-        policyCheckerElement.appendChild(policyRules);
+      } else {
+        for (String iso : ir.getCheckedIsos()) {
+          if (ir.hasModifiedIso(iso) || iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+            int errorsCount = (ir.hasModifiedIso(iso)) ? ir.getNErrorsPolicy(iso) : ir.getNErrors(iso);
+            String title = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+            String resultName = (errorsCount == 0) ? "Passed" : "Failed";
+            Element implementationCheck = doc.createElement("implementation_check");
+            Element name = doc.createElement("name");
+            name.setTextContent(title);
+            implementationCheck.appendChild(name);
+            Element result = doc.createElement("result");
+            result.setTextContent(resultName);
+            implementationCheck.appendChild(result);
+            policyCheckerElement.appendChild(implementationCheck);
+          }
+        }
       }
       report.appendChild(policyCheckerElement);
 
       // Total
-      Element results = doc.createElement("results");
-      addErrorsWarnings(doc, results, errorsTotal, warningsTotal, true);
-      implementationCheckerElement.appendChild(results);
+      if (!ir.isQuick()){
+        Element results = doc.createElement("results");
+        addErrorsWarnings(doc, results, errorsTotal, warningsTotal, true);
+        implementationCheckerElement.appendChild(results);
+      }
     } else {
       try {
         // External results
