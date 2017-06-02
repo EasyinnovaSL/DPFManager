@@ -11,6 +11,7 @@
 
 <AnchorPane id="pane-show" prefWidth="970.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
+         <VBox fx:id="panePdfViewer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         <VBox fx:id="showVBox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <TextArea fx:id="textArea" VBox.vgrow="ALWAYS">
             <styleClass>

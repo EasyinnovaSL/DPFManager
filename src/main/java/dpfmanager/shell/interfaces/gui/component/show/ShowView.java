@@ -24,13 +24,19 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
 import org.jacpfx.api.annotations.Resource;
@@ -38,6 +44,12 @@ import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
+import org.jpedal.PdfDecoderFX;
+import org.jpedal.examples.baseviewer.BaseViewerFX;
+import org.jpedal.examples.viewer.OpenViewerFX;
+import org.jpedal.examples.viewer.gui.javafx.FXViewerTransitions;
+import org.jpedal.exception.PdfException;
+import org.jpedal.objects.PdfPageData;
 
 import java.io.File;
 import java.util.ResourceBundle;
@@ -62,6 +74,11 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   @FXML
   private ComboBox comboIndividuals;
   private String folderPath, extension;
+
+  @FXML
+  private VBox panePdfViewer;
+  @FXML
+  private VBox showVBox;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -139,12 +156,12 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   public void showTextArea() {
     NodeUtil.showNode(textArea);
-    hideWebView();
-    hideComboBox();
+    NodeUtil.showNode(showVBox);
   }
 
   public void hideTextArea() {
     NodeUtil.hideNode(textArea);
+    NodeUtil.hideNode(showVBox);
     textArea.clear();
   }
 
@@ -159,20 +176,94 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   public void showWebView(String path) {
     webView.getEngine().load("file:///" + path.replace("\\", "/"));
     NodeUtil.showNode(webView);
-    NodeUtil.hideNode(comboIndividuals);
-    hideTextArea();
-    hideComboBox();
+    NodeUtil.showNode(showVBox);
   }
 
   public void hideWebView() {
     NodeUtil.hideNode(webView);
+    NodeUtil.hideNode(showVBox);
     webView.getEngine().load("");
+  }
+
+  public void showPdfView(String path) {
+    opePdfFile(path);
+    NodeUtil.showNode(panePdfViewer);
+  }
+
+  public void hidePdfView() {
+    NodeUtil.hideNode(panePdfViewer);
   }
 
   public void hideAll() {
     hideTextArea();
     hideWebView();
     hideComboBox();
+    hidePdfView();
+  }
+
+  /**
+   * PDF Viewer
+   */
+
+  private void opePdfFile(String absolutePath) {
+    // Load PDF Viewer
+    System.out.println("OPEN FILE");
+    BaseViewerFX bvfx = new BaseViewerFX();
+    Scene scene = bvfx.setupViewer(500,1200);
+
+    // Add to layout
+    panePdfViewer.getChildren().clear();
+    panePdfViewer.getChildren().add(scene.getRoot());
+
+    // Load pdf
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        try{
+          bvfx.loadPDF(absolutePath);
+        } catch(Exception e){
+        }
+//        Node node = scene.lookup("#open");
+//        NodeUtil.hideNode(node);
+        System.out.println("LOADED!");
+      }
+    });
+
+//    bvfx.loadPDF(absolutePath);
+//
+//    try {
+//      PdfDecoderFX pdf = new PdfDecoderFX();
+//      pdf.openPdfFile(absolutePath);
+//
+//      // Goes to first page
+//      int currentPage = 1;
+//      try {
+//        final PdfPageData pageData = pdf.getPdfPageData();
+//        final int rotation = pageData.getRotation(currentPage); //rotation angle of current page
+//
+//            /*
+//             * Only call this when the page is displayed vertically, otherwise
+//             * it will mess up the document cropping on side-ways documents.
+//            */
+//        if (rotation == 0 || rotation == 180) {
+//          pdf.setPageParameters(scale, currentPage);
+//        }
+//
+//        pdf.decodePage(currentPage);
+//        //wait to ensure decoded
+//        pdf.waitForDecodingToFinish();
+//      } catch (final Exception e) {
+//        e.printStackTrace();
+//      }
+//
+//      fitToX(BaseViewerFX.FitToPage.AUTO);
+//      updateNavButtons();
+//      setBorder();
+//      adjustPagePosition(center.getViewportBounds());
+
+//    } catch (final PdfException ex) {
+//      ex.printStackTrace();
+//    }
   }
 
 }

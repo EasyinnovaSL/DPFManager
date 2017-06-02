@@ -55,6 +55,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
 
   public void showSingleReport(String type, String path) {
 //    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Showing report..."));
+    getView().hideAll();
     switch (type) {
       case "html":
         getView().showWebView(path);
@@ -69,13 +70,16 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
         showComboTextArea(path, "json");
         break;
       case "pdf":
-        try {
-          getView().getContext().send(GuiConfig.PERSPECTIVE_REPORTS,new UiMessage());
-          Desktop.getDesktop().open(new File(path));
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+        System.out.println("PATH: "+path );
+        getView().showPdfView(path);
         break;
+//        try {
+//          getView().getContext().send(GuiConfig.PERSPECTIVE_REPORTS,new UiMessage());
+//          Desktop.getDesktop().open(new File(path));
+//        } catch (IOException e) {
+//          e.printStackTrace();
+//        }
+//        break;
       default:
         break;
     }

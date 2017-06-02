@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pdfviewer.PdfViewController">
+   <center>
+      <Pagination fx:id="pagination" prefHeight="46.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>
