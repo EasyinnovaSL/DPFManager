@@ -138,14 +138,19 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   @FXML
   protected void changeIndividual(ActionEvent event) throws Exception {
-    setTextAreaContent();
+    if (extension != null && extension.equals("pdf")) {
+      String name = (String) comboIndividuals.getSelectionModel().getSelectedItem();
+      String filename = folderPath + "/" + name + "." + extension;
+      opePdfFile(filename);
+    } else {
+      setTextAreaContent();
+    }
   }
 
   public void addComboChild(String name, boolean selected) {
     comboIndividuals.getItems().add(name);
     if (selected) {
       comboIndividuals.getSelectionModel().select(name);
-      setTextAreaContent();
     }
   }
 
@@ -171,6 +176,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    */
 
   public void showTextArea() {
+    setTextAreaContent();
     NodeUtil.showNode(textArea);
     NodeUtil.showNode(showVBox);
   }

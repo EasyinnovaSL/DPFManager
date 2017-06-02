@@ -61,31 +61,27 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
         getView().showWebView(path);
         break;
       case "xml":
-        showComboTextArea(path,"xml");
+        showComboBox(path,"xml");
+        getView().showTextArea();
         break;
       case "mets":
-        showComboTextArea(path,"mets.xml");
+        showComboBox(path, "mets.xml");
+        getView().showTextArea();
         break;
       case "json":
-        showComboTextArea(path, "json");
+        showComboBox(path, "json");
+        getView().showTextArea();
         break;
       case "pdf":
-        System.out.println("PATH: "+path );
+        showComboBox(path, "pdf");
         getView().showPdfView(path);
         break;
-//        try {
-//          getView().getContext().send(GuiConfig.PERSPECTIVE_REPORTS,new UiMessage());
-//          Desktop.getDesktop().open(new File(path));
-//        } catch (IOException e) {
-//          e.printStackTrace();
-//        }
-//        break;
       default:
         break;
     }
   }
 
-  public void showComboTextArea(String folderPath, String extension){
+  public void showComboBox(String folderPath, String extension){
     int count = 0;
 
     // Clear comboBox
@@ -120,7 +116,6 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
     }
 
     // Show nodes
-    getView().showTextArea();
     if (count > 1){
       getView().showComboBox();
     }
@@ -133,7 +128,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
         if (file.isDirectory()){
           return false;
         }
-        if (file.getName().startsWith("summary")){
+        if (file.getName().startsWith("summary") || file.getName().startsWith("report")){
           return false;
         }
         if (extension.equals("xml") && file.getName().endsWith(extension) && !file.getName().endsWith(".mets.xml")){
