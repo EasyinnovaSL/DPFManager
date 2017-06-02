@@ -341,13 +341,6 @@
             <version>2.9</version>
         </dependency>
 
-        <!-- PDF Viewer -->
-        <dependency>
-            <groupId>org.jpedal</groupId>
-            <artifactId>OpenViewerFX</artifactId>
-            <version>7.12.28</version>
-        </dependency>
-
     </dependencies>
 
     <!--Common Build Plugins-->
