@@ -173,31 +173,32 @@ public class DatabaseConnection {
   }
 
   public Jobs getJob(Long id) {
-    Jobs job = new Jobs();
-    try {
-      Statement stmt = globalConnection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.ID + " = " + id);
-      while (rs.next()) {
-        job.parseResultSet(rs);
-      }
-      stmt.close();
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
-    }
-    return job;
+    return getJobByQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.ID + " = " + id);
   }
 
   public Jobs getJob(String hash) {
+    return getJobByQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.HASH + " LIKE '" + hash + "'");
+  }
+
+  public Jobs getJobByQuery(String query) {
     Jobs job = new Jobs();
+    Statement stmt = null;
     try {
-      Statement stmt = globalConnection.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE + " WHERE " + Jobs.HASH + " LIKE '" + hash + "'");
+      stmt = globalConnection.createStatement();
+      ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) {
         job.parseResultSet(rs);
       }
       stmt.close();
     } catch (Exception e) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
+    } finally {
+      try {
+        if (stmt != null) stmt.close();
+      } catch (SQLException e){
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
+      }
+      releaseConnection();
     }
     return job;
   }
@@ -217,19 +218,24 @@ public class DatabaseConnection {
    */
   synchronized public int getProgramPid() {
     Integer maxPid = -1;
+    Statement stmt = null;
     if (blockConnection()) {
       try {
-        Statement stmt = globalConnection.createStatement();
+        stmt = globalConnection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT " + Jobs.PID + " FROM " + Jobs.TABLE + " ORDER BY " + Jobs.PID + " DESC");
         maxPid = 1;
         if (rs.next()) {
           Long pid = rs.getLong(1);
           maxPid = pid.intValue() + 1;
         }
-        stmt.close();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetPid")));
       } finally {
+        try {
+          if (stmt != null) stmt.close();
+        } catch (SQLException e){
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetPid")));
+        }
         releaseConnection();
       }
     } else {
@@ -239,9 +245,10 @@ public class DatabaseConnection {
   }
 
   synchronized public void insertNewJob(Jobs job) {
+    PreparedStatement pstmt = null;
     if (blockConnection()) {
       try {
-        PreparedStatement pstmt = globalConnection.prepareStatement(Jobs.insertJobSql);
+        pstmt = globalConnection.prepareStatement(Jobs.insertJobSql);
         pstmt.setLong(1, job.getId());
         pstmt.setString(2, job.getHash());
         pstmt.setInt(3, job.getState());
@@ -268,11 +275,15 @@ public class DatabaseConnection {
         }
         pstmt.setLong(13, job.getLastUpdate());
         pstmt.executeUpdate();
-        pstmt.close();
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorCreateJob")));
       } finally {
+        try {
+          if (pstmt != null) pstmt.close();
+        } catch (SQLException e){
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorCreateJob")));
+        }
         releaseConnection();
       }
     } else {
@@ -281,9 +292,9 @@ public class DatabaseConnection {
   }
 
   synchronized public void updateJobs(Collection<Jobs> jobs) {
+    Statement stmt = null;
     if (blockConnection()) {
       try {
-        //globalConnection.setAutoCommit(false);
         for (Jobs job : jobs) {
           String updateSql = "UPDATE " + Jobs.TABLE + " SET " +
               Jobs.STATE + " = " + job.getState() + ", " +
@@ -295,16 +306,18 @@ public class DatabaseConnection {
               Jobs.TIME + " = " + job.getTime() + ", " +
               Jobs.LAST_UPDATE + " = " + job.getLastUpdate() +
               " WHERE " + Jobs.ID + " = " + job.getId();
-          Statement stmt = globalConnection.createStatement();
+          stmt = globalConnection.createStatement();
           stmt.execute(updateSql);
-          stmt.close();
         }
-        //globalConnection.commit();
-        //globalConnection.setAutoCommit(true);
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorUpdateJob")));
       } finally {
+        try {
+          if (stmt != null) stmt.close();
+        } catch (SQLException e){
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorCreateJob")));
+        }
         releaseConnection();
       }
     } else {
@@ -314,32 +327,44 @@ public class DatabaseConnection {
 
   synchronized public List<Jobs> getAllJobs() {
     List<Jobs> jobs = new ArrayList<>();
+    Statement stmt = null;
     try {
-      Statement stmt = globalConnection.createStatement();
+      stmt = globalConnection.createStatement();
       ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE);
       while (rs.next()) {
         Jobs job = new Jobs();
         job.parseResultSet(rs);
         jobs.add(job);
       }
-      stmt.close();
     } catch (Exception e) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
+    } finally {
+      try {
+        if (stmt != null) stmt.close();
+      } catch (SQLException e){
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
+      }
+      releaseConnection();
     }
     return jobs;
   }
 
   synchronized public void deleteJob(Long uuid) {
+    Statement stmt = null;
     if (blockConnection()) {
       try {
         String deleteSql = "DELETE FROM " + Jobs.TABLE + " WHERE " + Jobs.ID + " = " + uuid;
-        Statement stmt = globalConnection.createStatement();
+        stmt = globalConnection.createStatement();
         stmt.execute(deleteSql);
-        stmt.close();
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorDeleteJob")));
       } finally {
+        try {
+          if (stmt != null) stmt.close();
+        } catch (SQLException e){
+          context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorDeleteJob")));
+        }
         releaseConnection();
       }
     } else {
@@ -390,24 +415,33 @@ public class DatabaseConnection {
    * Private DB functions
    */
   synchronized private void createFirstTable() throws Exception {
-    if (globalConnection != null) {
-      Statement stmt = globalConnection.createStatement();
+    Statement stmt = null;
+    try{
+      if (globalConnection != null) {
+        stmt = globalConnection.createStatement();
 
-      // Check need delete table
-      if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
-        stmt.execute(Jobs.delIndexIdSql);
-        stmt.execute(Jobs.delIndexPidSql);
-        stmt.execute(Jobs.deleteSql);
-        DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
+        // Check need delete table
+        if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
+          stmt.execute(Jobs.delIndexIdSql);
+          stmt.execute(Jobs.delIndexPidSql);
+          stmt.execute(Jobs.deleteSql);
+          DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
+        }
+
+        // Create tables
+        stmt.execute(Jobs.createSql);
+        stmt.execute(Jobs.indexIdSql);
+        stmt.execute(Jobs.indexPidSql);
       }
-
-      // Create tables
-      stmt.execute(Jobs.createSql);
-      stmt.execute(Jobs.indexIdSql);
-      stmt.execute(Jobs.indexPidSql);
-
-      // Close statement
-      stmt.close();
+    } catch (Exception e){
+      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
+    } finally {
+      try {
+        if (stmt != null) stmt.close();
+      } catch (SQLException e){
+        context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
+      }
+      releaseConnection();
     }
   }
 
