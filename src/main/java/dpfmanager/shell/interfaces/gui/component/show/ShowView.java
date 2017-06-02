@@ -24,34 +24,33 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
-import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Labeled;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
-import org.jpedal.PdfDecoderFX;
-import org.jpedal.examples.baseviewer.BaseViewerFX;
-import org.jpedal.examples.viewer.OpenViewerFX;
-import org.jpedal.examples.viewer.gui.javafx.FXViewerTransitions;
-import org.jpedal.exception.PdfException;
-import org.jpedal.objects.PdfPageData;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -76,7 +75,9 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   private String folderPath, extension;
 
   @FXML
-  private VBox panePdfViewer;
+  private ScrollPane scrollPdfPages;
+  @FXML
+  private VBox pdfPagesVBox;
   @FXML
   private VBox showVBox;
 
@@ -110,6 +111,21 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
       @Override
       public void handle(MouseEvent event) {
         comboIndividuals.requestFocus();
+      }
+    });
+
+    // Center content
+    scrollPdfPages.setHvalue(0.5);
+    scrollPdfPages.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        scrollPdfPages.setHvalue(0.5);
+      }
+    });
+    scrollPdfPages.hvalueProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        scrollPdfPages.setHvalue(0.5);
       }
     });
 
@@ -187,11 +203,11 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   public void showPdfView(String path) {
     opePdfFile(path);
-    NodeUtil.showNode(panePdfViewer);
+    NodeUtil.showNode(scrollPdfPages);
   }
 
   public void hidePdfView() {
-    NodeUtil.hideNode(panePdfViewer);
+    NodeUtil.hideNode(scrollPdfPages);
   }
 
   public void hideAll() {
@@ -206,64 +222,20 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    */
 
   private void opePdfFile(String absolutePath) {
-    // Load PDF Viewer
-    System.out.println("OPEN FILE");
-    BaseViewerFX bvfx = new BaseViewerFX();
-    Scene scene = bvfx.setupViewer(500,1200);
-
-    // Add to layout
-    panePdfViewer.getChildren().clear();
-    panePdfViewer.getChildren().add(scene.getRoot());
-
-    // Load pdf
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        try{
-          bvfx.loadPDF(absolutePath);
-        } catch(Exception e){
-        }
-//        Node node = scene.lookup("#open");
-//        NodeUtil.hideNode(node);
-        System.out.println("LOADED!");
+    // Load PDF codument
+    pdfPagesVBox.getChildren().clear();
+    try {
+      PDDocument document = PDDocument.load(absolutePath);
+      List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+      for (PDPage page : pages) {
+        BufferedImage pageImage = page.convertToImage();
+        ImageView imageView = new ImageView(SwingFXUtils.toFXImage(pageImage, null));
+        pdfPagesVBox.getChildren().add(imageView);
+        VBox.setMargin(imageView, new Insets(15,0,15,0));
       }
-    });
-
-//    bvfx.loadPDF(absolutePath);
-//
-//    try {
-//      PdfDecoderFX pdf = new PdfDecoderFX();
-//      pdf.openPdfFile(absolutePath);
-//
-//      // Goes to first page
-//      int currentPage = 1;
-//      try {
-//        final PdfPageData pageData = pdf.getPdfPageData();
-//        final int rotation = pageData.getRotation(currentPage); //rotation angle of current page
-//
-//            /*
-//             * Only call this when the page is displayed vertically, otherwise
-//             * it will mess up the document cropping on side-ways documents.
-//            */
-//        if (rotation == 0 || rotation == 180) {
-//          pdf.setPageParameters(scale, currentPage);
-//        }
-//
-//        pdf.decodePage(currentPage);
-//        //wait to ensure decoded
-//        pdf.waitForDecodingToFinish();
-//      } catch (final Exception e) {
-//        e.printStackTrace();
-//      }
-//
-//      fitToX(BaseViewerFX.FitToPage.AUTO);
-//      updateNavButtons();
-//      setBorder();
-//      adjustPagePosition(center.getViewportBounds());
-
-//    } catch (final PdfException ex) {
-//      ex.printStackTrace();
-//    }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
   }
 
 }
