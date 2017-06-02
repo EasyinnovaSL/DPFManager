@@ -94,7 +94,7 @@ public class PolicyCheckTest extends CommandLineTest {
 
     // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\" style=\"width: 100%\">");
     assertEquals(true, index > -1);
     table = htmlglobal.substring(index);
     table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
@@ -177,7 +177,7 @@ public class PolicyCheckTest extends CommandLineTest {
     table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
     String[] trs = table.split("</tr>");
 
-    // 1 Policy error
+    // 2 Policy warnings
     for (String tr : trs){
       if (tr.contains("<td>"+ TiffConformanceChecker.POLICY_ISO_NAME+"</td>")){
         assertEquals(true, tr.contains("<td class=\"info\">0</td>"));
@@ -190,7 +190,7 @@ public class PolicyCheckTest extends CommandLineTest {
 
     // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\" style=\"width: 100%\">");
     assertEquals(true, index > -1);
     table = htmlglobal.substring(index);
     table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
@@ -285,7 +285,7 @@ public class PolicyCheckTest extends CommandLineTest {
 
     // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\" style=\"width: 100%\">");
     assertEquals(true, index > -1);
     table = htmlglobal.substring(index);
     table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));
@@ -379,7 +379,7 @@ public class PolicyCheckTest extends CommandLineTest {
 
     // Global errors / warnings resume
     assertEquals(htmlglobal != null, true);
-    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\">");
+    index = htmlglobal.indexOf("<table class=\"center-table CustomTable2\" style=\"width: 100%\">");
     assertEquals(true, index > -1);
     table = htmlglobal.substring(index);
     table = table.substring(table.indexOf("<tr>"), table.indexOf("</table>"));

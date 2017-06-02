@@ -41,7 +41,7 @@ public class CommandLineTest {
     // Set feedback
     DPFManagerProperties.setFeedback(feedback);
     // Delete all reports
-    deleteReports();
+//    deleteReports();
     // Restore conformance checkers configuration
     restoreCC();
   }
