@@ -171,7 +171,6 @@ public class ClientService extends DpfService {
       context.sendAfter(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.ASK, map.get("id")), 1);
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, message));
-      DPFManagerProperties.setFinished(true);
     }
   }
 
@@ -185,7 +184,6 @@ public class ClientService extends DpfService {
         context.sendAfter(BasicConfig.MODULE_CLIENT, new RequestMessage(RequestMessage.Type.ASK, map.get("id")), 1);
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("jobStarted").replace("%1",map.get("id"))));
-        DPFManagerProperties.setFinished(true);
       }
     }
   }
@@ -231,7 +229,6 @@ public class ClientService extends DpfService {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotUnzip")));
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("reportDownloaded").replace("%1",output)));
-      DPFManagerProperties.setFinished(true);
     }
   }
 
