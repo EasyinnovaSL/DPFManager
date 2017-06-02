@@ -49,7 +49,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class DatabaseConnection {
 
-  private Connection globalConnection;
   private String dbUrl;
 
   private DpfContext context;
@@ -74,7 +73,6 @@ public class DatabaseConnection {
       checkLockFile();
       Class.forName("org.h2.Driver");
       dbUrl = "jdbc:h2:" + filename + ";AUTO_SERVER=TRUE";
-      globalConnection = connect();
       createFirstTable();
     } catch (Exception e) {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB2").replace("%1", filename)));
@@ -104,17 +102,6 @@ public class DatabaseConnection {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
     }
     return connection;
-  }
-
-  /**
-   * Close function
-   */
-  public void close() {
-    try {
-      globalConnection.close();
-    } catch (SQLException e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotCloseDB")));
-    }
   }
 
   /**
@@ -183,8 +170,9 @@ public class DatabaseConnection {
   public Jobs getJobByQuery(String query) {
     Jobs job = new Jobs();
     Statement stmt = null;
+    Connection connection = connect();
     try {
-      stmt = globalConnection.createStatement();
+      stmt = connection.createStatement();
       ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) {
         job.parseResultSet(rs);
@@ -195,6 +183,7 @@ public class DatabaseConnection {
     } finally {
       try {
         if (stmt != null) stmt.close();
+        if (connection != null) connection.close();
       } catch (SQLException e){
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
       }
@@ -219,9 +208,10 @@ public class DatabaseConnection {
   synchronized public int getProgramPid() {
     Integer maxPid = -1;
     Statement stmt = null;
+    Connection connection = connect();
     if (blockConnection()) {
       try {
-        stmt = globalConnection.createStatement();
+        stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT " + Jobs.PID + " FROM " + Jobs.TABLE + " ORDER BY " + Jobs.PID + " DESC");
         maxPid = 1;
         if (rs.next()) {
@@ -233,6 +223,7 @@ public class DatabaseConnection {
       } finally {
         try {
           if (stmt != null) stmt.close();
+          if (connection != null) connection.close();
         } catch (SQLException e){
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetPid")));
         }
@@ -246,9 +237,10 @@ public class DatabaseConnection {
 
   synchronized public void insertNewJob(Jobs job) {
     PreparedStatement pstmt = null;
+    Connection connection = connect();
     if (blockConnection()) {
       try {
-        pstmt = globalConnection.prepareStatement(Jobs.insertJobSql);
+        pstmt = connection.prepareStatement(Jobs.insertJobSql);
         pstmt.setLong(1, job.getId());
         pstmt.setString(2, job.getHash());
         pstmt.setInt(3, job.getState());
@@ -281,6 +273,7 @@ public class DatabaseConnection {
       } finally {
         try {
           if (pstmt != null) pstmt.close();
+          if (connection != null) connection.close();
         } catch (SQLException e){
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorCreateJob")));
         }
@@ -293,6 +286,7 @@ public class DatabaseConnection {
 
   synchronized public void updateJobs(Collection<Jobs> jobs) {
     Statement stmt = null;
+    Connection connection = connect();
     if (blockConnection()) {
       try {
         for (Jobs job : jobs) {
@@ -306,7 +300,7 @@ public class DatabaseConnection {
               Jobs.TIME + " = " + job.getTime() + ", " +
               Jobs.LAST_UPDATE + " = " + job.getLastUpdate() +
               " WHERE " + Jobs.ID + " = " + job.getId();
-          stmt = globalConnection.createStatement();
+          stmt = connection.createStatement();
           stmt.execute(updateSql);
         }
         lastUpdate = System.currentTimeMillis();
@@ -315,6 +309,7 @@ public class DatabaseConnection {
       } finally {
         try {
           if (stmt != null) stmt.close();
+          if (connection != null) connection.close();
         } catch (SQLException e){
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorCreateJob")));
         }
@@ -328,8 +323,9 @@ public class DatabaseConnection {
   synchronized public List<Jobs> getAllJobs() {
     List<Jobs> jobs = new ArrayList<>();
     Statement stmt = null;
+    Connection connection = connect();
     try {
-      stmt = globalConnection.createStatement();
+      stmt = connection.createStatement();
       ResultSet rs = stmt.executeQuery("SELECT * FROM " + Jobs.TABLE);
       while (rs.next()) {
         Jobs job = new Jobs();
@@ -341,6 +337,7 @@ public class DatabaseConnection {
     } finally {
       try {
         if (stmt != null) stmt.close();
+        if (connection != null) connection.close();
       } catch (SQLException e){
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorGetJobs")));
       }
@@ -351,10 +348,11 @@ public class DatabaseConnection {
 
   synchronized public void deleteJob(Long uuid) {
     Statement stmt = null;
+    Connection connection = connect();
     if (blockConnection()) {
       try {
         String deleteSql = "DELETE FROM " + Jobs.TABLE + " WHERE " + Jobs.ID + " = " + uuid;
-        stmt = globalConnection.createStatement();
+        stmt = connection.createStatement();
         stmt.execute(deleteSql);
         lastUpdate = System.currentTimeMillis();
       } catch (Exception e) {
@@ -362,6 +360,7 @@ public class DatabaseConnection {
       } finally {
         try {
           if (stmt != null) stmt.close();
+          if (connection != null) connection.close();
         } catch (SQLException e){
           context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("errorDeleteJob")));
         }
@@ -416,28 +415,28 @@ public class DatabaseConnection {
    */
   synchronized private void createFirstTable() throws Exception {
     Statement stmt = null;
+    Connection connection = connect();
     try{
-      if (globalConnection != null) {
-        stmt = globalConnection.createStatement();
+      stmt = connection.createStatement();
 
-        // Check need delete table
-        if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
-          stmt.execute(Jobs.delIndexIdSql);
-          stmt.execute(Jobs.delIndexPidSql);
-          stmt.execute(Jobs.deleteSql);
-          DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
-        }
-
-        // Create tables
-        stmt.execute(Jobs.createSql);
-        stmt.execute(Jobs.indexIdSql);
-        stmt.execute(Jobs.indexPidSql);
+      // Check need delete table
+      if (DPFManagerProperties.getDatabaseVersion() != DpFManagerConstants.DATABASE_VERSION) {
+        stmt.execute(Jobs.delIndexIdSql);
+        stmt.execute(Jobs.delIndexPidSql);
+        stmt.execute(Jobs.deleteSql);
+        DPFManagerProperties.setDatabaseVersion(DpFManagerConstants.DATABASE_VERSION);
       }
+
+      // Create tables
+      stmt.execute(Jobs.createSql);
+      stmt.execute(Jobs.indexIdSql);
+      stmt.execute(Jobs.indexPidSql);
     } catch (Exception e){
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
     } finally {
       try {
         if (stmt != null) stmt.close();
+        if (connection != null) connection.close();
       } catch (SQLException e){
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
       }

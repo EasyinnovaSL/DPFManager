@@ -204,9 +204,4 @@ public class DatabaseService extends DpfService {
     connection.updateJobs(cache.getJobs());
   }
 
-  @PreDestroy
-  public void finish() {
-    connection.close();
-  }
-
 }
