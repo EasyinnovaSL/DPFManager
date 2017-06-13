@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URL;
 import java.nio.file.Files;
@@ -82,7 +83,7 @@ import javax.xml.transform.stream.StreamResult;
     "bundle"
 })
 @XmlRootElement(name = "configuration")
-public class Configuration {
+public class Configuration implements Serializable {
   private ArrayList<String> isos;
   private Map<String, ArrayList<String>> modifiedIsos;
   private Rules rules;
@@ -95,7 +96,7 @@ public class Configuration {
   @XmlTransient
   private boolean quick;
 
-  private ResourceBundle bundle;
+  private transient ResourceBundle bundle;
 
   @XmlTransient
   private boolean isDefault;

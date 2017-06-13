@@ -24,12 +24,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by easy on 09/10/2015.
  */
-public class Fixes {
+public class Fixes implements Serializable{
   private ArrayList<Fix> fixes;
 
   /**

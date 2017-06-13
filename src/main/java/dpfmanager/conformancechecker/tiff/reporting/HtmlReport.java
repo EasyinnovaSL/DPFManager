@@ -484,38 +484,10 @@ public class HtmlReport extends Report {
       /**
        * Metadata incoherencies
        */
-      IFD tdifd = td.getFirstIFD();
       int nifd = 1;
       String rows = "";
-      while (tdifd != null) {
-        XMP xmp = null;
-        IPTC iptc = null;
-        if (tdifd.containsTagId(TiffTags.getTagId("XMP"))) {
-          try {
-            xmp = (XMP) tdifd.getTag("XMP").getReadValue().get(0);
-          } catch (Exception ex) {
-            xmp = null;
-          }
-        }
-        if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) {
-          try {
-            iptc = (IPTC) tdifd.getTag("IPTC").getReadValue().get(0);
-          } catch (Exception ex) {
-            iptc = null;
-          }
-        }
-
-        // Author
-        String authorTag = null;
-        if (tdifd.containsTagId(TiffTags.getTagId("Artist")))
-          authorTag = tdifd.getTag("Artist").toString();
-        String authorIptc = null;
-        if (iptc != null) authorIptc = iptc.getCreator();
-        String authorXmp = null;
-        if (xmp != null) authorXmp = xmp.getCreator();
-        rows += detectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd);
-
-        tdifd = tdifd.getNextIFD();
+      while (ir.getAuthorTag().containsKey(nifd) || ir.getAuthorIptc().containsKey(nifd) || ir.getAuthorXmp().containsKey(nifd)) {
+        rows += detectIncoherency(ir.getAuthorTag().get(nifd), ir.getAuthorIptc().get(nifd), ir.getAuthorXmp().get(nifd), "Author", nifd);
         nifd++;
       }
       if (rows.isEmpty()) {

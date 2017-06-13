@@ -25,25 +25,20 @@ import dpfmanager.shell.modules.report.util.ReportHtml;
 
 import com.easyinnova.implementation_checker.ValidationResult;
 import com.easyinnova.implementation_checker.rules.RuleResult;
-
 import com.easyinnova.tiff.model.IfdTags;
-import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.Tag;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
-import com.easyinnova.tiff.model.types.Text;
+import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -119,15 +114,18 @@ public class IndividualReport extends ReportSerializable {
   private boolean containsData;
 
   /**
-   * Data precomputed for write
+   * Data precomputed for write external
    */
-  private transient PDDocument pdf;
-
   private transient String conformanceCheckerReport = null;
 
-  private transient String conformanceCheckerReportHtml = null;
+  private boolean precomputedOutput = false;
 
-  private transient String conformanceCheckerReportMets = null;
+  /**
+   * Author tag
+   */
+  private Map<Integer, String> authorTag = new HashMap<>();
+  private Map<Integer, String> authorIptc = new HashMap<>();
+  private Map<Integer, String> authorXmp = new HashMap<>();
 
   /**
    * Extra check information
@@ -146,6 +144,8 @@ public class IndividualReport extends ReportSerializable {
 
   private String imagePath = null;
 
+  private int reportId;
+
   /**
    * Error constructor
    */
@@ -160,7 +160,7 @@ public class IndividualReport extends ReportSerializable {
    * @param path           the path
    * @param reportFilename the path
    */
-  public IndividualReport(String name, String path, String reportFilename, boolean q) {
+  public IndividualReport(String name, String path, String reportFilename, boolean q, int id) {
     filename = name;
     filepath = path;
     this.reportFilename = reportFilename;
@@ -168,6 +168,7 @@ public class IndividualReport extends ReportSerializable {
     errors = new HashMap<>();
     warnings = new HashMap<>();
     quick = q;
+    reportId = id;
   }
 
   public String getImagePath() {
@@ -185,7 +186,7 @@ public class IndividualReport extends ReportSerializable {
    * @param path      the path
    * @param tiffModel the TIFF model
    */
-  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, ArrayList<String>> modifiedIsosList, boolean q) {
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, ArrayList<String>> modifiedIsosList, boolean q, int id) {
     filename = name;
     filepath = path;
     containsData = true;
@@ -195,7 +196,12 @@ public class IndividualReport extends ReportSerializable {
     passed = new HashMap<>();
     modifiedIsos = modifiedIsosList;
     quick = q;
+    reportId = id;
     generate(tiffModel, validators);
+  }
+
+  public int getReportId() {
+    return reportId;
   }
 
   public boolean isError() {
@@ -246,26 +252,15 @@ public class IndividualReport extends ReportSerializable {
 
   public void setConformanceCheckerReport(String report) {
     conformanceCheckerReport = report;
+    precomputedOutput = true;
   }
 
-  public void setConformanceCheckerReportHtml(String report) {
-    conformanceCheckerReportHtml = report;
-  }
-
-  public void setConformanceCheckerReportMets(String report) {
-    conformanceCheckerReportMets = report;
+  public boolean hasPrecomputedOutput() {
+    return precomputedOutput;
   }
 
   public String getConformanceCheckerReport() {
     return conformanceCheckerReport;
-  }
-
-  public String getConformanceCheckerReportHtml() {
-    return conformanceCheckerReportHtml;
-  }
-
-  public String getConformanceCheckerReportMets() {
-    return conformanceCheckerReportMets;
   }
 
   public boolean containsData() {
@@ -356,32 +351,6 @@ public class IndividualReport extends ReportSerializable {
   }
 
   /**
-   * Sets pdf document.
-   *
-   * @param document the document
-   */
-  public void setPDFDocument(String document) {
-    this.document = document;
-  }
-
-  public void setPDF(PDDocument doc) {
-    this.pdf = doc;
-  }
-
-  public PDDocument getPDF() {
-    return pdf;
-  }
-
-  /**
-   * Gets pdf document.
-   *
-   * @return the pdf document
-   */
-  public String getPDFDocument() {
-    return document;
-  }
-
-  /**
    * Get file path.
    *
    * @return filepath file path
@@ -415,6 +384,42 @@ public class IndividualReport extends ReportSerializable {
         passed.put(key, validations.get(key).getPassed());
       }
     }
+
+    /**
+     * Metadata extra info
+     */
+    int nifd = 1;
+    IFD tdifd = getTiffModel().getFirstIFD();
+    while (tdifd != null) {
+      XMP xmp = null;
+      IPTC iptc = null;
+      if (tdifd.containsTagId(TiffTags.getTagId("XMP"))) {
+        try {
+          xmp = (XMP) tdifd.getTag("XMP").getReadValue().get(0);
+        } catch (Exception ex) {
+          xmp = null;
+        }
+      }
+      if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) {
+        try {
+          iptc = (IPTC) tdifd.getTag("IPTC").getReadValue().get(0);
+        } catch (Exception ex) {
+          iptc = null;
+        }
+      }
+
+      // Author
+      if (tdifd.containsTagId(TiffTags.getTagId("Artist"))) authorTag.put(nifd, tdifd.getTag("Artist").toString());
+      if (iptc != null) authorIptc.put(nifd, iptc.getCreator());
+      if (xmp != null) authorXmp.put(nifd, xmp.getCreator());
+      tdifd = tdifd.getNextIFD();
+      nifd++;
+    }
+
+    /**
+     * SmallMetadata
+     */
+
   }
 
   /**
@@ -949,5 +954,17 @@ public class IndividualReport extends ReportSerializable {
 
   public boolean isQuick() {
     return quick;
+  }
+
+  public Map<Integer, String> getAuthorTag() {
+    return authorTag;
+  }
+
+  public Map<Integer, String> getAuthorIptc() {
+    return authorIptc;
+  }
+
+  public Map<Integer, String> getAuthorXmp() {
+    return authorXmp;
   }
 }

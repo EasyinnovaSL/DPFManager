@@ -19,20 +19,19 @@
 
 package dpfmanager.shell.interfaces.gui.fragment;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
-import dpfmanager.shell.modules.periodic.messages.PeriodicMessage;
+import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
-import dpfmanager.shell.modules.report.util.ReportRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -110,7 +109,7 @@ public class ReportFragment {
     warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
     passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
     addChartScore(info.getScore());
-    addFormatIcons(info.getFormats());
+    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
     addActionsIcons(info.getDelete());
     addLastItem(info.isLast());
   }
@@ -135,28 +134,51 @@ public class ReportFragment {
     scoreBox.getChildren().add(score_label);
   }
 
-  private void addFormatIcons(Map<String, String> item) {
+  private void addFormatIcons(Map<String, String> item, Integer version, GlobalReport gr) {
+    if (version > 0) {
+      // Transform reports
+      if (!item.containsKey("mets")) item.put("mets", null);
+      if (!item.containsKey("xml")) item.put("xml", null);
+      if (!item.containsKey("json")) item.put("json", null);
+      if (!item.containsKey("html")) item.put("html", null);
+      if (!item.containsKey("pdf")) item.put("pdf", null);
+    }
     for (String i : item.keySet()) {
       ImageView icon = new ImageView();
       icon.setId("but" + i);
       icon.setFitHeight(20);
       icon.setFitWidth(20);
-      icon.setImage(new Image("images/formats/" + i + ".png"));
       icon.setCursor(Cursor.HAND);
 
       String path = item.get(i);
-      icon.setOnMouseClicked(event -> {
-        ArrayMessage am = new ArrayMessage();
-        am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-        am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(i, path));
-        context.send(GuiConfig.PERSPECTIVE_SHOW, am);
-      });
+      if (path != null){
+        // Show directly
+        icon.setImage(new Image("images/formats/" + i + ".png"));
+        icon.setOnMouseClicked(event -> {
+          ArrayMessage am = new ArrayMessage();
+          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
+          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(i, path));
+          context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+        });
 
-      ContextMenu contextMenu = new ContextMenu();
-      javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
-      contextMenu.getItems().add(download);
-      icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
-      formatsBox.getChildren().add(icon);
+        ContextMenu contextMenu = new ContextMenu();
+        javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
+        contextMenu.getItems().add(download);
+        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
+        formatsBox.getChildren().add(icon);
+      } else if (gr.getVersion() > 1){
+        // Transformation need
+        icon.setImage(new Image("images/formats/" + i + "-plus.png"));
+        icon.setOnMouseClicked(event -> {
+          context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(i, gr));
+        });
+
+        ContextMenu contextMenu = new ContextMenu();
+        javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
+        contextMenu.getItems().add(download);
+        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
+        formatsBox.getChildren().add(icon);
+      }
     }
   }
 

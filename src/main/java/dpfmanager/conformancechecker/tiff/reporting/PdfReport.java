@@ -35,6 +35,7 @@ import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -149,7 +150,7 @@ public class PdfReport extends Report {
    *
    * @param ir the individual report.
    */
-  public void parseIndividual(IndividualReport ir, int id, String internalReportFolder) {
+  public PDDocument parseIndividual(IndividualReport ir, int id, String internalReportFolder) {
     try {
       PDFParams pdfParams = new PDFParams();
       pdfParams.init(PDPage.PAGE_SIZE_A4);
@@ -545,35 +546,11 @@ public class PdfReport extends Report {
         pdfParams.y -= 20;
         Integer[] margins = {2, 30};
         pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("", "Description"), margins);
-        IFD tdifd = td.getFirstIFD();
+
         int nifd = 1;
         List<String> rows = new ArrayList<>();
-        while (tdifd != null) {
-          XMP xmp = null;
-          IPTC iptc = null;
-          if (tdifd.containsTagId(TiffTags.getTagId("XMP")) && tdifd.getTag("XMP").getCardinality() > 0) {
-            abstractTiffType obj = tdifd.getTag("XMP").getValue().get(0);
-            if (obj instanceof XMP)
-              xmp = (XMP) obj;
-          }
-          if (tdifd.containsTagId(TiffTags.getTagId("IPTC")) && tdifd.getTag("IPTC").getCardinality() > 0) {
-            abstractTiffType obj = tdifd.getTag("IPTC").getValue().get(0);
-            if (obj instanceof IPTC) {
-              iptc = (IPTC) obj;
-            }
-          }
-
-          // Author
-          String authorTag = null;
-          if (tdifd.containsTagId(TiffTags.getTagId("Artist")))
-            authorTag = tdifd.getTag("Artist").toString();
-          String authorIptc = null;
-          if (iptc != null) authorIptc = iptc.getCreator();
-          String authorXmp = null;
-          if (xmp != null) authorXmp = xmp.getCreator();
-
-          rows.addAll(detectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd));
-          tdifd = tdifd.getNextIFD();
+        while (ir.getAuthorTag().containsKey(nifd) || ir.getAuthorIptc().containsKey(nifd) || ir.getAuthorXmp().containsKey(nifd)) {
+          rows.addAll(detectIncoherency(ir.getAuthorTag().get(nifd), ir.getAuthorIptc().get(nifd), ir.getAuthorXmp().get(nifd), "Author", nifd));
           nifd++;
         }
         if (rows.isEmpty()) {
@@ -622,10 +599,10 @@ public class PdfReport extends Report {
 
       pdfParams.getContentStream().close();
 
-      ir.setPDF(pdfParams.getDocument());
+      return pdfParams.getDocument();
     } catch (Exception tfe) {
       tfe.printStackTrace();
-      ir.setPDF(null);
+      return null;
       //context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", tfe));
     }
   }

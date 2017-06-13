@@ -138,7 +138,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   @FXML
   protected void changeIndividual(ActionEvent event) throws Exception {
-    if (extension != null && extension.equals("pdf")) {
+    if (extension != null && extension.equals("pdf") && comboIndividuals.getSelectionModel().getSelectedItem() != null) {
       String name = (String) comboIndividuals.getSelectionModel().getSelectedItem();
       String filename = folderPath + "/" + name + "." + extension;
       opePdfFile(filename);
@@ -231,6 +231,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     // Load PDF codument
     pdfPagesVBox.getChildren().clear();
     try {
+      if (absolutePath == null) System.out.println("NULL!!!!!!!!!!!");
       PDDocument document = PDDocument.load(absolutePath);
       List<PDPage> pages = document.getDocumentCatalog().getAllPages();
       for (PDPage page : pages) {

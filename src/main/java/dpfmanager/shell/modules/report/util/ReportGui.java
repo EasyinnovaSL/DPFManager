@@ -74,6 +74,7 @@ public class ReportGui implements Comparable<ReportGui>{
   private String deletePath;
 
   private GlobalReport globalReport;
+  private Integer reportVersion = 0;
 
   public ReportGui(String baseDir, String reportDay, String reportDir) {
     this.baseDir = baseDir;
@@ -221,6 +222,9 @@ public class ReportGui implements Comparable<ReportGui>{
       }
 
       globalReport = gr;
+      if (gr.getVersion() != null) {
+        reportVersion = gr.getVersion();
+      }
       int n = gr.getReportsCount();
       String stime = getStime(timestamp);
       String input = gr.getInputString();
@@ -680,6 +684,10 @@ public class ReportGui implements Comparable<ReportGui>{
 
   public GlobalReport getGlobalReport() {
     return globalReport;
+  }
+
+  public Integer getReportVersion() {
+    return reportVersion;
   }
 
   /**
