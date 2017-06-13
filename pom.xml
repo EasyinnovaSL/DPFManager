@@ -227,19 +227,19 @@
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tifflibrary4java</artifactId>
-            <version>1.9</version>
+            <version>1.9.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tiffimplementationchecker</artifactId>
-            <version>1.1</version>
+            <version>1.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tiffpolicychecker</artifactId>
-            <version>1.0.5</version>
+            <version>1.1</version>
         </dependency>
 
         <dependency>
