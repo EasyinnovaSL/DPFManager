@@ -49,4 +49,14 @@ public class ReportTag {
    * Is thumbnail.
    */
   public boolean thumbnail = false;
+
+  /**
+   * Default tag value
+   */
+  public boolean isDefault = false;
+
+  /**
+   * Default tag value
+   */
+  public String defaultValue = "";
 }

@@ -173,19 +173,22 @@ public class StatisticsObject {
 
   private void parseTags(IndividualReport ir){
     try {
-      for (ReportTag tag : ir.getTags(true)) {
+      for (ReportTag tag : ir.getTags(true, true)) {
         if (tag.tv == null) continue;
+        if (tag.tv.getId() == 263){
+          tag.toString();
+        }
         if (!tags.containsKey(tag.tv.getId())) tags.put(tag.tv.getId(), new HistogramTag(tag));
         HistogramTag hTag = tags.get(tag.tv.getId());
         if (!tag.thumbnail) {
-          hTag.increaseMainCount();
+          hTag.increaseCount(true, tag.isDefault);
           if (expandableTagNames.contains(hTag.getValue().getName())){
-            hTag.addMainValue(tag.tv.getFirstTextReadValue());
+            hTag.addMainValue((tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue(), tag.isDefault);
           }
         } else {
-          hTag.increaseThumbCount();
+          hTag.increaseCount(false, tag.isDefault);
           if (expandableTagNames.contains(hTag.getValue().getName())){
-            hTag.addThumbValue(tag.tv.getFirstTextReadValue());
+            hTag.addThumbValue((tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue(), tag.isDefault);
           }
         }
       }

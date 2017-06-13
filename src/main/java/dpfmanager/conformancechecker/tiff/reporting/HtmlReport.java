@@ -536,6 +536,7 @@ public class HtmlReport extends Report {
 
   private String generateTagsDivs(IndividualReport ir) {
     Map<String, Boolean> hasExpert = new HashMap<>();
+    Map<String, Boolean> hasDefault = new HashMap<>();
     Map<String, String> tagsMap = new HashMap<>();
     Map<String, String> templates = new HashMap<>();
     String row;
@@ -543,8 +544,8 @@ public class HtmlReport extends Report {
     /**
      * Parse TAGs
      */
-    for (ReportTag tag : ir.getTags()) {
-      if (tag.tv.getId() == 700) {
+    for (ReportTag tag : ir.getTags(false, true)) {
+      if (tag.tv.getId() == 700 && !tag.isDefault) {
         String mapId = "xmp" + tag.index;
         String mapIdH = "xmp" + tag.index + "h";
         // XMP
@@ -580,7 +581,7 @@ public class HtmlReport extends Report {
         }
         continue;
       }
-      if (tag.tv.getId() == 34665) {
+      if (tag.tv.getId() == 34665 && !tag.isDefault) {
         // EXIF
         String mapId = "exi" + tag.index;
         try {
@@ -600,7 +601,7 @@ public class HtmlReport extends Report {
         }
         continue;
       }
-      if (tag.tv.getId() == 330) {
+      if (tag.tv.getId() == 330 && !tag.isDefault) {
         // Sub IFD
         String mapId = "sub" + tag.index;
         IFD sub = (IFD) tag.tv.getReadValue().get(0);
@@ -620,7 +621,7 @@ public class HtmlReport extends Report {
         }
         continue;
       }
-      if (tag.tv.getId() == 33723) {
+      if (tag.tv.getId() == 33723 && !tag.isDefault) {
         String mapId = "ipt" + tag.index;
         // IPTC
         for (abstractTiffType to : tag.tv.getReadValue()) {
@@ -646,14 +647,19 @@ public class HtmlReport extends Report {
         expert = " expert";
         hasExpert.put(mapId, true);
       }
-      row = "<tr class='ifd" + tag.index + " " + expert + "'><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+      String defaultVisible = "";
+      if (tag.isDefault){
+        defaultVisible = " default-value";
+        hasDefault.put(mapId, true);
+      }
+      row = "<tr class='ifd" + tag.index + expert + defaultVisible + " '><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
       String sDif = "";
       if (tag.dif < 0) sDif = "<i class=\"fa fa-times\"></i>";
       else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";
       row = row.replace("##ICON##", "<i class=\"image-default icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()));
-      String val = tag.tv.getFirstTextReadValue();
+      String val = (tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue();
       if (val.length() > 200)
         val = val.substring(0, 200) + "...";
       row = row.replace("##VALUE##", val);
@@ -665,9 +671,13 @@ public class HtmlReport extends Report {
      * Generate divs
      */
     String finalResult = "";
-    String expertTmpl = "<div class=\"clexpert\"><input type=\"checkbox\" id=\"checkSelected##INDEX##\" onchange=\"expertChanged('##INDEX##')\"><label for=\"checkSelected##INDEX##\"><span></span> Expert mode</label></div>";
+    String expertCheckTmpl = "<input type=\"checkbox\" id=\"checkSelected##INDEX##\" onchange=\"filterChanged('##INDEX##')\">" +
+          "<label for=\"checkSelected##INDEX##\"><span></span> Expert mode</label>";
+    String defaultCheckTmpl = "<input type=\"checkbox\" id=\"defaultSelected##INDEX##\" onchange=\"filterChanged('##INDEX##')\">" +
+        "<label for=\"defaultSelected##INDEX##\" style=\"margin-left: 10px;\"><span></span> Default values</label>";
+    String checkBoxTmpl = "<div class=\"clexpert\">##CHECK_EXPERT####CHECK_DEFAULT##</div>";
     String genTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##EXPERT##\n" +
+        "\t\t\t\t\t##CHECKBOXS##\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  ##TITLE##</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -683,7 +693,7 @@ public class HtmlReport extends Report {
     String ifdTmpl = StringUtils.replace(genTmpl, "##TITLE##", "IFD Tags");
     String exifTmpl = StringUtils.replace(genTmpl, "##TITLE##", "EXIF");
     String iptcTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##EXPERT##\n" +
+        "\t\t\t\t\t##CHECKBOXS##\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  IPTC</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -694,7 +704,7 @@ public class HtmlReport extends Report {
         "\t\t\t\t\t</table>\n" +
         "\t\t\t\t</div>";
     String xmpTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##EXPERT##\n" +
+        "\t\t\t\t\t##CHECKBOXS##\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  XMP</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -727,11 +737,16 @@ public class HtmlReport extends Report {
     for (String key : tagsMap.keySet()) {
       if (key.endsWith("h")) continue;
       String type = key.substring(0, 3);
-      String display = "none;", expert = "";
+      String display = "none;", checkBoxs = "";
       if (key.equals("ifd0")) display = "block;";
-      if (hasExpert.containsKey(key)) expert = expertTmpl;
+      String expert = (hasExpert.containsKey(key)) ? expertCheckTmpl : "";
+      String defaultCheck = (hasDefault.containsKey(key)) ? defaultCheckTmpl : "";
+      if (expert.length() > 0 || defaultCheck.length() > 0) {
+        checkBoxs = StringUtils.replace(checkBoxTmpl, "##CHECK_EXPERT##", expert);
+        checkBoxs = StringUtils.replace(checkBoxs, "##CHECK_DEFAULT##", defaultCheck);
+      }
       String tmpl = templates.get(type);
-      tmpl = StringUtils.replace(tmpl, "##EXPERT##", expert);
+      tmpl = StringUtils.replace(tmpl, "##CHECKBOXS##", checkBoxs);
       tmpl = StringUtils.replace(tmpl, "##INDEX##", key);
       tmpl = StringUtils.replace(tmpl, "##DISPLAY##", display);
       if (key.startsWith("ipt")) {

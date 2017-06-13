@@ -10,7 +10,7 @@ import java.util.Comparator;
 public class TagsComparator implements  Comparator<HistogramTag> {
 
   public enum Mode {
-    ID, NAME, MAIN, THUMB
+    ID, NAME, MAIN, THUMB, MAIN_DEFAULTS, THUMB_DEFAULTS
   }
 
   private Mode mode;
@@ -28,10 +28,16 @@ public class TagsComparator implements  Comparator<HistogramTag> {
         compare = o1.getValue().getName().compareTo(o2.getValue().getName());
         break;
       case MAIN:
-        compare = o2.getMainCount().compareTo(o1.getMainCount());
+        compare = o2.getMainCount(false).compareTo(o1.getMainCount(false));
+        break;
+      case MAIN_DEFAULTS:
+        compare = o2.getMainCount(true).compareTo(o1.getMainCount(true));
         break;
       case THUMB:
-        compare = o2.getThumbCount().compareTo(o1.getThumbCount());
+        compare = o2.getThumbCount(false).compareTo(o1.getThumbCount(false));
+        break;
+      case THUMB_DEFAULTS:
+        compare = o2.getThumbCount(true).compareTo(o1.getThumbCount(true));
         break;
     }
 

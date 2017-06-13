@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
 
-<AnchorPane id="pane-statistics" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="pane-statistics" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <ImageView focusTraversable="true" preserveRatio="true" styleClass="main-logo">
@@ -234,7 +234,7 @@
                                         </Label>
                                         <Label fx:id="labelAMain" styleClass="body-statistics" />
                                         <Label fx:id="labelNThumb" styleClass="body-statistics" />
-                                        <Label styleClass="body-statistics" />
+                                        <Label fx:id="labelPThumb" styleClass="body-statistics" />
                                     </children>
                                 </VBox>
                             </children>
@@ -292,6 +292,8 @@
                         </HBox.margin>
                     </ImageView>
                     <Label styleClass="config-title" text="%tagsTitle" />
+                    <Separator opacity="0.0" HBox.hgrow="ALWAYS" />
+                    <CheckBox fx:id="checkDefault" mnemonicParsing="false" onAction="#defaultCheckClicked" styleClass="checkreport" text="%showDefault" />
                     <VBox.margin>
                         <Insets top="30.0" />
                     </VBox.margin>
@@ -417,6 +419,9 @@
                         </padding>
                     </GridPane>
                     <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               <VBox.margin>
+                  <Insets bottom="1.0" left="1.0" right="1.0" top="22.0" />
+               </VBox.margin>
                 </AnchorPane>
                 <ScrollPane fx:id="scrollTags" hbarPolicy="NEVER" maxHeight="250.0" minHeight="0.0">
                     <content>
