@@ -67,6 +67,13 @@ public class ConformanceRunnable extends DpfRunnable {
   @Override
   public void runTask() {
     // if config is null, get the default one
+    if (config != null) {
+      boolean isQuick = config.isQuick();
+      if (config.isDefault()) {
+        config = pi.getDefaultConfigurationFromFile(filename);
+        config.setQuick(isQuick);
+      }
+    }
     if (config == null) {
       config = pi.getDefaultConfigurationFromFile(filename);
     }

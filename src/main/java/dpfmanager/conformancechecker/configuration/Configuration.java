@@ -97,6 +97,9 @@ public class Configuration {
 
   private ResourceBundle bundle;
 
+  @XmlTransient
+  private boolean isDefault;
+
   /**
    * Instantiates a new Configuration.
    */
@@ -108,6 +111,7 @@ public class Configuration {
     version = 0;
     bundle = DPFManagerProperties.getBundle();
     modifiedIsos = new HashMap<>();
+    isDefault = false;
   }
 
   /**
@@ -127,6 +131,13 @@ public class Configuration {
   public void initDefault() {
     addISO(ImplementationCheckerLoader.getDefaultIso());
     addFormat("HTML");
+  }
+
+  /**
+   * Set the configuration to default one
+   */
+  public void setDefault(){
+    isDefault = true;
   }
 
   /**
@@ -775,5 +786,9 @@ public class Configuration {
 
   public void setQuick(boolean quick) {
     this.quick = quick;
+  }
+
+  public boolean isDefault() {
+    return isDefault;
   }
 }
