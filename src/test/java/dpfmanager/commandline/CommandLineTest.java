@@ -72,6 +72,7 @@ public class CommandLineTest {
       Thread.sleep(1000);
       timeout++;
     }
+    DPFManagerProperties.setFinished(false);
     Assert.assertNotEquals("Timeout for command line app reached! (" + maxTimeout + "s)", maxTimeout, timeout);
   }
 

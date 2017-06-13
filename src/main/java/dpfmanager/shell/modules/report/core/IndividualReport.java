@@ -28,10 +28,13 @@ import com.easyinnova.implementation_checker.rules.RuleResult;
 
 import com.easyinnova.tiff.model.IfdTags;
 import com.easyinnova.tiff.model.Metadata;
+import com.easyinnova.tiff.model.Tag;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.Text;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -46,7 +49,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -669,8 +674,8 @@ public class IndividualReport extends ReportSerializable {
     return modifiedIsos.containsKey(iso);
   }
 
-  public ArrayList<ReportTag> getTags() {
-    return getTags(false);
+  public ArrayList<ReportTag> getTags(boolean subTags) {
+    return getTags(subTags, false);
   }
 
   /**
@@ -678,8 +683,9 @@ public class IndividualReport extends ReportSerializable {
    *
    * @return the tags
    */
-  public ArrayList<ReportTag> getTags(boolean subTags) {
-    ArrayList<ReportTag> list = new ArrayList<ReportTag>();
+  public ArrayList<ReportTag> getTags(boolean subTags, boolean defaultTags) {
+    ArrayList<ReportTag> list = new ArrayList<>();
+    List<Integer> currentTagsIds = new ArrayList<>();
     TiffDocument td = getTiffModel();
     IFD ifd = td.getFirstIFD();
     IFD ifdcomp = null;
@@ -701,8 +707,9 @@ public class IndividualReport extends ReportSerializable {
             tag.dif = 1;
         }
         if (!showTag(tv)) tag.expert = true;
-        if (subTags) list.addAll(getSubTags(tag, index, isThumbnail));
+        if (subTags) list.addAll(getSubTags(tag, index, isThumbnail, defaultTags));
         list.add(tag);
+        currentTagsIds.add(tag.tv.getId());
       }
       if (ifdcomp != null) {
         boolean isThumbnailComp = ifdcomp.isThumbnail();
@@ -714,26 +721,72 @@ public class IndividualReport extends ReportSerializable {
             tag.thumbnail = isThumbnailComp;
             tag.dif = -1;
             if (!showTag(tv)) tag.expert = true;
-            if (subTags) list.addAll(getSubTags(tag, index, isThumbnailComp));
+            if (subTags) list.addAll(getSubTags(tag, index, isThumbnailComp, defaultTags));
             list.add(tag);
+            currentTagsIds.add(tag.tv.getId());
           }
         }
       }
       ifd = ifd.getNextIFD();
       if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
+
+      // Get missing default tags values for each main IFD
+      if (defaultTags) {
+        TagValue tv = meta.get(262);
+        int intPhotometric = (tv != null) ? getPhotometricIntValue(tv) : -1;
+        List<ReportTag> defaultTagsList = getMissingDefaultTags(currentTagsIds, index, isThumbnail, intPhotometric);
+        list.addAll(defaultTagsList);
+      }
+
       index++;
     }
+
+    // Sort list by tag id
+    Collections.sort(list, new Comparator<ReportTag>() {
+      @Override
+      public int compare(ReportTag o1, ReportTag o2) {
+        Integer i1 = o1.index;
+        int comp = i1.compareTo(o2.index);
+        if (comp == 0){
+          Integer id1 = o1.tv.getId();
+          return id1.compareTo(o2.tv.getId());
+        }
+        return comp;
+      }
+    });
+
     return list;
   }
 
-  private ArrayList<ReportTag> getSubTags(ReportTag tag, int index, boolean isThumbnail){
+  private int getPhotometricIntValue(TagValue tv){
+    if (tv.getValue() != null){
+      if (tv.getValue().size() > 0) {
+        return tv.getValue().get(0).toInt();
+      }
+      return -1;
+    } else {
+      HashMap<String, String> map = TiffTags.getTag(262).getValues();
+      for (String key : map.keySet()){
+        String value = map.get(key);
+        if (value.equals(tv.getFirstTextReadValue())) {
+          return Integer.parseInt(key);
+        }
+      }
+      return -1;
+    }
+  }
+
+  private ArrayList<ReportTag> getSubTags(ReportTag tag, int index, boolean isThumbnail, boolean defaultTags){
     ArrayList<ReportTag> subTagsList = new ArrayList<>();
+    List<Integer> currentTagsIds = new ArrayList<>();
+    TagValue tvPhotometric = null;
     if (tag.tv.getId() == 34665) {
       // EXIF
       try {
         abstractTiffType obj = tag.tv.getReadValue().get(0);
         if (obj instanceof IFD) {
           IFD exif = (IFD) obj;
+          tvPhotometric = exif.getTags().get(262);
           for (TagValue tv : exif.getTags().getTags()) {
             ReportTag rTag = new ReportTag();
             rTag.index = index;
@@ -741,27 +794,86 @@ public class IndividualReport extends ReportSerializable {
             rTag.thumbnail = isThumbnail;
             if (!showTag(tv)) rTag.expert = true;
             subTagsList.add(rTag);
+            currentTagsIds.add(rTag.tv.getId());
           }
         }
       } catch (Exception ex) {
-        ex.toString();
         //ex.printStackTrace();
       }
     } else if (tag.tv.getId() == 330) {
       // Sub IFD
       IFD sub = (IFD) tag.tv.getReadValue().get(0);
-      boolean isThumbnailSub = sub.isThumbnail();
+      tvPhotometric = sub.getTags().get(262);
+      isThumbnail = sub.isThumbnail();
       for (TagValue tv : sub.getTags().getTags()) {
         ReportTag rTag = new ReportTag();
         rTag.index = index;
         rTag.tv = tv;
-        rTag.thumbnail = isThumbnailSub;
+        rTag.thumbnail = isThumbnail;
         if (!showTag(tv)) rTag.expert = true;
         subTagsList.add(rTag);
+        currentTagsIds.add(rTag.tv.getId());
       }
     }
+
+    // Get missing default tags values for each main IFD
+    if (defaultTags && tvPhotometric != null) {
+      int intPhotometric = getPhotometricIntValue(tvPhotometric);
+      List<ReportTag> defaultTagsList = getMissingDefaultTags(currentTagsIds, index, isThumbnail,intPhotometric);
+      subTagsList.addAll(defaultTagsList);
+    }
+
     return subTagsList;
   }
+
+  public static List<String> defaultTagsNames = Arrays.asList("BitsPerSample","Compression","DotRange","MaxSampleValue","MinSampleValue","NewSubfileType"
+      ,"Orientation","PlanarConfiguration","Predictor","ResolutionUnit","RowsPerStrip","SampleFormat"
+      ,"SamplesPerPixel","SMaxSampleValue","SMinSampleValue","Threshholding","TransferRange","WhiteLevel"
+      ,"YCbCrCoefficients","YCbCrSubSampling","YCbCrPositioning","GrayResponseUnit","InkSet","NumberOfInks","Indexed","ReferenceBlackWhite");
+
+  public List<ReportTag> getMissingDefaultTags(List<Integer> currentTagsIds, Integer index, Boolean isThumbnail, Integer photometric){
+    List<ReportTag> defaultTags = new ArrayList<>();
+    try{
+      TiffTags tiffTags = TiffTags.getTiffTags();
+      for (Integer key : tiffTags.tagMap.keySet()) {
+        if (currentTagsIds.contains(key)) continue;
+        Tag tag = tiffTags.tagMap.get(key);
+        if (!tag.getDefaultValue().isEmpty() && defaultTagsNames.contains(tag.getName())) {
+          if (tag.getName().equals("GrayResponseUnit") && photometric != 0 && photometric != 1) continue;
+          if ((tag.getName().equals("YCbCrCoefficients") || tag.getName().equals("YCbCrSubSampling") || tag.getName().equals("YCbCrPositioning")) && photometric != 6) continue;
+          if ((tag.getName().equals("InkSet") || tag.getName().equals("NumberOfInks")) && photometric != 5) continue;
+          if (tag.getName().equals("Indexed") && photometric != 3) continue;
+          if (tag.getName().equals("ReferenceBlackWhite") && photometric != 2 && photometric != 6) continue;
+          ReportTag rTag = new ReportTag();
+          rTag.index = index;
+          rTag.tv = new TagValue(tag.getId(), -1);
+          rTag.thumbnail = isThumbnail;
+          rTag.isDefault = true;
+          String desc = tag.getTextDescription(tag.getDefaultValue());
+          rTag.defaultValue = (desc == null) ? tag.getDefaultValue() : desc;
+          if (!showTag(tag.getName())) rTag.expert = true;
+          defaultTags.add(rTag);
+        }
+      }
+    } catch (Exception e) {
+      /* unable to read tiff tags */
+    }
+    return defaultTags;
+  }
+
+  public String getDescriptiveTextValue(Tag tag) {
+    if (tag.hasReadableDescription()){
+      String desc = tag.getDefaultValue();
+      String tagDescription = tag.getTextDescription(toString());
+      if (tagDescription != null){
+        desc = tagDescription;
+      }
+      return desc;
+    } else {
+      return tag.getDefaultValue();
+    }
+  }
+
 
   /**
    * Show Tag.
@@ -770,10 +882,14 @@ public class IndividualReport extends ReportSerializable {
    * @return true, if successful
    */
   public boolean showTag(TagValue tv) {
+    return showTag(tv.getName());
+  }
+
+  public boolean showTag(String name) {
     if (IndividualReport.showableTags == null) {
       IndividualReport.showableTags = readShowableTags();
     }
-    return IndividualReport.showableTags.contains(tv.getName());
+    return IndividualReport.showableTags.contains(name);
   }
 
   public static HashSet<String> showableTags = null;

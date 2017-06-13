@@ -265,7 +265,7 @@ public class ThreadingService extends DpfService {
   public void finishIndividual(IndividualReport ir, Long uuid, Configuration config) {
     FileCheck fc = checks.get(uuid);
     if (fc != null) {
-      if (fc.getConfig() == null){
+      if (fc.getConfig() == null || fc.getConfig().isDefault()){
         fc.setConfig(config);
       }
       if (ir != null) {

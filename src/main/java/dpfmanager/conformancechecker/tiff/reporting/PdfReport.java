@@ -366,7 +366,7 @@ public class PdfReport extends Report {
         /**
          * IFD
          */
-        if (key.startsWith("ifd") && !key.endsWith("e")) {
+        if (key.startsWith("ifd") && !key.endsWith("e") && !key.endsWith("d")) {
           pdfParams.y -= 40;
           pdfParams = writeTitle(pdfParams, "IFD Tags", "images/pdf/tag.png", pos_x, font, 10);
           pdfParams.y -= 20;
@@ -375,17 +375,18 @@ public class PdfReport extends Report {
           for (ReportTag tag : tags.get(key)) {
             pdfParams.y -= 15;
             String sDif = "";
-            if (tag.dif < 0) sDif = "(-)";
-            else if (tag.dif > 0) sDif = "(+)";
+            if (tag.dif < 0) sDif = " (-)";
+            else if (tag.dif > 0) sDif = " (+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
             pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId() + "") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
             pdfParams = writeText(pdfParams, tag.tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
           }
         }
+
         /**
          * IFD  expert
          */
-        else if (key.startsWith("ifd")) {
+        else if (key.startsWith("ifd") && !key.endsWith("d")) {
           pdfParams.y -= 40;
           pdfParams = writeTitle(pdfParams, "IFD Expert Tags", "images/pdf/tag.png", pos_x, font, 10);
           pdfParams.y -= 20;
@@ -394,13 +395,34 @@ public class PdfReport extends Report {
           for (ReportTag tag : tags.get(key)) {
             pdfParams.y -= 15;
             String sDif = "";
-            if (tag.dif < 0) sDif = "(-)";
-            else if (tag.dif > 0) sDif = "(+)";
+            if (tag.dif < 0) sDif = " (-)";
+            else if (tag.dif > 0) sDif = " (+)";
             pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
             pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId() + "") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
             pdfParams = writeText(pdfParams, tag.tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
           }
         }
+
+        /**
+         * IFD default
+         */
+        else if (key.startsWith("ifd") && key.endsWith("d")) {
+          pdfParams.y -= 40;
+          pdfParams = writeTitle(pdfParams, "IFD Default Tags", "images/pdf/tag.png", pos_x, font, 10);
+          pdfParams.y -= 20;
+          Integer[] margins = {2, 40, 180};
+          pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Default value"), margins);
+          for (ReportTag tag : tags.get(key)) {
+            pdfParams.y -= 15;
+            String sDif = "";
+            if (tag.dif < 0) sDif = " (-)";
+            else if (tag.dif > 0) sDif = " (+)";
+            pdfParams = writeText(pdfParams, tag.tv.getId() + sDif, pos_x + margins[0], font, font_size);
+            pdfParams = writeText(pdfParams, (tag.tv.getName().equals(tag.tv.getId() + "") ? "Private tag" : tag.tv.getName()), pos_x + margins[1], font, font_size);
+            pdfParams = writeText(pdfParams, (tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue(), pos_x + margins[2], font, font_size);
+          }
+        }
+
         /**
          * SUB
          */

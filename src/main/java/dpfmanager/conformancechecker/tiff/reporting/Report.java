@@ -163,7 +163,7 @@ public class Report {
      * Parse Tags
      */
     Map<String, List<ReportTag>> tags = new HashMap<>();
-    for (ReportTag tag : ir.getTags()) {
+    for (ReportTag tag : ir.getTags(false, true)) {
       String mapId;
       List<ReportTag> list = null;
       if (tag.tv.getId() == 700) {
@@ -178,6 +178,9 @@ public class Report {
       } else if (tag.tv.getId() == 330) {
         mapId = "sub" + tag.index;
         IFD sub = (IFD) tag.tv.getReadValue().get(0);
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.isDefault) {
+        mapId = "ifd" + tag.index + "d";
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else if (tag.expert) {
         mapId = "ifd" + tag.index + "e";

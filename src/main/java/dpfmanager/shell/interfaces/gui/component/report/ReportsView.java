@@ -281,6 +281,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       hideClearOptions();
       getContext().send(new ReportsMessage(ReportsMessage.Type.READ));
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("successDeleteReports")));
+      vboxReports.getChildren().clear();
     } else {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorDeleteReports")));
     }

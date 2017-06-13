@@ -255,7 +255,6 @@ public class FixerTest extends CommandLineTest {
         byte[] encoded = Files.readAllBytes(Paths.get(path + "/" + file));
         xml_modif = new String(encoded);
       }
-      System.out.println("File: " + file);
     }
     assertEquals(true, xml_orig != null);
     assertEquals(true, xml_modif != null);

@@ -24,22 +24,33 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -62,6 +73,13 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   @FXML
   private ComboBox comboIndividuals;
   private String folderPath, extension;
+
+  @FXML
+  private ScrollPane scrollPdfPages;
+  @FXML
+  private VBox pdfPagesVBox;
+  @FXML
+  private VBox showVBox;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -96,6 +114,21 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
       }
     });
 
+    // Center content
+    scrollPdfPages.setHvalue(0.5);
+    scrollPdfPages.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        scrollPdfPages.setHvalue(0.5);
+      }
+    });
+    scrollPdfPages.hvalueProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        scrollPdfPages.setHvalue(0.5);
+      }
+    });
+
   }
 
   @Override
@@ -105,14 +138,19 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   @FXML
   protected void changeIndividual(ActionEvent event) throws Exception {
-    setTextAreaContent();
+    if (extension != null && extension.equals("pdf")) {
+      String name = (String) comboIndividuals.getSelectionModel().getSelectedItem();
+      String filename = folderPath + "/" + name + "." + extension;
+      opePdfFile(filename);
+    } else {
+      setTextAreaContent();
+    }
   }
 
   public void addComboChild(String name, boolean selected) {
     comboIndividuals.getItems().add(name);
     if (selected) {
       comboIndividuals.getSelectionModel().select(name);
-      setTextAreaContent();
     }
   }
 
@@ -138,13 +176,14 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    */
 
   public void showTextArea() {
+    setTextAreaContent();
     NodeUtil.showNode(textArea);
-    hideWebView();
-    hideComboBox();
+    NodeUtil.showNode(showVBox);
   }
 
   public void hideTextArea() {
     NodeUtil.hideNode(textArea);
+    NodeUtil.hideNode(showVBox);
     textArea.clear();
   }
 
@@ -159,20 +198,50 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   public void showWebView(String path) {
     webView.getEngine().load("file:///" + path.replace("\\", "/"));
     NodeUtil.showNode(webView);
-    NodeUtil.hideNode(comboIndividuals);
-    hideTextArea();
-    hideComboBox();
+    NodeUtil.showNode(showVBox);
   }
 
   public void hideWebView() {
     NodeUtil.hideNode(webView);
+    NodeUtil.hideNode(showVBox);
     webView.getEngine().load("");
+  }
+
+  public void showPdfView(String path) {
+    opePdfFile(path);
+    NodeUtil.showNode(scrollPdfPages);
+  }
+
+  public void hidePdfView() {
+    NodeUtil.hideNode(scrollPdfPages);
   }
 
   public void hideAll() {
     hideTextArea();
     hideWebView();
     hideComboBox();
+    hidePdfView();
+  }
+
+  /**
+   * PDF Viewer
+   */
+
+  private void opePdfFile(String absolutePath) {
+    // Load PDF codument
+    pdfPagesVBox.getChildren().clear();
+    try {
+      PDDocument document = PDDocument.load(absolutePath);
+      List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+      for (PDPage page : pages) {
+        BufferedImage pageImage = page.convertToImage();
+        ImageView imageView = new ImageView(SwingFXUtils.toFXImage(pageImage, null));
+        pdfPagesVBox.getChildren().add(imageView);
+        VBox.setMargin(imageView, new Insets(15,0,15,0));
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
   }
 
 }

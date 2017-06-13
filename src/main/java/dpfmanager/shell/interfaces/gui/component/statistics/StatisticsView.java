@@ -49,6 +49,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -68,6 +69,7 @@ import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
+import java.awt.*;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -115,6 +117,7 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   @FXML private Label labelNMain;
   @FXML private Label labelAMain;
   @FXML private Label labelNThumb;
+  @FXML private Label labelPThumb;
 
   // Filter
   @FXML
@@ -138,6 +141,8 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   @FXML private AnchorPane tagsHeaders;
   @FXML private Label tagsEmpty;
   private List<HistogramTag> tagsList;
+  @FXML private CheckBox checkDefault;
+  private TagsComparator.Mode currentTagsComparator;
 
   // Isos
   @FXML private VBox vboxIsos;
@@ -229,8 +234,8 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     totalSize = so.getTotalSize();
 
     // Tags Histogram
+    currentTagsComparator = TagsComparator.Mode.MAIN;
     tagsList = new ArrayList<>(so.getTags().values());
-    tagsList.sort(new TagsComparator(TagsComparator.Mode.MAIN));
 
     // Isos
     isosList = new ArrayList<>(so.getIsos().values());
@@ -242,6 +247,7 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
   }
 
   private void renderStatistics() {
+    checkDefault.setSelected(false);
     renderGeneral();
     renderTags();
     renderIsos(true);
@@ -261,22 +267,27 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     Double mainIfdPerTiff = (tiffsCount == 0) ? 0 : (mainImagesCount * 1.0) / (tiffsCount * 1.0);
     labelAMain.setText(parseDouble(mainIfdPerTiff, 1) + "");
     labelNThumb.setText(thumbnailsCount + "");
+    Double percentageThumbTiffs = (tiffsCount == 0) ? 0 : (thumbnailsCount * 1.0) / (tiffsCount * 1.0) * 100.0;
+    labelPThumb.setText(parseDouble(percentageThumbTiffs, 1) + "%");
   }
 
   private void renderTags() {
+    tagsList.sort(new TagsComparator(currentTagsComparator));
+    boolean withDefault = checkDefault.isSelected();
     // Tags Histogram
     vboxTags.getChildren().clear();
     boolean first = true;
     for (HistogramTag hTag : tagsList) {
+      if (hTag.isOnlyDefault() && !withDefault) continue;
       ManagedFragmentHandler<TagFragment> handler = getContext().getManagedFragmentHandler(TagFragment.class);
-      handler.getController().init(hTag, mainImagesCount, thumbnailsCount);
+      handler.getController().init(hTag, withDefault, mainImagesCount, thumbnailsCount);
       vboxTags.getChildren().add(handler.getFragmentNode());
       if (first) {
         handler.getController().hideLine();
         first = false;
       }
-      if (hTag.hasSpecificValues()) {
-        renderTagValues(hTag, handler);
+      if ((!withDefault && hTag.hasSpecificValues()) || (withDefault && hTag.hasSpecificValuesDefault())) {
+        renderTagValues(hTag, handler, withDefault);
       }
     }
     // Empty
@@ -289,12 +300,17 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
     }
   }
 
-  private void renderTagValues(HistogramTag hTag, ManagedFragmentHandler<TagFragment> parent) {
-    List<ValueTag> valueTags = new ArrayList<>(hTag.getPossibleValues().values());
+  private void renderTagValues(HistogramTag hTag, ManagedFragmentHandler<TagFragment> parent, boolean withDefault) {
+    List<ValueTag> valueTags;
+    if (withDefault){
+      valueTags = new ArrayList<>(hTag.getPossibleValuesDefault().values());
+    } else {
+      valueTags = new ArrayList<>(hTag.getPossibleValues().values());
+    }
     valueTags.sort(new ValueTagsComparator());
     for (ValueTag valueTag : valueTags) {
       ManagedFragmentHandler<TagFragment> child = getContext().getManagedFragmentHandler(TagFragment.class);
-      child.getController().initChild(hTag, valueTag);
+      child.getController().initChild(hTag, valueTag, withDefault);
       parent.getController().addChild(child);
       vboxTags.getChildren().add(child.getFragmentNode());
     }
@@ -433,26 +449,46 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
    * Tags Headers click
    */
   @FXML
+  protected void defaultCheckClicked(ActionEvent event) throws Exception {
+    if (checkDefault.isSelected() && currentTagsComparator == TagsComparator.Mode.MAIN) {
+      currentTagsComparator = TagsComparator.Mode.MAIN_DEFAULTS;
+    } else if (checkDefault.isSelected() && currentTagsComparator == TagsComparator.Mode.THUMB) {
+      currentTagsComparator = TagsComparator.Mode.THUMB_DEFAULTS;
+    } else if (!checkDefault.isSelected() && currentTagsComparator == TagsComparator.Mode.MAIN_DEFAULTS) {
+      currentTagsComparator = TagsComparator.Mode.MAIN;
+    } else if (!checkDefault.isSelected() && currentTagsComparator == TagsComparator.Mode.THUMB_DEFAULTS) {
+      currentTagsComparator = TagsComparator.Mode.THUMB;
+    }
+    renderTags();
+  }
+
+  @FXML
   protected void sortId(MouseEvent event) throws Exception {
-    tagsList.sort(new TagsComparator(TagsComparator.Mode.ID));
+    currentTagsComparator = TagsComparator.Mode.ID;
     renderTags();
   }
 
   @FXML
   protected void sortName(MouseEvent event) throws Exception {
-    tagsList.sort(new TagsComparator(TagsComparator.Mode.NAME));
+    currentTagsComparator = TagsComparator.Mode.NAME;
     renderTags();
   }
 
   @FXML
   protected void sortMain(MouseEvent event) throws Exception {
-    tagsList.sort(new TagsComparator(TagsComparator.Mode.MAIN));
+    currentTagsComparator = TagsComparator.Mode.MAIN;
+    if (checkDefault.isSelected()) {
+      currentTagsComparator = TagsComparator.Mode.MAIN_DEFAULTS;
+    }
     renderTags();
   }
 
   @FXML
   protected void sortThumb(MouseEvent event) throws Exception {
-    tagsList.sort(new TagsComparator(TagsComparator.Mode.THUMB));
+    currentTagsComparator = TagsComparator.Mode.THUMB;
+    if (checkDefault.isSelected()) {
+      currentTagsComparator = TagsComparator.Mode.THUMB_DEFAULTS;
+    }
     renderTags();
   }
 

@@ -166,25 +166,28 @@ public class XmlReport extends Report {
     // Tags
     el = doc.createElement("tags");
     IfdTags ifdTags = ifd.getMetadata();
-    for (TagValue t : ifdTags.getTags()) {
+//    for (TagValue t : ifdTags.getTags()) {
+    for (ReportTag tag : ir.getTags(false, true)) {
       elchild = doc.createElement("tag");
 
       elchild2 = doc.createElement("name");
-      elchild2.setTextContent((t.getName().equals(t.getId()) ? "Private tag" : t.getName()));
+      elchild2.setTextContent((tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()));
       elchild.appendChild(elchild2);
 
       elchild2 = doc.createElement("id");
-      elchild2.setTextContent(t.getId() + "");
+      elchild2.setTextContent(tag.tv.getId() + "");
       elchild.appendChild(elchild2);
 
       elchild2 = doc.createElement("value");
-      if (t.getCardinality() == 1 || t.toString().length() < 100) {
-        String val = t.toString().replaceAll("\\p{C}", "?");
-        elchild2.setTextContent(val);
-      } else
-        elchild2.setTextContent("Array[" + t.getCardinality() + "]");
-
+      String val = (tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue();
+      elchild2.setTextContent(val);
       elchild.appendChild(elchild2);
+
+      if (tag.isDefault) {
+        elchild2 = doc.createElement("default");
+        elchild2.setTextContent("true");
+        elchild.appendChild(elchild2);
+      }
 
       el.appendChild(elchild);
     }
@@ -645,7 +648,7 @@ public class XmlReport extends Report {
       report.appendChild(infoElement);
 
       // tags
-      for (ReportTag tag : ir.getTags()) {
+      for (ReportTag tag : ir.getTags(false, true)) {
         try {
           if (tag.tv.getName().equals("Compression")) continue;
 
