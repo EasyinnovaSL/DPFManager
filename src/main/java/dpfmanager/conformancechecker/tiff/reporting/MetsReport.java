@@ -274,7 +274,11 @@ public class MetsReport {
     PositiveIntegerType width = new PositiveIntegerType();
     width.setUse("System");
     if (ifd.getMetadata().containsTagId(TiffTags.getTagId("ImageWidth"))) {
-      width.setValue(new BigInteger(ifd.getMetadata().get("ImageWidth").toString()));
+      try {
+        width.setValue(new BigInteger(ifd.getMetadata().get("ImageWidth").toString()));
+      } catch ( Exception e) {
+        width.setValue(BigInteger.valueOf(0));
+      }
     } else {
       width.setValue(BigInteger.valueOf(0));
     }
@@ -282,7 +286,11 @@ public class MetsReport {
     PositiveIntegerType height = new PositiveIntegerType();
     height.setUse("System");
     if (ifd.getMetadata().containsTagId(TiffTags.getTagId("ImageLength"))) {
-      height.setValue(new BigInteger(ifd.getMetadata().get("ImageLength").toString()));
+      try {
+        height.setValue(new BigInteger(ifd.getMetadata().get("ImageLength").toString()));
+      } catch (Exception e) {
+        height.setValue(BigInteger.valueOf(0));
+      }
     } else {
       height.setValue(BigInteger.valueOf(0));
     }
@@ -293,7 +301,12 @@ public class MetsReport {
       BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation photometricInterpretation = new BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation();
       StringType colorSpace = new StringType();
       colorSpace.setUse("System");
-      int photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
+      int photo = 0;
+      try {
+        photo = Integer.parseInt(ifd.getMetadata().get("PhotometricInterpretation").toString());
+      } catch (Exception e) {
+
+      }
       colorSpace.setValue(PolicyConstants.photometricName(photo));
       photometricInterpretation.setColorSpace(colorSpace);
 
@@ -737,10 +750,14 @@ public class MetsReport {
       if (ir.getTiffModel().getMetadata().contains("BrightnessValue")) {
         RationalType bightnessValue = new RationalType();
         bightnessValue.setUse("Manager");
-        SRational brightnessTagValue = (SRational) ir.getTiffModel().getMetadata().get("BrightnessValue");
-        bightnessValue.setDenominator(BigInteger.valueOf(brightnessTagValue.getDenominator()));
-        bightnessValue.setNumerator(BigInteger.valueOf(brightnessTagValue.getNumerator()));
-        imageData.setBrightnessValue(bightnessValue);
+        try {
+          SRational brightnessTagValue = (SRational) ir.getTiffModel().getMetadata().get("BrightnessValue");
+          bightnessValue.setDenominator(BigInteger.valueOf(brightnessTagValue.getDenominator()));
+          bightnessValue.setNumerator(BigInteger.valueOf(brightnessTagValue.getNumerator()));
+          imageData.setBrightnessValue(bightnessValue);
+        } catch (Exception e) {
+
+        }
       }
       if (ir.getTiffModel().getMetadata().contains("ExposureBiasValue")) {
         RationalType exposureBias = new RationalType();
@@ -846,30 +863,38 @@ public class MetsReport {
     ImageCaptureMetadataType.SourceInformation.SourceSize sourceSize = new ImageCaptureMetadataType.SourceInformation.SourceSize();
     if (ifd.getMetadata() != null) {
       if (ifd.getMetadata().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("ResolutionUnit")) && SourceDimensionUnitType.verifyTag(ifd.getMetadata().get("ResolutionUnit").toString())) {
-        ImageCaptureMetadataType.SourceInformation.SourceSize.SourceXDimension sourceXDimension = new ImageCaptureMetadataType.SourceInformation.SourceSize.SourceXDimension();
-        TypeOfNonNegativeRealType xDValue = new TypeOfNonNegativeRealType();
-        xDValue.setUse("System");
-        Rational xResolutionValue = (Rational) (ifd.getMetadata().get("XResolution").getValue().get(0));
-        xDValue.setValue(xResolutionValue.getFloatValue());
-        sourceXDimension.setSourceXDimensionValue(xDValue);
-        TypeOfsourceDimensionUnitType dimensionUnit = new TypeOfsourceDimensionUnitType();
-        dimensionUnit.setUse("System");
-        dimensionUnit.setValue(SourceDimensionUnitType.fromValue(ifd.getMetadata().get("ResolutionUnit").toString()));
-        sourceXDimension.setSourceXDimensionUnit(dimensionUnit);
-        sourceSize.setSourceXDimension(sourceXDimension);
+        try {
+          ImageCaptureMetadataType.SourceInformation.SourceSize.SourceXDimension sourceXDimension = new ImageCaptureMetadataType.SourceInformation.SourceSize.SourceXDimension();
+          TypeOfNonNegativeRealType xDValue = new TypeOfNonNegativeRealType();
+          xDValue.setUse("System");
+          Rational xResolutionValue = (Rational) (ifd.getMetadata().get("XResolution").getValue().get(0));
+          xDValue.setValue(xResolutionValue.getFloatValue());
+          sourceXDimension.setSourceXDimensionValue(xDValue);
+          TypeOfsourceDimensionUnitType dimensionUnit = new TypeOfsourceDimensionUnitType();
+          dimensionUnit.setUse("System");
+          dimensionUnit.setValue(SourceDimensionUnitType.fromValue(ifd.getMetadata().get("ResolutionUnit").toString()));
+          sourceXDimension.setSourceXDimensionUnit(dimensionUnit);
+          sourceSize.setSourceXDimension(sourceXDimension);
+        }catch (Exception e) {
+
+        }
       }
       if (ifd.getMetadata().containsTagId(TiffTags.getTagId("YResolution")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("ResolutionUnit")) && SourceDimensionUnitType.verifyTag(ifd.getMetadata().get("ResolutionUnit").toString())) {
-        ImageCaptureMetadataType.SourceInformation.SourceSize.SourceYDimension sourceYDimension = new ImageCaptureMetadataType.SourceInformation.SourceSize.SourceYDimension();
-        TypeOfNonNegativeRealType yDValue = new TypeOfNonNegativeRealType();
-        yDValue.setUse("System");
-        Rational yResolutionValue = (Rational) (ifd.getMetadata().get("YResolution").getValue().get(0));
-        yDValue.setValue(yResolutionValue.getFloatValue());
-        sourceYDimension.setSourceYDimensionValue(yDValue);
-        TypeOfsourceDimensionUnitType dimensionUnit = new TypeOfsourceDimensionUnitType();
-        dimensionUnit.setUse("System");
-        dimensionUnit.setValue(SourceDimensionUnitType.fromValue(ifd.getMetadata().get("ResolutionUnit").toString()));
-        sourceYDimension.setSourceYDimensionUnit(dimensionUnit);
-        sourceSize.setSourceYDimension(sourceYDimension);
+        try {
+          ImageCaptureMetadataType.SourceInformation.SourceSize.SourceYDimension sourceYDimension = new ImageCaptureMetadataType.SourceInformation.SourceSize.SourceYDimension();
+          TypeOfNonNegativeRealType yDValue = new TypeOfNonNegativeRealType();
+          yDValue.setUse("System");
+          Rational yResolutionValue = (Rational) (ifd.getMetadata().get("YResolution").getValue().get(0));
+          yDValue.setValue(yResolutionValue.getFloatValue());
+          sourceYDimension.setSourceYDimensionValue(yDValue);
+          TypeOfsourceDimensionUnitType dimensionUnit = new TypeOfsourceDimensionUnitType();
+          dimensionUnit.setUse("System");
+          dimensionUnit.setValue(SourceDimensionUnitType.fromValue(ifd.getMetadata().get("ResolutionUnit").toString()));
+          sourceYDimension.setSourceYDimensionUnit(dimensionUnit);
+          sourceSize.setSourceYDimension(sourceYDimension);
+        } catch (Exception e) {
+
+        }
       }
 
       sourceInformation.setSourceSize(sourceSize);
@@ -955,9 +980,13 @@ public class MetsReport {
       while (iteratorBitPerSample.hasNext()) {
         PositiveIntegerType bitPerSampleInv = new PositiveIntegerType();
         bitPerSampleInv.setUse("System");
-        Short bitValue = (Short) iteratorBitPerSample.next();
-        bitPerSampleInv.setValue(BigInteger.valueOf(bitValue.toInt()));
-        bitsPerSample.setBitsPerSampleValue(bitPerSampleInv);
+        try {
+          Short bitValue = (Short) iteratorBitPerSample.next();
+          bitPerSampleInv.setValue(BigInteger.valueOf(bitValue.toInt()));
+          bitsPerSample.setBitsPerSampleValue(bitPerSampleInv);
+        } catch (Exception e) {
+
+        }
       }
       TypeOfBitsPerSampleUnitType bitsPerSampleUnit = new TypeOfBitsPerSampleUnitType();
       bitsPerSampleUnit.setUse("System");
@@ -968,8 +997,12 @@ public class MetsReport {
     if (ifd.getMetadata().containsTagId(TiffTags.getTagId("SamplesPerPixel"))) {
       PositiveIntegerType samplePerPixel = new PositiveIntegerType();
       samplePerPixel.setUse("System");
-      samplePerPixel.setValue(new BigInteger(ifd.getMetadata().get("SamplesPerPixel").toString()));
-      imageColorEncoding.setSamplesPerPixel(samplePerPixel);
+      try {
+        samplePerPixel.setValue(new BigInteger(ifd.getMetadata().get("SamplesPerPixel").toString()));
+        imageColorEncoding.setSamplesPerPixel(samplePerPixel);
+      } catch (Exception e) {
+
+      }
     }
     if (ifd.getMetadata().containsTagId(TiffTags.getTagId("ExtraSamples")) && ExtraSamplesType.verifyTag(ifd.getMetadata().get("ExtraSamples").toString())) {
       TypeOfExtraSamplesType extraSampleType = new TypeOfExtraSamplesType();
@@ -1246,7 +1279,12 @@ public class MetsReport {
           BasicDigitalObjectInformationType.Compression compression = new BasicDigitalObjectInformationType.Compression();
           StringType comprScheme = new StringType();
           comprScheme.setUse("System");
-          comprScheme.setValue(PolicyConstants.compressionName(Integer.parseInt(ifd.getMetadata().get("Compression").toString())));
+          int icomp = 0;
+          try {
+            icomp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
+          } catch (Exception e) {
+          }
+          comprScheme.setValue(PolicyConstants.compressionName(icomp));
           compression.setCompressionScheme(comprScheme);
           digitalObject.setCompression(compression);
         }
@@ -1490,7 +1528,12 @@ public class MetsReport {
       if (ifd.getMetadata() != null && ifd.getMetadata().containsTagId(TiffTags.getTagId("Compression"))) {
         FileType.TransformFile transformFile = new FileType.TransformFile();
         transformFile.setID("T" + ifd.hashCode());
-        int comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
+        int comp = 0;
+        try {
+          comp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
+        } catch (Exception e) {
+
+        }
         String value = comp > 0 ? PolicyConstants.compressionName(comp) : "Unknown";
         transformFile.setTRANSFORMALGORITHM(value);
         transformFile.setTRANSFORMTYPE("compression");
