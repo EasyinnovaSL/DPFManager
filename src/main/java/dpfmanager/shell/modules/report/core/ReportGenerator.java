@@ -708,10 +708,15 @@ public class ReportGenerator {
       reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
     }
     if (config.getFormats().contains("JSON")) {
+      boolean toDelete = false;
       if (!new File(xmlFileStr).exists()){
         reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+        toDelete = true;
       }
       reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
+      if (toDelete){
+        new File(xmlFileStr).delete();
+      }
     }
     if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
