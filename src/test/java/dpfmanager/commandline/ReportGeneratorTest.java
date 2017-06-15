@@ -263,7 +263,7 @@ public class ReportGeneratorTest extends CommandLineTest {
 
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains(".mets") && !file.contains(".ser") && !file.contains("serialized")) n++;
+      if (!file.contains(".mets") && !file.contains(".ser") && !file.contains("serialized") && !file.contains("html")) n++;
     }
 
     assertEquals(filesExpect, n);

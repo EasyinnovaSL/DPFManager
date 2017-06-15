@@ -627,9 +627,8 @@ public class ReportGenerator {
       }
       if (config.getFormats().contains("HTML")) {
         String htmlFileStr = reportName + ".html";
-        int htmlMode = (config.getFixes() != null && config.getFixes().getFixes().size() > 0) ? 1 : 0;
         HtmlReport htmlReport = new HtmlReport();
-        String htmlOutput = htmlReport.parseIndividual(ir, htmlMode, ir.getReportId(), ir.getInternalReportFodler());
+        String htmlOutput = htmlReport.parseIndividual(ir, ir.getReportId(), ir.getInternalReportFodler());
         String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
         String outputfile = htmlFileStr.replace(name, "html/" + name);
         File outputFile = new File(outputfile);

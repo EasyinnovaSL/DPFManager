@@ -66,9 +66,8 @@ public class HtmlReport extends Report {
    * Parse an individual report to HTML.
    *
    * @param ir   the individual report.
-   * @param mode the mode (1, 2).
    */
-  public String parseIndividual(IndividualReport ir, int mode, int id, String internalReportFolder) {
+  public String parseIndividual(IndividualReport ir, int id, String internalReportFolder) {
     String templatePath = "templates/individual.html";
 
     String htmlBody = readFilefromResources(templatePath);
@@ -102,6 +101,11 @@ public class HtmlReport extends Report {
     }
     htmlBody = StringUtils.replace(htmlBody, "##DIVS_CONFORMS##", divs);
 
+    int mode = 0;
+    if (ir.getCompareReport() != null) {
+      if (ir.getIsOriginal()) mode = 1;
+      else mode = 2;
+    }
     if (mode == 1) {
       htmlBody = StringUtils.replace(htmlBody, "##CL_LINKR2##", "show");
       htmlBody = StringUtils.replace(htmlBody, "##LINK2##", encodeUrl(new File(fileName).getName() + "_fixed.html"));
@@ -604,7 +608,9 @@ public class HtmlReport extends Report {
       row = "<tr class='ifd" + tag.index + expert + defaultVisible + " '><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
       String sDif = "";
       if (tag.dif < 0) sDif = "<i class=\"fa fa-times\"></i>";
-      else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";
+      else if (tag.dif > 0) {
+        sDif = "<i class=\"fa fa-plus\"></i>";
+      }
       row = row.replace("##ICON##", "<i class=\"image-default icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()));

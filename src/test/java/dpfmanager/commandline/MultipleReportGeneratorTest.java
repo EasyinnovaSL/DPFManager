@@ -73,10 +73,12 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets") && !file.contains(".ser") && !file.equals("serialized")) n++;
+      if (!file.contains("Mets") && !file.contains(".ser") && !file.equals("serialized") && !file.equals("html")) {
+        n++;
+      }
     }
 
-    assertEquals(2, n);
+    assertEquals(3, n);
 
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
@@ -105,7 +107,7 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
     File directori = new File(path);
     int n=0;
     for (String file : directori.list()) {
-      if (!file.contains("Mets") && !file.contains(".ser") && !file.equals("serialized")) n++;
+      if (!file.contains("Mets") && !file.contains(".ser") && !file.equals("serialized") && !file.equals("html")) n++;
     }
 
     assertEquals(2, n);

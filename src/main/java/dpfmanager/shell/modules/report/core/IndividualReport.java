@@ -146,6 +146,8 @@ public class IndividualReport extends ReportSerializable {
 
   private int reportId;
 
+  private boolean isOriginal = true;
+
   /**
    * Error constructor
    */
@@ -169,6 +171,14 @@ public class IndividualReport extends ReportSerializable {
     warnings = new HashMap<>();
     quick = q;
     reportId = id;
+  }
+
+  public boolean getIsOriginal() {
+    return isOriginal;
+  }
+
+  public void setisOriginal(boolean isOriginal) {
+    this.isOriginal = isOriginal;
   }
 
   public String getImagePath() {
@@ -694,7 +704,7 @@ public class IndividualReport extends ReportSerializable {
     TiffDocument td = getTiffModel();
     IFD ifd = td.getFirstIFD();
     IFD ifdcomp = null;
-    if (getCompareReport() != null) {
+    if (getCompareReport() != null && !isOriginal) {
       ifdcomp = getCompareReport().getTiffModel().getFirstIFD();
     }
     td.getFirstIFD();
@@ -716,22 +726,7 @@ public class IndividualReport extends ReportSerializable {
         list.add(tag);
         currentTagsIds.add(tag.tv.getId());
       }
-      if (ifdcomp != null) {
-        boolean isThumbnailComp = ifdcomp.isThumbnail();
-        for (TagValue tv : ifdcomp.getMetadata().getTags()) {
-          if (!meta.containsTagId(tv.getId())) {
-            ReportTag tag = new ReportTag();
-            tag.index = index;
-            tag.tv = tv;
-            tag.thumbnail = isThumbnailComp;
-            tag.dif = -1;
-            if (!showTag(tv)) tag.expert = true;
-            if (subTags) list.addAll(getSubTags(tag, index, isThumbnailComp, defaultTags));
-            list.add(tag);
-            currentTagsIds.add(tag.tv.getId());
-          }
-        }
-      }
+
       ifd = ifd.getNextIFD();
       if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
 
