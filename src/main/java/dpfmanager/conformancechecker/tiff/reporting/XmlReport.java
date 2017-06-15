@@ -208,7 +208,7 @@ public class XmlReport extends Report {
     TiffDocument td = ir.getTiffModel();
     IFD ifd = td.getFirstIFD();
     IFD ifdcomp = null;
-    if (ir.getCompareReport() != null) {
+    if (ir.getCompareReport() != null && !ir.getIsOriginal()) {
       ifdcomp = ir.getCompareReport().getTiffModel().getFirstIFD();
     }
     td.getFirstIFD();

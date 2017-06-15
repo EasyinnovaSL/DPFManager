@@ -444,7 +444,11 @@ public class TiffConformanceChecker extends ConformanceChecker {
             IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, validationsFixed, config.getModifiedIsos(), config.isQuick(), id);
             int ind = reportFilename.lastIndexOf(".tif");
             ir2.setReportPath(reportFilename.substring(0, ind) + "_fixed.tif");
-            ir2.setIsosCheck(ir.getCheckedIsos());
+            ir2.setIsosCheck(isosCheck);
+            ir2.setisOriginal(false);
+            if (config.hasRules()) {
+              ir2.addIsosCheck(TiffConformanceChecker.POLICY_ISO);
+            }
             ir2.setFilePath(pathFixed);
             ir2.setFileName(new File(nameOriginalTif).getName() + " Fixed");
             ir.setCompareReport(ir2);
