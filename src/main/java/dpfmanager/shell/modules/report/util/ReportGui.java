@@ -699,6 +699,10 @@ public class ReportGui implements Comparable<ReportGui>{
     return reportVersion;
   }
 
+  public String getInternalReportFolder(){
+    return baseDir + "/" + reportDay + "/" + reportDir + "/";
+  }
+
   /**
    * Overrides
    */

@@ -56,7 +56,9 @@ import org.jacpfx.rcp.context.Context;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -93,10 +95,8 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   @FXML
   private ProgressBar progressLoading;
 
-  private Integer count = 0;
-  private Integer max = 0;
-  private Integer globalValue = 0;
-  private MakeReportRunnable mrr = null;
+  private Map<Long, ShowReport> showReports;
+  private Long currentReport;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -112,22 +112,52 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     if (message != null && message.isTypeOf(ShowMessage.class)) {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
       if (sMessage.isShow()) {
-        getController().showSingleReport(sMessage.getType(), sMessage.getPath());
+        if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)){
+          getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
+        }
       } else if (sMessage.isGenerate()) {
-        hideAll();
-        showLoading();
-        context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport()));
+        if (showReports.containsKey(sMessage.getUuid())) {
+          ShowReport sr = showReports.get(sMessage.getUuid());
+          if (sr.finished) {
+            // Transformation DONE, do nothing
+            getController().showSingleReport(sMessage.getType(), sMessage.getInternal(), false);
+          } else {
+            // Already initiated
+            hideAll();
+            showLoading();
+            updateLoading(sr.count, sr.max);
+            currentReport = sMessage.getUuid();
+          }
+        } else {
+          // Init new transformation
+          ShowReport sr = new ShowReport(sMessage.getUuid());
+          currentReport = sMessage.getUuid();
+          showReports.put(sMessage.getUuid(), sr);
+          hideAll();
+          showLoading();
+          context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport(), sMessage.getUuid()));
+        }
       } else if (sMessage.isInit()) {
-        count = 0;
-        max = sMessage.getNumber();
-        globalValue = sMessage.getValue();
-        mrr = sMessage.getMakeReportRunnable();
-        updateLoading();
+        if (showReports.containsKey(sMessage.getUuid())) {
+          ShowReport sr = showReports.get(sMessage.getUuid());
+          sr.max = sMessage.getNumber();
+          sr.globalValue = sMessage.getValue();
+          sr.mrr = sMessage.getMakeReportRunnable();
+          updateLoading(sr.count, sr.max);
+        }
       } else if (sMessage.isUpdate()) {
-        count += sMessage.getNumber();
-        updateLoading();
-        if (globalValue + count == max && mrr != null) {
-          context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(null, mrr));
+        if (showReports.containsKey(sMessage.getUuid())){
+          ShowReport sr = showReports.get(sMessage.getUuid());
+          sr.count += sMessage.getNumber();
+          if (sMessage.getUuid().equals(currentReport)){
+            updateLoading(sr.count, sr.max);
+          }
+          if (sr.count == sr.max) {
+            sr.finished = true;
+          }
+          if (sr.globalValue + sr.count == sr.max && sr.mrr != null) {
+            context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(sr.uuid, sr.mrr));
+          }
         }
       }
     }
@@ -139,6 +169,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     // Init MVC
     setModel(new ShowModel());
     setController(new ShowController());
+    showReports = new HashMap<>();
 
     hideAll();
 
@@ -221,7 +252,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     NodeUtil.hideNode(progressLoading);
   }
 
-  public void updateLoading() {
+  public void updateLoading(int count, int max) {
     double progress = (count * 1.0) / (max * 1.0);
     if (count == 0) {
       progressLoading.getStyleClass().remove("green-bar");
@@ -232,6 +263,9 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     if (progress == 1.0){
       progressLoading.getStyleClass().remove("blue-bar");
       progressLoading.getStyleClass().add("green-bar");
+    }
+    if (count < 0){
+      progress = -1;
     }
     progressLoading.setProgress(progress);
   }

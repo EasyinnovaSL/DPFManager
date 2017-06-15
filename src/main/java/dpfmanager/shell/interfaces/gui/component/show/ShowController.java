@@ -53,14 +53,16 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
 
   }
 
-  public void showSingleReport(String type, String path) {
-//    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Showing report..."));
+  public void showSingleReport(String type, String path, boolean completedPath) {
+    //    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Showing report..."));
     getView().hideAll();
     switch (type) {
       case "html":
+        if (!completedPath) path += "report.html";
         getView().showWebView(path);
         break;
       case "xml":
+        if (!completedPath) path += "summary.xml";
         showComboBox(path,"xml");
         getView().showTextArea();
         break;
@@ -69,10 +71,12 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
         getView().showTextArea();
         break;
       case "json":
+        if (!completedPath) path += "summary.json";
         showComboBox(path, "json");
         getView().showTextArea();
         break;
       case "pdf":
+        if (!completedPath) path += "report.pdf";
         showComboBox(path, "pdf");
         getView().showPdfView(path);
         break;

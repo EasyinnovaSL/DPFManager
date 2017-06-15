@@ -38,23 +38,35 @@ public class ShowMessage extends DpfMessage {
   private int number;
   private int value;
   private MakeReportRunnable makeReportRunnable;
+  private Long uuid;
+  private String internal;
 
   // Show
+  public ShowMessage(Long u, String t, String p) {
+    type = t;
+    uuid = u;
+    path = p;
+    internalType = Type.SHOW;
+  }
   public ShowMessage(String t, String p) {
     type = t;
+    uuid = null;
     path = p;
     internalType = Type.SHOW;
   }
 
   // Generate
-  public ShowMessage(String t, GlobalReport gr) {
+  public ShowMessage(Long u, String t, GlobalReport gr, String i) {
     type = t;
+    uuid = u;
+    internal = i;
     globalReport = gr;
     internalType = Type.GENERATE;
   }
 
   // Init
-  public ShowMessage(int m, int v, MakeReportRunnable mrr) {
+  public ShowMessage(Long u, int m, int v, MakeReportRunnable mrr) {
+    uuid = u;
     internalType = Type.INIT;
     number = m;
     value = v;
@@ -62,7 +74,8 @@ public class ShowMessage extends DpfMessage {
   }
 
   // Update
-  public ShowMessage(int m) {
+  public ShowMessage(Long u, int m) {
+    uuid = u;
     internalType = Type.UPDATE;
     number = m;
   }
@@ -107,4 +120,11 @@ public class ShowMessage extends DpfMessage {
     return internalType.equals(Type.INIT);
   }
 
+  public Long getUuid() {
+    return uuid;
+  }
+
+  public String getInternal() {
+    return internal;
+  }
 }

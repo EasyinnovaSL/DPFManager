@@ -89,18 +89,18 @@ public class MakeReportRunnable extends DpfRunnable {
       IndividualReport ir = (IndividualReport) IndividualReport.read(reportSerialized);
       String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
       generator.transformIndividualReport(outputfile, format, ir, global.getConfig());
-      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(1));
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(getUuid(), 1));
     }
   }
 
   private void generateGlobalReport(){
     String outputPath = generator.transformGlobalReport(internalReportFolder, format, global);
-    context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(globalValue));
-    if (globalValue == 0) {
+    context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(getUuid(), globalValue));
+    if (format.toLowerCase().equals("mets")) {
       outputPath = internalReportFolder;
     }
     if (outputPath != null){
-      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(format, outputPath));
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(getUuid(), format, outputPath));
     }
   }
 

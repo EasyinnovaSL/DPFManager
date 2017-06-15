@@ -559,13 +559,13 @@ public class ReportGenerator {
    */
   public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError {
     ir.setReportPath(reportName);
-    writeIndividualReport(ir, config, reportName, false);
+    writeIndividualReport(ir, config.getFormats(), config, reportName, false);
     if (!ir.containsData()) return;
 
     // Fixes -> New report
     IndividualReport ir2 = ir.getCompareReport();
     if (ir2 != null) {
-      writeIndividualReport(ir2, config, reportName + "_fixed", false);
+      writeIndividualReport(ir2, config.getFormats(), config, reportName + "_fixed", false);
     }
   }
 
@@ -576,19 +576,19 @@ public class ReportGenerator {
    * @param ir         the individual report
    */
   public void transformIndividualReport(String reportName, String format, IndividualReport ir, Configuration config) throws OutOfMemoryError {
-    config.getFormats().clear();
-    config.getFormats().add(format.toUpperCase());
-    writeIndividualReport(ir, config, reportName, true);
+    List<String> formats = new ArrayList<>();
+    formats.add(format.toUpperCase());
+    writeIndividualReport(ir, formats, config, reportName, true);
     if (!ir.containsData()) return;
 
     // Fixes -> New report
     IndividualReport ir2 = ir.getCompareReport();
     if (ir2 != null) {
-      writeIndividualReport(ir2, config, reportName + "_fixed", true);
+      writeIndividualReport(ir2, formats, config, reportName + "_fixed", true);
     }
   }
 
-  private void writeIndividualReport(IndividualReport ir, Configuration config, String reportName, boolean explicit) {
+  private void writeIndividualReport(IndividualReport ir, List<String> formats, Configuration config, String reportName, boolean explicit) {
     if (ir.hasPrecomputedOutput()){
       // External CC precomputed output
       String xmlFileStr = reportName + ".xml";
@@ -597,7 +597,7 @@ public class ReportGenerator {
       // Generate report
       XmlReport xmlReport = new XmlReport();
       String xmlOutput = "";
-      if (config.getFormats().contains("XML") && !explicit) {
+      if (formats.contains("XML") && !explicit) {
         String xmlFileStr = reportName + ".xml";
         xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
         writeProcomputedIndividual(xmlFileStr, xmlOutput);
@@ -607,25 +607,25 @@ public class ReportGenerator {
           String metsFileStr = reportName + ".mets.xml";
           writeProcomputedIndividual(metsFileStr, metsOutput);
         }
-      } else if (config.getFormats().contains("XML")) {
+      } else if (formats.contains("XML")) {
         String xmlFileStr = reportName + ".xml";
         xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
         writeProcomputedIndividual(xmlFileStr, xmlOutput);
       }
-      if (config.getFormats().contains("METS") && explicit) {
+      if (formats.contains("METS") && explicit) {
         String metsFileStr = reportName + ".mets.xml";
         MetsReport metsReport = new MetsReport();
         String metsOutput = metsReport.parseIndividual(ir, config);
         writeProcomputedIndividual(metsFileStr, metsOutput);
       }
-      if (config.getFormats().contains("JSON")) {
+      if (formats.contains("JSON")) {
         String jsonFileStr = reportName + ".json";
         if (xmlOutput.isEmpty()){
           xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
         }
         reportJson.xmlToJson(xmlOutput, jsonFileStr, this);
       }
-      if (config.getFormats().contains("HTML")) {
+      if (formats.contains("HTML")) {
         String htmlFileStr = reportName + ".html";
         int htmlMode = (config.getFixes() != null && config.getFixes().getFixes().size() > 0) ? 1 : 0;
         HtmlReport htmlReport = new HtmlReport();
@@ -636,7 +636,7 @@ public class ReportGenerator {
         outputFile.getParentFile().mkdirs();
         writeProcomputedIndividual(outputfile, htmlOutput);
       }
-      if (config.getFormats().contains("PDF")) {
+      if (formats.contains("PDF")) {
         try {
           String pdfFileStr = reportName + ".pdf";
           PdfReport pdfReport = new PdfReport();

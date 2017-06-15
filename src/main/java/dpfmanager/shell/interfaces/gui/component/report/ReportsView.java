@@ -167,8 +167,10 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       handler.getController().updateIcons();
     }
     if (row.isLoaded()) {
-      mainVBox.getChildren().add(handler.getFragmentNode());
-      hideLoading();
+      if (!mainVBox.getChildren().contains(handler.getFragmentNode())){
+        mainVBox.getChildren().add(handler.getFragmentNode());
+        hideLoading();
+      }
     }
     calculateMinHeight();
   }

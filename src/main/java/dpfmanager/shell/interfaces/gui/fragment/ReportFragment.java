@@ -167,7 +167,8 @@ public class ReportFragment {
       } else if (gr.getVersion() > 1){
         // Transformation need
         icon.setImage(new Image("images/formats/" + i + "-plus.png"));
-        sMessage = new ShowMessage(i, gr);
+        Long formatUuid = Long.parseLong(info.getUuid()+Character.getNumericValue(i.charAt(0)));
+        sMessage = new ShowMessage(formatUuid, i, gr, info.getInternalReportFolder());
       }
       if (sMessage != null){
         final ShowMessage finalSMessage = sMessage;
