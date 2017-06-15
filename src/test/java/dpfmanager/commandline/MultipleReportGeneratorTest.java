@@ -82,7 +82,6 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
-    //assertEquals(2, l.size());
     assertEquals(1, l.size());
     doc.close();
   }
@@ -114,7 +113,6 @@ public class MultipleReportGeneratorTest extends CommandLineTest {
 
     PDDocument doc = PDDocument.load(path + "/report.pdf");
     List<PDPage> l = doc.getDocumentCatalog().getAllPages();
-    //assertEquals(2, l.size());
     assertEquals(1, l.size());
     doc.close();
   }
