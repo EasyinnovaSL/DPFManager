@@ -36,6 +36,7 @@ import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.shared.utils.io.FileUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -74,32 +75,7 @@ public class HtmlReport extends Report {
 
     // Thumbnail image
     String fileName = getReportName("", ir.getFilePath(), id);
-    String imgPath = "img/" + fileName + ".jpg";
-    if (!ir.getTiffModel().getFatalError()) {
-    //if (ir.getTiffModel() != null) {
-      try {
-        // Make thumbnail
-        BufferedImage thumb = tiff2Jpg(ir.getFilePath());
-        if (thumb == null) {
-          imgPath = "img/noise.jpg";
-        } else {
-          // Save thumbnail
-          File outputFile = new File(internalReportFolder + "/html/" + imgPath);
-          outputFile.getParentFile().mkdirs();
-          ImageIO.write(thumb, "jpg", outputFile);
-          buffer.flush();
-          buffer = null;
-          thumb.flush();
-          thumb = null;
-        }
-      } catch (Exception ex) {
-        imgPath = "img/noise.jpg";
-      }
-    } else {
-      System.out.println("Cannot generate thumbnail for image " + fileName + ". Reason: " + ir.getTiffModel().getFatalErrorMEssage());
-      imgPath = "img/noise.jpg";
-    }
-
+    String imgPath = getThumbnailPath(internalReportFolder, fileName, ir);
     ir.setImagePath(imgPath);
     htmlBody = StringUtils.replace(htmlBody, "##IMG_PATH##", encodeUrl(imgPath));
 
@@ -521,7 +497,7 @@ public class HtmlReport extends Report {
         String mapId = "xmp" + tag.index;
         String mapIdH = "xmp" + tag.index + "h";
         // XMP
-        for (abstractTiffType to : tag.tv.getReadValue()) {
+        for (abstractTiffType to : tag.tv.getValue()) {
           XMP xmp = (XMP) to;
           try {
             Metadata metadata = xmp.createMetadata();
@@ -557,11 +533,11 @@ public class HtmlReport extends Report {
         // EXIF
         String mapId = "exi" + tag.index;
         try {
-          abstractTiffType obj = tag.tv.getReadValue().get(0);
+          abstractTiffType obj = tag.tv.getValue().get(0);
           if (obj instanceof IFD) {
             IFD exif = (IFD) obj;
             for (TagValue tv : exif.getTags().getTags()) {
-              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>" + tv.getId() + "</td><td>" + (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getReadValue().get(0) + "</td></tr>";
+              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>" + tv.getId() + "</td><td>" + (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getFirstTextReadValue() + "</td></tr>";
               row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
@@ -576,7 +552,8 @@ public class HtmlReport extends Report {
       if (tag.tv.getId() == 330 && !tag.isDefault) {
         // Sub IFD
         String mapId = "sub" + tag.index;
-        IFD sub = (IFD) tag.tv.getReadValue().get(0);
+        if (tag.tv.getValue().size() == 0) continue;
+        IFD sub = (IFD) tag.tv.getValue().get(0);
         for (TagValue tv : sub.getTags().getTags()) {
           String expert = "";
           if (!ir.showTag(tv)) {
@@ -596,7 +573,7 @@ public class HtmlReport extends Report {
       if (tag.tv.getId() == 33723 && !tag.isDefault) {
         String mapId = "ipt" + tag.index;
         // IPTC
-        for (abstractTiffType to : tag.tv.getReadValue()) {
+        for (abstractTiffType to : tag.tv.getValue()) {
           try {
             IPTC iptc = (IPTC) to;
             Metadata metadata = iptc.createMetadata();

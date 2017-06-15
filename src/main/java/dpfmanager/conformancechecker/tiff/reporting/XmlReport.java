@@ -503,30 +503,6 @@ public class XmlReport extends Report {
             ex.printStackTrace();
           }
         }
-        if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))
-            && ifd.getTag("XResolution").getReadValue() != null && ifd.getTag("YResolution").getReadValue() != null
-            && ifd.getTag("XResolution").getReadValue().size() > 0 && ifd.getTag("YResolution").getReadValue().size() > 0) {
-          try {
-            abstractTiffType rx = ifd.getTag("XResolution").getReadValue().get(0);
-            abstractTiffType ry = ifd.getTag("YResolution").getReadValue().get(0);
-            if (rx instanceof Text && ry instanceof Text) {
-              Text ratx = (Text) rx;
-              Text raty = (Text) ry;
-              String numeratorX = ratx.getValue().substring(0, ratx.getValue().indexOf("/"));
-              String denominatorX = ratx.getValue().substring(ratx.getValue().indexOf("/") + 1);
-              int xres = Integer.parseInt(numeratorX) / Integer.parseInt(denominatorX);
-              String numeratorY = raty.getValue().substring(0, raty.getValue().indexOf("/"));
-              String denominatorY = raty.getValue().substring(raty.getValue().indexOf("/") + 1);
-              int yres = Integer.parseInt(numeratorY) / Integer.parseInt(denominatorY);
-              if (xres % 2 != 0 || yres % 2 != 0)
-                evenness = "Uneven";
-              else
-                evenness = "Even";
-            }
-          } catch (Exception ex) {
-            ex.printStackTrace();
-          }
-        }
         infoElement = doc.createElement("Evenness");
         infoElement.setTextContent(evenness);
         infoElement.setAttribute("Evenness", evenness);

@@ -19,14 +19,12 @@
 
 package dpfmanager.shell.interfaces.gui.fragment;
 
-import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
-import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -53,6 +51,9 @@ import org.jacpfx.rcp.context.Context;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -99,6 +100,12 @@ public class ReportFragment {
     loadReportRow();
   }
 
+  public void updateIcons(){
+    info.readFormats();
+    formatsBox.getChildren().clear();
+    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
+  }
+
   private void loadReportRow() {
     info.load();
     date.setText(info.getDate());
@@ -134,16 +141,17 @@ public class ReportFragment {
     scoreBox.getChildren().add(score_label);
   }
 
-  private void addFormatIcons(Map<String, String> item, Integer version, GlobalReport gr) {
+  private void addFormatIcons(Map<String, String> itemRead, Integer version, GlobalReport gr) {
+    List<String> sortedFormats = Arrays.asList("html","pdf","xml","mets", "json");
+    Map<String, String> item = new HashMap<>();
     if (version > 0) {
       // Transform reports
-      if (!item.containsKey("mets")) item.put("mets", null);
-      if (!item.containsKey("xml")) item.put("xml", null);
-      if (!item.containsKey("json")) item.put("json", null);
-      if (!item.containsKey("html")) item.put("html", null);
-      if (!item.containsKey("pdf")) item.put("pdf", null);
+      for (String format : sortedFormats){
+        if (!item.containsKey(format)) item.put(format, (itemRead.containsKey(format)) ? itemRead.get(format) : null);
+      }
     }
-    for (String i : item.keySet()) {
+    for (String i : sortedFormats) {
+      if (!item.containsKey(i)) continue;
       ImageView icon = new ImageView();
       icon.setId("but" + i);
       icon.setFitHeight(20);
@@ -151,26 +159,23 @@ public class ReportFragment {
       icon.setCursor(Cursor.HAND);
 
       String path = item.get(i);
-      if (path != null){
+      ShowMessage sMessage = null;
+      if (path != null && new File(path).exists()){
         // Show directly
         icon.setImage(new Image("images/formats/" + i + ".png"));
-        icon.setOnMouseClicked(event -> {
-          ArrayMessage am = new ArrayMessage();
-          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(i, path));
-          context.send(GuiConfig.PERSPECTIVE_SHOW, am);
-        });
-
-        ContextMenu contextMenu = new ContextMenu();
-        javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
-        contextMenu.getItems().add(download);
-        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
-        formatsBox.getChildren().add(icon);
+        sMessage = new ShowMessage(i, path);
       } else if (gr.getVersion() > 1){
         // Transformation need
         icon.setImage(new Image("images/formats/" + i + "-plus.png"));
+        sMessage = new ShowMessage(i, gr);
+      }
+      if (sMessage != null){
+        final ShowMessage finalSMessage = sMessage;
         icon.setOnMouseClicked(event -> {
-          context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(i, gr));
+          ArrayMessage am = new ArrayMessage();
+          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
+          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
+          context.send(GuiConfig.PERSPECTIVE_SHOW, am);
         });
 
         ContextMenu contextMenu = new ContextMenu();

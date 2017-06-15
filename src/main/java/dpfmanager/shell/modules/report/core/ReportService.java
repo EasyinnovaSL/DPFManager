@@ -93,17 +93,23 @@ public class ReportService extends DpfService {
 
   public void tractGenerateMessage(GenerateMessage gm) {
     String internalReportFolder = null;
+    Integer max = gm.getGlobalReport().getIndividualReports().size() + 1;
+    Integer count = 0;
 
     // Transform individual reports
     for (SmallIndividualReport sir : gm.getGlobalReport().getIndividualReports()) {
       if (internalReportFolder == null) internalReportFolder = sir.getInternalReportFodler();
-      String reportSerialized = sir.getInternalReportFodler() + "serialized/" + sir.getFileName() + ".ser";
+      sir.predictImagePath();
+
+      String filename = sir.getReportPath().substring(sir.getReportPath().lastIndexOf("/") + 1);
+      String reportSerialized = sir.getInternalReportFodler() + "serialized/" + filename + ".ser";
       File reportSerializedFile = new File(reportSerialized);
 
       if (reportSerializedFile.exists()){
         IndividualReport ir = (IndividualReport) IndividualReport.read(reportSerialized);
         String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
         generator.transformIndividualReport(outputfile, gm.getFormat(), ir, gm.getGlobalReport().getConfig());
+        context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(++count, max));
       }
     }
 
@@ -111,14 +117,12 @@ public class ReportService extends DpfService {
     String outputPath = null;
     if (internalReportFolder != null){
       outputPath = generator.transformGlobalReport(internalReportFolder, gm.getFormat(), gm.getGlobalReport());
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(++count, max));
     }
 
     // Show the report
     if (outputPath != null){
-      ArrayMessage am = new ArrayMessage();
-      am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-      am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(gm.getFormat(), outputPath));
-      context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(gm.getFormat(), outputPath));
     }
   }
 

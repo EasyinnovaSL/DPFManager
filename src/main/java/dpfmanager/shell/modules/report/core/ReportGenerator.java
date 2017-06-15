@@ -469,9 +469,11 @@ public class ReportGenerator {
           arrayFiles.add("html/js/jquery.flot.min.js");
 
           //files in img folder
-          arrayFiles.add("html/img/noise.jpg");
+//          arrayFiles.add("html/img/noise.jpg");
+          arrayFiles.add("html/img/error.jpg");
+          arrayFiles.add("html/img/not-found.jpg");
           arrayFiles.add("html/img/logo.png");
-          arrayFiles.add("html/img/logo - copia.png");
+//          arrayFiles.add("html/img/logo - copia.png");
           arrayFiles.add("html/img/check_radio_sheet.png");
 
           //files in fonts folder
@@ -539,8 +541,7 @@ public class ReportGenerator {
    */
   public void writeProcomputedIndividual(String filename, String content) {
     try {
-      //PrintWriter out = new PrintWriter(filename);
-      //out.print(content);
+      if (content == null) return;
       Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
       out.write(content);
       out.close();
@@ -558,13 +559,13 @@ public class ReportGenerator {
    */
   public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError {
     ir.setReportPath(reportName);
-    writeIndividualReport(ir, config, reportName);
+    writeIndividualReport(ir, config, reportName, false);
     if (!ir.containsData()) return;
 
     // Fixes -> New report
     IndividualReport ir2 = ir.getCompareReport();
     if (ir2 != null) {
-      writeIndividualReport(ir2, config, reportName + "_fixed");
+      writeIndividualReport(ir2, config, reportName + "_fixed", false);
     }
   }
 
@@ -577,17 +578,17 @@ public class ReportGenerator {
   public void transformIndividualReport(String reportName, String format, IndividualReport ir, Configuration config) throws OutOfMemoryError {
     config.getFormats().clear();
     config.getFormats().add(format.toUpperCase());
-    writeIndividualReport(ir, config, reportName);
+    writeIndividualReport(ir, config, reportName, true);
     if (!ir.containsData()) return;
 
     // Fixes -> New report
     IndividualReport ir2 = ir.getCompareReport();
     if (ir2 != null) {
-      writeIndividualReport(ir2, config, reportName + "_fixed");
+      writeIndividualReport(ir2, config, reportName + "_fixed", true);
     }
   }
 
-  private void writeIndividualReport(IndividualReport ir, Configuration config, String reportName) {
+  private void writeIndividualReport(IndividualReport ir, Configuration config, String reportName, boolean explicit) {
     if (ir.hasPrecomputedOutput()){
       // External CC precomputed output
       String xmlFileStr = reportName + ".xml";
@@ -596,7 +597,7 @@ public class ReportGenerator {
       // Generate report
       XmlReport xmlReport = new XmlReport();
       String xmlOutput = "";
-      if (config.getFormats().contains("XML")) {
+      if (config.getFormats().contains("XML") && !explicit) {
         String xmlFileStr = reportName + ".xml";
         xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
         writeProcomputedIndividual(xmlFileStr, xmlOutput);
@@ -605,9 +606,17 @@ public class ReportGenerator {
         if (metsOutput != null){
           String metsFileStr = reportName + ".mets.xml";
           writeProcomputedIndividual(metsFileStr, metsOutput);
-        } else {
-          System.out.println("METS FAILED!!");
         }
+      } else if (config.getFormats().contains("XML")) {
+        String xmlFileStr = reportName + ".xml";
+        xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
+        writeProcomputedIndividual(xmlFileStr, xmlOutput);
+      }
+      if (config.getFormats().contains("METS") && explicit) {
+        String metsFileStr = reportName + ".mets.xml";
+        MetsReport metsReport = new MetsReport();
+        String metsOutput = metsReport.parseIndividual(ir, config);
+        writeProcomputedIndividual(metsFileStr, metsOutput);
       }
       if (config.getFormats().contains("JSON")) {
         String jsonFileStr = reportName + ".json";
@@ -653,10 +662,16 @@ public class ReportGenerator {
       return xmlFileStr;
     }
     if (format.equals("json")) {
-      if (!new File(xmlFileStr).exists()){
+      boolean toDelete = false;
+      File xmlFile = new File(xmlFileStr);
+      if (!xmlFile.exists()){
         reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+        toDelete = true;
       }
       reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
+      if (toDelete && xmlFile.exists()){
+        xmlFile.delete();
+      }
       return jsonFileStr;
     }
     if (format.equals("html")) {
@@ -688,7 +703,6 @@ public class ReportGenerator {
     String pdfFileStr = internalReportFolder + "report.pdf";
 
     gr.write(internalReportFolder, "summary.ser");
-    gr = null;
     gr = (GlobalReport) GlobalReport.read(internalReportFolder + "/summary.ser");
 
     if (config.getFormats().contains("XML")) {

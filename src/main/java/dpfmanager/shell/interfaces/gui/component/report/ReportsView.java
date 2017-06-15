@@ -163,6 +163,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         getModel().addReportFragment(handler);
         handler.getController().init(row);
       }
+    } else {
+      handler.getController().updateIcons();
     }
     if (row.isLoaded()) {
       mainVBox.getChildren().add(handler.getFragmentNode());

@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.report.core;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -184,4 +185,19 @@ public class SmallIndividualReport implements Comparable, Serializable {
   public boolean isQuick() {
     return quick;
   }
+
+  public void setImagePath(String imagePath) {
+    this.imagePath = imagePath;
+  }
+
+  public void predictImagePath(){
+    String originalFile = getFilePath();
+    if (new File(originalFile).exists()){
+      String filename = getReportPath().substring(getReportPath().lastIndexOf("/") + 1);
+      setImagePath("img/" + filename + ".jpg");
+    } else {
+      setImagePath("img/not-found.jpg");
+    }
+  }
+
 }

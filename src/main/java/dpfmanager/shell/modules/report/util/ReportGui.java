@@ -87,39 +87,47 @@ public class ReportGui implements Comparable<ReportGui>{
   }
 
   public void readTime(){
-    File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-    File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
-    File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
     timestamp = 0L;
+    File reportSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
+    if (reportSer.exists() && reportSer.length() > 0) {
+      timestamp = getTimestamp(reportSer.getPath());
+    }
+    File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
     if (reportXml.exists() && reportXml.length() > 0) {
       timestamp = getTimestamp(reportXml.getPath());
     }
+    File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
     if (reportJson.exists() && reportJson.length() > 0) {
       timestamp = getTimestamp(reportJson.getPath());
     }
+    File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
     if (reportHtml.exists() && reportHtml.length() > 0) {
       timestamp = getTimestamp(reportHtml.getPath());
     }
+    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
     if (reportPdf.exists() && reportPdf.length() > 0) {
       timestamp = getTimestamp(reportPdf.getPath());
     }
   }
 
   public boolean exists(){
+    File reportSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
+    if (reportSer.exists() && reportSer.length() > 0) {
+      return true;
+    }
     File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-    File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
-    File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
     if (reportXml.exists() && reportXml.length() > 0) {
       return true;
     }
+    File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
     if (reportJson.exists() && reportJson.length() > 0) {
       return true;
     }
+    File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
     if (reportHtml.exists() && reportHtml.length() > 0) {
       return true;
     }
+    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
     if (reportPdf.exists() && reportPdf.length() > 0) {
       return true;
     }
@@ -128,29 +136,31 @@ public class ReportGui implements Comparable<ReportGui>{
 
   public void load() {
     if (loaded) return;
-
-    File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
-    File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
-    File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
-    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
     File reportSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
-
     if (reportSer.exists() && reportSer.length() > 0) {
       createRowFromSer(reportDay, reportSer);
     }
+    File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
     if (error && reportXml.exists() && reportXml.length() > 0) {
       createRowFromXml(reportDay, reportXml);
     }
+    File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
     if (error && reportJson.exists() && reportJson.length() > 0) {
       createRowFromJson(reportDay, reportJson);
     }
+    File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
     if (error && reportHtml.exists() && reportHtml.length() > 0) {
       createRowFromHtml(reportDay, reportHtml);
     }
+    File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
     if (error && reportPdf.exists() && reportPdf.length() > 0) {
       createRowFromPdf(reportDay, reportPdf);
     }
 
+    readFormats();
+  }
+
+  public void readFormats() {
     if (!error) {
       // Add formats
       for (String format : available_formats) {
@@ -514,8 +524,7 @@ public class ReportGui implements Comparable<ReportGui>{
     this.passed = passed;
     this.score = score;
     this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
-    this.uuid = System.currentTimeMillis() + "";
-    this.delete = uuid;
+    this.delete = System.currentTimeMillis() + "";;
     this.deletePath = deletePath;
     this.error = false;
   }
@@ -696,6 +705,7 @@ public class ReportGui implements Comparable<ReportGui>{
 
   @Override
   public int compareTo(ReportGui other) {
+    if (other.getUuid().equals(this.getUuid())) return 0;
     return other.timestamp.compareTo(this.timestamp);
   }
 

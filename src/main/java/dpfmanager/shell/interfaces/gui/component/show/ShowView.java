@@ -19,11 +19,13 @@
 
 package dpfmanager.shell.interfaces.gui.component.show;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -33,6 +35,8 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
@@ -60,6 +64,7 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_SHOW,
     viewLocation = "/fxml/show.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_SHOW)
 public class ShowView extends DpfView<ShowModel, ShowController> {
 
@@ -81,6 +86,11 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   @FXML
   private VBox showVBox;
 
+  @FXML
+  private Label labelLoading;
+  @FXML
+  private ProgressBar progressLoading;
+
   @Override
   public void sendMessage(String target, Object dpfMessage) {
     context.send(target, dpfMessage);
@@ -94,7 +104,15 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   public Node handleMessageOnFX(DpfMessage message) {
     if (message != null && message.isTypeOf(ShowMessage.class)) {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
-      getController().showSingleReport(sMessage.getType(), sMessage.getPath());
+      if (sMessage.isShow()) {
+        getController().showSingleReport(sMessage.getType(), sMessage.getPath());
+      } else if (sMessage.isGenerate()) {
+        hideAll();
+        showLoading();
+        context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport()));
+      } else if (sMessage.isUpdate()) {
+        updateLoading(sMessage.getCount(), sMessage.getMax());
+      }
     }
     return null;
   }
@@ -175,6 +193,32 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    * Show Hide
    */
 
+  public void showLoading(){
+    NodeUtil.showNode(labelLoading);
+    NodeUtil.showNode(progressLoading);
+    progressLoading.setProgress(-1);
+  }
+
+  public void hideLoading(){
+    NodeUtil.hideNode(labelLoading);
+    NodeUtil.hideNode(progressLoading);
+  }
+
+  public void updateLoading(int x, int max) {
+    double progress = (x * 1.0) / (max * 1.0);
+    if (x == 0) {
+      progressLoading.getStyleClass().remove("green-bar");
+      if (!progressLoading.getStyleClass().contains("blue-bar")) {
+        progressLoading.getStyleClass().add("blue-bar");
+      }
+    }
+    if (progress == 1.0){
+      progressLoading.getStyleClass().remove("blue-bar");
+      progressLoading.getStyleClass().add("green-bar");
+    }
+    progressLoading.setProgress(progress);
+  }
+
   public void showTextArea() {
     setTextAreaContent();
     NodeUtil.showNode(textArea);
@@ -221,6 +265,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     hideWebView();
     hideComboBox();
     hidePdfView();
+    hideLoading();
   }
 
   /**

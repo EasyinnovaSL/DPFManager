@@ -79,8 +79,7 @@ import javax.xml.transform.stream.StreamResult;
     "fixes",
     "output",
     "description",
-    "version",
-    "bundle"
+    "version"
 })
 @XmlRootElement(name = "configuration")
 public class Configuration implements Serializable {
@@ -787,6 +786,9 @@ public class Configuration implements Serializable {
 
   public void setQuick(boolean quick) {
     this.quick = quick;
+    if (quick) {
+      this.formats.clear();
+    }
   }
 
   public boolean isDefault() {

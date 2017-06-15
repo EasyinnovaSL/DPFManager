@@ -19,18 +19,43 @@
 
 package dpfmanager.shell.core.messages;
 
+import dpfmanager.shell.modules.report.core.GlobalReport;
+
 /**
  * Created by Adria Llorens on 04/03/2016.
  */
 public class ShowMessage extends DpfMessage {
 
+  public enum Type {
+    SHOW, GENERATE, UPDATE
+  }
+
+  private Type internalType;
   private String type;
   private String path;
+  private GlobalReport globalReport;
+  private int count;
+  private int max;
 
-
+  // Show
   public ShowMessage(String t, String p) {
     type = t;
     path = p;
+    internalType = Type.SHOW;
+  }
+
+  // Generate
+  public ShowMessage(String t, GlobalReport gr) {
+    type = t;
+    globalReport = gr;
+    internalType = Type.GENERATE;
+  }
+
+  // Update
+  public ShowMessage(int c, int m) {
+    count = c;
+    max = m;
+    internalType = Type.UPDATE;
   }
 
   public String getPath() {
@@ -39,6 +64,30 @@ public class ShowMessage extends DpfMessage {
 
   public String getType() {
     return type;
+  }
+
+  public GlobalReport getGlobalReport() {
+    return globalReport;
+  }
+
+  public int getCount() {
+    return count;
+  }
+
+  public int getMax() {
+    return max;
+  }
+
+  public boolean isGenerate() {
+    return internalType.equals(Type.GENERATE);
+  }
+
+  public boolean isShow() {
+    return internalType.equals(Type.SHOW);
+  }
+
+  public boolean isUpdate() {
+    return internalType.equals(Type.UPDATE);
   }
 
 }

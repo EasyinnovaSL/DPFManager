@@ -143,7 +143,7 @@ public class ReportPDF extends ReportGeneric {
         BufferedImage bimg;
         FileInputStream fis = null;
         if (!new File(imgPath).exists()) {
-          bimg = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
+          bimg = ImageIO.read(getFileStreamFromResources("html/img/not-found.jpg"));
         } else {
           fis = new FileInputStream(imgPath);
           bimg = ImageIO.read(fis);

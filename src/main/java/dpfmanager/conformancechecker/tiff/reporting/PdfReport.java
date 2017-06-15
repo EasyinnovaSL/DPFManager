@@ -187,37 +187,17 @@ public class PdfReport extends Report {
       int image_pos_y = pdfParams.y;
       BufferedImage thumb = null;
       FileInputStream fis = null;
-      if (!ir.getTiffModel().getFatalError()) {
-      //if (ir.getTiffModel() != null) {
-        // Get thumbnail
-        String fileName = getReportName("", ir.getFilePath(), id);
-        String imgPath = "img/" + fileName + ".jpg";
-        if (!new File(internalReportFolder + "/html/" + imgPath).exists()) {
-          // Create thumbnail
-          thumb = tiff2Jpg(ir.getFilePath());
-          if (thumb == null) {
-            imgPath = "img/noise.jpg";
-          } else {
-            // Save thumbnail
-            File outputFile = new File(internalReportFolder + "/html/" + imgPath);
-            outputFile.getParentFile().mkdirs();
-            ImageIO.write(thumb, "jpg", outputFile);
-            buffer.flush();
-            buffer = null;
-            thumb.flush();
-            thumb = null;
-            if (ir.getImagePath() == null)
-              ir.setImagePath(imgPath);
-          }
-        }
-        // Read thumbnail
-        if (new File(internalReportFolder + "/html/" + imgPath).exists()) {
-          fis = new FileInputStream(internalReportFolder + "/html/" + imgPath);
-          thumb = ImageIO.read(fis);
-        }
+
+      String fileName = getReportName("", ir.getFilePath(), id);
+      String imgPath = getThumbnailPath(internalReportFolder, fileName, ir);
+      if (new File(internalReportFolder + "/html/" + imgPath).exists()) {
+        fis = new FileInputStream(internalReportFolder + "/html/" + imgPath);
+        thumb = ImageIO.read(fis);
+      } else {
+        thumb = ImageIO.read(getFileStreamFromResources("html/img/not-found.jpg"));
       }
       if (thumb == null) {
-        thumb = ImageIO.read(getFileStreamFromResources("html/img/noise.jpg"));
+        thumb = ImageIO.read(getFileStreamFromResources("html/img/error.jpg"));
       }
       int image_height = thumb.getHeight();
       int image_width = thumb.getWidth();
