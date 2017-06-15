@@ -19,10 +19,12 @@
 
 package dpfmanager.conformancechecker.tiff.metadata_fixer;
 
+import java.io.Serializable;
+
 /**
  * Created by easy on 09/10/2015.
  */
-public class Fix {
+public class Fix  implements Serializable {
   private String tag;
   private String operator;
   private String value;

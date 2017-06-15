@@ -1668,12 +1668,12 @@ public class MetsReport {
     } catch (JAXBException e) {
       // TODO: Something
       //System.err.println("Error generating METS report");
-      //e.printStackTrace();
+//      e.printStackTrace();
       return null;
     } catch (Exception e) {
       // TODO: Something
       //System.err.println("Error generating METS report");
-      //e.printStackTrace();
+//      e.printStackTrace();
       return null;
     }
 

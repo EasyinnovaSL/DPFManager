@@ -34,6 +34,7 @@ import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.Rational;
+import com.easyinnova.tiff.model.types.Text;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.commons.lang.StringUtils;
@@ -483,17 +484,16 @@ public class XmlReport extends Report {
 
         String evenness = "";
         if (ifd.getTags().containsTagId(TiffTags.getTagId("XResolution")) && ifd.getTags().containsTagId(TiffTags.getTagId("YResolution"))
+            && ifd.getTag("XResolution").getValue() != null && ifd.getTag("YResolution").getValue() != null
             && ifd.getTag("XResolution").getValue().size() > 0 && ifd.getTag("YResolution").getValue().size() > 0) {
           try {
-            int xres = 1;
-            int yres = 1;
             abstractTiffType rx = ifd.getTag("XResolution").getValue().get(0);
             abstractTiffType ry = ifd.getTag("YResolution").getValue().get(0);
             if (rx instanceof Rational && ry instanceof Rational) {
               Rational ratx = (Rational) rx;
               Rational raty = (Rational) ry;
-              xres = (int) ratx.getFloatValue();
-              yres = (int) raty.getFloatValue();
+              int xres = (int) ratx.getFloatValue();
+              int yres = (int) raty.getFloatValue();
               if (xres % 2 != 0 || yres % 2 != 0)
                 evenness = "Uneven";
               else

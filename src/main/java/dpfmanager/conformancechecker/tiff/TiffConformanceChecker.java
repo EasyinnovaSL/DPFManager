@@ -361,32 +361,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
     return tiffValidation.getXml();
   }
 
-  private String addXmlReportToPremisSection(String xmlReport, String metsReport) {
-
-    //FIXME revisar el procediment, cal afegir el contingut del report xml com un node al mets report
-    //FIXME el node del mets és el premis:eventOutcomeDetail, aquí dins s'ha de colocar el report
-//    try {
-//      DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-//      domFactory.setNamespaceAware(true);
-//      DocumentBuilder builder = domFactory.newDocumentBuilder();
-//      Document docMets = builder.parse(new InputSource(new StringReader(metsReport)));
-//      Document docXML = builder.parse(new InputSource(new StringReader(xmlReport)));
-//
-//      Element outcomeDetail = (Element)docMets.getElementsByTagName("premis:eventOutcomeDetail").item(0);
-//      outcomeDetail.appendChild(docXML);
-//      //http://stackoverflow.com/questions/4613140/xml-to-append-xml-document-into-the-node-of-another-document
-//    } catch (ParserConfigurationException e) {
-//      e.printStackTrace();
-//    } catch (SAXException e) {
-//      e.printStackTrace();
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-
-
-    return "";
-  }
-
   /**
    * Process tiff file.
    *
@@ -398,10 +372,6 @@ public class TiffConformanceChecker extends ConformanceChecker {
    */
   public IndividualReport processFile(String pathToFile, String reportFilename, String internalReportFolder, Configuration config, int id) throws ReadTagsIOException, ReadIccConfigIOException {
     try {
-//      Logger.println("Reading Tiff file");
-      if (config == null) {
-        config = getDefaultConfiguration();
-      }
       TiffReader tr = new TiffReader();
       int result = tr.readFile(pathToFile, false);
       switch (result) {
@@ -417,38 +387,15 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
           String pathNorm = reportFilename.replaceAll("\\\\", "/");
           String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations, config.getModifiedIsos(), config.isQuick());
+          IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, tr.getModel(), validations, config.getModifiedIsos(), config.isQuick(), id);
           ArrayList<String> isosCheck = new ArrayList<>(config.getIsos());
           Collections.sort(isosCheck, Collator.getInstance());
           ir.setIsosCheck(isosCheck);
           if (config.hasRules()) {
             ir.addIsosCheck(TiffConformanceChecker.POLICY_ISO);
           }
-          XmlReport xmlReport = new XmlReport();
-          String output = xmlReport.parseIndividual(ir, config.getRules());
-          ir.setConformanceCheckerReport(output);
-
-          //Mets report
-          MetsReport metsReport = new MetsReport();
-          String xmlOutput = output;
-          output = metsReport.parseIndividual(ir, config);
-          addXmlReportToPremisSection(xmlOutput, output);
-          ir.setConformanceCheckerReportMets(output);
 
           Fixes fixes = config.getFixes();
-          if (config.getFormats().contains("HTML")) {
-            int htmlMode = 0;
-            if (fixes != null && fixes.getFixes().size() > 0) htmlMode = 1;
-            HtmlReport htmlReport = new HtmlReport();
-            output = htmlReport.parseIndividual(ir, htmlMode, id, internalReportFolder);
-            ir.setConformanceCheckerReportHtml(output);
-          }
-
-          if (config.getFormats().contains("PDF")) {
-            PdfReport pdfReport = new PdfReport();
-            pdfReport.parseIndividual(ir, id, internalReportFolder);
-          }
-
           if (fixes != null && fixes.getFixes().size() > 0) {
             TiffDocument td = ir.getTiffModel();
             String nameOriginalTif = ir.getFilePath();
@@ -494,37 +441,14 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
             pathNorm = pathFixed.replaceAll("\\\\", "/");
             name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, validationsFixed, config.getModifiedIsos(), config.isQuick());
+            IndividualReport ir2 = new IndividualReport(name, pathFixed, pathFixed, to, validationsFixed, config.getModifiedIsos(), config.isQuick(), id);
             int ind = reportFilename.lastIndexOf(".tif");
             ir2.setReportPath(reportFilename.substring(0, ind) + "_fixed.tif");
             ir2.setIsosCheck(ir.getCheckedIsos());
-
             ir2.setFilePath(pathFixed);
-            //context.sendConsole(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Fixed file " + pathFixed + " created"));
             ir2.setFileName(new File(nameOriginalTif).getName() + " Fixed");
-
-            //Make report
-            output = xmlReport.parseIndividual(ir2, config.getRules());
-            ir2.setConformanceCheckerReport(output);
             ir.setCompareReport(ir2);
             ir2.setCompareReport(ir);
-
-            //Make due report in METS
-            //FIXME cal revisar xq aixo dóna null
-            MetsReport metsReportFixed = new MetsReport();
-            output = metsReport.parseIndividual(ir2, config);
-            ir2.setConformanceCheckerReportMets(output);
-
-            if (config.getFormats().contains("HTML")) {
-              HtmlReport htmlReport = new HtmlReport();
-              output = htmlReport.parseIndividual(ir2, 2, id, internalReportFolder);
-              ir2.setConformanceCheckerReportHtml(output);
-            }
-
-            if (config.getFormats().contains("PDF")) {
-              PdfReport pdfReport = new PdfReport();
-              pdfReport.parseIndividual(ir2, id, internalReportFolder);
-            }
           }
 
           return ir;

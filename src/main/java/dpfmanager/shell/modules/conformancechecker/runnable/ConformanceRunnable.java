@@ -71,7 +71,9 @@ public class ConformanceRunnable extends DpfRunnable {
       boolean isQuick = config.isQuick();
       if (config.isDefault()) {
         config = pi.getDefaultConfigurationFromFile(filename);
-        config.setQuick(isQuick);
+        if (config != null){
+          config.setQuick(isQuick);
+        }
       }
     }
     if (config == null) {
@@ -95,8 +97,11 @@ public class ConformanceRunnable extends DpfRunnable {
 
       // Serialize it
       String filenameNorm = filename.replaceAll("\\\\", "/");
-      ir.write(internalReportFolder + "/serialized", filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser");
-//      IndividualReport irRead = (IndividualReport) IndividualReport.read(internalReportFolder + "/serialized/" + filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser");
+      String serFileName = ir.getReportId() + "-" +filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser";
+      ir.filter();
+      ir.write(internalReportFolder + "/serialized", serFileName);
+      ir.defilter();
+//      ir = (IndividualReport) IndividualReport.read(internalReportFolder + "/serialized/" + filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser");
 
       // Create report
       IndividualReportsRunnable run = new IndividualReportsRunnable(generator);

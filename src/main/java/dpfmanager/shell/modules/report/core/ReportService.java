@@ -22,7 +22,12 @@ package dpfmanager.shell.modules.report.core;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
+import dpfmanager.shell.core.messages.ArrayMessage;
+import dpfmanager.shell.core.messages.ShowMessage;
+import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
 import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
 import dpfmanager.shell.modules.report.runnable.GlobalReportsRunnable;
@@ -32,6 +37,7 @@ import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -83,6 +89,41 @@ public class ReportService extends DpfService {
     GlobalReportsRunnable run = new GlobalReportsRunnable(generator);
     run.setParameters(individuals, config, start, checkedIsos);
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
+  }
+
+  public void tractGenerateMessage(GenerateMessage gm) {
+    String internalReportFolder = null;
+    Integer max = gm.getGlobalReport().getIndividualReports().size() + 1;
+    Integer count = 0;
+
+    // Transform individual reports
+    for (SmallIndividualReport sir : gm.getGlobalReport().getIndividualReports()) {
+      if (internalReportFolder == null) internalReportFolder = sir.getInternalReportFodler();
+      sir.predictImagePath();
+
+      String filename = sir.getReportPath().substring(sir.getReportPath().lastIndexOf("/") + 1);
+      String reportSerialized = sir.getInternalReportFodler() + "serialized/" + filename + ".ser";
+      File reportSerializedFile = new File(reportSerialized);
+
+      if (reportSerializedFile.exists()){
+        IndividualReport ir = (IndividualReport) IndividualReport.read(reportSerialized);
+        String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
+        generator.transformIndividualReport(outputfile, gm.getFormat(), ir, gm.getGlobalReport().getConfig());
+        context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(++count, max));
+      }
+    }
+
+    // Transforms global report
+    String outputPath = null;
+    if (internalReportFolder != null){
+      outputPath = generator.transformGlobalReport(internalReportFolder, gm.getFormat(), gm.getGlobalReport());
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(++count, max));
+    }
+
+    // Show the report
+    if (outputPath != null){
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(gm.getFormat(), outputPath));
+    }
   }
 
   public Configuration getConfig() {

@@ -86,6 +86,11 @@ public class GlobalReport extends ReportSerializable {
   private double errVal = 12.5;
 
   /**
+   * The configuration
+   */
+  private Configuration config;
+
+  /**
    * Instantiates a new global report.
    */
   public GlobalReport() {
@@ -104,6 +109,7 @@ public class GlobalReport extends ReportSerializable {
       selectedIsos.add(TiffConformanceChecker.POLICY_ISO);
     }
     this.checkedIsos = ci;
+    this.config = c;
   }
 
   /**
@@ -315,5 +321,9 @@ public class GlobalReport extends ReportSerializable {
       name = (name.length() > 0) ? name + ", " + individual.getFileName() : individual.getFileName();
     }
     return name;
+  }
+
+  public Configuration getConfig() {
+    return config;
   }
 }
