@@ -20,6 +20,7 @@
 package dpfmanager.shell.core.messages;
 
 import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
 
 /**
  * Created by Adria Llorens on 04/03/2016.
@@ -27,15 +28,16 @@ import dpfmanager.shell.modules.report.core.GlobalReport;
 public class ShowMessage extends DpfMessage {
 
   public enum Type {
-    SHOW, GENERATE, UPDATE
+    SHOW, GENERATE, UPDATE, INIT
   }
 
   private Type internalType;
   private String type;
   private String path;
   private GlobalReport globalReport;
-  private int count;
-  private int max;
+  private int number;
+  private int value;
+  private MakeReportRunnable makeReportRunnable;
 
   // Show
   public ShowMessage(String t, String p) {
@@ -51,11 +53,18 @@ public class ShowMessage extends DpfMessage {
     internalType = Type.GENERATE;
   }
 
+  // Init
+  public ShowMessage(int m, int v, MakeReportRunnable mrr) {
+    internalType = Type.INIT;
+    number = m;
+    value = v;
+    makeReportRunnable = mrr;
+  }
+
   // Update
-  public ShowMessage(int c, int m) {
-    count = c;
-    max = m;
+  public ShowMessage(int m) {
     internalType = Type.UPDATE;
+    number = m;
   }
 
   public String getPath() {
@@ -70,12 +79,16 @@ public class ShowMessage extends DpfMessage {
     return globalReport;
   }
 
-  public int getCount() {
-    return count;
+  public int getNumber() {
+    return number;
   }
 
-  public int getMax() {
-    return max;
+  public int getValue() {
+    return value;
+  }
+
+  public MakeReportRunnable getMakeReportRunnable() {
+    return makeReportRunnable;
   }
 
   public boolean isGenerate() {
@@ -88,6 +101,10 @@ public class ShowMessage extends DpfMessage {
 
   public boolean isUpdate() {
     return internalType.equals(Type.UPDATE);
+  }
+
+  public boolean isInit() {
+    return internalType.equals(Type.INIT);
   }
 
 }

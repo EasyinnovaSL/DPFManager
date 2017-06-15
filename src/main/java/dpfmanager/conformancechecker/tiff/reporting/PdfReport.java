@@ -414,7 +414,7 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 40, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
-            IFD sub = (IFD) tag.tv.getReadValue().get(0);
+            IFD sub = (IFD) tag.tv.getValue().get(0);
             for (TagValue tv : sub.getTags().getTags()) {
               pdfParams.y -= 15;
               pdfParams = writeText(pdfParams, tv.getId() + "", pos_x + margins[0], font, font_size);
@@ -434,8 +434,8 @@ public class PdfReport extends Report {
             pdfParams.y -= 20;
             Integer[] margins = {2, 40, 180};
             pdfParams = writeTableHeaders(pdfParams, pos_x, font_size, font, Arrays.asList("ID", "Name", "Value"), margins);
-            if (tag.tv.getReadValue().size() > 0) {
-              abstractTiffType obj = tag.tv.getReadValue().get(0);
+            if (tag.tv.getValue().size() > 0) {
+              abstractTiffType obj = tag.tv.getValue().get(0);
               if (obj instanceof IFD) {
                 IFD exif = (IFD) obj;
                 for (TagValue tv : exif.getTags().getTags()) {

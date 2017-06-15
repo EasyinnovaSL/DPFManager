@@ -26,6 +26,8 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.modules.report.messages.GenerateMessage;
+import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
+import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -91,6 +93,11 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   @FXML
   private ProgressBar progressLoading;
 
+  private Integer count = 0;
+  private Integer max = 0;
+  private Integer globalValue = 0;
+  private MakeReportRunnable mrr = null;
+
   @Override
   public void sendMessage(String target, Object dpfMessage) {
     context.send(target, dpfMessage);
@@ -110,8 +117,18 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
         hideAll();
         showLoading();
         context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport()));
+      } else if (sMessage.isInit()) {
+        count = 0;
+        max = sMessage.getNumber();
+        globalValue = sMessage.getValue();
+        mrr = sMessage.getMakeReportRunnable();
+        updateLoading();
       } else if (sMessage.isUpdate()) {
-        updateLoading(sMessage.getCount(), sMessage.getMax());
+        count += sMessage.getNumber();
+        updateLoading();
+        if (globalValue + count == max && mrr != null) {
+          context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(null, mrr));
+        }
       }
     }
     return null;
@@ -204,9 +221,9 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     NodeUtil.hideNode(progressLoading);
   }
 
-  public void updateLoading(int x, int max) {
-    double progress = (x * 1.0) / (max * 1.0);
-    if (x == 0) {
+  public void updateLoading() {
+    double progress = (count * 1.0) / (max * 1.0);
+    if (count == 0) {
       progressLoading.getStyleClass().remove("green-bar");
       if (!progressLoading.getStyleClass().contains("blue-bar")) {
         progressLoading.getStyleClass().add("blue-bar");

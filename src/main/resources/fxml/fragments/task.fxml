@@ -51,6 +51,14 @@
                <Cursor fx:constant="HAND" />
             </cursor>
             </ImageView>
+            <ImageView fx:id="reportsImage" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showReportsTab" pickOnBounds="true" preserveRatio="true">
+                <HBox.margin>
+                    <Insets left="10.0" />
+                </HBox.margin>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </ImageView>
             <ImageView fx:id="resumePauseImage" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#resumePause" pickOnBounds="true" preserveRatio="true">
                 <HBox.margin>
                     <Insets left="10.0" />

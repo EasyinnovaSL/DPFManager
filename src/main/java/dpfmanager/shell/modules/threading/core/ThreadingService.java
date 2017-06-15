@@ -112,7 +112,7 @@ public class ThreadingService extends DpfService {
 
   @Override
   protected void handleContext(DpfContext context) {
-
+    initThreads();
   }
 
   private void initThreads(){
@@ -203,7 +203,6 @@ public class ThreadingService extends DpfService {
   }
 
   public void handleGlobalStatus(GlobalStatusMessage gm, boolean silence) {
-    initThreads();
     if (gm.isNew()) {
       // New file check
       Long uuid = gm.getUuid();

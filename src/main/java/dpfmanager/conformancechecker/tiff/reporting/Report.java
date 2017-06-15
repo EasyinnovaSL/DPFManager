@@ -185,7 +185,6 @@ public class Report {
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else if (tag.tv.getId() == 330) {
         mapId = "sub" + tag.index;
-        IFD sub = (IFD) tag.tv.getReadValue().get(0);
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else if (tag.isDefault) {
         mapId = "ifd" + tag.index + "d";

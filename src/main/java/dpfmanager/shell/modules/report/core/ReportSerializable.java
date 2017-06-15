@@ -82,7 +82,7 @@ public class ReportSerializable implements Serializable {
       IFD ifd = ir.getTiffModel().getFirstIFD();
       while (ifd != null) {                                 // Each IFD
         for (TagValue tv : ifd.getMetadata().getTags()){    // Each Tag
-          if (tv.getFirstTextReadValue().isEmpty() && tv.getId() != 700 && !tv.getName().equals("ICCProfile")) {
+          if (tv.getFirstTextReadValue().isEmpty() && !tv.getName().equals("XMP") && !tv.getName().equals("ICCProfile") && !tv.getName().equals("SubIFDs") && !tv.getName().equals("ExifIFD")) {
             tv.setValueBackup(tv.getValue());
             tv.getValue().clear();
           }

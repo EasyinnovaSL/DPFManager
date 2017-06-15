@@ -32,12 +32,14 @@ import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
 import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
 import dpfmanager.shell.modules.report.runnable.GlobalReportsRunnable;
 import dpfmanager.shell.modules.report.runnable.IndividualReportsRunnable;
+import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -92,37 +94,31 @@ public class ReportService extends DpfService {
   }
 
   public void tractGenerateMessage(GenerateMessage gm) {
+    Integer globalValue = gm.getFormat().toLowerCase().equals("mets") ? 0 : 1;
     String internalReportFolder = null;
-    Integer max = gm.getGlobalReport().getIndividualReports().size() + 1;
-    Integer count = 0;
+    Integer max = gm.getGlobalReport().getIndividualReports().size() + globalValue;
 
-    // Transform individual reports
+    // Transform individual reports runnables
+    List<MakeReportRunnable> individualsMakers = new ArrayList<>();
     for (SmallIndividualReport sir : gm.getGlobalReport().getIndividualReports()) {
       if (internalReportFolder == null) internalReportFolder = sir.getInternalReportFodler();
       sir.predictImagePath();
 
-      String filename = sir.getReportPath().substring(sir.getReportPath().lastIndexOf("/") + 1);
-      String reportSerialized = sir.getInternalReportFodler() + "serialized/" + filename + ".ser";
-      File reportSerializedFile = new File(reportSerialized);
-
-      if (reportSerializedFile.exists()){
-        IndividualReport ir = (IndividualReport) IndividualReport.read(reportSerialized);
-        String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
-        generator.transformIndividualReport(outputfile, gm.getFormat(), ir, gm.getGlobalReport().getConfig());
-        context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(++count, max));
-      }
+      MakeReportRunnable mrr = new MakeReportRunnable(generator);
+      mrr.setIndividualParameters(sir, gm.getGlobalReport(), gm.getFormat());
+      individualsMakers.add(mrr);
     }
 
-    // Transforms global report
-    String outputPath = null;
-    if (internalReportFolder != null){
-      outputPath = generator.transformGlobalReport(internalReportFolder, gm.getFormat(), gm.getGlobalReport());
-      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(++count, max));
-    }
+    // Transforms global report and show runnable
+    MakeReportRunnable mrr = new MakeReportRunnable(generator);
+    mrr.setGlobalParameters(internalReportFolder, gm.getGlobalReport(), globalValue, gm.getFormat());
 
-    // Show the report
-    if (outputPath != null){
-      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(gm.getFormat(), outputPath));
+    // Init progress bar
+    context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(max, globalValue, mrr));
+
+    // Start individual transforms
+    for (MakeReportRunnable iMrr : individualsMakers){
+      context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(null, iMrr));
     }
   }
 
