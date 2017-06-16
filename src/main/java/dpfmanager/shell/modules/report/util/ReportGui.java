@@ -569,6 +569,10 @@ public class ReportGui implements Comparable<ReportGui>{
     return date;
   }
 
+  public String getReportDir() {
+    return reportDir;
+  }
+
   public void setDate(String date) {
     this.date = date;
   }
