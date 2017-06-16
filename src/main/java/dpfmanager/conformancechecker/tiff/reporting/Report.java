@@ -205,7 +205,7 @@ public class Report {
   }
 
   public String getThumbnailPath(String internalReportFolder, String fileName, IndividualReport ir){
-    String imgPath = "img/" + fileName + ".png";
+    String imgPath = "img/" + fileName + ".gif";
     File outputFile = new File(internalReportFolder + "/html/" + imgPath);
     outputFile.getParentFile().mkdirs();
     if (outputFile.exists()) return imgPath;
@@ -219,13 +219,14 @@ public class Report {
           return imgPath;
         } else {
           // Save thumbnail
-          ImageIO.write(thumb, "png", outputFile);
+          ImageIO.write(thumb, "gif", outputFile);
           buffer.flush();
           buffer = null;
           thumb.flush();
           thumb = null;
         }
       } catch (Exception ex) {
+        ex.printStackTrace();
         try {
           copyFile("img/error.jpg", internalReportFolder, imgPath);
           return imgPath;
