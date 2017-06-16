@@ -210,7 +210,6 @@ public class Report {
     outputFile.getParentFile().mkdirs();
     if (outputFile.exists()) return imgPath;
     if (!new File(ir.getFilePath()).exists()) return "img/not-found.jpg";
-    File errorFile = new File(internalReportFolder + "/html/img/error.jpg");
     if (!ir.getTiffModel().getFatalError()) {
       try {
         // Make thumbnail
@@ -227,6 +226,13 @@ public class Report {
           thumb = null;
         }
       } catch (Exception ex) {
+        try {
+          copyFile("img/error.jpg", internalReportFolder, imgPath);
+          return imgPath;
+        } catch (Exception e){
+          imgPath = "img/error.jpg";
+        }
+      } catch (Error err) {
         try {
           copyFile("img/error.jpg", internalReportFolder, imgPath);
           return imgPath;
