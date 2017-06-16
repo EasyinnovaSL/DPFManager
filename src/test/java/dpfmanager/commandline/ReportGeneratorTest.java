@@ -187,7 +187,7 @@ public class ReportGeneratorTest extends CommandLineTest {
       assertEquals(4, n);
 
       // Check tiff to jpg
-      String jpgPath = path+"html/img/1-Bilevel.tif.jpg";
+      String jpgPath = path+"html/img/1-Bilevel.tif.gif";
       File jpgFile = new File(jpgPath);
       assertEquals(true, jpgFile.exists());
     } catch (Exception ex) {
@@ -223,7 +223,7 @@ public class ReportGeneratorTest extends CommandLineTest {
       assertEquals(4, n);
 
       // Check tiff to jpg
-      String jpgPath = path+"html/img/1-Bilevel.tif.jpg";
+      String jpgPath = path+"html/img/1-Bilevel.tif.gif";
       File jpgFile = new File(jpgPath);
       assertEquals(true, jpgFile.exists());
     } catch (Exception ex) {
