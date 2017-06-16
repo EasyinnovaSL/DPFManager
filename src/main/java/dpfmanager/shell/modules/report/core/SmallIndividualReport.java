@@ -194,7 +194,7 @@ public class SmallIndividualReport implements Comparable, Serializable {
     String originalFile = getFilePath();
     if (new File(originalFile).exists()){
       String filename = getReportPath().substring(getReportPath().lastIndexOf("/") + 1);
-      setImagePath("img/" + filename + ".jpg");
+      setImagePath("img/" + filename + ".gif");
     } else {
       setImagePath("img/not-found.jpg");
     }
