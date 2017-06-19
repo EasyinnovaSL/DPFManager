@@ -181,7 +181,8 @@ public class DessignController extends DpfController<DessignModel, DessignView> 
   private List<String> parseExtensions(List<String> extensions) {
     List<String> newExtensions = new ArrayList<>();
     for (String ext : extensions) {
-      newExtensions.add("*." + ext);
+      newExtensions.add("*." + ext.toLowerCase());
+      newExtensions.add("*." + ext.toUpperCase());
     }
     return newExtensions;
   }

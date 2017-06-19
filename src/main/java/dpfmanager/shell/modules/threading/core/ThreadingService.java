@@ -384,12 +384,16 @@ public class ThreadingService extends DpfService {
       }
       File file = new File(path);
       if (file.exists() && Desktop.isDesktopSupported()) {
-        try {
-          String fullPath = file.getAbsolutePath();
-          fullPath = fullPath.replaceAll("\\\\", "/");
-          Desktop.getDesktop().browse(new URI("file:///" + fullPath.replaceAll(" ", "%20")));
-        } catch (Exception e) {
-          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("browserError"), e));
+        if (Desktop.isDesktopSupported()) {
+          new Thread(() -> {
+            try {
+              String fullPath = file.getAbsolutePath();
+              fullPath = fullPath.replaceAll("\\\\", "/");
+              Desktop.getDesktop().browse(new URI("file:///" + fullPath.replaceAll(" ", "%20")));
+            } catch (Exception e) {
+              context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("browserError"), e));
+            }
+          }).start();
         }
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("deskServError")));

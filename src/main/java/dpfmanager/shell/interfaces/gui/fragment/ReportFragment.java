@@ -157,16 +157,18 @@ public class ReportFragment {
       icon.setFitHeight(20);
       icon.setFitWidth(20);
       icon.setCursor(Cursor.HAND);
+      icon.setImage(new Image("images/formats/" + i + ".png"));
 
       String path = item.get(i);
       ShowMessage sMessage = null;
       if (path != null && new File(path).exists()){
         // Show directly
-        icon.setImage(new Image("images/formats/" + i + ".png"));
         sMessage = new ShowMessage(i, path);
       } else if (gr.getVersion() > 1){
         // Transformation need
-        icon.setImage(new Image("images/formats/" + i + "-plus.png"));
+        icon.setOpacity(0.4);
+        icon.setOnMouseEntered(event -> icon.setOpacity(1.0));
+        icon.setOnMouseExited(event -> icon.setOpacity(0.4));
         Long formatUuid = Long.parseLong(info.getUuid()+Character.getNumericValue(i.charAt(0)));
         sMessage = new ShowMessage(formatUuid, i, gr, info.getInternalReportFolder());
       }
@@ -207,12 +209,14 @@ public class ReportFragment {
         // Open folder
         File file = new File(path);
         File dir = new File(file.getParent());
-        try {
-          if (Desktop.isDesktopSupported()) {
-            Desktop.getDesktop().open(dir);
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
+        if (Desktop.isDesktopSupported()) {
+          new Thread(() -> {
+            try {
+              Desktop.getDesktop().open(dir);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }).start();
         }
       }
     });
