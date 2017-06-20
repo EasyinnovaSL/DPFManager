@@ -256,6 +256,11 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   }
 
   @FXML
+  protected void reloadReports(ActionEvent event) throws Exception {
+    context.send(new ReportsMessage(ReportsMessage.Type.RELOAD));
+  }
+
+  @FXML
   protected void clearOptions(ActionEvent event) throws Exception {
     if (hboxOptions.isVisible()){
       hideClearOptions();

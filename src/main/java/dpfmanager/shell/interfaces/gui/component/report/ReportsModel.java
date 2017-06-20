@@ -33,8 +33,10 @@ import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -47,6 +49,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
   private Context context;
   private ResourceBundle bundle;
 
+  private Map<Long, ReportGui> dataCache;
   private SortedSet<ReportGui> data;
   private List<ManagedFragmentHandler<ReportFragment>> reportsFragments;
 
@@ -61,6 +64,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
     bundle = DPFManagerProperties.getBundle();
     data = new TreeSet<>();
     reportsFragments = new ArrayList<>();
+    dataCache = new HashMap<>();
     loadReportsFromDir();
   }
 
@@ -82,6 +86,7 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
   }
 
   public void loadReportsFromDir() {
+    data.clear();
     String baseDir = ReportGenerator.getReportsFolder();
     File reportsDir = new File(baseDir);
     if (reportsDir.exists()) {
@@ -93,7 +98,10 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
         for (int j = 0; j < directoriesDay.length; j++) {
           String reportDir = directoriesDay[j];
           ReportGui rg = new ReportGui(baseDir, reportDay, reportDir);
-          if (rg.exists() && !data.contains(rg)) {
+          if (dataCache.containsKey(rg.getTimestamp())) {
+            data.add(dataCache.get(rg.getTimestamp()));
+          } else if (rg.exists()) {
+            dataCache.put(rg.getTimestamp(), rg);
             data.add(rg);
           }
         }

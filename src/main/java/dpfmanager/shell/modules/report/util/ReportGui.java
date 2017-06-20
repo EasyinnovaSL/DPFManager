@@ -91,22 +91,27 @@ public class ReportGui implements Comparable<ReportGui>{
     File reportSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
     if (reportSer.exists() && reportSer.length() > 0) {
       timestamp = getTimestamp(reportSer.getPath());
+      return;
     }
     File reportXml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.xml");
     if (reportXml.exists() && reportXml.length() > 0) {
       timestamp = getTimestamp(reportXml.getPath());
+      return;
     }
     File reportJson = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.json");
     if (reportJson.exists() && reportJson.length() > 0) {
       timestamp = getTimestamp(reportJson.getPath());
+      return;
     }
     File reportHtml = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.html");
     if (reportHtml.exists() && reportHtml.length() > 0) {
       timestamp = getTimestamp(reportHtml.getPath());
+      return;
     }
     File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
     if (reportPdf.exists() && reportPdf.length() > 0) {
       timestamp = getTimestamp(reportPdf.getPath());
+      return;
     }
   }
 
@@ -625,6 +630,10 @@ public class ReportGui implements Comparable<ReportGui>{
     } catch (Exception e) {
       return 0L;
     }
+  }
+
+  public Long getTimestamp() {
+    return timestamp;
   }
 
   public String getUuid() {
