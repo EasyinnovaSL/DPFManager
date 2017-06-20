@@ -149,6 +149,8 @@ public class ReportFragment {
       for (String format : sortedFormats){
         if (!item.containsKey(format)) item.put(format, (itemRead.containsKey(format)) ? itemRead.get(format) : null);
       }
+    } else {
+      item = itemRead;
     }
     for (String i : sortedFormats) {
       if (!item.containsKey(i)) continue;

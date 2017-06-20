@@ -101,7 +101,7 @@ public class ConformanceRunnable extends DpfRunnable {
       ir.filter();
       ir.write(internalReportFolder + "/serialized", serFileName);
       ir.defilter();
-      ir = (IndividualReport) IndividualReport.read(internalReportFolder + "/serialized/" + serFileName);
+//      ir = (IndividualReport) IndividualReport.read(internalReportFolder + "/serialized/" + serFileName);
 
       // Create report
       IndividualReportsRunnable run = new IndividualReportsRunnable(generator);

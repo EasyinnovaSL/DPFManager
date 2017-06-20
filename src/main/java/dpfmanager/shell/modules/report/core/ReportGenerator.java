@@ -702,7 +702,7 @@ public class ReportGenerator {
     String pdfFileStr = internalReportFolder + "report.pdf";
 
     gr.write(internalReportFolder, "summary.ser");
-    gr = (GlobalReport) GlobalReport.read(internalReportFolder + "/summary.ser");
+//    gr = (GlobalReport) GlobalReport.read(internalReportFolder + "/summary.ser");
 
     if (config.getFormats().contains("XML")) {
       reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
