@@ -138,14 +138,14 @@
                     <RowConstraints valignment="TOP" vgrow="ALWAYS"/>
                 </rowConstraints>
                 <children>
-                    <Button fx:id="loadMore" mnemonicParsing="false" onAction="#reloadReports"
+                    <Button mnemonicParsing="false" onAction="#reloadReports"
                             prefHeight="25.0" styleClass="secondary-button" text="%reloadReports"
                             textFill="WHITE">
                         <padding>
                             <Insets left="20.0" right="20.0"/>
                         </padding>
                     </Button>
-                    <Button mnemonicParsing="false" onAction="#loadMoreReports"
+                    <Button fx:id="loadMore" mnemonicParsing="false" onAction="#loadMoreReports"
                             prefHeight="25.0" styleClass="secondary-button" text="%loadMore"
                             textFill="WHITE" GridPane.columnIndex="1">
                         <padding>

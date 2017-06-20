@@ -249,7 +249,7 @@ public class InteroperabilityService extends DpfService {
     }
   }
 
-  private void filterAvailableConformances() {
+  synchronized private void filterAvailableConformances() {
     available.clear();
     for (ConformanceConfig conformance : conformances) {
       if (conformance.isEnabled()) {
@@ -292,8 +292,7 @@ public class InteroperabilityService extends DpfService {
   }
 
   public List<ConformanceChecker> getConformanceCheckers() {
-    filterAvailableConformances();
-    return available;
+    return getConformanceCheckers(false);
   }
 
   public List<ConformanceChecker> getConformanceCheckers(boolean filter) {
