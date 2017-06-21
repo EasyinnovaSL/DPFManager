@@ -308,6 +308,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   }
 
   public void hidePdfView() {
+    pdfPagesVBox.getChildren().clear();
     NodeUtil.hideNode(scrollPdfPages);
   }
 

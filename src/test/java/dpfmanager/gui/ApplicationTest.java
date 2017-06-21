@@ -13,6 +13,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -50,6 +51,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
 
   boolean feedback;
   String lastReport;
+  private Integer scrollUnit = 10;
 
   /**
    * The constant width.
@@ -132,9 +134,11 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     lastReport = ReportGenerator.getLastReportPath();
     // Setup application
     FxToolkit.setupApplication(this);
+    // Custom pre test
+    customPreTest();
   }
 
-  public void customPreTest(){
+  public void customPreTest() throws Exception {
 
   }
 
@@ -156,7 +160,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     customPostTest();
   }
 
-  public void customPostTest(){
+  public void customPostTest() throws Exception {
 
   }
 
@@ -327,6 +331,35 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   /**
+   * Wait until has children.
+   *
+   * @param id     the id
+   */
+  public void waitUntilHasChilds(String id) {
+    reloadScene();
+    int count = 0;
+    Node node = scene.lookup(id);
+    if (node instanceof VBox) {
+      VBox vbox = (VBox) node;
+      while (vbox.getChildren().size() == 0 && count < maxTimeout *4) {
+        sleep(250);
+        count++;
+        reloadScene();
+        vbox = (VBox) scene.lookup(id);;
+      }
+    } else if (node instanceof HBox) {
+      HBox hbox = (HBox) node;
+      while (hbox.getChildren().size() == 0 && count < maxTimeout *4) {
+        sleep(250);
+        count++;
+        reloadScene();
+        hbox = (HBox) scene.lookup(id);;
+      }
+    }
+    sleep(500);
+  }
+
+  /**
    * Wait until exists.
    *
    * @param id     the id
@@ -418,7 +451,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
         restartScroll();
       }
       while (!ret && scroll < maxScroll) {
-        makeScroll(10,false);
+        makeScroll(scrollUnit, false);
         ret = moveToCustom(id);
       }
       if (scroll == maxScroll){
@@ -516,7 +549,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
   }
 
-  private void makeScroll(int x, boolean move){
+  public void makeScroll(int x, boolean move){
     if (move) {
       moveTo(100 + baseW, 100 + baseH);
     }
@@ -536,7 +569,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     }
   }
 
-  private boolean moveToCustom(String id) {
+  public boolean moveToCustom(String id) {
     try {
       moveTo(id);
       return true;
@@ -663,7 +696,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
   }
 
   private boolean containsSummary(File[] files){
-    List<String> summarys = Arrays.asList("report.html","report.pdf","summary.json","summary.xml");
+    List<String> summarys = Arrays.asList("report.html", "report.pdf", "summary.json", "summary.xml");
     for (File file : files){
       if (summarys.contains(file.getName())){
         return true;
@@ -722,6 +755,30 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     scene = stage.getScene();
   }
 
+  public void clickOnSpecificScrollPane(String idToClick, String scrollPaneId) {
+    ScrollPane scrollPane = (ScrollPane) scene.lookup(scrollPaneId);
+
+    moveTo(scrollPaneId);
+    boolean ret = moveToCustom(idToClick);
+    while (!ret) {
+      robotContext().getScrollRobot().scrollDown(1);
+      ret = moveToCustom(idToClick);
+    }
+
+    // Check if button is in at limits
+    int limitY = (int) (scrollPane.localToScreen(scrollPane.getBoundsInLocal()).getMinY() + scrollPane.getHeight());
+    int currentY = getMousePositionY();
+    while (currentY > limitY-2){
+      moveTo(scrollPaneId);
+      robotContext().getScrollRobot().scrollDown(1);
+      moveTo(idToClick);
+      currentY = getMousePositionY();
+    }
+
+    clickOnCustom(idToClick);
+    scene = stage.getScene();
+  }
+
   public File getBackupFile(String path){
     path = path + ".bak";
     File file = new File(path);
@@ -731,5 +788,9 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       count++;
     }
     return file;
+  }
+
+  public void setScrollUnit(Integer x) {
+    scrollUnit = x;
   }
 }

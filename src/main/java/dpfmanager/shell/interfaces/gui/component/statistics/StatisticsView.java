@@ -557,6 +557,7 @@ public class StatisticsView extends DpfView<StatisticsModel, StatisticsControlle
    */
   private void showLoading() {
     indicator.setProgress(-1.0);
+    genStatisticsButton.setDisable(true);
     NodeUtil.showNode(indicator);
     NodeUtil.hideNode(mainVBoxStatics);
     NodeUtil.hideNode(labelEmpty);

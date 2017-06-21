@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets OBJID="123456" LABEL="DPF Manager Report" TYPE="myType" PROFILE="myProfile" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd" xsi:schemaLocation="http://www.loc.gov/standards/mets/mets.xsd" xmlns:premis="http://www.loc.gov/standards/premis/v1" xmlns:ns5="http://www.w3.org/1999/xlink" xmlns:mets="http://www.loc.gov/METS/" xmlns:niso="http://www.loc.gov/mix/v20">
+    <metsHdr ID="Hdr1289528707" RECORDSTATUS="Incoming">
+        <agent ID="A1793264011" ROLE="CREATOR">
+            <name>DPF Manager</name>
+        </agent>
+    </metsHdr>
+    <dmdSec ID="D1289528707" STATUS="">
+        <mdWrap ID="W1055604510" MIMETYPE="text/xml" CREATED="2017-06-21T09:19:36.338+02:00" MDTYPE="DC" MDTYPEVERSION="1.1">
+            <xmlData>
+                <dcContainer>
+                    <dc:rights>                                                      </dc:rights>
+                    <dc:creator>                                    </dc:creator>
+                    <dc:type>image/tiff</dc:type>
+                    <dc:date>2015:05:20 23:28:35</dc:date>
+                </dcContainer>
+            </xmlData>
+        </mdWrap>
+    </dmdSec>
+    <amdSec ID="A1289528707">
+        <techMD ID="T1461662905">
+            <mdWrap ID="W820765323" MIMETYPE="text/xml" CREATED="2017-06-21T09:19:36.340+02:00" MDTYPE="NISOIMG" MDTYPEVERSION="2.0">
+                <xmlData>
+                    <nisoContainer>
+                        <niso:BasicDigitalObjectInformation>
+                            <niso:fileSize use="System">294</niso:fileSize>
+                            <niso:FormatDesignation>
+                                <niso:formatName use="System">TIFF/6.0</niso:formatName>
+                                <niso:formatVersion/>
+                            </niso:FormatDesignation>
+                            <niso:FormatRegistry>
+                                <niso:formatRegistryKey/>
+                            </niso:FormatRegistry>
+                            <niso:byteOrder use="System">Big endian</niso:byteOrder>
+                            <niso:Compression>
+                                <niso:compressionScheme use="System">None</niso:compressionScheme>
+                            </niso:Compression>
+                        </niso:BasicDigitalObjectInformation>
+                        <niso:BasicImageInformation>
+                            <niso:BasicImageCharacteristics>
+                                <niso:imageWidth use="System">999</niso:imageWidth>
+                                <niso:imageHeight use="System">662</niso:imageHeight>
+                                <niso:PhotometricInterpretation>
+                                    <niso:colorSpace use="System">Bilevel</niso:colorSpace>
+                                </niso:PhotometricInterpretation>
+                            </niso:BasicImageCharacteristics>
+                        </niso:BasicImageInformation>
+                        <niso:ImageCaptureMetadata>
+                            <niso:SourceInformation>
+                                <niso:SourceSize>
+                                    <niso:SourceXDimension>
+                                        <niso:sourceXDimensionValue use="System">72.0</niso:sourceXDimensionValue>
+                                        <niso:sourceXDimensionUnit use="System">mm</niso:sourceXDimensionUnit>
+                                    </niso:SourceXDimension>
+                                    <niso:SourceYDimension>
+                                        <niso:sourceYDimensionValue use="System">72.0</niso:sourceYDimensionValue>
+                                        <niso:sourceYDimensionUnit use="System">mm</niso:sourceYDimensionUnit>
+                                    </niso:SourceYDimension>
+                                </niso:SourceSize>
+                            </niso:SourceInformation>
+                            <niso:GeneralCaptureInformation>
+                                <niso:dateTimeCreated use="Manager">2015:05:20 23:28:35</niso:dateTimeCreated>
+                                <niso:imageProducer use="Manager"> </niso:imageProducer>
+                            </niso:GeneralCaptureInformation>
+                            <niso:DigitalCameraCapture>
+                                <niso:digitalCameraManufacturer use="Manager">NIKON CORPORATION</niso:digitalCameraManufacturer>
+                                <niso:DigitalCameraModel>
+                                    <niso:digitalCameraModelName use="Manager">NIKON D7000</niso:digitalCameraModelName>
+                                </niso:DigitalCameraModel>
+                                <niso:CameraCaptureSettings>
+                                    <niso:ImageData>
+                                        <niso:fNumber use="Manager">5.0</niso:fNumber>
+                                        <niso:exposureTime use="Manager">0.003125</niso:exposureTime>
+                                        <niso:exposureProgram use="Manager">Aperture priority</niso:exposureProgram>
+                                        <niso:isoSpeedRatings use="Manager">200</niso:isoSpeedRatings>
+                                        <niso:exifVersion use="System">0220</niso:exifVersion>
+                                        <niso:exposureBiasValue use="Manager">
+                                            <niso:numerator>0</niso:numerator>
+                                            <niso:denominator>1</niso:denominator>
+                                        </niso:exposureBiasValue>
+                                        <niso:meteringMode use="Manager">Pattern</niso:meteringMode>
+                                        <niso:lightSource use="Manager">unknown</niso:lightSource>
+                                        <niso:flash use="Manager">Flash did not fire, compulsory flash mode</niso:flash>
+                                        <niso:sensingMethod use="Manager">One-chip color area sensor</niso:sensingMethod>
+                                    </niso:ImageData>
+                                    <niso:GPSData/>
+                                </niso:CameraCaptureSettings>
+                            </niso:DigitalCameraCapture>
+                            <niso:orientation use="System">normal*</niso:orientation>
+                        </niso:ImageCaptureMetadata>
+                        <niso:ImageAssessmentMetadata>
+                            <niso:ImageColorEncoding>
+                                <niso:BitsPerSample>
+                                    <niso:bitsPerSampleValue use="System">1</niso:bitsPerSampleValue>
+                                    <niso:bitsPerSampleUnit use="System">integer</niso:bitsPerSampleUnit>
+                                </niso:BitsPerSample>
+                                <niso:samplesPerPixel use="System">1</niso:samplesPerPixel>
+                            </niso:ImageColorEncoding>
+                        </niso:ImageAssessmentMetadata>
+                        <niso:ChangeHistory>
+                            <niso:ImageProcessing>
+                                <niso:processingActions use="Manager">saved</niso:processingActions>
+                            </niso:ImageProcessing>
+                            <niso:ImageProcessing/>
+                            <niso:ImageProcessing>
+                                <niso:dateTimeProcessed use="Manager">2015-05-20T23:20:53+02:00</niso:dateTimeProcessed>
+                            </niso:ImageProcessing>
+                            <niso:ImageProcessing>
+                                <niso:ProcessingSoftware>
+                                    <niso:processingSoftwareName use="Manager">Adobe Photoshop CS6 (Macintosh)</niso:processingSoftwareName>
+                                </niso:ProcessingSoftware>
+                            </niso:ImageProcessing>
+                            <niso:ImageProcessing/>
+                            <niso:ImageProcessing>
+                                <niso:processingActions use="Manager">saved</niso:processingActions>
+                            </niso:ImageProcessing>
+                            <niso:ImageProcessing/>
+                            <niso:ImageProcessing>
+                                <niso:dateTimeProcessed use="Manager">2015-05-20T23:28:35+02:00</niso:dateTimeProcessed>
+                            </niso:ImageProcessing>
+                            <niso:ImageProcessing>
+                                <niso:ProcessingSoftware>
+                                    <niso:processingSoftwareName use="Manager">Adobe Photoshop CS6 (Macintosh)</niso:processingSoftwareName>
+                                </niso:ProcessingSoftware>
+                            </niso:ImageProcessing>
+                            <niso:ImageProcessing/>
+                        </niso:ChangeHistory>
+                    </nisoContainer>
+                </xmlData>
+            </mdWrap>
+        </techMD>
+        <digiprovMD ID="D1046938557">
+            <mdWrap ID="W1366769984" MIMETYPE="text/xml" CREATED="2017-06-21T09:19:36.355+02:00" MDTYPE="PREMIS">
+                <xmlData>
+                    <premisContainer>
+                        <premis:eventIdentifier>
+                            <premis:eventIdentifierType>Validation</premis:eventIdentifierType>
+                            <premis:eventIdentifierValue>Input_validation</premis:eventIdentifierValue>
+                        </premis:eventIdentifier>
+                        <premis:eventType>Validation</premis:eventType>
+                        <premis:eventDateTime>Wed Jun 21 09:19:36 CEST 2017</premis:eventDateTime>
+                        <premis:eventDetail>
+                            <isos>TIFF_Baseline_Core_6_0</isos>
+                            <modifiedIsos/>
+                            <rules/>
+                            <formats>HTML</formats>
+                            <formats>XML</formats>
+                            <fixes/>
+                            <description>Baseline HTML and XML</description>
+                            <version>1</version>
+                        </premis:eventDetail>
+                        <premis:eventOutcomeInformation>
+                            <premis:eventOutcome>Report output</premis:eventOutcome>
+                            <premis:eventOutcomeDetail/>
+                        </premis:eventOutcomeInformation>
+                        <premis:linkingAgentIdentifier>
+                            <premis:linkingAgentIdentifierType>Software</premis:linkingAgentIdentifierType>
+                            <premis:linkingAgentIdentifierValue>DPF Manager 3.4</premis:linkingAgentIdentifierValue>
+                        </premis:linkingAgentIdentifier>
+                    </premisContainer>
+                </xmlData>
+            </mdWrap>
+        </digiprovMD>
+    </amdSec>
+    <fileSec ID="F1289528707">
+        <fileGrp ID="F984663076">
+            <file ID="F1289528707">
+                <stream ID="S470746880" streamType="image/tiff"/>
+                <stream ID="S680450615" streamType="application/octet-stream"/>
+                <stream ID="S945293770" streamType="application/xmpp+xml"/>
+                <stream ID="S83192577" streamType="text/vnd.IPTC.NITF"/>
+                <transformFile ID="T69438650" TRANSFORMTYPE="compression" TRANSFORMALGORITHM="None"/>
+            </file>
+        </fileGrp>
+    </fileSec>
+    <structMap ID="S1289528707">
+        <div ID="Hdr69438650" TYPE="Header">
+            <div ID="I69438650" TYPE="IFD" LABEL="Main Image">
+                <fptr ID="f1621511064" FILEID="F1289528707">
+                    <area ID="a1051159257" FILEID="F1289528707" BEGIN="8" END="302"/>
+                </fptr>
+                <div ID="Tag1728173448" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1187590814" FILEID="F1289528707" BEGIN="10" END="22"/>
+                    </fptr>
+                    <div ID="V1766581285" TYPE="Value">
+                        <fptr ID="f996378655" FILEID="F1289528707">
+                            <area ID="a1041751048" FILEID="F1289528707" BEGIN="18" END="19"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag2003469917" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a835015830" FILEID="F1289528707" BEGIN="22" END="34"/>
+                    </fptr>
+                    <div ID="V119141447" TYPE="Value">
+                        <fptr ID="f538818507" FILEID="F1289528707">
+                            <area ID="a552257628" FILEID="F1289528707" BEGIN="30" END="31"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1144028452" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a999315763" FILEID="F1289528707" BEGIN="34" END="46"/>
+                    </fptr>
+                    <div ID="V1935882698" TYPE="Value">
+                        <fptr ID="f1049455490" FILEID="F1289528707">
+                            <area ID="a1221852199" FILEID="F1289528707" BEGIN="42" END="43"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1778003983" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1907584463" FILEID="F1289528707" BEGIN="46" END="58"/>
+                    </fptr>
+                    <div ID="V469018458" TYPE="Value">
+                        <fptr ID="f1324359389" FILEID="F1289528707">
+                            <area ID="a420864480" FILEID="F1289528707" BEGIN="54" END="55"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1519801763" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1931622936" FILEID="F1289528707" BEGIN="58" END="70"/>
+                    </fptr>
+                    <div ID="V1305644369" TYPE="Value">
+                        <fptr ID="f52065472" FILEID="F1289528707">
+                            <area ID="a892772258" FILEID="F1289528707" BEGIN="66" END="67"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1213975125" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1470530022" FILEID="F1289528707" BEGIN="70" END="82"/>
+                    </fptr>
+                    <div ID="V247932486" TYPE="Value">
+                        <fptr ID="f1579937578" FILEID="F1289528707">
+                            <area ID="a1608622274" FILEID="F1289528707" BEGIN="78" END="79"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag740696067" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1017885545" FILEID="F1289528707" BEGIN="82" END="94"/>
+                    </fptr>
+                    <div ID="V191449004" TYPE="Value">
+                        <fptr ID="f171621204" FILEID="F1289528707">
+                            <area ID="a1485831521" FILEID="F1289528707" BEGIN="302" END="320"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag305830016" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a962473442" FILEID="F1289528707" BEGIN="94" END="106"/>
+                    </fptr>
+                    <div ID="V2026592578" TYPE="Value">
+                        <fptr ID="f661962004" FILEID="F1289528707">
+                            <area ID="a12007534" FILEID="F1289528707" BEGIN="320" END="332"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag2080682081" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1213084839" FILEID="F1289528707" BEGIN="106" END="118"/>
+                    </fptr>
+                    <div ID="V1793942949" TYPE="Value">
+                        <fptr ID="f1752426993" FILEID="F1289528707">
+                            <area ID="a1371461849" FILEID="F1289528707" BEGIN="114" END="115"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1703397921" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1760306501" FILEID="F1289528707" BEGIN="118" END="130"/>
+                    </fptr>
+                    <div ID="V1764599216" TYPE="Value">
+                        <fptr ID="f518452485" FILEID="F1289528707">
+                            <area ID="a968461840" FILEID="F1289528707" BEGIN="126" END="127"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1163238693" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a813060719" FILEID="F1289528707" BEGIN="130" END="142"/>
+                    </fptr>
+                    <div ID="V879911412" TYPE="Value">
+                        <fptr ID="f496362658" FILEID="F1289528707">
+                            <area ID="a1747525646" FILEID="F1289528707" BEGIN="138" END="139"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1293504022" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1791943246" FILEID="F1289528707" BEGIN="142" END="154"/>
+                    </fptr>
+                    <div ID="V1301566242" TYPE="Value">
+                        <fptr ID="f2140544710" FILEID="F1289528707">
+                            <area ID="a1587443818" FILEID="F1289528707" BEGIN="150" END="151"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag983944728" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1130311013" FILEID="F1289528707" BEGIN="154" END="166"/>
+                    </fptr>
+                    <div ID="V750615407" TYPE="Value">
+                        <fptr ID="f1670524944" FILEID="F1289528707">
+                            <area ID="a1323452704" FILEID="F1289528707" BEGIN="162" END="163"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1483940109" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1961652636" FILEID="F1289528707" BEGIN="166" END="178"/>
+                    </fptr>
+                    <div ID="V860691053" TYPE="Value">
+                        <fptr ID="f1101901476" FILEID="F1289528707">
+                            <area ID="a492455160" FILEID="F1289528707" BEGIN="332" END="333"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag56852761" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a170767966" FILEID="F1289528707" BEGIN="178" END="190"/>
+                    </fptr>
+                    <div ID="V1365793540" TYPE="Value">
+                        <fptr ID="f2107381507" FILEID="F1289528707">
+                            <area ID="a841937356" FILEID="F1289528707" BEGIN="340" END="341"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1259139623" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1440099985" FILEID="F1289528707" BEGIN="190" END="202"/>
+                    </fptr>
+                    <div ID="V1190522708" TYPE="Value">
+                        <fptr ID="f1540152454" FILEID="F1289528707">
+                            <area ID="a506066594" FILEID="F1289528707" BEGIN="198" END="199"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag893169884" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a2054152528" FILEID="F1289528707" BEGIN="202" END="214"/>
+                    </fptr>
+                    <div ID="V327757318" TYPE="Value">
+                        <fptr ID="f773646365" FILEID="F1289528707">
+                            <area ID="a2136049562" FILEID="F1289528707" BEGIN="348" END="380"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1571650760" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a2050067521" FILEID="F1289528707" BEGIN="214" END="226"/>
+                    </fptr>
+                    <div ID="V546464799" TYPE="Value">
+                        <fptr ID="f1770470416" FILEID="F1289528707">
+                            <area ID="a437849069" FILEID="F1289528707" BEGIN="380" END="400"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1492064274" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1824313195" FILEID="F1289528707" BEGIN="226" END="238"/>
+                    </fptr>
+                    <div ID="V1606282367" TYPE="Value">
+                        <fptr ID="f260713508" FILEID="F1289528707">
+                            <area ID="a1570642011" FILEID="F1289528707" BEGIN="400" END="437"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag92502720" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1473467156" FILEID="F1289528707" BEGIN="238" END="250"/>
+                    </fptr>
+                    <div ID="V1732088709" TYPE="Value">
+                        <fptr ID="f956856394" FILEID="F1289528707">
+                            <area ID="a343536624" FILEID="F1289528707" BEGIN="438" END="15783"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag255355093" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1509906840" FILEID="F1289528707" BEGIN="250" END="262"/>
+                    </fptr>
+                    <div ID="V1389709465" TYPE="Value">
+                        <fptr ID="f686141601" FILEID="F1289528707">
+                            <area ID="a1935155262" FILEID="F1289528707" BEGIN="15784" END="15839"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag216316977" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1355318356" FILEID="F1289528707" BEGIN="262" END="274"/>
+                    </fptr>
+                    <div ID="V673288020" TYPE="Value">
+                        <fptr ID="f759448137" FILEID="F1289528707">
+                            <area ID="a531619343" FILEID="F1289528707" BEGIN="15840" END="15988"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag1297765643" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a198251402" FILEID="F1289528707" BEGIN="274" END="286"/>
+                    </fptr>
+                    <div ID="V791574155" TYPE="Value">
+                        <fptr ID="f553070381" FILEID="F1289528707">
+                            <area ID="a1103741594" FILEID="F1289528707" BEGIN="15988" END="32020"/>
+                        </fptr>
+                    </div>
+                </div>
+                <div ID="Tag55738696" TYPE="Tag">
+                    <fptr ID="f1621511064" FILEID="F1289528707">
+                        <area ID="a1116197994" FILEID="F1289528707" BEGIN="286" END="298"/>
+                    </fptr>
+                    <div ID="V507607199" TYPE="Value">
+                        <fptr ID="f131506749" FILEID="F1289528707">
+                            <area ID="a142900559" FILEID="F1289528707" BEGIN="294" END="295"/>
+                        </fptr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </structMap>
+</mets>

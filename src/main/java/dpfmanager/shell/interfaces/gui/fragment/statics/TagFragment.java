@@ -92,6 +92,7 @@ public class TagFragment {
 
     tagId.setText(String.valueOf(hTag.getValue().getId()));
     tagName.setText(hTag.getValue().getName());
+    mainPane.getStyleClass().add(hTag.getValue().getName());
 
     tagMain.setText(String.valueOf(hTag.getMainCount(withDefault)));
     tagMainPercent.setText(getPrettyPercent(mainPercentOne));

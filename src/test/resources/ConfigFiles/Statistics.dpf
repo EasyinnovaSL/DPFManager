@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+  <version>3</version>
+  <isos>
+    <iso>TiffITProfileChecker</iso>
+    <iso>TIFF_Baseline_Core_6_0</iso>
+    <iso>TIFF_EP</iso>
+  </isos>
+  <formats>
+    <format>HTML</format>
+  </formats>
+  <modified-isos/>
+  <rules>
+    <rule>
+      <tag>ImageWidth</tag>
+      <operator>&gt;</operator>
+      <value>1000</value>
+    </rule>
+    <rule>
+      <tag>ImageLength</tag>
+      <operator>&gt;</operator>
+      <value>1500</value>
+      <warning>true</warning>
+    </rule>
+  </rules>
+  <fixes/>
+  <description/>
+</configuration>

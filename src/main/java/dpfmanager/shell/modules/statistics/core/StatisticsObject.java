@@ -132,7 +132,7 @@ public class StatisticsObject {
   private void parseErrors(IndividualReport ir){
     for (String iso : ir.getSelectedIsos()){
       if (iso.equals(TiffConformanceChecker.POLICY_ISO)){
-        parsePolicyErrors(ir);
+        parsePolicy(ir);
       } else {
         String isoName = ImplementationCheckerLoader.getIsoName(iso);
         StatisticsIso sIso = (isos.containsKey(iso)) ? isos.get(iso) : new StatisticsIso(isoName, iso);
@@ -160,7 +160,7 @@ public class StatisticsObject {
     isoErrors.put(isoId, sIsoErrors);
   }
 
-  private void parsePolicyErrors(IndividualReport ir){
+  private void parsePolicy(IndividualReport ir){
     for (RuleResult rr : ir.getAllRuleResults(TiffConformanceChecker.POLICY_ISO)) {
       String name = rr.getRule().getDescription().getValue();
       String id = name + String.valueOf(rr.getWarning());
