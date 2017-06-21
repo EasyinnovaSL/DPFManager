@@ -40,20 +40,17 @@ public class StatisticsTest extends ApplicationTest {
 
   @Override
   public void init() throws Exception {
-    System.out.println("LAUNCH");
     stage = launch(GuiApp.class, "-gui", "-test");
     scene = stage.getScene();
   }
 
   @Override
   public void customPreTest() throws Exception {
-    System.out.println("BEFORE");
     backupReportsFolder();
   }
 
   @Override
   public void customPostTest() throws Exception {
-    System.out.println("AFTER");
     restoreReportsFolder();
   }
 

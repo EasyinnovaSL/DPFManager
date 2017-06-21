@@ -1,22 +1,25 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -24,12 +27,16 @@ import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxRobotException;
 import org.testfx.api.FxToolkit;
+import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.toolkit.ApplicationFixture;
 
 import java.awt.*;
+import java.awt.Label;
+import java.awt.TextArea;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -788,6 +795,65 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       count++;
     }
     return file;
+  }
+
+  public void checkFormatsAsserts(int nReports) throws Exception {
+    //Check table view
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    waitUntilExists("#lastReportRow");
+    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), mainVBox.getChildren().size());
+    AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
+    GridPane grid = (GridPane) row.getChildren().get(0);
+    Assert.assertEquals("Report row N files", "3", ((javafx.scene.control.Label) grid.getChildren().get(2)).getText());
+    Assert.assertEquals("Report row N passed", "3 passed", ((javafx.scene.control.Label) grid.getChildren().get(6)).getText());
+    Assert.assertEquals("Report row N errors", "0 errors", ((javafx.scene.control.Label) grid.getChildren().get(4)).getText());
+    Assert.assertEquals("Report row N warnings", "0 warnings", ((javafx.scene.control.Label) grid.getChildren().get(5)).getText());
+
+    //Check html
+    reloadScene();
+    waitUntilExists("#mainVBox #buthtml");
+    clickOnAndReload("#mainVBox #buthtml", "#pane-show");
+    waitUntilExists("#webView");
+    FxAssert.verifyThat("#webView", NodeMatchers.isNotNull());
+
+    //Check pdf
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    clickOnAndReload("#mainVBox #butpdf", "#pane-show");
+    waitUntilExists("#pdfPagesVBox");
+    waitUntilHasChilds("#pdfPagesVBox");
+    FxAssert.verifyThat("#pdfPagesVBox", NodeMatchers.isNotNull());
+    VBox pdfPagesVBox = (VBox) scene.lookup("#pdfPagesVBox");
+    Assert.assertEquals(1, pdfPagesVBox.getChildren().size());
+
+    //Check xml
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    clickOnAndReload("#mainVBox #butxml", "#pane-show");
+    waitUntilExists("#textArea");
+    FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
+    javafx.scene.control.TextArea textArea = (javafx.scene.control.TextArea) scene.lookup("#textArea");
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"";
+    String initial = textArea.getText().substring(0,expected.length());
+    Assert.assertEquals("Report xml", expected, initial);
+
+    //Check mets
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    clickOnAndReload("#mainVBox #butmets", "#pane-show");
+    waitUntilExists("#textArea");
+    FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
+    textArea = (javafx.scene.control.TextArea) scene.lookup("#textArea");
+    expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"";
+    initial = textArea.getText().substring(0,expected.length());
+    Assert.assertEquals("Report mets", expected, initial);
+
+    //Check json
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    clickOnAndReload("#mainVBox #butjson", "#pane-show");
+    waitUntilExists("#textArea");
+    FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
+    textArea = (javafx.scene.control.TextArea) scene.lookup("#textArea");
+    JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
+    Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
   }
 
   public void setScrollUnit(Integer x) {

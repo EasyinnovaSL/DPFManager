@@ -42,21 +42,32 @@ public class OldReportsCompatibleTest extends ApplicationTest {
     scene = stage.getScene();
   }
 
+  @Override
+  public void customPreTest() throws Exception {
+    // Copy old report to folder
+    String last = ReportGenerator.getLastReportPath();
+    String reportId = "0";
+    String reportDay = last;
+    if (last.endsWith("/")) {
+      last = last.substring(0, last.length() - 1);
+      reportId = last.substring(last.lastIndexOf("/") + 1);
+      reportDay = last.substring(0, last.lastIndexOf("/"));
+    }
+    Integer nextReportId = Integer.parseInt(reportId)+1;
+    File newReportFolder = new File(reportDay + "/" + nextReportId);
+    File oldReportFolder = new File("src/test/resources/OldReport");
+    FileUtils.copyDirectory(oldReportFolder, newReportFolder);
+  }
+
+  @Override
+  public void customPostTest() throws Exception {
+  }
+
   @Test
   public void testOldReportCompatible() throws Exception {
     //Wait for async events
     WaitForAsyncUtils.waitForFxEvents();
     System.out.println("Running old report compatible test...");
-
-    // Copy old report to folder
-    String last = ReportGenerator.getLastReportPath();
-    if (last.endsWith("/")) last = last.substring(0, last.length() - 1);
-    String reportId = last.substring(last.lastIndexOf("/") + 1);
-    Integer nextReportId = Integer.parseInt(reportId)+1;
-    String reportDay = last.substring(0, last.lastIndexOf("/"));
-    File newReportFolder = new File(reportDay + "/" + nextReportId);
-    File oldReportFolder = new File("src/test/resources/OldReport");
-    FileUtils.copyDirectory(oldReportFolder, newReportFolder);
 
     // Go to reports tab
     clickOnAndReloadTop("#butReports", "#pane-reports");
