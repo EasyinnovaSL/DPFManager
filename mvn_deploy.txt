@@ -1,18 +1,21 @@
 mvn deploy -DskipTests -DperformRelease=true
 
-Windows 64:
-    (Configurar Java 64 a la maquina)
-    mvn clean install -Dinstallers -Druntime="C:\Program Files\Zulu\zulu-8\jre"
-
 Windows 32:
-    (Configurar Java 32 a la maquina)
+    (Configurar Java 32 Oracle a la maquina, JAVA_HOME)
     mvn clean install -Dinstallers
 
+Windows 64:
+    (Configurar Java 64 Oracle a la maquina, JAVA_HOME)
+    mvn clean install -Dinstallers -Druntime="C:\Program Files\Zulu\zulu-8\jre"
+
 Mac OS 64:
-    mvn clean install -Dinstallers -Druntime=/path-to-java-home
+    mvn clean install -Dinstallers -Druntime=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home
 
 Ubuntu 64:
     mvn clean install -Dinstallers -Druntime=/usr/lib/jvm/java-8-openjdk-amd64/jre
 
 Ubuntu 32:
     mvn clean install -Dinstallers -Druntime=/usr/lib/jvm/java-8-openjdk-i386/jre
+
+Generate example:
+    java -jar generate.jar -m2 "/path/to/m2/repository"
