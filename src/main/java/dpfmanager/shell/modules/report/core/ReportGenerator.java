@@ -20,6 +20,11 @@
 package dpfmanager.shell.modules.report.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
+import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
+import dpfmanager.conformancechecker.tiff.reporting.MetsReport;
+import dpfmanager.conformancechecker.tiff.reporting.PdfReport;
+import dpfmanager.conformancechecker.tiff.reporting.XmlReport;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
@@ -33,6 +38,7 @@ import dpfmanager.shell.modules.report.util.ReportXml;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.logging.log4j.Level;
 import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -463,9 +469,11 @@ public class ReportGenerator {
           arrayFiles.add("html/js/jquery.flot.min.js");
 
           //files in img folder
-          arrayFiles.add("html/img/noise.jpg");
+//          arrayFiles.add("html/img/noise.jpg");
+          arrayFiles.add("html/img/error.jpg");
+          arrayFiles.add("html/img/not-found.jpg");
           arrayFiles.add("html/img/logo.png");
-          arrayFiles.add("html/img/logo - copia.png");
+//          arrayFiles.add("html/img/logo - copia.png");
           arrayFiles.add("html/img/check_radio_sheet.png");
 
           //files in fonts folder
@@ -533,8 +541,7 @@ public class ReportGenerator {
    */
   public void writeProcomputedIndividual(String filename, String content) {
     try {
-      //PrintWriter out = new PrintWriter(filename);
-      //out.print(content);
+      if (content == null) return;
       Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
       out.write(content);
       out.close();
@@ -551,84 +558,132 @@ public class ReportGenerator {
    * @param ir         the individual report
    */
   public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError {
-    String xmlFileStr = reportName + ".xml";
-    String jsonFileStr = reportName + ".json";
-    String htmlFileStr = reportName + ".html";
-    String pdfFileStr = reportName + ".pdf";
-    String metsFileStr = reportName + ".mets.xml";
     ir.setReportPath(reportName);
-
-    writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());
-    String mets = ir.getConformanceCheckerReportMets();
-    if (mets != null && config.getFormats().contains("XML"))
-      writeProcomputedIndividual(metsFileStr, mets);
-
-    if (config.getFormats().contains("JSON")) {
-      reportJson.xmlToJson(ir.getConformanceCheckerReport(), jsonFileStr, this);
-    }
+    writeIndividualReport(ir, config.getFormats(), config, reportName, false);
     if (!ir.containsData()) return;
-
-    if (config.getFormats().contains("HTML")) {
-      String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
-      String outputfile = htmlFileStr.replace(name, "html/" + name);
-      File outputFile = new File(outputfile);
-      outputFile.getParentFile().mkdirs();
-      writeProcomputedIndividual(outputfile, ir.getConformanceCheckerReportHtml());
-    }
-    if (config.getFormats().contains("PDF")) {
-      try {
-        if (ir.getPDF() != null) {
-          ir.getPDF().save(pdfFileStr);
-        }
-      } catch (IOException e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
-      } catch (COSVisitorException e) {
-        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
-      }
-    }
-    if (!config.getFormats().contains("XML")) {
-      deleteFileOrFolder(new File(xmlFileStr));
-    }
 
     // Fixes -> New report
     IndividualReport ir2 = ir.getCompareReport();
     if (ir2 != null) {
-      xmlFileStr = reportName + "_fixed" + ".xml";
-      jsonFileStr = reportName + "_fixed" + ".json";
-      htmlFileStr = reportName + "_fixed" + ".html";
-      pdfFileStr = reportName + "_fixed" + ".pdf";
-      metsFileStr = reportName + "Mets_fixed" + ".xml";
+      writeIndividualReport(ir2, config.getFormats(), config, reportName + "_fixed", false);
+    }
+  }
 
-      try {
-        writeProcomputedIndividual(xmlFileStr, ir2.getConformanceCheckerReport());
-        mets = ir2.getConformanceCheckerReportMets();
-        if (mets != null && config.getFormats().contains("XML"))
-          writeProcomputedIndividual(metsFileStr, mets);
+  /**
+   * Make individual report.
+   *
+   * @param reportName the output file name
+   * @param ir         the individual report
+   */
+  public void transformIndividualReport(String reportName, String format, IndividualReport ir, Configuration config) throws OutOfMemoryError {
+    List<String> formats = new ArrayList<>();
+    formats.add(format.toUpperCase());
+    writeIndividualReport(ir, formats, config, reportName, true);
+    if (!ir.containsData()) return;
 
-        if (config.getFormats().contains("JSON")) {
-          reportJson.xmlToJson(ir2.getConformanceCheckerReport(), jsonFileStr, this);
+    // Fixes -> New report
+    IndividualReport ir2 = ir.getCompareReport();
+    if (ir2 != null) {
+      writeIndividualReport(ir2, formats, config, reportName + "_fixed", true);
+    }
+  }
+
+  private void writeIndividualReport(IndividualReport ir, List<String> formats, Configuration config, String reportName, boolean explicit) {
+    if (ir.hasPrecomputedOutput()){
+      // External CC precomputed output
+      String xmlFileStr = reportName + ".xml";
+      writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());
+    } else {
+      // Generate report
+      XmlReport xmlReport = new XmlReport();
+      String xmlOutput = "";
+      if (formats.contains("XML") && !explicit) {
+        String xmlFileStr = reportName + ".xml";
+        xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
+        writeProcomputedIndividual(xmlFileStr, xmlOutput);
+        MetsReport metsReport = new MetsReport();
+        String metsOutput = metsReport.parseIndividual(ir, config);
+        if (metsOutput != null){
+          String metsFileStr = reportName + ".mets.xml";
+          writeProcomputedIndividual(metsFileStr, metsOutput);
         }
-        if (config.getFormats().contains("HTML")) {
-          String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
-          String outputfile = htmlFileStr.replace(name, "html/" + name);
-          writeProcomputedIndividual(outputfile, ir2.getConformanceCheckerReportHtml());
+      } else if (formats.contains("XML")) {
+        String xmlFileStr = reportName + ".xml";
+        xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
+        writeProcomputedIndividual(xmlFileStr, xmlOutput);
+      }
+      if (formats.contains("METS") && explicit) {
+        String metsFileStr = reportName + ".mets.xml";
+        MetsReport metsReport = new MetsReport();
+        String metsOutput = metsReport.parseIndividual(ir, config);
+        writeProcomputedIndividual(metsFileStr, metsOutput);
+      }
+      if (formats.contains("JSON")) {
+        String jsonFileStr = reportName + ".json";
+        if (xmlOutput.isEmpty()){
+          xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
         }
-        if (config.getFormats().contains("PDF")) {
-          try {
-            ir2.getPDF().save(pdfFileStr);
-          } catch (IOException e) {
-            context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
-          } catch (COSVisitorException e) {
-            context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
+        reportJson.xmlToJson(xmlOutput, jsonFileStr, this);
+      }
+      if (formats.contains("HTML")) {
+        String htmlFileStr = reportName + ".html";
+        HtmlReport htmlReport = new HtmlReport();
+        String htmlOutput = htmlReport.parseIndividual(ir, ir.getReportId(), ir.getInternalReportFodler());
+        String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
+        String outputfile = htmlFileStr.replace(name, "html/" + name);
+        File outputFile = new File(outputfile);
+        outputFile.getParentFile().mkdirs();
+        writeProcomputedIndividual(outputfile, htmlOutput);
+      }
+      if (formats.contains("PDF")) {
+        try {
+          String pdfFileStr = reportName + ".pdf";
+          PdfReport pdfReport = new PdfReport();
+          PDDocument pdfDocument = pdfReport.parseIndividual(ir, ir.getReportId(), ir.getInternalReportFodler());
+          if (pdfDocument != null) {
+            pdfDocument.save(pdfFileStr);
           }
+        } catch (Exception e) {
+          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
         }
-        if (!config.getFormats().contains("XML")) {
-          deleteFileOrFolder(new File(xmlFileStr));
-        }
-      } catch (Exception ex) {
-        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Error creating report of fixed image", ex));
       }
     }
+  }
+
+  public String transformGlobalReport(String internalReportFolder, String format, GlobalReport gr) {
+    String xmlFileStr = internalReportFolder + "summary.xml";
+    String jsonFileStr = internalReportFolder + "summary.json";
+    String htmlFileStr = internalReportFolder + "report.html";
+    String pdfFileStr = internalReportFolder + "report.pdf";
+
+    if (format.equals("xml")) {
+      reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+      return xmlFileStr;
+    }
+    if (format.equals("json")) {
+      boolean toDelete = false;
+      File xmlFile = new File(xmlFileStr);
+      if (!xmlFile.exists()){
+        reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+        toDelete = true;
+      }
+      reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
+      if (toDelete && xmlFile.exists()){
+        xmlFile.delete();
+      }
+      return jsonFileStr;
+    }
+    if (format.equals("html")) {
+      copyHtmlFolder(htmlFileStr);
+      reportHtml.parseGlobal(htmlFileStr, gr, gr.getIndividualReports(), this);
+      return htmlFileStr;
+    }
+    if (format.equals("pdf")) {
+      reportPdf.parseGlobal(pdfFileStr, gr, gr.getIndividualReports());
+      return pdfFileStr;
+    }
+
+    return null;
   }
 
   /**
@@ -647,10 +702,21 @@ public class ReportGenerator {
     String pdfFileStr = internalReportFolder + "report.pdf";
 
     gr.write(internalReportFolder, "summary.ser");
+//    gr = (GlobalReport) GlobalReport.read(internalReportFolder + "/summary.ser");
 
-    reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+    if (config.getFormats().contains("XML")) {
+      reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+    }
     if (config.getFormats().contains("JSON")) {
+      boolean toDelete = false;
+      if (!new File(xmlFileStr).exists()){
+        reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+        toDelete = true;
+      }
       reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
+      if (toDelete){
+        new File(xmlFileStr).delete();
+      }
     }
     if (config.getFormats().contains("HTML")) {
       copyHtmlFolder(htmlFileStr);
@@ -658,10 +724,6 @@ public class ReportGenerator {
     }
     if (config.getFormats().contains("PDF")) {
       reportPdf.parseGlobal(pdfFileStr, gr, gr.getIndividualReports());
-    }
-    if (!config.getFormats().contains("XML")) {
-      deleteFileOrFolder(new File(xmlFileStr));
-      xmlFileStr = null;
     }
 
     String outputFolder = config.getOutput();

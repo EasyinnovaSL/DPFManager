@@ -36,7 +36,7 @@
             <Insets bottom="15.0" left="65.0" right="65.0" />
         </VBox.margin>
     </ImageView>
-    <CheckBox fx:id="chkXml" mnemonicParsing="false" styleClass="checkreport" text="XML">
+    <CheckBox fx:id="chkXml" mnemonicParsing="false" styleClass="checkreport" text="XML and METS">
         <VBox.margin>
             <Insets bottom="15.0" left="250.0" />
         </VBox.margin>

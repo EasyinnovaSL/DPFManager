@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
@@ -23,166 +18,217 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import java.lang.String?>
-
-<AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main"
+            xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <ImageView focusTraversable="true" preserveRatio="true" styleClass="main-logo">
                 <image>
-                    <Image url="@../images/logo2.png" />
+                    <Image url="@../images/logo2.png"/>
                 </image>
                 <VBox.margin>
-                    <Insets bottom="20.0" top="10.0" />
+                    <Insets bottom="20.0" top="10.0"/>
                 </VBox.margin>
             </ImageView>
-            <Label styleClass="mainTitle" text="%reportsTitle" />
+            <Label styleClass="mainTitle" text="%reportsTitle"/>
             <ImageView focusTraversable="true" preserveRatio="true">
                 <image>
-                    <Image url="@../images/lineTop.png" />
+                    <Image url="@../images/lineTop.png"/>
                 </image>
                 <VBox.margin>
-                    <Insets bottom="30.0" left="65.0" right="65.0" top="10.0" />
+                    <Insets bottom="30.0" left="65.0" right="65.0" top="10.0"/>
                 </VBox.margin>
             </ImageView>
             <!--Simulate table-->
             <VBox fx:id="vboxReports" maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
                 <AnchorPane>
-                    <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
+                    <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0"
+                              AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="165.0" minWidth="165.0" prefWidth="165.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0"
+                                               prefWidth="75.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0"
+                                               prefWidth="75.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0"
+                                               prefWidth="50.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="165.0" minWidth="165.0"
+                                               prefWidth="165.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0"
+                                               prefWidth="65.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0"
+                                               prefWidth="85.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0"
+                                               prefWidth="65.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0"
+                                               prefWidth="75.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0"
+                                               prefWidth="120.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0"
+                                               prefWidth="50.0"/>
                         </columnConstraints>
                         <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="BOTTOM"
+                                            vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <children>
-                            <Label styleClass="periodicHeader" text="%colDate" />
-                            <Label styleClass="periodicHeader" text="%colTime" GridPane.columnIndex="1" />
-                            <Label styleClass="periodicHeader" text="%colN" GridPane.columnIndex="2" />
-                            <Label styleClass="periodicHeader" text="%colFile" GridPane.columnIndex="3" />
-                            <Label styleClass="periodicHeader" text="%colErrors" GridPane.columnIndex="4" />
-                            <Label styleClass="periodicHeader" text="%colWarnings" GridPane.columnIndex="5" />
-                            <Label styleClass="periodicHeader" text="%colPassed" GridPane.columnIndex="6" />
-                            <Label styleClass="periodicHeader" text="%colScore" GridPane.columnIndex="7" />
-                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="8" />
-                            <Label styleClass="periodicHeader" text="%colDelete" GridPane.columnIndex="9" />
+                            <Label styleClass="periodicHeader" text="%colDate"/>
+                            <Label styleClass="periodicHeader" text="%colTime"
+                                   GridPane.columnIndex="1"/>
+                            <Label styleClass="periodicHeader" text="%colN"
+                                   GridPane.columnIndex="2"/>
+                            <Label styleClass="periodicHeader" text="%colFile"
+                                   GridPane.columnIndex="3"/>
+                            <Label styleClass="periodicHeader" text="%colErrors"
+                                   GridPane.columnIndex="4"/>
+                            <Label styleClass="periodicHeader" text="%colWarnings"
+                                   GridPane.columnIndex="5"/>
+                            <Label styleClass="periodicHeader" text="%colPassed"
+                                   GridPane.columnIndex="6"/>
+                            <Label styleClass="periodicHeader" text="%colScore"
+                                   GridPane.columnIndex="7"/>
+                            <Label styleClass="periodicHeader" text="%colFormats"
+                                   GridPane.columnIndex="8"/>
+                            <Label styleClass="periodicHeader" text="%colDelete"
+                                   GridPane.columnIndex="9"/>
                         </children>
                         <VBox.margin>
-                            <Insets bottom="5.0" left="5.0" right="5.0" />
+                            <Insets bottom="5.0" left="5.0" right="5.0"/>
                         </VBox.margin>
                     </GridPane>
                 </AnchorPane>
-                <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
-                <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
+                <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0"
+                           prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic"/>
+                <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0"
+                            minHeight="0.0" minWidth="840.0" prefWidth="840.0">
                     <content>
-                        <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
+                        <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0"/>
                     </content>
                     <VBox.margin>
-                        <Insets bottom="10.0" />
+                        <Insets bottom="10.0"/>
                     </VBox.margin>
                     <styleClass>
-                        <String fx:value="periodical-scroll" />
-                        <String fx:value="dpf-bar" />
+                        <String fx:value="periodical-scroll"/>
+                        <String fx:value="dpf-bar"/>
                     </styleClass>
                 </ScrollPane>
             </VBox>
             <!--End simulate table-->
 
-            <ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">
+            <ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0"
+                               progress="0.0">
                 <VBox.margin>
-                    <Insets top="20.0" />
+                    <Insets top="20.0"/>
                 </VBox.margin>
             </ProgressIndicator>
             <Label fx:id="labelEmpty" styleClass="label-info" text="%noReports">
                 <VBox.margin>
-                    <Insets top="15.0" />
+                    <Insets top="15.0"/>
                 </VBox.margin>
             </Label>
             <GridPane maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
-                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0"
+                                       percentWidth="20.0" prefWidth="100.0"/>
+                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0"
+                                       prefWidth="100.0"/>
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints valignment="TOP" vgrow="ALWAYS" />
+                    <RowConstraints valignment="TOP" vgrow="ALWAYS"/>
                 </rowConstraints>
                 <children>
-                    <Button fx:id="loadMore" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" styleClass="secondary-button" text="%loadMore" textFill="WHITE" GridPane.columnIndex="1">
-                  <padding>
-                     <Insets left="20.0" right="20.0" />
-                  </padding></Button>
-               <VBox alignment="TOP_RIGHT" spacing="10.0" GridPane.columnIndex="2">
-                  <children>
-                          <HBox fx:id="hboxSize" alignment="CENTER_RIGHT">
-                              <children>
-                                  <Label fx:id="labelSize" styleClass="lightgrey" text="%folderSize">
-                                      <HBox.margin>
-                                          <Insets right="10.0" />
-                                      </HBox.margin>
-                                  </Label>
-                                  <Button fx:id="clearOptionsButton" mnemonicParsing="false" onAction="#clearOptions" styleClass="button-trans-clear" text="%clearOptions">
-                                      <padding>
-                                          <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
-                                      </padding>
-                                      <HBox.margin>
-                                          <Insets />
-                                      </HBox.margin>
-                                  </Button>
-                              </children>
-                          </HBox>
-                     <HBox fx:id="hboxOptions" alignment="CENTER_RIGHT" styleClass="border-box">
-                        <VBox.margin>
-                           <Insets top="5.0" />
-                        </VBox.margin>
+                    <Button mnemonicParsing="false" onAction="#reloadReports"
+                            prefHeight="25.0" styleClass="secondary-button" text="%reloadReports"
+                            textFill="WHITE">
+                        <padding>
+                            <Insets left="20.0" right="20.0"/>
+                        </padding>
+                    </Button>
+                    <Button fx:id="loadMore" mnemonicParsing="false" onAction="#loadMoreReports"
+                            prefHeight="25.0" styleClass="secondary-button" text="%loadMore"
+                            textFill="WHITE" GridPane.columnIndex="1">
+                        <padding>
+                            <Insets left="20.0" right="20.0"/>
+                        </padding>
+                    </Button>
+                    <VBox alignment="TOP_RIGHT" spacing="10.0" GridPane.columnIndex="2">
                         <children>
-                           <VBox spacing="10.0">
-                              <children>
-                                 <RadioButton fx:id="radAll" mnemonicParsing="false" selected="true" styleClass="lightgrey" text="%allReports">
-                                    <toggleGroup>
-                                       <ToggleGroup fx:id="toggleClear" />
-                                    </toggleGroup></RadioButton>
-                                 <HBox alignment="CENTER_LEFT">
-                                    <children>
-                                       <RadioButton fx:id="radOlder" mnemonicParsing="false" styleClass="lightgrey" text="%olderThan" toggleGroup="$toggleClear" />
-                                       <DatePicker fx:id="datePicker" prefWidth="110.0">
-                                          <HBox.margin>
-                                             <Insets left="10.0" />
-                                          </HBox.margin>
-                                       </DatePicker>
-                                    </children>
-                                 </HBox>
-                              </children>
-                              <HBox.margin>
-                                 <Insets right="20.0" />
-                              </HBox.margin>
-                           </VBox>
-                           <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearReports" styleClass="button-trans-clear" text="%clear">
-                              <padding>
-                                 <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
-                              </padding>
-                           </Button>
+                            <HBox fx:id="hboxSize" alignment="CENTER_RIGHT">
+                                <children>
+                                    <Label fx:id="labelSize" styleClass="lightgrey"
+                                           text="%folderSize">
+                                        <HBox.margin>
+                                            <Insets right="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <Button fx:id="clearOptionsButton" mnemonicParsing="false"
+                                            onAction="#clearOptions" styleClass="button-trans-clear"
+                                            text="%clearOptions">
+                                        <padding>
+                                            <Insets bottom="3.0" left="8.0" right="8.0" top="3.0"/>
+                                        </padding>
+                                        <HBox.margin>
+                                            <Insets/>
+                                        </HBox.margin>
+                                    </Button>
+                                </children>
+                            </HBox>
+                            <HBox fx:id="hboxOptions" alignment="CENTER_RIGHT"
+                                  styleClass="border-box">
+                                <VBox.margin>
+                                    <Insets top="5.0"/>
+                                </VBox.margin>
+                                <children>
+                                    <VBox spacing="10.0">
+                                        <children>
+                                            <RadioButton fx:id="radAll" mnemonicParsing="false"
+                                                         selected="true" styleClass="lightgrey"
+                                                         text="%allReports">
+                                                <toggleGroup>
+                                                    <ToggleGroup fx:id="toggleClear"/>
+                                                </toggleGroup>
+                                            </RadioButton>
+                                            <HBox alignment="CENTER_LEFT">
+                                                <children>
+                                                    <RadioButton fx:id="radOlder"
+                                                                 mnemonicParsing="false"
+                                                                 styleClass="lightgrey"
+                                                                 text="%olderThan"
+                                                                 toggleGroup="$toggleClear"/>
+                                                    <DatePicker fx:id="datePicker"
+                                                                prefWidth="110.0">
+                                                        <HBox.margin>
+                                                            <Insets left="10.0"/>
+                                                        </HBox.margin>
+                                                    </DatePicker>
+                                                </children>
+                                            </HBox>
+                                        </children>
+                                        <HBox.margin>
+                                            <Insets right="20.0"/>
+                                        </HBox.margin>
+                                    </VBox>
+                                    <Button fx:id="clearButton" mnemonicParsing="false"
+                                            onAction="#clearReports" styleClass="button-trans-clear"
+                                            text="%clear">
+                                        <padding>
+                                            <Insets bottom="3.0" left="8.0" right="8.0" top="3.0"/>
+                                        </padding>
+                                    </Button>
+                                </children>
+                                <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                </padding>
+                            </HBox>
                         </children>
                         <padding>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            <Insets right="10.0"/>
                         </padding>
-                     </HBox>
-                  </children>
-                  <padding>
-                     <Insets right="10.0" />
-                  </padding>
-               </VBox>
+                    </VBox>
                 </children>
                 <VBox.margin>
-                    <Insets bottom="30.0" top="15.0" />
+                    <Insets bottom="30.0" top="15.0"/>
                 </VBox.margin>
             </GridPane>
         </VBox>

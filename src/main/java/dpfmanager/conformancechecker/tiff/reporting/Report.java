@@ -19,6 +19,8 @@
 
 package dpfmanager.conformancechecker.tiff.reporting;
 
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.util.ReportHtml;
@@ -31,17 +33,23 @@ import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.types.IFD;
 
+import org.apache.maven.shared.utils.io.FileUtils;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -163,7 +171,7 @@ public class Report {
      * Parse Tags
      */
     Map<String, List<ReportTag>> tags = new HashMap<>();
-    for (ReportTag tag : ir.getTags()) {
+    for (ReportTag tag : ir.getTags(false, true)) {
       String mapId;
       List<ReportTag> list = null;
       if (tag.tv.getId() == 700) {
@@ -177,7 +185,9 @@ public class Report {
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else if (tag.tv.getId() == 330) {
         mapId = "sub" + tag.index;
-        IFD sub = (IFD) tag.tv.getReadValue().get(0);
+        list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
+      } else if (tag.isDefault) {
+        mapId = "ifd" + tag.index + "d";
         list = tags.containsKey(mapId) ? tags.get(mapId) : new ArrayList<>();
       } else if (tag.expert) {
         mapId = "ifd" + tag.index + "e";
@@ -193,4 +203,96 @@ public class Report {
     }
     return tags;
   }
+
+  public String getThumbnailPath(String internalReportFolder, String fileName, IndividualReport ir){
+    String imgPath = "img/" + fileName + ".gif";
+    File outputFile = new File(internalReportFolder + "/html/" + imgPath);
+    outputFile.getParentFile().mkdirs();
+    if (outputFile.exists()) return imgPath;
+    if (!new File(ir.getFilePath()).exists()) return "img/not-found.jpg";
+    if (!ir.getTiffModel().getFatalError()) {
+      try {
+        // Make thumbnail
+        BufferedImage thumb = tiff2Jpg(ir.getFilePath());
+        if (thumb == null) {
+          copyFile("img/error.jpg", internalReportFolder, imgPath);
+          return imgPath;
+        } else {
+          // Save thumbnail
+          ImageIO.write(thumb, "gif", outputFile);
+          buffer.flush();
+          buffer = null;
+          thumb.flush();
+          thumb = null;
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        try {
+          copyFile("img/error.jpg", internalReportFolder, imgPath);
+          return imgPath;
+        } catch (Exception e){
+          imgPath = "img/error.jpg";
+        }
+      } catch (Error err) {
+        err.printStackTrace();
+        try {
+          copyFile("img/error.jpg", internalReportFolder, imgPath);
+          return imgPath;
+        } catch (Exception e){
+          imgPath = "img/error.jpg";
+        }
+      }
+    } else {
+      try {
+        copyFile("img/error.jpg", internalReportFolder, imgPath);
+        return imgPath;
+      } catch (Exception e){
+        imgPath = "img/error.jpg";
+      }
+    }
+    return imgPath;
+  }
+
+  public void copyFile(String filePath, String internalReportFolder, String targetPath) {
+    String pathStr = "./src/main/resources/html/" + filePath;
+    File targetFile = new File(internalReportFolder + "/html/" + targetPath);
+    Path path = Paths.get(pathStr);
+    if (Files.exists(path)) {
+      // Look in current dir
+      File srcFile = new File(pathStr);
+      if (srcFile.exists() && srcFile.isFile()) {
+        try {
+          org.apache.commons.io.FileUtils.copyFile(srcFile, targetFile);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    } else {
+      // Look in JAR
+      CodeSource src = ReportGenerator.class.getProtectionDomain().getCodeSource();
+      if (src != null) {
+        try {
+          // if originals folders does not exist
+          targetFile.getParentFile().mkdirs();
+
+          // copy file
+          Class cls = ReportGenerator.class;
+          ClassLoader cLoader = cls.getClassLoader();
+          InputStream in = cLoader.getResourceAsStream("html/"+filePath);
+          if(in != null) {
+            int readBytes;
+            byte[] buffer = new byte[4096];
+            OutputStream resStreamOut = new FileOutputStream(targetFile);
+            while ((readBytes = in.read(buffer)) > 0) {
+              resStreamOut.write(buffer, 0, readBytes);
+            }
+            resStreamOut.close();
+            in.close();
+          }
+        } catch (Exception e) {
+        }
+      }
+    }
+  }
+
 }

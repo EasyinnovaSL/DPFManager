@@ -132,7 +132,7 @@ public class StatisticsObject {
   private void parseErrors(IndividualReport ir){
     for (String iso : ir.getSelectedIsos()){
       if (iso.equals(TiffConformanceChecker.POLICY_ISO)){
-        parsePolicyErrors(ir);
+        parsePolicy(ir);
       } else {
         String isoName = ImplementationCheckerLoader.getIsoName(iso);
         StatisticsIso sIso = (isos.containsKey(iso)) ? isos.get(iso) : new StatisticsIso(isoName, iso);
@@ -160,7 +160,7 @@ public class StatisticsObject {
     isoErrors.put(isoId, sIsoErrors);
   }
 
-  private void parsePolicyErrors(IndividualReport ir){
+  private void parsePolicy(IndividualReport ir){
     for (RuleResult rr : ir.getAllRuleResults(TiffConformanceChecker.POLICY_ISO)) {
       String name = rr.getRule().getDescription().getValue();
       String id = name + String.valueOf(rr.getWarning());
@@ -173,19 +173,22 @@ public class StatisticsObject {
 
   private void parseTags(IndividualReport ir){
     try {
-      for (ReportTag tag : ir.getTags(true)) {
+      for (ReportTag tag : ir.getTags(true, true)) {
         if (tag.tv == null) continue;
+        if (tag.tv.getId() == 263){
+          tag.toString();
+        }
         if (!tags.containsKey(tag.tv.getId())) tags.put(tag.tv.getId(), new HistogramTag(tag));
         HistogramTag hTag = tags.get(tag.tv.getId());
         if (!tag.thumbnail) {
-          hTag.increaseMainCount();
+          hTag.increaseCount(true, tag.isDefault);
           if (expandableTagNames.contains(hTag.getValue().getName())){
-            hTag.addMainValue(tag.tv.getFirstTextReadValue());
+            hTag.addMainValue((tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue(), tag.isDefault);
           }
         } else {
-          hTag.increaseThumbCount();
+          hTag.increaseCount(false, tag.isDefault);
           if (expandableTagNames.contains(hTag.getValue().getName())){
-            hTag.addThumbValue(tag.tv.getFirstTextReadValue());
+            hTag.addThumbValue((tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue(), tag.isDefault);
           }
         }
       }

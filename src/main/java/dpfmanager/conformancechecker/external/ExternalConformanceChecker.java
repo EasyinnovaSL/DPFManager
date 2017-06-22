@@ -107,7 +107,7 @@ public class ExternalConformanceChecker extends ConformanceChecker {
       }
       String pathNorm = reportFilename.replaceAll("\\\\", "/");
       String name = pathNorm.substring(pathNorm.lastIndexOf("/") + 1);
-      IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename);
+      IndividualReport ir = new IndividualReport(name, pathToFile, reportFilename, config.isQuick(), id);
       while (report.indexOf("<?xml", report.indexOf("<?xml") + 1) > -1) {
         report = report.substring(report.indexOf("<?xml", report.indexOf("<?xml") + 1));
       }

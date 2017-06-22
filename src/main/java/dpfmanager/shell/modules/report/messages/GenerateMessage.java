@@ -1,5 +1,5 @@
 /**
- * <h1>ReportTag.java</h1> <p> This program is free software: you can redistribute it
+ * <h1>IndividualReportMessage.java</h1> <p> This program is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
@@ -12,51 +12,41 @@
  * © statement, include Easy Innova SL or other company/Person contributing the code. </p> <p> ©
  * 2015 Easy Innova, SL </p>
  *
- * @author Victor Muñoz Sola
+ * @author Adria Llorens
  * @version 1.0
  * @since 23/7/2015
  */
 
-package dpfmanager.conformancechecker.tiff.reporting;
+package dpfmanager.shell.modules.report.messages;
 
-import com.easyinnova.tiff.model.TagValue;
+import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.modules.report.core.GlobalReport;
 
 /**
- * Created by easy on 17/05/2016.
+ * Created by Adria Llorens on 13/06/2017.
  */
-public class ReportTag {
-  /**
-   * The Index.
-   */
-  public int index;
+public class GenerateMessage extends DpfMessage {
 
-  /**
-   * The Tv.
-   */
-  public TagValue tv;
+  private String format;
+  private GlobalReport globalReport;
+  private Long uuid;
 
-  /**
-   * The Dif.
-   */
-  public int dif = 0;
+  public GenerateMessage(String format, GlobalReport g, Long uuid) {
+    this.format = format;
+    this.globalReport = g;
+    this.uuid = uuid;
+  }
 
-  /**
-   * show only expert
-   */
-  public boolean expert = false;
+  public String getFormat() {
+    return format;
+  }
 
-  /**
-   * Is thumbnail.
-   */
-  public boolean thumbnail = false;
+  public GlobalReport getGlobalReport() {
+    return globalReport;
+  }
 
-  /**
-   * Default tag value
-   */
-  public boolean isDefault = false;
-
-  /**
-   * Default tag value
-   */
-  public String defaultValue = "";
+  public Long getUuid() {
+    return uuid;
+  }
 }
+

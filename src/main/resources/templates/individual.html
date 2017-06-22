@@ -75,7 +75,7 @@
                     </table>
 				</div>
 			</div>
-            <div class="row top30-sm top50">
+            <div class="row top30-sm top50" style="display: ##SHOW_METADATA##;">
                 <div class="col-md-12 top30-sm">
                     <h4 class="bold"><i class="fa fa-file-text"></i>  Metadata analysis</h4>
                     <table class="CustomTable3">
@@ -87,7 +87,7 @@
                     </table>
                 </div>
             </div>
-            <div class="row top30-sm top50">
+            <div class="row top30-sm top50" style="display: ##SHOW_CONFORMANCE##;">
                 <div class="col-md-12 top30-sm">
                     <h4 class="bold"><i class="fa fa-thumbs-up"></i>  Conformance checker</h4>
                     ##DIVS_CONFORMANCE##
@@ -146,11 +146,21 @@
         $("#structure li a").removeClass("bold");
         $("#li"+id).addClass("bold");
 
-		expertChanged(id);
+		filterChanged(id);
 	}
-	function expertChanged(sufix){
-		if ($('#checkSelected'+sufix).is(":checked")) $("."+sufix+".expert").show();
-		else $(".expert").hide();
+	function filterChanged(sufix){
+		$(".expert").hide();
+		$(".default-value").hide();
+		if ($('#checkSelected'+sufix).is(":checked") && $('#defaultSelected'+sufix).is(":checked")) {
+            $("."+sufix+".expert").show();
+            $("."+sufix+".default-value").show();
+		} else if ($('#checkSelected'+sufix).is(":checked")) {
+			$("."+sufix+".expert").show();
+            $("."+sufix+".default-value").hide();
+		} else if ($('#defaultSelected'+sufix).is(":checked")) {
+			$("."+sufix+".default-value").show();
+            $("."+sufix+".expert").hide();
+		}
 	}
 	function onChangeInfo(index){
 		if ($("#checkInfo"+index).is(":checked")){

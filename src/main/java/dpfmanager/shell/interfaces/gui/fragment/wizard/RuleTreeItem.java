@@ -11,7 +11,13 @@ public class RuleTreeItem {
   private String reference;
 
   public RuleTreeItem(){
+  }
 
+  public RuleTreeItem(String n){
+    id = "";
+    name = n;
+    description = "";
+    reference = null;
   }
 
   public RuleTreeItem(String id, String name, String description) {

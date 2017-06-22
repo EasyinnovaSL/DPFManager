@@ -36,18 +36,20 @@ public class ConformanceMessage extends DpfMessage {
   private Configuration config;
   private int recursive;
   private boolean askOverwrite;
+  private boolean quick;
 
   private boolean gui = false;
   private boolean console = false;
   private boolean server = false;
 
-  public ConformanceMessage(String i, String p, int r, boolean ao) {
+  public ConformanceMessage(String i, String p, int r, boolean ao, boolean q) {
     // Gui
     input = i;
     path = p;
     recursive = r;
     gui = true;
     askOverwrite = ao;
+    quick = q;
   }
 
   public ConformanceMessage(Long u, String i, String p) {
@@ -56,6 +58,7 @@ public class ConformanceMessage extends DpfMessage {
     path = p;
     uuid = u;
     server = true;
+    quick = false;
   }
 
   public ConformanceMessage(List<String> f, Configuration c) {
@@ -65,6 +68,7 @@ public class ConformanceMessage extends DpfMessage {
     input = null;
     path = null;
     console = true;
+    quick = false;
   }
 
   public boolean hasPaths() {
@@ -101,6 +105,10 @@ public class ConformanceMessage extends DpfMessage {
 
   public void setAskOverwrite(boolean ow){
     askOverwrite = ow;
+  }
+
+  public boolean isQuick() {
+    return quick;
   }
 
   public boolean isGui() {

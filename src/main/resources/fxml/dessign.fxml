@@ -181,11 +181,18 @@
                     <Insets bottom="20.0" left="65.0" right="65.0" />
                 </VBox.margin>
             </ImageView>
-            <Button fx:id="checkFilesButton" mnemonicParsing="false" onAction="#checkFilesClicked" styleClass="main-button" text="%checkFilesButton">
+            <HBox alignment="TOP_CENTER" maxWidth="504.0" prefWidth="504.0">
                 <VBox.margin>
                     <Insets bottom="30.0" />
                 </VBox.margin>
-            </Button>
+                <children>
+                    <Button fx:id="quickCheckFilesButton" mnemonicParsing="false" onAction="#quickCheckFilesClicked" styleClass="main-button" text="%quickCheckButton" />
+                    <Button fx:id="checkFilesButton" mnemonicParsing="false" onAction="#checkFilesClicked" styleClass="main-button" text="%fullCheckButton">
+                  <HBox.margin>
+                     <Insets left="44.0" />
+                  </HBox.margin></Button>
+                </children>
+            </HBox>
         </VBox>
     </children>
 </AnchorPane>

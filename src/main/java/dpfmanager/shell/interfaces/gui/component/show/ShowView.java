@@ -19,27 +19,46 @@
 
 package dpfmanager.shell.interfaces.gui.component.show;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.modules.report.messages.GenerateMessage;
+import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
+import dpfmanager.shell.modules.threading.messages.RunnableMessage;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.context.Context;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -49,6 +68,7 @@ import java.util.ResourceBundle;
     name = GuiConfig.COMPONENT_SHOW,
     viewLocation = "/fxml/show.fxml",
     active = true,
+    resourceBundleLocation = "bundles.language",
     initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_SHOW)
 public class ShowView extends DpfView<ShowModel, ShowController> {
 
@@ -63,6 +83,21 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   private ComboBox comboIndividuals;
   private String folderPath, extension;
 
+  @FXML
+  private ScrollPane scrollPdfPages;
+  @FXML
+  private VBox pdfPagesVBox;
+  @FXML
+  private VBox showVBox;
+
+  @FXML
+  private Label labelLoading;
+  @FXML
+  private ProgressBar progressLoading;
+
+  private Map<Long, ShowReport> showReports;
+  private Long currentReport;
+
   @Override
   public void sendMessage(String target, Object dpfMessage) {
     context.send(target, dpfMessage);
@@ -76,7 +111,55 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   public Node handleMessageOnFX(DpfMessage message) {
     if (message != null && message.isTypeOf(ShowMessage.class)) {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
-      getController().showSingleReport(sMessage.getType(), sMessage.getPath());
+      if (sMessage.isShow()) {
+        if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)){
+          getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
+        }
+      } else if (sMessage.isGenerate()) {
+        if (showReports.containsKey(sMessage.getUuid())) {
+          ShowReport sr = showReports.get(sMessage.getUuid());
+          if (sr.finished) {
+            // Transformation DONE, do nothing
+            getController().showSingleReport(sMessage.getType(), sMessage.getInternal(), false);
+          } else {
+            // Already initiated
+            hideAll();
+            showLoading();
+            updateLoading(sr.count, sr.max);
+            currentReport = sMessage.getUuid();
+          }
+        } else {
+          // Init new transformation
+          ShowReport sr = new ShowReport(sMessage.getUuid());
+          currentReport = sMessage.getUuid();
+          showReports.put(sMessage.getUuid(), sr);
+          hideAll();
+          showLoading();
+          context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport(), sMessage.getUuid()));
+        }
+      } else if (sMessage.isInit()) {
+        if (showReports.containsKey(sMessage.getUuid())) {
+          ShowReport sr = showReports.get(sMessage.getUuid());
+          sr.max = sMessage.getNumber();
+          sr.globalValue = sMessage.getValue();
+          sr.mrr = sMessage.getMakeReportRunnable();
+          updateLoading(sr.count, sr.max);
+        }
+      } else if (sMessage.isUpdate()) {
+        if (showReports.containsKey(sMessage.getUuid())){
+          ShowReport sr = showReports.get(sMessage.getUuid());
+          sr.count += sMessage.getNumber();
+          if (sMessage.getUuid().equals(currentReport)){
+            updateLoading(sr.count, sr.max);
+          }
+          if (sr.count == sr.max) {
+            sr.finished = true;
+          }
+          if (sr.globalValue + sr.count == sr.max && sr.mrr != null) {
+            context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(sr.uuid, sr.mrr));
+          }
+        }
+      }
     }
     return null;
   }
@@ -86,6 +169,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     // Init MVC
     setModel(new ShowModel());
     setController(new ShowController());
+    showReports = new HashMap<>();
 
     hideAll();
 
@@ -93,6 +177,21 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
       @Override
       public void handle(MouseEvent event) {
         comboIndividuals.requestFocus();
+      }
+    });
+
+    // Center content
+    scrollPdfPages.setHvalue(0.5);
+    scrollPdfPages.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        scrollPdfPages.setHvalue(0.5);
+      }
+    });
+    scrollPdfPages.hvalueProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        scrollPdfPages.setHvalue(0.5);
       }
     });
 
@@ -105,14 +204,19 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   @FXML
   protected void changeIndividual(ActionEvent event) throws Exception {
-    setTextAreaContent();
+    if (extension != null && extension.equals("pdf") && comboIndividuals.getSelectionModel().getSelectedItem() != null) {
+      String name = (String) comboIndividuals.getSelectionModel().getSelectedItem();
+      String filename = folderPath + "/" + name + "." + extension;
+      opePdfFile(filename);
+    } else {
+      setTextAreaContent();
+    }
   }
 
   public void addComboChild(String name, boolean selected) {
     comboIndividuals.getItems().add(name);
     if (selected) {
       comboIndividuals.getSelectionModel().select(name);
-      setTextAreaContent();
     }
   }
 
@@ -137,14 +241,44 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    * Show Hide
    */
 
+  public void showLoading(){
+    NodeUtil.showNode(labelLoading);
+    NodeUtil.showNode(progressLoading);
+    progressLoading.setProgress(-1);
+  }
+
+  public void hideLoading(){
+    NodeUtil.hideNode(labelLoading);
+    NodeUtil.hideNode(progressLoading);
+  }
+
+  public void updateLoading(int count, int max) {
+    double progress = (count * 1.0) / (max * 1.0);
+    if (count == 0) {
+      progressLoading.getStyleClass().remove("green-bar");
+      if (!progressLoading.getStyleClass().contains("blue-bar")) {
+        progressLoading.getStyleClass().add("blue-bar");
+      }
+    }
+    if (progress == 1.0){
+      progressLoading.getStyleClass().remove("blue-bar");
+      progressLoading.getStyleClass().add("green-bar");
+    }
+    if (count < 0){
+      progress = -1;
+    }
+    progressLoading.setProgress(progress);
+  }
+
   public void showTextArea() {
+    setTextAreaContent();
     NodeUtil.showNode(textArea);
-    hideWebView();
-    hideComboBox();
+    NodeUtil.showNode(showVBox);
   }
 
   public void hideTextArea() {
     NodeUtil.hideNode(textArea);
+    NodeUtil.hideNode(showVBox);
     textArea.clear();
   }
 
@@ -159,20 +293,53 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   public void showWebView(String path) {
     webView.getEngine().load("file:///" + path.replace("\\", "/"));
     NodeUtil.showNode(webView);
-    NodeUtil.hideNode(comboIndividuals);
-    hideTextArea();
-    hideComboBox();
+    NodeUtil.showNode(showVBox);
   }
 
   public void hideWebView() {
     NodeUtil.hideNode(webView);
+    NodeUtil.hideNode(showVBox);
     webView.getEngine().load("");
+  }
+
+  public void showPdfView(String path) {
+    opePdfFile(path);
+    NodeUtil.showNode(scrollPdfPages);
+  }
+
+  public void hidePdfView() {
+    pdfPagesVBox.getChildren().clear();
+    NodeUtil.hideNode(scrollPdfPages);
   }
 
   public void hideAll() {
     hideTextArea();
     hideWebView();
     hideComboBox();
+    hidePdfView();
+    hideLoading();
+  }
+
+  /**
+   * PDF Viewer
+   */
+
+  private void opePdfFile(String absolutePath) {
+    // Load PDF codument
+    pdfPagesVBox.getChildren().clear();
+    try {
+      if (absolutePath == null) System.out.println("NULL!!!!!!!!!!!");
+      PDDocument document = PDDocument.load(absolutePath);
+      List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+      for (PDPage page : pages) {
+        BufferedImage pageImage = page.convertToImage();
+        ImageView imageView = new ImageView(SwingFXUtils.toFXImage(pageImage, null));
+        pdfPagesVBox.getChildren().add(imageView);
+        VBox.setMargin(imageView, new Insets(15,0,15,0));
+      }
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
   }
 
 }

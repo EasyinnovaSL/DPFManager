@@ -71,6 +71,8 @@ public class TaskFragment {
   @FXML
   private ImageView taskImage;
   @FXML
+  private ImageView reportsImage;
+  @FXML
   private ImageView resumePauseImage;
   @FXML
   private ImageView cancelImage;
@@ -180,7 +182,11 @@ public class TaskFragment {
       taskImage.setImage(new Image("images/formats/" + type + ".png"));
       timeLabel.setText(getReadableData(job.getFinish() - job.getInit()));
       NodeUtil.showNode(taskImage);
+      NodeUtil.hideNode(reportsImage);
     } else {
+      reportsImage.setImage(new Image("images/formats/reports.png"));
+      timeLabel.setText(getReadableData(job.getFinish() - job.getInit()));
+      NodeUtil.showNode(reportsImage);
       NodeUtil.hideNode(taskImage);
     }
     progress.setProgress(job.getProgress());
@@ -193,6 +199,7 @@ public class TaskFragment {
     NodeUtil.hideNode(resumePauseImage);
     NodeUtil.hideNode(cancelImage);
     NodeUtil.hideNode(taskImage);
+    NodeUtil.hideNode(reportsImage);
     timeLabel.setText(getReadableData(0L));
     progress.setProgress(1.0);
     progress.getStyleClass().remove("blue-bar");
@@ -203,6 +210,7 @@ public class TaskFragment {
     NodeUtil.showNode(cancelImage);
     NodeUtil.showNode(resumePauseImage);
     NodeUtil.hideNode(taskImage);
+    NodeUtil.hideNode(reportsImage);
     timeLabel.setText("0:00");
   }
 
@@ -212,12 +220,14 @@ public class TaskFragment {
     NodeUtil.showNode(cancelImage);
     NodeUtil.hideNode(resumePauseImage);
     NodeUtil.hideNode(taskImage);
+    NodeUtil.hideNode(reportsImage);
   }
 
   private void showPausedJob(){
     hideLoadingPause();
     hideLoadingCancel();
     NodeUtil.hideNode(taskImage);
+    NodeUtil.hideNode(reportsImage);
     mainVbox.setOpacity(opacity);
     timeLabel.setText("Paused");
   }
@@ -279,6 +289,12 @@ public class TaskFragment {
     am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
     am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(type, path));
     context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+  }
+
+  @FXML
+  private void showReportsTab() {
+    // Show check
+    context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
   }
 
   @FXML

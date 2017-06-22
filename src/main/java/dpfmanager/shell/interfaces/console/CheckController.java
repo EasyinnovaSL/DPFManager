@@ -51,6 +51,7 @@ public class CheckController {
   public static String showReport = "showReport";
   public static String overwrite = "overwrite";
   public static String recursive = "recursive";
+  public static String quick = "quick";
 
   /**
    * The Dpf Context
@@ -129,6 +130,10 @@ public class CheckController {
         } else {
           printOutErr(bundle.getString("specifyFormat"));
         }
+      }
+      // -q --quick
+      else if (arg.equals("-q") || arg.equals("--quick")) {
+        common.putParameter(CheckController.quick, "true");
       }
       // -r --recursive
       else if (arg.equals("-r") || arg.equals("--recursive")) {
@@ -281,7 +286,7 @@ public class CheckController {
     printOut(bundle.getString("helpSources"));
     printOut("");
     printOut(bundle.getString("helpOptions"));
-    printOptions("helpC", 9);
+    printOptions("helpC", 10);
     exit();
   }
 

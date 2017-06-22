@@ -163,10 +163,14 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         getModel().addReportFragment(handler);
         handler.getController().init(row);
       }
+    } else {
+      handler.getController().updateIcons();
     }
     if (row.isLoaded()) {
-      mainVBox.getChildren().add(handler.getFragmentNode());
-      hideLoading();
+      if (!mainVBox.getChildren().contains(handler.getFragmentNode())){
+        mainVBox.getChildren().add(handler.getFragmentNode());
+        hideLoading();
+      }
     }
     calculateMinHeight();
   }
@@ -252,6 +256,11 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   }
 
   @FXML
+  protected void reloadReports(ActionEvent event) throws Exception {
+    context.send(new ReportsMessage(ReportsMessage.Type.RELOAD));
+  }
+
+  @FXML
   protected void clearOptions(ActionEvent event) throws Exception {
     if (hboxOptions.isVisible()){
       hideClearOptions();
@@ -281,6 +290,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       hideClearOptions();
       getContext().send(new ReportsMessage(ReportsMessage.Type.READ));
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("successDeleteReports")));
+      vboxReports.getChildren().clear();
     } else {
       getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorDeleteReports")));
     }

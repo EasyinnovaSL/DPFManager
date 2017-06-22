@@ -392,7 +392,12 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
 
   @FXML
   protected void checkFilesClicked(ActionEvent event) throws Exception {
-    getController().mainCheckFiles();
+    getController().mainFullCheck();
+  }
+
+  @FXML
+  protected void quickCheckFilesClicked(ActionEvent event) throws Exception {
+    getController().mainQuickCheck();
   }
 
   @FXML

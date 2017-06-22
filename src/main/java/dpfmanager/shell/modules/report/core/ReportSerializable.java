@@ -1,5 +1,9 @@
 package dpfmanager.shell.modules.report.core;
 
+import com.easyinnova.tiff.model.TagValue;
+import com.easyinnova.tiff.model.types.IFD;
+import com.easyinnova.tiff.model.types.abstractTiffType;
+
 import java.beans.XMLEncoder;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -34,7 +38,7 @@ public class ReportSerializable implements Serializable {
   }
 
   public void write(String internal, String filename){
-    version = 1;
+    version = 2;
     try {
       File internalFile = new File(internal);
       if (!internalFile.exists()) internalFile.mkdirs();
@@ -70,6 +74,37 @@ public class ReportSerializable implements Serializable {
       obj = null;
     }
     return obj;
+  }
+
+  public void filter(){
+    if (this instanceof IndividualReport){
+      IndividualReport ir = (IndividualReport) this;
+      IFD ifd = ir.getTiffModel().getFirstIFD();
+      while (ifd != null) {                                 // Each IFD
+        for (TagValue tv : ifd.getMetadata().getTags()){    // Each Tag
+          if (tv.getFirstTextReadValue().isEmpty() && !tv.getName().equals("XMP") && !tv.getName().equals("ICCProfile") && !tv.getName().equals("SubIFDs") && !tv.getName().equals("ExifIFD")) {
+            tv.setValueBackup(tv.getValue());
+            tv.getValue().clear();
+          }
+        }
+        ifd = ifd.getNextIFD();
+      }
+    }
+  }
+
+  public void defilter(){
+    if (this instanceof IndividualReport){
+      IndividualReport ir = (IndividualReport) this;
+      IFD ifd = ir.getTiffModel().getFirstIFD();
+      while (ifd != null) {                                 // Each IFD
+        for (TagValue tv : ifd.getMetadata().getTags()){    // Each Tag
+          if (tv.getValueBackup() != null && !tv.getValueBackup().isEmpty()) {
+            tv.setValue(tv.getValueBackup());
+          }
+        }
+        ifd = ifd.getNextIFD();
+      }
+    }
   }
 
 }

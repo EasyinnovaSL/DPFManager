@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URL;
 import java.nio.file.Files;
@@ -55,6 +56,7 @@ import java.util.zip.ZipInputStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -77,11 +79,10 @@ import javax.xml.transform.stream.StreamResult;
     "fixes",
     "output",
     "description",
-    "version",
-    "bundle"
+    "version"
 })
 @XmlRootElement(name = "configuration")
-public class Configuration {
+public class Configuration implements Serializable {
   private ArrayList<String> isos;
   private Map<String, ArrayList<String>> modifiedIsos;
   private Rules rules;
@@ -91,7 +92,13 @@ public class Configuration {
   private String description = null;
   private int version;
 
-  private ResourceBundle bundle;
+  @XmlTransient
+  private boolean quick;
+
+  private transient ResourceBundle bundle;
+
+  @XmlTransient
+  private boolean isDefault;
 
   /**
    * Instantiates a new Configuration.
@@ -104,6 +111,7 @@ public class Configuration {
     version = 0;
     bundle = DPFManagerProperties.getBundle();
     modifiedIsos = new HashMap<>();
+    isDefault = false;
   }
 
   /**
@@ -123,6 +131,13 @@ public class Configuration {
   public void initDefault() {
     addISO(ImplementationCheckerLoader.getDefaultIso());
     addFormat("HTML");
+  }
+
+  /**
+   * Set the configuration to default one
+   */
+  public void setDefault(){
+    isDefault = true;
   }
 
   /**
@@ -763,5 +778,20 @@ public class Configuration {
 
   public boolean hasRules(){
     return rules != null && rules.getRules() != null && rules.getRules().size() > 0;
+  }
+
+  public boolean isQuick() {
+    return quick;
+  }
+
+  public void setQuick(boolean quick) {
+    this.quick = quick;
+    if (quick) {
+      this.formats.clear();
+    }
+  }
+
+  public boolean isDefault() {
+    return isDefault;
   }
 }

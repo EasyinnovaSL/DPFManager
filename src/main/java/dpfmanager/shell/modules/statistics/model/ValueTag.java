@@ -25,4 +25,12 @@ public class ValueTag {
     thumb = 0;
   }
 
+  public void increaseCount(boolean isMain){
+    if (isMain){
+      main++;
+    } else {
+      thumb++;
+    }
+  }
+
 }

@@ -74,6 +74,11 @@ public class ConformanceCheckerModule extends DpfModule {
             getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
             return;
           }
+          config.setQuick(cm.isQuick());
+        } else {
+          config = new Configuration();
+          config.setDefault();
+          config.setQuick(cm.isQuick());
         }
         service.initProcessInputRun(input, config, cm.getRecursive());
       }

@@ -1,5 +1,6 @@
 package dpfmanager.shell.modules.report.core;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class SmallIndividualReport implements Comparable, Serializable {
   String imagePath;
   int percentOne;
   int percent;
+  boolean quick;
 
   public SmallIndividualReport(IndividualReport ind) {
     this.isError = ind.isError();
@@ -42,6 +44,7 @@ public class SmallIndividualReport implements Comparable, Serializable {
     this.internalReportFodler = ind.getInternalReportFodler();
     this.uuid = ind.getUuid();
     this.imagePath = ind.getImagePath();
+    this.quick = ind.isQuick();
   }
 
   public void generate(IndividualReport ind){
@@ -134,18 +137,31 @@ public class SmallIndividualReport implements Comparable, Serializable {
    * @return the int
    */
   private int calculatePercent(GlobalReport global, double errVal) {
-    Double rest = 100.0;
+    if (isQuick()){
+      int nErrors = 0;
+      for (String key : global.getSelectedIsos()) {
+        int errors = global.hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
+        if (errors > 0) nErrors++;
+      }
+      int size = global.getSelectedIsos().size();
+      int nPassed = size - nErrors;
+      Double percentage = (size == 0) ? 0.0 : (nPassed * 1.0) / (size * 1.0) * 100.0;
+      return percentage.intValue();
+    } else {
+      // Full check percentage
+      Double rest = 100.0;
 
-    for (String key : global.getSelectedIsos()) {
-      int size = global.hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
-      rest -= size * errVal; // errVal = 12.5 default
-      if (rest < 0 ) break; // Fast break
-    }
+      for (String key : global.getSelectedIsos()) {
+        int size = global.hasModifiedIso(key) ? getNErrorsPolicy(key) : getNErrors(key);
+        rest -= size * errVal; // errVal = 12.5 default
+        if (rest < 0 ) break; // Fast break
+      }
 
-    if (rest < 0.0) {
-      rest = 0.0;
+      if (rest < 0.0) {
+        rest = 0.0;
+      }
+      return rest.intValue();
     }
-    return rest.intValue();
   }
 
   @Override
@@ -164,6 +180,24 @@ public class SmallIndividualReport implements Comparable, Serializable {
 
   public Long getUuid() {
     return uuid;
+  }
+
+  public boolean isQuick() {
+    return quick;
+  }
+
+  public void setImagePath(String imagePath) {
+    this.imagePath = imagePath;
+  }
+
+  public void predictImagePath(){
+    String originalFile = getFilePath();
+    if (new File(originalFile).exists()){
+      String filename = getReportPath().substring(getReportPath().lastIndexOf("/") + 1);
+      setImagePath("img/" + filename + ".gif");
+    } else {
+      setImagePath("img/not-found.jpg");
+    }
   }
 
 }

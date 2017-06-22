@@ -36,6 +36,7 @@ import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.shared.utils.io.FileUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -65,41 +66,15 @@ public class HtmlReport extends Report {
    * Parse an individual report to HTML.
    *
    * @param ir   the individual report.
-   * @param mode the mode (1, 2).
    */
-  public String parseIndividual(IndividualReport ir, int mode, int id, String internalReportFolder) {
+  public String parseIndividual(IndividualReport ir, int id, String internalReportFolder) {
     String templatePath = "templates/individual.html";
 
     String htmlBody = readFilefromResources(templatePath);
 
     // Thumbnail image
     String fileName = getReportName("", ir.getFilePath(), id);
-    String imgPath = "img/" + fileName + ".jpg";
-    if (!ir.getTiffModel().getFatalError()) {
-    //if (ir.getTiffModel() != null) {
-      try {
-        // Make thumbnail
-        BufferedImage thumb = tiff2Jpg(ir.getFilePath());
-        if (thumb == null) {
-          imgPath = "img/noise.jpg";
-        } else {
-          // Save thumbnail
-          File outputFile = new File(internalReportFolder + "/html/" + imgPath);
-          outputFile.getParentFile().mkdirs();
-          ImageIO.write(thumb, "jpg", outputFile);
-          buffer.flush();
-          buffer = null;
-          thumb.flush();
-          thumb = null;
-        }
-      } catch (Exception ex) {
-        imgPath = "img/noise.jpg";
-      }
-    } else {
-      System.out.println("Cannot generate thumbnail for image " + fileName + ". Reason: " + ir.getTiffModel().getFatalErrorMEssage());
-      imgPath = "img/noise.jpg";
-    }
-
+    String imgPath = getThumbnailPath(internalReportFolder, fileName, ir);
     ir.setImagePath(imgPath);
     htmlBody = StringUtils.replace(htmlBody, "##IMG_PATH##", encodeUrl(imgPath));
 
@@ -126,6 +101,11 @@ public class HtmlReport extends Report {
     }
     htmlBody = StringUtils.replace(htmlBody, "##DIVS_CONFORMS##", divs);
 
+    int mode = 0;
+    if (ir.getCompareReport() != null) {
+      if (ir.getIsOriginal()) mode = 1;
+      else mode = 2;
+    }
     if (mode == 1) {
       htmlBody = StringUtils.replace(htmlBody, "##CL_LINKR2##", "show");
       htmlBody = StringUtils.replace(htmlBody, "##LINK2##", encodeUrl(new File(fileName).getName() + "_fixed.html"));
@@ -138,225 +118,170 @@ public class HtmlReport extends Report {
     /**
      * Table errors / warnings count
      */
-    int modeTh = 1;
-    String thTmpl = "<tr><td></td><td>Errors</td><td>Warnings</td></tr>";
-    String rowTmpl = "<tr>\n" +
-        "    <td>##TITLE##</td>\n" +
-        "    <td class=\"##ERR_CLASS##\">##ERR##</td>\n" +
-        "    <td class=\"##WAR_CLASS##\">##WAR##</td>\n" +
-        "    </tr>";
-    if (ir.getModifiedIsos().keySet().size() > 0) {
-      thTmpl = "<tr><td></td><td>Standard</td><td>Policy</td></tr>";
-      rowTmpl = "<tr>\n" +
-          "\t\t\t\t\t\t        <td>##TITLE##</td>\n" +
-          "\t\t\t\t\t\t        <td>" +
-          "\t\t\t\t\t\t\t        <p><span class=\"##ERR_CLASS##\">##ERR## errors</span></p>" +
-          "\t\t\t\t\t\t\t        <p><span class=\"##WAR_CLASS##\">##WAR## warnings</span></p>" +
-          "\t\t\t\t\t\t        </td>\n" +
-          "\t\t\t\t\t\t        <td>" +
-          "\t\t\t\t\t\t\t        <p><span class=\"##ERR_CLASS_P##\">##ERR_P## errors</span></p>" +
-          "\t\t\t\t\t\t\t        <p><span class=\"##WAR_CLASS_P##\">##WAR_P## warnings</span></p>" +
-          "\t\t\t\t\t\t        </td>\n" +
-          "\t\t\t\t\t\t    </tr>";
-      modeTh = 2;
-    }
-    String rows = "";
-    for (String iso : ir.getCheckedIsos()) {
-      if (ir.hasValidation(iso)) {
-        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
-        String row = rowTmpl;
-        int errorsCount = ir.getNErrors(iso);
-        int warningsCount = ir.getNWarnings(iso);
-        row = StringUtils.replace(row, "##TITLE##", name);
-        String difErr = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrors(iso), ir.getNErrors(iso)) : "";
-        String difWar = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarnings(iso), ir.getNWarnings(iso)) : "";
-        row = StringUtils.replace(row, "##ERR##", "" + errorsCount + difErr);
-        row = StringUtils.replace(row, "##WAR##", "" + warningsCount + difWar);
-        row = StringUtils.replace(row, "##ERR_CLASS##", errorsCount > 0 ? "error" : "info");
-        row = StringUtils.replace(row, "##WAR_CLASS##", warningsCount > 0 ? "warning" : "info");
-        if (modeTh == 2) {
-          if (!ir.hasModifiedIso(iso)) {
-            // Empty
-            row = StringUtils.replace(row, "##ERR_CLASS_P##", "hide");
-            row = StringUtils.replace(row, "##WAR_CLASS_P##", "hide");
-          } else {
-            int errorsCountPolicy = ir.getNErrorsPolicy(iso);
-            int warningsCountPolicy = ir.getNWarningsPolicy(iso);
-            row = StringUtils.replace(row, "##ERR_P##", "" + errorsCountPolicy);
-            row = StringUtils.replace(row, "##WAR_P##", "" + warningsCountPolicy);
-            row = StringUtils.replace(row, "##ERR_CLASS_P##", errorsCountPolicy > 0 ? "error" : (errorsCount > 0 ? "success" : "info"));
-            row = StringUtils.replace(row, "##WAR_CLASS_P##", warningsCountPolicy > 0 ? "warning" : (warningsCount > 0 ? "success" : "info"));
-          }
-        }
-        rows += row;
+    if (!ir.isQuick()){
+      int modeTh = 1;
+      String thTmpl = "<tr><td></td><td>Errors</td><td>Warnings</td></tr>";
+      String rowTmpl = "<tr>\n" +
+          "    <td>##TITLE##</td>\n" +
+          "    <td class=\"##ERR_CLASS##\">##ERR##</td>\n" +
+          "    <td class=\"##WAR_CLASS##\">##WAR##</td>\n" +
+          "    </tr>";
+      if (ir.getModifiedIsos().keySet().size() > 0) {
+        thTmpl = "<tr><td></td><td>Standard</td><td>Policy</td></tr>";
+        rowTmpl = "<tr>\n" +
+            "\t\t\t\t\t\t        <td>##TITLE##</td>\n" +
+            "\t\t\t\t\t\t        <td>" +
+            "\t\t\t\t\t\t\t        <p><span class=\"##ERR_CLASS##\">##ERR## errors</span></p>" +
+            "\t\t\t\t\t\t\t        <p><span class=\"##WAR_CLASS##\">##WAR## warnings</span></p>" +
+            "\t\t\t\t\t\t        </td>\n" +
+            "\t\t\t\t\t\t        <td>" +
+            "\t\t\t\t\t\t\t        <p><span class=\"##ERR_CLASS_P##\">##ERR_P## errors</span></p>" +
+            "\t\t\t\t\t\t\t        <p><span class=\"##WAR_CLASS_P##\">##WAR_P## warnings</span></p>" +
+            "\t\t\t\t\t\t        </td>\n" +
+            "\t\t\t\t\t\t    </tr>";
+        modeTh = 2;
       }
-    }
-    htmlBody = StringUtils.replace(htmlBody, "##TABLE_RESUME_ERRORS##", thTmpl + rows);
+      String rows = "";
+      for (String iso : ir.getCheckedIsos()) {
+        if (ir.hasValidation(iso)) {
+          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+          String row = rowTmpl;
+          int errorsCount = ir.getNErrors(iso);
+          int warningsCount = ir.getNWarnings(iso);
+          row = StringUtils.replace(row, "##TITLE##", name);
+          String difErr = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNErrors(iso), ir.getNErrors(iso)) : "";
+          String difWar = ir.getCompareReport() != null ? getDif(ir.getCompareReport().getNWarnings(iso), ir.getNWarnings(iso)) : "";
+          row = StringUtils.replace(row, "##ERR##", "" + errorsCount + difErr);
+          row = StringUtils.replace(row, "##WAR##", "" + warningsCount + difWar);
+          row = StringUtils.replace(row, "##ERR_CLASS##", errorsCount > 0 ? "error" : "info");
+          row = StringUtils.replace(row, "##WAR_CLASS##", warningsCount > 0 ? "warning" : "info");
+          if (modeTh == 2) {
+            if (!ir.hasModifiedIso(iso)) {
+              // Empty
+              row = StringUtils.replace(row, "##ERR_CLASS_P##", "hide");
+              row = StringUtils.replace(row, "##WAR_CLASS_P##", "hide");
+            } else {
+              int errorsCountPolicy = ir.getNErrorsPolicy(iso);
+              int warningsCountPolicy = ir.getNWarningsPolicy(iso);
+              row = StringUtils.replace(row, "##ERR_P##", "" + errorsCountPolicy);
+              row = StringUtils.replace(row, "##WAR_P##", "" + warningsCountPolicy);
+              row = StringUtils.replace(row, "##ERR_CLASS_P##", errorsCountPolicy > 0 ? "error" : (errorsCount > 0 ? "success" : "info"));
+              row = StringUtils.replace(row, "##WAR_CLASS_P##", warningsCountPolicy > 0 ? "warning" : (warningsCount > 0 ? "success" : "info"));
+            }
+          }
+          rows += row;
+        }
+      }
+      htmlBody = StringUtils.replace(htmlBody, "##TABLE_RESUME_ERRORS##", thTmpl + rows);
 
-    /**
-     * Errors / Warnings resume
-     */
-    String fullTmpl = "<div class=\"row bot20 fullw\">\n" +
-        "\t\t\t\t##CHECK##\n" +
-        "\t\t\t\t<div>\n" +
-        "\t\t\t\t\t<h5 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
-        "\t\t\t\t\t##CONTENT##\n" +
-        "\t\t\t\t</div>\n" +
-        "\t\t\t</div>";
-    String checkInfos = "<div class=\"clexpert\"><input type=\"checkbox\" id=\"checkInfo##COUNT##\" onchange=\"onChangeInfo(##COUNT##)\"><label for=\"checkInfo##COUNT##\"><span></span> Show infos</label></div>";
-    String errorsTmpl = "<table class=\"CustomTable3 left15\">\n" +
-        "\t\t\t\t        <tr>\n" +
-        "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'>Type</th>\n" +
-        "\t\t\t\t            <th class=\"bold\" style='width: 120px;'>ID</th>\n" +
-        "\t\t\t\t            <th class=\"bold\" style='width: 80px;'>Location</th>\n" +
-        "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
-        "\t\t\t\t        </tr>\n" +
-        "\t\t\t\t        ##ROWS##\n" +
-        "\t\t\t\t\t</table>";
-    String tdTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
-    rows = "";
-    int count = 0;
-    for (String iso : ir.getCheckedIsos()) {
-      if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
-        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
-        String row = fullTmpl, icon;
+      /**
+       * Errors / Warnings resume
+       */
+      String fullTmpl = "<div class=\"row bot20 fullw\">\n" +
+          "\t\t\t\t##CHECK##\n" +
+          "\t\t\t\t<div>\n" +
+          "\t\t\t\t\t<h5 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
+          "\t\t\t\t\t##CONTENT##\n" +
+          "\t\t\t\t</div>\n" +
+          "\t\t\t</div>";
+      String checkInfos = "<div class=\"clexpert\"><input type=\"checkbox\" id=\"checkInfo##COUNT##\" onchange=\"onChangeInfo(##COUNT##)\"><label for=\"checkInfo##COUNT##\"><span></span> Show infos</label></div>";
+      String errorsTmpl = "<table class=\"CustomTable3 left15\">\n" +
+          "\t\t\t\t        <tr>\n" +
+          "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'>Type</th>\n" +
+          "\t\t\t\t            <th class=\"bold\" style='width: 120px;'>ID</th>\n" +
+          "\t\t\t\t            <th class=\"bold\" style='width: 80px;'>Location</th>\n" +
+          "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
+          "\t\t\t\t        </tr>\n" +
+          "\t\t\t\t        ##ROWS##\n" +
+          "\t\t\t\t\t</table>";
+      String tdTmpl = "<tr ##CLASS## ##DISPLAY## ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
+      rows = "";
+      int count = 0;
+      for (String iso : ir.getCheckedIsos()) {
+        if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+          String row = fullTmpl, icon;
+          int errorsCount = ir.getNErrors(iso);
+          int warningsCount = ir.getNWarnings(iso);
+          int infosCount = ir.getNInfos(iso);
+          int addedRows = 0, addedInfos = 0;
+          if (errorsCount > 0) {
+            icon = "fa-times-circle";
+          } else if (warningsCount > 0) {
+            icon = "fa-exclamation-circle";
+          } else {
+            icon = "fa-check-circle";
+          }
+          String content = "";
+          if (errorsCount + warningsCount + infosCount > 0) {
+            content += errorsTmpl;
+            String allRows = "";
+            // Errors, Warnings and Infos
+            for (RuleResult val : ir.getKORuleResults(iso)) {
+              String tdRow = tdTmpl, display = "", clasz = "", location = "";
+              if (val.getRule().isError() || val.getRule().isCritical()) {
+                tdRow = tdRow.replace("##FA_CLASS##", "times");
+              } else if (val.getRule().isWarning()) {
+                tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
+              } else if (val.getRule().isInfo()) {
+                tdRow = tdRow.replace("##FA_CLASS##", "info");
+                display = "style='display: none;'";
+                clasz = "class='info##COUNT##'";
+                addedInfos++;
+              }
+              tdRow = tdRow.replace("##ID##", val.getRule() != null ? val.getRule().getId() : "");
+              tdRow = tdRow.replace("##LOC##", val.getLocation());
+              tdRow = tdRow.replace("##DESC##", val.getDescription());
+              tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
+              tdRow = tdRow.replace("##DISPLAY##", display);
+              tdRow = tdRow.replace("##CLASS##", clasz);
+              addedRows++;
+              allRows += tdRow;
+            }
+            content = StringUtils.replace(content, "##ROWS##", allRows);
+          }
+          if (addedRows == 0) {
+            content = "";
+          }
+          if (addedInfos == 0) {
+            row = StringUtils.replace(row, "##CHECK##", "");
+          }
+          row = StringUtils.replace(row, "##CHECK##", checkInfos);
+          row = StringUtils.replace(row, "##CONTENT##", content);
+          row = StringUtils.replace(row, "##COUNT##", (++count) + "");
+          row = StringUtils.replace(row, "##TITLE##", name);
+          row = StringUtils.replace(row, "##ICON##", icon);
+          rows += row;
+        }
+      }
+      htmlBody = StringUtils.replace(htmlBody, "##DIVS_CONFORMANCE##", rows);
+
+      /**
+       * Policy checker custom rules
+       */
+      String fullTmplPC = "<div class=\"row bot20 fullw\">\n" +
+          "\t\t\t\t<div>\n" +
+          "\t\t\t\t\t<h5 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
+          "\t\t\t\t\t##CONTENT##\n" +
+          "\t\t\t\t</div>\n" +
+          "\t\t\t</div>";
+      String policyTmpl = "<table class=\"CustomTable3 left15\">\n" +
+          "\t\t\t\t        <tr>\n" +
+          "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'>Type</th>\n" +
+          "\t\t\t\t            <th class=\"bold\">Rule</th>\n" +
+          "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
+          "\t\t\t\t        </tr>\n" +
+          "\t\t\t\t        ##ROWS##\n" +
+          "\t\t\t\t\t</table>";
+      String pcTmpl = "<tr ##CLASS## ##DISPLAY##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##RULE##</td><td>##DESC##</td></tr>";
+      rows = "";
+      if (ir.hasValidation(TiffConformanceChecker.POLICY_ISO)) {
+        String name = TiffConformanceChecker.POLICY_ISO_NAME;
+        String row = fullTmplPC, icon, content = "", tdRow, location;
+        String iso = TiffConformanceChecker.POLICY_ISO;
         int errorsCount = ir.getNErrors(iso);
         int warningsCount = ir.getNWarnings(iso);
         int infosCount = ir.getNInfos(iso);
-        int addedRows = 0, addedInfos = 0;
-        if (errorsCount > 0) {
-          icon = "fa-times-circle";
-        } else if (warningsCount > 0) {
-          icon = "fa-exclamation-circle";
-        } else {
-          icon = "fa-check-circle";
-        }
-        String content = "";
-        if (errorsCount + warningsCount + infosCount > 0) {
-          content += errorsTmpl;
-          String allRows = "";
-          // Errors, Warnings and Infos
-          for (RuleResult val : ir.getKORuleResults(iso)) {
-            String tdRow = tdTmpl, display = "", clasz = "", location = "";
-            if (val.getRule().isError() || val.getRule().isCritical()) {
-              tdRow = tdRow.replace("##FA_CLASS##", "times");
-            } else if (val.getRule().isWarning()) {
-              tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
-            } else if (val.getRule().isInfo()) {
-              tdRow = tdRow.replace("##FA_CLASS##", "info");
-              display = "style='display: none;'";
-              clasz = "class='info##COUNT##'";
-              addedInfos++;
-            }
-            tdRow = tdRow.replace("##ID##", val.getRule() != null ? val.getRule().getId() : "");
-            tdRow = tdRow.replace("##LOC##", val.getLocation());
-            tdRow = tdRow.replace("##DESC##", val.getDescription());
-            tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
-            tdRow = tdRow.replace("##DISPLAY##", display);
-            tdRow = tdRow.replace("##CLASS##", clasz);
-            addedRows++;
-            allRows += tdRow;
-          }
-          content = StringUtils.replace(content, "##ROWS##", allRows);
-        }
-        if (addedRows == 0) {
-          content = "";
-        }
-        if (addedInfos == 0) {
-          row = StringUtils.replace(row, "##CHECK##", "");
-        }
-        row = StringUtils.replace(row, "##CHECK##", checkInfos);
-        row = StringUtils.replace(row, "##CONTENT##", content);
-        row = StringUtils.replace(row, "##COUNT##", (++count) + "");
-        row = StringUtils.replace(row, "##TITLE##", name);
-        row = StringUtils.replace(row, "##ICON##", icon);
-        rows += row;
-      }
-    }
-    htmlBody = StringUtils.replace(htmlBody, "##DIVS_CONFORMANCE##", rows);
-
-    /**
-     * Policy checker custom rules
-     */
-    String fullTmplPC = "<div class=\"row bot20 fullw\">\n" +
-        "\t\t\t\t<div>\n" +
-        "\t\t\t\t\t<h5 class=\"bold left15\"><i class=\"fa ##ICON##\"></i>  ##TITLE##</h4>\n" +
-        "\t\t\t\t\t##CONTENT##\n" +
-        "\t\t\t\t</div>\n" +
-        "\t\t\t</div>";
-    String policyTmpl = "<table class=\"CustomTable3 left15\">\n" +
-        "\t\t\t\t        <tr>\n" +
-        "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'>Type</th>\n" +
-        "\t\t\t\t            <th class=\"bold\">Rule</th>\n" +
-        "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
-        "\t\t\t\t        </tr>\n" +
-        "\t\t\t\t        ##ROWS##\n" +
-        "\t\t\t\t\t</table>";
-    String pcTmpl = "<tr ##CLASS## ##DISPLAY##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-##FA_CLASS##-circle iconStyle\"/><td>##RULE##</td><td>##DESC##</td></tr>";
-    rows = "";
-    if (ir.hasValidation(TiffConformanceChecker.POLICY_ISO)) {
-      String name = TiffConformanceChecker.POLICY_ISO_NAME;
-      String row = fullTmplPC, icon, content = "", tdRow, location;
-      String iso = TiffConformanceChecker.POLICY_ISO;
-      int errorsCount = ir.getNErrors(iso);
-      int warningsCount = ir.getNWarnings(iso);
-      int infosCount = ir.getNInfos(iso);
-      if (errorsCount > 0) {
-        icon = "fa-times-circle";
-      } else if (warningsCount > 0) {
-        icon = "fa-exclamation-circle";
-      } else {
-        icon = "fa-check-circle";
-      }
-      int addedRows = 0;
-      content += policyTmpl;
-      if (errorsCount + warningsCount + infosCount > 0) {
-        String allRows = "";
-        // Errors, Warnings and Infos
-        for (RuleResult val : ir.getKORuleResults(iso)) {
-          // Policy value
-          tdRow = pcTmpl;
-          if (!val.ok() && !val.getWarning()) {
-            tdRow = tdRow.replace("##FA_CLASS##", "times");
-          } else if (!val.ok()) {
-            tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
-          }
-          tdRow = tdRow.replace("##RULE##", val.getRule().getDescription().getValue());
-          tdRow = tdRow.replace("##DESC##", val.getDescription());
-          addedRows++;
-          allRows += tdRow;
-        }
-        content = StringUtils.replace(content, "##ROWS##", allRows);
-      }
-      if (addedRows == 0) {
-        content = "";
-      }
-      row = StringUtils.replace(row, "##CONTENT##", content);
-      row = StringUtils.replace(row, "##TITLE##", name);
-      row = StringUtils.replace(row, "##ICON##", icon);
-      rows += row;
-    }
-
-    /**
-     * Policy checker custom ISO
-     */
-    String errorsTmplPC = "<table class=\"CustomTable3 left15\">\n" +
-        "\t\t\t\t        <tr>\n" +
-        "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'></th>\n" +
-        "\t\t\t\t            <th class=\"bold\" style='width: 120px;'>ID</th>\n" +
-        "\t\t\t\t            <th class=\"bold\" style='width: 80px;'>Location</th>\n" +
-        "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
-        "\t\t\t\t        </tr>\n" +
-        "\t\t\t\t        ##ROWS##\n" +
-        "\t\t\t\t\t</table>";
-    String tdTmplPC = "<tr ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-minus-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
-    for (String iso : ir.getModifiedIsos().keySet()) {
-      if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
-        String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
-        String row = fullTmplPC, icon, content = "", tdRow, location;
-        int errorsCount = ir.getNErrorsPolicy(iso);
-        int warningsCount = ir.getNWarningsPolicy(iso);
-        int infosCount = ir.getNInfosPolicy(iso);
         if (errorsCount > 0) {
           icon = "fa-times-circle";
         } else if (warningsCount > 0) {
@@ -365,19 +290,20 @@ public class HtmlReport extends Report {
           icon = "fa-check-circle";
         }
         int addedRows = 0;
-        content += errorsTmplPC;
+        content += policyTmpl;
         if (errorsCount + warningsCount + infosCount > 0) {
           String allRows = "";
           // Errors, Warnings and Infos
           for (RuleResult val : ir.getKORuleResults(iso)) {
-            // Skip not invalidated rules
-            if (!ir.getModifiedIsos().get(iso).contains(val.getRule().getId())) continue;
-            tdRow = tdTmplPC;
-            location = val.getLocation();
-            tdRow = tdRow.replace("##ID##", val.getRule() != null ? val.getRule().getId() : "");
-            tdRow = tdRow.replace("##LOC##", location);
+            // Policy value
+            tdRow = pcTmpl;
+            if (!val.ok() && !val.getWarning()) {
+              tdRow = tdRow.replace("##FA_CLASS##", "times");
+            } else if (!val.ok()) {
+              tdRow = tdRow.replace("##FA_CLASS##", "exclamation");
+            }
+            tdRow = tdRow.replace("##RULE##", val.getRule().getDescription().getValue());
             tdRow = tdRow.replace("##DESC##", val.getDescription());
-            tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
             addedRows++;
             allRows += tdRow;
           }
@@ -391,18 +317,80 @@ public class HtmlReport extends Report {
         row = StringUtils.replace(row, "##ICON##", icon);
         rows += row;
       }
-    }
 
+      /**
+       * Policy checker custom ISO
+       */
+      String errorsTmplPC = "<table class=\"CustomTable3 left15\">\n" +
+          "\t\t\t\t        <tr>\n" +
+          "\t\t\t\t            <th class=\"bold tcenter\" style='width: 50px;'></th>\n" +
+          "\t\t\t\t            <th class=\"bold\" style='width: 120px;'>ID</th>\n" +
+          "\t\t\t\t            <th class=\"bold\" style='width: 80px;'>Location</th>\n" +
+          "\t\t\t\t            <th class=\"bold\">Description</th>\n" +
+          "\t\t\t\t        </tr>\n" +
+          "\t\t\t\t        ##ROWS##\n" +
+          "\t\t\t\t\t</table>";
+      String tdTmplPC = "<tr ##POPOVER##><td class=\"bold tcenter\"><i style=\"font-size: 18px;\" class=\"fa fa-minus-circle iconStyle\"/></td><td>##ID##</td><td>##LOC##</td><td>##DESC##</td></tr>";
+      for (String iso : ir.getModifiedIsos().keySet()) {
+        if (ir.hasValidation(iso) && !iso.equals(TiffConformanceChecker.POLICY_ISO)) {
+          String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
+          String row = fullTmplPC, icon, content = "", tdRow, location;
+          int errorsCount = ir.getNErrorsPolicy(iso);
+          int warningsCount = ir.getNWarningsPolicy(iso);
+          int infosCount = ir.getNInfosPolicy(iso);
+          if (errorsCount > 0) {
+            icon = "fa-times-circle";
+          } else if (warningsCount > 0) {
+            icon = "fa-exclamation-circle";
+          } else {
+            icon = "fa-check-circle";
+          }
+          int addedRows = 0;
+          content += errorsTmplPC;
+          if (errorsCount + warningsCount + infosCount > 0) {
+            String allRows = "";
+            // Errors, Warnings and Infos
+            for (RuleResult val : ir.getKORuleResults(iso)) {
+              // Skip not invalidated rules
+              if (!ir.getModifiedIsos().get(iso).contains(val.getRule().getId())) continue;
+              tdRow = tdTmplPC;
+              location = val.getLocation();
+              tdRow = tdRow.replace("##ID##", val.getRule() != null ? val.getRule().getId() : "");
+              tdRow = tdRow.replace("##LOC##", location);
+              tdRow = tdRow.replace("##DESC##", val.getDescription());
+              tdRow = tdRow.replace("##POPOVER##", makePopoverAttributes(val));
+              addedRows++;
+              allRows += tdRow;
+            }
+            content = StringUtils.replace(content, "##ROWS##", allRows);
+          }
+          if (addedRows == 0) {
+            content = "";
+          }
+          row = StringUtils.replace(row, "##CONTENT##", content);
+          row = StringUtils.replace(row, "##TITLE##", name);
+          row = StringUtils.replace(row, "##ICON##", icon);
+          rows += row;
+        }
+      }
 
-    /**
-     * Show / Hide all Policy Block
-     */
-    String displayPolicy = "none";
-    if (!rows.equals("")) {
-      displayPolicy = "block";
+      /**
+       * Show / Hide all Conformance & Policy Block
+       */
+      String displayPolicy = "none";
+      if (!rows.equals("")) {
+        displayPolicy = "block";
+      }
+      htmlBody = StringUtils.replace(htmlBody, "##SHOW_POLICY##", displayPolicy);
+      htmlBody = StringUtils.replace(htmlBody, "##SHOW_CONFORMANCE##", "block");
+      htmlBody = StringUtils.replace(htmlBody, "##DIVS_POLICY##", rows);
+    } else {
+      /**
+       * Hide all Conformance & Policy Block
+       */
+      htmlBody = StringUtils.replace(htmlBody, "##SHOW_POLICY##", "none");
+      htmlBody = StringUtils.replace(htmlBody, "##SHOW_CONFORMANCE##", "none");
     }
-    htmlBody = StringUtils.replace(htmlBody, "##SHOW_POLICY##", displayPolicy);
-    htmlBody = StringUtils.replace(htmlBody, "##DIVS_POLICY##", rows);
 
     /**
      * Tags divs
@@ -472,47 +460,24 @@ public class HtmlReport extends Report {
     ul += "</ul>";
     htmlBody = StringUtils.replace(htmlBody, "##UL##", ul);
 
-    /**
-     * Metadata incoherencies
-     */
-    IFD tdifd = td.getFirstIFD();
-    int nifd = 1;
-    rows = "";
-    while (tdifd != null) {
-      XMP xmp = null;
-      IPTC iptc = null;
-      if (tdifd.containsTagId(TiffTags.getTagId("XMP"))) {
-        try {
-          xmp = (XMP) tdifd.getTag("XMP").getReadValue().get(0);
-        } catch (Exception ex) {
-          xmp = null;
-        }
+    if (!ir.isQuick()) {
+      /**
+       * Metadata incoherencies
+       */
+      int nifd = 1;
+      String rows = "";
+      while (ir.getAuthorTag().containsKey(nifd) || ir.getAuthorIptc().containsKey(nifd) || ir.getAuthorXmp().containsKey(nifd)) {
+        rows += detectIncoherency(ir.getAuthorTag().get(nifd), ir.getAuthorIptc().get(nifd), ir.getAuthorXmp().get(nifd), "Author", nifd);
+        nifd++;
       }
-      if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) {
-        try {
-          iptc = (IPTC) tdifd.getTag("IPTC").getReadValue().get(0);
-        } catch (Exception ex) {
-          iptc = null;
-        }
+      if (rows.isEmpty()) {
+        rows = "<tr><td class='tcenter'><i style='font-size: 18px;' class=\"fa fa-check-circle\"></i></td><td>No metadata incoherencies found</td></tr>";
       }
-
-      // Author
-      String authorTag = null;
-      if (tdifd.containsTagId(TiffTags.getTagId("Artist")))
-        authorTag = tdifd.getTag("Artist").toString();
-      String authorIptc = null;
-      if (iptc != null) authorIptc = iptc.getCreator();
-      String authorXmp = null;
-      if (xmp != null) authorXmp = xmp.getCreator();
-      rows += detectIncoherency(authorTag, authorIptc, authorXmp, "Author", nifd);
-
-      tdifd = tdifd.getNextIFD();
-      nifd++;
+      htmlBody = StringUtils.replace(htmlBody, "##SHOW_METADATA##", "block");
+      htmlBody = StringUtils.replace(htmlBody, "##META_ROWS##", rows);
+    } else {
+      htmlBody = StringUtils.replace(htmlBody, "##SHOW_METADATA##", "none");
     }
-    if (rows.isEmpty()) {
-      rows = "<tr><td class='tcenter'><i style='font-size: 18px;' class=\"fa fa-check-circle\"></i></td><td>No metadata incoherencies found</td></tr>";
-    }
-    htmlBody = StringUtils.replace(htmlBody, "##META_ROWS##", rows);
 
     /**
      * Finish, write to html file
@@ -523,6 +488,7 @@ public class HtmlReport extends Report {
 
   private String generateTagsDivs(IndividualReport ir) {
     Map<String, Boolean> hasExpert = new HashMap<>();
+    Map<String, Boolean> hasDefault = new HashMap<>();
     Map<String, String> tagsMap = new HashMap<>();
     Map<String, String> templates = new HashMap<>();
     String row;
@@ -530,12 +496,12 @@ public class HtmlReport extends Report {
     /**
      * Parse TAGs
      */
-    for (ReportTag tag : ir.getTags()) {
-      if (tag.tv.getId() == 700) {
+    for (ReportTag tag : ir.getTags(false, true)) {
+      if (tag.tv.getId() == 700 && !tag.isDefault) {
         String mapId = "xmp" + tag.index;
         String mapIdH = "xmp" + tag.index + "h";
         // XMP
-        for (abstractTiffType to : tag.tv.getReadValue()) {
+        for (abstractTiffType to : tag.tv.getValue()) {
           XMP xmp = (XMP) to;
           try {
             Metadata metadata = xmp.createMetadata();
@@ -567,15 +533,15 @@ public class HtmlReport extends Report {
         }
         continue;
       }
-      if (tag.tv.getId() == 34665) {
+      if (tag.tv.getId() == 34665 && !tag.isDefault) {
         // EXIF
         String mapId = "exi" + tag.index;
         try {
-          abstractTiffType obj = tag.tv.getReadValue().get(0);
+          abstractTiffType obj = tag.tv.getValue().get(0);
           if (obj instanceof IFD) {
             IFD exif = (IFD) obj;
             for (TagValue tv : exif.getTags().getTags()) {
-              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>" + tv.getId() + "</td><td>" + (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getReadValue().get(0) + "</td></tr>";
+              row = "<tr class='exi" + tag.index + "'><td>##ICON##</td><td class='tcenter'>" + tv.getId() + "</td><td>" + (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()) + "</td><td>" + tv.getFirstTextReadValue() + "</td></tr>";
               row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
               String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
               tagsMap.put(mapId, rows + row);
@@ -587,10 +553,11 @@ public class HtmlReport extends Report {
         }
         continue;
       }
-      if (tag.tv.getId() == 330) {
+      if (tag.tv.getId() == 330 && !tag.isDefault) {
         // Sub IFD
         String mapId = "sub" + tag.index;
-        IFD sub = (IFD) tag.tv.getReadValue().get(0);
+        if (tag.tv.getValue().size() == 0) continue;
+        IFD sub = (IFD) tag.tv.getValue().get(0);
         for (TagValue tv : sub.getTags().getTags()) {
           String expert = "";
           if (!ir.showTag(tv)) {
@@ -607,10 +574,10 @@ public class HtmlReport extends Report {
         }
         continue;
       }
-      if (tag.tv.getId() == 33723) {
+      if (tag.tv.getId() == 33723 && !tag.isDefault) {
         String mapId = "ipt" + tag.index;
         // IPTC
-        for (abstractTiffType to : tag.tv.getReadValue()) {
+        for (abstractTiffType to : tag.tv.getValue()) {
           try {
             IPTC iptc = (IPTC) to;
             Metadata metadata = iptc.createMetadata();
@@ -633,14 +600,21 @@ public class HtmlReport extends Report {
         expert = " expert";
         hasExpert.put(mapId, true);
       }
-      row = "<tr class='ifd" + tag.index + " " + expert + "'><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
+      String defaultVisible = "";
+      if (tag.isDefault){
+        defaultVisible = " default-value";
+        hasDefault.put(mapId, true);
+      }
+      row = "<tr class='ifd" + tag.index + expert + defaultVisible + " '><td>##ICON##</td><td class='tcenter'>##ID##</td><td>##KEY##</td><td>##VALUE##</td></tr>";
       String sDif = "";
       if (tag.dif < 0) sDif = "<i class=\"fa fa-times\"></i>";
-      else if (tag.dif > 0) sDif = "<i class=\"fa fa-plus\"></i>";
+      else if (tag.dif > 0) {
+        sDif = "<i class=\"fa fa-plus\"></i>";
+      }
       row = row.replace("##ICON##", "<i class=\"image-default icon-" + tag.tv.getName().toLowerCase() + "\"></i>");
       row = row.replace("##ID##", tag.tv.getId() + sDif);
       row = row.replace("##KEY##", (tag.tv.getName().equals(tag.tv.getId()) ? "Private tag" : tag.tv.getName()));
-      String val = tag.tv.getFirstTextReadValue();
+      String val = (tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue();
       if (val.length() > 200)
         val = val.substring(0, 200) + "...";
       row = row.replace("##VALUE##", val);
@@ -652,9 +626,13 @@ public class HtmlReport extends Report {
      * Generate divs
      */
     String finalResult = "";
-    String expertTmpl = "<div class=\"clexpert\"><input type=\"checkbox\" id=\"checkSelected##INDEX##\" onchange=\"expertChanged('##INDEX##')\"><label for=\"checkSelected##INDEX##\"><span></span> Expert mode</label></div>";
+    String expertCheckTmpl = "<input type=\"checkbox\" id=\"checkSelected##INDEX##\" onchange=\"filterChanged('##INDEX##')\">" +
+          "<label for=\"checkSelected##INDEX##\"><span></span> Expert mode</label>";
+    String defaultCheckTmpl = "<input type=\"checkbox\" id=\"defaultSelected##INDEX##\" onchange=\"filterChanged('##INDEX##')\">" +
+        "<label for=\"defaultSelected##INDEX##\" style=\"margin-left: 10px;\"><span></span> Default values</label>";
+    String checkBoxTmpl = "<div class=\"clexpert\">##CHECK_EXPERT####CHECK_DEFAULT##</div>";
     String genTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##EXPERT##\n" +
+        "\t\t\t\t\t##CHECKBOXS##\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  ##TITLE##</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -670,7 +648,7 @@ public class HtmlReport extends Report {
     String ifdTmpl = StringUtils.replace(genTmpl, "##TITLE##", "IFD Tags");
     String exifTmpl = StringUtils.replace(genTmpl, "##TITLE##", "EXIF");
     String iptcTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##EXPERT##\n" +
+        "\t\t\t\t\t##CHECKBOXS##\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  IPTC</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -681,7 +659,7 @@ public class HtmlReport extends Report {
         "\t\t\t\t\t</table>\n" +
         "\t\t\t\t</div>";
     String xmpTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##EXPERT##\n" +
+        "\t\t\t\t\t##CHECKBOXS##\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  XMP</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -714,11 +692,16 @@ public class HtmlReport extends Report {
     for (String key : tagsMap.keySet()) {
       if (key.endsWith("h")) continue;
       String type = key.substring(0, 3);
-      String display = "none;", expert = "";
+      String display = "none;", checkBoxs = "";
       if (key.equals("ifd0")) display = "block;";
-      if (hasExpert.containsKey(key)) expert = expertTmpl;
+      String expert = (hasExpert.containsKey(key)) ? expertCheckTmpl : "";
+      String defaultCheck = (hasDefault.containsKey(key)) ? defaultCheckTmpl : "";
+      if (expert.length() > 0 || defaultCheck.length() > 0) {
+        checkBoxs = StringUtils.replace(checkBoxTmpl, "##CHECK_EXPERT##", expert);
+        checkBoxs = StringUtils.replace(checkBoxs, "##CHECK_DEFAULT##", defaultCheck);
+      }
       String tmpl = templates.get(type);
-      tmpl = StringUtils.replace(tmpl, "##EXPERT##", expert);
+      tmpl = StringUtils.replace(tmpl, "##CHECKBOXS##", checkBoxs);
       tmpl = StringUtils.replace(tmpl, "##INDEX##", key);
       tmpl = StringUtils.replace(tmpl, "##DISPLAY##", display);
       if (key.startsWith("ipt")) {

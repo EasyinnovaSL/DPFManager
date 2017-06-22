@@ -19,18 +19,65 @@
 
 package dpfmanager.shell.core.messages;
 
+import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
+
 /**
  * Created by Adria Llorens on 04/03/2016.
  */
 public class ShowMessage extends DpfMessage {
 
+  public enum Type {
+    SHOW, GENERATE, UPDATE, INIT
+  }
+
+  private Type internalType;
   private String type;
   private String path;
+  private GlobalReport globalReport;
+  private int number;
+  private int value;
+  private MakeReportRunnable makeReportRunnable;
+  private Long uuid;
+  private String internal;
 
-
+  // Show
+  public ShowMessage(Long u, String t, String p) {
+    type = t;
+    uuid = u;
+    path = p;
+    internalType = Type.SHOW;
+  }
   public ShowMessage(String t, String p) {
     type = t;
+    uuid = null;
     path = p;
+    internalType = Type.SHOW;
+  }
+
+  // Generate
+  public ShowMessage(Long u, String t, GlobalReport gr, String i) {
+    type = t;
+    uuid = u;
+    internal = i;
+    globalReport = gr;
+    internalType = Type.GENERATE;
+  }
+
+  // Init
+  public ShowMessage(Long u, int m, int v, MakeReportRunnable mrr) {
+    uuid = u;
+    internalType = Type.INIT;
+    number = m;
+    value = v;
+    makeReportRunnable = mrr;
+  }
+
+  // Update
+  public ShowMessage(Long u, int m) {
+    uuid = u;
+    internalType = Type.UPDATE;
+    number = m;
   }
 
   public String getPath() {
@@ -41,4 +88,43 @@ public class ShowMessage extends DpfMessage {
     return type;
   }
 
+  public GlobalReport getGlobalReport() {
+    return globalReport;
+  }
+
+  public int getNumber() {
+    return number;
+  }
+
+  public int getValue() {
+    return value;
+  }
+
+  public MakeReportRunnable getMakeReportRunnable() {
+    return makeReportRunnable;
+  }
+
+  public boolean isGenerate() {
+    return internalType.equals(Type.GENERATE);
+  }
+
+  public boolean isShow() {
+    return internalType.equals(Type.SHOW);
+  }
+
+  public boolean isUpdate() {
+    return internalType.equals(Type.UPDATE);
+  }
+
+  public boolean isInit() {
+    return internalType.equals(Type.INIT);
+  }
+
+  public Long getUuid() {
+    return uuid;
+  }
+
+  public String getInternal() {
+    return internal;
+  }
 }

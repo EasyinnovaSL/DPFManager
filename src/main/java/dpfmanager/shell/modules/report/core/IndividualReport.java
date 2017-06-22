@@ -25,28 +25,28 @@ import dpfmanager.shell.modules.report.util.ReportHtml;
 
 import com.easyinnova.implementation_checker.ValidationResult;
 import com.easyinnova.implementation_checker.rules.RuleResult;
-
 import com.easyinnova.tiff.model.IfdTags;
-import com.easyinnova.tiff.model.Metadata;
+import com.easyinnova.tiff.model.Tag;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
+import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
+import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -114,15 +114,18 @@ public class IndividualReport extends ReportSerializable {
   private boolean containsData;
 
   /**
-   * Data precomputed for write
+   * Data precomputed for write external
    */
-  private transient PDDocument pdf;
-
   private transient String conformanceCheckerReport = null;
 
-  private transient String conformanceCheckerReportHtml = null;
+  private boolean precomputedOutput = false;
 
-  private transient String conformanceCheckerReportMets = null;
+  /**
+   * Author tag
+   */
+  private Map<Integer, String> authorTag = new HashMap<>();
+  private Map<Integer, String> authorIptc = new HashMap<>();
+  private Map<Integer, String> authorXmp = new HashMap<>();
 
   /**
    * Extra check information
@@ -135,9 +138,15 @@ public class IndividualReport extends ReportSerializable {
 
   private boolean error;
 
+  private boolean quick;
+
   private Map<String, ArrayList<String>> modifiedIsos;
 
   private String imagePath = null;
+
+  private int reportId;
+
+  private boolean isOriginal = true;
 
   /**
    * Error constructor
@@ -153,13 +162,23 @@ public class IndividualReport extends ReportSerializable {
    * @param path           the path
    * @param reportFilename the path
    */
-  public IndividualReport(String name, String path, String reportFilename) {
+  public IndividualReport(String name, String path, String reportFilename, boolean q, int id) {
     filename = name;
     filepath = path;
     this.reportFilename = reportFilename;
     containsData = false;
     errors = new HashMap<>();
     warnings = new HashMap<>();
+    quick = q;
+    reportId = id;
+  }
+
+  public boolean getIsOriginal() {
+    return isOriginal;
+  }
+
+  public void setisOriginal(boolean isOriginal) {
+    this.isOriginal = isOriginal;
   }
 
   public String getImagePath() {
@@ -177,7 +196,7 @@ public class IndividualReport extends ReportSerializable {
    * @param path      the path
    * @param tiffModel the TIFF model
    */
-  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, ArrayList<String>> modifiedIsosList) {
+  public IndividualReport(String name, String path, String rFilename, TiffDocument tiffModel, Map<String, ValidationResult> validators, Map<String, ArrayList<String>> modifiedIsosList, boolean q, int id) {
     filename = name;
     filepath = path;
     containsData = true;
@@ -186,7 +205,13 @@ public class IndividualReport extends ReportSerializable {
     warnings = new HashMap<>();
     passed = new HashMap<>();
     modifiedIsos = modifiedIsosList;
+    quick = q;
+    reportId = id;
     generate(tiffModel, validators);
+  }
+
+  public int getReportId() {
+    return reportId;
   }
 
   public boolean isError() {
@@ -237,26 +262,15 @@ public class IndividualReport extends ReportSerializable {
 
   public void setConformanceCheckerReport(String report) {
     conformanceCheckerReport = report;
+    precomputedOutput = true;
   }
 
-  public void setConformanceCheckerReportHtml(String report) {
-    conformanceCheckerReportHtml = report;
-  }
-
-  public void setConformanceCheckerReportMets(String report) {
-    conformanceCheckerReportMets = report;
+  public boolean hasPrecomputedOutput() {
+    return precomputedOutput;
   }
 
   public String getConformanceCheckerReport() {
     return conformanceCheckerReport;
-  }
-
-  public String getConformanceCheckerReportHtml() {
-    return conformanceCheckerReportHtml;
-  }
-
-  public String getConformanceCheckerReportMets() {
-    return conformanceCheckerReportMets;
   }
 
   public boolean containsData() {
@@ -347,32 +361,6 @@ public class IndividualReport extends ReportSerializable {
   }
 
   /**
-   * Sets pdf document.
-   *
-   * @param document the document
-   */
-  public void setPDFDocument(String document) {
-    this.document = document;
-  }
-
-  public void setPDF(PDDocument doc) {
-    this.pdf = doc;
-  }
-
-  public PDDocument getPDF() {
-    return pdf;
-  }
-
-  /**
-   * Gets pdf document.
-   *
-   * @return the pdf document
-   */
-  public String getPDFDocument() {
-    return document;
-  }
-
-  /**
    * Get file path.
    *
    * @return filepath file path
@@ -406,6 +394,42 @@ public class IndividualReport extends ReportSerializable {
         passed.put(key, validations.get(key).getPassed());
       }
     }
+
+    /**
+     * Metadata extra info
+     */
+    int nifd = 1;
+    IFD tdifd = getTiffModel().getFirstIFD();
+    while (tdifd != null) {
+      XMP xmp = null;
+      IPTC iptc = null;
+      if (tdifd.containsTagId(TiffTags.getTagId("XMP"))) {
+        try {
+          xmp = (XMP) tdifd.getTag("XMP").getReadValue().get(0);
+        } catch (Exception ex) {
+          xmp = null;
+        }
+      }
+      if (tdifd.containsTagId(TiffTags.getTagId("IPTC"))) {
+        try {
+          iptc = (IPTC) tdifd.getTag("IPTC").getReadValue().get(0);
+        } catch (Exception ex) {
+          iptc = null;
+        }
+      }
+
+      // Author
+      if (tdifd.containsTagId(TiffTags.getTagId("Artist"))) authorTag.put(nifd, tdifd.getTag("Artist").toString());
+      if (iptc != null) authorIptc.put(nifd, iptc.getCreator());
+      if (xmp != null) authorXmp.put(nifd, xmp.getCreator());
+      tdifd = tdifd.getNextIFD();
+      nifd++;
+    }
+
+    /**
+     * SmallMetadata
+     */
+
   }
 
   /**
@@ -665,8 +689,8 @@ public class IndividualReport extends ReportSerializable {
     return modifiedIsos.containsKey(iso);
   }
 
-  public ArrayList<ReportTag> getTags() {
-    return getTags(false);
+  public ArrayList<ReportTag> getTags(boolean subTags) {
+    return getTags(subTags, false);
   }
 
   /**
@@ -674,12 +698,13 @@ public class IndividualReport extends ReportSerializable {
    *
    * @return the tags
    */
-  public ArrayList<ReportTag> getTags(boolean subTags) {
-    ArrayList<ReportTag> list = new ArrayList<ReportTag>();
+  public ArrayList<ReportTag> getTags(boolean subTags, boolean defaultTags) {
+    ArrayList<ReportTag> list = new ArrayList<>();
+    List<Integer> currentTagsIds = new ArrayList<>();
     TiffDocument td = getTiffModel();
     IFD ifd = td.getFirstIFD();
     IFD ifdcomp = null;
-    if (getCompareReport() != null) {
+    if (getCompareReport() != null && !isOriginal) {
       ifdcomp = getCompareReport().getTiffModel().getFirstIFD();
     }
     td.getFirstIFD();
@@ -697,39 +722,71 @@ public class IndividualReport extends ReportSerializable {
             tag.dif = 1;
         }
         if (!showTag(tv)) tag.expert = true;
-        if (subTags) list.addAll(getSubTags(tag, index, isThumbnail));
+        if (subTags) list.addAll(getSubTags(tag, index, isThumbnail, defaultTags));
         list.add(tag);
+        currentTagsIds.add(tag.tv.getId());
       }
-      if (ifdcomp != null) {
-        boolean isThumbnailComp = ifdcomp.isThumbnail();
-        for (TagValue tv : ifdcomp.getMetadata().getTags()) {
-          if (!meta.containsTagId(tv.getId())) {
-            ReportTag tag = new ReportTag();
-            tag.index = index;
-            tag.tv = tv;
-            tag.thumbnail = isThumbnailComp;
-            tag.dif = -1;
-            if (!showTag(tv)) tag.expert = true;
-            if (subTags) list.addAll(getSubTags(tag, index, isThumbnailComp));
-            list.add(tag);
-          }
-        }
-      }
+
       ifd = ifd.getNextIFD();
       if (ifdcomp != null) ifdcomp = ifdcomp.getNextIFD();
+
+      // Get missing default tags values for each main IFD
+      if (defaultTags) {
+        TagValue tv = meta.get(262);
+        int intPhotometric = (tv != null) ? getPhotometricIntValue(tv) : -1;
+        List<ReportTag> defaultTagsList = getMissingDefaultTags(currentTagsIds, index, isThumbnail, intPhotometric);
+        list.addAll(defaultTagsList);
+      }
+
       index++;
     }
+
+    // Sort list by tag id
+    Collections.sort(list, new Comparator<ReportTag>() {
+      @Override
+      public int compare(ReportTag o1, ReportTag o2) {
+        Integer i1 = o1.index;
+        int comp = i1.compareTo(o2.index);
+        if (comp == 0){
+          Integer id1 = o1.tv.getId();
+          return id1.compareTo(o2.tv.getId());
+        }
+        return comp;
+      }
+    });
+
     return list;
   }
 
-  private ArrayList<ReportTag> getSubTags(ReportTag tag, int index, boolean isThumbnail){
+  private int getPhotometricIntValue(TagValue tv){
+    if (tv.getValue() != null){
+      if (tv.getValue().size() > 0) {
+        return tv.getValue().get(0).toInt();
+      }
+      return -1;
+    } else {
+      HashMap<String, String> map = TiffTags.getTag(262).getValues();
+      for (String key : map.keySet()){
+        String value = map.get(key);
+        if (value.equals(tv.getFirstTextReadValue())) {
+          return Integer.parseInt(key);
+        }
+      }
+      return -1;
+    }
+  }
+
+  private ArrayList<ReportTag> getSubTags(ReportTag tag, int index, boolean isThumbnail, boolean defaultTags){
     ArrayList<ReportTag> subTagsList = new ArrayList<>();
+    List<Integer> currentTagsIds = new ArrayList<>();
+    TagValue tvPhotometric = null;
     if (tag.tv.getId() == 34665) {
       // EXIF
       try {
         abstractTiffType obj = tag.tv.getReadValue().get(0);
         if (obj instanceof IFD) {
           IFD exif = (IFD) obj;
+          tvPhotometric = exif.getTags().get(262);
           for (TagValue tv : exif.getTags().getTags()) {
             ReportTag rTag = new ReportTag();
             rTag.index = index;
@@ -737,27 +794,86 @@ public class IndividualReport extends ReportSerializable {
             rTag.thumbnail = isThumbnail;
             if (!showTag(tv)) rTag.expert = true;
             subTagsList.add(rTag);
+            currentTagsIds.add(rTag.tv.getId());
           }
         }
       } catch (Exception ex) {
-        ex.toString();
         //ex.printStackTrace();
       }
     } else if (tag.tv.getId() == 330) {
       // Sub IFD
       IFD sub = (IFD) tag.tv.getReadValue().get(0);
-      boolean isThumbnailSub = sub.isThumbnail();
+      tvPhotometric = sub.getTags().get(262);
+      isThumbnail = sub.isThumbnail();
       for (TagValue tv : sub.getTags().getTags()) {
         ReportTag rTag = new ReportTag();
         rTag.index = index;
         rTag.tv = tv;
-        rTag.thumbnail = isThumbnailSub;
+        rTag.thumbnail = isThumbnail;
         if (!showTag(tv)) rTag.expert = true;
         subTagsList.add(rTag);
+        currentTagsIds.add(rTag.tv.getId());
       }
     }
+
+    // Get missing default tags values for each main IFD
+    if (defaultTags && tvPhotometric != null) {
+      int intPhotometric = getPhotometricIntValue(tvPhotometric);
+      List<ReportTag> defaultTagsList = getMissingDefaultTags(currentTagsIds, index, isThumbnail,intPhotometric);
+      subTagsList.addAll(defaultTagsList);
+    }
+
     return subTagsList;
   }
+
+  public static List<String> defaultTagsNames = Arrays.asList("BitsPerSample","Compression","DotRange","MaxSampleValue","MinSampleValue","NewSubfileType"
+      ,"Orientation","PlanarConfiguration","Predictor","ResolutionUnit","RowsPerStrip","SampleFormat"
+      ,"SamplesPerPixel","SMaxSampleValue","SMinSampleValue","Threshholding","TransferRange","WhiteLevel"
+      ,"YCbCrCoefficients","YCbCrSubSampling","YCbCrPositioning","GrayResponseUnit","InkSet","NumberOfInks","Indexed","ReferenceBlackWhite");
+
+  public List<ReportTag> getMissingDefaultTags(List<Integer> currentTagsIds, Integer index, Boolean isThumbnail, Integer photometric){
+    List<ReportTag> defaultTags = new ArrayList<>();
+    try{
+      TiffTags tiffTags = TiffTags.getTiffTags();
+      for (Integer key : tiffTags.tagMap.keySet()) {
+        if (currentTagsIds.contains(key)) continue;
+        Tag tag = tiffTags.tagMap.get(key);
+        if (!tag.getDefaultValue().isEmpty() && defaultTagsNames.contains(tag.getName())) {
+          if (tag.getName().equals("GrayResponseUnit") && photometric != 0 && photometric != 1) continue;
+          if ((tag.getName().equals("YCbCrCoefficients") || tag.getName().equals("YCbCrSubSampling") || tag.getName().equals("YCbCrPositioning")) && photometric != 6) continue;
+          if ((tag.getName().equals("InkSet") || tag.getName().equals("NumberOfInks")) && photometric != 5) continue;
+          if (tag.getName().equals("Indexed") && photometric != 3) continue;
+          if (tag.getName().equals("ReferenceBlackWhite") && photometric != 2 && photometric != 6) continue;
+          ReportTag rTag = new ReportTag();
+          rTag.index = index;
+          rTag.tv = new TagValue(tag.getId(), -1);
+          rTag.thumbnail = isThumbnail;
+          rTag.isDefault = true;
+          String desc = tag.getTextDescription(tag.getDefaultValue());
+          rTag.defaultValue = (desc == null) ? tag.getDefaultValue() : desc;
+          if (!showTag(tag.getName())) rTag.expert = true;
+          defaultTags.add(rTag);
+        }
+      }
+    } catch (Exception e) {
+      /* unable to read tiff tags */
+    }
+    return defaultTags;
+  }
+
+  public String getDescriptiveTextValue(Tag tag) {
+    if (tag.hasReadableDescription()){
+      String desc = tag.getDefaultValue();
+      String tagDescription = tag.getTextDescription(toString());
+      if (tagDescription != null){
+        desc = tagDescription;
+      }
+      return desc;
+    } else {
+      return tag.getDefaultValue();
+    }
+  }
+
 
   /**
    * Show Tag.
@@ -766,10 +882,14 @@ public class IndividualReport extends ReportSerializable {
    * @return true, if successful
    */
   public boolean showTag(TagValue tv) {
+    return showTag(tv.getName());
+  }
+
+  public boolean showTag(String name) {
     if (IndividualReport.showableTags == null) {
       IndividualReport.showableTags = readShowableTags();
     }
-    return IndividualReport.showableTags.contains(tv.getName());
+    return IndividualReport.showableTags.contains(name);
   }
 
   public static HashSet<String> showableTags = null;
@@ -825,5 +945,21 @@ public class IndividualReport extends ReportSerializable {
     } catch (Exception ex) {
     }
     return hs;
+  }
+
+  public boolean isQuick() {
+    return quick;
+  }
+
+  public Map<Integer, String> getAuthorTag() {
+    return authorTag;
+  }
+
+  public Map<Integer, String> getAuthorIptc() {
+    return authorIptc;
+  }
+
+  public Map<Integer, String> getAuthorXmp() {
+    return authorXmp;
   }
 }

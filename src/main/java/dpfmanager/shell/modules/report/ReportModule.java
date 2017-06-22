@@ -24,6 +24,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.GuiContext;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.report.core.ReportService;
+import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
 import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
 
@@ -55,6 +56,8 @@ public class ReportModule extends DpfModule {
       service.tractIndividualMessage(dpfMessage.getTypedMessage(IndividualReportMessage.class));
     } else if (dpfMessage.isTypeOf(GlobalReportMessage.class)) {
       service.tractGlobalMessage(dpfMessage.getTypedMessage(GlobalReportMessage.class));
+    } else if (dpfMessage.isTypeOf(GenerateMessage.class)) {
+      service.tractGenerateMessage(dpfMessage.getTypedMessage(GenerateMessage.class));
     }
   }
 

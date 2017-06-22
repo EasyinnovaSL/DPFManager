@@ -112,7 +112,7 @@ public class ThreadingService extends DpfService {
 
   @Override
   protected void handleContext(DpfContext context) {
-
+    initThreads();
   }
 
   private void initThreads(){
@@ -203,7 +203,6 @@ public class ThreadingService extends DpfService {
   }
 
   public void handleGlobalStatus(GlobalStatusMessage gm, boolean silence) {
-    initThreads();
     if (gm.isNew()) {
       // New file check
       Long uuid = gm.getUuid();
@@ -265,7 +264,7 @@ public class ThreadingService extends DpfService {
   public void finishIndividual(IndividualReport ir, Long uuid, Configuration config) {
     FileCheck fc = checks.get(uuid);
     if (fc != null) {
-      if (fc.getConfig() == null){
+      if (fc.getConfig() == null || fc.getConfig().isDefault()){
         fc.setConfig(config);
       }
       if (ir != null) {
@@ -323,35 +322,34 @@ public class ThreadingService extends DpfService {
   }
 
   private void removeInternalFolder(String internal) {
-    try {
-      File folder = new File(internal);
-      if (folder.exists() && folder.isDirectory()) {
-        FileUtils.deleteDirectory(folder);
-      }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excInternal"), e));
-    }
+    removeDirectory(new File(internal), 0);
   }
 
   private void removeServerFolder(Long uuid) {
-    try {
-      File folder = new File(DPFManagerProperties.getServerDir() + "/" + uuid);
-      if (folder.exists() && folder.isDirectory()) {
-        FileUtils.deleteDirectory(folder);
-      }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excServer"), e));
-    }
+    removeDirectory(new File(DPFManagerProperties.getServerDir() + "/" + uuid), 0);
   }
 
   private void removeReportFolderIfEmpty(String internal){
-    try {
-      File folder = new File(internal);
-      if (folder.exists() && folder.isDirectory() && folder.list().length == 0) {
-        FileUtils.deleteDirectory(folder);
+    File folder = new File(internal);
+    if (folder.exists() && folder.isDirectory() && folder.list().length == 0) {
+      removeDirectory(folder, 0);
+    }
+  }
+
+  private void removeDirectory(File directory, int count) {
+    int max_retrys = 5;
+    if (directory.exists() && directory.isDirectory()) {
+      try {
+        if (count < max_retrys) Thread.sleep(1000);
+        FileUtils.deleteDirectory(directory);
+      } catch (Exception e) {
+        if (count < max_retrys){ // Retry X times
+          count++;
+          removeDirectory(directory, count);
+        } else {
+          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excInternal"), e));
+        }
       }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excInternal"), e));
     }
   }
 
@@ -386,12 +384,16 @@ public class ThreadingService extends DpfService {
       }
       File file = new File(path);
       if (file.exists() && Desktop.isDesktopSupported()) {
-        try {
-          String fullPath = file.getAbsolutePath();
-          fullPath = fullPath.replaceAll("\\\\", "/");
-          Desktop.getDesktop().browse(new URI("file:///" + fullPath.replaceAll(" ", "%20")));
-        } catch (Exception e) {
-          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("browserError"), e));
+        if (Desktop.isDesktopSupported()) {
+          new Thread(() -> {
+            try {
+              String fullPath = file.getAbsolutePath();
+              fullPath = fullPath.replaceAll("\\\\", "/");
+              Desktop.getDesktop().browse(new URI("file:///" + fullPath.replaceAll(" ", "%20")));
+            } catch (Exception e) {
+              context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("browserError"), e));
+            }
+          }).start();
         }
       } else {
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("deskServError")));

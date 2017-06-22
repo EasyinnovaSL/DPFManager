@@ -85,26 +85,27 @@ public class TagFragment {
   /** the internal Histogram Tag object */
   private HistogramTag hTag;
 
-  public void init(HistogramTag h, Integer mainImages, Integer thumbnails) {
+  public void init(HistogramTag h, boolean withDefault, Integer mainImages, Integer thumbnails) {
     hTag = h;
-    Double mainPercentOne = (mainImages > 0) ? (1.0 * hTag.getMainCount()) / (1.0 * mainImages) : 0.0;
-    Double thumbPercentOne = (thumbnails > 0) ? (1.0 * hTag.getThumbCount()) / (1.0 * thumbnails) : 0.0;
+    Double mainPercentOne = (mainImages > 0) ? (1.0 * hTag.getMainCount(withDefault)) / (1.0 * mainImages) : 0.0;
+    Double thumbPercentOne = (thumbnails > 0) ? (1.0 * hTag.getThumbCount(withDefault)) / (1.0 * thumbnails) : 0.0;
 
     tagId.setText(String.valueOf(hTag.getValue().getId()));
     tagName.setText(hTag.getValue().getName());
+    mainPane.getStyleClass().add(hTag.getValue().getName());
 
-    tagMain.setText(String.valueOf(hTag.getMainCount()));
+    tagMain.setText(String.valueOf(hTag.getMainCount(withDefault)));
     tagMainPercent.setText(getPrettyPercent(mainPercentOne));
     progressMain.setProgress(mainPercentOne);
 
-    tagThumb.setText(String.valueOf(hTag.getThumbCount()));
+    tagThumb.setText(String.valueOf(hTag.getThumbCount(withDefault)));
     tagThumbPercent.setText(getPrettyPercent(thumbPercentOne));
     progressThumb.setProgress(thumbPercentOne);
   }
 
-  public void initChild(HistogramTag h, ValueTag valueTag){
-    Double mainPercentOne = (h.getMainCount() > 0) ? (1.0 * valueTag.main) / (1.0 * h.getMainCount()) : 0.0;
-    Double thumbPercentOne = (h.getThumbCount() > 0) ? (1.0 * valueTag.thumb) / (1.0 * h.getThumbCount()) : 0.0;
+  public void initChild(HistogramTag h, ValueTag valueTag, boolean withDefault){
+    Double mainPercentOne = (h.getMainCount(withDefault) > 0) ? (1.0 * valueTag.main) / (1.0 * h.getMainCount(withDefault)) : 0.0;
+    Double thumbPercentOne = (h.getThumbCount(withDefault) > 0) ? (1.0 * valueTag.thumb) / (1.0 * h.getThumbCount(withDefault)) : 0.0;
 
     tagId.setText("");
     tagName.setText(valueTag.value);
