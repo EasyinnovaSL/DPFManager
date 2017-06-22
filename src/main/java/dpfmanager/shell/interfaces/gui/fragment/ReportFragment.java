@@ -35,6 +35,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -160,6 +161,7 @@ public class ReportFragment {
       icon.setFitWidth(20);
       icon.setCursor(Cursor.HAND);
       icon.setImage(new Image("images/formats/" + i + ".png"));
+      Tooltip.install(icon, new Tooltip(i.toUpperCase()));
 
       String path = item.get(i);
       ShowMessage sMessage = null;

@@ -9,7 +9,9 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -35,8 +37,6 @@ import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.toolkit.ApplicationFixture;
 
 import java.awt.*;
-import java.awt.Label;
-import java.awt.TextArea;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -830,6 +830,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     clickOnAndReloadTop("#butReports", "#pane-reports");
     clickOnAndReload("#mainVBox #butxml", "#pane-show");
     waitUntilExists("#textArea");
+    waitUntilHasText("#textArea");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     javafx.scene.control.TextArea textArea = (javafx.scene.control.TextArea) scene.lookup("#textArea");
     String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"";
@@ -840,6 +841,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     clickOnAndReloadTop("#butReports", "#pane-reports");
     clickOnAndReload("#mainVBox #butmets", "#pane-show");
     waitUntilExists("#textArea");
+    waitUntilHasText("#textArea");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     textArea = (javafx.scene.control.TextArea) scene.lookup("#textArea");
     expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"";
@@ -854,6 +856,17 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     textArea = (javafx.scene.control.TextArea) scene.lookup("#textArea");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
     Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
+  }
+
+  public void waitUntilHasText(String id){
+    TextArea textArea = (TextArea) scene.lookup(id);
+    int timeout = 0;
+    while (textArea.getText().isEmpty() && timeout < maxTimeout * 4){
+      sleep(250);
+      timeout++;
+    }
+    Assert.assertNotEquals("Wait for text reached timeout! (" + maxTimeout + "s)", maxTimeout, timeout);
+    sleep(250);
   }
 
   public void setScrollUnit(Integer x) {
