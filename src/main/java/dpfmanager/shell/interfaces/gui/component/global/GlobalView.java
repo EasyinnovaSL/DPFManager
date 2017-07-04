@@ -130,7 +130,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     if (message != null && message.isTypeOf(GuiGlobalMessage.class)){
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isInit()) {
-        getController().readIndividualReports(gMessage.getReportGui().getInternalReportFolder());
+        getController().readIndividualReports(gMessage.getReportGui().getInternalReportFolder(), gMessage.getReportGui().getGlobalReport().getConfig());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
       }
@@ -200,7 +200,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     Integer version = info.getReportVersion();
     GlobalReport gr = info.getGlobalReport();
     globalFormatsBox.getChildren().clear();
-    List<String> sortedFormats = Arrays.asList("html", "pdf", "xml", "mets", "json");
+    List<String> sortedFormats = Arrays.asList("html", "pdf", "xml", "json");
     Map<String, String> item = new HashMap<>();
     if (version > 0) {
       // Transform reports

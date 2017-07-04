@@ -100,7 +100,7 @@ public class IndividualFragment {
   public void updateIcons(){
     info.readFormats();
     formatsBox.getChildren().clear();
-    addFormatIcons(info.getFormats(), info.getReportVersion());
+    addFormatIcons();
   }
 
   private void loadReportRow() {
@@ -115,7 +115,7 @@ public class IndividualFragment {
     warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
     passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
     addChartScore(info.getScore());
-    addFormatIcons(info.getFormats(), info.getReportVersion());
+    addFormatIcons();
   }
 
   private void addChartScore(Integer scoreInt) {
@@ -138,8 +138,10 @@ public class IndividualFragment {
     scoreBox.getChildren().add(score_label);
   }
 
-  private void addFormatIcons(Map<String, String> itemRead, Integer version) {
+  private void addFormatIcons() {
     List<String> sortedFormats = Arrays.asList("html","pdf","xml","mets", "json");
+    Map<String, String> itemRead = info.getFormats();
+    Integer version = info.getReportVersion();
     Map<String, String> item = new HashMap<>();
     if (version > 0) {
       // Transform reports
@@ -169,8 +171,7 @@ public class IndividualFragment {
         icon.setOpacity(0.4);
         icon.setOnMouseEntered(event -> icon.setOpacity(1.0));
         icon.setOnMouseExited(event -> icon.setOpacity(0.4));
-//        Long formatUuid = Long.parseLong(info.getUuid()+Character.getNumericValue(i.charAt(0)));
-//        sMessage = new ShowMessage(formatUuid, i, gr, info.getInternalReportFolder());
+        sMessage = new ShowMessage(i, info.getPath(), info.getConfig());
       }
       if (sMessage != null){
         final ShowMessage finalSMessage = sMessage;

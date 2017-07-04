@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.core.messages;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
 
@@ -28,7 +29,7 @@ import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
 public class ShowMessage extends DpfMessage {
 
   public enum Type {
-    SHOW, GENERATE, UPDATE, INIT
+    SHOW, GENERATE, UPDATE, INIT, INDIVIDUAL
   }
 
   private Type internalType;
@@ -41,6 +42,7 @@ public class ShowMessage extends DpfMessage {
   private Long uuid;
   private String internal;
   private boolean onlyGlobal;
+  private Configuration config;
 
   // Show
   public ShowMessage(Long u, String t, String p) {
@@ -49,6 +51,8 @@ public class ShowMessage extends DpfMessage {
     path = p;
     internalType = Type.SHOW;
   }
+
+  // Show
   public ShowMessage(String t, String p) {
     type = t;
     uuid = null;
@@ -64,6 +68,14 @@ public class ShowMessage extends DpfMessage {
     globalReport = gr;
     onlyGlobal = o;
     internalType = Type.GENERATE;
+  }
+
+  // Individual
+  public ShowMessage(String t, String p, Configuration c) {
+    type = t;
+    path = p;
+    config = c;
+    internalType = Type.INDIVIDUAL;
   }
 
   // Init
@@ -114,6 +126,10 @@ public class ShowMessage extends DpfMessage {
     return internalType.equals(Type.SHOW);
   }
 
+  public boolean isIndividual() {
+    return internalType.equals(Type.INDIVIDUAL);
+  }
+
   public boolean isUpdate() {
     return internalType.equals(Type.UPDATE);
   }
@@ -132,5 +148,9 @@ public class ShowMessage extends DpfMessage {
 
   public boolean isOnlyGlobal() {
     return onlyGlobal;
+  }
+
+  public Configuration getConfig() {
+    return config;
   }
 }

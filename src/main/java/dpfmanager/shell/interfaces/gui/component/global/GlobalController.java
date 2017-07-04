@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.component.global;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
@@ -40,13 +41,13 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
   public GlobalController() {
   }
 
-  public void readIndividualReports(String internal){
+  public void readIndividualReports(String internal, Configuration config){
     individuals = new ArrayList<>();
     File serializedDirectory = new File(internal + "/serialized");
     if (serializedDirectory.exists() && serializedDirectory.isDirectory()){
       for (File individualSer : serializedDirectory.listFiles()){
         if (individualSer.exists() && individualSer.isFile() && individualSer.getName().endsWith(".ser")){
-          individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath()));
+          individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), config));
         }
       }
     }

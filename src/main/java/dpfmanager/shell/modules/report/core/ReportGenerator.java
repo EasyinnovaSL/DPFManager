@@ -642,6 +642,7 @@ public class ReportGenerator {
           PDDocument pdfDocument = pdfReport.parseIndividual(ir, ir.getReportId(), ir.getInternalReportFodler());
           if (pdfDocument != null) {
             pdfDocument.save(pdfFileStr);
+            pdfDocument.close();
           }
         } catch (Exception e) {
           context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));

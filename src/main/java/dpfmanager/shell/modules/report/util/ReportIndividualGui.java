@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.modules.report.util;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 
@@ -50,11 +51,13 @@ public class ReportIndividualGui {
   private Integer reportId;
   private Map<String, String> formats;
 
+  private Configuration config;
   private Integer reportVersion = 0;
 
-  public ReportIndividualGui(String path) {
+  public ReportIndividualGui(String path, Configuration config) {
     this.path = path;
     this.name = parseFileName(path);
+    this.config = config;
     this.loaded = false;
     this.error = false;
   }
@@ -170,6 +173,9 @@ public class ReportIndividualGui {
   }
   public Integer getSelectedIsos() {
     return selectedIsos;
+  }
+  public Configuration getConfig() {
+    return config;
   }
 }
 

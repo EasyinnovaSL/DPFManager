@@ -27,6 +27,7 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.modules.report.messages.GenerateIndividualMessage;
 import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
 import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
@@ -128,6 +129,13 @@ public class ReportService extends DpfService {
       // Start global transforms
       context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(uuid, 0));
     }
+  }
+
+  public void tractGenerateIndividualMessage(GenerateIndividualMessage gm) {
+    IndividualReport ir = (IndividualReport) IndividualReport.read(gm.getPath());
+    MakeReportRunnable mrr = new MakeReportRunnable(generator);
+    mrr.setIndividualParameters(ir, gm.getPath(), gm.getFormat(), gm.getConfig());
+    context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(System.currentTimeMillis(), mrr));
   }
 
   public Configuration getConfig() {

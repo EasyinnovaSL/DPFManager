@@ -25,6 +25,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.modules.report.messages.GenerateIndividualMessage;
 import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
@@ -149,6 +150,10 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
           }
           context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
         }
+      } else if (sMessage.isIndividual()) {
+        hideAll();
+        showLoading();
+        context.send(BasicConfig.MODULE_REPORT, new GenerateIndividualMessage(sMessage.getType(), sMessage.getPath(), sMessage.getConfig()));
       } else if (sMessage.isInit()) {
         if (showReports.containsKey(sMessage.getUuid())) {
           ShowReport sr = showReports.get(sMessage.getUuid());
@@ -349,7 +354,6 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     // Load PDF codument
     pdfPagesVBox.getChildren().clear();
     try {
-      if (absolutePath == null) System.out.println("NULL!!!!!!!!!!!");
       PDDocument document = PDDocument.load(absolutePath);
       List<PDPage> pages = document.getDocumentCatalog().getAllPages();
       for (PDPage page : pages) {

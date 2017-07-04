@@ -40,13 +40,17 @@ import java.io.File;
 public class MakeReportRunnable extends DpfRunnable {
 
   private SmallIndividualReport sir;
+  private IndividualReport ir;
   private String format;
+  private String path;
   private ReportGenerator generator;
   private GlobalReport global;
   private String internalReportFolder;
   private Integer globalValue;
+  private Configuration config;
 
   private boolean individual = false;
+  private boolean onlyIndividual = false;
 
   public MakeReportRunnable(ReportGenerator g) {
     // No context yet
@@ -64,6 +68,14 @@ public class MakeReportRunnable extends DpfRunnable {
     individual = true;
   }
 
+  public void setIndividualParameters(IndividualReport i, String p, String f, Configuration c) {
+    ir = i;
+    path = p;
+    format = f;
+    config = c;
+    onlyIndividual = true;
+  }
+
   public void setGlobalParameters(String i, GlobalReport g, Integer gv, String f) {
     internalReportFolder = i;
     global = g;
@@ -74,10 +86,22 @@ public class MakeReportRunnable extends DpfRunnable {
 
   @Override
   public void runTask() {
-    if (individual){
+    if (onlyIndividual){
+      generateOnlyIndividualReport();
+    } else if (individual){
       generateIndividualReport();
     } else {
       generateGlobalReport();
+    }
+  }
+
+  private void generateOnlyIndividualReport(){
+    File reportSerializedFile = new File(path);
+    if (reportSerializedFile.exists()){
+      IndividualReport ir = (IndividualReport) IndividualReport.read(reportSerializedFile.getPath());
+      String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
+      generator.transformIndividualReport(outputfile, format, ir, config);
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(format, outputfile + "." + format));
     }
   }
 
