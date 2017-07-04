@@ -21,7 +21,9 @@ package dpfmanager.shell.interfaces.gui.component.global;
 
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.mvc.DpfController;
+import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
+import dpfmanager.shell.interfaces.gui.component.statistics.comparators.IsoComparator;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 
 import java.io.File;
@@ -48,6 +50,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
         }
       }
     }
+    individuals.sort(new IndividualComparator(IndividualComparator.Mode.NAME));
   }
 
   public void loadAndPrintIndividuals(){

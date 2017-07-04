@@ -36,25 +36,32 @@ public class ReportIndividualGui {
 
   private String[] available_formats = {"html", "xml", "json", "pdf"};
 
-  private IndividualReport individualReport;
-
   private String path;
+  private String name;
   private boolean loaded;
   private boolean error;
 
   private String filename;
+  private Integer selectedIsos;
   private Integer errors;
   private Integer warnings;
   private Integer passed;
   private Integer score;
+  private Integer reportId;
   private Map<String, String> formats;
 
   private Integer reportVersion = 0;
 
   public ReportIndividualGui(String path) {
     this.path = path;
+    this.name = parseFileName(path);
     this.loaded = false;
     this.error = false;
+  }
+
+  private String parseFileName(String path){
+    String serName = new File(path).getName();
+    return serName.substring(serName.indexOf("-") + 1, serName.lastIndexOf("."));
   }
 
   public void load(){
@@ -82,16 +89,17 @@ public class ReportIndividualGui {
       if (ir.getVersion() != null) {
         reportVersion = ir.getVersion();
       }
-      individualReport = ir;
 
       for (String iso : ir.getSelectedIsos()){
         if (ir.getNErrors(iso) > 0) errors++;
-        if (ir.getNWarnings(iso) > 0) warnings++;
+        else if (ir.getNWarnings(iso) > 0) warnings++;
       }
       Integer n = ir.getSelectedIsos().size();
+      selectedIsos = ir.getSelectedIsos().size();
       passed = n - errors - warnings;
       filename = ir.getFileName();
-      score = (n > 0) ? passed * 100 / n : 0;
+      score = (n > 0) ? (passed + warnings) * 100 / n : 0;
+      reportId = ir.getIdReport();
     } catch (Exception e) {
       error = true;
     }
@@ -106,9 +114,9 @@ public class ReportIndividualGui {
       for (String format : available_formats) {
         File report;
         if (format.equals("json") || format.equals("xml") || format.equals("pdf")) {
-          report = new File(baseFile.getPath() + "/" + individualReport.getIdReport() + "-" + filename + "." + format);
+          report = new File(baseFile.getPath() + "/" + reportId + "-" + filename + "." + format);
         } else {
-          report = new File(baseFile.getPath() + "/html/" + individualReport.getIdReport() + "-" + filename + "." + format);
+          report = new File(baseFile.getPath() + "/html/" + reportId + "-" + filename + "." + format);
         }
         if (report.exists() && report.length() > 0) {
           formats.put(format, report.getPath());
@@ -119,7 +127,7 @@ public class ReportIndividualGui {
       String[] filter = {"mets.xml"};
       Collection<File> childs = FileUtils.listFiles(baseFile, filter, false);
       for (File child : childs){
-        if (child.getName().contains(individualReport.getIdReport() + "-" + filename + ".mets.xml")) {
+        if (child.getName().contains(reportId + "-" + filename + ".mets.xml")) {
           formats.put("mets", child.getPath());
         }
       }
@@ -133,6 +141,12 @@ public class ReportIndividualGui {
    * Getters
    */
 
+  public String getName() {
+    return name;
+  }
+  public String getPath() {
+    return path;
+  }
   public Integer getErrors() {
     return errors;
   }
@@ -153,6 +167,9 @@ public class ReportIndividualGui {
   }
   public Integer getReportVersion() {
     return reportVersion;
+  }
+  public Integer getSelectedIsos() {
+    return selectedIsos;
   }
 }
 

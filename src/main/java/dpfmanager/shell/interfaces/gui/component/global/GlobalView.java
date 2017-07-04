@@ -242,10 +242,10 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
           context.send(GuiConfig.PERSPECTIVE_SHOW, am);
         });
 
-        ContextMenu contextMenu = new ContextMenu();
-        javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
-        contextMenu.getItems().add(download);
-        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
+//        ContextMenu contextMenu = new ContextMenu();
+//        javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
+//        contextMenu.getItems().add(download);
+//        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
         globalFormatsBox.getChildren().add(icon);
       }
     }

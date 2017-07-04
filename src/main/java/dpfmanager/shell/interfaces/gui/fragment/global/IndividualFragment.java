@@ -77,6 +77,8 @@ public class IndividualFragment {
   @FXML
   private Label input;
   @FXML
+  private Label nfiles;
+  @FXML
   private Label errors;
   @FXML
   private Label warnings;
@@ -104,6 +106,11 @@ public class IndividualFragment {
   private void loadReportRow() {
     info.load();
     input.setText(info.getFilename());
+    String isotext = bundle.getString("oneIso").replace("%1", info.getSelectedIsos() + "");
+    if (info.getSelectedIsos() > 1) {
+      isotext = bundle.getString("multipleIso").replace("%1", info.getSelectedIsos() + "");
+    }
+    nfiles.setText(isotext);
     errors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
     warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
     passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
@@ -174,10 +181,6 @@ public class IndividualFragment {
           context.send(GuiConfig.PERSPECTIVE_SHOW, am);
         });
 
-//        ContextMenu contextMenu = new ContextMenu();
-//        javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
-//        contextMenu.getItems().add(download);
-//        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
         formatsBox.getChildren().add(icon);
       }
     }

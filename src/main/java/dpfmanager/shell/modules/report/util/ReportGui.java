@@ -246,7 +246,7 @@ public class ReportGui implements Comparable<ReportGui>{
       int passed = gr.getAllReportsOk();
       int errors = gr.getAllReportsKo();
       int warnings = gr.getAllReportsWarnings();
-      int score = (n > 0) ? passed * 100 / n : 0;
+      int score = (n > 0) ? (passed + warnings) * 100 / n : 0;
 
       setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath());
     } catch (Exception e) {
