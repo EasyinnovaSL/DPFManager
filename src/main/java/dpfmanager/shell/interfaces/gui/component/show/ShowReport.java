@@ -13,6 +13,7 @@ public class ShowReport {
   public Integer globalValue = 0;
   public MakeReportRunnable mrr = null;
   public boolean finished = false;
+  public boolean onlyGlobal = false;
 
   public ShowReport(Long u){
     uuid = u;

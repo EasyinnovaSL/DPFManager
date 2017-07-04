@@ -30,11 +30,13 @@ public class GenerateMessage extends DpfMessage {
   private String format;
   private GlobalReport globalReport;
   private Long uuid;
+  private boolean onlyGlobal;
 
-  public GenerateMessage(String format, GlobalReport g, Long uuid) {
+  public GenerateMessage(String format, GlobalReport g, Long uuid, boolean onlyGlobal) {
     this.format = format;
     this.globalReport = g;
     this.uuid = uuid;
+    this.onlyGlobal = onlyGlobal;
   }
 
   public String getFormat() {
@@ -47,6 +49,10 @@ public class GenerateMessage extends DpfMessage {
 
   public Long getUuid() {
     return uuid;
+  }
+
+  public boolean isOnlyGlobal() {
+    return onlyGlobal;
   }
 }
 

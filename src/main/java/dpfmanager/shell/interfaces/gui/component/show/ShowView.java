@@ -39,6 +39,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
@@ -93,6 +94,8 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   @FXML
   private Label labelLoading;
   @FXML
+  private ProgressIndicator indicator;
+  @FXML
   private ProgressBar progressLoading;
 
   private Map<Long, ShowReport> showReports;
@@ -124,18 +127,27 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
           } else {
             // Already initiated
             hideAll();
-            showLoading();
+            if (sr.onlyGlobal) {
+              showLoading();
+            } else {
+              showLoadingMultiple();
+            }
             updateLoading(sr.count, sr.max);
             currentReport = sMessage.getUuid();
           }
         } else {
           // Init new transformation
           ShowReport sr = new ShowReport(sMessage.getUuid());
+          sr.onlyGlobal = sMessage.isOnlyGlobal();
           currentReport = sMessage.getUuid();
           showReports.put(sMessage.getUuid(), sr);
           hideAll();
-          showLoading();
-          context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport(), sMessage.getUuid()));
+          if (sMessage.isOnlyGlobal()) {
+            showLoading();
+          } else {
+            showLoadingMultiple();
+          }
+          context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
         }
       } else if (sMessage.isInit()) {
         if (showReports.containsKey(sMessage.getUuid())) {
@@ -241,15 +253,24 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    * Show Hide
    */
 
-  public void showLoading(){
+  public void showLoadingMultiple(){
     NodeUtil.showNode(labelLoading);
     NodeUtil.showNode(progressLoading);
+    NodeUtil.hideNode(indicator);
     progressLoading.setProgress(-1);
+  }
+
+  public void showLoading() {
+    NodeUtil.showNode(indicator);
+    NodeUtil.hideNode(labelLoading);
+    NodeUtil.hideNode(progressLoading);
+    indicator.setProgress(-1);
   }
 
   public void hideLoading(){
     NodeUtil.hideNode(labelLoading);
     NodeUtil.hideNode(progressLoading);
+    NodeUtil.hideNode(indicator);
   }
 
   public void updateLoading(int count, int max) {

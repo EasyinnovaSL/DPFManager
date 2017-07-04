@@ -40,6 +40,7 @@ public class ShowMessage extends DpfMessage {
   private MakeReportRunnable makeReportRunnable;
   private Long uuid;
   private String internal;
+  private boolean onlyGlobal;
 
   // Show
   public ShowMessage(Long u, String t, String p) {
@@ -56,11 +57,12 @@ public class ShowMessage extends DpfMessage {
   }
 
   // Generate
-  public ShowMessage(Long u, String t, GlobalReport gr, String i) {
+  public ShowMessage(Long u, String t, GlobalReport gr, String i, boolean o) {
     type = t;
     uuid = u;
     internal = i;
     globalReport = gr;
+    onlyGlobal = o;
     internalType = Type.GENERATE;
   }
 
@@ -126,5 +128,9 @@ public class ShowMessage extends DpfMessage {
 
   public String getInternal() {
     return internal;
+  }
+
+  public boolean isOnlyGlobal() {
+    return onlyGlobal;
   }
 }

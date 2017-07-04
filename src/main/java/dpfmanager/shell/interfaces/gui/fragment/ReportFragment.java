@@ -104,9 +104,6 @@ public class ReportFragment {
   }
 
   public void updateIcons(){
-//    info.readFormats();
-//    formatsBox.getChildren().clear();
-//    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
   }
 
   private void loadReportRow() {
@@ -121,7 +118,6 @@ public class ReportFragment {
     addChartScore(info.getScore());
     addActionsIcons(info.getDelete());
     addLastItem(info.isLast());
-//    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
   }
 
   private void addChartScore(Integer scoreInt) {
@@ -142,54 +138,6 @@ public class ReportFragment {
 
     scoreBox.getChildren().add(chart);
     scoreBox.getChildren().add(score_label);
-  }
-
-  private void addFormatIcons(Map<String, String> itemRead, Integer version, GlobalReport gr) {
-    List<String> sortedFormats = Arrays.asList("html","pdf","xml","mets", "json");
-    Map<String, String> item = new HashMap<>();
-    if (version > 0) {
-      // Transform reports
-      for (String format : sortedFormats){
-        if (!item.containsKey(format)) item.put(format, (itemRead.containsKey(format)) ? itemRead.get(format) : null);
-      }
-    } else {
-      item = itemRead;
-    }
-    for (String i : sortedFormats) {
-      if (!item.containsKey(i)) continue;
-      ImageView icon = new ImageView();
-      icon.setId("but" + i);
-      icon.setFitHeight(20);
-      icon.setFitWidth(20);
-      icon.setCursor(Cursor.HAND);
-      icon.setImage(new Image("images/formats/" + i + ".png"));
-      Tooltip.install(icon, new Tooltip(i.toUpperCase()));
-
-      String path = item.get(i);
-      ShowMessage sMessage = null;
-      if (path != null && new File(path).exists()){
-        // Show directly
-        sMessage = new ShowMessage(i, path);
-      } else if (gr.getVersion() > 1){
-        // Transformation need
-        icon.setOpacity(0.4);
-        icon.setOnMouseEntered(event -> icon.setOpacity(1.0));
-        icon.setOnMouseExited(event -> icon.setOpacity(0.4));
-        Long formatUuid = Long.parseLong(info.getUuid()+Character.getNumericValue(i.charAt(0)));
-        sMessage = new ShowMessage(formatUuid, i, gr, info.getInternalReportFolder());
-      }
-      if (sMessage != null){
-        final ShowMessage finalSMessage = sMessage;
-        icon.setOnMouseClicked(event -> {
-          ArrayMessage am = new ArrayMessage();
-          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
-          context.send(GuiConfig.PERSPECTIVE_SHOW, am);
-        });
-
-        formatsBox.getChildren().add(icon);
-      }
-    }
   }
 
   public void addActionsIcons(String item) {

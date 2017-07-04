@@ -231,7 +231,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
         icon.setOnMouseEntered(event -> icon.setOpacity(1.0));
         icon.setOnMouseExited(event -> icon.setOpacity(0.4));
         Long formatUuid = Long.parseLong(info.getUuid()+Character.getNumericValue(i.charAt(0)));
-        sMessage = new ShowMessage(formatUuid, i, gr, info.getInternalReportFolder());
+        sMessage = new ShowMessage(formatUuid, i, gr, info.getInternalReportFolder(), true);
       }
       if (sMessage != null){
         final ShowMessage finalSMessage = sMessage;

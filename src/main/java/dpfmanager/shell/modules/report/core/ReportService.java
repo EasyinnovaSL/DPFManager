@@ -96,9 +96,9 @@ public class ReportService extends DpfService {
   public void tractGenerateMessage(GenerateMessage gm) {
     Long uuid = gm.getUuid();
     String internalReportFolder = null;
-    Integer globalValue = gm.getFormat().toLowerCase().equals("mets") ? 0 : 1;
-    globalValue = 1;
-    Integer max = gm.getGlobalReport().getIndividualReports().size() + globalValue;
+//    Integer globalValue = gm.getFormat().toLowerCase().equals("mets") ? 0 : 1;
+    Integer globalValue = 1;
+    Integer max = (gm.isOnlyGlobal()) ? globalValue : gm.getGlobalReport().getIndividualReports().size() + globalValue;
 
     // Transform individual reports runnables
     List<MakeReportRunnable> individualsMakers = new ArrayList<>();
@@ -118,9 +118,15 @@ public class ReportService extends DpfService {
     // Init progress bar
     context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(uuid, max, globalValue, mrr));
 
-    // Start individual transforms
-    for (MakeReportRunnable iMrr : individualsMakers){
-      context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, iMrr));
+
+    if (!gm.isOnlyGlobal()){
+      // Start individual transforms
+      for (MakeReportRunnable iMrr : individualsMakers){
+        context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, iMrr));
+      }
+    } else {
+      // Start global transforms
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(uuid, 0));
     }
   }
 
