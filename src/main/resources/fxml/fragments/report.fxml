@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.StackPane?>
 
 <AnchorPane prefWidth="840.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
-    <GridPane hgap="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+    <GridPane hgap="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" onMouseClicked="#onGridPaneClicked">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" />
@@ -46,6 +46,10 @@
             <HBox fx:id="formatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="8" />
             <HBox fx:id="actionsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="9" />
         </children>
+      <styleClass>
+         <String fx:value="hoverRow" />
+         <String fx:value="clickable" />
+      </styleClass>
     </GridPane>
     <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
 </AnchorPane>

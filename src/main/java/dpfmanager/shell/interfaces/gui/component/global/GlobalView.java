@@ -1,5 +1,5 @@
 /**
- * <h1>PeriodicFragment.java</h1> <p> This program is free software: you can redistribute it and/or
+ * <h1>ReportsView.java</h1> <p> This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later version; or, at your
  * choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+. </p>
@@ -17,38 +17,46 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.interfaces.gui.fragment;
+package dpfmanager.shell.interfaces.gui.component.global;
 
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
+import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
-import dpfmanager.shell.interfaces.gui.component.statistics.messages.ShowHideErrorsMessage;
+import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
+import dpfmanager.shell.interfaces.gui.fragment.global.IndividualFragment;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
+import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import org.apache.commons.io.FileUtils;
 import org.jacpfx.api.annotations.Resource;
-import org.jacpfx.api.annotations.fragment.Fragment;
-import org.jacpfx.api.fragment.Scope;
+import org.jacpfx.api.annotations.component.DeclarativeView;
+import org.jacpfx.api.annotations.lifecycle.PostConstruct;
+import org.jacpfx.rcp.componentLayout.FXComponentLayout;
+import org.jacpfx.rcp.components.managedFragment.ManagedFragmentHandler;
 import org.jacpfx.rcp.context.Context;
 
 import java.awt.*;
@@ -61,71 +69,113 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Created by Adria Llorens on 18/04/2016.
+ * Created by Adria Llorens on 25/02/2016.
  */
-@Fragment(id = GuiConfig.FRAGMENT_REPORT,
-    viewLocation = "/fxml/fragments/report.fxml",
+@DeclarativeView(id = GuiConfig.COMPONENT_GLOBAL,
+    name = GuiConfig.COMPONENT_GLOBAL,
+    viewLocation = "/fxml/global.fxml",
+    active = true,
     resourceBundleLocation = "bundles.language",
-    scope = Scope.PROTOTYPE)
-public class ReportFragment {
+    initialTargetLayoutId = GuiConfig.TARGET_CONTAINER_GLOBAL)
+public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   @Resource
   private Context context;
   @Resource
   private ResourceBundle bundle;
 
+  /**
+   * Global report elements
+   */
   @FXML
-  private Label date;
+  private VBox globalVBox;
   @FXML
-  private Label time;
+  private Label globalDate;
   @FXML
-  private Label files;
+  private Label globalTime;
   @FXML
-  private Label input;
+  private Label globalFiles;
   @FXML
-  private Label errors;
+  private Label globalErrors;
   @FXML
-  private Label warnings;
+  private Label globalWarnings;
   @FXML
-  private Label passed;
+  private Label globalPassed;
   @FXML
-  private HBox scoreBox;
+  private HBox globalScoreBox;
   @FXML
-  private HBox formatsBox;
+  private HBox globalFormatsBox;
   @FXML
-  private HBox actionsBox;
+  private HBox globalActionsBox;
 
-  /* Report Row info */
-  private ReportGui info;
+  /**
+   * Individual reports elements
+   */
+//  @FXML
+//  private ProgressIndicator indicator;
+  @FXML
+  private VBox individualsVBox;
 
-  public void init(ReportGui reportRow) {
-    info = reportRow;
-    loadReportRow();
+  @Override
+  public void sendMessage(String target, Object dpfMessage) {
+    context.send(target, dpfMessage);
   }
 
-  public void updateIcons(){
-    info.readFormats();
-    formatsBox.getChildren().clear();
-    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
+  public Context getContext() {
+    return context;
   }
 
-  private void loadReportRow() {
-    info.load();
-    date.setText(info.getDate());
-    time.setText(info.getTime());
-    files.setText(info.getNfiles() + "");
-    input.setText(info.getInput());
-    errors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
-    warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
-    passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
-    addChartScore(info.getScore());
-    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
-    addActionsIcons(info.getDelete());
-    addLastItem(info.isLast());
+  @Override
+  public void handleMessageOnWorker(DpfMessage message) {
+    if (message != null && message.isTypeOf(GuiGlobalMessage.class)){
+      GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
+      if (gMessage.isInit()) {
+        getController().readIndividualReports(gMessage.getReportGui().getInternalReportFolder());
+      } else if (gMessage.isAddIndividual()) {
+        gMessage.getReportIndividualGui().load();
+      }
+    }
   }
 
-  private void addChartScore(Integer scoreInt) {
-    Double score = scoreInt * 1.0;
+  @Override
+  public Node handleMessageOnFX(DpfMessage message) {
+    if (message != null && message.isTypeOf(GuiGlobalMessage.class)){
+      GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
+      if (gMessage.isInit()) {
+        initGlobalReport(gMessage.getReportGui());
+        initIndividualsReports();
+      } else if (gMessage.isAddIndividual()) {
+        addIndividualReport(gMessage.getReportIndividualGui());
+      }
+    }
+    return null;
+  }
+
+  @PostConstruct
+  public void onPostConstructComponent(FXComponentLayout layout, ResourceBundle resourceBundle) {
+    // Init MVC
+    setModel(new GlobalModel(context));
+    setController(new GlobalController());
+    getModel().setResourcebundle(bundle);
+  }
+
+  /**
+   * Global report
+   */
+  private void initGlobalReport(ReportGui info) {
+    globalDate.setText(info.getDate());
+    globalTime.setText(info.getTime());
+    globalFiles.setText(info.getNfiles() + "");
+    globalErrors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
+    globalWarnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
+    globalPassed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
+    addChartScore(info);
+    addFormatIcons(info);
+    addActionsIcons(info);
+  }
+
+  private void addChartScore(ReportGui info) {
+    Double score = info.getScore() * 1.0;
 
     ObservableList<PieChart.Data> pieChartData =
         FXCollections.observableArrayList(
@@ -140,12 +190,17 @@ public class ReportFragment {
     Label score_label = new Label(score + "%");
     score_label.setTextFill(Color.LIGHTGRAY);
 
-    scoreBox.getChildren().add(chart);
-    scoreBox.getChildren().add(score_label);
+    globalScoreBox.getChildren().clear();
+    globalScoreBox.getChildren().add(chart);
+    globalScoreBox.getChildren().add(score_label);
   }
 
-  private void addFormatIcons(Map<String, String> itemRead, Integer version, GlobalReport gr) {
-    List<String> sortedFormats = Arrays.asList("html","pdf","xml","mets", "json");
+  private void addFormatIcons(ReportGui info) {
+    Map<String, String> itemRead = info.getFormats();
+    Integer version = info.getReportVersion();
+    GlobalReport gr = info.getGlobalReport();
+    globalFormatsBox.getChildren().clear();
+    List<String> sortedFormats = Arrays.asList("html", "pdf", "xml", "mets", "json");
     Map<String, String> item = new HashMap<>();
     if (version > 0) {
       // Transform reports
@@ -191,12 +246,13 @@ public class ReportFragment {
         javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
         contextMenu.getItems().add(download);
         icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
-        formatsBox.getChildren().add(icon);
+        globalFormatsBox.getChildren().add(icon);
       }
     }
   }
 
-  public void addActionsIcons(String item) {
+  public void addActionsIcons(ReportGui info) {
+    globalActionsBox.getChildren().clear();
     String path = info.getDeletePath();
 
     // Open folder button
@@ -226,7 +282,7 @@ public class ReportFragment {
         }
       }
     });
-    actionsBox.getChildren().add(iconFolder);
+    globalActionsBox.getChildren().add(iconFolder);
 
     // Trash button
     Button icon = new Button();
@@ -242,7 +298,7 @@ public class ReportFragment {
       @Override
       public void handle(MouseEvent event) {
         // Send action to controller
-        context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.DELETE, getUuid()));
+        context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.DELETE, info.getUuid()));
         // Delete report
         File file = new File(path);
         File dir = new File(file.getParent());
@@ -251,35 +307,24 @@ public class ReportFragment {
         } catch (IOException e) {
           e.printStackTrace();
         }
-
-        // TODO
-//        getModel().removeItem(item);
       }
     });
-    actionsBox.getChildren().add(icon);
+    globalActionsBox.getChildren().add(icon);
   }
 
-  public void addLastItem(boolean isLast){
-    if (isLast){
-      StackPane stack = new StackPane();
-      stack.setMaxWidth(0.0);
-      stack.setMaxHeight(0.0);
-      stack.setId("lastReportRow");
-      actionsBox.getChildren().add(stack);
-    }
+  /**
+   * Individual reports
+   */
+
+  private void initIndividualsReports(){
+    individualsVBox.getChildren().clear();
+    getController().loadAndPrintIndividuals();
   }
 
-  @FXML
-  protected void onGridPaneClicked(MouseEvent event) throws Exception {
-    context.send(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
-    context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, info));
+  private void addIndividualReport(ReportIndividualGui rig){
+    ManagedFragmentHandler<IndividualFragment> handler = context.getManagedFragmentHandler(IndividualFragment.class);
+    handler.getController().init(rig);
+    individualsVBox.getChildren().add(handler.getFragmentNode());
   }
 
-  public String getUuid() {
-    return info.getUuid();
-  }
-
-  public ReportGui getInfo() {
-    return info;
-  }
 }

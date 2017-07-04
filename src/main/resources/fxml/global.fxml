@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
+
+<AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView focusTraversable="true" preserveRatio="true" styleClass="main-logo">
+                <image>
+                    <Image url="@../images/logo2.png" />
+                </image>
+                <VBox.margin>
+                    <Insets bottom="20.0" top="10.0" />
+                </VBox.margin>
+            </ImageView>
+            <Label styleClass="mainTitle" text="%globalTitle" />
+            <ImageView focusTraversable="true" preserveRatio="true">
+                <image>
+                    <Image url="@../images/lineTop.png" />
+                </image>
+                <VBox.margin>
+                    <Insets bottom="15.0" left="65.0" right="65.0" top="10.0" />
+                </VBox.margin>
+            </ImageView>
+
+            <!--Simulate table-->
+            <VBox fx:id="vboxReports" maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+                <AnchorPane>
+                    <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="95.0" prefWidth="95.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <children>
+                            <Label styleClass="periodicHeader" text="%colDate" />
+                            <Label styleClass="periodicHeader" text="%colTime" GridPane.columnIndex="1" />
+                            <Label styleClass="periodicHeader" text="%colN" GridPane.columnIndex="2" />
+                            <Label styleClass="periodicHeader" text="%colErrors" GridPane.columnIndex="3" />
+                            <Label styleClass="periodicHeader" text="%colWarnings" GridPane.columnIndex="4" />
+                            <Label styleClass="periodicHeader" text="%colPassed" GridPane.columnIndex="5" />
+                            <Label styleClass="periodicHeader" text="%colScore" GridPane.columnIndex="6" />
+                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="7" />
+                            <Label styleClass="periodicHeader" text="%colDelete" GridPane.columnIndex="8" />
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" />
+                        </VBox.margin>
+                    </GridPane>
+                </AnchorPane>
+                <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
+                <AnchorPane prefWidth="840.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+                    <GridPane hgap="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="83.0" prefWidth="83.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="83.0" prefWidth="83.0" />
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="58.0" minWidth="58.0" prefWidth="58.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="98.0" prefWidth="98.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="98.0" prefWidth="98.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="98.0" minWidth="98.0" prefWidth="98.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="93.0" minWidth="93.0" prefWidth="93.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="148.0" prefWidth="148.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <children>
+                            <Label fx:id="globalDate" text="" textFill="LIGHTGRAY" />
+                            <Label fx:id="globalTime" text="" textFill="LIGHTGRAY" GridPane.columnIndex="1" />
+                            <Label fx:id="globalFiles" text="" textFill="CYAN" GridPane.columnIndex="2">
+                                <padding>
+                                    <Insets left="10.0" />
+                                </padding></Label>
+                            <Label fx:id="globalErrors" text="" textFill="RED" GridPane.columnIndex="3" />
+                            <Label fx:id="globalWarnings" text="" textFill="ORANGE" GridPane.columnIndex="4" />
+                            <Label fx:id="globalPassed" text="" textFill="GREENYELLOW" GridPane.columnIndex="5" />
+                            <HBox fx:id="globalScoreBox" alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="6" />
+                            <HBox fx:id="globalFormatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="7" />
+                            <HBox fx:id="globalActionsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="8" />
+                        </children>
+                    </GridPane>
+                    <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                </AnchorPane>
+                <VBox.margin>
+                   <Insets bottom="30.0" />
+                </VBox.margin>
+            </VBox>
+            <!--End simulate table-->
+
+            <Label styleClass="mainTitle" text="%individualTitle" />
+            <ImageView focusTraversable="true" preserveRatio="true">
+                <image>
+                    <Image url="@../images/lineTop.png" />
+                </image>
+                <VBox.margin>
+                    <Insets bottom="15.0" left="65.0" right="65.0" top="10.0" />
+                </VBox.margin>
+            </ImageView>
+
+            <!--Simulate table-->
+            <VBox maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+                <AnchorPane>
+                    <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="280.0" minWidth="280.0" prefWidth="280.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="95.0" prefWidth="95.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <children>
+                            <Label styleClass="periodicHeader" text="%colSingleFile" />
+                            <Label styleClass="periodicHeader" text="%colErrors" GridPane.columnIndex="1" />
+                            <Label styleClass="periodicHeader" text="%colWarnings" GridPane.columnIndex="2" />
+                            <Label styleClass="periodicHeader" text="%colPassed" GridPane.columnIndex="3" />
+                            <Label styleClass="periodicHeader" text="%colScore" GridPane.columnIndex="4" />
+                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="5" />
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" />
+                        </VBox.margin>
+                    </GridPane>
+                </AnchorPane>
+                <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
+                <ScrollPane hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
+                    <content>
+                        <VBox fx:id="individualsVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
+                    </content>
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                    <styleClass>
+                        <String fx:value="periodical-scroll" />
+                        <String fx:value="dpf-bar" />
+                    </styleClass>
+                </ScrollPane>
+                <VBox.margin>
+                    <Insets bottom="30.0" />
+                </VBox.margin>
+            </VBox>
+            <!--End simulate table-->
+
+            <!--<ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">-->
+                <!--<VBox.margin>-->
+                    <!--<Insets top="20.0" />-->
+                <!--</VBox.margin>-->
+            <!--</ProgressIndicator>-->
+        </VBox>
+    </children>
+</AnchorPane>
