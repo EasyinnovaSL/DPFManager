@@ -143,7 +143,7 @@
             <HBox alignment="CENTER_LEFT">
                 <ImageView focusTraversable="true" preserveRatio="true">
                     <image>
-                        <Image url="@../images/statistics/info-circle-blue.png" />
+                        <Image url="@../images/statistics/files-blue.png" />
                     </image>
                     <HBox.margin>
                         <Insets right="10" />

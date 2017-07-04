@@ -104,9 +104,9 @@ public class ReportFragment {
   }
 
   public void updateIcons(){
-    info.readFormats();
-    formatsBox.getChildren().clear();
-    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
+//    info.readFormats();
+//    formatsBox.getChildren().clear();
+//    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
   }
 
   private void loadReportRow() {
@@ -119,9 +119,9 @@ public class ReportFragment {
     warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
     passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
     addChartScore(info.getScore());
-    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
     addActionsIcons(info.getDelete());
     addLastItem(info.isLast());
+//    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
   }
 
   private void addChartScore(Integer scoreInt) {
