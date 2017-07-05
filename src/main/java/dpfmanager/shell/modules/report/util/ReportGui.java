@@ -86,6 +86,23 @@ public class ReportGui implements Comparable<ReportGui>{
     readTime();
   }
 
+  public ReportGui(String path) {
+    if (path.endsWith("/")){
+      path = path.substring(0,path.length()-1);
+    }
+
+    this.reportDir = path.substring(path.lastIndexOf("/") + 1);
+    path = path.substring(0, path.lastIndexOf("/"));
+    this.reportDay = path.substring(path.lastIndexOf("/") + 1);
+    this.baseDir = path.substring(0, path.lastIndexOf("/"));
+
+    this.uuid = reportDay + reportDir;
+    this.loaded = false;
+    this.error = true;
+    readTime();
+    load();
+  }
+
   public void readTime(){
     timestamp = 0L;
     File reportSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
@@ -246,7 +263,7 @@ public class ReportGui implements Comparable<ReportGui>{
       int passed = gr.getAllReportsOk();
       int errors = gr.getAllReportsKo();
       int warnings = gr.getAllReportsWarnings();
-      int score = (n > 0) ? passed * 100 / n : 0;
+      int score = (n > 0) ? (passed + warnings) * 100 / n : 0;
 
       setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath());
     } catch (Exception e) {

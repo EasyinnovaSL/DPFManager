@@ -21,10 +21,15 @@ package dpfmanager.shell.interfaces.gui.component.show;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
+import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
+import dpfmanager.shell.modules.report.messages.GenerateIndividualMessage;
 import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
@@ -39,6 +44,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
@@ -93,6 +99,8 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   @FXML
   private Label labelLoading;
   @FXML
+  private ProgressIndicator indicator;
+  @FXML
   private ProgressBar progressLoading;
 
   private Map<Long, ShowReport> showReports;
@@ -112,31 +120,59 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     if (message != null && message.isTypeOf(ShowMessage.class)) {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
       if (sMessage.isShow()) {
-        if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)){
+        if (sMessage.getInfo() != null && sMessage.getUuid().equals(currentReport)){
+          String currentId = context.getManagedFragmentHandler(TopFragment.class).getController().getCurrentId();
+          if (currentId.equals(GuiConfig.PERSPECTIVE_SHOW)){
+            ArrayMessage am = new ArrayMessage();
+            am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+            am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, sMessage.getInfo()));
+            context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
+          }
+        } else if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)){
           getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
         }
       } else if (sMessage.isGenerate()) {
         if (showReports.containsKey(sMessage.getUuid())) {
           ShowReport sr = showReports.get(sMessage.getUuid());
-          if (sr.finished) {
+          if (sr.finished && sMessage.getTypes().size() > 0) {
+            // Transformation DONE, return to global report
+            context.send(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+          } else if (sr.finished) {
             // Transformation DONE, do nothing
             getController().showSingleReport(sMessage.getType(), sMessage.getInternal(), false);
           } else {
             // Already initiated
             hideAll();
-            showLoading();
+            if (sr.onlyGlobal) {
+              showLoading();
+            } else {
+              showLoadingMultiple();
+            }
             updateLoading(sr.count, sr.max);
             currentReport = sMessage.getUuid();
           }
         } else {
           // Init new transformation
           ShowReport sr = new ShowReport(sMessage.getUuid());
+          sr.onlyGlobal = sMessage.isOnlyGlobal();
           currentReport = sMessage.getUuid();
           showReports.put(sMessage.getUuid(), sr);
           hideAll();
-          showLoading();
-          context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport(), sMessage.getUuid()));
+          if (sMessage.isOnlyGlobal()) {
+            showLoading();
+          } else {
+            showLoadingMultiple();
+          }
+          if (sMessage.getTypes() != null){
+            context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getTypes(), sMessage.getInfo(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
+          } else {
+            context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getInfo(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
+          }
         }
+      } else if (sMessage.isIndividual()) {
+        hideAll();
+        showLoading();
+        context.send(BasicConfig.MODULE_REPORT, new GenerateIndividualMessage(sMessage.getType(), sMessage.getPath(), sMessage.getConfig()));
       } else if (sMessage.isInit()) {
         if (showReports.containsKey(sMessage.getUuid())) {
           ShowReport sr = showReports.get(sMessage.getUuid());
@@ -241,15 +277,24 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    * Show Hide
    */
 
-  public void showLoading(){
+  public void showLoadingMultiple(){
     NodeUtil.showNode(labelLoading);
     NodeUtil.showNode(progressLoading);
+    NodeUtil.hideNode(indicator);
     progressLoading.setProgress(-1);
+  }
+
+  public void showLoading() {
+    NodeUtil.showNode(indicator);
+    NodeUtil.hideNode(labelLoading);
+    NodeUtil.hideNode(progressLoading);
+    indicator.setProgress(-1);
   }
 
   public void hideLoading(){
     NodeUtil.hideNode(labelLoading);
     NodeUtil.hideNode(progressLoading);
+    NodeUtil.hideNode(indicator);
   }
 
   public void updateLoading(int count, int max) {
@@ -328,7 +373,6 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     // Load PDF codument
     pdfPagesVBox.getChildren().clear();
     try {
-      if (absolutePath == null) System.out.println("NULL!!!!!!!!!!!");
       PDDocument document = PDDocument.load(absolutePath);
       List<PDPage> pages = document.getDocumentCatalog().getAllPages();
       for (PDPage page : pages) {

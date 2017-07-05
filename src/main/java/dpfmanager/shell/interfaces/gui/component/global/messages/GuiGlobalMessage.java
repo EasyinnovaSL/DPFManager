@@ -1,5 +1,5 @@
 /**
- * <h1>IndividualReportMessage.java</h1> <p> This program is free software: you can redistribute it
+ * <h1>GlobalReportMessage.java</h1> <p> This program is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any later version; or,
  * at your choice, under the terms of the Mozilla Public License, v. 2.0. SPDX GPL-3.0+ or MPL-2.0+.
@@ -17,53 +17,50 @@
  * @since 23/7/2015
  */
 
-package dpfmanager.shell.modules.report.messages;
+package dpfmanager.shell.interfaces.gui.component.global.messages;
 
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 
 /**
- * Created by Adria Llorens on 13/06/2017.
+ * Created by Adria Llorens on 24/03/2016.
  */
-public class GenerateMessage extends DpfMessage {
+public class GuiGlobalMessage extends DpfMessage {
 
-  private List<String> formats = null;
-  private ReportGui info;
-  private Long uuid;
-  private boolean onlyGlobal;
-
-  public GenerateMessage(String format, ReportGui info, Long uuid, boolean onlyGlobal) {
-    this.formats = Arrays.asList(format);
-    this.info = info;
-    this.uuid = uuid;
-    this.onlyGlobal = onlyGlobal;
+  public enum Type {
+    INIT, ADD_INDIVIDUAL
   }
 
-  public GenerateMessage(List<String> formats, ReportGui info, Long uuid, boolean onlyGlobal) {
-    this.formats = formats;
-    this.info = info;
-    this.uuid = uuid;
-    this.onlyGlobal = onlyGlobal;
+  private Type type;
+  private ReportGui reportGui;
+  private ReportIndividualGui reportIndividualGui;
+
+  // Init
+  public GuiGlobalMessage(Type t, ReportGui rg) {
+    type = t;
+    reportGui = rg;
   }
 
-  public ReportGui getInfo() {
-    return info;
+  // add individual
+  public GuiGlobalMessage(Type t, ReportIndividualGui rig) {
+    type = t;
+    reportIndividualGui = rig;
   }
 
-  public Long getUuid() {
-    return uuid;
+  public boolean isInit(){
+    return type.equals(Type.INIT);
   }
 
-  public boolean isOnlyGlobal() {
-    return onlyGlobal;
+  public boolean isAddIndividual(){
+    return type.equals(Type.ADD_INDIVIDUAL);
   }
 
-  public List<String> getFormats() {
-    return formats;
+  public ReportGui getReportGui() {
+    return reportGui;
+  }
+
+  public ReportIndividualGui getReportIndividualGui() {
+    return reportIndividualGui;
   }
 }
-

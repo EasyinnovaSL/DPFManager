@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="botAnchor" maxHeight="18.0" minHeight="18.0" prefHeight="18.0" prefWidth="970.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox alignment="TOP_CENTER" styleClass="bread-hbox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox fx:id="hboxBread" alignment="CENTER_LEFT" maxHeight="18.0" maxWidth="840.0" minHeight="18.0" minWidth="840.0" prefHeight="18.0" prefWidth="840.0" spacing="8.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label fx:id="labelTable" onMouseClicked="#clickedTable" text="%labelTable">
+                     <styleClass>
+                        <String fx:value="label-bread" />
+                        <String fx:value="myactive" />
+                     </styleClass>
+                  </Label>
+                  <Label fx:id="labelSeparator1" text="/">
+                     <styleClass>
+                        <String fx:value="label-bread" />
+                        <String fx:value="fixed" />
+                     </styleClass>
+                  </Label>
+                  <Label fx:id="labelReport" onMouseClicked="#clickedReport" styleClass="label-bread" text="%labelReport" />
+                  <Label fx:id="labelSeparator2" text="/">
+                     <styleClass>
+                        <String fx:value="label-bread" />
+                        <String fx:value="fixed" />
+                     </styleClass>
+                  </Label>
+                  <Label fx:id="labelSingle" onMouseClicked="#clickedSingle" styleClass="label-bread" text="%labelSingle" />
+               </children></HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

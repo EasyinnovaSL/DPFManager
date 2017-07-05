@@ -39,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,7 +61,7 @@ public class ReportXml extends ReportGeneric {
    * @param xmlfile the file name.
    * @param gr      the global report.
    */
-  public void parseGlobal(String xmlfile, GlobalReport gr, java.util.List<SmallIndividualReport> reports) {
+  public void parseGlobal(String xmlfile, GlobalReport gr, List<SmallIndividualReport> reports) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();

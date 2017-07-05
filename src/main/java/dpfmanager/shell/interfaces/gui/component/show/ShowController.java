@@ -85,27 +85,30 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
     }
   }
 
-  public void showComboBox(String folderPath, String extension){
+  public void showComboBox(String filePath, String extension){
     int count = 0;
+    File file = new File(filePath);
+    File folder = file;
+    if (folder.isFile()){
+      folder = folder.getParentFile();
+    }
 
     // Clear comboBox
     getView().clearComboBox();
 
-    // Check if summary
-    File summary = new File(folderPath);
+    // First add summary
+    File summary = new File(folder.getPath() + "/summary." + extension);
+    if (extension.equals("pdf")){
+      summary = new File(folder.getPath() + "/report." + extension);
+    }
     if (summary.isFile()){
       getView().setCurrentReportParams(summary.getParent(), extension);
-      getView().addComboChild(summary.getName().replace("." + extension, ""), true);
+      getView().addComboChild(summary.getName().replace("." + extension, ""), summary.getName().equals(file.getName()));
       count++;
     }
 
     // Add all individuals
-    File folder = new File(folderPath);
-    if (folder.isFile()){
-      folder = folder.getParentFile();
-    }
     getView().setCurrentReportParams(folder.getPath(), extension);
-
     IOFileFilter filter = customFilter(extension);
     IOFileFilter filterDir = customFilterDir(folder.getPath());
     Collection<File> childs = FileUtils.listFiles(folder, filter, filterDir);
@@ -114,7 +117,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
       if (count == 0){
         getView().addComboChild(onlyName, true);
       } else {
-        getView().addComboChild(onlyName, false);
+        getView().addComboChild(onlyName, child.getName().equals(file.getName()));
       }
       count++;
     }

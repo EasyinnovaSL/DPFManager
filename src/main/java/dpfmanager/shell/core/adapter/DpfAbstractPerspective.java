@@ -40,6 +40,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -216,6 +217,31 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
     AnchorPane.setBottomAnchor(mainSplit, 21.0);
     AnchorPane.setLeftAnchor(mainSplit, 0.0);
     AnchorPane.setRightAnchor(mainSplit, 0.0);
+
+    mainPane.getChildren().add(bar);
+    AnchorPane.setBottomAnchor(bar, 0.0);
+    AnchorPane.setRightAnchor(bar, 0.0);
+    AnchorPane.setLeftAnchor(bar, 0.0);
+
+    return mainPane;
+  }
+
+  protected AnchorPane constructMainPaneWithBread(SplitPane mainSplit, Node bread, Node bar) {
+    AnchorPane mainPane = new AnchorPane();
+    mainPane.setCenterShape(true);
+    mainPane.setId("mainPane");
+    mainPane.getStyleClass().add("background-main");
+
+    mainPane.getChildren().add(mainSplit);
+    AnchorPane.setTopAnchor(mainSplit, 20.0);
+    AnchorPane.setBottomAnchor(mainSplit, 21.0);
+    AnchorPane.setLeftAnchor(mainSplit, 0.0);
+    AnchorPane.setRightAnchor(mainSplit, 0.0);
+
+    mainPane.getChildren().add(bread);
+    AnchorPane.setTopAnchor(bread, 0.0);
+    AnchorPane.setRightAnchor(bread, 0.0);
+    AnchorPane.setLeftAnchor(bread, 0.0);
 
     mainPane.getChildren().add(bar);
     AnchorPane.setBottomAnchor(bar, 0.0);

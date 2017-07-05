@@ -57,7 +57,8 @@ import java.util.Map;
         GuiConfig.PERSPECTIVE_SHOW,
         GuiConfig.PERSPECTIVE_PERIODICAL,
         GuiConfig.PERSPECTIVE_INTEROPERABILITY,
-        GuiConfig.PERSPECTIVE_STATISTICS
+        GuiConfig.PERSPECTIVE_STATISTICS,
+        GuiConfig.PERSPECTIVE_GLOBAL
     }
 )
 public class GuiWorkbench implements FXWorkbench {

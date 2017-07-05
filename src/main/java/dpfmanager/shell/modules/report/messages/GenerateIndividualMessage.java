@@ -19,51 +19,35 @@
 
 package dpfmanager.shell.modules.report.messages;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.report.util.ReportGui;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import dpfmanager.shell.modules.report.core.GlobalReport;
 
 /**
  * Created by Adria Llorens on 13/06/2017.
  */
-public class GenerateMessage extends DpfMessage {
+public class GenerateIndividualMessage extends DpfMessage {
 
-  private List<String> formats = null;
-  private ReportGui info;
-  private Long uuid;
-  private boolean onlyGlobal;
+  private String format;
+  private String path;
+  private Configuration config;
 
-  public GenerateMessage(String format, ReportGui info, Long uuid, boolean onlyGlobal) {
-    this.formats = Arrays.asList(format);
-    this.info = info;
-    this.uuid = uuid;
-    this.onlyGlobal = onlyGlobal;
+  public GenerateIndividualMessage(String format, String path, Configuration config) {
+    this.format = format;
+    this.path = path;
+    this.config = config;
   }
 
-  public GenerateMessage(List<String> formats, ReportGui info, Long uuid, boolean onlyGlobal) {
-    this.formats = formats;
-    this.info = info;
-    this.uuid = uuid;
-    this.onlyGlobal = onlyGlobal;
+  public String getFormat() {
+    return format;
   }
 
-  public ReportGui getInfo() {
-    return info;
+  public String getPath() {
+    return path;
   }
 
-  public Long getUuid() {
-    return uuid;
-  }
-
-  public boolean isOnlyGlobal() {
-    return onlyGlobal;
-  }
-
-  public List<String> getFormats() {
-    return formats;
+  public Configuration getConfig() {
+    return config;
   }
 }
 

@@ -514,7 +514,7 @@ public class TiffConformanceChecker extends ConformanceChecker {
 
   @Override
   public Configuration getDefaultConfiguration() {
-    return checkConfig;
+    return new Configuration(checkConfig);
   }
 
   /**

@@ -24,7 +24,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.NavMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 
@@ -40,13 +40,13 @@ import java.util.ResourceBundle;
 /**
  * Created by Adria Llorens on 25/02/2016.
  */
-@Perspective(id = GuiConfig.PERSPECTIVE_REPORTS,
-    name = GuiConfig.PERSPECTIVE_REPORTS,
+@Perspective(id = GuiConfig.PERSPECTIVE_GLOBAL,
+    name = GuiConfig.PERSPECTIVE_GLOBAL,
     active = false,
     components = {
         GuiConfig.COMPONENT_TOP,
         GuiConfig.COMPONENT_NAV,
-        GuiConfig.COMPONENT_REPORTS,
+        GuiConfig.COMPONENT_GLOBAL,
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
         BasicConfig.MODULE_MESSAGE,
@@ -54,7 +54,7 @@ import java.util.ResourceBundle;
         BasicConfig.MODULE_REPORT
     }
 )
-public class ReportsPerspective extends DpfAbstractPerspective {
+public class GlobalPerspective extends DpfAbstractPerspective {
 
   @Resource
   public Context context;
@@ -65,8 +65,12 @@ public class ReportsPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
-    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.TABLE));
-    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
+    context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.REPORT));
+  }
+
+  @Override
+  public void onReloadCustom() {
+    context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new UiMessage(UiMessage.Type.RELOAD));
   }
 
   @PostConstruct
@@ -95,7 +99,7 @@ public class ReportsPerspective extends DpfAbstractPerspective {
     mainPane = constructMainPaneWithBread(mainSplit, navPane, bottomBar);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_TOP, topPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_NAV, navPane);
-    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_REPORTS, centerPane);
+    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_GLOBAL, centerPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_PANE, bottomPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_BAR, bottomBar);
 

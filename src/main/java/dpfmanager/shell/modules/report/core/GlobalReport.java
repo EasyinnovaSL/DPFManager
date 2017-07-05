@@ -226,12 +226,18 @@ public class GlobalReport extends ReportSerializable {
   public int getAllReportsWarnings() {
     int n = 0;
     for (SmallIndividualReport rep : reports) {
+      boolean warn = false;
       for (String iso : getSelectedIsos()) {
-        if (rep.getNWarnings(iso) > 0) {
-          n++;
+        if (rep.getNErrors(iso) == 0){
+          if (rep.getNWarnings(iso) > 0) {
+            warn = true;
+          }
+        } else {
+          warn = false;
           break;
         }
       }
+      if (warn) n++;
     }
     return n;
   }
@@ -263,7 +269,6 @@ public class GlobalReport extends ReportSerializable {
    * @return the individual reports
    */
   public List<SmallIndividualReport> getIndividualReports() {
-    Collections.sort(reports);
     return reports;
   }
 

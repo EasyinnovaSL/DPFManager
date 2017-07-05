@@ -34,6 +34,7 @@ import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.shell.modules.report.util.ReportJson;
 import dpfmanager.shell.modules.report.util.ReportPDF;
 import dpfmanager.shell.modules.report.util.ReportXml;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.logging.log4j.Level;
@@ -441,6 +442,10 @@ public class ReportGenerator {
       target.mkdirs();
     }
 
+    // Already copied
+    File testFile = new File(target.getPath() + "/js/bootstrap.min.js");
+    if (testFile.exists()) return;
+
     // Copy the html folder to target
     String pathStr = "./src/main/resources/html";
     Path path = Paths.get(pathStr);
@@ -627,6 +632,7 @@ public class ReportGenerator {
       }
       if (formats.contains("HTML")) {
         String htmlFileStr = reportName + ".html";
+        copyHtmlFolder(htmlFileStr);
         HtmlReport htmlReport = new HtmlReport();
         String htmlOutput = htmlReport.parseIndividual(ir, ir.getReportId(), ir.getInternalReportFodler());
         String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
@@ -642,6 +648,7 @@ public class ReportGenerator {
           PDDocument pdfDocument = pdfReport.parseIndividual(ir, ir.getReportId(), ir.getInternalReportFodler());
           if (pdfDocument != null) {
             pdfDocument.save(pdfFileStr);
+            pdfDocument.close();
           }
         } catch (Exception e) {
           context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception in ReportPDF", e));
@@ -652,34 +659,36 @@ public class ReportGenerator {
 
   public String transformGlobalReport(String internalReportFolder, String format, GlobalReport gr) {
     String xmlFileStr = internalReportFolder + "summary.xml";
+    String xmlTempFileStr = internalReportFolder + "summary.temp.xml";
     String jsonFileStr = internalReportFolder + "summary.json";
     String htmlFileStr = internalReportFolder + "report.html";
     String pdfFileStr = internalReportFolder + "report.pdf";
+    List<SmallIndividualReport> reports = new ArrayList<>();
+    reports.addAll(gr.getIndividualReports());
 
     if (format.equals("xml")) {
-      reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+      reportXml.parseGlobal(xmlFileStr, gr, reports);
       return xmlFileStr;
     }
     if (format.equals("json")) {
-      boolean toDelete = false;
       File xmlFile = new File(xmlFileStr);
-      if (!xmlFile.exists()){
-        reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
-        toDelete = true;
-      }
-      reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
-      if (toDelete && xmlFile.exists()){
-        xmlFile.delete();
+      File xmlTempFile = new File(xmlTempFileStr);
+      if (xmlFile.exists()){
+        reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
+      } else {
+        reportXml.parseGlobal(xmlTempFileStr, gr, reports);
+        reportJson.xmlToJsonFile(xmlTempFileStr, jsonFileStr, this);
+        xmlTempFile.delete();
       }
       return jsonFileStr;
     }
     if (format.equals("html")) {
       copyHtmlFolder(htmlFileStr);
-      reportHtml.parseGlobal(htmlFileStr, gr, gr.getIndividualReports(), this);
+      reportHtml.parseGlobal(htmlFileStr, gr, reports, this);
       return htmlFileStr;
     }
     if (format.equals("pdf")) {
-      reportPdf.parseGlobal(pdfFileStr, gr, gr.getIndividualReports());
+      reportPdf.parseGlobal(pdfFileStr, gr, reports);
       return pdfFileStr;
     }
 

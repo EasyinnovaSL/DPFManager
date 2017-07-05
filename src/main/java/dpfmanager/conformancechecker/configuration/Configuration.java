@@ -83,6 +83,12 @@ import javax.xml.transform.stream.StreamResult;
 })
 @XmlRootElement(name = "configuration")
 public class Configuration implements Serializable {
+
+  /**
+   * Do not modify!
+   */
+  private static final long serialVersionUID = -1010943725602839341L;
+
   private ArrayList<String> isos;
   private Map<String, ArrayList<String>> modifiedIsos;
   private Rules rules;
@@ -123,6 +129,23 @@ public class Configuration implements Serializable {
     this.formats = formats;
     this.fixes = fixes;
     modifiedIsos = new HashMap<>();
+  }
+
+  /**
+   * Instantiates a new clone Configuration.
+   */
+  public Configuration(Configuration c) {
+    this.isos = new ArrayList<>(c.isos);
+    this.modifiedIsos = new HashMap<>(c.modifiedIsos);
+    this.rules = c.rules;
+    this.formats = new ArrayList<>(c.formats);
+    this.fixes = c.fixes;
+    this.output = c.output;
+    this.description = c.description;
+    this.version = c.version;
+    this.quick = c.quick;
+    this.bundle = c.bundle;
+    this.isDefault = c.isDefault;
   }
 
   /**

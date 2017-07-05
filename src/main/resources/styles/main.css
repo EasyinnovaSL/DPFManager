@@ -481,11 +481,38 @@
     -fx-font-weight: bold;
     -fx-font-size: 14;
     -fx-alignment: center;
-    -fx-text-fill: #1cc2ff;
+    -fx-text-fill: #33CCFF;
 }
 .bot-button:hover {
     -fx-background-color: rgba(200,200,200,0.2);
 }
+
+/* Bread Crumb Panel */
+
+.bread-hbox {
+    -fx-background-color: #414141;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0, 0, 0);
+}
+.label-bread {
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-text-fill: lightgray;
+    -fx-cursor: hand;
+}
+.label-bread.myactive,
+.label-bread:hover {
+    -fx-text-fill: #33CCFF;
+}
+.label-bread.myactive {
+    -fx-cursor: default;
+}
+.label-bread.fixed {
+    -fx-text-fill: lightgray;
+    -fx-cursor: default;
+    -fx-font-size: 16;
+    -fx-padding: -1 0 0 0;
+}
+
 
 /* Dividers */
 
