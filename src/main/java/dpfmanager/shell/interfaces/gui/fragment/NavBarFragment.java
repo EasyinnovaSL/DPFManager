@@ -107,6 +107,10 @@ public class NavBarFragment {
     labelSingle.getStyleClass().add("myactive");
   }
 
+  public void setSpecificText(String format){
+    labelSingle.setText(bundle.getString("labelSpecific").replace("%1", format));
+  }
+
   @FXML
   protected void clickedTable(MouseEvent event) throws Exception {
     if (!labelTable.getStyleClass().contains("myactive")) {

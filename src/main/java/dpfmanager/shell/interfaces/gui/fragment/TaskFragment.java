@@ -25,8 +25,10 @@ import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
+import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.threading.messages.ThreadsMessage;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -178,17 +180,12 @@ public class TaskFragment {
     getReportsInfo();
     NodeUtil.hideNode(resumePauseImage);
     NodeUtil.hideNode(cancelImage);
-    if (!type.isEmpty()) {
-      taskImage.setImage(new Image("images/formats/" + type + ".png"));
-      timeLabel.setText(getReadableData(job.getFinish() - job.getInit()));
-      NodeUtil.showNode(taskImage);
-      NodeUtil.hideNode(reportsImage);
-    } else {
-      reportsImage.setImage(new Image("images/formats/reports.png"));
-      timeLabel.setText(getReadableData(job.getFinish() - job.getInit()));
-      NodeUtil.showNode(reportsImage);
-      NodeUtil.hideNode(taskImage);
-    }
+
+    reportsImage.setImage(new Image("images/formats/report.png"));
+    timeLabel.setText(getReadableData(job.getFinish() - job.getInit()));
+    NodeUtil.showNode(reportsImage);
+    NodeUtil.hideNode(taskImage);
+
     progress.setProgress(job.getProgress());
     progress.getStyleClass().remove("blue-bar");
     progress.getStyleClass().add("green-bar");
@@ -258,28 +255,8 @@ public class TaskFragment {
   }
 
   private void getReportsInfo() {
-    String filefolder = job.getOutput();
-
-    String htmlPath = filefolder + "report.html";
-    String xmlPath = filefolder + "summary.xml";
-    String jsonPath = filefolder + "summary.json";
-    String pdfPath = filefolder + "report.pdf";
-
     type = "";
-    path = "";
-    if (exists(htmlPath)) {
-      type = "html";
-      path = htmlPath;
-    } else if (exists(xmlPath)) {
-      type = "xml";
-      path = xmlPath;
-    } else if (exists(jsonPath)) {
-      type = "json";
-      path = jsonPath;
-    } else if (exists(pdfPath)) {
-      type = "pdf";
-      path = pdfPath;
-    }
+    path = job.getOutput();
   }
 
   @FXML
@@ -294,7 +271,11 @@ public class TaskFragment {
   @FXML
   private void showReportsTab() {
     // Show check
-    context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
+    ReportGui rg = new ReportGui(path);
+    ArrayMessage am = new ArrayMessage();
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, rg));
+    context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
   }
 
   @FXML

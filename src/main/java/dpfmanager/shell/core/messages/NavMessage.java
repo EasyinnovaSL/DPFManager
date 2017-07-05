@@ -29,13 +29,24 @@ public class NavMessage extends DpfMessage {
   public enum Selected {
     TABLE,
     REPORT,
-    SPECIFIC
+    SPECIFIC,
+    TEXT
   }
 
   private Selected selected;
+  private String text;
 
   public NavMessage(Selected s) {
     selected = s;
+  }
+
+  public NavMessage(String s) {
+    selected = Selected.TEXT;
+    text = s;
+  }
+
+  public String getText() {
+    return text;
   }
 
   public boolean isTable() {
@@ -48,6 +59,10 @@ public class NavMessage extends DpfMessage {
 
   public boolean isSpecific() {
     return selected.equals(Selected.SPECIFIC);
+  }
+
+  public boolean isText() {
+    return selected.equals(Selected.TEXT);
   }
 
 }

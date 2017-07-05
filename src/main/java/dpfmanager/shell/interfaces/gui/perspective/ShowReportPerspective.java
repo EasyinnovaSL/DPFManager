@@ -64,7 +64,7 @@ public class ShowReportPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
-    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.SPECIFIC));
+    context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.SPECIFIC));
   }
 
   @PostConstruct

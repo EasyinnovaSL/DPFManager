@@ -22,6 +22,7 @@ package dpfmanager.shell.interfaces.gui.component.global;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
@@ -249,6 +250,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
         final ShowMessage finalSMessage = sMessage;
         icon.setOnMouseClicked(event -> {
           ArrayMessage am = new ArrayMessage();
+          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
           am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
           am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
           context.send(GuiConfig.PERSPECTIVE_SHOW, am);
