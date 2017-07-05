@@ -442,6 +442,10 @@ public class ReportGenerator {
       target.mkdirs();
     }
 
+    // Already copied
+    File testFile = new File(target.getPath() + "/js/bootstrap.min.js");
+    if (testFile.exists()) return;
+
     // Copy the html folder to target
     String pathStr = "./src/main/resources/html";
     Path path = Paths.get(pathStr);
@@ -628,6 +632,7 @@ public class ReportGenerator {
       }
       if (formats.contains("HTML")) {
         String htmlFileStr = reportName + ".html";
+        copyHtmlFolder(htmlFileStr);
         HtmlReport htmlReport = new HtmlReport();
         String htmlOutput = htmlReport.parseIndividual(ir, ir.getReportId(), ir.getInternalReportFodler());
         String name = htmlFileStr.substring(htmlFileStr.lastIndexOf("/") + 1, htmlFileStr.length());
@@ -666,15 +671,13 @@ public class ReportGenerator {
       return xmlFileStr;
     }
     if (format.equals("json")) {
-      boolean toDelete = false;
       File xmlFile = new File(xmlFileStr);
       File xmlTempFile = new File(xmlTempFileStr);
-      if (!xmlFile.exists()){
+      if (xmlFile.exists()){
+        reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
+      } else {
         reportXml.parseGlobal(xmlTempFileStr, gr, reports);
-        toDelete = true;
-      }
-      reportJson.xmlToJsonFile(xmlTempFileStr, jsonFileStr, this);
-      if (toDelete && xmlTempFile.exists()){
+        reportJson.xmlToJsonFile(xmlTempFileStr, jsonFileStr, this);
         xmlTempFile.delete();
       }
       return jsonFileStr;

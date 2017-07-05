@@ -28,6 +28,7 @@ import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
+import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
 import dpfmanager.shell.modules.report.messages.GenerateIndividualMessage;
 import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
@@ -120,17 +121,23 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
       if (sMessage.isShow()) {
         if (sMessage.getInfo() != null && sMessage.getUuid().equals(currentReport)){
-          ArrayMessage am = new ArrayMessage();
-          am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage());
-          am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, sMessage.getInfo()));
-          context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
+          String currentId = context.getManagedFragmentHandler(TopFragment.class).getController().getCurrentId();
+          if (currentId.equals(GuiConfig.PERSPECTIVE_SHOW)){
+            ArrayMessage am = new ArrayMessage();
+            am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+            am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, sMessage.getInfo()));
+            context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
+          }
         } else if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)){
           getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
         }
       } else if (sMessage.isGenerate()) {
         if (showReports.containsKey(sMessage.getUuid())) {
           ShowReport sr = showReports.get(sMessage.getUuid());
-          if (sr.finished) {
+          if (sr.finished && sMessage.getTypes().size() > 0) {
+            // Transformation DONE, return to global report
+            context.send(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+          } else if (sr.finished) {
             // Transformation DONE, do nothing
             getController().showSingleReport(sMessage.getType(), sMessage.getInternal(), false);
           } else {

@@ -115,7 +115,15 @@ public class MakeReportRunnable extends DpfRunnable {
       IndividualReport ir = (IndividualReport) IndividualReport.read(reportSerializedFile.getPath());
       String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
       generator.transformIndividualReport(outputfile, format, ir, config);
-      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(format, outputfile + "." + format));
+      String finalOutput = outputfile;
+      if (format.toLowerCase().equals("html")){
+        String first = outputfile.substring(0, outputfile.lastIndexOf("/"));
+        String second = outputfile.substring(outputfile.lastIndexOf("/")) + "." + format;
+        finalOutput = first + "/html" + second;
+      } else {
+        finalOutput = outputfile + "." + format;
+      }
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(format, finalOutput));
     }
   }
 

@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.component.global;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
@@ -31,6 +32,7 @@ import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.interfaces.gui.fragment.global.IndividualFragment;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
@@ -47,6 +49,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -126,6 +129,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   @FXML
   private VBox individualsVBox;
 
+  private List<ManagedFragmentHandler<IndividualFragment>> individualHandlers;
+
   @Override
   public void sendMessage(String target, Object dpfMessage) {
     context.send(target, dpfMessage);
@@ -157,6 +162,21 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
       } else if (gMessage.isAddIndividual()) {
         addIndividualReport(gMessage.getReportIndividualGui());
       }
+    } else if (message != null && message.isTypeOf(AlertMessage.class)){
+      AlertMessage am = message.getTypedMessage(AlertMessage.class);
+      if (am.hasResult() && am.getResult()) {
+        File dir = new File(info.getInternalReportFolder());
+        try {
+          FileUtils.deleteDirectory(dir);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage());
+      }
+    } else if (message != null && message.isTypeOf(UiMessage.class)){
+      info.readFormats();
+      addFormatIcons(info);
+      updateIndividualsReports();
     }
     return null;
   }
@@ -312,17 +332,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
       @Override
       public void handle(MouseEvent event) {
         // Alert confirmation
-
-        // Delete report
-        File file = new File(path);
-        File dir = new File(file.getParent());
-        try {
-          FileUtils.deleteDirectory(dir);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        // Go to reports tab
-        // TODO
+        AlertMessage am = new AlertMessage(AlertMessage.Type.CONFIRMATION, bundle.getString("deleteConfirmationGlobal"), bundle.getString("deleteInfoGlobal"));
+        am.setTitle(bundle.getString("deleteTitle"));
+        getContext().send(BasicConfig.MODULE_MESSAGE, am);
       }
     });
     globalActionsBox.getChildren().add(icon);
@@ -333,6 +345,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    */
 
   private void initIndividualsReports(){
+    individualHandlers = new ArrayList<>();
     individualsVBox.getChildren().clear();
     getController().loadAndPrintIndividuals();
   }
@@ -340,7 +353,14 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private void addIndividualReport(ReportIndividualGui rig){
     ManagedFragmentHandler<IndividualFragment> handler = context.getManagedFragmentHandler(IndividualFragment.class);
     handler.getController().init(rig);
+    individualHandlers.add(handler);
     individualsVBox.getChildren().add(handler.getFragmentNode());
+  }
+
+  private void updateIndividualsReports(){
+    for (ManagedFragmentHandler<IndividualFragment> handler : individualHandlers){
+      handler.getController().updateIcons();
+    }
   }
 
   /**

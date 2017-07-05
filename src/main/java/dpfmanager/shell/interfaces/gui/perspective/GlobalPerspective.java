@@ -24,6 +24,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.NavMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 
@@ -65,6 +66,11 @@ public class GlobalPerspective extends DpfAbstractPerspective {
   @Override
   public void onShowCustom() {
     context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.REPORT));
+  }
+
+  @Override
+  public void onReloadCustom() {
+    context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new UiMessage(UiMessage.Type.RELOAD));
   }
 
   @PostConstruct
