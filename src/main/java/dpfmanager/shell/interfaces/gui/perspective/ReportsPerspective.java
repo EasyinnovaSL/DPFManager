@@ -23,22 +23,10 @@ import dpfmanager.shell.core.adapter.DpfAbstractPerspective;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
-import dpfmanager.shell.core.messages.UiMessage;
-import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
-import dpfmanager.shell.modules.threading.messages.GlobalStatusMessage;
-import dpfmanager.shell.modules.threading.messages.RunnableMessage;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -57,6 +45,7 @@ import java.util.ResourceBundle;
     active = false,
     components = {
         GuiConfig.COMPONENT_TOP,
+        GuiConfig.COMPONENT_NAV,
         GuiConfig.COMPONENT_REPORTS,
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
@@ -76,6 +65,7 @@ public class ReportsPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
+    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.TABLE));
     context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
   }
 
@@ -96,10 +86,15 @@ public class ReportsPerspective extends DpfAbstractPerspective {
     bottomBar = new StackPane();
     bottomBar.setAlignment(Pos.BOTTOM_CENTER);
 
+    // Navigation Bar
+    StackPane navPane = new StackPane();
+    centerPane.setAlignment(Pos.TOP_CENTER);
+
     // Attach to PERSPECTIVE
     mainSplit = constructSplitPane(constructScrollPane(centerPane), bottomPane);
-    mainPane = constructMainPane(mainSplit, bottomBar);
+    mainPane = constructMainPaneWithBread(mainSplit, navPane, bottomBar);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_TOP, topPane);
+    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_NAV, navPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_REPORTS, centerPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_PANE, bottomPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_BAR, bottomBar);

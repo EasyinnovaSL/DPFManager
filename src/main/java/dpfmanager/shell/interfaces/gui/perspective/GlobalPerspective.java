@@ -23,7 +23,7 @@ import dpfmanager.shell.core.adapter.DpfAbstractPerspective;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
+import dpfmanager.shell.core.messages.NavMessage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 
@@ -44,6 +44,7 @@ import java.util.ResourceBundle;
     active = false,
     components = {
         GuiConfig.COMPONENT_TOP,
+        GuiConfig.COMPONENT_NAV,
         GuiConfig.COMPONENT_GLOBAL,
         GuiConfig.COMPONENT_PANE,
         GuiConfig.COMPONENT_BAR,
@@ -63,6 +64,7 @@ public class GlobalPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onShowCustom() {
+    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.REPORT));
   }
 
   @PostConstruct
@@ -82,10 +84,15 @@ public class GlobalPerspective extends DpfAbstractPerspective {
     bottomBar = new StackPane();
     bottomBar.setAlignment(Pos.BOTTOM_CENTER);
 
+    // Navigation Bar
+    StackPane navPane = new StackPane();
+    centerPane.setAlignment(Pos.TOP_CENTER);
+
     // Attach to PERSPECTIVE
     mainSplit = constructSplitPane(constructScrollPane(centerPane), bottomPane);
-    mainPane = constructMainPane(mainSplit, bottomBar);
+    mainPane = constructMainPaneWithBread(mainSplit, navPane, bottomBar);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_TOP, topPane);
+    perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_NAV, navPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_GLOBAL, centerPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_PANE, bottomPane);
     perspectiveLayout.registerTargetLayoutComponent(GuiConfig.TARGET_CONTAINER_BAR, bottomBar);

@@ -47,6 +47,7 @@ public class GuiConfig {
   public static final String COMPONENT_INTEROPERABILITY = "id011";
   public static final String COMPONENT_STATISTICS = "id012";
   public static final String COMPONENT_GLOBAL = "id013";
+  public static final String COMPONENT_NAV = "id014";
 
   /** Target containers */
   public static final String TARGET_CONTAINER_TOP = "tc001";
@@ -62,6 +63,7 @@ public class GuiConfig {
   public static final String TARGET_CONTAINER_INTEROPERABILITY = "tc011";
   public static final String TARGET_CONTAINER_STATISTICS = "tc012";
   public static final String TARGET_CONTAINER_GLOBAL = "tc013";
+  public static final String TARGET_CONTAINER_NAV = "tc014";
 
   /** Fragments */
   public static final String FRAGMENT_BOTTOM = "f001";
@@ -84,4 +86,5 @@ public class GuiConfig {
   public static final String FRAGMENT_RULE = "f018";
   public static final String FRAGMENT_ERRORS_LIST = "f019";
   public static final String FRAGMENT_INDIVIDUAL = "f020";
+  public static final String FRAGMENT_BREAD = "f021";
 }
