@@ -22,6 +22,9 @@ package dpfmanager.shell.core.messages;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
+import dpfmanager.shell.modules.report.util.ReportGui;
+
+import java.util.List;
 
 /**
  * Created by Adria Llorens on 04/03/2016.
@@ -34,6 +37,7 @@ public class ShowMessage extends DpfMessage {
 
   private Type internalType;
   private String type;
+  private List<String> types = null;
   private String path;
   private GlobalReport globalReport;
   private int number;
@@ -43,6 +47,7 @@ public class ShowMessage extends DpfMessage {
   private String internal;
   private boolean onlyGlobal;
   private Configuration config;
+  private ReportGui info;
 
   // Show
   public ShowMessage(Long u, String t, String p) {
@@ -60,12 +65,31 @@ public class ShowMessage extends DpfMessage {
     internalType = Type.SHOW;
   }
 
+  // Show
+  public ShowMessage(Long u, ReportGui i) {
+    uuid = u;
+    info = i;
+    internalType = Type.SHOW;
+  }
+
   // Generate
-  public ShowMessage(Long u, String t, GlobalReport gr, String i, boolean o) {
+  public ShowMessage(Long u, String t, ReportGui info, boolean o) {
+    this.info = info;
     type = t;
     uuid = u;
-    internal = i;
-    globalReport = gr;
+    internal = info.getInternalReportFolder();
+    globalReport = info.getGlobalReport();
+    onlyGlobal = o;
+    internalType = Type.GENERATE;
+  }
+
+  // Generate
+  public ShowMessage(Long u, List<String> t, ReportGui info, boolean o) {
+    this.info = info;
+    types = t;
+    uuid = u;
+    internal = info.getInternalReportFolder();
+    globalReport = info.getGlobalReport();
     onlyGlobal = o;
     internalType = Type.GENERATE;
   }
@@ -152,5 +176,13 @@ public class ShowMessage extends DpfMessage {
 
   public Configuration getConfig() {
     return config;
+  }
+
+  public ReportGui getInfo() {
+    return info;
+  }
+
+  public List<String> getTypes() {
+    return types;
   }
 }

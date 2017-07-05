@@ -4,19 +4,14 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import java.lang.String?>
 
 <AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
@@ -122,7 +117,8 @@
                             <Label fx:id="globalFiles" text="" textFill="CYAN" GridPane.columnIndex="2">
                                 <padding>
                                     <Insets left="10.0" />
-                                </padding></Label>
+                                </padding>
+                            </Label>
                             <Label fx:id="globalErrors" text="" textFill="RED" GridPane.columnIndex="3" />
                             <Label fx:id="globalWarnings" text="" textFill="ORANGE" GridPane.columnIndex="4" />
                             <Label fx:id="globalPassed" text="" textFill="GREENYELLOW" GridPane.columnIndex="5" />
@@ -134,7 +130,7 @@
                     <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                 </AnchorPane>
                 <VBox.margin>
-                   <Insets bottom="30.0" />
+                    <Insets bottom="30.0" />
                 </VBox.margin>
             </VBox>
             <!--End simulate table-->
@@ -170,7 +166,7 @@
                     <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
                         <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="260.0" minWidth="260.0" prefWidth="260.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
@@ -213,10 +209,97 @@
             </VBox>
             <!--End simulate table-->
 
+            <HBox fx:id="hboxButton" alignment="TOP_RIGHT">
+                <children>
+                    <Button fx:id="buttonFilters" mnemonicParsing="false" onAction="#showGenerate" styleClass="button-trans-clear" text="%showGenerate">
+                        <VBox.margin>
+                            <Insets bottom="5.0" />
+                        </VBox.margin>
+                        <padding>
+                            <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+                        </padding>
+                    </Button>
+                </children>
+                <VBox.margin>
+                    <Insets bottom="30.0" left="65.0" right="65.0" />
+                </VBox.margin>
+            </HBox>
+
+            <HBox fx:id="hboxGenerators" alignment="TOP_RIGHT">
+                <children>
+                    <VBox alignment="CENTER_RIGHT" maxWidth="375.0" prefWidth="375.0" styleClass="border-box-light">
+                        <children>
+                            <HBox alignment="CENTER" spacing="20.0">
+                                <children>
+                                    <CheckBox fx:id="htmlCheck" mnemonicParsing="false" styleClass="checkreport" text="HTML">
+                                        <HBox.margin>
+                                            <Insets />
+                                        </HBox.margin>
+                                    </CheckBox>
+                                    <CheckBox fx:id="pdfCheck" mnemonicParsing="false" styleClass="checkreport" text="PDF">
+                                        <HBox.margin>
+                                            <Insets />
+                                        </HBox.margin>
+                                    </CheckBox>
+                                    <CheckBox mnemonicParsing="false" styleClass="checkreport" text="XML" fx:id="xmlCheck">
+                                        <HBox.margin>
+                                            <Insets />
+                                        </HBox.margin>
+                                    </CheckBox>
+                           <CheckBox fx:id="metsCheck" mnemonicParsing="false" styleClass="checkreport" text="METS" />
+                                    <CheckBox fx:id="jsonCheck" mnemonicParsing="false" styleClass="checkreport" text="JSON">
+                                        <HBox.margin>
+                                            <Insets />
+                                        </HBox.margin>
+                                    </CheckBox>
+                                </children>
+                            </HBox>
+
+                            <HBox alignment="CENTER_RIGHT">
+                                <children>
+                                    <Button fx:id="genStatisticsButton" mnemonicParsing="false" onAction="#generateReportsClicked" styleClass="button-trans-clear" text="%generateReports">
+                                        <padding>
+                                            <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+                                        </padding>
+                                        <VBox.margin>
+                                            <Insets top="10.0" />
+                                        </VBox.margin>
+                              <HBox.margin>
+                                 <Insets left="15.0" />
+                              </HBox.margin>
+                                    </Button>
+                                    <Separator maxHeight="0.0" minHeight="0.0" opacity="0.0" prefHeight="0.0" HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#hideGenerate" styleClass="button-trans-clear" text="%closeFilters">
+                                        <padding>
+                                            <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+                                        </padding>
+                              <HBox.margin>
+                                 <Insets right="15.0" />
+                              </HBox.margin>
+                                    </Button>
+                                </children>
+                                <VBox.margin>
+                                    <Insets top="15.0" />
+                                </VBox.margin>
+                            </HBox>
+                        </children>
+                        <padding>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </padding>
+                        <VBox.margin>
+                            <Insets right="65.0" />
+                        </VBox.margin>
+                    </VBox>
+                </children>
+                <VBox.margin>
+                    <Insets bottom="30.0" left="65.0" right="65.0" />
+                </VBox.margin>
+            </HBox>
+
             <!--<ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">-->
-                <!--<VBox.margin>-->
-                    <!--<Insets top="20.0" />-->
-                <!--</VBox.margin>-->
+            <!--<VBox.margin>-->
+            <!--<Insets top="20.0" />-->
+            <!--</VBox.margin>-->
             <!--</ProgressIndicator>-->
         </VBox>
     </children>

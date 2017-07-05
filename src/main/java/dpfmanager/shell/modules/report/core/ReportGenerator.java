@@ -34,6 +34,7 @@ import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.shell.modules.report.util.ReportJson;
 import dpfmanager.shell.modules.report.util.ReportPDF;
 import dpfmanager.shell.modules.report.util.ReportXml;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.logging.log4j.Level;
@@ -653,34 +654,38 @@ public class ReportGenerator {
 
   public String transformGlobalReport(String internalReportFolder, String format, GlobalReport gr) {
     String xmlFileStr = internalReportFolder + "summary.xml";
+    String xmlTempFileStr = internalReportFolder + "summary.temp.xml";
     String jsonFileStr = internalReportFolder + "summary.json";
     String htmlFileStr = internalReportFolder + "report.html";
     String pdfFileStr = internalReportFolder + "report.pdf";
+    List<SmallIndividualReport> reports = new ArrayList<>();
+    reports.addAll(gr.getIndividualReports());
 
     if (format.equals("xml")) {
-      reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+      reportXml.parseGlobal(xmlFileStr, gr, reports);
       return xmlFileStr;
     }
     if (format.equals("json")) {
       boolean toDelete = false;
       File xmlFile = new File(xmlFileStr);
+      File xmlTempFile = new File(xmlTempFileStr);
       if (!xmlFile.exists()){
-        reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
+        reportXml.parseGlobal(xmlTempFileStr, gr, reports);
         toDelete = true;
       }
-      reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
-      if (toDelete && xmlFile.exists()){
-        xmlFile.delete();
+      reportJson.xmlToJsonFile(xmlTempFileStr, jsonFileStr, this);
+      if (toDelete && xmlTempFile.exists()){
+        xmlTempFile.delete();
       }
       return jsonFileStr;
     }
     if (format.equals("html")) {
       copyHtmlFolder(htmlFileStr);
-      reportHtml.parseGlobal(htmlFileStr, gr, gr.getIndividualReports(), this);
+      reportHtml.parseGlobal(htmlFileStr, gr, reports, this);
       return htmlFileStr;
     }
     if (format.equals("pdf")) {
-      reportPdf.parseGlobal(pdfFileStr, gr, gr.getIndividualReports());
+      reportPdf.parseGlobal(pdfFileStr, gr, reports);
       return pdfFileStr;
     }
 

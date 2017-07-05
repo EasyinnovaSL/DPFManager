@@ -21,10 +21,13 @@ package dpfmanager.shell.interfaces.gui.component.show;
 
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
+import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
+import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.modules.report.messages.GenerateIndividualMessage;
 import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
@@ -116,7 +119,12 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     if (message != null && message.isTypeOf(ShowMessage.class)) {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
       if (sMessage.isShow()) {
-        if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)){
+        if (sMessage.getInfo() != null && sMessage.getUuid().equals(currentReport)){
+          ArrayMessage am = new ArrayMessage();
+          am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage());
+          am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, sMessage.getInfo()));
+          context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
+        } else if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)){
           getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
         }
       } else if (sMessage.isGenerate()) {
@@ -148,7 +156,11 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
           } else {
             showLoadingMultiple();
           }
-          context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getGlobalReport(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
+          if (sMessage.getTypes() != null){
+            context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getTypes(), sMessage.getInfo(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
+          } else {
+            context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getInfo(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
+          }
         }
       } else if (sMessage.isIndividual()) {
         hideAll();

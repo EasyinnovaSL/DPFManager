@@ -97,29 +97,35 @@ public class ReportService extends DpfService {
   public void tractGenerateMessage(GenerateMessage gm) {
     Long uuid = gm.getUuid();
     String internalReportFolder = null;
-//    Integer globalValue = gm.getFormat().toLowerCase().equals("mets") ? 0 : 1;
     Integer globalValue = 1;
-    Integer max = (gm.isOnlyGlobal()) ? globalValue : gm.getGlobalReport().getIndividualReports().size() + globalValue;
+    Integer max = (gm.isOnlyGlobal()) ? globalValue : (gm.getInfo().getGlobalReport().getIndividualReports().size() + globalValue) * gm.getFormats().size();
 
     // Transform individual reports runnables
     List<MakeReportRunnable> individualsMakers = new ArrayList<>();
-    for (SmallIndividualReport sir : gm.getGlobalReport().getIndividualReports()) {
-      if (internalReportFolder == null) internalReportFolder = sir.getInternalReportFodler();
-      sir.predictImagePath();
+    List<MakeReportRunnable> globalMakers = new ArrayList<>();
+    for (String format : gm.getFormats()) {
+      for (SmallIndividualReport sir : gm.getInfo().getGlobalReport().getIndividualReports()) {
+        if (internalReportFolder == null) internalReportFolder = sir.getInternalReportFodler();
+        sir.predictImagePath();
 
+        MakeReportRunnable mrr = new MakeReportRunnable(generator);
+        mrr.setIndividualParameters(sir, gm.getInfo().getGlobalReport(), format);
+        individualsMakers.add(mrr);
+      }
+
+      // Transforms global report and show runnable
       MakeReportRunnable mrr = new MakeReportRunnable(generator);
-      mrr.setIndividualParameters(sir, gm.getGlobalReport(), gm.getFormat());
-      individualsMakers.add(mrr);
+      mrr.setGlobalParameters(internalReportFolder, gm.getInfo(), globalValue, format, gm.isOnlyGlobal());
+      globalMakers.add(mrr);
     }
 
-    // Transforms global report and show runnable
-    MakeReportRunnable mrr = new MakeReportRunnable(generator);
-    mrr.setGlobalParameters(internalReportFolder, gm.getGlobalReport(), globalValue, gm.getFormat());
-
     // Init progress bar
+    MakeReportRunnable mrr = globalMakers.get(0);
+    mrr.setShowAtEnd(true);
     context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(uuid, max, globalValue, mrr));
 
-
+    globalMakers.remove(0);
+    individualsMakers.addAll(globalMakers);
     if (!gm.isOnlyGlobal()){
       // Start individual transforms
       for (MakeReportRunnable iMrr : individualsMakers){

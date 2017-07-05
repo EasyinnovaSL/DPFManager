@@ -26,6 +26,7 @@ import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
+import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.interfaces.gui.fragment.global.IndividualFragment;
@@ -34,12 +35,14 @@ import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -62,6 +65,7 @@ import org.jacpfx.rcp.context.Context;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +87,13 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private Context context;
   @Resource
   private ResourceBundle bundle;
+
+  private ReportGui info;
+  @FXML private CheckBox htmlCheck;
+  @FXML private CheckBox xmlCheck;
+  @FXML private CheckBox metsCheck;
+  @FXML private CheckBox pdfCheck;
+  @FXML private CheckBox jsonCheck;
 
   /**
    * Global report elements
@@ -111,8 +122,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   /**
    * Individual reports elements
    */
-//  @FXML
-//  private ProgressIndicator indicator;
   @FXML
   private VBox individualsVBox;
 
@@ -163,6 +172,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    * Global report
    */
   private void initGlobalReport(ReportGui info) {
+    this.info = info;
+    info.readFormats();
     globalDate.setText(info.getDate());
     globalTime.setText(info.getTime());
     globalFiles.setText(info.getNfiles() + "");
@@ -172,6 +183,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     addChartScore(info);
     addFormatIcons(info);
     addActionsIcons(info);
+    hideGenerate();
   }
 
   private void addChartScore(ReportGui info) {
@@ -231,7 +243,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
         icon.setOnMouseEntered(event -> icon.setOpacity(1.0));
         icon.setOnMouseExited(event -> icon.setOpacity(0.4));
         Long formatUuid = Long.parseLong(info.getUuid()+Character.getNumericValue(i.charAt(0)));
-        sMessage = new ShowMessage(formatUuid, i, gr, info.getInternalReportFolder(), true);
+        sMessage = new ShowMessage(formatUuid, i, info, true);
       }
       if (sMessage != null){
         final ShowMessage finalSMessage = sMessage;
@@ -297,8 +309,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
-        // Send action to controller
-        context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.DELETE, info.getUuid()));
+        // Alert confirmation
+
         // Delete report
         File file = new File(path);
         File dir = new File(file.getParent());
@@ -307,6 +319,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
         } catch (IOException e) {
           e.printStackTrace();
         }
+        // Go to reports tab
+        // TODO
       }
     });
     globalActionsBox.getChildren().add(icon);
@@ -325,6 +339,72 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     ManagedFragmentHandler<IndividualFragment> handler = context.getManagedFragmentHandler(IndividualFragment.class);
     handler.getController().init(rig);
     individualsVBox.getChildren().add(handler.getFragmentNode());
+  }
+
+  /**
+   * Generate all reports
+   */
+
+  @FXML
+  private HBox hboxGenerators;
+  @FXML
+  private HBox hboxButton;
+
+  @FXML
+  protected void showGenerate(ActionEvent event) throws Exception {
+    showGenerate();
+    htmlCheck.setSelected(false);
+    xmlCheck.setSelected(false);
+    metsCheck.setSelected(false);
+    jsonCheck.setSelected(false);
+    pdfCheck.setSelected(false);
+  }
+
+  private void showGenerate(){
+    NodeUtil.showNode(hboxGenerators);
+    NodeUtil.hideNode(hboxButton);
+  }
+
+  @FXML
+  protected void hideGenerate(ActionEvent event) throws Exception {
+    hideGenerate();
+  }
+
+  private void hideGenerate(){
+    NodeUtil.hideNode(hboxGenerators);
+    NodeUtil.showNode(hboxButton);
+  }
+
+  @FXML
+  protected void generateReportsClicked(ActionEvent event) throws Exception {
+    String uuidStr = info.getUuid();
+    for (String i : getSelectedFormats()) {
+      uuidStr += getNumericValue(i.charAt(0));
+    }
+    ShowMessage sMessage = new ShowMessage(Long.parseLong(uuidStr), getSelectedFormats(), info, false);
+    ArrayMessage am = new ArrayMessage();
+    am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
+    am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, sMessage);
+    context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+  }
+
+  private String getNumericValue(Character ch){
+    if (ch.equals('h')) return "1";
+    if (ch.equals('x')) return "2";
+    if (ch.equals('m')) return "3";
+    if (ch.equals('p')) return "4";
+    if (ch.equals('j')) return "5";
+    return "0";
+  }
+
+  public List<String> getSelectedFormats() {
+    List<String> formats = new ArrayList<>();
+    if (htmlCheck.isSelected()) formats.add("html");
+    if (xmlCheck.isSelected()) formats.add("xml");
+    if (metsCheck.isSelected()) formats.add("mets");
+    if (pdfCheck.isSelected()) formats.add("pdf");
+    if (jsonCheck.isSelected()) formats.add("json");
+    return formats;
   }
 
 }

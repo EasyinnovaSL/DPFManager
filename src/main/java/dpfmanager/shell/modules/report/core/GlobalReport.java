@@ -269,7 +269,6 @@ public class GlobalReport extends ReportSerializable {
    * @return the individual reports
    */
   public List<SmallIndividualReport> getIndividualReports() {
-    Collections.sort(reports);
     return reports;
   }
 
