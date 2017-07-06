@@ -24,13 +24,11 @@ import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.NavMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
-import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.interfaces.gui.fragment.global.IndividualFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
@@ -46,10 +44,8 @@ import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -57,6 +53,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Callback;
 
 import org.apache.commons.io.FileUtils;
 import org.jacpfx.api.annotations.Resource;
@@ -128,8 +125,10 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    */
   @FXML
   private VBox individualsVBox;
+  @FXML
+  private Pagination pagination;
 
-  private List<ManagedFragmentHandler<IndividualFragment>> individualHandlers;
+  private Map<Integer, ManagedFragmentHandler<IndividualFragment>> individualHandlers;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -145,6 +144,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     if (message != null && message.isTypeOf(GuiGlobalMessage.class)){
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isInit()) {
+        individualHandlers = new HashMap<>();
         getController().readIndividualReports(gMessage.getReportGui().getInternalReportFolder(), gMessage.getReportGui().getGlobalReport().getConfig());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
@@ -158,9 +158,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isInit()) {
         initGlobalReport(gMessage.getReportGui());
-        initIndividualsReports();
+        initPagination();
       } else if (gMessage.isAddIndividual()) {
-        addIndividualReport(gMessage.getReportIndividualGui());
+        addIndividualReport(gMessage.getVboxId(), gMessage.getReportIndividualGui());
       }
     } else if (message != null && message.isTypeOf(AlertMessage.class)){
       AlertMessage am = message.getTypedMessage(AlertMessage.class);
@@ -187,6 +187,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     setModel(new GlobalModel(context));
     setController(new GlobalController());
     getModel().setResourcebundle(bundle);
+    individualHandlers = new HashMap<>();
+    pagination.setSkin(new PaginationBetterSkin(pagination));
   }
 
   /**
@@ -344,21 +346,65 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    * Individual reports
    */
 
-  private void initIndividualsReports(){
-    individualHandlers = new ArrayList<>();
-    individualsVBox.getChildren().clear();
-    getController().loadAndPrintIndividuals();
+  boolean paginationInitiated = false;
+
+  public void initPagination(){
+    Integer oldPageCount = pagination.getPageCount();
+    Integer oldPageIndex = pagination.getCurrentPageIndex();
+    pagination.setPageCount(getController().getPagesCount());
+    pagination.setCurrentPageIndex(0);
+    if (paginationInitiated) {
+      if (oldPageCount.equals(getController().getPagesCount()) && oldPageIndex.equals(0)){
+        reloadFirstPage();
+      }
+    } else {
+      paginationInitiated = true;
+      pagination.setPageFactory(new Callback<Integer, Node>() {
+        @Override
+        public Node call(Integer pageIndex) {
+          return createPage(pageIndex);
+        }
+      });
+    }
   }
 
-  private void addIndividualReport(ReportIndividualGui rig){
-    ManagedFragmentHandler<IndividualFragment> handler = context.getManagedFragmentHandler(IndividualFragment.class);
-    handler.getController().init(rig);
-    individualHandlers.add(handler);
-    individualsVBox.getChildren().add(handler.getFragmentNode());
+  public void reloadFirstPage(){
+    Node node = pagination.lookup("#vboxIndividuals0");
+    if (node != null) {
+      VBox vbox = (VBox) node;
+      vbox.getChildren().clear();
+      getController().loadAndPrintIndividuals("#vboxIndividuals0", 0);
+    }
+  }
+
+  public VBox createPage(Integer pageIndex){
+    String id = "vboxIndividuals" + pageIndex;
+    VBox box = new VBox();
+    box.setId(id);
+    box.setStyle("-fx-padding: 0 0 10 0;");
+    getController().loadAndPrintIndividuals("#" + id, pageIndex);
+    return box;
+  }
+
+  private void addIndividualReport(String vboxId, ReportIndividualGui rig){
+    Node node = pagination.lookup(vboxId);
+    if (node != null) {
+      VBox vbox = (VBox) node;
+      ManagedFragmentHandler<IndividualFragment> handler;
+      if (individualHandlers.containsKey(rig.getId())) {
+        handler = individualHandlers.get(rig.getId());
+        handler.getController().updateIcons();
+      } else {
+        handler = context.getManagedFragmentHandler(IndividualFragment.class);
+        handler.getController().init(rig);
+        individualHandlers.put(rig.getId(), handler);
+      }
+      vbox.getChildren().add(handler.getFragmentNode());
+    }
   }
 
   private void updateIndividualsReports(){
-    for (ManagedFragmentHandler<IndividualFragment> handler : individualHandlers){
+    for (ManagedFragmentHandler<IndividualFragment> handler : individualHandlers.values()){
       handler.getController().updateIcons();
     }
   }

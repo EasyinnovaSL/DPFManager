@@ -191,22 +191,15 @@
                     </GridPane>
                 </AnchorPane>
                 <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
-                <ScrollPane hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
-                    <content>
-                        <VBox fx:id="individualsVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
-                    </content>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                    <styleClass>
-                        <String fx:value="periodical-scroll" />
-                        <String fx:value="dpf-bar" />
-                    </styleClass>
-                </ScrollPane>
                 <VBox.margin>
-                    <Insets bottom="30.0" />
+                    <Insets />
                 </VBox.margin>
             </VBox>
+         <Pagination fx:id="pagination" maxHeight="300.0" maxPageIndicatorCount="7" maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+            <VBox.margin>
+               <Insets />
+            </VBox.margin>
+         </Pagination>
             <!--End simulate table-->
 
             <HBox fx:id="hboxButton" alignment="TOP_RIGHT">
@@ -221,8 +214,11 @@
                     </Button>
                 </children>
                 <VBox.margin>
-                    <Insets bottom="30.0" left="65.0" right="65.0" />
+                    <Insets bottom="15.0" left="65.0" right="65.0" />
                 </VBox.margin>
+            <padding>
+               <Insets top="10.0" />
+            </padding>
             </HBox>
 
             <HBox fx:id="hboxGenerators" alignment="TOP_RIGHT">
@@ -292,8 +288,11 @@
                     </VBox>
                 </children>
                 <VBox.margin>
-                    <Insets bottom="30.0" left="65.0" right="65.0" />
+                    <Insets bottom="15.0" left="65.0" right="65.0" />
                 </VBox.margin>
+            <padding>
+               <Insets top="10.0" />
+            </padding>
             </HBox>
 
             <!--<ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">-->

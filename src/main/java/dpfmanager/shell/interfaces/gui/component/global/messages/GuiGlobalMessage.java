@@ -34,6 +34,7 @@ public class GuiGlobalMessage extends DpfMessage {
 
   private Type type;
   private ReportGui reportGui;
+  private String vboxId;
   private ReportIndividualGui reportIndividualGui;
 
   // Init
@@ -43,8 +44,9 @@ public class GuiGlobalMessage extends DpfMessage {
   }
 
   // add individual
-  public GuiGlobalMessage(Type t, ReportIndividualGui rig) {
+  public GuiGlobalMessage(Type t, String i, ReportIndividualGui rig) {
     type = t;
+    vboxId = i;
     reportIndividualGui = rig;
   }
 
@@ -62,5 +64,9 @@ public class GuiGlobalMessage extends DpfMessage {
 
   public ReportIndividualGui getReportIndividualGui() {
     return reportIndividualGui;
+  }
+
+  public String getVboxId() {
+    return vboxId;
   }
 }

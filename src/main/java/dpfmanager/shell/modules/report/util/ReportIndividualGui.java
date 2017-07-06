@@ -37,6 +37,7 @@ public class ReportIndividualGui {
 
   private String[] available_formats = {"html", "xml", "json", "pdf"};
 
+  private Integer id;
   private String path;
   private String name;
   private boolean loaded;
@@ -54,10 +55,11 @@ public class ReportIndividualGui {
   private Configuration config;
   private Integer reportVersion = 0;
 
-  public ReportIndividualGui(String path, Configuration config) {
+  public ReportIndividualGui(String path, Configuration config, Integer id) {
     this.path = path;
     this.name = parseFileName(path);
     this.config = config;
+    this.id = id;
     this.loaded = false;
     this.error = false;
   }
@@ -176,6 +178,9 @@ public class ReportIndividualGui {
   }
   public Configuration getConfig() {
     return config;
+  }
+  public Integer getId() {
+    return id;
   }
 }
 
