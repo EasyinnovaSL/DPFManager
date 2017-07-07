@@ -25,23 +25,26 @@ import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.component.global.PaginationBetterSkin;
+import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
+import dpfmanager.shell.interfaces.gui.component.report.comparators.ReportsComparator;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
-import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
@@ -52,6 +55,8 @@ import org.jacpfx.rcp.context.Context;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -76,13 +81,11 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   @FXML
   private AnchorPane paneStatistics;
   @FXML
-  private ScrollPane scrollPane;
+  private Pagination pagination;
 
   // View elements
   @FXML
   private VBox reportsVbox;
-  @FXML
-  private Button loadMore;
   @FXML
   private VBox vboxReports;
   @FXML
@@ -106,6 +109,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   @FXML
   private DatePicker datePicker;
 
+  private Map<String, ManagedFragmentHandler<ReportFragment>> reportHandlers;
+
   @Override
   public void sendMessage(String target, Object dpfMessage) {
     context.send(target, dpfMessage);
@@ -116,10 +121,13 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     if (message != null && message.isTypeOf(ReportsMessage.class)) {
       ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
       if (rMessage.isRead()) {
-        getModel().loadReportsFromDir();
-        getModel().printReports();
+        currentMode = ReportsComparator.Mode.DATE;
+        currentOrder = ReportsComparator.Order.DESC;
+        getController().readReports();
       } else if (rMessage.isSize()) {
         getModel().readReportsSize();
+      } else if (rMessage.isAdd()) {
+        rMessage.getReportGui().load();
       }
     }
   }
@@ -130,17 +138,16 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       ReportsMessage rMessage = message.getTypedMessage(ReportsMessage.class);
       if (rMessage.isReload()) {
         showLoading();
-        mainVBox.getChildren().clear();
-        getModel().clearReportsLoaded();
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
       } else if (rMessage.isRead()) {
+        initPagination();
         loadReportsSize();
       } else if (rMessage.isSize()) {
         printSize(getModel().getReportsSize());
       } else if (rMessage.isDelete()) {
         deleteReportGui(rMessage.getUuid());
       } else if (rMessage.isAdd()) {
-        addReportGui(rMessage.getReportGui());
+        addReportGui(rMessage.getVboxId(), rMessage.getReportGui());
       }
     }
     return null;
@@ -153,35 +160,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     setController(new ReportsController());
     getModel().setResourcebundle(bundle);
     hideClearOptions();
-  }
-
-  public void addReportGui(ReportGui row) {
-    ManagedFragmentHandler<ReportFragment> handler = getModel().getReportGuiByUuid(row.getUuid());
-    if (handler == null){
-      if (row.isLoaded()){
-        handler = context.getManagedFragmentHandler(ReportFragment.class);
-        getModel().addReportFragment(handler);
-        handler.getController().init(row);
-      }
-    } else {
-      handler.getController().updateIcons();
-    }
-    if (row.isLoaded()) {
-      if (!mainVBox.getChildren().contains(handler.getFragmentNode())){
-        mainVBox.getChildren().add(handler.getFragmentNode());
-        hideLoading();
-      }
-    }
-    calculateMinHeight();
-  }
-
-  private void deleteReportGui(String uuid) {
-    ManagedFragmentHandler<ReportFragment> toDelete = getModel().getReportGuiByUuid(uuid);
-    if (toDelete != null) {
-      mainVBox.getChildren().remove(toDelete.getFragmentNode());
-      getModel().removeReport(toDelete.getController().getInfo());
-      getModel().removeReportFragment(toDelete);
-    }
+    reportHandlers = new HashMap<>();
+    pagination.setSkin(new PaginationBetterSkin(pagination));
   }
 
   /**
@@ -217,8 +197,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     indicator.setProgress(-1.0);
     NodeUtil.showNode(indicator);
     NodeUtil.hideNode(vboxReports);
+    NodeUtil.hideNode(pagination);
     NodeUtil.hideNode(labelEmpty);
-    NodeUtil.hideNode(loadMore);
     NodeUtil.hideNode(hboxSize);
   }
 
@@ -226,33 +206,19 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     NodeUtil.hideNode(indicator);
     NodeUtil.showNode(vboxReports);
 
-    if (getModel().isEmpty()) {
-      NodeUtil.hideNode(loadMore);
+    if (getController().isEmpty()) {
       NodeUtil.showNode(labelEmpty);
       NodeUtil.hideNode(hboxSize);
-    } else if (getModel().isAllReportsLoaded()) {
-      NodeUtil.hideNode(labelEmpty);
-      NodeUtil.hideNode(loadMore);
-      NodeUtil.showNode(hboxSize);
+      NodeUtil.hideNode(pagination);
     } else {
-      NodeUtil.showNode(loadMore);
       NodeUtil.showNode(hboxSize);
       NodeUtil.hideNode(labelEmpty);
+      NodeUtil.showNode(pagination);
     }
-  }
-
-  public void calculateMinHeight(){
-    int currentRows = mainVBox.getChildren().size();
-    int rows = (currentRows > 16) ? 16 : currentRows;
-    int height = 2 + rows * 30;
-    scrollPane.setMinHeight(height);
-    scrollPane.setMaxHeight(height);
-    scrollPane.setPrefHeight(height);
   }
 
   @FXML
   protected void loadMoreReports(ActionEvent event) throws Exception {
-    getModel().printMoreReports();
   }
 
   @FXML
@@ -285,7 +251,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
 
     // All ok, delete
     if (getController().clearReports(date)){
-      getModel().clearData();
+      getController().clearData();
       showLoading();
       hideClearOptions();
       getContext().send(new ReportsMessage(ReportsMessage.Type.READ));
@@ -300,12 +266,90 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     return toggleClear;
   }
 
-  public void hideLoadMore() {
-    NodeUtil.hideNode(loadMore);
-  }
-
   public Context getContext() {
     return context;
+  }
+
+  /**
+   * Pagination
+   */
+
+  private ReportsComparator.Mode currentMode;
+  private ReportsComparator.Order currentOrder;
+
+  boolean paginationInitiated = false;
+
+  public void initPagination() {
+    Integer oldPageCount = pagination.getPageCount();
+    Integer oldPageIndex = pagination.getCurrentPageIndex();
+    pagination.setPageCount(getController().getPagesCount());
+    pagination.setCurrentPageIndex(0);
+    if (paginationInitiated) {
+      if (oldPageCount.equals(getController().getPagesCount()) && oldPageIndex.equals(0)) {
+        reloadFirstPage();
+      }
+    } else {
+      paginationInitiated = true;
+      pagination.setPageFactory(new Callback<Integer, Node>() {
+        @Override
+        public Node call(Integer pageIndex) {
+          return createPage(pageIndex);
+        }
+      });
+    }
+  }
+
+  public VBox createPage(Integer pageIndex) {
+    String id = "vboxReports" + pageIndex;
+    VBox box = new VBox();
+    box.setId(id);
+    box.setStyle("-fx-padding: 0 0 10 0;");
+    getController().loadAndPrintReports("#" + id, pageIndex);
+    return box;
+  }
+
+  public void addReportGui(String vboxId, ReportGui row) {
+    hideLoading();
+    Node node = pagination.lookup(vboxId);
+    if (node != null) {
+      VBox vbox = (VBox) node;
+      ManagedFragmentHandler<ReportFragment> handler;
+      if (reportHandlers.containsKey(row.getUuid())) {
+        handler = reportHandlers.get(row.getUuid());
+        handler.getController().updateIcons();
+      } else {
+        handler = context.getManagedFragmentHandler(ReportFragment.class);
+        handler.getController().init(row);
+        reportHandlers.put(row.getUuid(), handler);
+      }
+      vbox.getChildren().add(handler.getFragmentNode());
+    }
+  }
+
+  private void deleteReportGui(String uuid) {
+//    ManagedFragmentHandler<ReportFragment> toDelete = getModel().getReportGuiByUuid(uuid);
+//    if (toDelete != null) {
+//      mainVBox.getChildren().remove(toDelete.getFragmentNode());
+//      getController().removeReport(toDelete.getController().getInfo());
+//      getModel().removeReportFragment(toDelete);
+//    }
+  }
+
+  public void reloadFirstPage() {
+    Node node = pagination.lookup("#vboxReports0");
+    if (node != null) {
+      VBox vbox = (VBox) node;
+      vbox.getChildren().clear();
+      getController().loadAndPrintReports("#vboxReports0", 0);
+    }
+  }
+
+  public ReportsComparator.Mode getCurrentMode() {
+    return currentMode;
+  }
+
+  public ReportsComparator.Order getCurrentOrder() {
+    return currentOrder;
   }
 
 }

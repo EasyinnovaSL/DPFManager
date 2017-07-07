@@ -37,6 +37,7 @@ public class ReportsMessage extends DpfMessage {
   private String uuid;
   private ReportGui report;
   private Long size;
+  private String vboxId;
 
   // READ & RELOAD
   public ReportsMessage(Type t) {
@@ -50,8 +51,9 @@ public class ReportsMessage extends DpfMessage {
   }
 
   // ADD
-  public ReportsMessage(Type t, ReportGui r) {
+  public ReportsMessage(Type t, String i, ReportGui r) {
     type = t;
+    vboxId = i;
     report = r;
   }
 
@@ -96,5 +98,9 @@ public class ReportsMessage extends DpfMessage {
 
   public Long getSize() {
     return size;
+  }
+
+  public String getVboxId() {
+    return vboxId;
   }
 }

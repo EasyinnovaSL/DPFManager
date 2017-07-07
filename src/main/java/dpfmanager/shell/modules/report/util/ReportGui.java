@@ -88,7 +88,7 @@ public class ReportGui implements Comparable<ReportGui>{
 
   public ReportGui(String path) {
     if (path.endsWith("/")){
-      path = path.substring(0,path.length()-1);
+      path = path.substring(0, path.length() - 1);
     }
 
     this.reportDir = path.substring(path.lastIndexOf("/") + 1);
@@ -128,7 +128,6 @@ public class ReportGui implements Comparable<ReportGui>{
     File reportPdf = new File(baseDir + "/" + reportDay + "/" + reportDir + "/report.pdf");
     if (reportPdf.exists() && reportPdf.length() > 0) {
       timestamp = getTimestamp(reportPdf.getPath());
-      return;
     }
   }
 
@@ -611,6 +610,13 @@ public class ReportGui implements Comparable<ReportGui>{
     return input;
   }
 
+  public String getInputLower() {
+    if (input == null) {
+      String h = "";
+    }
+    return input.toLowerCase();
+  }
+
   public void setInput(String input) {
     this.input = input;
   }
@@ -669,13 +675,8 @@ public class ReportGui implements Comparable<ReportGui>{
     this.deletePath = deletePath;
   }
 
-  public boolean isLoaded() {
-    return loaded;
-  }
-
   public Integer getScore() {
-//    return score;
-    return 1;
+    return score;
   }
 
   public void setScore(Integer score) {
@@ -732,6 +733,10 @@ public class ReportGui implements Comparable<ReportGui>{
 
   public String getInternalReportFolder(){
     return baseDir + "/" + reportDay + "/" + reportDir + "/";
+  }
+
+  public boolean isLoaded() {
+    return loaded;
   }
 
   /**

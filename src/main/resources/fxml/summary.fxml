@@ -81,18 +81,6 @@
                     </GridPane>
                 </AnchorPane>
                 <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
-                <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
-                    <content>
-                        <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
-                    </content>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                    <styleClass>
-                        <String fx:value="periodical-scroll" />
-                        <String fx:value="dpf-bar" />
-                    </styleClass>
-                </ScrollPane>
             </VBox>
             <!--End simulate table-->
 
@@ -101,6 +89,7 @@
                     <Insets top="20.0" />
                 </VBox.margin>
             </ProgressIndicator>
+         <Pagination fx:id="pagination" maxHeight="400.0" maxPageIndicatorCount="7" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
             <Label fx:id="labelEmpty" styleClass="label-info" text="%noReports">
                 <VBox.margin>
                     <Insets top="15.0" />
@@ -117,11 +106,6 @@
                 </rowConstraints>
                 <children>
                     <Button mnemonicParsing="false" onAction="#reloadReports" prefHeight="25.0" styleClass="secondary-button" text="%reloadReports" textFill="WHITE">
-                        <padding>
-                            <Insets left="20.0" right="20.0" />
-                        </padding>
-                    </Button>
-                    <Button fx:id="loadMore" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" styleClass="secondary-button" text="%loadMore" textFill="WHITE" GridPane.columnIndex="1">
                         <padding>
                             <Insets left="20.0" right="20.0" />
                         </padding>

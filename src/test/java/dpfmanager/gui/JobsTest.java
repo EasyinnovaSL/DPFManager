@@ -1,6 +1,7 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsController;
 import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.util.ReportRow;
@@ -59,7 +60,7 @@ public class JobsTest extends ApplicationTest {
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitForTable("#lastReportRow");
     VBox mainVBox = (VBox) scene.lookup("#mainVBox");
-    Assert.assertEquals("Reports table rows", Math.min(nReports, ReportsModel.reports_to_load), mainVBox.getChildren().size());
+    Assert.assertEquals("Reports table rows", Math.min(nReports, ReportsController.itemsPerPage), mainVBox.getChildren().size());
 
     /**
      * Pause checks test
