@@ -8,7 +8,7 @@ import java.util.Comparator;
 /**
  * Created by Adrià Llorens on 26/05/2017.
  */
-public class IndividualComparator implements  Comparator<ReportIndividualGui> {
+public class IndividualComparator implements Comparator<ReportIndividualGui> {
 
   public enum Mode {
     ERRORS, WARNINGS, PASSED, NAME
