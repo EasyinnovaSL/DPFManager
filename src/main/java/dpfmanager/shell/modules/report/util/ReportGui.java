@@ -543,7 +543,7 @@ public class ReportGui implements Comparable<ReportGui>{
     this.errors = errors;
     this.warnings = warnings;
     this.passed = passed;
-    this.score = (score == 0) ? 1 : score;
+    this.score = (score == 0 && this.passed > 0) ? 1 : score;
     this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
     this.delete = System.currentTimeMillis() + "";;
     this.deletePath = deletePath;
