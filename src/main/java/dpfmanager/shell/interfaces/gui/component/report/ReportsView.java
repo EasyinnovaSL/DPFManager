@@ -26,7 +26,6 @@ import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.PaginationBetterSkin;
-import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.report.comparators.ReportsComparator;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
