@@ -7,7 +7,7 @@
     <groupId>com.easyinnova</groupId>
     <artifactId>dpf_manager</artifactId>
     <packaging>jar</packaging>
-    <version>3.4</version>
+    <version>3.5</version>
 
     <!--Properties-->
     <properties>
