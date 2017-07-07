@@ -61,18 +61,91 @@
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
                         </columnConstraints>
                         <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="25.0" valignment="BOTTOM" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <children>
-                            <Label styleClass="periodicHeader" text="%colDate" />
-                            <Label styleClass="periodicHeader" text="%colN" GridPane.columnIndex="1" />
-                            <Label styleClass="periodicHeader" text="%colResult" GridPane.columnIndex="2" />
-                            <Label styleClass="periodicHeader" text="%colFile" GridPane.columnIndex="3" />
-                            <Label styleClass="periodicHeader" text="%colErrors" GridPane.columnIndex="4" />
-                            <Label styleClass="periodicHeader" text="%colWarnings" GridPane.columnIndex="5" />
-                            <Label styleClass="periodicHeader" text="%colPassed" GridPane.columnIndex="6" />
-                            <Label styleClass="periodicHeader" text="%colScore" GridPane.columnIndex="7" />
+                            <HBox fx:id="hboxDate" alignment="CENTER_LEFT" onMouseClicked="#clickedColDate" styleClass="clickable">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colDate">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxFiles" alignment="CENTER_LEFT" onMouseClicked="#clickedColFiles" styleClass="clickable" GridPane.columnIndex="1">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colN">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxResult" alignment="CENTER_LEFT" onMouseClicked="#clickedColResult" styleClass="clickable" GridPane.columnIndex="2">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colResult">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxName" alignment="CENTER_LEFT" onMouseClicked="#clickedColName" styleClass="clickable" GridPane.columnIndex="3">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colFile">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxErrors" alignment="CENTER_LEFT" onMouseClicked="#clickedColErrors" styleClass="clickable" GridPane.columnIndex="4">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colErrors">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxWarnings" alignment="CENTER_LEFT" onMouseClicked="#clickedColWarnings" styleClass="clickable" GridPane.columnIndex="5">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colWarnings">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxPassed" alignment="CENTER_LEFT" onMouseClicked="#clickedColPassed" styleClass="clickable" GridPane.columnIndex="6">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colPassed">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxScore" alignment="CENTER_LEFT" onMouseClicked="#clickedColScore" styleClass="clickable" GridPane.columnIndex="7">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colScore">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
                             <!--<Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="8" />-->
+
                             <Label styleClass="periodicHeader" text="%colDelete" GridPane.columnIndex="9" />
                         </children>
                         <VBox.margin>
@@ -105,7 +178,7 @@
                     <RowConstraints valignment="TOP" vgrow="ALWAYS" />
                 </rowConstraints>
                 <children>
-                    <Button mnemonicParsing="false" onAction="#reloadReports" prefHeight="25.0" styleClass="secondary-button" text="%reloadReports" textFill="WHITE">
+                    <Button fx:id="reloadButton2" mnemonicParsing="false" onAction="#reloadReports" prefHeight="25.0" styleClass="secondary-button" text="%reloadReports" textFill="WHITE">
                         <padding>
                             <Insets left="20.0" right="20.0" />
                         </padding>

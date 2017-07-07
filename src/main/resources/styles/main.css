@@ -48,7 +48,7 @@
 }
 
 .chart-pie {
-    /*-fx-border-width: 0;*/
+    -fx-border-width: 0;
 }
 .data0.chart-pie {
     -fx-border-color: #33ccff;
@@ -1035,7 +1035,9 @@
     -fx-pie-legend-visible: false;
     -fx-pie-title-visible: false;
 }
-
+#pie_chart_global .chart-pie {
+    -fx-border-width: 1;
+}
 #pie_chart_global .data0.chart-pie {
     -fx-border-color: yellowgreen;
     -fx-background-color: yellowgreen;

@@ -43,7 +43,7 @@ import java.util.Map;
  */
 public class ReportsController extends DpfController<ReportsModel, ReportsView> {
 
-  public static Integer itemsPerPage = 15;
+  public static Integer itemsPerPage = 3;
 
   private Map<String, ReportGui> dataCache;
   private List<ReportGui> data;
@@ -76,12 +76,6 @@ public class ReportsController extends DpfController<ReportsModel, ReportsView> 
     }
   }
 
-  public void removeReport(ReportGui rg) {
-    if (data.contains(rg)) {
-      data.remove(rg);
-    }
-  }
-
   public void readReports(){
     data.clear();
     String baseDir = ReportGenerator.getReportsFolder();
@@ -105,6 +99,14 @@ public class ReportsController extends DpfController<ReportsModel, ReportsView> 
       }
     }
     sortReports();
+  }
+
+  public void removeReport(String uuid){
+    ReportGui rg = dataCache.get(uuid);
+    if (rg != null){
+      data.remove(rg);
+      dataCache.remove(uuid);
+    }
   }
 
   public void sortReports(){

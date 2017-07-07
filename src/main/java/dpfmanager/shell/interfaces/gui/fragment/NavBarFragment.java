@@ -114,7 +114,7 @@ public class NavBarFragment {
   @FXML
   protected void clickedTable(MouseEvent event) throws Exception {
     if (!labelTable.getStyleClass().contains("myactive")) {
-      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
+      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));
     }
   }
 
