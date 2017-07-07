@@ -24,6 +24,7 @@ import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.interfaces.gui.component.statistics.messages.ShowHideErrorsMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
@@ -77,7 +78,9 @@ public class ReportFragment {
   @FXML
   private Label date;
   @FXML
-  private Label time;
+  private ImageView okImage;
+  @FXML
+  private ImageView koImage;
   @FXML
   private Label files;
   @FXML
@@ -108,11 +111,17 @@ public class ReportFragment {
 
   private void loadReportRow() {
     info.load();
-    date.setText(info.getDate());
-    time.setText(info.getTime());
+    date.setText(info.getDate() + " " + info.getTime());
     files.setText(info.getNfiles() + "");
     input.setText(info.getInput());
     errors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
+    if (info.getErrors() == 0){
+      NodeUtil.showNode(okImage);
+      NodeUtil.hideNode(koImage);
+    } else {
+      NodeUtil.hideNode(okImage);
+      NodeUtil.showNode(koImage);
+    }
     warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
     passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
     addChartScore(info.getScore());
@@ -133,7 +142,7 @@ public class ReportFragment {
     chart.setMinSize(22, 22);
     chart.setMaxSize(22, 22);
 
-    Label score_label = new Label(score + "%");
+    Label score_label = new Label(score.intValue() + "%");
     score_label.setTextFill(Color.LIGHTGRAY);
 
     scoreBox.getChildren().add(chart);

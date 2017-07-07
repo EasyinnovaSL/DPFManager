@@ -1,17 +1,17 @@
-package dpfmanager.shell.interfaces.gui.component.global.comparators;
+package dpfmanager.shell.interfaces.gui.component.report.comparators;
 
+import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
-import dpfmanager.shell.modules.statistics.model.StatisticsIso;
 
 import java.util.Comparator;
 
 /**
  * Created by Adrià Llorens on 26/05/2017.
  */
-public class IndividualComparator implements Comparator<ReportIndividualGui> {
+public class ReportsComparator implements  Comparator<ReportGui> {
 
   public enum Mode {
-    ERRORS, WARNINGS, PASSED, NAME, RESULT
+    ERRORS, WARNINGS, PASSED, RESULT, DATE, NAME
   }
 
   public enum Order {
@@ -22,14 +22,14 @@ public class IndividualComparator implements Comparator<ReportIndividualGui> {
 
   private Order order;
 
-  public IndividualComparator(Mode m, Order o){
+  public ReportsComparator(Mode m, Order o){
     mode = m;
     order = o;
   }
 
   @Override
-  public int compare(ReportIndividualGui o1, ReportIndividualGui o2) {
-    if (!mode.equals(Mode.NAME)) {
+  public int compare(ReportGui o1, ReportGui o2) {
+    if (!mode.equals(Mode.DATE)) {
       o1.load();
       o2.load();
     }
@@ -65,16 +65,23 @@ public class IndividualComparator implements Comparator<ReportIndividualGui> {
         break;
       case NAME:
         if (order.equals(Order.ASC)){
-          compare = o1.getLowerName().compareTo(o2.getLowerName());
+          compare = o1.getInputLower().compareTo(o2.getInputLower());
         } else {
-          compare = o2.getLowerName().compareTo(o1.getLowerName());
+          compare = o2.getInputLower().compareTo(o1.getInputLower());
+        }
+        break;
+      case DATE:
+        if (order.equals(Order.ASC)){
+          compare = o1.getTimestamp().compareTo(o2.getTimestamp());
+        } else {
+          compare = o2.getTimestamp().compareTo(o1.getTimestamp());
         }
         break;
     }
 
     // If equals, default NAME ASC
-    if (compare == 0){
-      compare = o1.getLowerName().compareTo(o2.getLowerName());
+    if (compare == 0 && o1.isLoaded() && o2.isLoaded()){
+      compare = o1.getInputLower().compareTo(o2.getInputLower());
     }
     return compare;
   }

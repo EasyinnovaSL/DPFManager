@@ -25,6 +25,7 @@ import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
@@ -78,17 +79,15 @@ public class IndividualFragment {
   @FXML
   private Label input;
   @FXML
-  private Label nfiles;
-  @FXML
   private Label errors;
   @FXML
   private Label warnings;
   @FXML
-  private Label passed;
-  @FXML
-  private HBox scoreBox;
-  @FXML
   private HBox formatsBox;
+  @FXML
+  private ImageView okImage;
+  @FXML
+  private ImageView koImage;
 
   /* Report Row info */
   private ReportIndividualGui info;
@@ -107,36 +106,34 @@ public class IndividualFragment {
   private void loadReportRow() {
     info.load();
     input.setText(info.getFilename());
-    String isotext = bundle.getString("oneIso").replace("%1", info.getSelectedIsos() + "");
-    if (info.getSelectedIsos() > 1) {
-      isotext = bundle.getString("multipleIso").replace("%1", info.getSelectedIsos() + "");
+
+    // Result
+    if (info.getErrors() > 0) {
+      NodeUtil.showNode(koImage);
+      NodeUtil.hideNode(okImage);
+    } else {
+      NodeUtil.hideNode(koImage);
+      NodeUtil.showNode(okImage);
     }
-    nfiles.setText(isotext);
+
+    // Errors
     errors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
+    if (info.getErrors() > 0) {
+      errors.setTextFill(Color.RED);
+    } else {
+      errors.setTextFill(Color.YELLOWGREEN);
+    }
+
+    // Warnings
     warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
-    passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
-    addChartScore(info.getScore());
+    if (info.getWarnings() > 0) {
+      warnings.setTextFill(Color.ORANGE);
+    } else {
+      warnings.setTextFill(Color.LIGHTGREY);
+    }
+
+    // Format Icons
     addFormatIcons();
-  }
-
-  private void addChartScore(Integer scoreInt) {
-    Double score = scoreInt * 1.0;
-
-    ObservableList<PieChart.Data> pieChartData =
-        FXCollections.observableArrayList(
-            new PieChart.Data("Correct", score),
-            new PieChart.Data("Error", 100 - score));
-
-    PieChart chart = new PieChart(pieChartData);
-    chart.setId("pie_chart");
-    chart.setMinSize(22, 22);
-    chart.setMaxSize(22, 22);
-
-    Label score_label = new Label(score + "%");
-    score_label.setTextFill(Color.LIGHTGRAY);
-
-    scoreBox.getChildren().add(chart);
-    scoreBox.getChildren().add(score_label);
   }
 
   private void addFormatIcons() {
@@ -178,8 +175,8 @@ public class IndividualFragment {
         final ShowMessage finalSMessage = sMessage;
         icon.setOnMouseClicked(event -> {
           ArrayMessage am = new ArrayMessage();
+          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
           am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
-          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
           am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
           context.send(GuiConfig.PERSPECTIVE_SHOW, am);
         });

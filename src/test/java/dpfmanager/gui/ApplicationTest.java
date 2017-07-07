@@ -1,6 +1,7 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsController;
 import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import javafx.application.Application;
@@ -802,7 +803,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitUntilExists("#lastReportRow");
     VBox mainVBox = (VBox) scene.lookup("#mainVBox");
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), mainVBox.getChildren().size());
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
     GridPane grid = (GridPane) row.getChildren().get(0);
     Assert.assertEquals("Report row N files", "3", ((javafx.scene.control.Label) grid.getChildren().get(2)).getText());

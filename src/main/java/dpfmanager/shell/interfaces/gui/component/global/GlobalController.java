@@ -36,6 +36,8 @@ import java.util.List;
  */
 public class GlobalController extends DpfController<GlobalModel, GlobalView> {
 
+  public static Integer itemsPerPage = 12;
+
   private List<ReportIndividualGui> individuals;
 
   public GlobalController() {
@@ -43,25 +45,43 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
 
   public void readIndividualReports(String internal, Configuration config){
     individuals = new ArrayList<>();
+    Integer count = 0;
     File serializedDirectory = new File(internal + "/serialized");
     if (serializedDirectory.exists() && serializedDirectory.isDirectory()){
       for (File individualSer : serializedDirectory.listFiles()){
         if (individualSer.exists() && individualSer.isFile() && individualSer.getName().endsWith(".ser")){
-          individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), config));
+          individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), config, count));
+          count++;
         }
       }
     }
-    individuals.sort(new IndividualComparator(IndividualComparator.Mode.NAME));
+    sortIndividuals();
   }
 
-  public void loadAndPrintIndividuals(){
-    for (ReportIndividualGui rig : individuals){
-      getContext().send(GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.ADD_INDIVIDUAL, rig));
+  public void sortIndividuals(){
+    individuals.sort(new IndividualComparator(getView().getCurrentMode(), getView().getCurrentOrder()));
+  }
+
+  public void loadAndPrintIndividuals(String vboxId, int page){
+    int init = page * itemsPerPage;
+    int end = init + itemsPerPage;
+    int i = init;
+    while (i < individuals.size() && i < end) {
+      ReportIndividualGui rig = individuals.get(i);
+      getContext().send(GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.ADD_INDIVIDUAL, vboxId, rig));
+      i++;
     }
   }
 
   public List<ReportIndividualGui> getIndividualReports(){
     return individuals;
+  }
+
+  public Integer getPagesCount(){
+    int size = individuals.size();
+    int pages = size / itemsPerPage;
+    if (size % itemsPerPage > 0) pages++;
+    return pages;
   }
 
 }

@@ -49,14 +49,14 @@
                 <AnchorPane>
                     <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="110.0" prefWidth="110.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="275.0" minWidth="275.0" prefWidth="275.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
                         </columnConstraints>
@@ -65,8 +65,8 @@
                         </rowConstraints>
                         <children>
                             <Label styleClass="periodicHeader" text="%colDate" />
-                            <Label styleClass="periodicHeader" text="%colTime" GridPane.columnIndex="1" />
-                            <Label styleClass="periodicHeader" text="%colN" GridPane.columnIndex="2" />
+                            <Label styleClass="periodicHeader" text="%colN" GridPane.columnIndex="1" />
+                            <Label styleClass="periodicHeader" text="%colResult" GridPane.columnIndex="2" />
                             <Label styleClass="periodicHeader" text="%colFile" GridPane.columnIndex="3" />
                             <Label styleClass="periodicHeader" text="%colErrors" GridPane.columnIndex="4" />
                             <Label styleClass="periodicHeader" text="%colWarnings" GridPane.columnIndex="5" />
@@ -81,18 +81,6 @@
                     </GridPane>
                 </AnchorPane>
                 <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
-                <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" maxHeight="480.0" maxWidth="840.0" minHeight="0.0" minWidth="840.0" prefWidth="840.0">
-                    <content>
-                        <VBox fx:id="mainVBox" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
-                    </content>
-                    <VBox.margin>
-                        <Insets bottom="10.0" />
-                    </VBox.margin>
-                    <styleClass>
-                        <String fx:value="periodical-scroll" />
-                        <String fx:value="dpf-bar" />
-                    </styleClass>
-                </ScrollPane>
             </VBox>
             <!--End simulate table-->
 
@@ -101,6 +89,7 @@
                     <Insets top="20.0" />
                 </VBox.margin>
             </ProgressIndicator>
+         <Pagination fx:id="pagination" maxHeight="400.0" maxPageIndicatorCount="7" maxWidth="840.0" minWidth="840.0" prefWidth="840.0" />
             <Label fx:id="labelEmpty" styleClass="label-info" text="%noReports">
                 <VBox.margin>
                     <Insets top="15.0" />
@@ -117,11 +106,6 @@
                 </rowConstraints>
                 <children>
                     <Button mnemonicParsing="false" onAction="#reloadReports" prefHeight="25.0" styleClass="secondary-button" text="%reloadReports" textFill="WHITE">
-                        <padding>
-                            <Insets left="20.0" right="20.0" />
-                        </padding>
-                    </Button>
-                    <Button fx:id="loadMore" mnemonicParsing="false" onAction="#loadMoreReports" prefHeight="25.0" styleClass="secondary-button" text="%loadMore" textFill="WHITE" GridPane.columnIndex="1">
                         <padding>
                             <Insets left="20.0" right="20.0" />
                         </padding>

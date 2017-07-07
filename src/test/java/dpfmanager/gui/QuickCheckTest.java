@@ -1,6 +1,7 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsController;
 import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
@@ -59,7 +60,7 @@ public class QuickCheckTest extends ApplicationTest {
     clickOnAndReloadTop("#butReports","#pane-reports");
     waitUntilExists("#lastReportRow");
     VBox mainVBox = (VBox) scene.lookup("#mainVBox");
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), mainVBox.getChildren().size());
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
     GridPane grid = (GridPane) row.getChildren().get(0);
     checkValidRow(grid);

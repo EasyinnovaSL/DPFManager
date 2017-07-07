@@ -1,6 +1,7 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
+import dpfmanager.shell.interfaces.gui.component.report.ReportsController;
 import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.report.util.ReportRow;
@@ -57,7 +58,7 @@ public class MultiFileCheckTest extends ApplicationTest {
     waitUntilExists("#lastReportRow");
     VBox mainVBox = (VBox) scene.lookup("#mainVBox");
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
-    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsModel.reports_to_load), mainVBox.getChildren().size());
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
     GridPane grid = (GridPane) row.getChildren().get(0);
     Assert.assertEquals("Report row N files", "4", ((Label) grid.getChildren().get(2)).getText());
     Assert.assertEquals("Report row N passed", "4 passed", ((Label) grid.getChildren().get(6)).getText());

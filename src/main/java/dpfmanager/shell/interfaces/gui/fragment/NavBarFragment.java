@@ -108,7 +108,7 @@ public class NavBarFragment {
   }
 
   public void setSpecificText(String format){
-    labelSingle.setText(bundle.getString("labelSpecific").replace("%1", format));
+    labelSingle.setText(format);
   }
 
   @FXML
