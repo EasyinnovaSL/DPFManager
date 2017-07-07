@@ -11,7 +11,7 @@ import java.util.Comparator;
 public class ReportsComparator implements  Comparator<ReportGui> {
 
   public enum Mode {
-    ERRORS, WARNINGS, PASSED, RESULT, DATE, NAME
+    ERRORS, WARNINGS, PASSED, RESULT, DATE, NAME, SCORE, FILES
   }
 
   public enum Order {
@@ -77,11 +77,25 @@ public class ReportsComparator implements  Comparator<ReportGui> {
           compare = o2.getTimestamp().compareTo(o1.getTimestamp());
         }
         break;
+      case SCORE:
+        if (order.equals(Order.ASC)){
+          compare = o1.getScore().compareTo(o2.getScore());
+        } else {
+          compare = o2.getScore().compareTo(o1.getScore());
+        }
+        break;
+      case FILES:
+        if (order.equals(Order.ASC)){
+          compare = o1.getNfiles().compareTo(o2.getNfiles());
+        } else {
+          compare = o2.getNfiles().compareTo(o1.getNfiles());
+        }
+        break;
     }
 
-    // If equals, default NAME ASC
-    if (compare == 0 && o1.isLoaded() && o2.isLoaded()){
-      compare = o1.getInputLower().compareTo(o2.getInputLower());
+    // If equals, default DATE DESC
+    if (compare == 0){
+      compare = o2.getTimestamp().compareTo(o1.getTimestamp());
     }
     return compare;
   }

@@ -26,6 +26,7 @@ import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.PaginationBetterSkin;
+import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.report.comparators.ReportsComparator;
 import dpfmanager.shell.interfaces.gui.fragment.ReportFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
@@ -40,6 +41,9 @@ import javafx.scene.control.Pagination;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -81,6 +85,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   private AnchorPane paneStatistics;
   @FXML
   private Pagination pagination;
+  @FXML
+  private Button reloadButton2;
 
   // View elements
   @FXML
@@ -127,6 +133,8 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         getModel().readReportsSize();
       } else if (rMessage.isAdd()) {
         rMessage.getReportGui().load();
+      } else if (rMessage.isSort()){
+        getController().sortReports();
       }
     }
   }
@@ -147,6 +155,12 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         deleteReportGui(rMessage.getUuid());
       } else if (rMessage.isAdd()) {
         addReportGui(rMessage.getVboxId(), rMessage.getReportGui());
+      } else if (rMessage.isSort()){
+        if (pagination.getCurrentPageIndex() != 0) {
+          pagination.setCurrentPageIndex(0);
+        } else {
+          reloadFirstPage();
+        }
       }
     }
     return null;
@@ -196,6 +210,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     indicator.setProgress(-1.0);
     NodeUtil.showNode(indicator);
     NodeUtil.hideNode(vboxReports);
+    NodeUtil.hideNode(reloadButton2);
     NodeUtil.hideNode(pagination);
     NodeUtil.hideNode(labelEmpty);
     NodeUtil.hideNode(hboxSize);
@@ -204,6 +219,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   public void hideLoading() {
     NodeUtil.hideNode(indicator);
     NodeUtil.showNode(vboxReports);
+    NodeUtil.showNode(reloadButton2);
 
     if (getController().isEmpty()) {
       NodeUtil.showNode(labelEmpty);
@@ -273,9 +289,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
    * Pagination
    */
 
-  private ReportsComparator.Mode currentMode;
-  private ReportsComparator.Order currentOrder;
-
   boolean paginationInitiated = false;
 
   public void initPagination() {
@@ -340,6 +353,106 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       VBox vbox = (VBox) node;
       vbox.getChildren().clear();
       getController().loadAndPrintReports("#vboxReports0", 0);
+    }
+  }
+
+  /**
+   * Sort reports
+   */
+
+  private ReportsComparator.Mode currentMode;
+  private ReportsComparator.Order currentOrder;
+
+  @FXML private HBox hboxName;
+  @FXML private HBox hboxPassed;
+  @FXML private HBox hboxFiles;
+  @FXML private HBox hboxErrors;
+  @FXML private HBox hboxWarnings;
+  @FXML private HBox hboxResult;
+  @FXML private HBox hboxDate;
+  @FXML private HBox hboxScore;
+
+  @FXML
+  protected void clickedColDate(MouseEvent event) throws Exception {
+    clickedCol(hboxDate, ReportsComparator.Mode.DATE);
+  }
+  @FXML
+  protected void clickedColName(MouseEvent event) throws Exception {
+    clickedCol(hboxName, ReportsComparator.Mode.NAME);
+  }
+  @FXML
+  protected void clickedColErrors(MouseEvent event) throws Exception {
+    clickedCol(hboxErrors, ReportsComparator.Mode.ERRORS);
+  }
+  @FXML
+  protected void clickedColWarnings(MouseEvent event) throws Exception {
+    clickedCol(hboxWarnings, ReportsComparator.Mode.WARNINGS);
+  }
+  @FXML
+  protected void clickedColResult(MouseEvent event) throws Exception {
+    clickedCol(hboxResult, ReportsComparator.Mode.RESULT);
+  }
+  @FXML
+  protected void clickedColPassed(MouseEvent event) throws Exception {
+    clickedCol(hboxPassed, ReportsComparator.Mode.PASSED);
+  }
+  @FXML
+  protected void clickedColScore(MouseEvent event) throws Exception {
+    clickedCol(hboxScore, ReportsComparator.Mode.SCORE);
+  }
+  @FXML
+  protected void clickedColFiles(MouseEvent event) throws Exception {
+    clickedCol(hboxFiles, ReportsComparator.Mode.FILES);
+  }
+
+  private void clickedCol(HBox hbox, ReportsComparator.Mode mode){
+    if (indicator.isVisible()) return;
+
+    // Visual sort
+    removeArrows();
+    if (currentMode.equals(mode)) {
+      swapOrder();
+    } else {
+      currentOrder = getDefaultOrder(mode);
+    }
+    currentMode = mode;
+    addArrow(hbox);
+
+    // Show loading
+    showLoading();
+    context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.SORT));
+  }
+
+  private void addArrow(HBox hbox) {
+    String type = (currentOrder.equals(ReportsComparator.Order.ASC)) ? "up" : "down";
+    ImageView icon = new ImageView();
+    icon.setFitHeight(10);
+    icon.setFitWidth(10);
+    icon.setImage(new Image("images/icons/caret-" + type + ".png"));
+    hbox.getChildren().add(icon);
+  }
+
+  private void removeArrows() {
+    hboxName.getChildren().remove(1, hboxName.getChildren().size());
+    hboxErrors.getChildren().remove(1, hboxErrors.getChildren().size());
+    hboxWarnings.getChildren().remove(1, hboxWarnings.getChildren().size());
+    hboxResult.getChildren().remove(1, hboxResult.getChildren().size());
+    hboxPassed.getChildren().remove(1, hboxPassed.getChildren().size());
+    hboxScore.getChildren().remove(1, hboxScore.getChildren().size());
+    hboxFiles.getChildren().remove(1, hboxFiles.getChildren().size());
+    hboxDate.getChildren().remove(1, hboxDate.getChildren().size());
+  }
+
+  public ReportsComparator.Order getDefaultOrder(ReportsComparator.Mode mode){
+    if (mode.equals(ReportsComparator.Mode.NAME)) return ReportsComparator.Order.ASC;
+    return ReportsComparator.Order.DESC;
+  }
+
+  private void swapOrder(){
+    if (currentOrder.equals(ReportsComparator.Order.ASC)){
+      currentOrder = ReportsComparator.Order.DESC;
+    } else {
+      currentOrder = ReportsComparator.Order.ASC;
     }
   }
 
