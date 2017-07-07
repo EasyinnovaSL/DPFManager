@@ -28,7 +28,7 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator2;
+import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.interfaces.gui.fragment.global.IndividualFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
@@ -158,8 +158,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isInit()) {
         individualHandlers = new HashMap<>();
-        currentMode = IndividualComparator2.Mode.NAME;
-        currentOrder = IndividualComparator2.Order.ASC;
+        currentMode = IndividualComparator.Mode.NAME;
+        currentOrder = IndividualComparator.Order.ASC;
         getController().readIndividualReports(gMessage.getReportGui().getInternalReportFolder(), gMessage.getReportGui().getGlobalReport().getConfig());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
@@ -451,30 +451,30 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   @FXML
   private HBox hboxResult;
 
-  private IndividualComparator2.Mode currentMode;
-  private IndividualComparator2.Order currentOrder;
+  private IndividualComparator.Mode currentMode;
+  private IndividualComparator.Order currentOrder;
 
   @FXML
   protected void clickedColName(MouseEvent event) throws Exception {
-    clickedCol(hboxName, IndividualComparator2.Mode.NAME);
+    clickedCol(hboxName, IndividualComparator.Mode.NAME);
   }
 
   @FXML
   protected void clickedColErrors(MouseEvent event) throws Exception {
-    clickedCol(hboxErrors, IndividualComparator2.Mode.ERRORS);
+    clickedCol(hboxErrors, IndividualComparator.Mode.ERRORS);
   }
 
   @FXML
   protected void clickedColWarnings(MouseEvent event) throws Exception {
-    clickedCol(hboxWarnings, IndividualComparator2.Mode.WARNINGS);
+    clickedCol(hboxWarnings, IndividualComparator.Mode.WARNINGS);
   }
 
   @FXML
   protected void clickedColResult(MouseEvent event) throws Exception {
-    clickedCol(hboxResult, IndividualComparator2.Mode.RESULT);
+    clickedCol(hboxResult, IndividualComparator.Mode.RESULT);
   }
 
-  private void clickedCol(HBox hbox, IndividualComparator2.Mode mode){
+  private void clickedCol(HBox hbox, IndividualComparator.Mode mode){
     if (indicator.isVisible()) return;
 
     // Visual sort
@@ -503,7 +503,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   }
 
   private void addArrow(HBox hbox) {
-    String type = (currentOrder.equals(IndividualComparator2.Order.ASC)) ? "up" : "down";
+    String type = (currentOrder.equals(IndividualComparator.Order.ASC)) ? "up" : "down";
     ImageView icon = new ImageView();
     icon.setFitHeight(10);
     icon.setFitWidth(10);
@@ -518,9 +518,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     hboxResult.getChildren().remove(1, hboxResult.getChildren().size());
   }
 
-  public IndividualComparator2.Order getDefaultOrder(IndividualComparator2.Mode mode){
-    if (mode.equals(IndividualComparator2.Mode.NAME)) return IndividualComparator2.Order.ASC;
-    return IndividualComparator2.Order.DESC;
+  public IndividualComparator.Order getDefaultOrder(IndividualComparator.Mode mode){
+    if (mode.equals(IndividualComparator.Mode.NAME)) return IndividualComparator.Order.ASC;
+    return IndividualComparator.Order.DESC;
   }
 
   /**
@@ -590,18 +590,18 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   }
 
   private void swapOrder(){
-    if (currentOrder.equals(IndividualComparator2.Order.ASC)){
-      currentOrder = IndividualComparator2.Order.DESC;
+    if (currentOrder.equals(IndividualComparator.Order.ASC)){
+      currentOrder = IndividualComparator.Order.DESC;
     } else {
-      currentOrder = IndividualComparator2.Order.ASC;
+      currentOrder = IndividualComparator.Order.ASC;
     }
   }
 
-  public IndividualComparator2.Mode getCurrentMode() {
+  public IndividualComparator.Mode getCurrentMode() {
     return currentMode;
   }
 
-  public IndividualComparator2.Order getCurrentOrder() {
+  public IndividualComparator.Order getCurrentOrder() {
     return currentOrder;
   }
 }

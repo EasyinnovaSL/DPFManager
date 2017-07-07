@@ -8,7 +8,7 @@ import java.util.Comparator;
 /**
  * Created by Adrià Llorens on 26/05/2017.
  */
-public class IndividualComparator2 implements  Comparator<ReportIndividualGui> {
+public class IndividualComparator implements  Comparator<ReportIndividualGui> {
 
   public enum Mode {
     ERRORS, WARNINGS, PASSED, NAME, RESULT
@@ -22,7 +22,7 @@ public class IndividualComparator2 implements  Comparator<ReportIndividualGui> {
 
   private Order order;
 
-  public IndividualComparator2(Mode m, Order o){
+  public IndividualComparator(Mode m, Order o){
     mode = m;
     order = o;
   }
