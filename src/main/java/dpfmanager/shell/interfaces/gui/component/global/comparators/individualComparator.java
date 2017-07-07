@@ -11,13 +11,20 @@ import java.util.Comparator;
 public class IndividualComparator implements  Comparator<ReportIndividualGui> {
 
   public enum Mode {
-    ERRORS, WARNINGS, PASSED, NAME
+    ERRORS, WARNINGS, PASSED, NAME, RESULT
+  }
+
+  public enum Order {
+    ASC, DESC
   }
 
   private Mode mode;
 
-  public IndividualComparator(Mode m){
+  private Order order;
+
+  public IndividualComparator(Mode m, Order o){
     mode = m;
+    order = o;
   }
 
   @Override
@@ -29,18 +36,45 @@ public class IndividualComparator implements  Comparator<ReportIndividualGui> {
     Integer compare = 0;
     switch (mode){
       case ERRORS:
-        compare = o2.getErrors().compareTo(o1.getErrors());
+        if (order.equals(Order.ASC)){
+          compare = o1.getErrors().compareTo(o2.getErrors());
+        } else {
+          compare = o2.getErrors().compareTo(o1.getErrors());
+        }
         break;
       case WARNINGS:
-        compare = o2.getWarnings().compareTo(o1.getWarnings());
+        if (order.equals(Order.ASC)){
+          compare = o1.getWarnings().compareTo(o2.getWarnings());
+        } else {
+          compare = o2.getWarnings().compareTo(o1.getWarnings());
+        }
         break;
       case PASSED:
-        compare = o2.getPassed().compareTo(o1.getPassed());
+        if (order.equals(Order.ASC)){
+          compare = o1.getPassed().compareTo(o2.getPassed());
+        } else {
+          compare = o2.getPassed().compareTo(o1.getPassed());
+        }
+        break;
+      case RESULT:
+        if (order.equals(Order.ASC)){
+          compare = o1.getErrors().compareTo(o2.getErrors());
+        } else {
+          compare = o2.getErrors().compareTo(o1.getErrors());
+        }
+        break;
+      case NAME:
+        if (order.equals(Order.ASC)){
+          compare = o1.getLowerName().compareTo(o2.getLowerName());
+        } else {
+          compare = o2.getLowerName().compareTo(o1.getLowerName());
+        }
         break;
     }
 
+    // If equals, default NAME ASC
     if (compare == 0){
-      compare = o1.getName().compareTo(o2.getName());
+      compare = o1.getLowerName().compareTo(o2.getLowerName());
     }
     return compare;
   }

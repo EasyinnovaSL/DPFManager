@@ -29,7 +29,7 @@ import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 public class GuiGlobalMessage extends DpfMessage {
 
   public enum Type {
-    INIT, ADD_INDIVIDUAL
+    INIT, SORT, ADD_INDIVIDUAL
   }
 
   private Type type;
@@ -43,15 +43,24 @@ public class GuiGlobalMessage extends DpfMessage {
     reportGui = rg;
   }
 
-  // add individual
+  // Add individual
   public GuiGlobalMessage(Type t, String i, ReportIndividualGui rig) {
     type = t;
     vboxId = i;
     reportIndividualGui = rig;
   }
 
+  // Sort
+  public GuiGlobalMessage(Type t) {
+    type = t;
+  }
+
   public boolean isInit(){
     return type.equals(Type.INIT);
+  }
+
+  public boolean isSort(){
+    return type.equals(Type.SORT);
   }
 
   public boolean isAddIndividual(){

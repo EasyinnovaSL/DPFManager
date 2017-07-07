@@ -28,6 +28,7 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.interfaces.gui.fragment.global.IndividualFragment;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
@@ -39,6 +40,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
@@ -46,6 +49,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -90,21 +94,30 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private ResourceBundle bundle;
 
   private ReportGui info;
-  @FXML private CheckBox htmlCheck;
-  @FXML private CheckBox xmlCheck;
-  @FXML private CheckBox metsCheck;
-  @FXML private CheckBox pdfCheck;
-  @FXML private CheckBox jsonCheck;
+  @FXML
+  private CheckBox htmlCheck;
+  @FXML
+  private CheckBox xmlCheck;
+  @FXML
+  private CheckBox metsCheck;
+  @FXML
+  private CheckBox pdfCheck;
+  @FXML
+  private CheckBox jsonCheck;
 
   /**
    * Global report elements
    */
   @FXML
+  private ImageView globalImage;
+  @FXML
+  private Label resultLabel;
+  @FXML
   private VBox globalVBox;
   @FXML
   private Label globalDate;
   @FXML
-  private Label globalTime;
+  private Label globalScore;
   @FXML
   private Label globalFiles;
   @FXML
@@ -127,6 +140,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private VBox individualsVBox;
   @FXML
   private Pagination pagination;
+  @FXML
+  private ProgressIndicator indicator;
 
   private Map<Integer, ManagedFragmentHandler<IndividualFragment>> individualHandlers;
 
@@ -141,28 +156,38 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
-    if (message != null && message.isTypeOf(GuiGlobalMessage.class)){
+    if (message != null && message.isTypeOf(GuiGlobalMessage.class)) {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isInit()) {
         individualHandlers = new HashMap<>();
+        currentMode = IndividualComparator.Mode.NAME;
+        currentOrder = IndividualComparator.Order.ASC;
         getController().readIndividualReports(gMessage.getReportGui().getInternalReportFolder(), gMessage.getReportGui().getGlobalReport().getConfig());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
+      } else if (gMessage.isSort()){
+        getController().sortIndividuals();
       }
     }
   }
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
-    if (message != null && message.isTypeOf(GuiGlobalMessage.class)){
+    if (message != null && message.isTypeOf(GuiGlobalMessage.class)) {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isInit()) {
         initGlobalReport(gMessage.getReportGui());
         initPagination();
       } else if (gMessage.isAddIndividual()) {
         addIndividualReport(gMessage.getVboxId(), gMessage.getReportIndividualGui());
+      } else if (gMessage.isSort()){
+        if (pagination.getCurrentPageIndex() != 0) {
+          pagination.setCurrentPageIndex(0);
+        } else {
+          reloadFirstPage();
+        }
       }
-    } else if (message != null && message.isTypeOf(AlertMessage.class)){
+    } else if (message != null && message.isTypeOf(AlertMessage.class)) {
       AlertMessage am = message.getTypedMessage(AlertMessage.class);
       if (am.hasResult() && am.getResult()) {
         File dir = new File(info.getInternalReportFolder());
@@ -173,7 +198,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
         }
         context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage());
       }
-    } else if (message != null && message.isTypeOf(UiMessage.class)){
+    } else if (message != null && message.isTypeOf(UiMessage.class)) {
       info.readFormats();
       addFormatIcons(info);
       updateIndividualsReports();
@@ -189,6 +214,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     getModel().setResourcebundle(bundle);
     individualHandlers = new HashMap<>();
     pagination.setSkin(new PaginationBetterSkin(pagination));
+    indicator.setProgress(-1);
   }
 
   /**
@@ -197,16 +223,26 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private void initGlobalReport(ReportGui info) {
     this.info = info;
     info.readFormats();
-    globalDate.setText(info.getDate());
-    globalTime.setText(info.getTime());
+    if (info.getErrors() == 0) {
+      resultLabel.setText(bundle.getString("passedCheck"));
+      resultLabel.setTextFill(Color.YELLOWGREEN);
+      globalImage.setImage(new Image("images/icons/ok.png"));
+    } else {
+      resultLabel.setText(bundle.getString("errorCheck"));
+      resultLabel.setTextFill(Color.RED);
+      globalImage.setImage(new Image("images/icons/ko.png"));
+    }
+    globalDate.setText(info.getDate() + " " + info.getTime());
+    globalScore.setText(info.getScore() + "%");
     globalFiles.setText(info.getNfiles() + "");
     globalErrors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
-    globalWarnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
+    globalWarnings.setText(bundle.getString("passedWithWarnings").replace("%1", "" + info.getWarnings() + ""));
     globalPassed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
     addChartScore(info);
     addFormatIcons(info);
     addActionsIcons(info);
     hideGenerate();
+    showLoadingReports();
   }
 
   private void addChartScore(ReportGui info) {
@@ -218,16 +254,12 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
             new PieChart.Data("Error", 100 - score));
 
     PieChart chart = new PieChart(pieChartData);
-    chart.setId("pie_chart");
-    chart.setMinSize(22, 22);
-    chart.setMaxSize(22, 22);
-
-    Label score_label = new Label(score + "%");
-    score_label.setTextFill(Color.LIGHTGRAY);
+    chart.setId("pie_chart_global");
+    chart.setMinSize(80, 80);
+    chart.setMaxSize(80, 80);
 
     globalScoreBox.getChildren().clear();
     globalScoreBox.getChildren().add(chart);
-    globalScoreBox.getChildren().add(score_label);
   }
 
   private void addFormatIcons(ReportGui info) {
@@ -239,8 +271,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     Map<String, String> item = new HashMap<>();
     if (version > 0) {
       // Transform reports
-      for (String format : sortedFormats){
-        if (!item.containsKey(format)) item.put(format, (itemRead.containsKey(format)) ? itemRead.get(format) : null);
+      for (String format : sortedFormats) {
+        if (!item.containsKey(format))
+          item.put(format, (itemRead.containsKey(format)) ? itemRead.get(format) : null);
       }
     } else {
       item = itemRead;
@@ -249,31 +282,31 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
       if (!item.containsKey(i)) continue;
       ImageView icon = new ImageView();
       icon.setId("but" + i);
-      icon.setFitHeight(20);
-      icon.setFitWidth(20);
+      icon.setFitHeight(35);
+      icon.setFitWidth(35);
       icon.setCursor(Cursor.HAND);
       icon.setImage(new Image("images/formats/" + i + ".png"));
       Tooltip.install(icon, new Tooltip(i.toUpperCase()));
 
       String path = item.get(i);
       ShowMessage sMessage = null;
-      if (path != null && new File(path).exists()){
+      if (path != null && new File(path).exists()) {
         // Show directly
         sMessage = new ShowMessage(i, path);
-      } else if (gr.getVersion() > 1){
+      } else if (gr.getVersion() > 1) {
         // Transformation need
         icon.setOpacity(0.4);
         icon.setOnMouseEntered(event -> icon.setOpacity(1.0));
         icon.setOnMouseExited(event -> icon.setOpacity(0.4));
-        Long formatUuid = Long.parseLong(info.getUuid()+Character.getNumericValue(i.charAt(0)));
+        Long formatUuid = Long.parseLong(info.getUuid() + Character.getNumericValue(i.charAt(0)));
         sMessage = new ShowMessage(formatUuid, i, info, true);
       }
-      if (sMessage != null){
+      if (sMessage != null) {
         final ShowMessage finalSMessage = sMessage;
         icon.setOnMouseClicked(event -> {
           ArrayMessage am = new ArrayMessage();
+          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
           am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
-          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
           am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
           context.send(GuiConfig.PERSPECTIVE_SHOW, am);
         });
@@ -290,16 +323,17 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   public void addActionsIcons(ReportGui info) {
     globalActionsBox.getChildren().clear();
     String path = info.getDeletePath();
+    Integer size = 25;
 
     // Open folder button
     Button iconFolder = new Button();
-    iconFolder.setMinHeight(20);
-    iconFolder.setPrefHeight(20);
-    iconFolder.setMaxHeight(20);
-    iconFolder.setMinWidth(20);
-    iconFolder.setPrefWidth(20);
-    iconFolder.setMaxWidth(20);
-    iconFolder.getStyleClass().addAll("folder-img", "periodic-img");
+    iconFolder.setMinHeight(size);
+    iconFolder.setPrefHeight(size);
+    iconFolder.setMaxHeight(size);
+    iconFolder.setMinWidth(size);
+    iconFolder.setPrefWidth(size);
+    iconFolder.setMaxWidth(size);
+    iconFolder.getStyleClass().addAll("folder-img", "icon-img");
     iconFolder.setCursor(Cursor.HAND);
     iconFolder.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
@@ -322,13 +356,13 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
     // Trash button
     Button icon = new Button();
-    icon.setMinHeight(20);
-    icon.setPrefHeight(20);
-    icon.setMaxHeight(20);
-    icon.setMinWidth(20);
-    icon.setPrefWidth(20);
-    icon.setMaxWidth(20);
-    icon.getStyleClass().addAll("delete-img", "periodic-img");
+    icon.setMinHeight(size);
+    icon.setPrefHeight(size);
+    icon.setMaxHeight(size);
+    icon.setMinWidth(size);
+    icon.setPrefWidth(size);
+    icon.setMaxWidth(size);
+    icon.getStyleClass().addAll("delete-img", "icon-img");
     icon.setCursor(Cursor.HAND);
     icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
@@ -348,13 +382,13 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   boolean paginationInitiated = false;
 
-  public void initPagination(){
+  public void initPagination() {
     Integer oldPageCount = pagination.getPageCount();
     Integer oldPageIndex = pagination.getCurrentPageIndex();
     pagination.setPageCount(getController().getPagesCount());
     pagination.setCurrentPageIndex(0);
     if (paginationInitiated) {
-      if (oldPageCount.equals(getController().getPagesCount()) && oldPageIndex.equals(0)){
+      if (oldPageCount.equals(getController().getPagesCount()) && oldPageIndex.equals(0)) {
         reloadFirstPage();
       }
     } else {
@@ -368,7 +402,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     }
   }
 
-  public void reloadFirstPage(){
+  public void reloadFirstPage() {
     Node node = pagination.lookup("#vboxIndividuals0");
     if (node != null) {
       VBox vbox = (VBox) node;
@@ -377,7 +411,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     }
   }
 
-  public VBox createPage(Integer pageIndex){
+  public VBox createPage(Integer pageIndex) {
     String id = "vboxIndividuals" + pageIndex;
     VBox box = new VBox();
     box.setId(id);
@@ -386,7 +420,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     return box;
   }
 
-  private void addIndividualReport(String vboxId, ReportIndividualGui rig){
+  private void addIndividualReport(String vboxId, ReportIndividualGui rig) {
+    hideLoadingReports();
     Node node = pagination.lookup(vboxId);
     if (node != null) {
       VBox vbox = (VBox) node;
@@ -403,10 +438,91 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     }
   }
 
-  private void updateIndividualsReports(){
-    for (ManagedFragmentHandler<IndividualFragment> handler : individualHandlers.values()){
+  private void updateIndividualsReports() {
+    for (ManagedFragmentHandler<IndividualFragment> handler : individualHandlers.values()) {
       handler.getController().updateIcons();
     }
+  }
+
+  @FXML
+  private HBox hboxName;
+  @FXML
+  private HBox hboxErrors;
+  @FXML
+  private HBox hboxWarnings;
+  @FXML
+  private HBox hboxResult;
+
+  private IndividualComparator.Mode currentMode;
+  private IndividualComparator.Order currentOrder;
+
+  @FXML
+  protected void clickedColName(MouseEvent event) throws Exception {
+    clickedCol(hboxName, IndividualComparator.Mode.NAME);
+  }
+
+  @FXML
+  protected void clickedColErrors(MouseEvent event) throws Exception {
+    clickedCol(hboxErrors, IndividualComparator.Mode.ERRORS);
+  }
+
+  @FXML
+  protected void clickedColWarnings(MouseEvent event) throws Exception {
+    clickedCol(hboxWarnings, IndividualComparator.Mode.WARNINGS);
+  }
+
+  @FXML
+  protected void clickedColResult(MouseEvent event) throws Exception {
+    clickedCol(hboxResult, IndividualComparator.Mode.RESULT);
+  }
+
+  private void clickedCol(HBox hbox, IndividualComparator.Mode mode){
+    if (indicator.isVisible()) return;
+
+    // Visual sort
+    removeArrows();
+    if (currentMode.equals(mode)) {
+      swapOrder();
+    } else {
+      currentOrder = getDefaultOrder(mode);
+    }
+    currentMode = mode;
+    addArrow(hbox);
+
+    // Show loading
+    showLoadingReports();
+    context.send(GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.SORT));
+  }
+
+  public void showLoadingReports() {
+    NodeUtil.hideNode(pagination);
+    NodeUtil.showNode(indicator);
+  }
+
+  public void hideLoadingReports() {
+    NodeUtil.showNode(pagination);
+    NodeUtil.hideNode(indicator);
+  }
+
+  private void addArrow(HBox hbox) {
+    String type = (currentOrder.equals(IndividualComparator.Order.ASC)) ? "up" : "down";
+    ImageView icon = new ImageView();
+    icon.setFitHeight(10);
+    icon.setFitWidth(10);
+    icon.setImage(new Image("images/icons/caret-" + type + ".png"));
+    hbox.getChildren().add(icon);
+  }
+
+  private void removeArrows() {
+    hboxName.getChildren().remove(1, hboxName.getChildren().size());
+    hboxErrors.getChildren().remove(1, hboxErrors.getChildren().size());
+    hboxWarnings.getChildren().remove(1, hboxWarnings.getChildren().size());
+    hboxResult.getChildren().remove(1, hboxResult.getChildren().size());
+  }
+
+  public IndividualComparator.Order getDefaultOrder(IndividualComparator.Mode mode){
+    if (mode.equals(IndividualComparator.Mode.NAME)) return IndividualComparator.Order.ASC;
+    return IndividualComparator.Order.DESC;
   }
 
   /**
@@ -428,7 +544,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     pdfCheck.setSelected(false);
   }
 
-  private void showGenerate(){
+  private void showGenerate() {
     NodeUtil.showNode(hboxGenerators);
     NodeUtil.hideNode(hboxButton);
   }
@@ -438,7 +554,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     hideGenerate();
   }
 
-  private void hideGenerate(){
+  private void hideGenerate() {
     NodeUtil.hideNode(hboxGenerators);
     NodeUtil.showNode(hboxButton);
   }
@@ -456,7 +572,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     context.send(GuiConfig.PERSPECTIVE_SHOW, am);
   }
 
-  private String getNumericValue(Character ch){
+  private String getNumericValue(Character ch) {
     if (ch.equals('h')) return "1";
     if (ch.equals('x')) return "2";
     if (ch.equals('m')) return "3";
@@ -475,4 +591,19 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     return formats;
   }
 
+  private void swapOrder(){
+    if (currentOrder.equals(IndividualComparator.Order.ASC)){
+      currentOrder = IndividualComparator.Order.DESC;
+    } else {
+      currentOrder = IndividualComparator.Order.ASC;
+    }
+  }
+
+  public IndividualComparator.Mode getCurrentMode() {
+    return currentMode;
+  }
+
+  public IndividualComparator.Order getCurrentOrder() {
+    return currentOrder;
+  }
 }

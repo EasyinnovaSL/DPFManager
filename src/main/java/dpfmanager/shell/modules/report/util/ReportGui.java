@@ -263,7 +263,7 @@ public class ReportGui implements Comparable<ReportGui>{
       int passed = gr.getAllReportsOk();
       int errors = gr.getAllReportsKo();
       int warnings = gr.getAllReportsWarnings();
-      int score = (n > 0) ? (passed + warnings) * 100 / n : 0;
+      int score = (n > 0) ? (passed) * 100 / n : 0;
 
       setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath());
     } catch (Exception e) {
@@ -544,7 +544,7 @@ public class ReportGui implements Comparable<ReportGui>{
     this.errors = errors;
     this.warnings = warnings;
     this.passed = passed;
-    this.score = score;
+    this.score = (score == 0) ? 1 : score;
     this.formats = new SimpleMapProperty<>(FXCollections.observableHashMap());
     this.delete = System.currentTimeMillis() + "";;
     this.deletePath = deletePath;
@@ -674,7 +674,8 @@ public class ReportGui implements Comparable<ReportGui>{
   }
 
   public Integer getScore() {
-    return score;
+//    return score;
+    return 1;
   }
 
   public void setScore(Integer score) {

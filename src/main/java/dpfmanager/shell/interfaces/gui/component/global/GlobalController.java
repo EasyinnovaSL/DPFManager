@@ -55,7 +55,11 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
         }
       }
     }
-    individuals.sort(new IndividualComparator(IndividualComparator.Mode.NAME));
+    sortIndividuals();
+  }
+
+  public void sortIndividuals(){
+    individuals.sort(new IndividualComparator(getView().getCurrentMode(), getView().getCurrentOrder()));
   }
 
   public void loadAndPrintIndividuals(String vboxId, int page){

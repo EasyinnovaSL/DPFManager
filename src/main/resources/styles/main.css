@@ -48,11 +48,16 @@
 }
 
 .chart-pie {
-    -fx-border-width: 0px;
-    -fx-border-color:#33CCFF ;
+    /*-fx-border-width: 0;*/
 }
-.data0.chart-pie { -fx-background-color: #33ccff; }
-.data1.chart-pie { -fx-background-color: #f2f2f2; }
+.data0.chart-pie {
+    -fx-border-color: #33ccff;
+    -fx-background-color: #33ccff;
+}
+.data1.chart-pie {
+    -fx-border-color: #f2f2f2;
+    -fx-background-color: #f2f2f2;
+}
 
 /* Elements */
 
@@ -577,6 +582,11 @@
     -fx-pref-height: 20;
     -fx-max-height: 20;
 }
+.icon-img{
+    -fx-background-color: transparent;
+    -fx-background-size: cover;
+    -fx-border-width: 0;
+}
 .combo-periodic{
     -fx-translate-x: -20;
     -fx-cursor: hand;
@@ -594,7 +604,7 @@
     -fx-background-image: url('../images/periodic/trash-red.png');
 }
 .folder-img{
-    -fx-background-image: url('../images/periodic/folder-gray.png');
+    -fx-background-image: url('../images/periodic/folder-grey.png');
 }
 .folder-img:hover{
     -fx-background-image: url('../images/periodic/folder-blue.png');
@@ -1016,4 +1026,21 @@
     -fx-cursor: default;
     -fx-text-fill: #33CCFF;
     -fx-border-color: transparent;
+}
+
+/* Chart */
+#pie_chart_global {
+    -fx-padding: -8px;
+    -fx-pie-label-visible: false;
+    -fx-pie-legend-visible: false;
+    -fx-pie-title-visible: false;
+}
+
+#pie_chart_global .data0.chart-pie {
+    -fx-border-color: yellowgreen;
+    -fx-background-color: yellowgreen;
+}
+#pie_chart_global .data1.chart-pie {
+    -fx-border-color: red;
+    -fx-background-color: red;
 }

@@ -70,6 +70,7 @@ public class GlobalPerspective extends DpfAbstractPerspective {
 
   @Override
   public void onReloadCustom() {
+    context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.REPORT));
     context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new UiMessage(UiMessage.Type.RELOAD));
   }
 

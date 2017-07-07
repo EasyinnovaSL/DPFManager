@@ -149,6 +149,9 @@ public class ReportIndividualGui {
   public String getName() {
     return name;
   }
+  public String getLowerName() {
+    return name.toLowerCase();
+  }
   public String getPath() {
     return path;
   }

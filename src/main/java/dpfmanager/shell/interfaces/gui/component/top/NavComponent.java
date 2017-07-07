@@ -68,10 +68,11 @@ public class NavComponent extends DpfSimpleView {
       } else if (nm.isReport()){
         handler.getController().setReport();
       } else if (nm.isSpecific()){
-        handler.getController().setSpecific();
+//        handler.getController().setSpecific();
       } else if (nm.isText()){
         String format = nm.getText().toUpperCase();
         handler.getController().setSpecificText(format);
+        handler.getController().setSpecific();
       }
     }
     return anchorPane;

@@ -4,15 +4,24 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import java.lang.String?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane id="pane-reports" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
@@ -58,81 +67,110 @@
                     <Insets bottom="5.0" top="3.0" />
                 </VBox.margin>
             </ImageView>
-            <!--End title-->
-
-            <!--Simulate table-->
-            <VBox fx:id="vboxReports" maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
-                <AnchorPane>
-                    <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="95.0" prefWidth="95.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                        </rowConstraints>
+            <GridPane maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                    <HBox GridPane.columnIndex="1">
                         <children>
-                            <Label styleClass="periodicHeader" text="%colDate" />
-                            <Label styleClass="periodicHeader" text="%colTime" GridPane.columnIndex="1" />
-                            <Label styleClass="periodicHeader" text="%colN" GridPane.columnIndex="2" />
-                            <Label styleClass="periodicHeader" text="%colErrors" GridPane.columnIndex="3" />
-                            <Label styleClass="periodicHeader" text="%colWithWarnings" GridPane.columnIndex="4" />
-                            <Label styleClass="periodicHeader" text="%colPassed" GridPane.columnIndex="5" />
-                            <Label styleClass="periodicHeader" text="%colScore" GridPane.columnIndex="6" />
-                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="7" />
-                            <Label styleClass="periodicHeader" text="%colDelete" GridPane.columnIndex="8" />
-                        </children>
-                        <VBox.margin>
-                            <Insets bottom="5.0" left="5.0" right="5.0" />
-                        </VBox.margin>
-                    </GridPane>
-                </AnchorPane>
-                <StackPane maxHeight="1.0" maxWidth="840.0" minHeight="1.0" minWidth="840.0" prefHeight="1.0" prefWidth="840.0" styleClass="separator-periodic" />
-                <AnchorPane prefWidth="840.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
-                    <GridPane hgap="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="83.0" prefWidth="83.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="83.0" prefWidth="83.0" />
-                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="58.0" minWidth="58.0" prefWidth="58.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="78.0" prefWidth="78.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="138.0" prefWidth="138.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="78.0" prefWidth="78.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="93.0" minWidth="93.0" prefWidth="93.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="148.0" prefWidth="148.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <children>
-                            <Label fx:id="globalDate" text="" textFill="LIGHTGRAY" />
-                            <Label fx:id="globalTime" text="" textFill="LIGHTGRAY" GridPane.columnIndex="1" />
-                            <Label fx:id="globalFiles" text="" textFill="CYAN" GridPane.columnIndex="2">
+                            <VBox alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="SOMETIMES">
+                                <children>
+                                    <Label styleClass="header-statistics" text="%rowDate" />
+                                    <Label styleClass="header-statistics" text="%rowFiles" />
+                                    <Label styleClass="header-statistics" text="%rowScore" />
+                                </children>
                                 <padding>
-                                    <Insets left="10.0" />
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
-                            </Label>
-                            <Label fx:id="globalErrors" text="" textFill="RED" GridPane.columnIndex="3" />
-                            <Label fx:id="globalWarnings" text="" textFill="ORANGE" GridPane.columnIndex="4" />
-                            <Label fx:id="globalPassed" text="" textFill="GREENYELLOW" GridPane.columnIndex="5" />
-                            <HBox fx:id="globalScoreBox" alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="6" />
-                            <HBox fx:id="globalFormatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="7" />
-                            <HBox fx:id="globalActionsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="8" />
+                            </VBox>
+                            <VBox alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                </padding>
+                                <children>
+                                    <Label fx:id="globalDate" styleClass="body-statistics" text="Date" />
+                                    <Label fx:id="globalFiles" styleClass="body-statistics" text="Files" />
+                                    <Label fx:id="globalScore" styleClass="body-statistics" text="Score" />
+                                </children>
+                            </VBox>
                         </children>
-                    </GridPane>
-                    <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                </AnchorPane>
+                    </HBox>
+                    <VBox alignment="CENTER" spacing="25.0" GridPane.columnIndex="2">
+                        <children>
+                            <HBox fx:id="globalFormatsBox" alignment="CENTER_RIGHT" spacing="3.0" />
+                            <HBox fx:id="globalActionsBox" alignment="CENTER_RIGHT" spacing="8.0" />
+                        </children>
+                    </VBox>
+               <VBox alignment="TOP_CENTER">
+                  <children>
+                     <GridPane>
+                       <columnConstraints>
+                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                       </columnConstraints>
+                       <rowConstraints>
+                         <RowConstraints vgrow="SOMETIMES" />
+                       </rowConstraints>
+                        <children>
+                                <VBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1">
+                                    <children>
+                                        <Label fx:id="globalErrors" text="errors" textFill="RED">
+                                            <font>
+                                                <Font name="System Bold" size="12.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="globalPassed" text="passed" textFill="GREENYELLOW">
+                                            <font>
+                                                <Font name="System Bold" size="12.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="globalWarnings" text="warnings" textFill="ORANGE">
+                                            <font>
+                                                <Font name="System Bold" size="12.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                </VBox>
+                           <VBox alignment="CENTER">
+                              <children>
+                                 <HBox alignment="CENTER">
+                                    <VBox.margin>
+                                       <Insets bottom="5.0" />
+                                    </VBox.margin>
+                                    <children>
+                                       <ImageView fx:id="globalImage" fitHeight="14.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
+                                          <HBox.margin>
+                                             <Insets right="5.0" />
+                                          </HBox.margin>
+                                       </ImageView>
+                                       <Label fx:id="resultLabel" text="result">
+                                          <font>
+                                             <Font name="System Bold" size="14.0" />
+                                          </font>
+                                       </Label>
+                                    </children>
+                                 </HBox>
+                                 <HBox fx:id="globalScoreBox" alignment="CENTER" />
+                              </children>
+                           </VBox>
+                        </children>
+                     </GridPane>
+                  </children>
+               </VBox>
+                </children>
                 <VBox.margin>
-                    <Insets bottom="30.0" />
+                    <Insets bottom="20.0" />
                 </VBox.margin>
-            </VBox>
+            </GridPane>
             <!--End simulate table-->
 
             <!--individuals title-->
@@ -165,25 +203,58 @@
                 <AnchorPane>
                     <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
                         <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="260.0" minWidth="260.0" prefWidth="260.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="85.0" prefWidth="85.0" />
+                            <ColumnConstraints fillWidth="false" maxWidth="375.0" minWidth="375.0" prefWidth="375.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
                         </columnConstraints>
                         <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                            <RowConstraints fillHeight="false" minHeight="25.0" prefHeight="25.0" valignment="BOTTOM" vgrow="ALWAYS" />
                         </rowConstraints>
                         <children>
-                            <Label styleClass="periodicHeader" text="%colSingleFile" />
-                            <Label styleClass="periodicHeader" text="%colIsosChecked" GridPane.columnIndex="1" />
-                            <Label styleClass="periodicHeader" text="%colErrors" GridPane.columnIndex="2" />
-                            <Label styleClass="periodicHeader" text="%colWarnings" GridPane.columnIndex="3" />
-                            <Label styleClass="periodicHeader" text="%colPassed" GridPane.columnIndex="4" />
-                            <Label styleClass="periodicHeader" text="%colScore" GridPane.columnIndex="5" />
-                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="6" />
+                            <HBox fx:id="hboxName" alignment="CENTER_LEFT" onMouseClicked="#clickedColName" styleClass="clickable">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colSingleFile">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxResult" alignment="CENTER_LEFT" onMouseClicked="#clickedColResult" styleClass="clickable" GridPane.columnIndex="1">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colResult">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+
+                            <HBox fx:id="hboxErrors" alignment="CENTER_LEFT" onMouseClicked="#clickedColErrors" styleClass="clickable" GridPane.columnIndex="2">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colErrors">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxWarnings" alignment="CENTER_LEFT" onMouseClicked="#clickedColWarnings" styleClass="clickable" GridPane.columnIndex="3">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colWarnings">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="4" />
                         </children>
                         <VBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" />
@@ -195,11 +266,16 @@
                     <Insets />
                 </VBox.margin>
             </VBox>
-         <Pagination fx:id="pagination" maxHeight="300.0" maxPageIndicatorCount="7" maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+            <Pagination fx:id="pagination" maxHeight="300.0" maxPageIndicatorCount="7" maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+                <VBox.margin>
+                    <Insets />
+                </VBox.margin>
+            </Pagination>
+         <ProgressIndicator fx:id="indicator" maxHeight="150.0" maxWidth="150.0" minHeight="150.0" minWidth="150.0" prefHeight="150.0" prefWidth="150.0" progress="1.0">
             <VBox.margin>
-               <Insets />
+               <Insets bottom="10.0" top="10.0" />
             </VBox.margin>
-         </Pagination>
+         </ProgressIndicator>
             <!--End simulate table-->
 
             <HBox fx:id="hboxButton" alignment="TOP_RIGHT">
@@ -216,9 +292,9 @@
                 <VBox.margin>
                     <Insets bottom="15.0" left="65.0" right="65.0" />
                 </VBox.margin>
-            <padding>
-               <Insets top="10.0" />
-            </padding>
+                <padding>
+                    <Insets top="10.0" />
+                </padding>
             </HBox>
 
             <HBox fx:id="hboxGenerators" alignment="TOP_RIGHT">
@@ -242,7 +318,7 @@
                                             <Insets />
                                         </HBox.margin>
                                     </CheckBox>
-                           <CheckBox fx:id="metsCheck" mnemonicParsing="false" styleClass="checkreport" text="METS" />
+                                    <CheckBox fx:id="metsCheck" mnemonicParsing="false" styleClass="checkreport" text="METS" />
                                     <CheckBox fx:id="jsonCheck" mnemonicParsing="false" styleClass="checkreport" text="JSON">
                                         <HBox.margin>
                                             <Insets />
@@ -260,18 +336,18 @@
                                         <VBox.margin>
                                             <Insets top="10.0" />
                                         </VBox.margin>
-                              <HBox.margin>
-                                 <Insets left="15.0" />
-                              </HBox.margin>
+                                        <HBox.margin>
+                                            <Insets left="15.0" />
+                                        </HBox.margin>
                                     </Button>
                                     <Separator maxHeight="0.0" minHeight="0.0" opacity="0.0" prefHeight="0.0" HBox.hgrow="ALWAYS" />
                                     <Button mnemonicParsing="false" onAction="#hideGenerate" styleClass="button-trans-clear" text="%closeFilters">
                                         <padding>
                                             <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
                                         </padding>
-                              <HBox.margin>
-                                 <Insets right="15.0" />
-                              </HBox.margin>
+                                        <HBox.margin>
+                                            <Insets right="15.0" />
+                                        </HBox.margin>
                                     </Button>
                                 </children>
                                 <VBox.margin>
@@ -290,9 +366,9 @@
                 <VBox.margin>
                     <Insets bottom="15.0" left="65.0" right="65.0" />
                 </VBox.margin>
-            <padding>
-               <Insets top="10.0" />
-            </padding>
+                <padding>
+                    <Insets top="10.0" />
+                </padding>
             </HBox>
 
             <!--<ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0">-->
