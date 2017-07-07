@@ -159,7 +159,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         if (pagination.getCurrentPageIndex() != 0) {
           pagination.setCurrentPageIndex(0);
         } else {
-          reloadFirstPage();
+          reloadPage(0);
         }
       }
     }
@@ -298,7 +298,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
     pagination.setCurrentPageIndex(0);
     if (paginationInitiated) {
       if (oldPageCount.equals(getController().getPagesCount()) && oldPageIndex.equals(0)) {
-        reloadFirstPage();
+        reloadPage(0);
       }
     } else {
       paginationInitiated = true;
@@ -339,20 +339,27 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   }
 
   private void deleteReportGui(String uuid) {
-//    ManagedFragmentHandler<ReportFragment> toDelete = getModel().getReportGuiByUuid(uuid);
-//    if (toDelete != null) {
-//      mainVBox.getChildren().remove(toDelete.getFragmentNode());
-//      getController().removeReport(toDelete.getController().getInfo());
-//      getModel().removeReportFragment(toDelete);
-//    }
+    boolean lastPage = pagination.getCurrentPageIndex() == pagination.getPageCount() - 1;
+    int oldPages = getController().getPagesCount();
+    if (reportHandlers.containsKey(uuid)){
+      reportHandlers.remove(uuid);
+    }
+    getController().removeReport(uuid);
+    int newPages = getController().getPagesCount();
+    if (oldPages == newPages) {
+      reloadPage(pagination.getCurrentPageIndex());
+    } else {
+      pagination.setPageCount(newPages);
+      pagination.setCurrentPageIndex(pagination.getPageCount() - 1);
+    }
   }
 
-  public void reloadFirstPage() {
-    Node node = pagination.lookup("#vboxReports0");
+  public void reloadPage(int index) {
+    Node node = pagination.lookup("#vboxReports" + index);
     if (node != null) {
       VBox vbox = (VBox) node;
       vbox.getChildren().clear();
-      getController().loadAndPrintReports("#vboxReports0", 0);
+      getController().loadAndPrintReports("#vboxReports" + index, index);
     }
   }
 

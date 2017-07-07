@@ -69,6 +69,11 @@ public class ReportsPerspective extends DpfAbstractPerspective {
     context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
   }
 
+  @Override
+  public void onReloadCustom() {
+    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.TABLE));
+  }
+
   @PostConstruct
   public void onStartPerspective(PerspectiveLayout perspectiveLayout, FXComponentLayout layout, ResourceBundle resourceBundle) {
     // Top Buttons component
