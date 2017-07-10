@@ -63,13 +63,13 @@ public class RecursiveTest extends ApplicationTest {
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitUntilExists("#lastReportRow");
 
-    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
     AnchorPane row1 = (AnchorPane) mainVBox.getChildren().get(0);
     GridPane grid1 = (GridPane) row1.getChildren().get(0);
     AnchorPane row2 = (AnchorPane) mainVBox.getChildren().get(1);
     GridPane grid2 = (GridPane) row2.getChildren().get(0);
-    int n1 = Integer.parseInt(((Label) grid1.getChildren().get(2)).getText());
-    int n2 = Integer.parseInt(((Label) grid2.getChildren().get(2)).getText());
+    int n1 = Integer.parseInt(((Label) grid1.getChildren().get(1)).getText());
+    int n2 = Integer.parseInt(((Label) grid2.getChildren().get(1)).getText());
     Assert.assertEquals("Reports count doesn't match ("+n1+", "+n2+")", true, (n1 == 2 || n2 == 2) && (n1 == 4 || n2 == 4));
   }
 }

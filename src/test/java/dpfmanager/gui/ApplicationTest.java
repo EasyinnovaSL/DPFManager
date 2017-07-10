@@ -802,14 +802,17 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     //Check table view
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitUntilExists("#lastReportRow");
-    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
     GridPane grid = (GridPane) row.getChildren().get(0);
-    Assert.assertEquals("Report row N files", "3", ((javafx.scene.control.Label) grid.getChildren().get(2)).getText());
-    Assert.assertEquals("Report row N passed", "3 passed", ((javafx.scene.control.Label) grid.getChildren().get(6)).getText());
-    Assert.assertEquals("Report row N errors", "0 errors", ((javafx.scene.control.Label) grid.getChildren().get(4)).getText());
-    Assert.assertEquals("Report row N warnings", "0 warnings", ((javafx.scene.control.Label) grid.getChildren().get(5)).getText());
+    Assert.assertEquals("Report row N files", "3", ((javafx.scene.control.Label) grid.getChildren().get(1)).getText());
+    Assert.assertEquals("Report row N passed", "3 passed", ((javafx.scene.control.Label) grid.getChildren().get(7)).getText());
+    Assert.assertEquals("Report row N errors", "0 errors", ((javafx.scene.control.Label) grid.getChildren().get(5)).getText());
+    Assert.assertEquals("Report row N warnings", "0 warnings", ((javafx.scene.control.Label) grid.getChildren().get(6)).getText());
+
+    // Go to global report
+//    clickOnAndReload("#butGlobal", "#pane-global");
 
     //Check html
     reloadScene();

@@ -56,12 +56,12 @@ public class MultiFileCheckTest extends ApplicationTest {
     //Check table view
     clickOnAndReloadTop("#butReports","#pane-reports");
     waitUntilExists("#lastReportRow");
-    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
     GridPane grid = (GridPane) row.getChildren().get(0);
-    Assert.assertEquals("Report row N files", "4", ((Label) grid.getChildren().get(2)).getText());
-    Assert.assertEquals("Report row N passed", "4 passed", ((Label) grid.getChildren().get(6)).getText());
+    Assert.assertEquals("Report row N files", "4", ((Label) grid.getChildren().get(1)).getText());
+    Assert.assertEquals("Report row N passed", "4 passed", ((Label) grid.getChildren().get(7)).getText());
   }
 }
 

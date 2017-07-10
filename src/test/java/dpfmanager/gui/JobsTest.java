@@ -59,7 +59,7 @@ public class JobsTest extends ApplicationTest {
     waitForCancelChecks();
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitForTable("#lastReportRow");
-    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
     Assert.assertEquals("Reports table rows", Math.min(nReports, ReportsController.itemsPerPage), mainVBox.getChildren().size());
 
     /**
@@ -97,6 +97,12 @@ public class JobsTest extends ApplicationTest {
     imgCancel = (ImageView) scene.lookup("#cancelImage");
     Assert.assertEquals(false, imgPause.isVisible());
     Assert.assertEquals(false, imgCancel.isVisible());
+
+    // Check that there is the report
+    clickOnAndReloadTop("#butReports", "#pane-reports");
+    waitForTable("#lastReportRow");
+    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
   }
 
 }
