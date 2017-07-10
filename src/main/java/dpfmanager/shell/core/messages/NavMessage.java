@@ -30,11 +30,14 @@ public class NavMessage extends DpfMessage {
     TABLE,
     REPORT,
     SPECIFIC,
-    TEXT
+    TEXT,
+    PDF
   }
 
   private Selected selected;
   private String text;
+  private Integer count;
+  private Integer max;
 
   public NavMessage(Selected s) {
     selected = s;
@@ -43,6 +46,12 @@ public class NavMessage extends DpfMessage {
   public NavMessage(String s) {
     selected = Selected.TEXT;
     text = s;
+  }
+
+  public NavMessage(Integer c, Integer m) {
+    selected = Selected.PDF;
+    count = c;
+    max = m;
   }
 
   public String getText() {
@@ -65,4 +74,15 @@ public class NavMessage extends DpfMessage {
     return selected.equals(Selected.TEXT);
   }
 
+  public boolean isPdf() {
+    return selected.equals(Selected.PDF);
+  }
+
+  public Integer getCount() {
+    return count;
+  }
+
+  public Integer getMax() {
+    return max;
+  }
 }

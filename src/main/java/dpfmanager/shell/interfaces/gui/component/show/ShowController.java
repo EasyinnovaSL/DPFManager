@@ -55,7 +55,6 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
 
   public void showSingleReport(String type, String path, boolean completedPath) {
     //    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Showing report..."));
-    getView().hideAll();
     switch (type) {
       case "html":
         if (!completedPath) path += "report.html";

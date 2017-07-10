@@ -43,7 +43,7 @@ import java.util.Map;
  */
 public class ReportsController extends DpfController<ReportsModel, ReportsView> {
 
-  public static Integer itemsPerPage = 3;
+  public static Integer itemsPerPage = 15;
 
   private Map<String, ReportGui> dataCache;
   private List<ReportGui> data;

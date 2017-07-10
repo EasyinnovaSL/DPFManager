@@ -63,6 +63,9 @@ public class NavBarFragment {
   @FXML
   private Label labelSingle;
 
+  @FXML
+  private Label labelPdf;
+
   private boolean initiated = false;
 
   public void init() {
@@ -77,6 +80,7 @@ public class NavBarFragment {
     NodeUtil.hideNode(labelReport);
     NodeUtil.hideNode(labelSeparator2);
     NodeUtil.hideNode(labelSingle);
+    NodeUtil.hideNode(labelPdf);
     labelTable.getStyleClass().remove("myactive");
     labelReport.getStyleClass().remove("myactive");
     labelSingle.getStyleClass().remove("myactive");
@@ -89,6 +93,7 @@ public class NavBarFragment {
     NodeUtil.showNode(labelReport);
     NodeUtil.hideNode(labelSeparator2);
     NodeUtil.hideNode(labelSingle);
+    NodeUtil.hideNode(labelPdf);
     labelTable.getStyleClass().remove("myactive");
     labelReport.getStyleClass().remove("myactive");
     labelSingle.getStyleClass().remove("myactive");
@@ -101,10 +106,20 @@ public class NavBarFragment {
     NodeUtil.showNode(labelReport);
     NodeUtil.showNode(labelSeparator2);
     NodeUtil.showNode(labelSingle);
+    NodeUtil.hideNode(labelPdf);
     labelTable.getStyleClass().remove("myactive");
     labelReport.getStyleClass().remove("myactive");
     labelSingle.getStyleClass().remove("myactive");
     labelSingle.getStyleClass().add("myactive");
+  }
+
+  public void setPdfPage(int c, int m){
+    if (c == 0 && m == 0){
+      NodeUtil.hideNode(labelPdf);
+    } else {
+      labelPdf.setText(c + "/" + m);
+      NodeUtil.showNode(labelPdf);
+    }
   }
 
   public void setSpecificText(String format){

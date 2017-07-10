@@ -23,6 +23,7 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.DpfMessage;
+import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfView;
@@ -31,7 +32,6 @@ import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessag
 import dpfmanager.shell.interfaces.gui.fragment.TopFragment;
 import dpfmanager.shell.modules.report.messages.GenerateIndividualMessage;
 import dpfmanager.shell.modules.report.messages.GenerateMessage;
-import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -105,6 +105,9 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   private Map<Long, ShowReport> showReports;
   private Long currentReport;
+  private int currentPdfPage;
+  private Integer currentPdfPageMax;
+  private String currentPdfPath;
 
   @Override
   public void sendMessage(String target, Object dpfMessage) {
@@ -120,15 +123,16 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     if (message != null && message.isTypeOf(ShowMessage.class)) {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
       if (sMessage.isShow()) {
-        if (sMessage.getInfo() != null && sMessage.getUuid().equals(currentReport)){
+        if (sMessage.getInfo() != null && sMessage.getUuid().equals(currentReport)) {
           String currentId = context.getManagedFragmentHandler(TopFragment.class).getController().getCurrentId();
-          if (currentId.equals(GuiConfig.PERSPECTIVE_SHOW)){
+          if (currentId.equals(GuiConfig.PERSPECTIVE_SHOW)) {
             ArrayMessage am = new ArrayMessage();
             am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
             am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, sMessage.getInfo()));
             context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
           }
-        } else if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)){
+        } else if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)) {
+          hideAll();
           getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
         }
       } else if (sMessage.isGenerate()) {
@@ -139,6 +143,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
             context.send(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
           } else if (sr.finished) {
             // Transformation DONE, do nothing
+            hideAll();
             getController().showSingleReport(sMessage.getType(), sMessage.getInternal(), false);
           } else {
             // Already initiated
@@ -163,7 +168,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
           } else {
             showLoadingMultiple();
           }
-          if (sMessage.getTypes() != null){
+          if (sMessage.getTypes() != null) {
             context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getTypes(), sMessage.getInfo(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
           } else {
             context.send(BasicConfig.MODULE_REPORT, new GenerateMessage(sMessage.getType(), sMessage.getInfo(), sMessage.getUuid(), sMessage.isOnlyGlobal()));
@@ -182,10 +187,10 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
           updateLoading(sr.count, sr.max);
         }
       } else if (sMessage.isUpdate()) {
-        if (showReports.containsKey(sMessage.getUuid())){
+        if (showReports.containsKey(sMessage.getUuid())) {
           ShowReport sr = showReports.get(sMessage.getUuid());
           sr.count += sMessage.getNumber();
-          if (sMessage.getUuid().equals(currentReport)){
+          if (sMessage.getUuid().equals(currentReport)) {
             updateLoading(sr.count, sr.max);
           }
           if (sr.count == sr.max) {
@@ -230,7 +235,28 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
         scrollPdfPages.setHvalue(0.5);
       }
     });
+    scrollPdfPages.vvalueProperty().addListener(
+        (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+          if (newValue.doubleValue() == 1.0) {
+            if (currentPdfPageMax != null && currentPdfPage < currentPdfPageMax) {
+              currentPdfPage++;
+            }
+            nextPdfFilePage();
+          }
+          updatePageIndicator();
+        });
 
+  }
+
+  public void updatePageIndicator() {
+    if (currentPdfPageMax == null) {
+      context.send(GuiConfig.COMPONENT_NAV, new NavMessage(0, 0));
+    } else {
+      Double selectedPage = scrollPdfPages.getVvalue() * (currentPdfPage + 1);
+      Integer count = selectedPage.intValue() + 1;
+      if (count >= currentPdfPageMax) count = currentPdfPageMax;
+      context.send(GuiConfig.COMPONENT_NAV, new NavMessage(count, currentPdfPageMax));
+    }
   }
 
   @Override
@@ -243,7 +269,8 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     if (extension != null && extension.equals("pdf") && comboIndividuals.getSelectionModel().getSelectedItem() != null) {
       String name = (String) comboIndividuals.getSelectionModel().getSelectedItem();
       String filename = folderPath + "/" + name + "." + extension;
-      opePdfFile(filename);
+      resetScrollPdf(filename);
+      nextPdfFilePage();
     } else {
       setTextAreaContent();
     }
@@ -260,7 +287,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     comboIndividuals.getItems().clear();
   }
 
-  public void setCurrentReportParams(String path, String ext){
+  public void setCurrentReportParams(String path, String ext) {
     folderPath = path;
     extension = ext;
   }
@@ -277,7 +304,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    * Show Hide
    */
 
-  public void showLoadingMultiple(){
+  public void showLoadingMultiple() {
     NodeUtil.showNode(labelLoading);
     NodeUtil.showNode(progressLoading);
     NodeUtil.hideNode(indicator);
@@ -291,7 +318,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     indicator.setProgress(-1);
   }
 
-  public void hideLoading(){
+  public void hideLoading() {
     NodeUtil.hideNode(labelLoading);
     NodeUtil.hideNode(progressLoading);
     NodeUtil.hideNode(indicator);
@@ -305,11 +332,11 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
         progressLoading.getStyleClass().add("blue-bar");
       }
     }
-    if (progress == 1.0){
+    if (progress == 1.0) {
       progressLoading.getStyleClass().remove("blue-bar");
       progressLoading.getStyleClass().add("green-bar");
     }
-    if (count < 0){
+    if (count < 0) {
       progress = -1;
     }
     progressLoading.setProgress(progress);
@@ -348,8 +375,17 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   }
 
   public void showPdfView(String path) {
-    opePdfFile(path);
+    resetScrollPdf(path);
+    nextPdfFilePage();
     NodeUtil.showNode(scrollPdfPages);
+  }
+
+  public void resetScrollPdf(String path){
+    currentPdfPage = 0;
+    currentPdfPageMax = null;
+    currentPdfPath = path;
+    scrollPdfPages.setVvalue(0.0);
+    pdfPagesVBox.getChildren().clear();
   }
 
   public void hidePdfView() {
@@ -369,21 +405,36 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
    * PDF Viewer
    */
 
-  private void opePdfFile(String absolutePath) {
-    // Load PDF codument
-    pdfPagesVBox.getChildren().clear();
+  private void nextPdfFilePage() {
+    if (currentPdfPageMax != null && currentPdfPage > currentPdfPageMax) return;
     try {
-      PDDocument document = PDDocument.load(absolutePath);
+      pdfPagesVBox.getChildren().add(getIndicatorPdf());
+      PDDocument document = PDDocument.load(currentPdfPath);
       List<PDPage> pages = document.getDocumentCatalog().getAllPages();
-      for (PDPage page : pages) {
+      currentPdfPageMax = pages.size();
+      if (currentPdfPage < currentPdfPageMax) {
+        PDPage page = pages.get(currentPdfPage);
         BufferedImage pageImage = page.convertToImage();
         ImageView imageView = new ImageView(SwingFXUtils.toFXImage(pageImage, null));
+        pdfPagesVBox.getChildren().remove(pdfPagesVBox.getChildren().size() - 1);
         pdfPagesVBox.getChildren().add(imageView);
-        VBox.setMargin(imageView, new Insets(15,0,15,0));
+        VBox.setMargin(imageView, new Insets(15, 0, 15, 0));
+        updatePageIndicator();
+      } else {
+        pdfPagesVBox.getChildren().remove(pdfPagesVBox.getChildren().size() - 1);
       }
     } catch (Exception ex) {
       ex.printStackTrace();
     }
   }
 
+  private ProgressIndicator getIndicatorPdf() {
+    ProgressIndicator indicatorPdf = new ProgressIndicator();
+    indicatorPdf.setProgress(-1);
+    indicatorPdf.setMinSize(150, 150);
+    indicatorPdf.setPrefSize(150, 150);
+    indicatorPdf.setMaxSize(150, 150);
+    VBox.setMargin(indicatorPdf, new Insets(20));
+    return indicatorPdf;
+  }
 }
