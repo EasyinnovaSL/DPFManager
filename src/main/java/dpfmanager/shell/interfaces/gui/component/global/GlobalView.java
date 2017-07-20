@@ -31,6 +31,7 @@ import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.interfaces.gui.fragment.global.IndividualFragment;
+import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
@@ -102,6 +103,12 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private CheckBox pdfCheck;
   @FXML
   private CheckBox jsonCheck;
+  @FXML
+  private CheckBox checkError;
+  @FXML
+  private CheckBox checkWarning;
+  @FXML
+  private CheckBox checkCorrect;
 
   /**
    * Global report elements
@@ -210,6 +217,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     setModel(new GlobalModel(context));
     setController(new GlobalController());
     getModel().setResourcebundle(bundle);
+    getController().setResourcebundle(bundle);
     individualHandlers = new HashMap<>();
     pagination.setSkin(new PaginationBetterSkin(pagination));
     indicator.setProgress(-1);
@@ -239,7 +247,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     addChartScore(info);
     addFormatIcons(info);
     addActionsIcons(info);
-    hideGenerate();
+    hideBottom();
     showLoadingReports();
   }
 
@@ -433,6 +441,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
         individualHandlers.put(rig.getId(), handler);
       }
       vbox.getChildren().add(handler.getFragmentNode());
+      if (rig.isLast()) showBottom();
     }
   }
 
@@ -528,9 +537,13 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    */
 
   @FXML
-  private HBox hboxGenerators;
+  private VBox vboxGenerators;
   @FXML
-  private HBox hboxButton;
+  private VBox vboxTransforms;
+  @FXML
+  private Button buttonTransforms;
+  @FXML
+  private Button buttonGenerate;
 
   @FXML
   protected void showGenerate(ActionEvent event) throws Exception {
@@ -542,9 +555,22 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     pdfCheck.setSelected(false);
   }
 
+  @FXML
+  protected void showTransform(ActionEvent event) throws Exception {
+    showTransform();
+    checkError.setSelected(true);
+    checkCorrect.setSelected(false);
+    checkWarning.setSelected(false);
+  }
+
   private void showGenerate() {
-    NodeUtil.showNode(hboxGenerators);
-    NodeUtil.hideNode(hboxButton);
+    NodeUtil.showNode(vboxGenerators);
+    NodeUtil.hideNode(buttonGenerate);
+  }
+
+  private void showTransform() {
+    NodeUtil.showNode(vboxTransforms);
+    NodeUtil.hideNode(buttonTransforms);
   }
 
   @FXML
@@ -553,8 +579,18 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   }
 
   private void hideGenerate() {
-    NodeUtil.hideNode(hboxGenerators);
-    NodeUtil.showNode(hboxButton);
+    NodeUtil.hideNode(vboxGenerators);
+    NodeUtil.showNode(buttonGenerate);
+  }
+
+  @FXML
+  protected void hideTransforms(ActionEvent event) throws Exception {
+    hideTransforms();
+  }
+
+  private void hideTransforms() {
+    NodeUtil.hideNode(vboxTransforms);
+    NodeUtil.showNode(buttonTransforms);
   }
 
   @FXML
@@ -568,6 +604,27 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
     am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, sMessage);
     context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+  }
+
+  @FXML
+  protected void transformReports(ActionEvent event) throws Exception {
+    if (getController().transformReport()) {
+      hideTransforms();
+    }
+  }
+
+  private void hideBottom(){
+    NodeUtil.hideNode(vboxTransforms);
+    NodeUtil.hideNode(buttonTransforms);
+    NodeUtil.hideNode(vboxGenerators);
+    NodeUtil.hideNode(buttonGenerate);
+  }
+
+  private void showBottom(){
+    if (info.getGlobalReport().getConfig().isQuick()){
+      NodeUtil.showNode(buttonTransforms);
+    }
+    NodeUtil.showNode(buttonGenerate);
   }
 
   private String getNumericValue(Character ch) {
@@ -604,4 +661,21 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   public IndividualComparator.Order getCurrentOrder() {
     return currentOrder;
   }
+
+  public ReportGui getInfo() {
+    return info;
+  }
+
+  public boolean isErrors(){
+    return checkError.isSelected();
+  }
+
+  public boolean isWarnings(){
+    return checkWarning.isSelected();
+  }
+
+  public boolean isCorrect(){
+    return checkCorrect.isSelected();
+  }
+
 }

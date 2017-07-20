@@ -20,10 +20,15 @@
 package dpfmanager.shell.interfaces.gui.component.global;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
+import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
+import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 
 import java.io.File;
@@ -67,6 +72,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
     int i = init;
     while (i < individuals.size() && i < end) {
       ReportIndividualGui rig = individuals.get(i);
+      rig.setLast(i == individuals.size()-1 || i == end-1);
       getContext().send(GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.ADD_INDIVIDUAL, vboxId, rig));
       i++;
     }
@@ -81,6 +87,47 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
     int pages = size / itemsPerPage;
     if (size % itemsPerPage > 0) pages++;
     return pages;
+  }
+
+  /**
+   * Starts a new full check based on this quick check.
+   */
+  public boolean transformReport(){
+    GlobalReport global = getView().getInfo().getGlobalReport();
+    if (global.getConfig().isQuick()){
+      List<String> inputFiles = getInputFiles(getView().isErrors(), getView().isWarnings(), getView().isCorrect(), true);
+      List<String> inputNotFound = getInputFiles(getView().isErrors(), getView().isWarnings(), getView().isCorrect(), false);
+      if (inputFiles.size() == 0) {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, getBundle().getString("filesEmpty")));
+      } else {
+        getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(String.join(";", inputFiles), getView().getInfo().getGlobalReport().getConfig(), 100, false, false));
+        return true;
+      }
+      if (inputNotFound.size() > 0) {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ALERT, getBundle().getString("filesNotFound"), String.join("\n", inputNotFound)));
+      }
+    }
+    return false;
+  }
+
+  private List<String> getInputFiles(boolean err, boolean war, boolean pas, boolean found){
+    List<String> inputFiles = new ArrayList<>();
+    GlobalReport global = getView().getInfo().getGlobalReport();
+    for (SmallIndividualReport individual : global.getIndividualReports()){
+      int errors = 0;
+      int warnings = 0;
+      for (String iso : global.getSelectedIsos()){
+        if (err && individual.getNErrors(iso) > 0)  errors++;
+        else if (individual.getNWarnings(iso) > 0) warnings++;
+      }
+      if ((err && errors > 0) || (war && errors == 0 && warnings > 0) || (pas && errors == 0 && warnings == 0)) {
+        String filePath = individual.getFilePath();
+        if (new File(filePath).exists() == found){
+          inputFiles.add(filePath);
+        }
+      }
+    }
+    return inputFiles;
   }
 
 }

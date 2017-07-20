@@ -42,6 +42,7 @@ public class ReportIndividualGui {
   private String name;
   private boolean loaded;
   private boolean error;
+  private boolean last;
 
   private String filename;
   private Integer selectedIsos;
@@ -62,6 +63,11 @@ public class ReportIndividualGui {
     this.id = id;
     this.loaded = false;
     this.error = false;
+    this.last = false;
+  }
+
+  public void setLast(boolean last) {
+    this.last = last;
   }
 
   private String parseFileName(String path){
@@ -184,6 +190,9 @@ public class ReportIndividualGui {
   }
   public Integer getId() {
     return id;
+  }
+  public boolean isLast() {
+    return last;
   }
 }
 
