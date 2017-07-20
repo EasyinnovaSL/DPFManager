@@ -20,16 +20,17 @@
 <AnchorPane prefWidth="840.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <GridPane hgap="2.0" onMouseClicked="#onGridPaneClicked" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.0" minWidth="108.0" prefWidth="108.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="113.0" prefWidth="113.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="273.0" prefWidth="273.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="38.0" minWidth="38.0" prefWidth="38.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="248.0" minWidth="248.0" prefWidth="248.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="63.0" minWidth="63.0" prefWidth="63.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="83.0" prefWidth="83.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="63.0" minWidth="63.0" prefWidth="63.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="63.0" minWidth="63.0" prefWidth="63.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="58.0" minWidth="58.0" prefWidth="58.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="38.0" minWidth="38.0" prefWidth="38.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -57,13 +58,14 @@
                     <Insets left="10.0" />
                 </GridPane.margin>
             </ImageView>
-            <Label fx:id="input" text="" textFill="LIGHTGRAY" GridPane.columnIndex="3" />
-            <Label fx:id="errors" text="" textFill="RED" GridPane.columnIndex="4" />
-            <Label fx:id="warnings" text="" textFill="ORANGE" GridPane.columnIndex="5" />
-            <Label fx:id="passed" text="" textFill="GREENYELLOW" GridPane.columnIndex="6" />
-            <HBox fx:id="scoreBox" alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="7" />
-            <HBox fx:id="formatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="8" />
-            <HBox fx:id="actionsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="9" />
+            <Label fx:id="type" text="" textFill="LIGHTGRAY" GridPane.columnIndex="3" />
+            <Label fx:id="input" text="" textFill="LIGHTGRAY" GridPane.columnIndex="4" />
+            <Label fx:id="errors" text="" textFill="RED" GridPane.columnIndex="5" />
+            <Label fx:id="warnings" text="" textFill="ORANGE" GridPane.columnIndex="6" />
+            <Label fx:id="passed" text="" textFill="GREENYELLOW" GridPane.columnIndex="7" />
+            <HBox fx:id="scoreBox" alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="8" />
+            <HBox fx:id="formatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="9" />
+            <HBox fx:id="actionsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="10" />
         </children>
         <styleClass>
             <String fx:value="hoverRow" />

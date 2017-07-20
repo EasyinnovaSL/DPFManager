@@ -86,6 +86,8 @@ public class ReportFragment {
   @FXML
   private Label input;
   @FXML
+  private Label type;
+  @FXML
   private Label errors;
   @FXML
   private Label warnings;
@@ -121,6 +123,11 @@ public class ReportFragment {
     } else {
       NodeUtil.hideNode(okImage);
       NodeUtil.showNode(koImage);
+    }
+    if (info.getGlobalReport().getConfig().isQuick()) {
+      type.setText(bundle.getString("typeQuick"));
+    } else {
+      type.setText(bundle.getString("typeFull"));
     }
     warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
     passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
