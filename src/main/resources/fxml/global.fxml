@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -17,6 +23,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+
 <AnchorPane id="pane-global" prefWidth="1046.0" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox fx:id="reportsVbox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -61,7 +68,7 @@
                     <Insets bottom="5.0" top="3.0" />
                 </VBox.margin>
             </ImageView>
-            <GridPane maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
+            <GridPane maxHeight="105.0" maxWidth="840.0" minHeight="105.0" minWidth="840.0" prefHeight="105.0" prefWidth="840.0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />

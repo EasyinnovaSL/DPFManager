@@ -101,7 +101,7 @@ public class JobsTest extends ApplicationTest {
     // Check that there is the report
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitForTable("#lastReportRow");
-    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
+    mainVBox = (VBox) scene.lookup("#vboxReports0");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
   }
 
