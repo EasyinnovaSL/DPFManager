@@ -91,6 +91,11 @@ public class GlobalReport extends ReportSerializable {
   private Configuration config;
 
   /**
+   * The input string
+   */
+  private String inputStr;
+
+  /**
    * Instantiates a new global report.
    */
   public GlobalReport() {
@@ -159,6 +164,7 @@ public class GlobalReport extends ReportSerializable {
     List<SmallIndividualReport> toDelete = new ArrayList<>();
     Collections.sort(reports);
     for (SmallIndividualReport ir : reports) {
+      if (inputStr == null) inputStr = ir.getInputStr();
       if (ir.isError()) {
         toDelete.add(ir);
       } else {
@@ -318,6 +324,7 @@ public class GlobalReport extends ReportSerializable {
   }
 
   public String getInputString(){
+    if (inputStr != null && !inputStr.isEmpty()) return inputStr;
     String name = "";
     int index = 0;
     Iterator<SmallIndividualReport> it = reports.iterator();
@@ -325,7 +332,8 @@ public class GlobalReport extends ReportSerializable {
       SmallIndividualReport individual = it.next();
       name = (name.length() > 0) ? name + ", " + individual.getFileName() : individual.getFileName();
     }
-    return name;
+    inputStr = name;
+    return inputStr;
   }
 
   public Configuration getConfig() {

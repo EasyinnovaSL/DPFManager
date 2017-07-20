@@ -33,6 +33,7 @@ public class SmallIndividualReport implements Comparable, Serializable {
   int percentOne;
   int percent;
   boolean quick;
+  String inputStr;
 
   public SmallIndividualReport(IndividualReport ind) {
     this.isError = ind.isError();
@@ -45,6 +46,7 @@ public class SmallIndividualReport implements Comparable, Serializable {
     this.uuid = ind.getUuid();
     this.imagePath = ind.getImagePath();
     this.quick = ind.isQuick();
+    this.inputStr = ind.getInputStr();
   }
 
   public void generate(IndividualReport ind){
@@ -65,6 +67,10 @@ public class SmallIndividualReport implements Comparable, Serializable {
   public void computePercent(GlobalReport global){
     this.percent = calculatePercent(global, global.getErrorValue());
     this.percentOne = calculatePercent(global, 1.0);
+  }
+
+  public String getInputStr() {
+    return inputStr;
   }
 
   public String getImagePath() {

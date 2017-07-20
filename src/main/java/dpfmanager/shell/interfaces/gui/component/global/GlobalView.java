@@ -147,6 +147,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private Pagination pagination;
   @FXML
   private ProgressIndicator indicator;
+  @FXML
+  private Label colActions;
 
   private Map<Integer, ManagedFragmentHandler<IndividualFragment>> individualHandlers;
 
@@ -244,6 +246,11 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     globalErrors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
     globalWarnings.setText(bundle.getString("passedWithWarnings").replace("%1", "" + info.getWarnings() + ""));
     globalPassed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
+    if (info.getGlobalReport().getConfig().isQuick()) {
+      NodeUtil.showNode(colActions);
+    } else {
+      NodeUtil.hideNode(colActions);
+    }
     addChartScore(info);
     addFormatIcons(info);
     addActionsIcons(info);

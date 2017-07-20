@@ -40,9 +40,11 @@ public class ReportIndividualGui {
   private Integer id;
   private String path;
   private String name;
+  private String filePath;
   private boolean loaded;
   private boolean error;
   private boolean last;
+  private boolean quick;
 
   private String filename;
   private Integer selectedIsos;
@@ -111,6 +113,8 @@ public class ReportIndividualGui {
       filename = ir.getFileName();
       score = (n > 0) ? (passed + warnings) * 100 / n : 0;
       reportId = ir.getIdReport();
+      filePath = ir.getFilePath();
+      quick = ir.isQuick();
     } catch (Exception e) {
       error = true;
     }
@@ -193,6 +197,12 @@ public class ReportIndividualGui {
   }
   public boolean isLast() {
     return last;
+  }
+  public String getFilePath() {
+    return filePath;
+  }
+  public boolean isQuick() {
+    return quick;
   }
 }
 

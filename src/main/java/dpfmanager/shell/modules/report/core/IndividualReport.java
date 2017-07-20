@@ -148,6 +148,8 @@ public class IndividualReport extends ReportSerializable {
 
   private boolean isOriginal = true;
 
+  private String inputStr;
+
   /**
    * Error constructor
    */
@@ -244,6 +246,14 @@ public class IndividualReport extends ReportSerializable {
 
   public void setIsosCheck(List<String> isosCheck) {
     this.checkedIsos = isosCheck;
+  }
+
+  public String getInputStr() {
+    return inputStr;
+  }
+
+  public void setInputStr(String inputStr) {
+    this.inputStr = inputStr;
   }
 
   public List<String> getSelectedIsos() {

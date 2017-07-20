@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.fragment.global;
 
+import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.NavMessage;
@@ -27,11 +28,14 @@ import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
+import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
+import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -88,6 +92,8 @@ public class IndividualFragment {
   private ImageView okImage;
   @FXML
   private ImageView koImage;
+  @FXML
+  private Button buttonFull;
 
   /* Report Row info */
   private ReportIndividualGui info;
@@ -106,6 +112,11 @@ public class IndividualFragment {
   private void loadReportRow() {
     info.load();
     input.setText(info.getFilename());
+
+    // Quick
+    if (!info.isQuick()) {
+      NodeUtil.hideNode(buttonFull);
+    }
 
     // Result
     if (info.getErrors() > 0) {
@@ -183,6 +194,16 @@ public class IndividualFragment {
 
         formatsBox.getChildren().add(icon);
       }
+    }
+  }
+
+  @FXML
+  protected void makeFullReport(ActionEvent event) throws Exception {
+    String inputFile = info.getFilePath();
+    if (!new File(inputFile).exists()) {
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("filesNotFound"), inputFile));
+    } else {
+      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(inputFile, info.getConfig(), 100, false, false));
     }
   }
 

@@ -1046,3 +1046,12 @@
     -fx-border-color: red;
     -fx-background-color: red;
 }
+
+/** Buttons individual report */
+.button-small {
+    -fx-text-fill: #33CCFF;
+    -fx-background-color: #333333;
+    -fx-border-width: 1;
+    -fx-border-color: white;
+    -fx-border-radius: 5;
+}

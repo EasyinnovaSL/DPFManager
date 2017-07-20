@@ -197,11 +197,12 @@
                 <AnchorPane>
                     <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
                         <columnConstraints>
-                            <ColumnConstraints fillWidth="false" maxWidth="375.0" minWidth="375.0" prefWidth="375.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
-                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
-                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                            <ColumnConstraints fillWidth="false" maxWidth="325.0" minWidth="325.0" prefWidth="325.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
+                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
+                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
                         </columnConstraints>
                         <rowConstraints>
                             <RowConstraints fillHeight="false" minHeight="25.0" prefHeight="25.0" valignment="BOTTOM" vgrow="ALWAYS" />
@@ -249,6 +250,8 @@
                             </HBox>
 
                             <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="4" />
+
+                            <Label fx:id="colActions" styleClass="periodicHeader" text="%colActions" GridPane.columnIndex="5" />
                         </children>
                         <VBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" />

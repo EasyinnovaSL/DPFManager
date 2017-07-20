@@ -44,6 +44,7 @@ public class ConformanceRunnable extends DpfRunnable {
   private int id;
   private long uuid;
   private ReportGenerator generator;
+  private String inputStr;
 
   public ConformanceRunnable(List<ConformanceChecker> list, ReportGenerator gen) {
     // No context yet
@@ -56,12 +57,13 @@ public class ConformanceRunnable extends DpfRunnable {
     pi.setContext(context);
   }
 
-  public void setParameters(String name, int i, String internal, Configuration conf, long u) {
+  public void setParameters(String name, int i, String internal, Configuration conf, long u, String in) {
     filename = name;
     id = i;
     internalReportFolder = internal;
     config = conf;
     uuid = u;
+    inputStr = in;
   }
 
   @Override
@@ -91,6 +93,7 @@ public class ConformanceRunnable extends DpfRunnable {
     // Process the input and get a list of individual reports
     IndividualReport ir = pi.processFile(filename, internalReportFolder, config, id);
     if (ir != null && !ir.isError()) {
+      ir.setInputStr(inputStr);
       ir.setIdReport(id);
       ir.setInternalReportFolder(internalReportFolder);
       ir.setUuid(uuid);
