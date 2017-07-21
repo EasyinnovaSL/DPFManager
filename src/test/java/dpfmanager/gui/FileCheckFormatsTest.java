@@ -31,7 +31,7 @@ public class FileCheckFormatsTest extends ApplicationTest {
     System.out.println("Running file check test...");
 
     //Get the current reports number
-    int nReports = getCurrentReports() - 1;
+    int nReports = getCurrentReports();
 
     // Import config file and check files
     GuiWorkbench.setTestParam("import", inputConfigPath);
