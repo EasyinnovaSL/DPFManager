@@ -49,11 +49,47 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
   }
 
   public void readIndividualReports(ReportGui reportGui){
+    individuals = new ArrayList<>();
     GlobalReport global = reportGui.getGlobalReport();
+    if (global == null) {
+      // Old report format, read from dir
+      Integer count = 0;
+      List<String> idsFound = new ArrayList<>();
+      File reportDir = new File(reportGui.getInternalReportFolder());
+      File htmlDir = new File(reportGui.getInternalReportFolder() + "/html");
+      // Search in report dir
+      if (reportDir.exists() && reportDir.isDirectory()) {
+        for (File individualReport : reportDir.listFiles()) {
+          String name = individualReport.getName();
+          if (individualReport.exists() && individualReport.isFile() && !name.startsWith("summary") && !name.startsWith("report")) {
+            String id = name.substring(0, name.indexOf("-"));
+            if (!idsFound.contains(id)) {
+              individuals.add(new ReportIndividualGui(individualReport.getAbsolutePath(), count));
+              idsFound.add(id);
+              count++;
+            }
+          }
+        }
+      }
+      // Search in html dir if no reports found
+      if (count == 0 && htmlDir.exists() && htmlDir.isDirectory()) {
+        for (File individualReport : htmlDir.listFiles()) {
+          String name = individualReport.getName();
+          if (individualReport.exists() && individualReport.isFile() && !name.startsWith("summary") && !name.startsWith("report")) {
+            String id = name.substring(0, name.indexOf("-"));
+            if (!idsFound.contains(id)) {
+              individuals.add(new ReportIndividualGui(individualReport.getAbsolutePath(), count));
+              idsFound.add(id);
+              count++;
+            }
+          }
+        }
+      }
+      return;
+    }
     Configuration config = global.getConfig();
     String internal = reportGui.getInternalReportFolder();
     if (global.getVersion() == 3) {
-      individuals = new ArrayList<>();
       Integer count = 0;
       for (SmallIndividualReport sir : global.getIndividualReports()) {
         String serPath = sir.getSerPath();
@@ -69,7 +105,6 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
         }
       }
     } else {
-      individuals = new ArrayList<>();
       Integer count = 0;
       File serializedDirectory = new File(internal + "/serialized");
       if (serializedDirectory.exists() && serializedDirectory.isDirectory()) {
