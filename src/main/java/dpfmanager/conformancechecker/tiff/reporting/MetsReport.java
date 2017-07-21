@@ -249,9 +249,13 @@ public class MetsReport {
     } else {
       try {
         File file = new File(filepath);
-        Path filePath = file.toPath();
-        BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
-        return attr.creationTime().toString();
+        if (file.exists()) {
+          Path filePath = file.toPath();
+          BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
+          return attr.creationTime().toString();
+        } else {
+          return "";
+        }
       } catch (IOException e) {
         e.printStackTrace();
         return "";
