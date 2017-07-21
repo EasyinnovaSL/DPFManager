@@ -34,16 +34,16 @@ public class FileCheckFormatsTest extends ApplicationTest {
     int nReports = getCurrentReports() - 1;
 
     // Import config file and check files
-//    GuiWorkbench.setTestParam("import", inputConfigPath);
-//    clickOnScroll("#importButton");
-//    clickOnScroll("No");
-//    clickOnImportedConfig(inputConfigPath);
-//    writeText("#inputText", inputFilePath);
-//    clickOnAndReload("#checkFilesButton");
-//
-//    // Wait for the checks
-//    waitForCheckFiles(1);
-//    clickOnAndReloadBot("#taskBut");
+    GuiWorkbench.setTestParam("import", inputConfigPath);
+    clickOnScroll("#importButton");
+    clickOnScroll("No");
+    clickOnImportedConfig(inputConfigPath);
+    writeText("#inputText", inputFilePath);
+    clickOnAndReload("#checkFilesButton");
+
+    // Wait for the checks
+    waitForCheckFiles(1);
+    clickOnAndReloadBot("#taskBut");
 
     // Full formats asserts
     checkFormatsAsserts(nReports);
