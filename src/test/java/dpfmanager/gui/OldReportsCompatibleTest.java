@@ -53,10 +53,13 @@ public class OldReportsCompatibleTest extends ApplicationTest {
       reportId = last.substring(last.lastIndexOf("/") + 1);
       reportDay = last.substring(0, last.lastIndexOf("/"));
     }
-    Integer nextReportId = Integer.parseInt(reportId)+1;
-    File newReportFolder = new File(reportDay + "/" + nextReportId);
-    File oldReportFolder = new File("src/test/resources/OldReport");
-    FileUtils.copyDirectory(oldReportFolder, newReportFolder);
+    List<String> olds = Arrays.asList("html", "json", "xml", "pdf");
+    for (int i = 0; i< olds.size(); i++) {
+      Integer nextReportId = Integer.parseInt(reportId) + 1 + i;
+      File newReportFolder = new File(reportDay + "/" + nextReportId);
+      File oldReportFolder = new File("src/test/resources/OldReports/" + olds.get(i));
+      FileUtils.copyDirectory(oldReportFolder, newReportFolder);
+    }
   }
 
   @Override
@@ -69,26 +72,35 @@ public class OldReportsCompatibleTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
     System.out.println("Running old report compatible test...");
 
-    // Go to reports tab
+    // Check reports table
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitUntilExists("#lastReportRow");
-    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
-    GridPane grid = (GridPane) row.getChildren().get(0);
-    Assert.assertEquals("Report row N files", "1", ((Label) grid.getChildren().get(2)).getText());
-    Assert.assertEquals("Report row N passed", "1 passed", ((Label) grid.getChildren().get(6)).getText());
-    Assert.assertEquals("Report row N errors", "0 errors", ((Label) grid.getChildren().get(4)).getText());
-    Assert.assertEquals("Report row N warnings", "0 warnings", ((Label) grid.getChildren().get(5)).getText());
+    checkValidRow((GridPane) row.getChildren().get(0), "PDF");  //Pdf
+    row = (AnchorPane) mainVBox.getChildren().get(1);
+    checkValidRow((GridPane) row.getChildren().get(0), "XML");  //Xml
+    row = (AnchorPane) mainVBox.getChildren().get(2);
+    checkValidRow((GridPane) row.getChildren().get(0), "JSON"); //Json
+    row = (AnchorPane) mainVBox.getChildren().get(3);
+    checkValidRow((GridPane) row.getChildren().get(0), "HTML"); //Html
 
-    // Check formats buttons
-    List<String> foundTypes = new ArrayList<>();
-    List<String> expectedTypes = Arrays.asList("xml","mets");
-    HBox formatsBox = (HBox) grid.getChildren().get(8);
-    for (Node n : formatsBox.getChildren()){
-      ImageView iv = (ImageView) n;
-      foundTypes.add(iv.getId().replace("but", ""));
-    }
-    Assert.assertEquals("Available buttons", expectedTypes, foundTypes);
+    // Check global view formats
+//    List<String> foundTypes = new ArrayList<>();
+//    List<String> expectedTypes = Arrays.asList("xml","mets");
+//    HBox formatsBox = (HBox) grid.getChildren().get(8);
+//    for (Node n : formatsBox.getChildren()){
+//      ImageView iv = (ImageView) n;
+//      foundTypes.add(iv.getId().replace("but", ""));
+//    }
+//    Assert.assertEquals("Available buttons", expectedTypes, foundTypes);
+  }
+
+  private void checkValidRow(GridPane grid, String type) {
+    Assert.assertEquals("Report row N files (" + type + ")", "2", ((Label) grid.getChildren().get(1)).getText());
+    Assert.assertEquals("Report row N passed (" + type + ")", "1 passed", ((Label) grid.getChildren().get(8)).getText());
+    Assert.assertEquals("Report row N errors (" + type + ")", "1 errors", ((Label) grid.getChildren().get(6)).getText());
+    Assert.assertEquals("Report row N warnings (" + type + ")", "1 warnings", ((Label) grid.getChildren().get(7)).getText());
   }
 
 }

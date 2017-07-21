@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<globalreport>
+  <individualreports>
+    <report>C:\Users\Roser/DPF Manager/reports/20170721/15/2-IMG_KO_resolution.tif.xml</report>
+    <report>C:\Users\Roser/DPF Manager/reports/20170721/15/1-Baseline error.tif.xml</report>
+  </individualreports>
+  <stats>
+    <reports_count>2</reports_count>
+    <valid_files>1</valid_files>
+    <invalid_files>1</invalid_files>
+    <warnings>1</warnings>
+    <duration>
+      <hours>0</hours>
+      <minutes>0</minutes>
+      <seconds>1</seconds>
+      <milliseconds>186</milliseconds>
+    </duration>
+  </stats>
+</globalreport>

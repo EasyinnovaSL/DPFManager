@@ -1,0 +1,958 @@
+<report>
+  <file_info>
+    <name>Baseline error.tif</name>
+    <fullpath>C:\Users\Roser\DPF Manager\reports\20170721\15\zip\OneOffEach\Baseline error.tif</fullpath>
+    <filesize>1631784</filesize>
+  </file_info>
+  <tiff_structure>
+    <ifdTree>
+      <ifdNode>
+        <number>0</number>
+        <isimg>yes</isimg>
+        <imagetype check_ifd0="typ">Main image</imagetype>
+        <image_representation>strips[1]</image_representation>
+        <photometric>2</photometric>
+        <hasSubIfd>no</hasSubIfd>
+        <hasExif>yes</hasExif>
+        <hasXMP>yes</hasXMP>
+        <hasIPTC>no</hasIPTC>
+        <tags>
+          <tag>
+            <name>NewSubfileType</name>
+            <id>254</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ImageWidth</name>
+            <id>256</id>
+            <value>85</value>
+          </tag>
+          <tag>
+            <name>ImageLength</name>
+            <id>257</id>
+            <value>128</value>
+          </tag>
+          <tag>
+            <name>BitsPerSample</name>
+            <id>258</id>
+            <value>[8,8,8]</value>
+          </tag>
+          <tag>
+            <name>Compression</name>
+            <id>259</id>
+            <value>None</value>
+          </tag>
+          <tag>
+            <name>PhotometricInterpretation</name>
+            <id>262</id>
+            <value>RGB</value>
+          </tag>
+          <tag>
+            <name>Threshholding</name>
+            <id>263</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>StripOffsets</name>
+            <id>273</id>
+            <value>8</value>
+          </tag>
+          <tag>
+            <name>Orientation</name>
+            <id>274</id>
+            <value>TopLeft</value>
+          </tag>
+          <tag>
+            <name>SamplesPerPixel</name>
+            <id>277</id>
+            <value>3</value>
+          </tag>
+          <tag>
+            <name>RowsPerStrip</name>
+            <id>278</id>
+            <value>257</value>
+          </tag>
+          <tag>
+            <name>StripBYTECount</name>
+            <id>279</id>
+            <value>32640</value>
+          </tag>
+          <tag>
+            <name>MinSampleValue</name>
+            <id>280</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>MaxSampleValue</name>
+            <id>281</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>PlanarConfiguration</name>
+            <id>284</id>
+            <value>Chunky</value>
+          </tag>
+          <tag>
+            <name>ResolutionUnit</name>
+            <id>296</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>Predictor</name>
+            <id>317</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>DotRange</name>
+            <id>336</id>
+            <value>\02</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SampleFormat</name>
+            <id>339</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMinSampleValue</name>
+            <id>340</id>
+            <value>Minimum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMaxSampleValue</name>
+            <id>341</id>
+            <value>Maximum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>TransferRange</name>
+            <id>342</id>
+            <value>\0NV\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ReferenceBlackWhite</name>
+            <id>532</id>
+            <value>\0/1NV/10/1NV/10/1NV/1\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>XMP</name>
+            <id>700</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>Photoshop</name>
+            <id>34377</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>ExifIFD</name>
+            <id>34665</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>WhiteLevel</name>
+            <id>50717</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>NewSubfileType</name>
+            <id>254</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ImageWidth</name>
+            <id>256</id>
+            <value>2000</value>
+          </tag>
+          <tag>
+            <name>ImageLength</name>
+            <id>257</id>
+            <value>3008</value>
+          </tag>
+          <tag>
+            <name>BitsPerSample</name>
+            <id>258</id>
+            <value>[8,8,8]</value>
+          </tag>
+          <tag>
+            <name>Compression</name>
+            <id>259</id>
+            <value>JPEG</value>
+          </tag>
+          <tag>
+            <name>PhotometricInterpretation</name>
+            <id>262</id>
+            <value>RGB</value>
+          </tag>
+          <tag>
+            <name>Threshholding</name>
+            <id>263</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ImageDescription</name>
+            <id>270</id>
+            <value>TIFF/EP sample</value>
+          </tag>
+          <tag>
+            <name>Make</name>
+            <id>271</id>
+            <value>DHLab</value>
+          </tag>
+          <tag>
+            <name>Model</name>
+            <id>272</id>
+            <value>PerfectWriter</value>
+          </tag>
+          <tag>
+            <name>StripOffsets</name>
+            <id>273</id>
+            <value>[32792,35026,37388,39717,42136,44616,47142,49626,52227,54756,57322,59897,62592,65316,68028,70777,73521,76219,78921,81640,84375,87160,89971,92803,95649,98329,100810,103140,105382,107589,109759,112027,114187,116340,118497,120617,122706,124832,126913,129046,131204,133302,135455,137587,139671,141723,143761,145962,148477,150801,153182,155616,158120,160562,162917,165374,167751,170189,172645,175135,177549,180017,182860,185946,188568,191174,193691,196159,198647,201110,203744,206479,209116,211736,214294,216757,219114,221532,223908,226297,228510,230660,232820,235222,237594,239901,242536,245818,248759,251704,254685,257672,261282,265204,269545,274026,278181,282444,286900,291359,295574,300063,306773,314151,321743,328961,336008,343431,351521,360218,372322,388152,404991,421631,439504,456918,473201,489508,507301,524379,540148,555397,569455,582111,594861,608379,622115,635876,648318,660538,674050,688346,703465,718176,732461,745418,759420,775163,791200,807692,825730,842685,858762,874575,890336,905228,920571,]</value>
+          </tag>
+          <tag>
+            <name>Orientation</name>
+            <id>274</id>
+            <value>TopLeft</value>
+          </tag>
+          <tag>
+            <name>SamplesPerPixel</name>
+            <id>277</id>
+            <value>3</value>
+          </tag>
+          <tag>
+            <name>RowsPerStrip</name>
+            <id>278</id>
+            <value>16</value>
+          </tag>
+          <tag>
+            <name>StripBYTECount</name>
+            <id>279</id>
+            <value>[2234,2362,2329,2419,2480,2526,2484,2601,2529,2566,2575,2695,2724,2712,2749,2744,2698,2702,2719,2735,2785,2811,2832,2846,2680,2481,2330,2242,2207,2170,2268,2160,2153,2157,2120,2089,2126,2081,2133,2158,2098,2153,2132,2084,2052,2038,2201,2515,2324,2381,2434,2504,2442,2355,2457,2377,2438,2456,2490,2414,2468,2843,3086,2622,2606,2517,2468,2488,2463,2634,2735,2637,2620,2558,2463,2357,2418,2376,2389,2213,2150,2160,2402,2372,2307,2635,3282,2941,2945,2981,2987,3610,3922,4341,4481,4155,4263,4456,4459,4215,4489,6710,7378,7592,7218,7047,7423,8090,8697,12104,15830,16839,16640,17873,17414,16283,16307,17793,17078,15769,15249,14058,12656,12750,13518,13736,13761,12442,12220,13512,14296,15119,14711,14285,12957,14002,15743,16037,16492,18038,16955,16077,15813,15761,14892,15343,16078,16147,16681,16435,16181,16253,15760,16647,16766,17053,17132,17091,16781,17055,18358,18955,17732,17881,17614,17661,17293,18190,18296,18942,19297,18881,19684,19707,18916,18405,17688,17152,16556,15069,14145,13299,12808,13226,13604,]</value>
+          </tag>
+          <tag>
+            <name>MinSampleValue</name>
+            <id>280</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>MaxSampleValue</name>
+            <id>281</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>XResolution</name>
+            <id>282</id>
+            <value>300/1</value>
+          </tag>
+          <tag>
+            <name>YResolution</name>
+            <id>283</id>
+            <value>300/1</value>
+          </tag>
+          <tag>
+            <name>PlanarConfiguration</name>
+            <id>284</id>
+            <value>Chunky</value>
+          </tag>
+          <tag>
+            <name>ResolutionUnit</name>
+            <id>296</id>
+            <value>2</value>
+          </tag>
+          <tag>
+            <name>Software</name>
+            <id>305</id>
+            <value>TIFF-EP producer 1.0B</value>
+          </tag>
+          <tag>
+            <name>DateTime</name>
+            <id>306</id>
+            <value>2015:08:01 14:15:33</value>
+          </tag>
+          <tag>
+            <name>Artist</name>
+            <id>315</id>
+            <value>Lukas Rosenthaler</value>
+          </tag>
+          <tag>
+            <name>Predictor</name>
+            <id>317</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SubIFDs</name>
+            <id>330</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>DotRange</name>
+            <id>336</id>
+            <value>\02</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SampleFormat</name>
+            <id>339</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMinSampleValue</name>
+            <id>340</id>
+            <value>Minimum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMaxSampleValue</name>
+            <id>341</id>
+            <value>Maximum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>TransferRange</name>
+            <id>342</id>
+            <value>\0NV\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>JPEGTables</name>
+            <id>347</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>ReferenceBlackWhite</name>
+            <id>532</id>
+            <value>\0/1NV/10/1NV/10/1NV/1\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>Copyright</name>
+            <id>33432</id>
+            <value>© 2015 Lukas Rosenthaler</value>
+          </tag>
+          <tag>
+            <name>WhiteLevel</name>
+            <id>50717</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+        </tags>
+      </ifdNode>
+      <ifdNode>
+        <number>1</number>
+        <isimg>yes</isimg>
+        <imagetype check_ifd0="typ">Main image</imagetype>
+        <image_representation>strips[188]</image_representation>
+        <photometric>2</photometric>
+        <hasSubIfd>Thumbnail</hasSubIfd>
+        <hasExif>no</hasExif>
+        <hasXMP>no</hasXMP>
+        <hasIPTC>no</hasIPTC>
+        <tags>
+          <tag>
+            <name>NewSubfileType</name>
+            <id>254</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ImageWidth</name>
+            <id>256</id>
+            <value>85</value>
+          </tag>
+          <tag>
+            <name>ImageLength</name>
+            <id>257</id>
+            <value>128</value>
+          </tag>
+          <tag>
+            <name>BitsPerSample</name>
+            <id>258</id>
+            <value>[8,8,8]</value>
+          </tag>
+          <tag>
+            <name>Compression</name>
+            <id>259</id>
+            <value>None</value>
+          </tag>
+          <tag>
+            <name>PhotometricInterpretation</name>
+            <id>262</id>
+            <value>RGB</value>
+          </tag>
+          <tag>
+            <name>Threshholding</name>
+            <id>263</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>StripOffsets</name>
+            <id>273</id>
+            <value>8</value>
+          </tag>
+          <tag>
+            <name>Orientation</name>
+            <id>274</id>
+            <value>TopLeft</value>
+          </tag>
+          <tag>
+            <name>SamplesPerPixel</name>
+            <id>277</id>
+            <value>3</value>
+          </tag>
+          <tag>
+            <name>RowsPerStrip</name>
+            <id>278</id>
+            <value>257</value>
+          </tag>
+          <tag>
+            <name>StripBYTECount</name>
+            <id>279</id>
+            <value>32640</value>
+          </tag>
+          <tag>
+            <name>MinSampleValue</name>
+            <id>280</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>MaxSampleValue</name>
+            <id>281</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>PlanarConfiguration</name>
+            <id>284</id>
+            <value>Chunky</value>
+          </tag>
+          <tag>
+            <name>ResolutionUnit</name>
+            <id>296</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>Predictor</name>
+            <id>317</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>DotRange</name>
+            <id>336</id>
+            <value>\02</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SampleFormat</name>
+            <id>339</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMinSampleValue</name>
+            <id>340</id>
+            <value>Minimum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMaxSampleValue</name>
+            <id>341</id>
+            <value>Maximum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>TransferRange</name>
+            <id>342</id>
+            <value>\0NV\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ReferenceBlackWhite</name>
+            <id>532</id>
+            <value>\0/1NV/10/1NV/10/1NV/1\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>XMP</name>
+            <id>700</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>Photoshop</name>
+            <id>34377</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>ExifIFD</name>
+            <id>34665</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>WhiteLevel</name>
+            <id>50717</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>NewSubfileType</name>
+            <id>254</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ImageWidth</name>
+            <id>256</id>
+            <value>2000</value>
+          </tag>
+          <tag>
+            <name>ImageLength</name>
+            <id>257</id>
+            <value>3008</value>
+          </tag>
+          <tag>
+            <name>BitsPerSample</name>
+            <id>258</id>
+            <value>[8,8,8]</value>
+          </tag>
+          <tag>
+            <name>Compression</name>
+            <id>259</id>
+            <value>JPEG</value>
+          </tag>
+          <tag>
+            <name>PhotometricInterpretation</name>
+            <id>262</id>
+            <value>RGB</value>
+          </tag>
+          <tag>
+            <name>Threshholding</name>
+            <id>263</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ImageDescription</name>
+            <id>270</id>
+            <value>TIFF/EP sample</value>
+          </tag>
+          <tag>
+            <name>Make</name>
+            <id>271</id>
+            <value>DHLab</value>
+          </tag>
+          <tag>
+            <name>Model</name>
+            <id>272</id>
+            <value>PerfectWriter</value>
+          </tag>
+          <tag>
+            <name>StripOffsets</name>
+            <id>273</id>
+            <value>[32792,35026,37388,39717,42136,44616,47142,49626,52227,54756,57322,59897,62592,65316,68028,70777,73521,76219,78921,81640,84375,87160,89971,92803,95649,98329,100810,103140,105382,107589,109759,112027,114187,116340,118497,120617,122706,124832,126913,129046,131204,133302,135455,137587,139671,141723,143761,145962,148477,150801,153182,155616,158120,160562,162917,165374,167751,170189,172645,175135,177549,180017,182860,185946,188568,191174,193691,196159,198647,201110,203744,206479,209116,211736,214294,216757,219114,221532,223908,226297,228510,230660,232820,235222,237594,239901,242536,245818,248759,251704,254685,257672,261282,265204,269545,274026,278181,282444,286900,291359,295574,300063,306773,314151,321743,328961,336008,343431,351521,360218,372322,388152,404991,421631,439504,456918,473201,489508,507301,524379,540148,555397,569455,582111,594861,608379,622115,635876,648318,660538,674050,688346,703465,718176,732461,745418,759420,775163,791200,807692,825730,842685,858762,874575,890336,905228,920571,]</value>
+          </tag>
+          <tag>
+            <name>Orientation</name>
+            <id>274</id>
+            <value>TopLeft</value>
+          </tag>
+          <tag>
+            <name>SamplesPerPixel</name>
+            <id>277</id>
+            <value>3</value>
+          </tag>
+          <tag>
+            <name>RowsPerStrip</name>
+            <id>278</id>
+            <value>16</value>
+          </tag>
+          <tag>
+            <name>StripBYTECount</name>
+            <id>279</id>
+            <value>[2234,2362,2329,2419,2480,2526,2484,2601,2529,2566,2575,2695,2724,2712,2749,2744,2698,2702,2719,2735,2785,2811,2832,2846,2680,2481,2330,2242,2207,2170,2268,2160,2153,2157,2120,2089,2126,2081,2133,2158,2098,2153,2132,2084,2052,2038,2201,2515,2324,2381,2434,2504,2442,2355,2457,2377,2438,2456,2490,2414,2468,2843,3086,2622,2606,2517,2468,2488,2463,2634,2735,2637,2620,2558,2463,2357,2418,2376,2389,2213,2150,2160,2402,2372,2307,2635,3282,2941,2945,2981,2987,3610,3922,4341,4481,4155,4263,4456,4459,4215,4489,6710,7378,7592,7218,7047,7423,8090,8697,12104,15830,16839,16640,17873,17414,16283,16307,17793,17078,15769,15249,14058,12656,12750,13518,13736,13761,12442,12220,13512,14296,15119,14711,14285,12957,14002,15743,16037,16492,18038,16955,16077,15813,15761,14892,15343,16078,16147,16681,16435,16181,16253,15760,16647,16766,17053,17132,17091,16781,17055,18358,18955,17732,17881,17614,17661,17293,18190,18296,18942,19297,18881,19684,19707,18916,18405,17688,17152,16556,15069,14145,13299,12808,13226,13604,]</value>
+          </tag>
+          <tag>
+            <name>MinSampleValue</name>
+            <id>280</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>MaxSampleValue</name>
+            <id>281</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>XResolution</name>
+            <id>282</id>
+            <value>300/1</value>
+          </tag>
+          <tag>
+            <name>YResolution</name>
+            <id>283</id>
+            <value>300/1</value>
+          </tag>
+          <tag>
+            <name>PlanarConfiguration</name>
+            <id>284</id>
+            <value>Chunky</value>
+          </tag>
+          <tag>
+            <name>ResolutionUnit</name>
+            <id>296</id>
+            <value>2</value>
+          </tag>
+          <tag>
+            <name>Software</name>
+            <id>305</id>
+            <value>TIFF-EP producer 1.0B</value>
+          </tag>
+          <tag>
+            <name>DateTime</name>
+            <id>306</id>
+            <value>2015:08:01 14:15:33</value>
+          </tag>
+          <tag>
+            <name>Artist</name>
+            <id>315</id>
+            <value>Lukas Rosenthaler</value>
+          </tag>
+          <tag>
+            <name>Predictor</name>
+            <id>317</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SubIFDs</name>
+            <id>330</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>DotRange</name>
+            <id>336</id>
+            <value>\02</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SampleFormat</name>
+            <id>339</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMinSampleValue</name>
+            <id>340</id>
+            <value>Minimum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMaxSampleValue</name>
+            <id>341</id>
+            <value>Maximum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>TransferRange</name>
+            <id>342</id>
+            <value>\0NV\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>JPEGTables</name>
+            <id>347</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>ReferenceBlackWhite</name>
+            <id>532</id>
+            <value>\0/1NV/10/1NV/10/1NV/1\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>Copyright</name>
+            <id>33432</id>
+            <value>© 2015 Lukas Rosenthaler</value>
+          </tag>
+          <tag>
+            <name>WhiteLevel</name>
+            <id>50717</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+        </tags>
+      </ifdNode>
+    </ifdTree>
+  </tiff_structure>
+  <ByteOrder ByteOrder="BIG_ENDIAN">BIG_ENDIAN</ByteOrder>
+  <NumberImages NumberImages="2">2</NumberImages>
+  <bitspersample>[8,8,8]</bitspersample>
+  <BitDepth BitDepth="[8,8,8]">[8,8,8]</BitDepth>
+  <EqualXYResolution EqualXYResolution="True">True</EqualXYResolution>
+  <Evenness Evenness=""/>
+  <FileSize FileSize="1631784">1631784</FileSize>
+  <ExtraChannels ExtraChannels="0">0</ExtraChannels>
+  <Compression Compression="None">None</Compression>
+  <Photometric Photometric="RGB">RGB</Photometric>
+  <Planar Planar="Chunky">Chunky</Planar>
+  <PixelDensity PixelDensity="0">0</PixelDensity>
+  <bitspersample>[8,8,8]</bitspersample>
+  <BitDepth BitDepth="[8,8,8]">[8,8,8]</BitDepth>
+  <EqualXYResolution EqualXYResolution="True">True</EqualXYResolution>
+  <Evenness Evenness="Even">Even</Evenness>
+  <FileSize FileSize="1631784">1631784</FileSize>
+  <ExtraChannels ExtraChannels="0">0</ExtraChannels>
+  <Compression Compression="JPEG">JPEG</Compression>
+  <Photometric Photometric="RGB">RGB</Photometric>
+  <Planar Planar="Chunky">Chunky</Planar>
+  <PixelDensity PixelDensity="300">300.0</PixelDensity>
+  <NumberBlankImages NumberBlankImages="0">0</NumberBlankImages>
+  <NewSubfileType NewSubfileType="" id="254" type="0"/>
+  <ImageWidth ImageWidth="85" id="256" type="0">85</ImageWidth>
+  <ImageLength ImageLength="128" id="257" type="0">128</ImageLength>
+  <BitsPerSample BitsPerSample="[8,8,8]" id="258" type="0">[8,8,8]</BitsPerSample>
+  <PhotometricInterpretation PhotometricInterpretation="RGB" id="262" type="0">RGB</PhotometricInterpretation>
+  <Threshholding Threshholding="" id="263" type="0"/>
+  <StripOffsets StripOffsets="8" id="273" type="0">8</StripOffsets>
+  <Orientation Orientation="TopLeft" id="274" type="0">TopLeft</Orientation>
+  <SamplesPerPixel SamplesPerPixel="3" id="277" type="0">3</SamplesPerPixel>
+  <RowsPerStrip RowsPerStrip="257" id="278" type="0">257</RowsPerStrip>
+  <StripBYTECount StripBYTECount="32640" id="279" type="0">32640</StripBYTECount>
+  <MinSampleValue MinSampleValue="" id="280" type="0"/>
+  <MaxSampleValue MaxSampleValue="" id="281" type="0"/>
+  <PlanarConfiguration PlanarConfiguration="Chunky" id="284" type="0">Chunky</PlanarConfiguration>
+  <ResolutionUnit ResolutionUnit="" id="296" type="0"/>
+  <Predictor Predictor="" id="317" type="0"/>
+  <DotRange DotRange="" id="336" type="0"/>
+  <SampleFormat SampleFormat="" id="339" type="0"/>
+  <SMinSampleValue SMinSampleValue="" id="340" type="0"/>
+  <SMaxSampleValue SMaxSampleValue="" id="341" type="0"/>
+  <TransferRange TransferRange="" id="342" type="0"/>
+  <ReferenceBlackWhite ReferenceBlackWhite="" id="532" type="0"/>
+  <XMP XMP="" id="700" type="0"/>
+  <Photoshop Photoshop="" id="34377" type="0"/>
+  <ExifIFD ExifIFD="" id="34665" type="0"/>
+  <WhiteLevel WhiteLevel="" id="50717" type="0"/>
+  <NewSubfileType NewSubfileType="" id="254" type="0"/>
+  <ImageWidth ImageWidth="2000" id="256" type="0">2000</ImageWidth>
+  <ImageLength ImageLength="3008" id="257" type="0">3008</ImageLength>
+  <BitsPerSample BitsPerSample="[8,8,8]" id="258" type="0">[8,8,8]</BitsPerSample>
+  <PhotometricInterpretation PhotometricInterpretation="RGB" id="262" type="0">RGB</PhotometricInterpretation>
+  <Threshholding Threshholding="" id="263" type="0"/>
+  <ImageDescription ImageDescription="TIFF/EP sample" id="270" type="0">TIFF/EP sample</ImageDescription>
+  <Make Make="DHLab" id="271" type="0">DHLab</Make>
+  <Model Model="PerfectWriter" id="272" type="0">PerfectWriter</Model>
+  <StripOffsets StripOffsets="[32792,35026,37388,39717,42136,44616,47142,49626,52227,54756,57322,59897,62592,65316,68028,70777,73521,76219,78921,81640,84375,87160,89971,92803,95649,98329,100810,103140,105382,107589,109759,112027,114187,116340,118497,120617,122706,124832,126913,129046,131204,133302,135455,137587,139671,141723,143761,145962,148477,150801,153182,155616,158120,160562,162917,165374,167751,170189,172645,175135,177549,180017,182860,185946,188568,191174,193691,196159,198647,201110,203744,206479,209116,211736,214294,..." id="273" type="0">[32792,35026,37388,39717,42136,44616,47142,49626,52227,54756,57322,59897,62592,65316,68028,70777,73521,76219,78921,81640,84375,87160,89971,92803,95649,98329,100810,103140,105382,107589,109759,112027,114187,116340,118497,120617,122706,124832,126913,129046,131204,133302,135455,137587,139671,141723,143761,145962,148477,150801,153182,155616,158120,160562,162917,165374,167751,170189,172645,175135,177549,180017,182860,185946,188568,191174,193691,196159,198647,201110,203744,206479,209116,211736,214294,...</StripOffsets>
+  <Orientation Orientation="TopLeft" id="274" type="0">TopLeft</Orientation>
+  <SamplesPerPixel SamplesPerPixel="3" id="277" type="0">3</SamplesPerPixel>
+  <RowsPerStrip RowsPerStrip="16" id="278" type="0">16</RowsPerStrip>
+  <StripBYTECount StripBYTECount="[2234,2362,2329,2419,2480,2526,2484,2601,2529,2566,2575,2695,2724,2712,2749,2744,2698,2702,2719,2735,2785,2811,2832,2846,2680,2481,2330,2242,2207,2170,2268,2160,2153,2157,2120,2089,2126,2081,2133,2158,2098,2153,2132,2084,2052,2038,2201,2515,2324,2381,2434,2504,2442,2355,2457,2377,2438,2456,2490,2414,2468,2843,3086,2622,2606,2517,2468,2488,2463,2634,2735,2637,2620,2558,2463,2357,2418,2376,2389,2213,2150,2160,2402,2372,2307,2635,3282,2941,2945,2981,2987,3610,3922,4341,4481,4155,4263,4456,4459,4215..." id="279" type="0">[2234,2362,2329,2419,2480,2526,2484,2601,2529,2566,2575,2695,2724,2712,2749,2744,2698,2702,2719,2735,2785,2811,2832,2846,2680,2481,2330,2242,2207,2170,2268,2160,2153,2157,2120,2089,2126,2081,2133,2158,2098,2153,2132,2084,2052,2038,2201,2515,2324,2381,2434,2504,2442,2355,2457,2377,2438,2456,2490,2414,2468,2843,3086,2622,2606,2517,2468,2488,2463,2634,2735,2637,2620,2558,2463,2357,2418,2376,2389,2213,2150,2160,2402,2372,2307,2635,3282,2941,2945,2981,2987,3610,3922,4341,4481,4155,4263,4456,4459,4215...</StripBYTECount>
+  <MinSampleValue MinSampleValue="" id="280" type="0"/>
+  <MaxSampleValue MaxSampleValue="" id="281" type="0"/>
+  <XResolution XResolution="300/1" id="282" type="0">300/1</XResolution>
+  <YResolution YResolution="300/1" id="283" type="0">300/1</YResolution>
+  <PlanarConfiguration PlanarConfiguration="Chunky" id="284" type="0">Chunky</PlanarConfiguration>
+  <ResolutionUnit ResolutionUnit="2" id="296" type="0">2</ResolutionUnit>
+  <Software Software="TIFF-EP producer 1.0B" id="305" type="0">TIFF-EP producer 1.0B</Software>
+  <DateTime DateTime="2015:08:01 14:15:33" id="306" type="0">2015:08:01 14:15:33</DateTime>
+  <Artist Artist="Lukas Rosenthaler" id="315" type="0">Lukas Rosenthaler</Artist>
+  <Predictor Predictor="" id="317" type="0"/>
+  <SubIFDs SubIFDs="" id="330" type="0"/>
+  <DotRange DotRange="" id="336" type="0"/>
+  <SampleFormat SampleFormat="" id="339" type="0"/>
+  <SMinSampleValue SMinSampleValue="" id="340" type="0"/>
+  <SMaxSampleValue SMaxSampleValue="" id="341" type="0"/>
+  <TransferRange TransferRange="" id="342" type="0"/>
+  <JPEGTables JPEGTables="" id="347" type="0"/>
+  <ReferenceBlackWhite ReferenceBlackWhite="" id="532" type="0"/>
+  <Copyright Copyright="© 2015 Lukas Rosenthaler" id="33432" type="0">© 2015 Lukas Rosenthaler</Copyright>
+  <WhiteLevel WhiteLevel="" id="50717" type="0"/>
+  <implementation_checker TIAProfileChecker="false" TIFF_Baseline_Core_6_0="false" TIFF_Baseline_Extended_6_0="false" TIFF_EP="false" TiffITP1ProfileChecker="false" TiffITP2ProfileChecker="false" TiffITProfileChecker="false" ref="DPF Manager" totalErrors="7" totalWarnings="0" version="3.4">
+    <implementation_check>
+      <name>TI/A Draft</name>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>Baseline TIFF 6.0</name>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>Extended TIFF 6.0</name>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>TIFF/EP</name>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>TIFF/IT-P1</name>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>TIFF/IT-P2</name>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>TIFF/IT</name>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <results>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>Image File Directory must have at least one entry</message>
+        <context>tags</context>
+        <location>IFD2</location>
+        <ruleId>IFD-0003</ruleId>
+        <ruleTest>{tagsCount &gt; 0}</ruleTest>
+        <ruleValue>Image File Directory must have at least one entry</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 2: TIFF Structure. Page 14</iso_reference>
+      </rule_result>
+    </results>
+  </implementation_checker>
+  <policy_checkers>
+    <policy_rules/>
+  </policy_checkers>
+</report>

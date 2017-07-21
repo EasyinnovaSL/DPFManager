@@ -1,28 +1,16 @@
 package dpfmanager.gui;
 
 import dpfmanager.shell.application.app.GuiApp;
-import dpfmanager.shell.interfaces.gui.component.report.ReportsModel;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.junit.Assert;
 import org.junit.Test;
-import org.testfx.api.FxAssert;
-import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 
 /**
  * Created by Adrià Llorens on 11/01/2016.
  */
-public class TransformsReportFormatsTest extends ApplicationTest {
+public class FileCheckTransformsTest extends ApplicationTest {
 
   private String inputConfigPath = "src/test/resources/ConfigFiles/configFormats.dpf";
   private String inputFilePath = "src/test/resources/SmallGui.zip";
@@ -61,4 +49,3 @@ public class TransformsReportFormatsTest extends ApplicationTest {
     checkFormatsAsserts(nReports);
   }
 }
-

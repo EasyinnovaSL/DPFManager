@@ -25,9 +25,6 @@ import java.util.List;
 public class ReportParserTest extends ApplicationTest {
 
   private String configHtml = "src/test/resources/ConfigFiles/SimpleHtml.dpf";
-  private String configXml = "src/test/resources/ConfigFiles/SimpleXml.dpf";
-  private String configJson = "src/test/resources/ConfigFiles/SimpleJson.dpf";
-  private String configPdf = "src/test/resources/ConfigFiles/SimplePdf.dpf";
   private String inputFiles = "src/test/resources/OneOffEach.zip";
 
   Stage stage = null;
@@ -50,41 +47,32 @@ public class ReportParserTest extends ApplicationTest {
     // --
     // First Run the 3 check
     // --
-    List<String> list = Arrays.asList(configHtml, configJson, configXml, configPdf);
-    for (String configFile : list) {
-      GuiWorkbench.setTestParam("import", configFile);
-      waitUntilExists("#importButton");
-      clickOnScroll("#importButton");
-      clickOnScroll("No");
-      clickOnImportedConfig(configFile);
-      writeText("#inputText", inputFiles);
-      clickOnAndReload("#checkFilesButton");
-    }
+    GuiWorkbench.setTestParam("import", configHtml);
+    waitUntilExists("#importButton");
+    clickOnScroll("#importButton");
+    clickOnScroll("No");
+    clickOnImportedConfig(configHtml);
+    writeText("#inputText", inputFiles);
+    clickOnAndReload("#checkFilesButton");
 
     // Now wait for the 4 checks
-    waitForCheckFiles(list.size());
+    waitForCheckFiles(1);
     clickOnAndReloadBot("#taskBut");
 
     // Go to reports and check them
     clickOnAndReloadTop("#butReports", "#pane-reports");
     waitUntilExists("#lastReportRow");
     VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
-    Assert.assertEquals("Reports table rows", Math.min(nReports + list.size(), ReportsController.itemsPerPage), mainVBox.getChildren().size());
+    Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
-    checkValidRow((GridPane) row.getChildren().get(0), "PDF");  //Pdf
-    row = (AnchorPane) mainVBox.getChildren().get(1);
-    checkValidRow((GridPane) row.getChildren().get(0), "XML");  //Xml
-    row = (AnchorPane) mainVBox.getChildren().get(2);
-    checkValidRow((GridPane) row.getChildren().get(0), "JSON"); //Json
-    row = (AnchorPane) mainVBox.getChildren().get(3);
-    checkValidRow((GridPane) row.getChildren().get(0), "HTML"); //Html
+    checkValidRow((GridPane) row.getChildren().get(0));
   }
 
-  private void checkValidRow(GridPane grid, String type) {
-    Assert.assertEquals("Report row N files (" + type + ")", "2", ((Label) grid.getChildren().get(1)).getText());
-    Assert.assertEquals("Report row N passed (" + type + ")", "1 passed", ((Label) grid.getChildren().get(8)).getText());
-    Assert.assertEquals("Report row N errors (" + type + ")", "1 errors", ((Label) grid.getChildren().get(6)).getText());
-    Assert.assertEquals("Report row N warnings (" + type + ")", "1 warnings", ((Label) grid.getChildren().get(7)).getText());
+  private void checkValidRow(GridPane grid) {
+    Assert.assertEquals("Report row N files", "2", ((Label) grid.getChildren().get(1)).getText());
+    Assert.assertEquals("Report row N passed", "1 passed", ((Label) grid.getChildren().get(8)).getText());
+    Assert.assertEquals("Report row N errors", "1 errors", ((Label) grid.getChildren().get(6)).getText());
+    Assert.assertEquals("Report row N warnings", "1 warnings", ((Label) grid.getChildren().get(7)).getText());
   }
 }
 
