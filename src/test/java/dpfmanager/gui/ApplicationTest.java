@@ -799,23 +799,23 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
     GridPane grid = (GridPane) row.getChildren().get(0);
     Assert.assertEquals("Report row N files", "3", ((javafx.scene.control.Label) grid.getChildren().get(1)).getText());
-    Assert.assertEquals("Report row N passed", "3 passed", ((javafx.scene.control.Label) grid.getChildren().get(7)).getText());
-    Assert.assertEquals("Report row N errors", "0 errors", ((javafx.scene.control.Label) grid.getChildren().get(5)).getText());
-    Assert.assertEquals("Report row N warnings", "0 warnings", ((javafx.scene.control.Label) grid.getChildren().get(6)).getText());
+    Assert.assertEquals("Report row N passed", "3 passed", ((javafx.scene.control.Label) grid.getChildren().get(8)).getText());
+    Assert.assertEquals("Report row N errors", "0 errors", ((javafx.scene.control.Label) grid.getChildren().get(6)).getText());
 
     // Go to global report
-//    clickOnAndReload("#butGlobal", "#pane-global");
+    clickOnAndReload("#vboxReports0 GridPane");
+    waitUntilExists("#pane-global");
 
     //Check html
     reloadScene();
-    waitUntilExists("#mainVBox #buthtml");
-    clickOnAndReload("#mainVBox #buthtml", "#pane-show");
+    waitUntilExists("#vboxIndividuals0 #buthtml");
+    clickOnAndReload("#vboxIndividuals0 #buthtml", "#pane-show");
     waitUntilExists("#webView");
     FxAssert.verifyThat("#webView", NodeMatchers.isNotNull());
 
     //Check pdf
-    clickOnAndReloadTop("#butReports", "#pane-reports");
-    clickOnAndReload("#mainVBox #butpdf", "#pane-show");
+    clickOnAndReloadTop("#labelReport", "#pane-global");
+    clickOnAndReload("#vboxIndividuals0 #butpdf", "#pane-show");
     waitUntilExists("#pdfPagesVBox");
     waitUntilHasChilds("#pdfPagesVBox");
     FxAssert.verifyThat("#pdfPagesVBox", NodeMatchers.isNotNull());
@@ -823,8 +823,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertEquals(1, pdfPagesVBox.getChildren().size());
 
     //Check xml
-    clickOnAndReloadTop("#butReports", "#pane-reports");
-    clickOnAndReload("#mainVBox #butxml", "#pane-show");
+    clickOnAndReloadTop("#labelReport", "#pane-global");
+    clickOnAndReload("#vboxIndividuals0 #butxml", "#pane-show");
     waitUntilExists("#textArea");
     waitUntilHasText("#textArea");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
@@ -834,8 +834,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertEquals("Report xml", expected, initial);
 
     //Check mets
-    clickOnAndReloadTop("#butReports", "#pane-reports");
-    clickOnAndReload("#mainVBox #butmets", "#pane-show");
+    clickOnAndReloadTop("#labelReport", "#pane-global");
+    clickOnAndReload("#vboxIndividuals0 #butmets", "#pane-show");
     waitUntilExists("#textArea");
     waitUntilHasText("#textArea");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
@@ -845,13 +845,13 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     Assert.assertEquals("Report mets", expected, initial);
 
     //Check json
-    clickOnAndReloadTop("#butReports", "#pane-reports");
-    clickOnAndReload("#mainVBox #butjson", "#pane-show");
+    clickOnAndReloadTop("#labelReport", "#pane-global");
+    clickOnAndReload("#vboxIndividuals0 #butjson", "#pane-show");
     waitUntilExists("#textArea");
     FxAssert.verifyThat("#textArea", NodeMatchers.isNotNull());
     textArea = (javafx.scene.control.TextArea) scene.lookup("#textArea");
     JsonObject jObj = new JsonParser().parse(textArea.getText()).getAsJsonObject();
-    Assert.assertTrue("Report json", (jObj.has("individualreports") && jObj.has("stats")));
+    Assert.assertTrue("Report json", (jObj.has("file_info") && jObj.has("tiff_structure")));
   }
 
   public void waitUntilHasText(String id){
