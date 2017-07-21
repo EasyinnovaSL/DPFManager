@@ -46,7 +46,7 @@
                         <Label fx:id="labelSingle" onMouseClicked="#clickedSingle" styleClass="label-bread" text="%labelSingle" />
                      </children>
                   </HBox>
-                  <Label fx:id="labelPdf" style="-fx-cursor: default;" styleClass="label-bread" GridPane.columnIndex="1" />
+                  <Label fx:id="labelPdf" style="-fx-cursor: default;" styleClass="label-bread-2" GridPane.columnIndex="1" />
                </children>
             </GridPane>
             </children>

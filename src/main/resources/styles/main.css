@@ -498,6 +498,12 @@
     -fx-background-color: #414141;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0, 0, 0);
 }
+.label-bread-2 {
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-text-fill: lightgray;
+    -fx-cursor: hand;
+}
 .label-bread {
     -fx-font-weight: bold;
     -fx-font-size: 14;

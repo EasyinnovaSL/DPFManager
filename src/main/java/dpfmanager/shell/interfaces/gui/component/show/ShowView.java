@@ -418,7 +418,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
         ImageView imageView = new ImageView(SwingFXUtils.toFXImage(pageImage, null));
         pdfPagesVBox.getChildren().remove(pdfPagesVBox.getChildren().size() - 1);
         pdfPagesVBox.getChildren().add(imageView);
-        VBox.setMargin(imageView, new Insets(15, 0, 15, 0));
+        VBox.setMargin(imageView, new Insets(0, 0, 30, 0));
         updatePageIndicator();
       } else {
         pdfPagesVBox.getChildren().remove(pdfPagesVBox.getChildren().size() - 1);

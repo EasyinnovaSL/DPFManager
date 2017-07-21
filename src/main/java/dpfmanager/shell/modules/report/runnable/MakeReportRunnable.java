@@ -120,6 +120,8 @@ public class MakeReportRunnable extends DpfRunnable {
         String first = outputfile.substring(0, outputfile.lastIndexOf("/"));
         String second = outputfile.substring(outputfile.lastIndexOf("/")) + "." + format;
         finalOutput = first + "/html" + second;
+      } else if (format.toLowerCase().equals("mets")) {
+        finalOutput = outputfile + ".mets.xml";
       } else {
         finalOutput = outputfile + "." + format;
       }
