@@ -920,7 +920,6 @@ public class XmlReport extends Report {
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
       // To String
-      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       StringWriter writer = new StringWriter();
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
       return writer.getBuffer().toString();
