@@ -124,7 +124,7 @@ public class ReportFragment {
       NodeUtil.hideNode(okImage);
       NodeUtil.showNode(koImage);
     }
-    if (info.getGlobalReport().getConfig().isQuick()) {
+    if (info.getGlobalReport() != null && info.getGlobalReport().getConfig().isQuick()) {
       type.setText(bundle.getString("typeQuick"));
       warnings.setText("");
     } else {

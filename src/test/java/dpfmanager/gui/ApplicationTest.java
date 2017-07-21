@@ -49,14 +49,6 @@ import java.util.logging.Logger;
  */
 public abstract class ApplicationTest extends FxRobot implements ApplicationFixture {
 
-  //Set properties for headless mode (Windows only)
-  static {
-    if (SystemUtils.IS_OS_WINDOWS) {
-//      System.setProperty("testfx.robot", "glass");
-//      System.setProperty("testfx.headless", "true");
-    }
-  }
-
   boolean feedback;
   String lastReport;
   private Integer scrollUnit = 10;
@@ -163,7 +155,7 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
     // Set feedback
     DPFManagerProperties.setFeedback(feedback);
     // Delete all reports
-    deleteReports();
+//    deleteReports();
     // Custom post test
     customPostTest();
   }
