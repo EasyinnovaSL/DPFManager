@@ -38,7 +38,7 @@ public class ReportSerializable implements Serializable {
   }
 
   public void write(String internal, String filename){
-    version = 2;
+    version = 3;
     try {
       File internalFile = new File(internal);
       if (!internalFile.exists()) internalFile.mkdirs();

@@ -195,20 +195,20 @@
             <!--Simulate table-->
             <VBox maxWidth="840.0" minWidth="840.0" prefWidth="840.0">
                 <AnchorPane>
-                    <GridPane AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
+                    <GridPane fx:id="gridHeadersFull" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
                         <columnConstraints>
-                            <ColumnConstraints fillWidth="false" maxWidth="325.0" minWidth="325.0" prefWidth="325.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
-                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
-                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                            <ColumnConstraints fillWidth="false" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" />
+                     <ColumnConstraints fillWidth="false" maxWidth="340.0" minWidth="340.0" prefWidth="340.0" />
+                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="70.0" minWidth="70.0" prefWidth="70.0" />
+                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
                         </columnConstraints>
                         <rowConstraints>
                             <RowConstraints fillHeight="false" minHeight="25.0" prefHeight="25.0" valignment="BOTTOM" vgrow="ALWAYS" />
                         </rowConstraints>
                         <children>
-                            <HBox fx:id="hboxName" alignment="CENTER_LEFT" onMouseClicked="#clickedColName" styleClass="clickable">
+                            <HBox fx:id="hboxNameF" alignment="CENTER_LEFT" onMouseClicked="#clickedColNameF" styleClass="clickable" GridPane.columnIndex="1">
                                 <children>
                                     <Label styleClass="periodicHeader" text="%colSingleFile">
                                         <HBox.margin>
@@ -218,9 +218,9 @@
                                 </children>
                             </HBox>
 
-                            <HBox fx:id="hboxResult" alignment="CENTER_LEFT" onMouseClicked="#clickedColResult" styleClass="clickable" GridPane.columnIndex="1">
+                            <HBox fx:id="hboxPathF" alignment="CENTER_LEFT" onMouseClicked="#clickedColPathF" styleClass="clickable" GridPane.columnIndex="2">
                                 <children>
-                                    <Label styleClass="periodicHeader" text="%colResult">
+                                    <Label styleClass="periodicHeader" text="%colSinglePath">
                                         <HBox.margin>
                                             <Insets right="5.0" />
                                         </HBox.margin>
@@ -228,8 +228,18 @@
                                 </children>
                             </HBox>
 
+                            <HBox fx:id="hboxResultF" alignment="CENTER_LEFT" onMouseClicked="#clickedColResultF" styleClass="clickable">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colResult">
+                                        <HBox.margin>
+                                            <Insets right="2.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
 
-                            <HBox fx:id="hboxErrors" alignment="CENTER_LEFT" onMouseClicked="#clickedColErrors" styleClass="clickable" GridPane.columnIndex="2">
+
+                            <HBox fx:id="hboxErrorsF" alignment="CENTER_LEFT" onMouseClicked="#clickedColErrorsF" styleClass="clickable" GridPane.columnIndex="3">
                                 <children>
                                     <Label styleClass="periodicHeader" text="%colErrors">
                                         <HBox.margin>
@@ -239,7 +249,7 @@
                                 </children>
                             </HBox>
 
-                            <HBox fx:id="hboxWarnings" alignment="CENTER_LEFT" onMouseClicked="#clickedColWarnings" styleClass="clickable" GridPane.columnIndex="3">
+                            <HBox fx:id="hboxWarningsF" alignment="CENTER_LEFT" onMouseClicked="#clickedColWarningsF" styleClass="clickable" GridPane.columnIndex="4">
                                 <children>
                                     <Label styleClass="periodicHeader" text="%colWarnings">
                                         <HBox.margin>
@@ -249,9 +259,59 @@
                                 </children>
                             </HBox>
 
-                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="4" />
+                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="5" />
+                        </children>
+                        <VBox.margin>
+                            <Insets bottom="5.0" left="5.0" right="5.0" />
+                        </VBox.margin>
+                    </GridPane>
 
-                            <Label fx:id="colActions" styleClass="periodicHeader" text="%colActions" GridPane.columnIndex="5" />
+                    <GridPane fx:id="gridHeadersQuick" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="2.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                            <ColumnConstraints fillWidth="false" maxWidth="175.0" minWidth="175.0" prefWidth="175.0" />
+                            <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" maxWidth="340.0" minWidth="340.0" prefWidth="340.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="130.0" prefWidth="130.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints fillHeight="false" minHeight="25.0" prefHeight="25.0" valignment="BOTTOM" vgrow="ALWAYS" />
+                        </rowConstraints>
+                        <children>
+                            <HBox fx:id="hboxNameQ" alignment="CENTER_LEFT" onMouseClicked="#clickedColNameQ" styleClass="clickable" GridPane.columnIndex="1">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colSingleFile">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <HBox fx:id="hboxResultQ" alignment="CENTER_LEFT" onMouseClicked="#clickedColResultQ" styleClass="clickable">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colResult">
+                                        <HBox.margin>
+                                            <Insets right="2.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+
+                            <HBox fx:id="hboxPathQ" alignment="CENTER_LEFT" onMouseClicked="#clickedColPathQ" styleClass="clickable" GridPane.columnIndex="2">
+                                <children>
+                                    <Label styleClass="periodicHeader" text="%colSinglePath">
+                                        <HBox.margin>
+                                            <Insets right="5.0" />
+                                        </HBox.margin>
+                                    </Label>
+                                </children>
+                            </HBox>
+
+                            <Label styleClass="periodicHeader" text="%colFormats" GridPane.columnIndex="3" />
+
+                            <Label fx:id="colActions" styleClass="periodicHeader" text="%colActions" GridPane.columnIndex="4" />
                         </children>
                         <VBox.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" />

@@ -150,6 +150,8 @@ public class IndividualReport extends ReportSerializable {
 
   private String inputStr;
 
+  private String serPath;
+
   /**
    * Error constructor
    */
@@ -273,6 +275,14 @@ public class IndividualReport extends ReportSerializable {
   public void setConformanceCheckerReport(String report) {
     conformanceCheckerReport = report;
     precomputedOutput = true;
+  }
+
+  public String getSerPath() {
+    return serPath;
+  }
+
+  public void setSerPath(String serPath) {
+    this.serPath = serPath;
   }
 
   public boolean hasPrecomputedOutput() {

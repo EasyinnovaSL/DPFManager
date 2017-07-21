@@ -35,6 +35,11 @@ public class SmallIndividualReport implements Comparable, Serializable {
   boolean quick;
   String inputStr;
 
+  List<String> selectedIsos;
+  Integer reportVersion;
+  String serPath;
+  int idReport;
+
   public SmallIndividualReport(IndividualReport ind) {
     this.isError = ind.isError();
     this.reportPath = ind.getReportPath();
@@ -47,6 +52,10 @@ public class SmallIndividualReport implements Comparable, Serializable {
     this.imagePath = ind.getImagePath();
     this.quick = ind.isQuick();
     this.inputStr = ind.getInputStr();
+    this.serPath = ind.getSerPath();
+    this.idReport = ind.getIdReport();
+    this.reportVersion = ind.getVersion();
+    this.selectedIsos = ind.getSelectedIsos();
   }
 
   public void generate(IndividualReport ind){
@@ -186,6 +195,22 @@ public class SmallIndividualReport implements Comparable, Serializable {
 
   public Long getUuid() {
     return uuid;
+  }
+
+  public String getSerPath() {
+    return serPath;
+  }
+
+  public int getIdReport() {
+    return idReport;
+  }
+
+  public int getReportVersion() {
+    return reportVersion;
+  }
+
+  public List<String> getSelectedIsos() {
+    return selectedIsos;
   }
 
   public boolean isQuick() {

@@ -23,43 +23,29 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.NavMessage;
-import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.report.core.GlobalReport;
-import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.chart.PieChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
-import org.apache.commons.io.FileUtils;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -80,74 +66,127 @@ public class IndividualFragment {
   @Resource
   private ResourceBundle bundle;
 
+
+  /**
+   * Full check elements
+   */
   @FXML
-  private Label input;
+  private Label fInput;
   @FXML
-  private Label errors;
+  private Label fPath;
   @FXML
-  private Label warnings;
+  private Label fErrors;
   @FXML
-  private HBox formatsBox;
+  private Label fWarnings;
   @FXML
-  private ImageView okImage;
+  private HBox fFormatsBox;
   @FXML
-  private ImageView koImage;
+  private ImageView fOkImage;
   @FXML
-  private Button buttonFull;
+  private ImageView fKoImage;
+  @FXML
+  private GridPane gridFull;
+
+  /**
+   * Quick check elements
+   */
+  @FXML
+  private Label qInput;
+  @FXML
+  private Label qPath;
+  @FXML
+  private HBox qFormatsBox;
+  @FXML
+  private ImageView qOkImage;
+  @FXML
+  private ImageView qKoImage;
+  @FXML
+  private GridPane gridQuick;
+
 
   /* Report Row info */
   private ReportIndividualGui info;
 
   public void init(ReportIndividualGui r) {
     info = r;
-    loadReportRow();
+    info.load();
+    info.loadFormats();
+    if (info.isQuick()){
+      loadReportRowQuick();
+    } else {
+      loadReportRowFull();
+    }
   }
 
   public void updateIcons(){
     info.readFormats();
-    formatsBox.getChildren().clear();
-    addFormatIcons();
+    if (info.isQuick()){
+      addFormatIcons(qFormatsBox);
+    } else {
+      addFormatIcons(fFormatsBox);
+    }
   }
 
-  private void loadReportRow() {
-    info.load();
-    input.setText(info.getFilename());
-
-    // Quick
-    if (!info.isQuick()) {
-      NodeUtil.hideNode(buttonFull);
-    }
+  private void loadReportRowQuick() {
+    qInput.setText(info.getFilename());
+    qPath.setText(info.getFilePath());
 
     // Result
     if (info.getErrors() > 0) {
-      NodeUtil.showNode(koImage);
-      NodeUtil.hideNode(okImage);
+      NodeUtil.showNode(qKoImage);
+      NodeUtil.hideNode(qOkImage);
     } else {
-      NodeUtil.hideNode(koImage);
-      NodeUtil.showNode(okImage);
-    }
-
-    // Errors
-    errors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
-    if (info.getErrors() > 0) {
-      errors.setTextFill(Color.RED);
-    } else {
-      errors.setTextFill(Color.YELLOWGREEN);
-    }
-
-    // Warnings
-    warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
-    if (info.getWarnings() > 0) {
-      warnings.setTextFill(Color.ORANGE);
-    } else {
-      warnings.setTextFill(Color.LIGHTGREY);
+      NodeUtil.hideNode(qKoImage);
+      NodeUtil.showNode(qOkImage);
     }
 
     // Format Icons
-    addFormatIcons();
+    addFormatIcons(qFormatsBox);
+
+    // Show
+    NodeUtil.showNode(gridQuick);
+    NodeUtil.hideNode(gridFull);
   }
 
-  private void addFormatIcons() {
+  private void loadReportRowFull() {
+    fInput.setText(info.getFilename());
+    fPath.setText(info.getFilePath());
+
+    // Result
+    if (info.getErrors() > 0) {
+      NodeUtil.showNode(fKoImage);
+      NodeUtil.hideNode(fOkImage);
+    } else {
+      NodeUtil.hideNode(fKoImage);
+      NodeUtil.showNode(fOkImage);
+    }
+
+    // Errors
+    fErrors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
+    if (info.getErrors() > 0) {
+      fErrors.setTextFill(Color.RED);
+    } else {
+      fErrors.setTextFill(Color.YELLOWGREEN);
+    }
+
+    // Warnings
+    fWarnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
+    if (info.getWarnings() > 0) {
+      fWarnings.setTextFill(Color.ORANGE);
+    } else {
+      fWarnings.setTextFill(Color.LIGHTGREY);
+    }
+
+    // Format Icons
+    addFormatIcons(fFormatsBox);
+
+    // Show
+    NodeUtil.showNode(gridFull);
+    NodeUtil.hideNode(gridQuick);
+  }
+
+  private void addFormatIcons(HBox formatsBox) {
+    formatsBox.getChildren().clear();
     List<String> sortedFormats = Arrays.asList("html","pdf","xml","mets", "json");
     Map<String, String> itemRead = info.getFormats();
     Integer version = info.getReportVersion();

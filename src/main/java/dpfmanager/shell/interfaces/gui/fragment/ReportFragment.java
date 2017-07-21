@@ -126,10 +126,11 @@ public class ReportFragment {
     }
     if (info.getGlobalReport().getConfig().isQuick()) {
       type.setText(bundle.getString("typeQuick"));
+      warnings.setText("");
     } else {
       type.setText(bundle.getString("typeFull"));
+      warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
     }
-    warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
     passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
     addChartScore(info.getScore());
     addActionsIcons(info.getDelete());

@@ -11,7 +11,7 @@ import java.util.Comparator;
 public class IndividualComparator implements  Comparator<ReportIndividualGui> {
 
   public enum Mode {
-    ERRORS, WARNINGS, PASSED, NAME, RESULT
+    ERRORS, WARNINGS, NAME, RESULT, PATH
   }
 
   public enum Order {
@@ -27,6 +27,10 @@ public class IndividualComparator implements  Comparator<ReportIndividualGui> {
     order = o;
   }
 
+  /**
+   * Negative = o1 < o2
+   * Positive = o1 > o2
+   */
   @Override
   public int compare(ReportIndividualGui o1, ReportIndividualGui o2) {
     if (!mode.equals(Mode.NAME)) {
@@ -44,16 +48,21 @@ public class IndividualComparator implements  Comparator<ReportIndividualGui> {
         break;
       case WARNINGS:
         if (order.equals(Order.ASC)){
-          compare = o1.getWarnings().compareTo(o2.getWarnings());
+          if (onlyWarnigns(o1) && !onlyWarnigns(o2)) {
+            compare = -1;
+          } else if (!onlyWarnigns(o1) && onlyWarnigns(o2)) {
+            compare = 1;
+          } else {
+            compare = o1.getWarnings().compareTo(o2.getWarnings());
+          }
         } else {
-          compare = o2.getWarnings().compareTo(o1.getWarnings());
-        }
-        break;
-      case PASSED:
-        if (order.equals(Order.ASC)){
-          compare = o1.getPassed().compareTo(o2.getPassed());
-        } else {
-          compare = o2.getPassed().compareTo(o1.getPassed());
+          if (onlyWarnigns(o1) && !onlyWarnigns(o2)) {
+            compare = -1;
+          } else if (!onlyWarnigns(o1) && onlyWarnigns(o2)) {
+            compare = 1;
+          } else {
+            compare = o2.getWarnings().compareTo(o1.getWarnings());
+          }
         }
         break;
       case RESULT:
@@ -70,6 +79,13 @@ public class IndividualComparator implements  Comparator<ReportIndividualGui> {
           compare = o2.getLowerName().compareTo(o1.getLowerName());
         }
         break;
+      case PATH:
+        if (order.equals(Order.ASC)){
+          compare = o1.getFilePath().toLowerCase().compareTo(o2.getFilePath().toLowerCase());
+        } else {
+          compare = o2.getFilePath().toLowerCase().compareTo(o1.getFilePath().toLowerCase());
+        }
+        break;
     }
 
     // If equals, default NAME ASC
@@ -78,4 +94,9 @@ public class IndividualComparator implements  Comparator<ReportIndividualGui> {
     }
     return compare;
   }
+
+  private boolean onlyWarnigns(ReportIndividualGui o) {
+    return o.getErrors() == 0 && o.getWarnings() > 0;
+  }
+
 }

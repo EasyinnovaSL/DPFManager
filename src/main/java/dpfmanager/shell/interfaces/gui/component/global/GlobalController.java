@@ -29,6 +29,7 @@ import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
+import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 
 import java.io.File;
@@ -47,15 +48,36 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
   public GlobalController() {
   }
 
-  public void readIndividualReports(String internal, Configuration config){
-    individuals = new ArrayList<>();
-    Integer count = 0;
-    File serializedDirectory = new File(internal + "/serialized");
-    if (serializedDirectory.exists() && serializedDirectory.isDirectory()){
-      for (File individualSer : serializedDirectory.listFiles()){
+  public void readIndividualReports(ReportGui reportGui){
+    GlobalReport global = reportGui.getGlobalReport();
+    Configuration config = global.getConfig();
+    String internal = reportGui.getInternalReportFolder();
+    if (global.getVersion() == 3) {
+      individuals = new ArrayList<>();
+      Integer count = 0;
+      for (SmallIndividualReport sir : global.getIndividualReports()) {
+        String serPath = sir.getSerPath();
+        if (serPath == null || serPath.isEmpty()){
+          String filenameNorm = sir.getFileName().replaceAll("\\\\", "/");
+          String serFileName = sir.getIdReport() + "-" +filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser";
+          serPath = internal + "/serialized/" + serFileName;
+        }
+        File individualSer = new File(serPath);
         if (individualSer.exists() && individualSer.isFile() && individualSer.getName().endsWith(".ser")){
-          individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), config, count));
+          individuals.add(new ReportIndividualGui(sir, config, count));
           count++;
+        }
+      }
+    } else {
+      individuals = new ArrayList<>();
+      Integer count = 0;
+      File serializedDirectory = new File(internal + "/serialized");
+      if (serializedDirectory.exists() && serializedDirectory.isDirectory()) {
+        for (File individualSer : serializedDirectory.listFiles()) {
+          if (individualSer.exists() && individualSer.isFile() && individualSer.getName().endsWith(".ser")) {
+            individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), config, count));
+            count++;
+          }
         }
       }
     }
@@ -72,7 +94,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
     int i = init;
     while (i < individuals.size() && i < end) {
       ReportIndividualGui rig = individuals.get(i);
-      rig.setLast(i == individuals.size()-1 || i == end-1);
+      rig.setLast(i == individuals.size() - 1 || i == end - 1);
       getContext().send(GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.ADD_INDIVIDUAL, vboxId, rig));
       i++;
     }

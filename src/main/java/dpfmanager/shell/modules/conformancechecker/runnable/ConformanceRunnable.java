@@ -101,6 +101,7 @@ public class ConformanceRunnable extends DpfRunnable {
       // Serialize it
       String filenameNorm = filename.replaceAll("\\\\", "/");
       String serFileName = ir.getReportId() + "-" +filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser";
+      ir.setSerPath(internalReportFolder + "/serialized/" + serFileName);
       ir.filter();
       ir.write(internalReportFolder + "/serialized", serFileName);
       ir.defilter();

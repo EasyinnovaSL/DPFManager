@@ -22,6 +22,7 @@ package dpfmanager.shell.modules.report.util;
 import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import org.apache.commons.io.FileUtils;
 
@@ -42,23 +43,34 @@ public class ReportIndividualGui {
   private String name;
   private String filePath;
   private boolean loaded;
+  private boolean loadedFormats;
   private boolean error;
   private boolean last;
   private boolean quick;
 
   private String filename;
-  private Integer selectedIsos;
   private Integer errors;
   private Integer warnings;
-  private Integer passed;
-  private Integer score;
   private Integer reportId;
   private Map<String, String> formats;
 
   private Configuration config;
   private Integer reportVersion = 0;
+  private SmallIndividualReport individual;
+
+  public ReportIndividualGui(SmallIndividualReport sir, Configuration config, Integer id) {
+    this.individual = sir;
+    this.path = sir.getSerPath();
+    this.name = parseFileName(path);
+    this.config = config;
+    this.id = id;
+    this.loaded = false;
+    this.error = false;
+    this.last = false;
+  }
 
   public ReportIndividualGui(String path, Configuration config, Integer id) {
+    this.individual = null;
     this.path = path;
     this.name = parseFileName(path);
     this.config = config;
@@ -66,6 +78,7 @@ public class ReportIndividualGui {
     this.loaded = false;
     this.error = false;
     this.last = false;
+    this.loadedFormats = false;
   }
 
   public void setLast(boolean last) {
@@ -80,16 +93,40 @@ public class ReportIndividualGui {
   public void load(){
     if (loaded) return;
     resetValues();
-    createRowFromSer();
+    createRow();
+  }
+
+  public void loadFormats(){
+    if (!loaded) return;
+    if (loadedFormats) return;
     readFormats();
   }
 
   private void resetValues(){
     errors = 0;
-    passed = 0;
     warnings = 0;
-    score = 0;
     filename = "";
+  }
+
+  private void createRow(){
+    if (individual != null) {
+      createRowFromSir();
+    } else {
+      createRowFromSer();
+    }
+  }
+
+  private void createRowFromSir(){
+    reportVersion = individual.getReportVersion();
+    for (String iso : individual.getSelectedIsos()){
+      errors += individual.getNErrors(iso);
+      warnings += individual.getNWarnings(iso);
+    }
+    filename = individual.getFileName();
+    reportId = individual.getIdReport();
+    filePath = individual.getFilePath();
+    quick = individual.isQuick();
+    loaded = true;
   }
 
   private void createRowFromSer(){
@@ -104,17 +141,14 @@ public class ReportIndividualGui {
       }
 
       for (String iso : ir.getSelectedIsos()){
-        if (ir.getNErrors(iso) > 0) errors++;
-        else if (ir.getNWarnings(iso) > 0) warnings++;
+        errors += ir.getNErrors(iso);
+        warnings += ir.getNWarnings(iso);
       }
-      Integer n = ir.getSelectedIsos().size();
-      selectedIsos = ir.getSelectedIsos().size();
-      passed = n - errors - warnings;
       filename = ir.getFileName();
-      score = (n > 0) ? (passed + warnings) * 100 / n : 0;
       reportId = ir.getIdReport();
       filePath = ir.getFilePath();
       quick = ir.isQuick();
+      loaded = true;
     } catch (Exception e) {
       error = true;
     }
@@ -148,7 +182,7 @@ public class ReportIndividualGui {
       }
 
       // All OK
-      loaded = true;
+      loadedFormats = true;
     }
   }
 
@@ -171,12 +205,6 @@ public class ReportIndividualGui {
   public Integer getWarnings() {
     return warnings;
   }
-  public Integer getPassed() {
-    return passed;
-  }
-  public Integer getScore() {
-    return score;
-  }
   public Map<String, String> getFormats() {
     return formats;
   }
@@ -185,9 +213,6 @@ public class ReportIndividualGui {
   }
   public Integer getReportVersion() {
     return reportVersion;
-  }
-  public Integer getSelectedIsos() {
-    return selectedIsos;
   }
   public Configuration getConfig() {
     return config;

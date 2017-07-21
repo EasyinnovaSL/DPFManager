@@ -53,6 +53,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -142,13 +143,15 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    * Individual reports elements
    */
   @FXML
+  private GridPane gridHeadersFull;
+  @FXML
+  private GridPane gridHeadersQuick;
+  @FXML
   private VBox individualsVBox;
   @FXML
   private Pagination pagination;
   @FXML
   private ProgressIndicator indicator;
-  @FXML
-  private Label colActions;
 
   private Map<Integer, ManagedFragmentHandler<IndividualFragment>> individualHandlers;
 
@@ -169,7 +172,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
         individualHandlers = new HashMap<>();
         currentMode = IndividualComparator.Mode.NAME;
         currentOrder = IndividualComparator.Order.ASC;
-        getController().readIndividualReports(gMessage.getReportGui().getInternalReportFolder(), gMessage.getReportGui().getGlobalReport().getConfig());
+        getController().readIndividualReports(gMessage.getReportGui());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
       } else if (gMessage.isSort()){
@@ -247,9 +250,11 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     globalWarnings.setText(bundle.getString("passedWithWarnings").replace("%1", "" + info.getWarnings() + ""));
     globalPassed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
     if (info.getGlobalReport().getConfig().isQuick()) {
-      NodeUtil.showNode(colActions);
+      NodeUtil.showNode(gridHeadersQuick);
+      NodeUtil.hideNode(gridHeadersFull);
     } else {
-      NodeUtil.hideNode(colActions);
+      NodeUtil.showNode(gridHeadersFull);
+      NodeUtil.hideNode(gridHeadersQuick);
     }
     addChartScore(info);
     addFormatIcons(info);
@@ -458,36 +463,67 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     }
   }
 
-  @FXML
-  private HBox hboxName;
-  @FXML
-  private HBox hboxErrors;
-  @FXML
-  private HBox hboxWarnings;
-  @FXML
-  private HBox hboxResult;
-
   private IndividualComparator.Mode currentMode;
   private IndividualComparator.Order currentOrder;
 
+  /**
+   * Quick sort
+   */
   @FXML
-  protected void clickedColName(MouseEvent event) throws Exception {
-    clickedCol(hboxName, IndividualComparator.Mode.NAME);
+  private HBox hboxNameQ;
+  @FXML
+  private HBox hboxPathQ;
+  @FXML
+  private HBox hboxResultQ;
+
+  @FXML
+  protected void clickedColNameQ(MouseEvent event) throws Exception {
+    clickedCol(hboxNameQ, IndividualComparator.Mode.NAME);
   }
 
   @FXML
-  protected void clickedColErrors(MouseEvent event) throws Exception {
-    clickedCol(hboxErrors, IndividualComparator.Mode.ERRORS);
+  protected void clickedColPathQ(MouseEvent event) throws Exception {
+    clickedCol(hboxPathQ, IndividualComparator.Mode.PATH);
   }
 
   @FXML
-  protected void clickedColWarnings(MouseEvent event) throws Exception {
-    clickedCol(hboxWarnings, IndividualComparator.Mode.WARNINGS);
+  protected void clickedColResultQ(MouseEvent event) throws Exception {
+    clickedCol(hboxResultQ, IndividualComparator.Mode.RESULT);
   }
 
+  /**
+   * Full sort
+   */
   @FXML
-  protected void clickedColResult(MouseEvent event) throws Exception {
-    clickedCol(hboxResult, IndividualComparator.Mode.RESULT);
+  private HBox hboxNameF;
+  @FXML
+  private HBox hboxPathF;
+  @FXML
+  private HBox hboxResultF;
+  @FXML
+  private HBox hboxErrorsF;
+  @FXML
+  private HBox hboxWarningsF;
+
+  @FXML
+  protected void clickedColNameF(MouseEvent event) throws Exception {
+    clickedCol(hboxNameF, IndividualComparator.Mode.NAME);
+  }
+  @FXML
+  protected void clickedColPathF(MouseEvent event) throws Exception {
+    clickedCol(hboxPathF, IndividualComparator.Mode.PATH);
+  }
+  @FXML
+  protected void clickedColResultF(MouseEvent event) throws Exception {
+    clickedCol(hboxResultF, IndividualComparator.Mode.RESULT);
+  }
+  @FXML
+  protected void clickedColErrorsF(MouseEvent event) throws Exception {
+    clickedCol(hboxErrorsF, IndividualComparator.Mode.ERRORS);
+  }
+  @FXML
+  protected void clickedColWarningsF(MouseEvent event) throws Exception {
+    clickedCol(hboxWarningsF, IndividualComparator.Mode.WARNINGS);
   }
 
   private void clickedCol(HBox hbox, IndividualComparator.Mode mode){
@@ -528,10 +564,15 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   }
 
   private void removeArrows() {
-    hboxName.getChildren().remove(1, hboxName.getChildren().size());
-    hboxErrors.getChildren().remove(1, hboxErrors.getChildren().size());
-    hboxWarnings.getChildren().remove(1, hboxWarnings.getChildren().size());
-    hboxResult.getChildren().remove(1, hboxResult.getChildren().size());
+    hboxNameQ.getChildren().remove(1, hboxNameQ.getChildren().size());
+    hboxResultQ.getChildren().remove(1, hboxResultQ.getChildren().size());
+    hboxPathQ.getChildren().remove(1, hboxPathQ.getChildren().size());
+
+    hboxNameF.getChildren().remove(1, hboxNameF.getChildren().size());
+    hboxErrorsF.getChildren().remove(1, hboxErrorsF.getChildren().size());
+    hboxWarningsF.getChildren().remove(1, hboxWarningsF.getChildren().size());
+    hboxResultF.getChildren().remove(1, hboxResultF.getChildren().size());
+    hboxPathF.getChildren().remove(1, hboxPathF.getChildren().size());
   }
 
   public IndividualComparator.Order getDefaultOrder(IndividualComparator.Mode mode){

@@ -16,25 +16,25 @@
 <?import javafx.scene.layout.StackPane?>
 
 <AnchorPane prefWidth="840.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
-    <GridPane hgap="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+    <GridPane fx:id="gridFull" hgap="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="323.0" minWidth="323.0" prefWidth="323.0" />
-         <ColumnConstraints hgrow="SOMETIMES" maxWidth="58.0" minWidth="58.0" prefWidth="58.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="88.0" prefWidth="88.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="88.0" prefWidth="88.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="138.0" prefWidth="138.0" />
-         <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="128.0" prefWidth="128.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="173.0" prefWidth="173.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.0" minWidth="338.0" prefWidth="338.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="68.0" minWidth="68.0" prefWidth="68.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="78.0" prefWidth="78.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.0" minWidth="118.0" prefWidth="118.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <children>
-            <Label fx:id="input" text="" textFill="LIGHTGRAY" />
-            <Label fx:id="nfiles" text="" textFill="CYAN" GridPane.columnIndex="1" />
-            <Label fx:id="errors" text="" textFill="RED" GridPane.columnIndex="2" />
-            <Label fx:id="warnings" text="" textFill="ORANGE" GridPane.columnIndex="3" />
-            <HBox fx:id="formatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="4" />
-         <ImageView fx:id="okImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+            <Label fx:id="fInput" text="" textFill="LIGHTGRAY" GridPane.columnIndex="1" />
+         <Label fx:id="fPath" textFill="LIGHTGRAY" GridPane.columnIndex="2" />
+            <Label fx:id="fErrors" text="" textFill="RED" GridPane.columnIndex="3" />
+            <Label fx:id="fWarnings" text="" textFill="ORANGE" GridPane.columnIndex="4" />
+            <HBox fx:id="fFormatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="5" />
+         <ImageView fx:id="fOkImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../../images/icons/ok.png" />
             </image>
@@ -42,7 +42,7 @@
                <Insets left="10.0" />
             </GridPane.margin>
          </ImageView>
-         <ImageView fx:id="koImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+         <ImageView fx:id="fKoImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../../images/icons/ko.png" />
             </image>
@@ -50,12 +50,45 @@
                <Insets left="10.0" />
             </GridPane.margin>
          </ImageView>
-            <Button fx:id="buttonFull" mnemonicParsing="false" onAction="#makeFullReport" styleClass="button-small" text="%makeFullReport" GridPane.columnIndex="5">
-                <padding>
-                    <Insets bottom="1.0" left="8.0" right="8.0" top="1.0" />
-                </padding>
-            </Button>
         </children>
     </GridPane>
+   <GridPane fx:id="gridQuick" hgap="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+      <columnConstraints>
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="173.0" prefWidth="173.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.0" minWidth="338.0" prefWidth="338.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="138.0" prefWidth="138.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="128.0" prefWidth="128.0" />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <children>
+         <Label fx:id="qInput" text="" textFill="LIGHTGRAY" GridPane.columnIndex="1" />
+         <Label fx:id="qPath" textFill="LIGHTGRAY" GridPane.columnIndex="2" />
+         <HBox fx:id="qFormatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" />
+         <ImageView fx:id="qOkImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../../images/icons/ok.png" />
+            </image>
+            <GridPane.margin>
+               <Insets left="10.0" />
+            </GridPane.margin>
+         </ImageView>
+         <ImageView fx:id="qKoImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../../images/icons/ko.png" />
+            </image>
+            <GridPane.margin>
+               <Insets left="10.0" />
+            </GridPane.margin>
+         </ImageView>
+         <Button mnemonicParsing="false" onAction="#makeFullReport" styleClass="button-small" text="%makeFullReport" GridPane.columnIndex="4">
+            <padding>
+               <Insets bottom="1.0" left="8.0" right="8.0" top="1.0" />
+            </padding>
+         </Button>
+      </children>
+   </GridPane>
     <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
 </AnchorPane>
