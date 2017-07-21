@@ -328,7 +328,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       ManagedFragmentHandler<ReportFragment> handler;
       if (reportHandlers.containsKey(row.getUuid())) {
         handler = reportHandlers.get(row.getUuid());
-        handler.getController().updateIcons();
       } else {
         handler = context.getManagedFragmentHandler(ReportFragment.class);
         handler.getController().init(row);

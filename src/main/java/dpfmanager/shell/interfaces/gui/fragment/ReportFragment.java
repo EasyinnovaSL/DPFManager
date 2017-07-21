@@ -108,9 +108,6 @@ public class ReportFragment {
     loadReportRow();
   }
 
-  public void updateIcons(){
-  }
-
   private void loadReportRow() {
     info.load();
     date.setText(info.getDate() + " " + info.getTime());

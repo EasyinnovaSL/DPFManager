@@ -56,17 +56,19 @@ public class QuickCheckTest extends ApplicationTest {
     waitForCheckFiles(1);
     clickOnAndReloadBot("#taskBut");
 
-    //Check table view
-    clickOnAndReloadTop("#butReports","#pane-reports");
+    // Check table view
+    clickOnAndReloadTop("#butReports", "#pane-reports");
     waitUntilExists("#lastReportRow");
-    VBox mainVBox = (VBox) scene.lookup("#mainVBox");
+    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
     Assert.assertEquals("Reports table rows", Math.min(nReports + 1, ReportsController.itemsPerPage), mainVBox.getChildren().size());
     AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
     GridPane grid = (GridPane) row.getChildren().get(0);
     checkValidRow(grid);
 
-    // Check semi transparent formats
-    HBox formatsBox = (HBox) grid.getChildren().get(8);
+    // Check global view
+    clickOnAndReload("#vboxReports0 GridPane");
+    waitUntilExists("#pane-global");
+    HBox formatsBox = (HBox) scene.lookup("#globalFormatsBox");
     for (Node n : formatsBox.getChildren()){
       ImageView iv = (ImageView) n;
       Assert.assertEquals("Formats buttons semi-transparent", 0.4, iv.getOpacity(), 0.0);
@@ -80,10 +82,9 @@ public class QuickCheckTest extends ApplicationTest {
   }
 
   private void checkValidRow(GridPane grid) {
-    Assert.assertEquals("Report row N files", "2", ((Label) grid.getChildren().get(2)).getText());
-    Assert.assertEquals("Report row N passed", "1 passed", ((Label) grid.getChildren().get(6)).getText());
-    Assert.assertEquals("Report row N errors", "1 errors", ((Label) grid.getChildren().get(4)).getText());
-    Assert.assertEquals("Report row N warnings", "0 warnings", ((Label) grid.getChildren().get(5)).getText());
+    Assert.assertEquals("Report row N files", "2", ((Label) grid.getChildren().get(1)).getText());
+    Assert.assertEquals("Report row N passed", "1 passed", ((Label) grid.getChildren().get(8)).getText());
+    Assert.assertEquals("Report row N errors", "1 errors", ((Label) grid.getChildren().get(6)).getText());
   }
 
 }
