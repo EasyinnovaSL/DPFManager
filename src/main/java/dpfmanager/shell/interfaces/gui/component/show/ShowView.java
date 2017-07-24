@@ -35,6 +35,7 @@ import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.threading.messages.RunnableMessage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -276,11 +277,12 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     }
   }
 
-  public void addComboChild(String name, boolean selected) {
-    comboIndividuals.getItems().add(name);
-    if (selected) {
-      comboIndividuals.getSelectionModel().select(name);
-    }
+  public void addComboChilds(ObservableList<String> names) {
+    comboIndividuals.setItems(names);
+  }
+
+  public void selectComboChild(String name) {
+    comboIndividuals.setValue(name);
   }
 
   public void clearComboBox() {
