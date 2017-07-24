@@ -197,7 +197,7 @@ public class IndividualFragment {
         if (!item.containsKey(format)) item.put(format, (itemRead.containsKey(format)) ? itemRead.get(format) : null);
       }
     } else {
-      item = itemRead;
+      item = (itemRead != null) ? itemRead : new HashMap<>();
     }
     for (String i : sortedFormats) {
       if (!item.containsKey(i)) continue;

@@ -173,13 +173,14 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   public void handleMessageOnWorker(DpfMessage message) {
     if (message != null && message.isTypeOf(GuiGlobalMessage.class)) {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
-      if (gMessage.isInit()) {
+      if (gMessage.isRead()) {
         individualHandlers = new HashMap<>();
         currentMode = IndividualComparator.Mode.NAME;
         currentOrder = IndividualComparator.Order.ASC;
         getController().readIndividualReports(gMessage.getReportGui());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
+        gMessage.getReportIndividualGui().loadFormats();
       } else if (gMessage.isSort()){
         getController().sortIndividuals();
       }
@@ -191,6 +192,10 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     if (message != null && message.isTypeOf(GuiGlobalMessage.class)) {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isInit()) {
+        showLoading();
+        gMessage.setType(GuiGlobalMessage.Type.READ);
+        context.send(gMessage);
+      } else if (gMessage.isRead()) {
         initGlobalReport(gMessage.getReportGui());
         initPagination();
       } else if (gMessage.isAddIndividual()) {
@@ -265,8 +270,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     addChartScore(info);
     addFormatIcons(info);
     addActionsIcons(info);
-    hideBottom();
-    showLoadingReports();
   }
 
   private void addChartScore(ReportGui info) {
@@ -548,6 +551,12 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     // Show loading
     showLoadingReports();
     context.send(GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.SORT));
+  }
+
+  public void showLoading() {
+    showLoadingReports();
+    hideBottom();
+    NodeUtil.hideNode(labelOld);
   }
 
   public void showLoadingReports() {

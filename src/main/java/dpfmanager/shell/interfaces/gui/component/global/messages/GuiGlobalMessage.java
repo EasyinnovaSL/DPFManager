@@ -29,7 +29,7 @@ import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 public class GuiGlobalMessage extends DpfMessage {
 
   public enum Type {
-    INIT, SORT, ADD_INDIVIDUAL
+    INIT, SORT, ADD_INDIVIDUAL, READ
   }
 
   private Type type;
@@ -55,8 +55,17 @@ public class GuiGlobalMessage extends DpfMessage {
     type = t;
   }
 
+  // Read
+  public void setType(Type type) {
+    this.type = type;
+  }
+
   public boolean isInit(){
     return type.equals(Type.INIT);
+  }
+
+  public boolean isRead(){
+    return type.equals(Type.READ);
   }
 
   public boolean isSort(){
