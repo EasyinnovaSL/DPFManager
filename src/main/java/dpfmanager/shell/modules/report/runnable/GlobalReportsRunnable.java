@@ -95,9 +95,8 @@ public class GlobalReportsRunnable extends DpfRunnable {
 
     if (internalReportFolder != null) {
       // Create it
-      String summaryXmlFile = null;
       try {
-        summaryXmlFile = generator.makeSummaryReport(internalReportFolder, global, config);
+        generator.makeSummaryReport(internalReportFolder, global, config);
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("globalReport").replace("%1", config.getOutput() != null ? config.getOutput() : internalReportFolder)));
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("durationReport").replace("%1", global.prettyPrintDuration())));
       } catch (OutOfMemoryError e) {
@@ -106,8 +105,8 @@ public class GlobalReportsRunnable extends DpfRunnable {
 
       // Send report over FTP
       try {
-        if (DPFManagerProperties.getFeedback() && summaryXmlFile != null) {
-          sendFtpCamel(summaryXmlFile);
+        if (DPFManagerProperties.getFeedback()) {
+          sendFtpCamel(internalReportFolder);
         }
       } catch (Exception e) {
         context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("exception"), e));
@@ -122,13 +121,12 @@ public class GlobalReportsRunnable extends DpfRunnable {
   /**
    * Sends the report to the preforma FTP.
    *
-   * @param summaryXmlFile the summary xml
    * @throws NoSuchAlgorithmException An error occurred
    */
-  private void sendFtpCamel(String summaryXmlFile)
-      throws NoSuchAlgorithmException, IOException {
-    String summaryXml = FileUtils.readFileToString(new File(summaryXmlFile), "utf-8");
-    context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("sendingFeedback")));
+  private void sendFtpCamel(String internalReportFolder) throws NoSuchAlgorithmException, IOException {
+    File serFile = new File(internalReportFolder + "/summary.ser");
+    if (!serFile.exists()) return;
+    String summarySer = FileUtils.readFileToString(serFile, "utf-8");
     String ftp = "84.88.145.109";
     String user = "preformaapp";
     String password = "2.eX#lh>";
@@ -142,7 +140,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
       });
       ProducerTemplate template = contextcc.createProducerTemplate();
       contextcc.start();
-      template.sendBody("direct:sendFtp", summaryXml);
+      template.sendBody("direct:sendFtp", summarySer);
       contextcc.stop();
     } catch (Exception e) {
       e.printStackTrace();

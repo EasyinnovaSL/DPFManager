@@ -128,27 +128,4 @@ public class CommandLineTest {
     return aux;
   }
 
-  public void sendFtpCamel(String summaryXmlFile)
-      throws NoSuchAlgorithmException, IOException {
-    byte[] summaryXml = FileUtils.readFileToByteArray(new File(summaryXmlFile));
-    String ftp = "84.88.145.109";
-    String user = "preformaapp";
-    String password = "2.eX#lh>";
-    CamelContext contextcc = new DefaultCamelContext();
-
-    try {
-      contextcc.addRoutes(new RouteBuilder() {
-        public void configure() {
-          from("direct:sendFtp").to("sftp://" + user + "@" + ftp + "/?password=" + password);
-        }
-      });
-      ProducerTemplate template = contextcc.createProducerTemplate();
-      contextcc.start();
-      template.sendBody("direct:sendFtp", summaryXml);
-      contextcc.stop();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
 }
