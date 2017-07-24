@@ -89,11 +89,10 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
     }
     Configuration config = global.getConfig();
     String internal = reportGui.getInternalReportFolder();
-    if (global.getVersion() > 3) {
+    if (global.getVersion() >= 3) {
       Integer count = 0;
       for (SmallIndividualReport sir : global.getIndividualReports()) {
-        String serPath = sir.getSerPath().replace("easy", "Roser");
-        serPath = serPath.replace("20170721/17", "20170724/1");
+        String serPath = sir.getSerPath();
         if (serPath == null || serPath.isEmpty()){
           String filenameNorm = sir.getFileName().replaceAll("\\\\", "/");
           String serFileName = sir.getIdReport() + "-" +filenameNorm.substring(filenameNorm.lastIndexOf("/") + 1) + ".ser";

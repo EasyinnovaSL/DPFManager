@@ -175,8 +175,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isRead()) {
         individualHandlers = new HashMap<>();
-        currentMode = IndividualComparator.Mode.NAME;
-        currentOrder = IndividualComparator.Order.ASC;
+        currentMode = IndividualComparator.Mode.ERRORS;
+        currentOrder = IndividualComparator.Order.DESC;
         getController().readIndividualReports(gMessage.getReportGui());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
