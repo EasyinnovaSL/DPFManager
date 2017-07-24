@@ -300,24 +300,39 @@ public class ThreadingService extends DpfService {
    * Remove functions
    */
   public void removeZipFolder(String internal) {
-    try {
-      File zipFolder = new File(internal + "zip");
-      if (zipFolder.exists() && zipFolder.isDirectory()) {
+    File zipFolder = new File(internal + "zip");
+    if (zipFolder.exists() && zipFolder.isDirectory()) {
+      try {
         FileUtils.deleteDirectory(zipFolder);
+      } catch (Exception e) {
+        try {
+          System.gc();
+          FileUtils.deleteDirectory(zipFolder);
+        } catch (Exception ex) {
+          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excZip"), ex));
+        }
       }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excZip"), e));
     }
   }
 
   private void removeDownloadFolder(String internal) {
     try {
+      // Delete zip
       File zipFolder = new File(internal + "download");
       if (zipFolder.exists() && zipFolder.isDirectory()) {
         FileUtils.deleteDirectory(zipFolder);
       }
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excDownload"), e));
+      // Sleep 1 sec and retry
+      try {
+        Thread.sleep(1000);
+        File zipFolder = new File(internal + "download");
+        if (zipFolder.exists() && zipFolder.isDirectory()) {
+          FileUtils.deleteDirectory(zipFolder);
+        }
+      } catch (Exception ex) {
+        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excDownload"), ex));
+      }
     }
   }
 

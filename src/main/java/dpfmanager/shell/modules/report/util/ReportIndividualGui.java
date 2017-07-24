@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public class ReportIndividualGui {
 
-  private String[] available_formats = {"html", "xml", "json", "pdf"};
+  private String[] available_formats = {"html", "xml", "json", "pdf", "mets.xml"};
 
   private Integer id;
   private String path;
@@ -47,6 +47,7 @@ public class ReportIndividualGui {
   private boolean error;
   private boolean last;
   private boolean quick;
+  private boolean old;
 
   private String filename;
   private Integer errors;
@@ -58,6 +59,15 @@ public class ReportIndividualGui {
   private Integer reportVersion = 0;
   private SmallIndividualReport individual;
 
+  public ReportIndividualGui(String path, Integer id) {
+    this.id = id;
+    this.path = path;
+    this.loaded = false;
+    this.error = false;
+    this.last = false;
+    this.old = true;
+  }
+
   public ReportIndividualGui(SmallIndividualReport sir, Configuration config, Integer id) {
     this.individual = sir;
     this.path = sir.getSerPath();
@@ -67,6 +77,7 @@ public class ReportIndividualGui {
     this.loaded = false;
     this.error = false;
     this.last = false;
+    this.old = false;
   }
 
   public ReportIndividualGui(String path, Configuration config, Integer id) {
@@ -79,6 +90,7 @@ public class ReportIndividualGui {
     this.error = false;
     this.last = false;
     this.loadedFormats = false;
+    this.old = false;
   }
 
   public void setLast(boolean last) {
@@ -109,14 +121,31 @@ public class ReportIndividualGui {
   }
 
   private void createRow(){
-    if (individual != null) {
+    if (old) {
+      createRowFromOld();
+    } else if (individual != null) {
       createRowFromSir();
     } else {
       createRowFromSer();
     }
   }
 
+  private void createRowFromOld(){
+    System.out.println("Row from OLD");
+    reportVersion = 0;
+    filePath = path;
+    name = new File(path).getName();
+    reportId = Integer.parseInt(name.substring(0, name.indexOf("-")));
+    filename = name.substring(name.indexOf("-") + 1, name.lastIndexOf("."));
+    if (filename.endsWith(".mets")) {
+      filename = filename.substring(0, filename.lastIndexOf("."));
+    }
+    quick = false;
+    loaded = true;
+  }
+
   private void createRowFromSir(){
+    System.out.println("Row from SIR");
     reportVersion = individual.getReportVersion();
     for (String iso : individual.getSelectedIsos()){
       errors += individual.getNErrors(iso);
@@ -130,6 +159,7 @@ public class ReportIndividualGui {
   }
 
   private void createRowFromSer(){
+    System.out.println("Row from SER");
     try {
       IndividualReport ir = (IndividualReport) IndividualReport.read(path);
       if (ir == null) {
@@ -156,28 +186,27 @@ public class ReportIndividualGui {
 
   public void readFormats() {
     formats = new HashMap<>();
-    File baseFile = new File(path).getParentFile().getParentFile();
+    File pathFile = new File(path);
+    File baseFile = pathFile.getParentFile();
+    if (baseFile.getName().endsWith("serialized")) {
+      baseFile = baseFile.getParentFile();
+    }
+    if (baseFile.getName().endsWith("html")) {
+      baseFile = baseFile.getParentFile();
+    }
     if (!error && baseFile.exists() && baseFile.isDirectory()) {
 
       // Add formats
       for (String format : available_formats) {
         File report;
-        if (format.equals("json") || format.equals("xml") || format.equals("pdf")) {
+        if (format.equals("json") || format.equals("xml") || format.equals("pdf") || format.equals("mets.xml")) {
           report = new File(baseFile.getPath() + "/" + reportId + "-" + filename + "." + format);
         } else {
           report = new File(baseFile.getPath() + "/html/" + reportId + "-" + filename + "." + format);
         }
         if (report.exists() && report.length() > 0) {
+          format = format.equals("mets.xml") ? "mets" : format;
           formats.put(format, report.getPath());
-        }
-      }
-
-      // Add mets
-      String[] filter = {"mets.xml"};
-      Collection<File> childs = FileUtils.listFiles(baseFile, filter, false);
-      for (File child : childs){
-        if (child.getName().contains(reportId + "-" + filename + ".mets.xml")) {
-          formats.put("mets", child.getPath());
         }
       }
 

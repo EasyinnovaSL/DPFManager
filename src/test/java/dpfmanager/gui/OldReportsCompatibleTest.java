@@ -35,6 +35,8 @@ import java.util.List;
 public class OldReportsCompatibleTest extends ApplicationTest {
 
   Stage stage = null;
+  String reportDay;
+  Integer nextReportId;
 
   @Override
   public void init() throws Exception {
@@ -44,22 +46,15 @@ public class OldReportsCompatibleTest extends ApplicationTest {
 
   @Override
   public void customPreTest() throws Exception {
-    // Copy old report to folder
     String last = ReportGenerator.getLastReportPath();
     String reportId = "0";
-    String reportDay = last;
+    reportDay = last;
     if (last.endsWith("/")) {
       last = last.substring(0, last.length() - 1);
       reportId = last.substring(last.lastIndexOf("/") + 1);
       reportDay = last.substring(0, last.lastIndexOf("/"));
     }
-    List<String> olds = Arrays.asList("html", "json", "xml", "pdf");
-    for (int i = 0; i< olds.size(); i++) {
-      Integer nextReportId = Integer.parseInt(reportId) + 1 + i;
-      File newReportFolder = new File(reportDay + "/" + nextReportId);
-      File oldReportFolder = new File("src/test/resources/OldReports/" + olds.get(i));
-      FileUtils.copyDirectory(oldReportFolder, newReportFolder);
-    }
+    nextReportId = Integer.parseInt(reportId);
   }
 
   @Override
@@ -72,18 +67,27 @@ public class OldReportsCompatibleTest extends ApplicationTest {
     WaitForAsyncUtils.waitForFxEvents();
     System.out.println("Running old report compatible test...");
 
-    // Check reports table
-    clickOnAndReloadTop("#butReports", "#pane-reports");
-    waitUntilExists("#lastReportRow");
-    VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
-    AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
-    checkValidRow((GridPane) row.getChildren().get(0), "PDF");  //Pdf
-    row = (AnchorPane) mainVBox.getChildren().get(1);
-    checkValidRow((GridPane) row.getChildren().get(0), "XML");  //Xml
-    row = (AnchorPane) mainVBox.getChildren().get(2);
-    checkValidRow((GridPane) row.getChildren().get(0), "JSON"); //Json
-    row = (AnchorPane) mainVBox.getChildren().get(3);
-    checkValidRow((GridPane) row.getChildren().get(0), "HTML"); //Html
+    // Formats to test
+    List<String> olds = Arrays.asList("html", "json", "xml", "pdf");
+    for (String old : olds) {
+      // Copy old report
+      copyReport(old);
+
+      // Check reports table
+      clickOnAndReloadTop("#butReports", "#pane-reports");
+      waitUntilExists("#reloadButton2");
+      clickOnAndReload("#reloadButton2");
+      waitUntilExists("#lastReportRow");
+      VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
+      AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
+      checkValidRow((GridPane) row.getChildren().get(0), old);
+
+      // Check global view formats
+      clickOnAndReload("#vboxReports0 GridPane");
+      waitUntilExists("#pane-global");
+    }
+
+
 
     // Check global view formats
 //    List<String> foundTypes = new ArrayList<>();
@@ -94,6 +98,13 @@ public class OldReportsCompatibleTest extends ApplicationTest {
 //      foundTypes.add(iv.getId().replace("but", ""));
 //    }
 //    Assert.assertEquals("Available buttons", expectedTypes, foundTypes);
+  }
+
+  private void copyReport(String old) throws Exception{
+    nextReportId++;
+    File newReportFolder = new File(reportDay + "/" + nextReportId);
+    File oldReportFolder = new File("src/test/resources/OldReports/" + old);
+    FileUtils.copyDirectory(oldReportFolder, newReportFolder);
   }
 
   private void checkValidRow(GridPane grid, String type) {

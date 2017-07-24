@@ -70,6 +70,7 @@ public class ReportSerializable implements Serializable {
       fis.close();
     } catch(Exception ioe) {
       System.err.println("Error in file: "+file);
+      System.err.println("Error message: "+ioe.getMessage());
       obj = null;
     }
     return obj;

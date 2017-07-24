@@ -55,6 +55,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
@@ -152,6 +153,10 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private Pagination pagination;
   @FXML
   private ProgressIndicator indicator;
+  @FXML
+  private StackPane gridStackPane;
+  @FXML
+  private Label labelOld;
 
   private Map<Integer, ManagedFragmentHandler<IndividualFragment>> individualHandlers;
 
@@ -168,13 +173,14 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   public void handleMessageOnWorker(DpfMessage message) {
     if (message != null && message.isTypeOf(GuiGlobalMessage.class)) {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
-      if (gMessage.isInit()) {
+      if (gMessage.isRead()) {
         individualHandlers = new HashMap<>();
-        currentMode = IndividualComparator.Mode.NAME;
-        currentOrder = IndividualComparator.Order.ASC;
+        currentMode = IndividualComparator.Mode.ERRORS;
+        currentOrder = IndividualComparator.Order.DESC;
         getController().readIndividualReports(gMessage.getReportGui());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
+        gMessage.getReportIndividualGui().loadFormats();
       } else if (gMessage.isSort()){
         getController().sortIndividuals();
       }
@@ -186,6 +192,10 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     if (message != null && message.isTypeOf(GuiGlobalMessage.class)) {
       GuiGlobalMessage gMessage = message.getTypedMessage(GuiGlobalMessage.class);
       if (gMessage.isInit()) {
+        showLoading();
+        gMessage.setType(GuiGlobalMessage.Type.READ);
+        context.send(gMessage);
+      } else if (gMessage.isRead()) {
         initGlobalReport(gMessage.getReportGui());
         initPagination();
       } else if (gMessage.isAddIndividual()) {
@@ -249,18 +259,17 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     globalErrors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
     globalWarnings.setText(bundle.getString("passedWithWarnings").replace("%1", "" + info.getWarnings() + ""));
     globalPassed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
-    if (info.getGlobalReport().getConfig().isQuick()) {
+    NodeUtil.hideNode(gridHeadersQuick);
+    NodeUtil.hideNode(gridHeadersFull);
+    NodeUtil.hideNode(labelOld);
+    if (!isOldReport() && info.getGlobalReport().getConfig().isQuick()) {
       NodeUtil.showNode(gridHeadersQuick);
-      NodeUtil.hideNode(gridHeadersFull);
     } else {
       NodeUtil.showNode(gridHeadersFull);
-      NodeUtil.hideNode(gridHeadersQuick);
     }
     addChartScore(info);
     addFormatIcons(info);
     addActionsIcons(info);
-    hideBottom();
-    showLoadingReports();
   }
 
   private void addChartScore(ReportGui info) {
@@ -544,6 +553,12 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     context.send(GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.SORT));
   }
 
+  public void showLoading() {
+    showLoadingReports();
+    hideBottom();
+    NodeUtil.hideNode(labelOld);
+  }
+
   public void showLoadingReports() {
     NodeUtil.hideNode(pagination);
     NodeUtil.showNode(indicator);
@@ -552,6 +567,11 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   public void hideLoadingReports() {
     NodeUtil.showNode(pagination);
     NodeUtil.hideNode(indicator);
+    if (isOldReport()) {
+      NodeUtil.showNode(labelOld);
+    } else {
+      NodeUtil.hideNode(labelOld);
+    }
   }
 
   private void addArrow(HBox hbox) {
@@ -669,10 +689,12 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   }
 
   private void showBottom(){
-    if (info.getGlobalReport().getConfig().isQuick()){
-      NodeUtil.showNode(buttonTransforms);
+    if (!isOldReport()){
+      if (info.getGlobalReport().getConfig().isQuick()){
+        NodeUtil.showNode(buttonTransforms);
+      }
+      NodeUtil.showNode(buttonGenerate);
     }
-    NodeUtil.showNode(buttonGenerate);
   }
 
   private String getNumericValue(Character ch) {
@@ -695,7 +717,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   }
 
   private void swapOrder(){
-    if (currentOrder.equals(IndividualComparator.Order.ASC)){
+    if (currentOrder.equals(IndividualComparator.Order.ASC)) {
       currentOrder = IndividualComparator.Order.DESC;
     } else {
       currentOrder = IndividualComparator.Order.ASC;
@@ -724,6 +746,10 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   public boolean isCorrect(){
     return checkCorrect.isSelected();
+  }
+
+  public boolean isOldReport() {
+    return info.getGlobalReport() == null;
   }
 
 }

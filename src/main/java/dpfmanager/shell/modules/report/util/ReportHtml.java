@@ -30,6 +30,7 @@ import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,6 +44,7 @@ public class ReportHtml extends ReportGeneric {
    * @param gr         the global report.
    */
   public void parseGlobal(String outputfile, GlobalReport gr, List<SmallIndividualReport> reports, ReportGenerator generator) {
+    Collections.sort(reports);
     String templatePath = "templates/global.html";
     String imagePath = "templates/image.html";
 
