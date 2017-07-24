@@ -312,12 +312,22 @@ public class ThreadingService extends DpfService {
 
   private void removeDownloadFolder(String internal) {
     try {
+      // Delete zip
       File zipFolder = new File(internal + "download");
       if (zipFolder.exists() && zipFolder.isDirectory()) {
         FileUtils.deleteDirectory(zipFolder);
       }
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excDownload"), e));
+      // Sleep 1 sec and retry
+      try {
+        Thread.sleep(1000);
+        File zipFolder = new File(internal + "download");
+        if (zipFolder.exists() && zipFolder.isDirectory()) {
+          FileUtils.deleteDirectory(zipFolder);
+        }
+      } catch (Exception ex) {
+        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excDownload"), ex));
+      }
     }
   }
 
