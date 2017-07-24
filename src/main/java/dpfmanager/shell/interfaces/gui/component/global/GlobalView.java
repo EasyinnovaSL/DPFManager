@@ -116,6 +116,10 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    * Global report elements
    */
   @FXML
+  private ProgressIndicator progressGlobal;
+  @FXML
+  private VBox vboxGlobal;
+  @FXML
   private ImageView globalImage;
   @FXML
   private Label resultLabel;
@@ -125,6 +129,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private Label globalDate;
   @FXML
   private Label globalScore;
+  @FXML
+  private Label globalDuration;
   @FXML
   private Label globalFiles;
   @FXML
@@ -236,6 +242,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     individualHandlers = new HashMap<>();
     pagination.setSkin(new PaginationBetterSkin(pagination));
     indicator.setProgress(-1);
+    progressGlobal.setProgress(-1);
   }
 
   /**
@@ -243,6 +250,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    */
   private void initGlobalReport(ReportGui info) {
     this.info = info;
+    NodeUtil.hideNode(gridHeadersQuick);
+    NodeUtil.hideNode(gridHeadersFull);
+    NodeUtil.hideNode(labelOld);
     info.readFormats();
     if (info.getErrors() == 0) {
       resultLabel.setText(bundle.getString("passedCheck"));
@@ -259,9 +269,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     globalErrors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
     globalWarnings.setText(bundle.getString("passedWithWarnings").replace("%1", "" + info.getWarnings() + ""));
     globalPassed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
-    NodeUtil.hideNode(gridHeadersQuick);
-    NodeUtil.hideNode(gridHeadersFull);
-    NodeUtil.hideNode(labelOld);
+    if (info.getGlobalReport() != null) {
+      globalDuration.setText(readableDuration(info.getGlobalReport()));
+    }
     if (!isOldReport() && info.getGlobalReport().getConfig().isQuick()) {
       NodeUtil.showNode(gridHeadersQuick);
     } else {
@@ -270,6 +280,11 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     addChartScore(info);
     addFormatIcons(info);
     addActionsIcons(info);
+    showLoadingReports();
+  }
+
+  private String readableDuration(GlobalReport gr){
+    return gr.getDurationHours() + ":" + gr.getDurationMinutes() + ":" + ((gr.getDurationMillis() > 500) ? gr.getDurationSeconds() + 1 : gr.getDurationSeconds());
   }
 
   private void addChartScore(ReportGui info) {
@@ -555,13 +570,17 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   public void showLoading() {
     showLoadingReports();
-    hideBottom();
-    NodeUtil.hideNode(labelOld);
+    NodeUtil.showNode(progressGlobal);
+    NodeUtil.hideNode(vboxGlobal);
   }
 
   public void showLoadingReports() {
+    NodeUtil.showNode(vboxGlobal);
+    NodeUtil.hideNode(progressGlobal);
     NodeUtil.hideNode(pagination);
     NodeUtil.showNode(indicator);
+    NodeUtil.hideNode(labelOld);
+    hideBottom();
   }
 
   public void hideLoadingReports() {

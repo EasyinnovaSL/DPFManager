@@ -187,7 +187,6 @@ public class ReportGui implements Comparable<ReportGui>{
   public void readFormats() {
     if (loadedFormats) return;
     if (!error) {
-      System.out.println("Read formats");
       // Add formats
       for (String format : available_formats) {
         File report;
