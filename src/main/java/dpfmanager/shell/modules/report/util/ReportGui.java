@@ -58,6 +58,7 @@ public class ReportGui implements Comparable<ReportGui>{
   private String reportDir;
   private Long timestamp;
   private boolean loaded;
+  private boolean loadedFormats;
   private boolean error;
   private boolean last;
 
@@ -82,6 +83,7 @@ public class ReportGui implements Comparable<ReportGui>{
     this.reportDir = reportDir;
     this.uuid = reportDay + reportDir;
     this.loaded = false;
+    this.loadedFormats = false;
     this.error = true;
     readTime();
   }
@@ -98,6 +100,7 @@ public class ReportGui implements Comparable<ReportGui>{
 
     this.uuid = reportDay + reportDir;
     this.loaded = false;
+    this.loadedFormats = false;
     this.error = true;
     readTime();
     load();
@@ -178,11 +181,13 @@ public class ReportGui implements Comparable<ReportGui>{
       createRowFromPdf(reportDay, reportPdf);
     }
 
-    readFormats();
+    loaded = true;
   }
 
   public void readFormats() {
+    if (loadedFormats) return;
     if (!error) {
+      System.out.println("Read formats");
       // Add formats
       for (String format : available_formats) {
         File report;
@@ -195,17 +200,8 @@ public class ReportGui implements Comparable<ReportGui>{
           addFormat(format, report.getPath());
         }
       }
-      // Add mets
-      File folder = new File(baseDir + "/" + reportDay + "/" + reportDir + "/");
-      if (folder.exists() && folder.isDirectory()) {
-        String[] filter = {"mets.xml"};
-        Collection<File> childs = FileUtils.listFiles(folder, filter, false);
-        if (childs.size() > 0) {
-          addFormat("mets", folder.getPath());
-        }
-      }
       // All OK
-      loaded = true;
+      loadedFormats = true;
     }
   }
 

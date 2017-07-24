@@ -131,7 +131,6 @@ public class ReportIndividualGui {
   }
 
   private void createRowFromOld(){
-    System.out.println("Row from OLD");
     reportVersion = 0;
     filePath = path;
     name = new File(path).getName();
@@ -145,7 +144,6 @@ public class ReportIndividualGui {
   }
 
   private void createRowFromSir(){
-    System.out.println("Row from SIR");
     reportVersion = individual.getReportVersion();
     for (String iso : individual.getSelectedIsos()){
       errors += individual.getNErrors(iso);
@@ -159,7 +157,6 @@ public class ReportIndividualGui {
   }
 
   private void createRowFromSer(){
-    System.out.println("Row from SER");
     try {
       IndividualReport ir = (IndividualReport) IndividualReport.read(path);
       if (ir == null) {
