@@ -131,6 +131,7 @@ public class NavBarFragment {
   protected void clickedTable(MouseEvent event) throws Exception {
     if (!labelTable.getStyleClass().contains("myactive")) {
       if (reload) {
+        setReload(false);
         context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));
       } else {
         context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
