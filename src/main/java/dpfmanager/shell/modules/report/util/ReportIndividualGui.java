@@ -182,6 +182,7 @@ public class ReportIndividualGui {
   }
 
   public void readFormats() {
+    if (loadedFormats) return;
     formats = new HashMap<>();
     File pathFile = new File(path);
     File baseFile = pathFile.getParentFile();

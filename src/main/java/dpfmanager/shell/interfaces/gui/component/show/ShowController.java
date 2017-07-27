@@ -81,7 +81,6 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
   }
 
   public void showComboBox(String filePath, String extension){
-    long t3 = System.currentTimeMillis();
     int count = 0;
     File file = new File(filePath);
     File folder = file;
@@ -99,7 +98,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
     if (extension.equals("pdf")){
       summary = new File(folder.getPath() + "/report." + extension);
     }
-    if (summary.isFile()){
+    if (summary.exists() && summary.isFile()){
       getView().setCurrentReportParams(summary.getParent(), extension);
       comboChilds.add(summary.getName().replace("." + extension, ""));
       selectFirst = true;
@@ -110,8 +109,6 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
     getView().setCurrentReportParams(folder.getPath(), extension);
     IOFileFilter filter = customFilter(extension);
     IOFileFilter filterDir = customFilterDir(folder.getPath());
-    long t4 = System.currentTimeMillis();
-    System.out.println("pre: " + (t4-t3));
     Collection<File> childs = FileUtils.listFiles(folder, filter, filterDir);
     for (File child : childs){
       String onlyName = child.getName().replace("."+extension, "");

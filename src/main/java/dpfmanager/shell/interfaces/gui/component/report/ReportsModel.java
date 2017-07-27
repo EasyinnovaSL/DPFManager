@@ -54,13 +54,19 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
    */
   public ReportsModel(Context ctx) {
     context = ctx;
+    sizeTime = 0L;
     bundle = DPFManagerProperties.getBundle();
   }
 
   private Long reportsSize;
+  private Long sizeTime;
 
   public void readReportsSize() {
-    reportsSize = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
+    Long currentTime = System.currentTimeMillis();
+    if ((currentTime - sizeTime) > 60000L){
+      reportsSize = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
+      sizeTime = currentTime;
+    }
   }
 
   public Long getReportsSize() {

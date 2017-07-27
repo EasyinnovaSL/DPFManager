@@ -102,7 +102,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   @FXML
   private HBox hboxSize;
   @FXML
-  private HBox hboxOptions;
+  private VBox hboxOptions;
   @FXML
   private Button clearOptionsButton;
   @FXML
@@ -148,7 +148,6 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
       } else if (rMessage.isRead()) {
         initPagination();
-        loadReportsSize();
       } else if (rMessage.isSize()) {
         printSize(getModel().getReportsSize());
       } else if (rMessage.isDelete()) {
@@ -247,6 +246,7 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
       hideClearOptions();
     } else {
       showClearOptions();
+      loadReportsSize();
     }
   }
 

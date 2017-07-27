@@ -522,7 +522,7 @@ public class HtmlReport extends Report {
                   row = row.replace("##LINE##", "");
                 }
                 row = row.replace("##ATTR##", key);
-                row = row.replace("##VALUE##", value);
+                row = row.replace("##VALUE##", value.replaceAll("<!--", "").replaceAll("-->", ""));
                 String rows = tagsMap.containsKey(mapIdH) ? tagsMap.get(mapIdH) : "";
                 tagsMap.put(mapIdH, rows + row);
               }
@@ -568,7 +568,7 @@ public class HtmlReport extends Report {
           row = row.replace("##ICON##", "<i class=\"image-default icon-" + tv.getName().toLowerCase() + "\"></i>");
           row = row.replace("##ID##", tv.getId() + "");
           row = row.replace("##KEY##", (tv.getName().equals(tv.getId() + "") ? "Private tag" : tv.getName()));
-          row = row.replace("##VALUE##", tv.getFirstTextReadValue());
+          row = row.replace("##VALUE##", tv.getFirstTextReadValue().replaceAll("<!--", "").replaceAll("-->", ""));
           String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
           tagsMap.put(mapId, rows + row);
         }
@@ -617,7 +617,7 @@ public class HtmlReport extends Report {
       String val = (tag.isDefault) ? tag.defaultValue : tag.tv.getFirstTextReadValue();
       if (val.length() > 200)
         val = val.substring(0, 200) + "...";
-      row = row.replace("##VALUE##", val);
+      row = row.replace("##VALUE##", val.replaceAll("<!--", "").replaceAll("-->", ""));
       String rows = tagsMap.containsKey(mapId) ? tagsMap.get(mapId) : "";
       tagsMap.put(mapId, rows + row);
     }

@@ -121,7 +121,7 @@ public class ReportFragment {
       NodeUtil.hideNode(okImage);
       NodeUtil.showNode(koImage);
     }
-    if (info.getGlobalReport() != null && info.getGlobalReport().getConfig().isQuick()) {
+    if (info.getGlobalReport() != null && info.isQuick()) {
       type.setText(bundle.getString("typeQuick"));
       warnings.setText("");
     } else {
@@ -205,7 +205,10 @@ public class ReportFragment {
         File file = new File(path);
         File dir = new File(file.getParent());
         try {
+          long t1 = System.currentTimeMillis();
           FileUtils.deleteDirectory(dir);
+          long t2 = System.currentTimeMillis();
+          System.out.println("Time: " + (t2-t1));
         } catch (IOException e) {
           e.printStackTrace();
         }
