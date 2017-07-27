@@ -78,7 +78,7 @@ public abstract class DpfRunnable implements Runnable {
       finish = true;
     } catch (OutOfMemoryError err){
       // Cancel the check and informs out of memory
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, getUuid(), true));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, getUuid(), true, "default"));
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("checkCancelled"), err));
     }
   }

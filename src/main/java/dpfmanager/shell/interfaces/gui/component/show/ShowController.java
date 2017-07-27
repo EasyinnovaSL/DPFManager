@@ -19,30 +19,23 @@
 
 package dpfmanager.shell.interfaces.gui.component.show;
 
-import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.core.config.GuiConfig;
-import dpfmanager.shell.core.messages.ReportsMessage;
-import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
-import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.logging.log4j.Level;
 
-import java.awt.*;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Adria Llorens on 17/03/2016.
@@ -76,7 +69,10 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
         break;
       case "pdf":
         if (!completedPath) path += "report.pdf";
+        long t1 = System.currentTimeMillis();
         showComboBox(path, "pdf");
+        long t2 = System.currentTimeMillis();
+//        System.out.println("Combobox: " + (t2-t1));
         getView().showPdfView(path);
         break;
       default:
@@ -87,6 +83,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
   public void showComboBox(String filePath, String extension){
     int count = 0;
     File file = new File(filePath);
+    String selectedName = file.getName().replace("." + extension, "");
     File folder = file;
     if (folder.isFile()){
       folder = folder.getParentFile();
@@ -94,15 +91,16 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
 
     // Clear comboBox
     getView().clearComboBox();
+    ObservableList<String> comboChilds = FXCollections.observableArrayList();
 
     // First add summary
     File summary = new File(folder.getPath() + "/summary." + extension);
     if (extension.equals("pdf")){
       summary = new File(folder.getPath() + "/report." + extension);
     }
-    if (summary.isFile()){
+    if (summary.exists() && summary.isFile()) {
       getView().setCurrentReportParams(summary.getParent(), extension);
-      getView().addComboChild(summary.getName().replace("." + extension, ""), summary.getName().equals(file.getName()));
+      comboChilds.add(summary.getName().replace("." + extension, ""));
       count++;
     }
 
@@ -113,13 +111,12 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
     Collection<File> childs = FileUtils.listFiles(folder, filter, filterDir);
     for (File child : childs){
       String onlyName = child.getName().replace("."+extension, "");
-      if (count == 0){
-        getView().addComboChild(onlyName, true);
-      } else {
-        getView().addComboChild(onlyName, child.getName().equals(file.getName()));
-      }
+      comboChilds.add(onlyName);
       count++;
     }
+
+    getView().addComboChilds(comboChilds);
+    getView().selectComboChild(selectedName);
 
     // Show nodes
     if (count > 1){

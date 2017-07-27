@@ -75,8 +75,6 @@ public class OldReportsCompatibleTest extends ApplicationTest {
 
       // Check reports table
       clickOnAndReloadTop("#butReports", "#pane-reports");
-      waitUntilExists("#reloadButton2");
-      clickOnAndReload("#reloadButton2");
       waitUntilExists("#lastReportRow");
       VBox mainVBox = (VBox) scene.lookup("#vboxReports0");
       AnchorPane row = (AnchorPane) mainVBox.getChildren().get(0);
@@ -85,19 +83,17 @@ public class OldReportsCompatibleTest extends ApplicationTest {
       // Check global view formats
       clickOnAndReload("#vboxReports0 GridPane");
       waitUntilExists("#pane-global");
+      waitUntilExists("#but" + old);
+      HBox globalFormatsBox = (HBox) scene.lookup("#globalFormatsBox");
+      Assert.assertEquals("Global formats old", 1, globalFormatsBox.getChildren().size());
+      System.out.println("ID:"+globalFormatsBox.getChildren().get(0).getId());
+      ImageView imageView = (ImageView) scene.lookup("#but" + old);
+      Assert.assertTrue(imageView != null);
+
+      // Go to main check files
+      clickOnAndReloadTop("#butDessign", "#pane-design");
+      waitUntilExists("#pane-design");
     }
-
-
-
-    // Check global view formats
-//    List<String> foundTypes = new ArrayList<>();
-//    List<String> expectedTypes = Arrays.asList("xml","mets");
-//    HBox formatsBox = (HBox) grid.getChildren().get(8);
-//    for (Node n : formatsBox.getChildren()){
-//      ImageView iv = (ImageView) n;
-//      foundTypes.add(iv.getId().replace("but", ""));
-//    }
-//    Assert.assertEquals("Available buttons", expectedTypes, foundTypes);
   }
 
   private void copyReport(String old) throws Exception{

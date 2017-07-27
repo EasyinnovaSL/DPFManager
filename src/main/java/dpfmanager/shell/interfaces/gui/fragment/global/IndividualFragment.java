@@ -85,6 +85,8 @@ public class IndividualFragment {
   @FXML
   private ImageView fKoImage;
   @FXML
+  private ImageView fQuestionImage;
+  @FXML
   private GridPane gridFull;
 
   /**
@@ -110,11 +112,12 @@ public class IndividualFragment {
   public void init(ReportIndividualGui r) {
     info = r;
     info.load();
-    info.loadFormats();
     if (info.isQuick()){
       loadReportRowQuick();
-    } else {
+    } else if (!info.isOld()){
       loadReportRowFull();
+    } else {
+      loadReportRowOld();
     }
   }
 
@@ -153,6 +156,7 @@ public class IndividualFragment {
     fPath.setText(info.getFilePath());
 
     // Result
+    NodeUtil.hideNode(fQuestionImage);
     if (info.getErrors() > 0) {
       NodeUtil.showNode(fKoImage);
       NodeUtil.hideNode(fOkImage);
@@ -176,6 +180,29 @@ public class IndividualFragment {
     } else {
       fWarnings.setTextFill(Color.LIGHTGREY);
     }
+
+    // Format Icons
+    addFormatIcons(fFormatsBox);
+
+    // Show
+    NodeUtil.showNode(gridFull);
+    NodeUtil.hideNode(gridQuick);
+  }
+
+  private void loadReportRowOld() {
+    fInput.setText(info.getFilename());
+    fPath.setText(info.getFilePath());
+
+    // Result
+    NodeUtil.hideNode(fKoImage);
+    NodeUtil.hideNode(fOkImage);
+    NodeUtil.showNode(fQuestionImage);
+
+    // Errors
+    fErrors.setText("");
+
+    // Warnings
+    fWarnings.setText("");
 
     // Format Icons
     addFormatIcons(fFormatsBox);

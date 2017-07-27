@@ -31,12 +31,14 @@ public class ThreadsMessage extends DpfMessage {
 
   private Type type;
   private Long uuid;
+  private String pool;
   private boolean request;
 
-  public ThreadsMessage(Type t, Long u, boolean r) {
+  public ThreadsMessage(Type t, Long u, boolean r, String p) {
     type = t;
     uuid = u;
     request = r;
+    pool = p;
   }
 
   public boolean isPause() {
@@ -57,5 +59,9 @@ public class ThreadsMessage extends DpfMessage {
 
   public Long getUuid() {
     return uuid;
+  }
+
+  public String getPool() {
+    return pool;
   }
 }

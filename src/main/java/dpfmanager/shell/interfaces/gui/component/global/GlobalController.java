@@ -187,4 +187,8 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
     return inputFiles;
   }
 
+  public void downloadReport(String path){
+    // TODO
+  }
+
 }

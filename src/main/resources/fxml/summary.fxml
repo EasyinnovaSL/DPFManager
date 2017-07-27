@@ -194,11 +194,6 @@
                         <children>
                             <HBox fx:id="hboxSize" alignment="CENTER_RIGHT">
                                 <children>
-                                    <Label fx:id="labelSize" styleClass="lightgrey" text="%folderSize">
-                                        <HBox.margin>
-                                            <Insets right="10.0" />
-                                        </HBox.margin>
-                                    </Label>
                                     <Button fx:id="clearOptionsButton" mnemonicParsing="false" onAction="#clearOptions" styleClass="button-trans-clear" text="%clearOptions">
                                         <padding>
                                             <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
@@ -209,43 +204,54 @@
                                     </Button>
                                 </children>
                             </HBox>
-                            <HBox fx:id="hboxOptions" alignment="CENTER_RIGHT" styleClass="border-box">
-                                <VBox.margin>
-                                    <Insets top="5.0" />
-                                </VBox.margin>
-                                <children>
-                                    <VBox spacing="10.0">
-                                        <children>
-                                            <RadioButton fx:id="radAll" mnemonicParsing="false" selected="true" styleClass="lightgrey" text="%allReports">
-                                                <toggleGroup>
-                                                    <ToggleGroup fx:id="toggleClear" />
-                                                </toggleGroup>
-                                            </RadioButton>
-                                            <HBox alignment="CENTER_LEFT">
-                                                <children>
-                                                    <RadioButton fx:id="radOlder" mnemonicParsing="false" styleClass="lightgrey" text="%olderThan" toggleGroup="$toggleClear" />
-                                                    <DatePicker fx:id="datePicker" prefWidth="110.0">
-                                                        <HBox.margin>
-                                                            <Insets left="10.0" />
-                                                        </HBox.margin>
-                                                    </DatePicker>
-                                                </children>
-                                            </HBox>
-                                        </children>
-                                        <HBox.margin>
-                                            <Insets right="20.0" />
-                                        </HBox.margin>
-                                    </VBox>
-                                    <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearReports" styleClass="button-trans-clear" text="%clear">
-                                        <padding>
-                                            <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
-                                        </padding>
-                                    </Button>
-                                </children>
-                                <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                </padding>
-                            </HBox>
+                     <VBox fx:id="hboxOptions" alignment="TOP_RIGHT" spacing="5.0" styleClass="border-box">
+                        <children>
+                                    <Label fx:id="labelSize" styleClass="lightgrey" text="%folderSize" />
+                                  <HBox alignment="CENTER_RIGHT">
+                                      <VBox.margin>
+                                          <Insets />
+                                      </VBox.margin>
+                                      <children>
+                                          <VBox spacing="10.0">
+                                              <children>
+                                                  <RadioButton fx:id="radAll" mnemonicParsing="false" selected="true" styleClass="lightgrey" text="%allReports">
+                                                      <toggleGroup>
+                                                          <ToggleGroup fx:id="toggleClear" />
+                                                      </toggleGroup>
+                                                  </RadioButton>
+                                                  <HBox alignment="CENTER_LEFT">
+                                                      <children>
+                                                          <RadioButton fx:id="radOlder" mnemonicParsing="false" styleClass="lightgrey" text="%olderThan" toggleGroup="$toggleClear" />
+                                                          <DatePicker fx:id="datePicker" prefWidth="110.0">
+                                                              <HBox.margin>
+                                                                  <Insets left="10.0" />
+                                                              </HBox.margin>
+                                                          </DatePicker>
+                                                      </children>
+                                                  </HBox>
+                                              </children>
+                                              <HBox.margin>
+                                                  <Insets right="20.0" />
+                                              </HBox.margin>
+                                          </VBox>
+                                          <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearReports" styleClass="button-trans-clear" text="%clear">
+                                              <padding>
+                                                  <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+                                              </padding>
+                                          </Button>
+                                      </children>
+                                      <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                      </padding>
+                                  </HBox>
+                        </children>
+                        <VBox.margin>
+                           <Insets />
+                        </VBox.margin>
+                        <padding>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </padding>
+                     </VBox>
                         </children>
                         <padding>
                             <Insets right="10.0" />

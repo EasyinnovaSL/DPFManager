@@ -22,12 +22,9 @@ package dpfmanager.shell.interfaces.gui.fragment;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
-import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
-import dpfmanager.shell.interfaces.gui.component.statistics.messages.ShowHideErrorsMessage;
-import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,10 +33,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -55,10 +49,6 @@ import org.jacpfx.rcp.context.Context;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -103,6 +93,8 @@ public class ReportFragment {
   /* Report Row info */
   private ReportGui info;
 
+  private StackPane lastStack;
+
   public void init(ReportGui reportRow) {
     info = reportRow;
     loadReportRow();
@@ -114,14 +106,14 @@ public class ReportFragment {
     files.setText(info.getNfiles() + "");
     input.setText(info.getInput());
     errors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
-    if (info.getErrors() == 0){
+    if (info.getErrors() == 0) {
       NodeUtil.showNode(okImage);
       NodeUtil.hideNode(koImage);
     } else {
       NodeUtil.hideNode(okImage);
       NodeUtil.showNode(koImage);
     }
-    if (info.getGlobalReport() != null && info.getGlobalReport().getConfig().isQuick()) {
+    if (info.getGlobalReport() != null && info.isQuick()) {
       type.setText(bundle.getString("typeQuick"));
       warnings.setText("");
     } else {
@@ -199,6 +191,8 @@ public class ReportFragment {
     icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
+        // Disable icon
+        icon.setDisable(true);
         // Send action to controller
         context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.DELETE, getUuid()));
         // Delete report
@@ -206,31 +200,45 @@ public class ReportFragment {
         File dir = new File(file.getParent());
         try {
           FileUtils.deleteDirectory(dir);
+          icon.setDisable(false);
         } catch (IOException e) {
           e.printStackTrace();
         }
-
-        // TODO
-//        getModel().removeItem(item);
       }
     });
     actionsBox.getChildren().add(icon);
   }
 
-  public void addLastItem(boolean isLast){
-    if (isLast){
-      StackPane stack = new StackPane();
-      stack.setMaxWidth(0.0);
-      stack.setMaxHeight(0.0);
-      stack.setId("lastReportRow");
-      actionsBox.getChildren().add(stack);
+  public void addLastItem(boolean isLast) {
+    initLastStack();
+    if (isLast) {
+      if (!actionsBox.getChildren().contains(lastStack)) {
+        actionsBox.getChildren().add(lastStack);
+      }
+    } else {
+      actionsBox.getChildren().remove(lastStack);
     }
+  }
+
+  private void initLastStack() {
+    if (lastStack != null) return;
+    lastStack = new StackPane();
+    lastStack.setMaxWidth(0.0);
+    lastStack.setMaxHeight(0.0);
+    lastStack.setId("lastReportRow");
   }
 
   @FXML
   protected void onGridPaneClicked(MouseEvent event) throws Exception {
-    context.send(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
-    context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, info));
+    ArrayMessage am = new ArrayMessage();
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, info));
+    context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
+  }
+
+  public void setLast(boolean last) {
+    info.setLast(last);
+    addLastItem(last);
   }
 
   public String getUuid() {

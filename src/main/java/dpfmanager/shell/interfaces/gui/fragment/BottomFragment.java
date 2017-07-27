@@ -191,10 +191,10 @@ public class BottomFragment {
     ManagedFragmentHandler<TaskFragment> taskFragment = taskFragments.get(ctm.getUuid());
     if (ctm.isPause()){
       taskFragment.getController().finishPause();
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.PAUSE, ctm.getUuid(), false));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.PAUSE, ctm.getUuid(), false, "default"));
     } else if (ctm.isCancel()){
       removeTask(ctm.getUuid());
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, ctm.getUuid(), false));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, ctm.getUuid(), false, "default"));
     }
   }
 

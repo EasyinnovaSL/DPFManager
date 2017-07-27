@@ -19,15 +19,14 @@
 
 package dpfmanager.shell.modules.report.util;
 
-import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.core.SmallGlobalReport;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 
@@ -39,12 +38,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.ResourceBundle;
 
 /**
  * Created by easy on 17/09/2015.
@@ -58,9 +55,10 @@ public class ReportGui implements Comparable<ReportGui>{
   private String reportDir;
   private Long timestamp;
   private boolean loaded;
-  private boolean loadedFormats;
+  private boolean loadedPartial;
   private boolean error;
   private boolean last;
+  private boolean quick;
 
   private String date;
   private Integer nfiles;
@@ -74,6 +72,7 @@ public class ReportGui implements Comparable<ReportGui>{
   private String delete;
   private String deletePath;
 
+  private SmallGlobalReport smallGlobalReport;
   private GlobalReport globalReport;
   private Integer reportVersion = 0;
 
@@ -83,8 +82,8 @@ public class ReportGui implements Comparable<ReportGui>{
     this.reportDir = reportDir;
     this.uuid = reportDay + reportDir;
     this.loaded = false;
-    this.loadedFormats = false;
     this.error = true;
+    this.loadedPartial = false;
     readTime();
   }
 
@@ -100,14 +99,22 @@ public class ReportGui implements Comparable<ReportGui>{
 
     this.uuid = reportDay + reportDir;
     this.loaded = false;
-    this.loadedFormats = false;
     this.error = true;
+    this.loadedPartial = false;
     readTime();
-    load();
+    loadPartial();
+    if (!loadedPartial) {
+      load();
+    }
   }
 
   public void readTime(){
     timestamp = 0L;
+    File reportSmallSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.min.ser");
+    if (reportSmallSer.exists() && reportSmallSer.length() > 0) {
+      timestamp = getTimestamp(reportSmallSer.getPath());
+      return;
+    }
     File reportSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
     if (reportSer.exists() && reportSer.length() > 0) {
       timestamp = getTimestamp(reportSer.getPath());
@@ -135,6 +142,10 @@ public class ReportGui implements Comparable<ReportGui>{
   }
 
   public boolean exists(){
+    File reportSmallSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.min.ser");
+    if (reportSmallSer.exists() && reportSmallSer.length() > 0) {
+      return true;
+    }
     File reportSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.ser");
     if (reportSer.exists() && reportSer.length() > 0) {
       return true;
@@ -156,6 +167,16 @@ public class ReportGui implements Comparable<ReportGui>{
       return true;
     }
     return false;
+  }
+
+  public void loadPartial() {
+    if (loadedPartial) return;
+    File reportSmallSer = new File(baseDir + "/" + reportDay + "/" + reportDir + "/summary.min.ser");
+    if (reportSmallSer.exists() && reportSmallSer.length() > 0) {
+      createRowFromSmallSer(reportDay, reportSmallSer);
+      loadedPartial = true;
+    }
+    loadedPartial = true;
   }
 
   public void load() {
@@ -180,14 +201,11 @@ public class ReportGui implements Comparable<ReportGui>{
     if (error && reportPdf.exists() && reportPdf.length() > 0) {
       createRowFromPdf(reportDay, reportPdf);
     }
-
     loaded = true;
   }
 
   public void readFormats() {
-    if (loadedFormats) return;
     if (!error) {
-      System.out.println("Read formats");
       // Add formats
       for (String format : available_formats) {
         File report;
@@ -200,8 +218,6 @@ public class ReportGui implements Comparable<ReportGui>{
           addFormat(format, report.getPath());
         }
       }
-      // All OK
-      loadedFormats = true;
     }
   }
 
@@ -233,6 +249,40 @@ public class ReportGui implements Comparable<ReportGui>{
   }
 
   /**
+   * Create report row from serialized SmallGlobalReport Object
+   *
+   * @param reportDay the report day
+   * @param file      the file
+   * @return the report row
+   */
+  private void createRowFromSmallSer(String reportDay, File file) {
+    try {
+      String sdate = reportDay.substring(6, 8) + "/" + reportDay.substring(4, 6) + "/" + reportDay.substring(0, 4);
+      SmallGlobalReport sgr = (SmallGlobalReport) GlobalReport.read(file.getAbsolutePath());
+      if (sgr == null) {
+        error = true;
+        return;
+      }
+
+      smallGlobalReport = sgr;
+      if (sgr.getVersion() != null) {
+        reportVersion = sgr.getVersion();
+      }
+      int n = sgr.getnFiles();
+      String stime = getStime(timestamp);
+      String input = sgr.getInput();
+      int passed = sgr.getnPassed();
+      int errors = sgr.getnErrors();
+      int warnings = sgr.getnWarnings();
+      int score = (n > 0) ? (passed) * 100 / n : 0;
+
+      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath(), sgr.isQuick());
+    } catch (Exception e) {
+      error = true;
+    }
+  }
+
+  /**
    * Create report row from serialized GlobalReport Object
    *
    * @param reportDay the report day
@@ -260,7 +310,7 @@ public class ReportGui implements Comparable<ReportGui>{
       int warnings = gr.getAllReportsWarnings();
       int score = (n > 0) ? (passed) * 100 / n : 0;
 
-      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath());
+      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath(), gr.getConfig().isQuick());
     } catch (Exception e) {
       error = true;
     }
@@ -323,7 +373,7 @@ public class ReportGui implements Comparable<ReportGui>{
         score = passed * 100 / n;
       }
 
-      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath());
+      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath(), false);
     } catch (Exception e) {
       error = true;
     }
@@ -411,7 +461,7 @@ public class ReportGui implements Comparable<ReportGui>{
         }
       }
 
-      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath());
+      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath(), false);
     } catch (Exception e) {
       error = true;
     }
@@ -473,7 +523,7 @@ public class ReportGui implements Comparable<ReportGui>{
       }
 
 
-      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath());
+      setValues(sdate, stime, input, n, errors, warnings, passed, score, file.getAbsolutePath(), false);
     } catch (Exception e) {
       error = true;
     }
@@ -525,13 +575,13 @@ public class ReportGui implements Comparable<ReportGui>{
       }
       document.close();
 
-      setValues(sdate, stime, input, n, errors, mWarns, passed, score, file.getAbsolutePath());
+      setValues(sdate, stime, input, n, errors, mWarns, passed, score, file.getAbsolutePath(), false);
     } catch (Exception e) {
       error = true;
     }
   }
 
-  public void setValues(String sdate, String stime, String input, Integer nFiles, Integer errors, Integer warnings, Integer passed, Integer score, String deletePath) {
+  public void setValues(String sdate, String stime, String input, Integer nFiles, Integer errors, Integer warnings, Integer passed, Integer score, String deletePath, boolean quick) {
     this.date = parseDate2Locale(sdate);
     this.time = stime;
     this.input = input;
@@ -544,6 +594,7 @@ public class ReportGui implements Comparable<ReportGui>{
     this.delete = System.currentTimeMillis() + "";;
     this.deletePath = deletePath;
     this.error = false;
+    this.quick = quick;
   }
 
   private String parseDate2Locale(String sdate) {
@@ -733,6 +784,10 @@ public class ReportGui implements Comparable<ReportGui>{
 
   public boolean isLoaded() {
     return loaded;
+  }
+
+  public boolean isQuick(){
+    return quick;
   }
 
   /**

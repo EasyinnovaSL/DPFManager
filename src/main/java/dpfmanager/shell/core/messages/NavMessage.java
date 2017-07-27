@@ -31,7 +31,8 @@ public class NavMessage extends DpfMessage {
     REPORT,
     SPECIFIC,
     TEXT,
-    PDF
+    PDF,
+    RELOAD
   }
 
   private Selected selected;
@@ -76,6 +77,10 @@ public class NavMessage extends DpfMessage {
 
   public boolean isPdf() {
     return selected.equals(Selected.PDF);
+  }
+
+  public boolean isReload() {
+    return selected.equals(Selected.RELOAD);
   }
 
   public Integer getCount() {

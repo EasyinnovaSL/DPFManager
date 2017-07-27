@@ -46,18 +46,23 @@ import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 import org.apache.commons.io.FileUtils;
@@ -116,6 +121,10 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    * Global report elements
    */
   @FXML
+  private ProgressIndicator progressGlobal;
+  @FXML
+  private VBox vboxGlobal;
+  @FXML
   private ImageView globalImage;
   @FXML
   private Label resultLabel;
@@ -125,6 +134,8 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   private Label globalDate;
   @FXML
   private Label globalScore;
+  @FXML
+  private Label globalDuration;
   @FXML
   private Label globalFiles;
   @FXML
@@ -177,6 +188,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
         individualHandlers = new HashMap<>();
         currentMode = IndividualComparator.Mode.ERRORS;
         currentOrder = IndividualComparator.Order.DESC;
+        gMessage.getReportGui().load();
         getController().readIndividualReports(gMessage.getReportGui());
       } else if (gMessage.isAddIndividual()) {
         gMessage.getReportIndividualGui().load();
@@ -236,6 +248,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     individualHandlers = new HashMap<>();
     pagination.setSkin(new PaginationBetterSkin(pagination));
     indicator.setProgress(-1);
+    progressGlobal.setProgress(-1);
   }
 
   /**
@@ -243,6 +256,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
    */
   private void initGlobalReport(ReportGui info) {
     this.info = info;
+    NodeUtil.hideNode(gridHeadersQuick);
+    NodeUtil.hideNode(gridHeadersFull);
+    NodeUtil.hideNode(labelOld);
     info.readFormats();
     if (info.getErrors() == 0) {
       resultLabel.setText(bundle.getString("passedCheck"));
@@ -259,9 +275,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     globalErrors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
     globalWarnings.setText(bundle.getString("passedWithWarnings").replace("%1", "" + info.getWarnings() + ""));
     globalPassed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
-    NodeUtil.hideNode(gridHeadersQuick);
-    NodeUtil.hideNode(gridHeadersFull);
-    NodeUtil.hideNode(labelOld);
+    if (info.getGlobalReport() != null) {
+      globalDuration.setText(readableDuration(info.getGlobalReport()));
+    }
     if (!isOldReport() && info.getGlobalReport().getConfig().isQuick()) {
       NodeUtil.showNode(gridHeadersQuick);
     } else {
@@ -270,6 +286,11 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     addChartScore(info);
     addFormatIcons(info);
     addActionsIcons(info);
+    showLoadingReports();
+  }
+
+  private String readableDuration(GlobalReport gr){
+    return gr.getDurationHours() + ":" + gr.getDurationMinutes() + ":" + ((gr.getDurationMillis() > 500) ? gr.getDurationSeconds() + 1 : gr.getDurationSeconds());
   }
 
   private void addChartScore(ReportGui info) {
@@ -331,17 +352,50 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
       if (sMessage != null) {
         final ShowMessage finalSMessage = sMessage;
         icon.setOnMouseClicked(event -> {
-          ArrayMessage am = new ArrayMessage();
-          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
-          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
-          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
-          context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+          if (event.getButton() == MouseButton.PRIMARY) {
+            ArrayMessage am = new ArrayMessage();
+            am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
+            context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+          }
         });
 
-//        ContextMenu contextMenu = new ContextMenu();
-//        javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
-//        contextMenu.getItems().add(download);
-//        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem itemShow = new MenuItem(bundle.getString("showReport"));
+        itemShow.setOnAction(new EventHandler<ActionEvent>() {
+          public void handle(ActionEvent e) {
+            ArrayMessage am = new ArrayMessage();
+            am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
+            context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+          }
+        });
+        MenuItem itemGenerate = new MenuItem(bundle.getString("generateReport"));
+        itemGenerate.setOnAction(new EventHandler<ActionEvent>() {
+          public void handle(ActionEvent e) {
+            ArrayMessage am = new ArrayMessage();
+            am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
+            context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+          }
+        });
+        MenuItem itemDownload = new MenuItem(bundle.getString("downloadReport"));
+        itemDownload.setOnAction(new EventHandler<ActionEvent>() {
+          public void handle(ActionEvent e) {
+            getController().downloadReport(path);
+          }
+        });
+
+        if (path == null) {
+          contextMenu.getItems().addAll(itemGenerate);
+        } else {
+          contextMenu.getItems().addAll(itemShow, itemDownload);
+        }
+
+        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
         globalFormatsBox.getChildren().add(icon);
       }
     }
@@ -555,13 +609,17 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   public void showLoading() {
     showLoadingReports();
-    hideBottom();
-    NodeUtil.hideNode(labelOld);
+    NodeUtil.showNode(progressGlobal);
+    NodeUtil.hideNode(vboxGlobal);
   }
 
   public void showLoadingReports() {
+    NodeUtil.showNode(vboxGlobal);
+    NodeUtil.hideNode(progressGlobal);
     NodeUtil.hideNode(pagination);
     NodeUtil.showNode(indicator);
+    NodeUtil.hideNode(labelOld);
+    hideBottom();
   }
 
   public void hideLoadingReports() {

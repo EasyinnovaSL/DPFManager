@@ -43,7 +43,6 @@ public class ReportIndividualGui {
   private String name;
   private String filePath;
   private boolean loaded;
-  private boolean loadedFormats;
   private boolean error;
   private boolean last;
   private boolean quick;
@@ -89,7 +88,6 @@ public class ReportIndividualGui {
     this.loaded = false;
     this.error = false;
     this.last = false;
-    this.loadedFormats = false;
     this.old = false;
   }
 
@@ -110,7 +108,6 @@ public class ReportIndividualGui {
 
   public void loadFormats(){
     if (!loaded) return;
-    if (loadedFormats) return;
     readFormats();
   }
 
@@ -206,9 +203,6 @@ public class ReportIndividualGui {
           formats.put(format, report.getPath());
         }
       }
-
-      // All OK
-      loadedFormats = true;
     }
   }
 
@@ -254,6 +248,9 @@ public class ReportIndividualGui {
   }
   public boolean isQuick() {
     return quick;
+  }
+  public boolean isOld() {
+    return old;
   }
 }
 

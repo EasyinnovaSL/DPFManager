@@ -71,7 +71,7 @@ public class ThreadingService extends DpfService {
   /**
    * The main executor service
    */
-  private DpfExecutor myExecutor;
+  private Map<String, DpfExecutor> myExecutors;
 
   /**
    * The number of threads
@@ -98,6 +98,7 @@ public class ThreadingService extends DpfService {
     // No context yet
     bundle = DPFManagerProperties.getBundle();
     checks = new HashMap<>();
+    myExecutors = new HashMap<>();
     pendingChecks = new LinkedList<>();
     needReload = true;
     totalChecks = 0;
@@ -107,7 +108,9 @@ public class ThreadingService extends DpfService {
   @PreDestroy
   public void finish() {
     // Finish executor
-    myExecutor.shutdownNow();
+    for (DpfExecutor myExecutor : myExecutors.values()){
+      myExecutor.shutdownNow();
+    }
   }
 
   @Override
@@ -131,27 +134,34 @@ public class ThreadingService extends DpfService {
     }
 
     cores = (specificCores >= 1 && specificCores <= maxCores) ? specificCores : maxCores;
-    myExecutor = new DpfExecutor(cores);
-    myExecutor.handleContext(context);
   }
 
-  public void run(DpfRunnable runnable, Long uuid) {
+  private DpfExecutor getMyExecutor(String pool){
+    if (!myExecutors.containsKey(pool)) {
+      DpfExecutor myExecutor = new DpfExecutor(cores);
+      myExecutor.handleContext(context);
+      myExecutors.put(pool, myExecutor);
+    }
+    return myExecutors.get(pool);
+  }
+
+  public void run(DpfRunnable runnable, Long uuid, String pool) {
     runnable.setContext(getContext());
     runnable.setUuid(uuid);
-    myExecutor.myExecute(runnable);
+    getMyExecutor(pool).myExecute(runnable);
   }
 
   public void processThreadMessage(ThreadsMessage tm) {
     if (tm.isPause() && tm.isRequest()) {
-      myExecutor.pause(tm.getUuid());
+      getMyExecutor(tm.getPool()).pause(tm.getUuid());
     } else if (tm.isResume()) {
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.RESUME, tm.getUuid()));
-      myExecutor.resume(tm.getUuid());
+      getMyExecutor(tm.getPool()).resume(tm.getUuid());
     } else if (tm.isCancel() && tm.isRequest()) {
-      cancelRequest(tm.getUuid());
-    } else if (tm.isCancel() && !tm.isRequest()) {
+      cancelRequest(tm.getUuid(), tm.getPool());
+    } else if (tm.isCancel()) {
       cancelFinish(tm.getUuid());
-    } else if (tm.isPause() && !tm.isRequest()) {
+    } else if (tm.isPause()) {
       pauseFinish(tm.getUuid());
     }
   }
@@ -160,7 +170,7 @@ public class ThreadingService extends DpfService {
     context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(CloseMessage.Type.THREADING, !checks.isEmpty()));
   }
 
-  private void cancelRequest(Long uuid) {
+  private void cancelRequest(Long uuid, String pool) {
     // Check if is pending
     FileCheck pending = null;
     for (FileCheck check : pendingChecks) {
@@ -175,7 +185,7 @@ public class ThreadingService extends DpfService {
       context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.CANCEL, uuid));
     } else {
       // Cancel threads
-      myExecutor.cancel(uuid);
+      getMyExecutor(pool).cancel(uuid);
     }
   }
 

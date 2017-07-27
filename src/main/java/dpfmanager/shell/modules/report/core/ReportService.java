@@ -129,7 +129,7 @@ public class ReportService extends DpfService {
     if (!gm.isOnlyGlobal()){
       // Start individual transforms
       for (MakeReportRunnable iMrr : individualsMakers){
-        context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, iMrr));
+        context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, iMrr, "individual"));
       }
     } else {
       // Start global transforms
@@ -141,7 +141,7 @@ public class ReportService extends DpfService {
     IndividualReport ir = (IndividualReport) IndividualReport.read(gm.getPath());
     MakeReportRunnable mrr = new MakeReportRunnable(generator);
     mrr.setIndividualParameters(ir, gm.getPath(), gm.getFormat(), gm.getConfig());
-    context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(System.currentTimeMillis(), mrr));
+    context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(System.currentTimeMillis(), mrr, "individual"));
   }
 
   public Configuration getConfig() {

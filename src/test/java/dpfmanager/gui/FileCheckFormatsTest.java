@@ -14,7 +14,6 @@ public class FileCheckFormatsTest extends ApplicationTest {
 
   private String inputConfigPath = "src/test/resources/ConfigFiles/configFormats.dpf";
   private String inputFilePath = "src/test/resources/SmallGui.zip";
-//  private String inputFilePath = "src/test/resources/Small/Bilevel.tif";
 
   Stage stage = null;
 

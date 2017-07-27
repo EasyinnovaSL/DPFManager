@@ -710,7 +710,10 @@ public class ReportGenerator {
     String htmlFileStr = internalReportFolder + "report.html";
     String pdfFileStr = internalReportFolder + "report.pdf";
 
+    SmallGlobalReport sgr = new SmallGlobalReport(gr, internalReportFolder + "/summary.ser");
+
     gr.write(internalReportFolder, "summary.ser");
+    sgr.write(internalReportFolder, "summary.min.ser");
 //    gr = (GlobalReport) GlobalReport.read(internalReportFolder + "/summary.ser");
 
     if (config.getFormats().contains("XML")) {

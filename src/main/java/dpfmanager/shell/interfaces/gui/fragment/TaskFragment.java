@@ -22,6 +22,7 @@ package dpfmanager.shell.interfaces.gui.fragment;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
+import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
@@ -274,6 +275,7 @@ public class TaskFragment {
     ReportGui rg = new ReportGui(path);
     ArrayMessage am = new ArrayMessage();
     am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.RELOAD));
     am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, rg));
     context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
   }
@@ -285,12 +287,12 @@ public class TaskFragment {
       showLoadingPause();
       mainVbox.setOpacity(opacity);
       resumePauseImage.setImage(new Image("images/resume.png"));
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.PAUSE, job.getId(), true));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.PAUSE, job.getId(), true, "default"));
     } else {
       // Resume check
       mainVbox.setOpacity(1.0);
       resumePauseImage.setImage(new Image("images/pause.png"));
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.RESUME, job.getId(), true));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.RESUME, job.getId(), true,"default"));
     }
     isPause = !isPause;
   }
@@ -301,7 +303,7 @@ public class TaskFragment {
     if (!loadingPause.isVisible()) {
       NodeUtil.hideNode(resumePauseImage);
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Cancelled check: "+job.getInput()));
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, job.getId(), true));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, job.getId(), true, "default"));
     }
   }
 
