@@ -86,7 +86,8 @@ public class OldReportsCompatibleTest extends ApplicationTest {
       waitUntilExists("#but" + old);
       HBox globalFormatsBox = (HBox) scene.lookup("#globalFormatsBox");
       Assert.assertEquals("Global formats old", 1, globalFormatsBox.getChildren().size());
-      FxAssert.verifyThat("#but" + old, NodeMatchers.isNotNull());
+      ImageView imageView = (ImageView) scene.lookup("#but" + old);
+      Assert.assertTrue(imageView != null);
 
       // Go to main check files
       clickOnAndReloadTop("#butDessign", "#pane-design");
