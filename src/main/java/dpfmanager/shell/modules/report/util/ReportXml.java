@@ -77,66 +77,62 @@ public class ReportXml extends ReportGeneric {
 
       // Individual reports
       for (SmallIndividualReport ir : reports) {
-        try {
-          Element report = doc.createElement("report");
+        Element report = doc.createElement("report");
 
-          // Image name
-          Element el = doc.createElement("name");
-          el.setTextContent(ir.getFileName());
-          report.appendChild(el);
+        // Image name
+        Element el = doc.createElement("name");
+        el.setTextContent(ir.getFileName());
+        report.appendChild(el);
 
-          // ISOs
-          Element isos = doc.createElement("ISOs");
-          int totalWarnings = 0;
-          for (String iso : gr.getCheckedIsos()) {
-            if (gr.hasValidation(iso)) {
-              Element isoEl = doc.createElement("iso");
+        // ISOs
+        Element isos = doc.createElement("ISOs");
+        int totalWarnings = 0;
+        for (String iso : gr.getCheckedIsos()) {
+          if (gr.hasValidation(iso)) {
+            Element isoEl = doc.createElement("iso");
 
-              el = doc.createElement("name");
-              el.setTextContent(iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso));
-              isoEl.appendChild(el);
+            el = doc.createElement("name");
+            el.setTextContent(iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso));
+            isoEl.appendChild(el);
 
-              el = doc.createElement("errors");
-              el.setTextContent(ir.getNErrors(iso) + "");
-              isoEl.appendChild(el);
+            el = doc.createElement("errors");
+            el.setTextContent(ir.getNErrors(iso) + "");
+            isoEl.appendChild(el);
 
-              el = doc.createElement("warnings");
-              el.setTextContent(ir.getNWarnings(iso) + "");
-              isoEl.appendChild(el);
-              totalWarnings += ir.getNWarnings(iso);
+            el = doc.createElement("warnings");
+            el.setTextContent(ir.getNWarnings(iso) + "");
+            isoEl.appendChild(el);
+            totalWarnings += ir.getNWarnings(iso);
 
-              isos.appendChild(isoEl);
-            }
+            isos.appendChild(isoEl);
           }
-
-          // Image result
-          el = doc.createElement("result");
-          if (ir.getPercent() == 100) {
-            el.setTextContent("Passed");
-          } else if (totalWarnings > 0){
-            el.setTextContent("Passed with warnings");
-          } else {
-            el.setTextContent("Error");
-          }
-          report.appendChild(el);
-
-          // Image score
-          el = doc.createElement("score");
-          el.setTextContent(ir.getPercent() + "%");
-          report.appendChild(el);
-
-          // ISOs list
-          report.appendChild(isos);
-
-          // Path
-          el = doc.createElement("path");
-          el.setTextContent(ir.getReportPath() + ".xml");
-          report.appendChild(el);
-
-          individualreports.appendChild(report);
-        } catch (Exception ex) {
-          ex.toString();
         }
+
+        // Image result
+        el = doc.createElement("result");
+        if (ir.getPercent() == 100) {
+          el.setTextContent("Passed");
+        } else if (totalWarnings > 0){
+          el.setTextContent("Passed with warnings");
+        } else {
+          el.setTextContent("Error");
+        }
+        report.appendChild(el);
+
+        // Image score
+        el = doc.createElement("score");
+        el.setTextContent(ir.getPercent() + "%");
+        report.appendChild(el);
+
+        // ISOs list
+        report.appendChild(isos);
+
+        // Path
+        el = doc.createElement("path");
+        el.setTextContent(ir.getReportPath() + ".xml");
+        report.appendChild(el);
+
+        individualreports.appendChild(report);
       }
 
       // Statistics
