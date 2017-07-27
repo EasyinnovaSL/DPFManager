@@ -958,7 +958,7 @@ public class MetsReport {
           ImageCaptureMetadataType.SourceInformation.SourceSize.SourceXDimension sourceXDimension = new ImageCaptureMetadataType.SourceInformation.SourceSize.SourceXDimension();
           TypeOfNonNegativeRealType xDValue = new TypeOfNonNegativeRealType();
           xDValue.setUse("System");
-          if (ifd.getMetadata().get("XResolution").getCardinality() > 0) {
+          if (ifd.getMetadata().get("XResolution").getCardinality() > 0 && ifd.getMetadata().get("XResolution").getValue().get(0) instanceof Rational) {
             Rational xResolutionValue = (Rational) (ifd.getMetadata().get("XResolution").getValue().get(0));
             xDValue.setValue(xResolutionValue.getFloatValue());
             sourceXDimension.setSourceXDimensionValue(xDValue);

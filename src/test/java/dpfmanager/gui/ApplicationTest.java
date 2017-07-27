@@ -327,6 +327,8 @@ public abstract class ApplicationTest extends FxRobot implements ApplicationFixt
       reloadScene();
       node = scene.lookup(id);
     }
+    if (node == null)
+      System.out.println("Timeout");
     sleep(500);
   }
 

@@ -189,10 +189,10 @@ public class RunsTest extends TestCase {
           }
         }
       }
+      System.out.println("Correctly classified files: " + nCorrect);
+      System.out.println("Incorrectly classified files: " + nIncorrect);
+      System.out.println("Score: " + nCorrect*100/(nCorrect+nIncorrect) + "%");
     }
-    System.out.println("Correctly classified files: " + nCorrect);
-    System.out.println("Incorrectly classified files: " + nIncorrect);
-    System.out.println("Score: " + nCorrect*100/(nCorrect+nIncorrect) + "%");
   }
 
   void CreatePolicy() {
