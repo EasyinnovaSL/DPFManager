@@ -20,17 +20,22 @@
 package dpfmanager.shell.interfaces.gui.component.global;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
+import javafx.stage.FileChooser;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -188,7 +193,29 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
   }
 
   public void downloadReport(String path){
-    // TODO
+    File src = new File(path);
+    if (!src.exists() || !src.isFile()) return;
+
+    String name = src.getName().substring(0, src.getName().indexOf("."));
+    String extension = src.getName().substring(src.getName().indexOf("."));
+
+    FileChooser fileChooser = new FileChooser();
+
+    //Set extension filter
+    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(extension.toLowerCase().substring(1, extension.length() -1) + " files (*"+extension+")", "*" + extension);
+    fileChooser.getExtensionFilters().add(extFilter);
+    fileChooser.setInitialFileName(name);
+
+    //Show save file dialog
+    File dest = fileChooser.showSaveDialog(GuiWorkbench.getMyStage());
+
+    if(dest != null){
+      try {
+        FileUtils.copyFile(src, dest);
+      } catch (Exception e) {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, getBundle().getString("errorSavingReport")));
+      }
+    }
   }
 
 }
