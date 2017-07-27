@@ -285,12 +285,12 @@ public class TaskFragment {
       showLoadingPause();
       mainVbox.setOpacity(opacity);
       resumePauseImage.setImage(new Image("images/resume.png"));
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.PAUSE, job.getId(), true));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.PAUSE, job.getId(), true, "default"));
     } else {
       // Resume check
       mainVbox.setOpacity(1.0);
       resumePauseImage.setImage(new Image("images/pause.png"));
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.RESUME, job.getId(), true));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.RESUME, job.getId(), true,"default"));
     }
     isPause = !isPause;
   }
@@ -301,7 +301,7 @@ public class TaskFragment {
     if (!loadingPause.isVisible()) {
       NodeUtil.hideNode(resumePauseImage);
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Cancelled check: "+job.getInput()));
-      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, job.getId(), true));
+      context.send(BasicConfig.MODULE_THREADING, new ThreadsMessage(ThreadsMessage.Type.CANCEL, job.getId(), true, "default"));
     }
   }
 

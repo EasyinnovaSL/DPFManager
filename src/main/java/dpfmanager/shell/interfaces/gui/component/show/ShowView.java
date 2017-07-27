@@ -198,7 +198,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
             sr.finished = true;
           }
           if (sr.globalValue + sr.count == sr.max && sr.mrr != null) {
-            context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(sr.uuid, sr.mrr));
+            context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(sr.uuid, sr.mrr, "individual"));
           }
         }
       }

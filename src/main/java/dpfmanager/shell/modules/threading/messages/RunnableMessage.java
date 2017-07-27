@@ -28,11 +28,19 @@ import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 public class RunnableMessage extends DpfMessage {
 
   private Long uuid;
+  private String pool;
   private DpfRunnable runnable;
 
   public RunnableMessage(Long u, DpfRunnable r) {
     uuid = u;
     runnable = r;
+    pool = "default";
+  }
+
+  public RunnableMessage(Long u, DpfRunnable r, String p) {
+    uuid = u;
+    runnable = r;
+    pool = p;
   }
 
   public DpfRunnable getRunnable() {
@@ -41,5 +49,9 @@ public class RunnableMessage extends DpfMessage {
 
   public Long getUuid() {
     return uuid;
+  }
+
+  public String getPool() {
+    return pool;
   }
 }

@@ -64,7 +64,7 @@ public class ThreadingModule extends DpfModule {
       service.handleGlobalStatus(gm, false);
     } else if (dpfMessage.isTypeOf(RunnableMessage.class)) {
       RunnableMessage rm = dpfMessage.getTypedMessage(RunnableMessage.class);
-      service.run(rm.getRunnable(), rm.getUuid());
+      service.run(rm.getRunnable(), rm.getUuid(), rm.getPool());
     } else if (dpfMessage.isTypeOf(ThreadsMessage.class)){
       ThreadsMessage tm = dpfMessage.getTypedMessage(ThreadsMessage.class);
       service.processThreadMessage(tm);
