@@ -83,13 +83,13 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
   public void showComboBox(String filePath, String extension){
     int count = 0;
     File file = new File(filePath);
+    String selectedName = file.getName().replace("." + extension, "");
     File folder = file;
     if (folder.isFile()){
       folder = folder.getParentFile();
     }
 
     // Clear comboBox
-    boolean selectFirst = false;
     getView().clearComboBox();
     ObservableList<String> comboChilds = FXCollections.observableArrayList();
 
@@ -98,10 +98,9 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
     if (extension.equals("pdf")){
       summary = new File(folder.getPath() + "/report." + extension);
     }
-    if (summary.exists() && summary.isFile()){
+    if (summary.exists() && summary.isFile()) {
       getView().setCurrentReportParams(summary.getParent(), extension);
       comboChilds.add(summary.getName().replace("." + extension, ""));
-      selectFirst = true;
       count++;
     }
 
@@ -113,19 +112,11 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
     for (File child : childs){
       String onlyName = child.getName().replace("."+extension, "");
       comboChilds.add(onlyName);
-      if (count == 0){
-        selectFirst = true;
-      }
       count++;
     }
 
     getView().addComboChilds(comboChilds);
-    if (selectFirst) {
-      getView().selectComboChild(comboChilds.get(0));
-    } else {
-      getView().selectComboChild(file.getName());
-    }
-
+    getView().selectComboChild(selectedName);
 
     // Show nodes
     if (count > 1){

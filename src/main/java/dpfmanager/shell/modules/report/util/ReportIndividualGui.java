@@ -249,6 +249,9 @@ public class ReportIndividualGui {
   public boolean isQuick() {
     return quick;
   }
+  public boolean isOld() {
+    return old;
+  }
 }
 
 

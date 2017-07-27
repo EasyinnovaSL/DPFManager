@@ -104,6 +104,8 @@ public class ReportFragment {
   /* Report Row info */
   private ReportGui info;
 
+  private StackPane lastStack;
+
   public void init(ReportGui reportRow) {
     info = reportRow;
     loadReportRow();
@@ -222,13 +224,22 @@ public class ReportFragment {
   }
 
   public void addLastItem(boolean isLast){
+    initLastStack();
     if (isLast){
-      StackPane stack = new StackPane();
-      stack.setMaxWidth(0.0);
-      stack.setMaxHeight(0.0);
-      stack.setId("lastReportRow");
-      actionsBox.getChildren().add(stack);
+      if (!actionsBox.getChildren().contains(lastStack)) {
+        actionsBox.getChildren().add(lastStack);
+      }
+    } else {
+      actionsBox.getChildren().remove(lastStack);
     }
+  }
+
+  private void initLastStack(){
+    if (lastStack != null) return;
+    lastStack = new StackPane();
+    lastStack.setMaxWidth(0.0);
+    lastStack.setMaxHeight(0.0);
+    lastStack.setId("lastReportRow");
   }
 
   @FXML
@@ -237,6 +248,11 @@ public class ReportFragment {
     am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
     am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, info));
     context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
+  }
+
+  public void setLast(boolean last){
+    info.setLast(last);
+    addLastItem(last);
   }
 
   public String getUuid() {

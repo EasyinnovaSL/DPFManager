@@ -36,7 +36,7 @@ public class QuickCheckCmdTest extends CommandLineTest {
     File reportFolder = new File(ReportGenerator.getLastReportPath());
     Assert.assertTrue("Report path exists", reportFolder.exists());
     Assert.assertTrue("Report path is directory", reportFolder.isDirectory());
-    Assert.assertEquals("Report folder items", 2, reportFolder.list().length);
+    Assert.assertEquals("Report folder items", 3, reportFolder.list().length);
     File serializedFolder = new File(ReportGenerator.getLastReportPath() + "/serialized");
     Assert.assertTrue("Report path exists", serializedFolder.exists());
     Assert.assertTrue("Report path is directory", serializedFolder.isDirectory());
