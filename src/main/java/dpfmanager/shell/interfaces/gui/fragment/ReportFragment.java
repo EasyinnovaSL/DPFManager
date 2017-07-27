@@ -21,14 +21,10 @@ package dpfmanager.shell.interfaces.gui.fragment;
 
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
-import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
-import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
-import dpfmanager.shell.interfaces.gui.component.statistics.messages.ShowHideErrorsMessage;
-import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,10 +33,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -56,10 +49,6 @@ import org.jacpfx.rcp.context.Context;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -117,7 +106,7 @@ public class ReportFragment {
     files.setText(info.getNfiles() + "");
     input.setText(info.getInput());
     errors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
-    if (info.getErrors() == 0){
+    if (info.getErrors() == 0) {
       NodeUtil.showNode(okImage);
       NodeUtil.hideNode(koImage);
     } else {
@@ -202,30 +191,27 @@ public class ReportFragment {
     icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
+        // Disable icon
+        icon.setDisable(true);
         // Send action to controller
         context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.DELETE, getUuid()));
         // Delete report
         File file = new File(path);
         File dir = new File(file.getParent());
         try {
-          long t1 = System.currentTimeMillis();
           FileUtils.deleteDirectory(dir);
-          long t2 = System.currentTimeMillis();
-          System.out.println("Time: " + (t2-t1));
+          icon.setDisable(false);
         } catch (IOException e) {
           e.printStackTrace();
         }
-
-        // TODO
-//        getModel().removeItem(item);
       }
     });
     actionsBox.getChildren().add(icon);
   }
 
-  public void addLastItem(boolean isLast){
+  public void addLastItem(boolean isLast) {
     initLastStack();
-    if (isLast){
+    if (isLast) {
       if (!actionsBox.getChildren().contains(lastStack)) {
         actionsBox.getChildren().add(lastStack);
       }
@@ -234,7 +220,7 @@ public class ReportFragment {
     }
   }
 
-  private void initLastStack(){
+  private void initLastStack() {
     if (lastStack != null) return;
     lastStack = new StackPane();
     lastStack.setMaxWidth(0.0);
@@ -250,7 +236,7 @@ public class ReportFragment {
     context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
   }
 
-  public void setLast(boolean last){
+  public void setLast(boolean last) {
     info.setLast(last);
     addLastItem(last);
   }

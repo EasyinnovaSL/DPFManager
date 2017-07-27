@@ -148,6 +148,9 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
         context.send(new ReportsMessage(ReportsMessage.Type.READ));
       } else if (rMessage.isRead()) {
         initPagination();
+        if (getController().isEmpty()) {
+          hideLoading();
+        }
       } else if (rMessage.isSize()) {
         printSize(getModel().getReportsSize());
       } else if (rMessage.isDelete()) {
@@ -339,19 +342,12 @@ public class ReportsView extends DpfView<ReportsModel, ReportsController> {
   }
 
   private void deleteReportGui(String uuid) {
-    boolean lastPage = pagination.getCurrentPageIndex() == pagination.getPageCount() - 1;
-    int oldPages = getController().getPagesCount();
     if (reportHandlers.containsKey(uuid)){
       reportHandlers.remove(uuid);
     }
     getController().removeReport(uuid);
-    int newPages = getController().getPagesCount();
-    if (oldPages == newPages) {
-      reloadPage(pagination.getCurrentPageIndex());
-    } else {
-      pagination.setPageCount(newPages);
-      pagination.setCurrentPageIndex(pagination.getPageCount() - 1);
-    }
+    showLoading();
+    context.send(new ReportsMessage(ReportsMessage.Type.READ));
   }
 
   public void reloadPage(int index) {
