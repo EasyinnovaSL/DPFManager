@@ -100,7 +100,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
         }
         File individualSer = new File(serPath);
         if (individualSer.exists() && individualSer.isFile() && individualSer.getName().endsWith(".ser")){
-          individuals.add(new ReportIndividualGui(sir, config, count));
+          individuals.add(new ReportIndividualGui(global, sir, config, count));
           count++;
         }
       }
@@ -110,7 +110,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
       if (serializedDirectory.exists() && serializedDirectory.isDirectory()) {
         for (File individualSer : serializedDirectory.listFiles()) {
           if (individualSer.exists() && individualSer.isFile() && individualSer.getName().endsWith(".ser")) {
-            individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), config, count));
+            individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), global, count));
             count++;
           }
         }

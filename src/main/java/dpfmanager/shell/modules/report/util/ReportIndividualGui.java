@@ -27,8 +27,10 @@ import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,11 +55,13 @@ public class ReportIndividualGui {
   private Integer warnings;
   private Integer reportId;
   private Map<String, String> formats;
+  private List<String> modifiedIsos;
 
   private Configuration config;
   private Integer reportVersion = 0;
   private SmallIndividualReport individual;
 
+  // OLD
   public ReportIndividualGui(String path, Integer id) {
     this.id = id;
     this.path = path;
@@ -67,7 +71,9 @@ public class ReportIndividualGui {
     this.old = true;
   }
 
-  public ReportIndividualGui(SmallIndividualReport sir, Configuration config, Integer id) {
+  // SIR
+  public ReportIndividualGui(GlobalReport global, SmallIndividualReport sir, Configuration config, Integer id) {
+    this.modifiedIsos = new ArrayList<>(global.getModifiedIsos().keySet());
     this.individual = sir;
     this.path = sir.getSerPath();
     this.name = parseFileName(path);
@@ -79,11 +85,13 @@ public class ReportIndividualGui {
     this.old = false;
   }
 
-  public ReportIndividualGui(String path, Configuration config, Integer id) {
+  // SER
+  public ReportIndividualGui(String path, GlobalReport global, Integer id) {
+    this.modifiedIsos = new ArrayList<>(global.getModifiedIsos().keySet());
     this.individual = null;
     this.path = path;
     this.name = parseFileName(path);
-    this.config = config;
+    this.config = global.getConfig();
     this.id = id;
     this.loaded = false;
     this.error = false;
@@ -143,8 +151,8 @@ public class ReportIndividualGui {
   private void createRowFromSir(){
     reportVersion = individual.getReportVersion();
     for (String iso : individual.getSelectedIsos()){
-      errors += individual.getNErrors(iso);
-      warnings += individual.getNWarnings(iso);
+      errors += (modifiedIsos.contains(iso)) ? individual.getNErrorsPolicy(iso) : individual.getNErrors(iso);
+      warnings += (modifiedIsos.contains(iso)) ? individual.getNWarningsPolicy(iso) : individual.getNWarnings(iso);
     }
     filename = individual.getFileName();
     reportId = individual.getIdReport();
@@ -163,10 +171,9 @@ public class ReportIndividualGui {
       if (ir.getVersion() != null) {
         reportVersion = ir.getVersion();
       }
-
-      for (String iso : ir.getSelectedIsos()){
-        errors += ir.getNErrors(iso);
-        warnings += ir.getNWarnings(iso);
+      for (String iso : individual.getSelectedIsos()){
+        errors += (modifiedIsos.contains(iso)) ? individual.getNErrorsPolicy(iso) : individual.getNErrors(iso);
+        warnings += (modifiedIsos.contains(iso)) ? individual.getNWarningsPolicy(iso) : individual.getNWarnings(iso);
       }
       filename = ir.getFileName();
       reportId = ir.getIdReport();
