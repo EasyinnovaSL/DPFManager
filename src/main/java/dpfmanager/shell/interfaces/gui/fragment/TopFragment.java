@@ -283,7 +283,7 @@ public class TopFragment extends FlowPane {
                       context.send(GuiConfig.PERSPECTIVE_INTEROPERABILITY, new UiMessage(UiMessage.Type.SHOW));
                       break;
                     case ButReports:
-                      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
+                      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));
                       break;
                     case ButStatistics:
                       context.send(GuiConfig.PERSPECTIVE_STATISTICS, new UiMessage(UiMessage.Type.SHOW));

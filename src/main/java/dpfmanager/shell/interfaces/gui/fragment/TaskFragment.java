@@ -22,6 +22,7 @@ package dpfmanager.shell.interfaces.gui.fragment;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
+import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
@@ -274,6 +275,7 @@ public class TaskFragment {
     ReportGui rg = new ReportGui(path);
     ArrayMessage am = new ArrayMessage();
     am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.RELOAD));
     am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, rg));
     context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
   }

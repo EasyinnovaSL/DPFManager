@@ -21,6 +21,7 @@ package dpfmanager.shell.interfaces.gui.fragment;
 
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
+import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
@@ -232,8 +233,10 @@ public class ReportFragment {
 
   @FXML
   protected void onGridPaneClicked(MouseEvent event) throws Exception {
-    context.send(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
-    context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, info));
+    ArrayMessage am = new ArrayMessage();
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, info));
+    context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
   }
 
   public String getUuid() {

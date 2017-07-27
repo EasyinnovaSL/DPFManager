@@ -67,6 +67,7 @@ public class NavBarFragment {
   private Label labelPdf;
 
   private boolean initiated = false;
+  private boolean reload = false;
 
   public void init() {
     if (initiated) return;
@@ -129,7 +130,11 @@ public class NavBarFragment {
   @FXML
   protected void clickedTable(MouseEvent event) throws Exception {
     if (!labelTable.getStyleClass().contains("myactive")) {
-      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));
+      if (reload) {
+        context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));
+      } else {
+        context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
+      }
     }
   }
 
@@ -144,4 +149,7 @@ public class NavBarFragment {
   protected void clickedSingle(MouseEvent event) throws Exception {
   }
 
+  public void setReload(boolean reload) {
+    this.reload = reload;
+  }
 }

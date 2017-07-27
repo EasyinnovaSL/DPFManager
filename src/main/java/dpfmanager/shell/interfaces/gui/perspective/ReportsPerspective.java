@@ -66,12 +66,12 @@ public class ReportsPerspective extends DpfAbstractPerspective {
   @Override
   public void onShowCustom() {
     context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.TABLE));
-    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
   }
 
   @Override
   public void onReloadCustom() {
     context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.TABLE));
+    context.send(GuiConfig.PERSPECTIVE_REPORTS + "." + GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.RELOAD));
   }
 
   @PostConstruct

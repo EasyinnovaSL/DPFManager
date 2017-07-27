@@ -119,6 +119,8 @@ public abstract class DpfAbstractPerspective implements FXPerspective {
   }
 
   public void onReload(){
+    getContext().getManagedFragmentHandler(TopFragment.class).getController().setCurrentToggle(getContext().getId());
+    showHideBottomPane(getContext().getManagedFragmentHandler(BarFragment.class).getController().isVisible());
     onReloadCustom();
   }
 
