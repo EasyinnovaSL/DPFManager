@@ -19,7 +19,6 @@
 
 package dpfmanager.shell.modules.report.util;
 
-import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.SmallGlobalReport;
 import javafx.beans.property.SimpleMapProperty;
@@ -28,7 +27,6 @@ import javafx.collections.FXCollections;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 
@@ -40,12 +38,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.ResourceBundle;
 
 /**
  * Created by easy on 17/09/2015.
@@ -60,7 +56,6 @@ public class ReportGui implements Comparable<ReportGui>{
   private Long timestamp;
   private boolean loaded;
   private boolean loadedPartial;
-  private boolean loadedFormats;
   private boolean error;
   private boolean last;
   private boolean quick;
@@ -87,7 +82,6 @@ public class ReportGui implements Comparable<ReportGui>{
     this.reportDir = reportDir;
     this.uuid = reportDay + reportDir;
     this.loaded = false;
-    this.loadedFormats = false;
     this.error = true;
     this.loadedPartial = false;
     readTime();
@@ -105,7 +99,6 @@ public class ReportGui implements Comparable<ReportGui>{
 
     this.uuid = reportDay + reportDir;
     this.loaded = false;
-    this.loadedFormats = false;
     this.error = true;
     this.loadedPartial = false;
     readTime();
@@ -212,7 +205,6 @@ public class ReportGui implements Comparable<ReportGui>{
   }
 
   public void readFormats() {
-    if (loadedFormats) return;
     if (!error) {
       // Add formats
       for (String format : available_formats) {
@@ -226,8 +218,6 @@ public class ReportGui implements Comparable<ReportGui>{
           addFormat(format, report.getPath());
         }
       }
-      // All OK
-      loadedFormats = true;
     }
   }
 

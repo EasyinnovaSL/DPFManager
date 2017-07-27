@@ -306,7 +306,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   }
 
   private void addFormatIcons(ReportGui info) {
-    info.readFormats();
     Map<String, String> itemRead = info.getFormats();
     Integer version = info.getReportVersion();
     GlobalReport gr = info.getGlobalReport();

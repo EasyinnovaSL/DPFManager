@@ -110,7 +110,6 @@ public class IndividualFragment {
   public void init(ReportIndividualGui r) {
     info = r;
     info.load();
-    info.loadFormats();
     if (info.isQuick()){
       loadReportRowQuick();
     } else {

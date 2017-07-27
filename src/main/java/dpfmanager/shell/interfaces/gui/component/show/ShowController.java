@@ -72,7 +72,7 @@ public class ShowController extends DpfController<ShowModel, ShowView> {
         long t1 = System.currentTimeMillis();
         showComboBox(path, "pdf");
         long t2 = System.currentTimeMillis();
-        System.out.println("Combobox: " + (t2-t1));
+//        System.out.println("Combobox: " + (t2-t1));
         getView().showPdfView(path);
         break;
       default:
