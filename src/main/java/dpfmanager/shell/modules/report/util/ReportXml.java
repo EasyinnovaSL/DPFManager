@@ -31,9 +31,12 @@
 
 package dpfmanager.shell.modules.report.util;
 
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.ReportGeneric;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
+
+import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -74,21 +77,63 @@ public class ReportXml extends ReportGeneric {
 
       // Individual reports
       for (SmallIndividualReport ir : reports) {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
         try {
-          File file = new File(ir.getReportPath() + ".xml");
-          if (file.exists()) {
-            //InputStream inputStream = new FileInputStream(file);
-            //Reader reader = new InputStreamReader(inputStream, "UTF-8");
-            //InputSource is = new InputSource(reader);
-            //is.setEncoding("UTF-8");
-            //Document docreport = db.parse(is);
-            //Node node = doc.importNode(docreport.getDocumentElement(), true);
-            Element el = doc.createElement("report");
-            el.setTextContent(ir.getReportPath() + ".xml");
-            individualreports.appendChild(el);
+          Element report = doc.createElement("report");
+
+          // Image name
+          Element el = doc.createElement("name");
+          el.setTextContent(ir.getFileName());
+          report.appendChild(el);
+
+          // ISOs
+          Element isos = doc.createElement("ISOs");
+          int totalWarnings = 0;
+          for (String iso : gr.getCheckedIsos()) {
+            if (gr.hasValidation(iso)) {
+              Element isoEl = doc.createElement("iso");
+
+              el = doc.createElement("name");
+              el.setTextContent(iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso));
+              isoEl.appendChild(el);
+
+              el = doc.createElement("errors");
+              el.setTextContent(ir.getNErrors(iso) + "");
+              isoEl.appendChild(el);
+
+              el = doc.createElement("warnings");
+              el.setTextContent(ir.getNWarnings(iso) + "");
+              isoEl.appendChild(el);
+              totalWarnings += ir.getNWarnings(iso);
+
+              isos.appendChild(isoEl);
+            }
           }
+
+          // Image result
+          el = doc.createElement("result");
+          if (ir.getPercent() == 100) {
+            el.setTextContent("Passed");
+          } else if (totalWarnings > 0){
+            el.setTextContent("Passed with warnings");
+          } else {
+            el.setTextContent("Error");
+          }
+          report.appendChild(el);
+
+          // Image score
+          el = doc.createElement("score");
+          el.setTextContent(ir.getPercent() + "%");
+          report.appendChild(el);
+
+          // ISOs list
+          report.appendChild(isos);
+
+          // Path
+          el = doc.createElement("path");
+          el.setTextContent(ir.getReportPath() + ".xml");
+          report.appendChild(el);
+
+          individualreports.appendChild(report);
         } catch (Exception ex) {
           ex.toString();
         }
