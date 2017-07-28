@@ -120,7 +120,8 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     if (message != null && message.isTypeOf(ShowMessage.class)) {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
       if (sMessage.isShow()) {
-        if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)) {
+        if (sMessage.getInfo() != null && sMessage.getUuid().equals(currentReport)) {
+        } else if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)) {
           getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
         }
       } else if (sMessage.isGenerate()) {
@@ -303,7 +304,9 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   }
 
   public void clearComboBox() {
-    comboIndividuals.getItems().clear();
+    if (comboIndividuals.getItems() != null){
+      comboIndividuals.getItems().clear();
+    }
   }
 
   public void setCurrentReportParams(String path, String ext) {

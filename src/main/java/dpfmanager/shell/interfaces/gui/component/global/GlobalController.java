@@ -38,6 +38,7 @@ import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -231,6 +232,41 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
         getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, getBundle().getString("errorSavingReport")));
       }
     }
+  }
+
+  public boolean allReportsDone(GlobalReport global, String internal, String format){
+    if (global.getConfig().getFormats().contains(format.toUpperCase())) {
+      return true;
+    }
+    File htmlGlobal = new File(internal + File.separator + "report.html");
+    String search = format.equals("mets") ? ".mets.xml" : "." + format;
+    File dir = format.equals("html") ? new File(internal + File.separator + "html") : new File(internal);
+    Integer expectedSize = global.getIndividualReports().size();
+    if (!format.equals("mets") && !format.equals("html")) {
+      expectedSize += 1;
+    }
+    File[] files = dir.listFiles(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return name.toLowerCase().endsWith(search);
+      }
+    });
+    if (files == null) return false;
+    int files_size = files.length;
+    if (format.equals("xml")){
+      File[] filesMets = dir.listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.toLowerCase().endsWith(".mets.xml");
+        }
+      });
+      files_size -= filesMets.length;
+    }
+    return (format.equals("html") && files_size == expectedSize && htmlGlobal.exists()) || (!format.equals("html") && files_size == expectedSize);
+  }
+
+  public boolean allReportsDone(GlobalReport global, String internal){
+    return allReportsDone(global, internal, "html") && allReportsDone(global, internal, "xml")
+        && allReportsDone(global, internal, "pdf") && allReportsDone(global, internal, "mets")
+        && allReportsDone(global, internal, "json");
   }
 
 }
