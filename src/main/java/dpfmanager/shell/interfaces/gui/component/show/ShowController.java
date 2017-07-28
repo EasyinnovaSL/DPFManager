@@ -19,110 +19,127 @@
 
 package dpfmanager.shell.interfaces.gui.component.show;
 
-import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.core.config.GuiConfig;
-import dpfmanager.shell.core.messages.ReportsMessage;
-import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.mvc.DpfController;
-import dpfmanager.shell.core.util.NodeUtil;
-import dpfmanager.shell.modules.messages.messages.AlertMessage;
-import dpfmanager.shell.modules.messages.messages.LogMessage;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.logging.log4j.Level;
 
-import java.awt.*;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Adria Llorens on 17/03/2016.
  */
 public class ShowController extends DpfController<ShowModel, ShowView> {
 
-  public ShowController(){
+  Integer count;
 
+  public ShowController(){
+    count = 0;
   }
 
   public void showSingleReport(String type, String path, boolean completedPath) {
-    //    getContext().send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, "Showing report..."));
-    getView().hideAll();
     switch (type) {
-      case "html":
-        if (!completedPath) path += "report.html";
-        getView().showWebView(path);
-        break;
       case "xml":
         if (!completedPath) path += "summary.xml";
-        showComboBox(path,"xml");
-        getView().showTextArea();
+        loadComboBox(path, "xml");
         break;
       case "mets":
-        showComboBox(path, "mets.xml");
-        getView().showTextArea();
+        loadComboBox(path, "mets.xml");
         break;
       case "json":
         if (!completedPath) path += "summary.json";
-        showComboBox(path, "json");
-        getView().showTextArea();
+        loadComboBox(path, "json");
         break;
       case "pdf":
         if (!completedPath) path += "report.pdf";
-        showComboBox(path, "pdf");
-        getView().showPdfView(path);
+        loadComboBox(path, "pdf");
         break;
       default:
         break;
     }
   }
 
-  public void showComboBox(String folderPath, String extension){
-    int count = 0;
+  public void showSingleReportFX(String type, String path, boolean completedPath) {
+    switch (type) {
+      case "html":
+        if (!completedPath) path += "report.html";
+        getView().showWebView(path);
+        break;
+      case "xml":
+        getView().showTextArea();
+        break;
+      case "mets":
+        getView().showTextArea();
+        break;
+      case "json":
+        getView().showTextArea();
+        break;
+      case "pdf":
+        if (!completedPath) path += "report.pdf";
+        getView().showPdfView(path);
+        break;
+    }
 
-    // Clear comboBox
-    getView().clearComboBox();
+    // ComboBox
+    if (!type.equals("html")) {
+      getView().clearComboBox();
+      getView().addComboChilds(getModel().getComboChilds());
+      getView().selectComboChild(getModel().getSelectedChild());
+      if (count > 1){
+        getView().showComboBox();
+      }
+    }
 
-    // Check if summary
-    File summary = new File(folderPath);
-    if (summary.isFile()){
+    getView().hideLoading();
+  }
+
+  public void loadComboBox(String filePath, String extension){
+    count = 0;
+    File file = new File(filePath);
+    String selectedName = file.getName().replace("." + extension, "");
+    File folder = file;
+    if (folder.isFile()){
+      folder = folder.getParentFile();
+    }
+
+    // ComboBox items
+    ObservableList<String> comboChilds = FXCollections.observableArrayList();
+
+    // First add summary
+    File summary = new File(folder.getPath() + "/summary." + extension);
+    if (extension.equals("pdf")){
+      summary = new File(folder.getPath() + "/report." + extension);
+    }
+    if (summary.exists() && summary.isFile()) {
       getView().setCurrentReportParams(summary.getParent(), extension);
-      getView().addComboChild(summary.getName().replace("." + extension, ""), true);
+      comboChilds.add(summary.getName().replace("." + extension, ""));
       count++;
     }
 
     // Add all individuals
-    File folder = new File(folderPath);
-    if (folder.isFile()){
-      folder = folder.getParentFile();
-    }
     getView().setCurrentReportParams(folder.getPath(), extension);
-
     IOFileFilter filter = customFilter(extension);
     IOFileFilter filterDir = customFilterDir(folder.getPath());
     Collection<File> childs = FileUtils.listFiles(folder, filter, filterDir);
     for (File child : childs){
       String onlyName = child.getName().replace("."+extension, "");
-      if (count == 0){
-        getView().addComboChild(onlyName, true);
-      } else {
-        getView().addComboChild(onlyName, false);
-      }
+      comboChilds.add(onlyName);
       count++;
     }
 
-    // Show nodes
-    if (count > 1){
-      getView().showComboBox();
-    }
+    getModel().setComboChilds(comboChilds);
+    getModel().setSelectedChild(selectedName);
   }
 
   public IOFileFilter customFilter(String extension){

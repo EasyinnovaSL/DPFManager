@@ -7,7 +7,7 @@
     <groupId>com.easyinnova</groupId>
     <artifactId>dpf_manager</artifactId>
     <packaging>jar</packaging>
-    <version>3.4</version>
+    <version>3.5</version>
 
     <!--Properties-->
     <properties>
@@ -227,19 +227,19 @@
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tifflibrary4java</artifactId>
-            <version>1.9.2</version>
+            <version>1.9.6</version>
         </dependency>
 
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tiffimplementationchecker</artifactId>
-            <version>1.2.2</version>
+            <version>1.2.6</version>
         </dependency>
 
         <dependency>
             <groupId>com.easyinnova</groupId>
             <artifactId>tiffpolicychecker</artifactId>
-            <version>1.1</version>
+            <version>1.1.4</version>
         </dependency>
 
         <dependency>

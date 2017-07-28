@@ -50,6 +50,17 @@ public class ConformanceMessage extends DpfMessage {
     gui = true;
     askOverwrite = ao;
     quick = q;
+    config = null;
+  }
+
+  public ConformanceMessage(String i, Configuration c, int r, boolean ao, boolean q) {
+    // Gui
+    input = i;
+    config = c;
+    recursive = r;
+    gui = true;
+    askOverwrite = ao;
+    quick = q;
   }
 
   public ConformanceMessage(Long u, String i, String p) {

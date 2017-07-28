@@ -23,6 +23,8 @@ import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
+import java.util.Map;
+
 /**
  * Created by Adria Llorens on 08/04/2016.
  */
@@ -43,6 +45,7 @@ public class GlobalStatusMessage extends DpfMessage {
   private String internal;
   private String input;
   private DpfRunnable run;
+  private Map<String,String> zipsPaths;
 
   public GlobalStatusMessage(Type t, Long u, DpfRunnable r, String i) {
     // New
@@ -52,7 +55,7 @@ public class GlobalStatusMessage extends DpfMessage {
     input = i;
   }
 
-  public GlobalStatusMessage(Type t, long u, int n, Configuration c, String i, String ri) {
+  public GlobalStatusMessage(Type t, long u, int n, Configuration c, String i, String ri, Map<String,String> z) {
     // Init
     type = t;
     uuid = u;
@@ -60,6 +63,7 @@ public class GlobalStatusMessage extends DpfMessage {
     config = c;
     internal = i;
     input = ri;
+    zipsPaths = z;
   }
 
   public GlobalStatusMessage(Type t, long u) {
@@ -124,4 +128,7 @@ public class GlobalStatusMessage extends DpfMessage {
     return run;
   }
 
+  public Map<String, String> getZipsPaths() {
+    return zipsPaths;
+  }
 }

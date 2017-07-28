@@ -30,15 +30,17 @@ public class ReportsMessage extends DpfMessage {
     READ,
     DELETE,
     ADD,
-    SIZE
+    SIZE,
+    SORT
   }
 
   private Type type;
   private String uuid;
   private ReportGui report;
   private Long size;
+  private String vboxId;
 
-  // READ & RELOAD
+  // READ & RELOAD & SORT
   public ReportsMessage(Type t) {
     type = t;
   }
@@ -50,8 +52,9 @@ public class ReportsMessage extends DpfMessage {
   }
 
   // ADD
-  public ReportsMessage(Type t, ReportGui r) {
+  public ReportsMessage(Type t, String i, ReportGui r) {
     type = t;
+    vboxId = i;
     report = r;
   }
 
@@ -86,6 +89,10 @@ public class ReportsMessage extends DpfMessage {
     return type.equals(Type.SIZE);
   }
 
+  public boolean isSort() {
+    return type.equals(Type.SORT);
+  }
+
   public String getUuid() {
     return uuid;
   }
@@ -96,5 +103,9 @@ public class ReportsMessage extends DpfMessage {
 
   public Long getSize() {
     return size;
+  }
+
+  public String getVboxId() {
+    return vboxId;
   }
 }

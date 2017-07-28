@@ -20,33 +20,50 @@
 package dpfmanager.shell.modules.report.messages;
 
 import dpfmanager.shell.core.messages.DpfMessage;
-import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.modules.report.util.ReportGui;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Adria Llorens on 13/06/2017.
  */
 public class GenerateMessage extends DpfMessage {
 
-  private String format;
-  private GlobalReport globalReport;
+  private List<String> formats = null;
+  private ReportGui info;
   private Long uuid;
+  private boolean onlyGlobal;
 
-  public GenerateMessage(String format, GlobalReport g, Long uuid) {
-    this.format = format;
-    this.globalReport = g;
+  public GenerateMessage(String format, ReportGui info, Long uuid, boolean onlyGlobal) {
+    this.formats = Arrays.asList(format);
+    this.info = info;
     this.uuid = uuid;
+    this.onlyGlobal = onlyGlobal;
   }
 
-  public String getFormat() {
-    return format;
+  public GenerateMessage(List<String> formats, ReportGui info, Long uuid, boolean onlyGlobal) {
+    this.formats = formats;
+    this.info = info;
+    this.uuid = uuid;
+    this.onlyGlobal = onlyGlobal;
   }
 
-  public GlobalReport getGlobalReport() {
-    return globalReport;
+  public ReportGui getInfo() {
+    return info;
   }
 
   public Long getUuid() {
     return uuid;
+  }
+
+  public boolean isOnlyGlobal() {
+    return onlyGlobal;
+  }
+
+  public List<String> getFormats() {
+    return formats;
   }
 }
 

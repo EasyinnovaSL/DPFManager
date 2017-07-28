@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import java.lang.*?>
-<?import javafx.scene.chart.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.chart.PieChart?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -13,39 +13,64 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import java.lang.String?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
 <AnchorPane prefWidth="840.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
-    <GridPane hgap="2.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+    <GridPane hgap="2.0" onMouseClicked="#onGridPaneClicked" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" />
-            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="163.0" minWidth="163.0" prefWidth="163.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="113.0" prefWidth="113.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="38.0" minWidth="38.0" prefWidth="38.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="248.0" minWidth="248.0" prefWidth="248.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="63.0" minWidth="63.0" prefWidth="63.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="83.0" prefWidth="83.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="63.0" minWidth="63.0" prefWidth="63.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.0" minWidth="118.0" prefWidth="118.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="48.0" minWidth="48.0" prefWidth="48.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="63.0" minWidth="63.0" prefWidth="63.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="38.0" minWidth="38.0" prefWidth="38.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <children>
             <Label fx:id="date" text="" textFill="LIGHTGRAY" />
-            <Label fx:id="time" text="" textFill="LIGHTGRAY" GridPane.columnIndex="1" />
-            <Label fx:id="files" text="" textFill="CYAN" GridPane.columnIndex="2">
-            <padding>
-               <Insets left="10.0" />
-            </padding></Label>
-            <Label fx:id="input" text="" textFill="LIGHTGRAY" GridPane.columnIndex="3" />
-            <Label fx:id="errors" text="" textFill="RED" GridPane.columnIndex="4" />
-            <Label fx:id="warnings" text="" textFill="ORANGE" GridPane.columnIndex="5" />
-            <Label fx:id="passed" text="" textFill="GREENYELLOW" GridPane.columnIndex="6" />
-            <HBox fx:id="scoreBox" alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="7" />
-            <HBox fx:id="formatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="8" />
-            <HBox fx:id="actionsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="9" />
+            <Label fx:id="files" text="" textFill="CYAN" GridPane.columnIndex="1">
+                <padding>
+                    <Insets left="10.0" />
+                </padding>
+            </Label>
+            <ImageView fx:id="okImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                <image>
+                    <Image url="@../../images/icons/ok.png" />
+                </image>
+                <GridPane.margin>
+                    <Insets left="10.0" />
+                </GridPane.margin>
+            </ImageView>
+            <ImageView fx:id="koImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                <image>
+                    <Image url="@../../images/icons/ko.png" />
+                </image>
+                <GridPane.margin>
+                    <Insets left="10.0" />
+                </GridPane.margin>
+            </ImageView>
+            <Label fx:id="type" text="" textFill="LIGHTGRAY" GridPane.columnIndex="3" />
+            <Label fx:id="input" text="" textFill="LIGHTGRAY" GridPane.columnIndex="4" />
+            <Label fx:id="errors" text="" textFill="RED" GridPane.columnIndex="5" />
+            <Label fx:id="warnings" text="" textFill="ORANGE" GridPane.columnIndex="6" />
+            <Label fx:id="passed" text="" textFill="GREENYELLOW" GridPane.columnIndex="7" />
+            <HBox fx:id="scoreBox" alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="8" />
+            <HBox fx:id="formatsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="9" />
+            <HBox fx:id="actionsBox" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="10" />
         </children>
+        <styleClass>
+            <String fx:value="hoverRow" />
+            <String fx:value="clickable" />
+        </styleClass>
     </GridPane>
     <StackPane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" styleClass="separator-periodic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
 </AnchorPane>

@@ -35,7 +35,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -46,6 +48,7 @@ public class GetInputRunnable extends DpfRunnable {
 
   private Long uuid;
   private List<String> files;
+  private Map<String,String> zipsPath;
   private String internalReportFolder;
 
   private File fileZip;
@@ -55,6 +58,7 @@ public class GetInputRunnable extends DpfRunnable {
   @Override
   public void handleContext(DpfContext context) {
     files = new ArrayList<>();
+    zipsPath = new HashMap<>();
     error = false;
   }
 
@@ -83,7 +87,7 @@ public class GetInputRunnable extends DpfRunnable {
     }
 
     // Notify
-    context.send(BasicConfig.MODULE_CONFORMANCE, new ProcessInputMessage(ProcessInputMessage.Type.FILE, getUuid(), files));
+    context.send(BasicConfig.MODULE_CONFORMANCE, new ProcessInputMessage(ProcessInputMessage.Type.FILE, getUuid(), files, zipsPath));
   }
 
   /**
@@ -92,10 +96,8 @@ public class GetInputRunnable extends DpfRunnable {
   private void runZip(){
     try {
       // Create zip folder
-      File zipFolder = new File(internalReportFolder + "zip/");
-      if (!zipFolder.exists()) {
-        zipFolder.mkdirs();
-      }
+      File zipFolder = getNExtZipFolder();
+      zipsPath.put(zipFolder.getName(), fileZip.getAbsolutePath());
 
       // Extract it
       ZipFile zipFile = new ZipFile(fileZip);
@@ -104,7 +106,7 @@ public class GetInputRunnable extends DpfRunnable {
         // Process each file contained in the compressed file
         ZipEntry entry = entries.nextElement();
         String name = entry.getName();
-        File targetFile = new File(internalReportFolder + "zip/" + name);
+        File targetFile = new File(zipFolder.getPath() + File.separator + name);
         if (name.endsWith("/")) {
           // Directory
           targetFile.mkdirs();
@@ -177,5 +179,18 @@ public class GetInputRunnable extends DpfRunnable {
     outStream.close();
     return filename;
   }
+
+  synchronized private File getNExtZipFolder(){
+    int count = 0;
+    File zipFolder = new File(internalReportFolder + GetInputRunnable.zipFolderPrefix);
+    while (zipFolder.exists()){
+      count++;
+      zipFolder = new File(internalReportFolder + GetInputRunnable.zipFolderPrefix + count);
+    }
+    zipFolder.mkdirs();
+    return zipFolder;
+  }
+
+  public static String zipFolderPrefix = "zipTmpDpfManager";
 
 }

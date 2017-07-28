@@ -1,0 +1,475 @@
+<report>
+  <file_info>
+    <name>IMG_KO_resolution.tif</name>
+    <fullpath>C:\Users\Roser\DPF Manager\reports\20170721\15\zip\OneOffEach\IMG_KO_resolution.tif</fullpath>
+    <filesize>3940644</filesize>
+  </file_info>
+  <tiff_structure>
+    <ifdTree>
+      <ifdNode>
+        <number>0</number>
+        <isimg>yes</isimg>
+        <imagetype check_ifd0="typ">Main image</imagetype>
+        <image_representation>strips[3]</image_representation>
+        <photometric>2</photometric>
+        <hasSubIfd>no</hasSubIfd>
+        <hasExif>yes</hasExif>
+        <hasXMP>yes</hasXMP>
+        <hasIPTC>yes</hasIPTC>
+        <tags>
+          <tag>
+            <name>NewSubfileType</name>
+            <id>254</id>
+            <value>0</value>
+          </tag>
+          <tag>
+            <name>ImageWidth</name>
+            <id>256</id>
+            <value>1319</value>
+          </tag>
+          <tag>
+            <name>ImageLength</name>
+            <id>257</id>
+            <value>989</value>
+          </tag>
+          <tag>
+            <name>BitsPerSample</name>
+            <id>258</id>
+            <value>[8,8,8]</value>
+          </tag>
+          <tag>
+            <name>Compression</name>
+            <id>259</id>
+            <value>None</value>
+          </tag>
+          <tag>
+            <name>PhotometricInterpretation</name>
+            <id>262</id>
+            <value>RGB</value>
+          </tag>
+          <tag>
+            <name>Threshholding</name>
+            <id>263</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>StripOffsets</name>
+            <id>273</id>
+            <value>[26836,1331327,2635818]</value>
+          </tag>
+          <tag>
+            <name>Orientation</name>
+            <id>274</id>
+            <value>TopLeft</value>
+          </tag>
+          <tag>
+            <name>SamplesPerPixel</name>
+            <id>277</id>
+            <value>3</value>
+          </tag>
+          <tag>
+            <name>RowsPerStrip</name>
+            <id>278</id>
+            <value>989</value>
+          </tag>
+          <tag>
+            <name>StripBYTECount</name>
+            <id>279</id>
+            <value>[1304491,1304491,1304491]</value>
+          </tag>
+          <tag>
+            <name>MinSampleValue</name>
+            <id>280</id>
+            <value>0</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>MaxSampleValue</name>
+            <id>281</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>XResolution</name>
+            <id>282</id>
+            <value>0/0</value>
+          </tag>
+          <tag>
+            <name>YResolution</name>
+            <id>283</id>
+            <value>720000/10000</value>
+          </tag>
+          <tag>
+            <name>PlanarConfiguration</name>
+            <id>284</id>
+            <value>Planar</value>
+          </tag>
+          <tag>
+            <name>ResolutionUnit</name>
+            <id>296</id>
+            <value>2</value>
+          </tag>
+          <tag>
+            <name>Software</name>
+            <id>305</id>
+            <value>Adobe Photoshop CS6 (Windows)</value>
+          </tag>
+          <tag>
+            <name>DateTime</name>
+            <id>306</id>
+            <value>2016:06:17 13:44:09</value>
+          </tag>
+          <tag>
+            <name>Predictor</name>
+            <id>317</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>DotRange</name>
+            <id>336</id>
+            <value>\02</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SampleFormat</name>
+            <id>339</id>
+            <value>1</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMinSampleValue</name>
+            <id>340</id>
+            <value>Minimum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>SMaxSampleValue</name>
+            <id>341</id>
+            <value>Maximum</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>TransferRange</name>
+            <id>342</id>
+            <value>\0NV\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>ReferenceBlackWhite</name>
+            <id>532</id>
+            <value>\0/1NV/10/1NV/10/1NV/1\</value>
+            <default>true</default>
+          </tag>
+          <tag>
+            <name>XMP</name>
+            <id>700</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>IPTC</name>
+            <id>33723</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>Photoshop</name>
+            <id>34377</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>ExifIFD</name>
+            <id>34665</id>
+            <value/>
+          </tag>
+          <tag>
+            <name>WhiteLevel</name>
+            <id>50717</id>
+            <value>2</value>
+            <default>true</default>
+          </tag>
+        </tags>
+      </ifdNode>
+    </ifdTree>
+  </tiff_structure>
+  <ByteOrder ByteOrder="LITTLE_ENDIAN">LITTLE_ENDIAN</ByteOrder>
+  <NumberImages NumberImages="1">1</NumberImages>
+  <bitspersample>[8,8,8]</bitspersample>
+  <BitDepth BitDepth="[8,8,8]">[8,8,8]</BitDepth>
+  <EqualXYResolution EqualXYResolution="False">False</EqualXYResolution>
+  <Evenness Evenness="Even">Even</Evenness>
+  <FileSize FileSize="3940644">3940644</FileSize>
+  <ExtraChannels ExtraChannels="0">0</ExtraChannels>
+  <Compression Compression="None">None</Compression>
+  <Photometric Photometric="RGB">RGB</Photometric>
+  <Planar Planar="Planar">Planar</Planar>
+  <PixelDensity PixelDensity="0">NaN</PixelDensity>
+  <NumberBlankImages NumberBlankImages="0">0</NumberBlankImages>
+  <NewSubfileType NewSubfileType="0" id="254" type="0">0</NewSubfileType>
+  <ImageWidth ImageWidth="1319" id="256" type="0">1319</ImageWidth>
+  <ImageLength ImageLength="989" id="257" type="0">989</ImageLength>
+  <BitsPerSample BitsPerSample="[8,8,8]" id="258" type="0">[8,8,8]</BitsPerSample>
+  <PhotometricInterpretation PhotometricInterpretation="RGB" id="262" type="0">RGB</PhotometricInterpretation>
+  <Threshholding Threshholding="" id="263" type="0"/>
+  <StripOffsets StripOffsets="[26836,1331327,2635818]" id="273" type="0">[26836,1331327,2635818]</StripOffsets>
+  <Orientation Orientation="TopLeft" id="274" type="0">TopLeft</Orientation>
+  <SamplesPerPixel SamplesPerPixel="3" id="277" type="0">3</SamplesPerPixel>
+  <RowsPerStrip RowsPerStrip="989" id="278" type="0">989</RowsPerStrip>
+  <StripBYTECount StripBYTECount="[1304491,1304491,1304491]" id="279" type="0">[1304491,1304491,1304491]</StripBYTECount>
+  <MinSampleValue MinSampleValue="" id="280" type="0"/>
+  <MaxSampleValue MaxSampleValue="" id="281" type="0"/>
+  <XResolution XResolution="0/0" id="282" type="0">0/0</XResolution>
+  <YResolution YResolution="720000/10000" id="283" type="0">720000/10000</YResolution>
+  <PlanarConfiguration PlanarConfiguration="Planar" id="284" type="0">Planar</PlanarConfiguration>
+  <ResolutionUnit ResolutionUnit="2" id="296" type="0">2</ResolutionUnit>
+  <Software Software="Adobe Photoshop CS6 (Windows)" id="305" type="0">Adobe Photoshop CS6 (Windows)</Software>
+  <DateTime DateTime="2016:06:17 13:44:09" id="306" type="0">2016:06:17 13:44:09</DateTime>
+  <Predictor Predictor="" id="317" type="0"/>
+  <DotRange DotRange="" id="336" type="0"/>
+  <SampleFormat SampleFormat="" id="339" type="0"/>
+  <SMinSampleValue SMinSampleValue="" id="340" type="0"/>
+  <SMaxSampleValue SMaxSampleValue="" id="341" type="0"/>
+  <TransferRange TransferRange="" id="342" type="0"/>
+  <ReferenceBlackWhite ReferenceBlackWhite="" id="532" type="0"/>
+  <XMP XMP="" id="700" type="0"/>
+  <IPTC IPTC="" id="33723" type="0"/>
+  <Photoshop Photoshop="" id="34377" type="0"/>
+  <ExifIFD ExifIFD="" id="34665" type="0"/>
+  <WhiteLevel WhiteLevel="" id="50717" type="0"/>
+  <implementation_checker TIAProfileChecker="false" TIFF_Baseline_Core_6_0="true" TIFF_Baseline_Extended_6_0="true" TIFF_EP="false" TiffITP1ProfileChecker="false" TiffITP2ProfileChecker="false" TiffITProfileChecker="true" ref="DPF Manager" totalErrors="4" totalWarnings="6" version="3.4">
+    <implementation_check>
+      <name>TI/A Draft</name>
+      <rule_result>
+        <level>error</level>
+        <message>In TI/A the only valid pixel aspect ratio is 1:1 (square)</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>MASTER-0001</ruleId>
+        <ruleTest>{tags.tag[name=XResolution] == tags.tag[name=YResolution]}</ruleTest>
+        <ruleValue>In TI/A the only valid pixel aspect ratio is 1:1 (square)</ruleValue>
+        <iso_reference>TI/A Draft v0.1: Section 4.2: Image data. Page 12</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>Baseline TIFF 6.0</name>
+      <rule_result>
+        <level>warning</level>
+        <message>PlanarConfiguration in Planar format is not currently in widespread use and it is not recommended
+    for general interchange. It is used as an extension and Baseline TIFF
+    readers are not required to support it.</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-284-0004</ruleId>
+        <ruleTest>{tags.tag[name=PlanarConfiguration] == 2}</ruleTest>
+        <ruleValue>PlanarConfiguration in Planar format is not currently in widespread use and it is not recommended
+    for general interchange. It is used as an extension and Baseline TIFF
+    readers are not required to support it.</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 38</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>warning</level>
+        <message> XResolution tag must be greater than zero.</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-282-0005</ruleId>
+        <ruleTest>{tags.tag[name=XResolution] == 0} &amp;&amp; {tags.tag[name=ResolutionUnit] != 1} || {!tags.tag[name=ResolutionUnit]}</ruleTest>
+        <ruleValue> XResolution tag must be greater than zero.</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 41</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>info</level>
+        <message>MaxSampleValue Tag is not defined. Then 2**(BitsPerSample) - 1 value is assumed</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-281-0005</ruleId>
+        <ruleTest>{!tags.tag[name=MaxSampleValue]}</ruleTest>
+        <ruleValue>MaxSampleValue Tag is not defined. Then 2**(BitsPerSample) - 1 value is assumed</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 35</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>info</level>
+        <message>MinSampleValue Tag is not defined. Then 0 value is assumed</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-280-0005</ruleId>
+        <ruleTest>{!tags.tag[name=MinSampleValue]}</ruleTest>
+        <ruleValue>MinSampleValue Tag is not defined. Then 0 value is assumed</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 35</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>info</level>
+        <message> It is not mandatory that the image be actually displayed or printed at the size implied by XResolution. It is up to the application to use this information as it wishes.</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-282-0004</ruleId>
+        <ruleTest>{tags.tag[name=XResolution]}</ruleTest>
+        <ruleValue> It is not mandatory that the image be actually displayed or printed at the size implied by XResolution. It is up to the application to use this information as it wishes.</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 41</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>info</level>
+        <message>It is not mandatory that the image be actually displayed or printed at the size implied by YResolution. It is up to the application to use this information as it wishes.</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-283-0004</ruleId>
+        <ruleTest>{tags.tag[name=YResolution]}</ruleTest>
+        <ruleValue>It is not mandatory that the image be actually displayed or printed at the size implied by YResolution. It is up to the application to use this information as it wishes.</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 41</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>Extended TIFF 6.0</name>
+    </implementation_check>
+    <implementation_check>
+      <name>TIFF/EP</name>
+      <rule_result>
+        <level>error</level>
+        <message>TIFF/EPStandardID tag must be used in the first IFD</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-37398-0003</ruleId>
+        <ruleTest>{tags.tag[name=TIFFEPStandardID]}</ruleTest>
+        <ruleValue>TIFF/EPStandardID tag must be used in the first IFD</ruleValue>
+        <iso_reference>TIFF/EP: Section 5.2: TIFF/EP tag definitions grouped by function. Page 16</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>TIFF/IT-P1</name>
+      <rule_result>
+        <level>error</level>
+        <message>Invalid Compression value for colour continuous-tone picture (CT) image</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TIFF-IT-CT-P1-0003</ruleId>
+        <ruleTest>{tags.tag[name=PhotometricInterpretation] == 5}</ruleTest>
+        <ruleValue>Invalid Compression value for colour continuous-tone picture (CT) image</ruleValue>
+        <iso_reference>Section 7.3.3: TIFF/IT-CT encoding. Page 23</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>TIFF/IT-P2</name>
+      <rule_result>
+        <level>error</level>
+        <message>Invalid PhotometricInterpretation value, Compression should be CMYK (5)</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TIFF-IT-CT-P2-0003</ruleId>
+        <ruleTest>{tags.tag[name=PhotometricInterpretation] == 5}</ruleTest>
+        <ruleValue>Invalid PhotometricInterpretation value, Compression should be CMYK (5)</ruleValue>
+        <iso_reference>Section 7.3.3: TIFF/IT-CT encoding. Page 23</iso_reference>
+      </rule_result>
+    </implementation_check>
+    <implementation_check>
+      <name>TIFF/IT</name>
+    </implementation_check>
+    <results>
+      <rule_result>
+        <level>error</level>
+        <message>Invalid PhotometricInterpretation value, Compression should be CMYK (5)</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TIFF-IT-CT-P2-0003</ruleId>
+        <ruleTest>{tags.tag[name=PhotometricInterpretation] == 5}</ruleTest>
+        <ruleValue>Invalid PhotometricInterpretation value, Compression should be CMYK (5)</ruleValue>
+        <iso_reference>Section 7.3.3: TIFF/IT-CT encoding. Page 23</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>Invalid Compression value for colour continuous-tone picture (CT) image</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TIFF-IT-CT-P1-0003</ruleId>
+        <ruleTest>{tags.tag[name=PhotometricInterpretation] == 5}</ruleTest>
+        <ruleValue>Invalid Compression value for colour continuous-tone picture (CT) image</ruleValue>
+        <iso_reference>Section 7.3.3: TIFF/IT-CT encoding. Page 23</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>In TI/A the only valid pixel aspect ratio is 1:1 (square)</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>MASTER-0001</ruleId>
+        <ruleTest>{tags.tag[name=XResolution] == tags.tag[name=YResolution]}</ruleTest>
+        <ruleValue>In TI/A the only valid pixel aspect ratio is 1:1 (square)</ruleValue>
+        <iso_reference>TI/A Draft v0.1: Section 4.2: Image data. Page 12</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>error</level>
+        <message>TIFF/EPStandardID tag must be used in the first IFD</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-37398-0003</ruleId>
+        <ruleTest>{tags.tag[name=TIFFEPStandardID]}</ruleTest>
+        <ruleValue>TIFF/EPStandardID tag must be used in the first IFD</ruleValue>
+        <iso_reference>TIFF/EP: Section 5.2: TIFF/EP tag definitions grouped by function. Page 16</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>warning</level>
+        <message>PlanarConfiguration in Planar format is not currently in widespread use and it is not recommended
+    for general interchange. It is used as an extension and Baseline TIFF
+    readers are not required to support it.</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-284-0004</ruleId>
+        <ruleTest>{tags.tag[name=PlanarConfiguration] == 2}</ruleTest>
+        <ruleValue>PlanarConfiguration in Planar format is not currently in widespread use and it is not recommended
+    for general interchange. It is used as an extension and Baseline TIFF
+    readers are not required to support it.</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 38</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>warning</level>
+        <message> XResolution tag must be greater than zero.</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-282-0005</ruleId>
+        <ruleTest>{tags.tag[name=XResolution] == 0} &amp;&amp; {tags.tag[name=ResolutionUnit] != 1} || {!tags.tag[name=ResolutionUnit]}</ruleTest>
+        <ruleValue> XResolution tag must be greater than zero.</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 41</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>info</level>
+        <message>MaxSampleValue Tag is not defined. Then 2**(BitsPerSample) - 1 value is assumed</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-281-0005</ruleId>
+        <ruleTest>{!tags.tag[name=MaxSampleValue]}</ruleTest>
+        <ruleValue>MaxSampleValue Tag is not defined. Then 2**(BitsPerSample) - 1 value is assumed</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 35</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>info</level>
+        <message>MinSampleValue Tag is not defined. Then 0 value is assumed</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-280-0005</ruleId>
+        <ruleTest>{!tags.tag[name=MinSampleValue]}</ruleTest>
+        <ruleValue>MinSampleValue Tag is not defined. Then 0 value is assumed</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 35</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>info</level>
+        <message> It is not mandatory that the image be actually displayed or printed at the size implied by XResolution. It is up to the application to use this information as it wishes.</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-282-0004</ruleId>
+        <ruleTest>{tags.tag[name=XResolution]}</ruleTest>
+        <ruleValue> It is not mandatory that the image be actually displayed or printed at the size implied by XResolution. It is up to the application to use this information as it wishes.</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 41</iso_reference>
+      </rule_result>
+      <rule_result>
+        <level>info</level>
+        <message>It is not mandatory that the image be actually displayed or printed at the size implied by YResolution. It is up to the application to use this information as it wishes.</message>
+        <context>ifd</context>
+        <location>IFD1</location>
+        <ruleId>TAG-283-0004</ruleId>
+        <ruleTest>{tags.tag[name=YResolution]}</ruleTest>
+        <ruleValue>It is not mandatory that the image be actually displayed or printed at the size implied by YResolution. It is up to the application to use this information as it wishes.</ruleValue>
+        <iso_reference>TIFF Baseline 6: Section 8: Baseline Field Reference Guide. Page 41</iso_reference>
+      </rule_result>
+    </results>
+  </implementation_checker>
+  <policy_checkers>
+    <policy_rules/>
+  </policy_checkers>
+</report>

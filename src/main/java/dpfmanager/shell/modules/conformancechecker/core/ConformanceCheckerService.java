@@ -169,6 +169,7 @@ public class ConformanceCheckerService extends DpfService {
     } else if (pim.isFile()){
       if (filesToCheck.containsKey(pim.getUuid())){
         filesToCheck.get(pim.getUuid()).add(pim.getFiles());
+        filesToCheck.get(pim.getUuid()).addZipsPath(pim.getZipsPath());
       }
     }
 
@@ -190,10 +191,10 @@ public class ConformanceCheckerService extends DpfService {
 
   public void startCheck(Long uuid, ProcessInputParameters pip) {
     // Init
-    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, pip.getFiles().size(), pip.getConfig(), pip.getInternalReportFolder(), pip.getInputStr()));
+    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, pip.getFiles().size(), pip.getConfig(), pip.getInternalReportFolder(), pip.getInputStr(), pip.getZipsPath()));
 
     // Now process files
-    ProcessFiles(uuid, pip.getFiles(), pip.getConfig(), pip.getInternalReportFolder());
+    ProcessFiles(uuid, pip.getFiles(), pip.getConfig(), pip.getInternalReportFolder(), pip.getInputStr());
   }
 
   public void emptyCheck(Long uuid, String internal) {
@@ -209,13 +210,13 @@ public class ConformanceCheckerService extends DpfService {
    * @param config the config
    * @return the path to the internal report folder
    */
-  private String ProcessFiles(Long uuid, List<String> files, Configuration config, String internalReportFolder) {
+  private String ProcessFiles(Long uuid, List<String> files, Configuration config, String internalReportFolder, String inputStr) {
     // Process each input of the list
     int idReport = 1;
     List<ConformanceChecker> list = interService.getConformanceCheckers();
     for (final String filename : files) {
       ConformanceRunnable run = new ConformanceRunnable(list, generator);
-      run.setParameters(filename, idReport, internalReportFolder, config, uuid);
+      run.setParameters(filename, idReport, internalReportFolder, config, uuid, inputStr);
       context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
       idReport++;
     }

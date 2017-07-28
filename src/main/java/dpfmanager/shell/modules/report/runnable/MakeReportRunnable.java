@@ -24,15 +24,19 @@ import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ShowMessage;
+import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
+import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.threading.messages.IndividualStatusMessage;
 import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by Adria Llorens on 13/04/2016.
@@ -40,13 +44,20 @@ import java.io.File;
 public class MakeReportRunnable extends DpfRunnable {
 
   private SmallIndividualReport sir;
+  private IndividualReport ir;
   private String format;
+  private String path;
   private ReportGenerator generator;
   private GlobalReport global;
+  private ReportGui info;
   private String internalReportFolder;
   private Integer globalValue;
+  private Configuration config;
 
   private boolean individual = false;
+  private boolean onlyIndividual = false;
+  private boolean onlyGlobal = true;
+  private boolean showAtEnd;
 
   public MakeReportRunnable(ReportGenerator g) {
     // No context yet
@@ -64,20 +75,57 @@ public class MakeReportRunnable extends DpfRunnable {
     individual = true;
   }
 
-  public void setGlobalParameters(String i, GlobalReport g, Integer gv, String f) {
+  public void setIndividualParameters(IndividualReport i, String p, String f, Configuration c) {
+    ir = i;
+    path = p;
+    format = f;
+    config = c;
+    onlyIndividual = true;
+  }
+
+  public void setGlobalParameters(String i, ReportGui in, Integer gv, String f, boolean o) {
     internalReportFolder = i;
-    global = g;
+    info = in;
+    global = info.getGlobalReport();
     format = f;
     globalValue = gv;
+    onlyGlobal = o;
     individual = false;
+    showAtEnd = false;
+  }
+
+  public void setShowAtEnd(boolean showAtEnd) {
+    this.showAtEnd = showAtEnd;
   }
 
   @Override
   public void runTask() {
-    if (individual){
+    if (onlyIndividual){
+      generateOnlyIndividualReport();
+    } else if (individual){
       generateIndividualReport();
     } else {
       generateGlobalReport();
+    }
+  }
+
+  private void generateOnlyIndividualReport(){
+    File reportSerializedFile = new File(path);
+    if (reportSerializedFile.exists()){
+      IndividualReport ir = (IndividualReport) IndividualReport.read(reportSerializedFile.getPath());
+      String outputfile = generator.getReportName(ir.getInternalReportFodler(), ir.getReportFileName(), ir.getIdReport());
+      generator.transformIndividualReport(outputfile, format, ir, config);
+      String finalOutput = outputfile;
+      if (format.toLowerCase().equals("html")){
+        String first = outputfile.substring(0, outputfile.lastIndexOf("/"));
+        String second = outputfile.substring(outputfile.lastIndexOf("/")) + "." + format;
+        finalOutput = first + "/html" + second;
+      } else if (format.toLowerCase().equals("mets")) {
+        finalOutput = outputfile + ".mets.xml";
+      } else {
+        finalOutput = outputfile + "." + format;
+      }
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(format, finalOutput));
     }
   }
 
@@ -96,11 +144,15 @@ public class MakeReportRunnable extends DpfRunnable {
   private void generateGlobalReport(){
     String outputPath = generator.transformGlobalReport(internalReportFolder, format, global);
     context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(getUuid(), globalValue));
-    if (format.toLowerCase().equals("mets")) {
-      outputPath = internalReportFolder;
-    }
+    if (format.toLowerCase().equals("mets")) outputPath = internalReportFolder;
     if (outputPath != null){
-      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(getUuid(), format, outputPath));
+      if (onlyGlobal){
+        // Show report
+        context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(getUuid(), format, outputPath));
+      } else if (showAtEnd) {
+        // Show javafx global report
+        context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(getUuid(), info));
+      }
     }
   }
 

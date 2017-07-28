@@ -49,121 +49,24 @@ public class ReportsModel extends DpfModel<ReportsView, ReportsController> {
   private Context context;
   private ResourceBundle bundle;
 
-  private Map<Long, ReportGui> dataCache;
-  private SortedSet<ReportGui> data;
-  private List<ManagedFragmentHandler<ReportFragment>> reportsFragments;
-
-  private int reports_loaded = 0;
-  public static int reports_to_load = 25;
-
   /**
    * Constructor
    */
   public ReportsModel(Context ctx) {
     context = ctx;
+    sizeTime = 0L;
     bundle = DPFManagerProperties.getBundle();
-    data = new TreeSet<>();
-    reportsFragments = new ArrayList<>();
-    dataCache = new HashMap<>();
-    loadReportsFromDir();
-  }
-
-  public void addReportFragment(ManagedFragmentHandler<ReportFragment> handler) {
-    reportsFragments.add(handler);
-  }
-
-  public void removeReportFragment(ManagedFragmentHandler<ReportFragment> handler) {
-    reportsFragments.remove(handler);
-  }
-
-  public ManagedFragmentHandler<ReportFragment> getReportGuiByUuid(String uuid) {
-    for (ManagedFragmentHandler<ReportFragment> handler : reportsFragments) {
-      if (handler.getController().getUuid().equals(uuid)) {
-        return handler;
-      }
-    }
-    return null;
-  }
-
-  public void loadReportsFromDir() {
-    data.clear();
-    String baseDir = ReportGenerator.getReportsFolder();
-    File reportsDir = new File(baseDir);
-    if (reportsDir.exists()) {
-      String[] directories = reportsDir.list((current, name) -> new File(current, name).isDirectory());
-      for (int i = 0; i < directories.length; i++) {
-        String reportDay = directories[i];
-        File reportDayFile = new File(baseDir + "/" + reportDay);
-        String[] directoriesDay = reportDayFile.list((current, name) -> new File(current, name).isDirectory());
-        for (int j = 0; j < directoriesDay.length; j++) {
-          String reportDir = directoriesDay[j];
-          ReportGui rg = new ReportGui(baseDir, reportDay, reportDir);
-          if (dataCache.containsKey(rg.getTimestamp())) {
-            data.add(dataCache.get(rg.getTimestamp()));
-          } else if (rg.exists()) {
-            dataCache.put(rg.getTimestamp(), rg);
-            data.add(rg);
-          }
-        }
-      }
-    }
-  }
-
-  public void removeReport(ReportGui rg) {
-    if (data.contains(rg)) {
-      data.remove(rg);
-    }
-  }
-
-  public void printReports() {
-    printReports(0, reports_to_load);
-  }
-
-  public void printMoreReports() {
-    printReports(reports_loaded, reports_loaded + reports_to_load);
-  }
-
-  public void printReports(int from, int to) {
-    int index = 0;
-    int loaded = 0;
-    Iterator<ReportGui> it = data.iterator();
-    while (it.hasNext()) {
-      ReportGui rg = it.next();
-      if (index >= from && index < to) {
-        rg.load();
-        rg.setLast(!it.hasNext() || index == to - 1);
-        getView().getContext().send(new ReportsMessage(ReportsMessage.Type.ADD, rg));
-        reports_loaded++;
-        loaded++;
-      }
-      index++;
-    }
-    if (loaded == 0) {
-      getView().hideLoading();
-      getView().calculateMinHeight();
-    }
-  }
-
-  public boolean isAllReportsLoaded() {
-    return reports_loaded == data.size();
-  }
-
-  public boolean isEmpty() {
-    return data.isEmpty();
-  }
-
-  public void clearData() {
-    data.clear();
-  }
-
-  public void clearReportsLoaded() {
-    reports_loaded = 0;
   }
 
   private Long reportsSize;
+  private Long sizeTime;
 
   public void readReportsSize() {
-    reportsSize = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
+    Long currentTime = System.currentTimeMillis();
+    if ((currentTime - sizeTime) > 60000L){
+      reportsSize = FileUtils.sizeOfDirectory(new File(DPFManagerProperties.getReportsDir()));
+      sizeTime = currentTime;
+    }
   }
 
   public Long getReportsSize() {

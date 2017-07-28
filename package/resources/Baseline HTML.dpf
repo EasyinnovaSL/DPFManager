@@ -1,2 +1,13 @@
-ISO	Baseline
-FORMAT	HTML
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+  <version>3</version>
+  <isos>
+    <iso>TIFF_Baseline_Core_6_0</iso>
+  </isos>
+  <formats>
+    <format>HTML</format>
+  </formats>
+  <modified-isos/>
+  <rules/>
+  <fixes/>
+</configuration>

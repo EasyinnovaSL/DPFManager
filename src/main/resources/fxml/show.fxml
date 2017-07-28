@@ -5,6 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,7 +15,7 @@
 <?import javafx.scene.web.WebView?>
 <?import java.lang.String?>
 
-<AnchorPane id="pane-show" styleClass="background-main" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="pane-show" styleClass="background-main" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox fx:id="showVBox" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <TextArea fx:id="textArea" VBox.vgrow="ALWAYS">
@@ -34,12 +37,13 @@
             </content>
         </ScrollPane>
         <ComboBox fx:id="comboIndividuals" onAction="#changeIndividual" prefWidth="150.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="15.0" />
-      <ProgressBar fx:id="progressLoading" maxHeight="20.0" prefHeight="20.0" progress="0.52" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0">
-         <styleClass>
-            <String fx:value="dpf-progress-bar" />
-            <String fx:value="light-bar" />
-         </styleClass>
-      </ProgressBar>
-      <Label fx:id="labelLoading" alignment="CENTER" styleClass="label-info" text="%loadingReports" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
+        <ProgressBar fx:id="progressLoading" maxHeight="20.0" prefHeight="20.0" progress="0.52" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0">
+            <styleClass>
+                <String fx:value="dpf-progress-bar" />
+                <String fx:value="light-bar" />
+            </styleClass>
+        </ProgressBar>
+        <ProgressIndicator fx:id="indicator" prefHeight="150.0" prefWidth="150.0" progress="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0" />
+        <Label fx:id="labelLoading" alignment="CENTER" styleClass="label-info" text="%loadingReports" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
     </children>
 </AnchorPane>

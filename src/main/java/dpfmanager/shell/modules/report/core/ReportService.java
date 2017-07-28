@@ -27,6 +27,7 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
+import dpfmanager.shell.modules.report.messages.GenerateIndividualMessage;
 import dpfmanager.shell.modules.report.messages.GenerateMessage;
 import dpfmanager.shell.modules.report.messages.GlobalReportMessage;
 import dpfmanager.shell.modules.report.messages.IndividualReportMessage;
@@ -42,6 +43,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -75,7 +77,7 @@ public class ReportService extends DpfService {
 
   // Main function
   public void tractGlobalMessage(GlobalReportMessage message) {
-    createGlobalReports(message.getUuid(), message.getIndividuals(), message.getConfig(), message.getStart(), message.getCheckedIsos());
+    createGlobalReports(message.getUuid(), message.getIndividuals(), message.getConfig(), message.getStart(), message.getCheckedIsos(), message.getZipsPaths());
     config = message.getConfig();
   }
 
@@ -86,42 +88,61 @@ public class ReportService extends DpfService {
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(ir.getUuid(), run));
   }
 
-  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config, Date start, List<String> checkedIsos) {
+  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config, Date start, List<String> checkedIsos, Map<String, String> zipsPaths) {
     // Create global runnable
     GlobalReportsRunnable run = new GlobalReportsRunnable(generator);
-    run.setParameters(individuals, config, start, checkedIsos);
+    run.setParameters(individuals, config, start, checkedIsos, zipsPaths);
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
   }
 
   public void tractGenerateMessage(GenerateMessage gm) {
     Long uuid = gm.getUuid();
     String internalReportFolder = null;
-    Integer globalValue = gm.getFormat().toLowerCase().equals("mets") ? 0 : 1;
-    globalValue = 1;
-    Integer max = gm.getGlobalReport().getIndividualReports().size() + globalValue;
+    Integer globalValue = 1;
+    Integer max = (gm.isOnlyGlobal()) ? globalValue : (gm.getInfo().getGlobalReport().getIndividualReports().size() + globalValue) * gm.getFormats().size();
 
     // Transform individual reports runnables
     List<MakeReportRunnable> individualsMakers = new ArrayList<>();
-    for (SmallIndividualReport sir : gm.getGlobalReport().getIndividualReports()) {
-      if (internalReportFolder == null) internalReportFolder = sir.getInternalReportFodler();
-      sir.predictImagePath();
+    List<MakeReportRunnable> globalMakers = new ArrayList<>();
+    for (String format : gm.getFormats()) {
+      for (SmallIndividualReport sir : gm.getInfo().getGlobalReport().getIndividualReports()) {
+        if (internalReportFolder == null) internalReportFolder = sir.getInternalReportFodler();
+        sir.predictImagePath();
 
+        MakeReportRunnable mrr = new MakeReportRunnable(generator);
+        mrr.setIndividualParameters(sir, gm.getInfo().getGlobalReport(), format);
+        individualsMakers.add(mrr);
+      }
+
+      // Transforms global report and show runnable
       MakeReportRunnable mrr = new MakeReportRunnable(generator);
-      mrr.setIndividualParameters(sir, gm.getGlobalReport(), gm.getFormat());
-      individualsMakers.add(mrr);
+      mrr.setGlobalParameters(internalReportFolder, gm.getInfo(), globalValue, format, gm.isOnlyGlobal());
+      globalMakers.add(mrr);
     }
-
-    // Transforms global report and show runnable
-    MakeReportRunnable mrr = new MakeReportRunnable(generator);
-    mrr.setGlobalParameters(internalReportFolder, gm.getGlobalReport(), globalValue, gm.getFormat());
 
     // Init progress bar
+    MakeReportRunnable mrr = globalMakers.get(0);
+    mrr.setShowAtEnd(true);
     context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(uuid, max, globalValue, mrr));
 
-    // Start individual transforms
-    for (MakeReportRunnable iMrr : individualsMakers){
-      context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, iMrr));
+    globalMakers.remove(0);
+    individualsMakers.addAll(globalMakers);
+    if (!gm.isOnlyGlobal()){
+      // Start individual transforms
+      for (MakeReportRunnable iMrr : individualsMakers){
+        context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, iMrr, "individual"));
+      }
+    } else {
+      // Start global transforms
+      context.send(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(uuid, 0));
     }
+  }
+
+  public void tractGenerateIndividualMessage(GenerateIndividualMessage gm) {
+    IndividualReport ir = (IndividualReport) IndividualReport.read(gm.getPath());
+    MakeReportRunnable mrr = new MakeReportRunnable(generator);
+    mrr.setIndividualParameters(ir, gm.getPath(), gm.getFormat(), gm.getConfig());
+    context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(System.currentTimeMillis(), mrr, "individual"));
   }
 
   public Configuration getConfig() {

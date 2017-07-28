@@ -33,6 +33,12 @@ public class SmallIndividualReport implements Comparable, Serializable {
   int percentOne;
   int percent;
   boolean quick;
+  String inputStr;
+
+  List<String> selectedIsos;
+  Integer reportVersion;
+  String serPath;
+  int idReport;
 
   public SmallIndividualReport(IndividualReport ind) {
     this.isError = ind.isError();
@@ -45,6 +51,11 @@ public class SmallIndividualReport implements Comparable, Serializable {
     this.uuid = ind.getUuid();
     this.imagePath = ind.getImagePath();
     this.quick = ind.isQuick();
+    this.inputStr = ind.getInputStr();
+    this.serPath = ind.getSerPath();
+    this.idReport = ind.getIdReport();
+    this.reportVersion = ind.getVersion();
+    this.selectedIsos = ind.getSelectedIsos();
   }
 
   public void generate(IndividualReport ind){
@@ -65,6 +76,10 @@ public class SmallIndividualReport implements Comparable, Serializable {
   public void computePercent(GlobalReport global){
     this.percent = calculatePercent(global, global.getErrorValue());
     this.percentOne = calculatePercent(global, 1.0);
+  }
+
+  public String getInputStr() {
+    return inputStr;
   }
 
   public String getImagePath() {
@@ -109,14 +124,14 @@ public class SmallIndividualReport implements Comparable, Serializable {
     if (nErrorsPolicy.containsKey(iso)) {
       return nErrorsPolicy.get(iso);
     }
-    return 0;
+    return -1;
   }
 
   public int getNWarningsPolicy(String iso){
     if (nWarningsPolicy.containsKey(iso)) {
       return nWarningsPolicy.get(iso);
     }
-    return 0;
+    return -1;
   }
 
   public int getAllNErrorsPolicy(){
@@ -180,6 +195,22 @@ public class SmallIndividualReport implements Comparable, Serializable {
 
   public Long getUuid() {
     return uuid;
+  }
+
+  public String getSerPath() {
+    return serPath;
+  }
+
+  public int getIdReport() {
+    return idReport;
+  }
+
+  public int getReportVersion() {
+    return reportVersion;
+  }
+
+  public List<String> getSelectedIsos() {
+    return selectedIsos;
   }
 
   public boolean isQuick() {

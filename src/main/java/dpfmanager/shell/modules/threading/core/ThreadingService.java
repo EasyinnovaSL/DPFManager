@@ -29,6 +29,7 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.conformancechecker.runnable.GetInputRunnable;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.messages.messages.CloseMessage;
@@ -71,7 +72,7 @@ public class ThreadingService extends DpfService {
   /**
    * The main executor service
    */
-  private DpfExecutor myExecutor;
+  private Map<String, DpfExecutor> myExecutors;
 
   /**
    * The number of threads
@@ -98,6 +99,7 @@ public class ThreadingService extends DpfService {
     // No context yet
     bundle = DPFManagerProperties.getBundle();
     checks = new HashMap<>();
+    myExecutors = new HashMap<>();
     pendingChecks = new LinkedList<>();
     needReload = true;
     totalChecks = 0;
@@ -107,7 +109,9 @@ public class ThreadingService extends DpfService {
   @PreDestroy
   public void finish() {
     // Finish executor
-    myExecutor.shutdownNow();
+    for (DpfExecutor myExecutor : myExecutors.values()){
+      myExecutor.shutdownNow();
+    }
   }
 
   @Override
@@ -131,27 +135,34 @@ public class ThreadingService extends DpfService {
     }
 
     cores = (specificCores >= 1 && specificCores <= maxCores) ? specificCores : maxCores;
-    myExecutor = new DpfExecutor(cores);
-    myExecutor.handleContext(context);
   }
 
-  public void run(DpfRunnable runnable, Long uuid) {
+  private DpfExecutor getMyExecutor(String pool){
+    if (!myExecutors.containsKey(pool)) {
+      DpfExecutor myExecutor = new DpfExecutor(cores);
+      myExecutor.handleContext(context);
+      myExecutors.put(pool, myExecutor);
+    }
+    return myExecutors.get(pool);
+  }
+
+  public void run(DpfRunnable runnable, Long uuid, String pool) {
     runnable.setContext(getContext());
     runnable.setUuid(uuid);
-    myExecutor.myExecute(runnable);
+    getMyExecutor(pool).myExecute(runnable);
   }
 
   public void processThreadMessage(ThreadsMessage tm) {
     if (tm.isPause() && tm.isRequest()) {
-      myExecutor.pause(tm.getUuid());
+      getMyExecutor(tm.getPool()).pause(tm.getUuid());
     } else if (tm.isResume()) {
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.RESUME, tm.getUuid()));
-      myExecutor.resume(tm.getUuid());
+      getMyExecutor(tm.getPool()).resume(tm.getUuid());
     } else if (tm.isCancel() && tm.isRequest()) {
-      cancelRequest(tm.getUuid());
-    } else if (tm.isCancel() && !tm.isRequest()) {
+      cancelRequest(tm.getUuid(), tm.getPool());
+    } else if (tm.isCancel()) {
       cancelFinish(tm.getUuid());
-    } else if (tm.isPause() && !tm.isRequest()) {
+    } else if (tm.isPause()) {
       pauseFinish(tm.getUuid());
     }
   }
@@ -160,7 +171,7 @@ public class ThreadingService extends DpfService {
     context.send(BasicConfig.MODULE_MESSAGE, new CloseMessage(CloseMessage.Type.THREADING, !checks.isEmpty()));
   }
 
-  private void cancelRequest(Long uuid) {
+  private void cancelRequest(Long uuid, String pool) {
     // Check if is pending
     FileCheck pending = null;
     for (FileCheck check : pendingChecks) {
@@ -175,7 +186,7 @@ public class ThreadingService extends DpfService {
       context.send(GuiConfig.COMPONENT_PANE, new CheckTaskMessage(CheckTaskMessage.Target.CANCEL, uuid));
     } else {
       // Cancel threads
-      myExecutor.cancel(uuid);
+      getMyExecutor(pool).cancel(uuid);
     }
   }
 
@@ -222,7 +233,7 @@ public class ThreadingService extends DpfService {
     } else if (gm.isInit()) {
       // Init file check
       FileCheck fc = checks.get(gm.getUuid());
-      fc.init(gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
+      fc.init(gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput(), gm.getZipsPaths());
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("startingCheck").replace("%1", gm.getInput())));
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.INIT, fc.getUuid(), fc.getTotal(), fc.getInternal()));
     } else if (gm.isFinish() || gm.isCancel()) {
@@ -277,7 +288,7 @@ public class ThreadingService extends DpfService {
       // Check if all finished
       if (fc.allFinished()) {
         // Tell reports module
-        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig(), fc.getStart(), ir.getCheckedIsos()));
+        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig(), fc.getStart(), ir.getCheckedIsos(), fc.getZipsPaths()));
       }
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.UPDATE, uuid));
     }
@@ -300,24 +311,42 @@ public class ThreadingService extends DpfService {
    * Remove functions
    */
   public void removeZipFolder(String internal) {
-    try {
-      File zipFolder = new File(internal + "zip");
-      if (zipFolder.exists() && zipFolder.isDirectory()) {
+    int count = 0;
+    File zipFolder = new File(internal + GetInputRunnable.zipFolderPrefix);
+    while (zipFolder.exists()) {
+      try {
         FileUtils.deleteDirectory(zipFolder);
+      } catch (Exception e) {
+        try {
+          System.gc();
+          FileUtils.deleteDirectory(zipFolder);
+        } catch (Exception ex) {
+          context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excZip"), ex));
+        }
       }
-    } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excZip"), e));
+      count++;
+      zipFolder = new File(internal + GetInputRunnable.zipFolderPrefix + count);
     }
   }
 
   private void removeDownloadFolder(String internal) {
     try {
+      // Delete zip
       File zipFolder = new File(internal + "download");
       if (zipFolder.exists() && zipFolder.isDirectory()) {
         FileUtils.deleteDirectory(zipFolder);
       }
     } catch (Exception e) {
-      context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excDownload"), e));
+      // Sleep 1 sec and retry
+      try {
+        Thread.sleep(1000);
+        File zipFolder = new File(internal + "download");
+        if (zipFolder.exists() && zipFolder.isDirectory()) {
+          FileUtils.deleteDirectory(zipFolder);
+        }
+      } catch (Exception ex) {
+        context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excDownload"), ex));
+      }
     }
   }
 

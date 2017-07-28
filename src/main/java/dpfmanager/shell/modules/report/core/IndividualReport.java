@@ -148,6 +148,10 @@ public class IndividualReport extends ReportSerializable {
 
   private boolean isOriginal = true;
 
+  private String inputStr;
+
+  private String serPath;
+
   /**
    * Error constructor
    */
@@ -246,6 +250,14 @@ public class IndividualReport extends ReportSerializable {
     this.checkedIsos = isosCheck;
   }
 
+  public String getInputStr() {
+    return inputStr;
+  }
+
+  public void setInputStr(String inputStr) {
+    this.inputStr = inputStr;
+  }
+
   public List<String> getSelectedIsos() {
     if (checkedIsos == null) return new ArrayList<>();
     return checkedIsos;
@@ -263,6 +275,14 @@ public class IndividualReport extends ReportSerializable {
   public void setConformanceCheckerReport(String report) {
     conformanceCheckerReport = report;
     precomputedOutput = true;
+  }
+
+  public String getSerPath() {
+    return serPath;
+  }
+
+  public void setSerPath(String serPath) {
+    this.serPath = serPath;
   }
 
   public boolean hasPrecomputedOutput() {

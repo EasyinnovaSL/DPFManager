@@ -67,19 +67,20 @@ public class ConformanceCheckerModule extends DpfModule {
       } else if (cm.isGui()) {
         String path = cm.getPath();
         String input = cm.getInput();
-        Configuration config = null;
-        if (!path.isEmpty()) {
-          config = service.readConfig(path);
-          if (config == null) {
-            getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
-            return;
+        Configuration config = cm.getConfig();
+        if (config == null) {
+          if (!path.isEmpty()) {
+            config = service.readConfig(path);
+            if (config == null) {
+              getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, DPFManagerProperties.getBundle().getString("errorReadingConfFile")));
+              return;
+            }
+          } else {
+            config = new Configuration();
+            config.setDefault();
           }
-          config.setQuick(cm.isQuick());
-        } else {
-          config = new Configuration();
-          config.setDefault();
-          config.setQuick(cm.isQuick());
         }
+        config.setQuick(cm.isQuick());
         service.initProcessInputRun(input, config, cm.getRecursive());
       }
     } else if (dpfMessage.isTypeOf(ProcessInputMessage.class)) {

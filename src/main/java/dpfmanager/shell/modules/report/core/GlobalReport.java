@@ -91,6 +91,16 @@ public class GlobalReport extends ReportSerializable {
   private Configuration config;
 
   /**
+   * The input string
+   */
+  private String inputStr;
+
+  /**
+   * The paths where each zip was unzipped
+   */
+  private Map<String, String> zipsPaths;
+
+  /**
    * Instantiates a new global report.
    */
   public GlobalReport() {
@@ -102,7 +112,7 @@ public class GlobalReport extends ReportSerializable {
     errVal = 0;
   }
 
-  public void init(Configuration c, List<String> ci) {
+  public void init(Configuration c, List<String> ci, Map<String, String> z) {
     this.modifiedIsos = c.getModifiedIsos();
     this.selectedIsos = c.getIsos();
     if (c.hasRules()) {
@@ -110,6 +120,10 @@ public class GlobalReport extends ReportSerializable {
     }
     this.checkedIsos = ci;
     this.config = c;
+    this.zipsPaths = z;
+    if (zipsPaths == null) {
+      zipsPaths = new HashMap<>();
+    }
   }
 
   /**
@@ -159,6 +173,7 @@ public class GlobalReport extends ReportSerializable {
     List<SmallIndividualReport> toDelete = new ArrayList<>();
     Collections.sort(reports);
     for (SmallIndividualReport ir : reports) {
+      if (inputStr == null) inputStr = ir.getInputStr();
       if (ir.isError()) {
         toDelete.add(ir);
       } else {
@@ -226,12 +241,18 @@ public class GlobalReport extends ReportSerializable {
   public int getAllReportsWarnings() {
     int n = 0;
     for (SmallIndividualReport rep : reports) {
+      boolean warn = false;
       for (String iso : getSelectedIsos()) {
-        if (rep.getNWarnings(iso) > 0) {
-          n++;
+        if (rep.getNErrors(iso) == 0){
+          if (rep.getNWarnings(iso) > 0) {
+            warn = true;
+          }
+        } else {
+          warn = false;
           break;
         }
       }
+      if (warn) n++;
     }
     return n;
   }
@@ -263,7 +284,6 @@ public class GlobalReport extends ReportSerializable {
    * @return the individual reports
    */
   public List<SmallIndividualReport> getIndividualReports() {
-    Collections.sort(reports);
     return reports;
   }
 
@@ -313,6 +333,7 @@ public class GlobalReport extends ReportSerializable {
   }
 
   public String getInputString(){
+    if (inputStr != null && !inputStr.isEmpty()) return inputStr;
     String name = "";
     int index = 0;
     Iterator<SmallIndividualReport> it = reports.iterator();
@@ -320,7 +341,12 @@ public class GlobalReport extends ReportSerializable {
       SmallIndividualReport individual = it.next();
       name = (name.length() > 0) ? name + ", " + individual.getFileName() : individual.getFileName();
     }
-    return name;
+    inputStr = name;
+    return inputStr;
+  }
+
+  public Map<String, String> getZipsPaths() {
+    return zipsPaths;
   }
 
   public Configuration getConfig() {

@@ -19,8 +19,12 @@
 
 package dpfmanager.shell.core.messages;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
+import dpfmanager.shell.modules.report.util.ReportGui;
+
+import java.util.List;
 
 /**
  * Created by Adria Llorens on 04/03/2016.
@@ -28,11 +32,12 @@ import dpfmanager.shell.modules.report.runnable.MakeReportRunnable;
 public class ShowMessage extends DpfMessage {
 
   public enum Type {
-    SHOW, GENERATE, UPDATE, INIT
+    SHOW, GENERATE, UPDATE, INIT, INDIVIDUAL, LOAD
   }
 
   private Type internalType;
   private String type;
+  private List<String> types = null;
   private String path;
   private GlobalReport globalReport;
   private int number;
@@ -40,6 +45,14 @@ public class ShowMessage extends DpfMessage {
   private MakeReportRunnable makeReportRunnable;
   private Long uuid;
   private String internal;
+  private boolean onlyGlobal;
+  private Configuration config;
+  private ReportGui info;
+
+  // Load
+  public ShowMessage(Type internalType) {
+    this.internalType = internalType;
+  }
 
   // Show
   public ShowMessage(Long u, String t, String p) {
@@ -48,6 +61,8 @@ public class ShowMessage extends DpfMessage {
     path = p;
     internalType = Type.SHOW;
   }
+
+  // Show
   public ShowMessage(String t, String p) {
     type = t;
     uuid = null;
@@ -55,13 +70,41 @@ public class ShowMessage extends DpfMessage {
     internalType = Type.SHOW;
   }
 
+  // Show
+  public ShowMessage(Long u, ReportGui i) {
+    uuid = u;
+    info = i;
+    internalType = Type.SHOW;
+  }
+
   // Generate
-  public ShowMessage(Long u, String t, GlobalReport gr, String i) {
+  public ShowMessage(Long u, String t, ReportGui info, boolean o) {
+    this.info = info;
     type = t;
     uuid = u;
-    internal = i;
-    globalReport = gr;
+    internal = info.getInternalReportFolder();
+    globalReport = info.getGlobalReport();
+    onlyGlobal = o;
     internalType = Type.GENERATE;
+  }
+
+  // Generate
+  public ShowMessage(Long u, List<String> t, ReportGui info, boolean o) {
+    this.info = info;
+    types = t;
+    uuid = u;
+    internal = info.getInternalReportFolder();
+    globalReport = info.getGlobalReport();
+    onlyGlobal = o;
+    internalType = Type.GENERATE;
+  }
+
+  // Individual
+  public ShowMessage(String t, String p, Configuration c) {
+    type = t;
+    path = p;
+    config = c;
+    internalType = Type.INDIVIDUAL;
   }
 
   // Init
@@ -112,6 +155,10 @@ public class ShowMessage extends DpfMessage {
     return internalType.equals(Type.SHOW);
   }
 
+  public boolean isIndividual() {
+    return internalType.equals(Type.INDIVIDUAL);
+  }
+
   public boolean isUpdate() {
     return internalType.equals(Type.UPDATE);
   }
@@ -126,5 +173,25 @@ public class ShowMessage extends DpfMessage {
 
   public String getInternal() {
     return internal;
+  }
+
+  public boolean isOnlyGlobal() {
+    return onlyGlobal;
+  }
+
+  public Configuration getConfig() {
+    return config;
+  }
+
+  public ReportGui getInfo() {
+    return info;
+  }
+
+  public List<String> getTypes() {
+    return types;
+  }
+
+  public boolean isLoad(){
+    return internalType.equals(Type.LOAD);
   }
 }

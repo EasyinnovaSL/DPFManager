@@ -205,7 +205,7 @@ public class TopFragment extends FlowPane {
     String finalId = "";
     if (id.equals(GuiConfig.PERSPECTIVE_DESSIGN) || id.equals(GuiConfig.PERSPECTIVE_CONFIG)) {
       finalId = ButDessign;
-    } else if (id.equals(GuiConfig.PERSPECTIVE_REPORTS) || id.equals(GuiConfig.PERSPECTIVE_SHOW)) {
+    } else if (id.equals(GuiConfig.PERSPECTIVE_REPORTS) || id.equals(GuiConfig.PERSPECTIVE_SHOW) || id.equals(GuiConfig.PERSPECTIVE_GLOBAL)) {
       finalId = ButReports;
     } else if (id.equals(GuiConfig.PERSPECTIVE_STATISTICS)) {
       finalId = ButStatistics;
@@ -283,7 +283,7 @@ public class TopFragment extends FlowPane {
                       context.send(GuiConfig.PERSPECTIVE_INTEROPERABILITY, new UiMessage(UiMessage.Type.SHOW));
                       break;
                     case ButReports:
-                      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.SHOW));
+                      context.send(GuiConfig.PERSPECTIVE_REPORTS, new UiMessage(UiMessage.Type.RELOAD));
                       break;
                     case ButStatistics:
                       context.send(GuiConfig.PERSPECTIVE_STATISTICS, new UiMessage(UiMessage.Type.SHOW));

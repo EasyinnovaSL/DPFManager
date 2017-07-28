@@ -121,6 +121,8 @@ import com.easyinnova.tiff.model.types.Short;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
 
+import org.apache.camel.ExchangeException;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -249,9 +251,13 @@ public class MetsReport {
     } else {
       try {
         File file = new File(filepath);
-        Path filePath = file.toPath();
-        BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
-        return attr.creationTime().toString();
+        if (file.exists()) {
+          Path filePath = file.toPath();
+          BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
+          return attr.creationTime().toString();
+        } else {
+          return "";
+        }
       } catch (IOException e) {
         e.printStackTrace();
         return "";
@@ -311,21 +317,23 @@ public class MetsReport {
       photometricInterpretation.setColorSpace(colorSpace);
 
       //7.1.3.2.1 Icc profile
-      if (ifd.getMetadata().get("ICCProfile") != null) {
+      if (ifd.getMetadata().get("ICCProfile") != null && ifd.getMetadata().get("ICCProfile").getCardinality() > 0) {
         BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ColorProfile colorProfile = new BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ColorProfile();
         BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ColorProfile.IccProfile iccProfile = new BasicImageInformationType.BasicImageCharacteristics.PhotometricInterpretation.ColorProfile.IccProfile();
         abstractTiffType iccProfileFromIfd = ifd.getMetadata().get("ICCProfile").getValue().get(0);
-        IccProfile icc = (IccProfile) iccProfileFromIfd;
-        StringType iccVersion = new StringType();
-        iccVersion.setUse("System");
-        iccVersion.setValue(icc.getVersion());
-        iccProfile.setIccProfileVersion(iccVersion);
-        StringType iccName = new StringType();
-        iccName.setUse("System");
-        iccName.setValue(icc.getDescription());
-        iccProfile.setIccProfileName(iccName);
-        colorProfile.setIccProfile(iccProfile);
-        photometricInterpretation.setColorProfile(colorProfile);
+        if (iccProfileFromIfd instanceof IccProfile) {
+          IccProfile icc = (IccProfile) iccProfileFromIfd;
+          StringType iccVersion = new StringType();
+          iccVersion.setUse("System");
+          iccVersion.setValue(icc.getVersion());
+          iccProfile.setIccProfileVersion(iccVersion);
+          StringType iccName = new StringType();
+          iccName.setUse("System");
+          iccName.setValue(icc.getDescription());
+          iccProfile.setIccProfileName(iccName);
+          colorProfile.setIccProfile(iccProfile);
+          photometricInterpretation.setColorProfile(colorProfile);
+        }
       }
 
       //7.1.3.3 YcbCr image
@@ -428,23 +436,30 @@ public class MetsReport {
     }
     if (ir.getTiffModel().getMetadata().contains("GPSLatitude")) {
       ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.GPSData.GPSLatitude latitude = new ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.GPSData.GPSLatitude();
-      List<Rational> gpsLatitudeList = (List<Rational>) ir.getTiffModel().getMetadata().get("GPSLatitude");
-      RationalType degreesValue = new RationalType();
-      degreesValue.setUse("System");
-      degreesValue.setNumerator(BigInteger.valueOf(gpsLatitudeList.get(0).getNumerator()));
-      degreesValue.setDenominator(BigInteger.valueOf(gpsLatitudeList.get(0).getDenominator()));
-      latitude.setDegrees(degreesValue);
-      RationalType minutesValue = new RationalType();
-      minutesValue.setUse("System");
-      minutesValue.setNumerator(BigInteger.valueOf(gpsLatitudeList.get(1).getNumerator()));
-      minutesValue.setDenominator(BigInteger.valueOf(gpsLatitudeList.get(1).getDenominator()));
-      latitude.setMinutes(minutesValue);
-      RationalType secondsValue = new RationalType();
-      secondsValue.setUse("System");
-      secondsValue.setNumerator(BigInteger.valueOf(gpsLatitudeList.get(2).getNumerator()));
-      secondsValue.setDenominator(BigInteger.valueOf(gpsLatitudeList.get(2).getDenominator()));
-      latitude.setSeconds(secondsValue);
-      gpsData.setGPSLatitude(latitude);
+      List<Rational> gpsLatitudeList = null;
+      try {
+        gpsLatitudeList = (List<Rational>) ir.getTiffModel().getMetadata().get("GPSLatitude");
+      } catch ( Exception ex) {
+
+      }
+      if (gpsLatitudeList != null && gpsLatitudeList.size() > 2) {
+        RationalType degreesValue = new RationalType();
+        degreesValue.setUse("System");
+        degreesValue.setNumerator(BigInteger.valueOf(gpsLatitudeList.get(0).getNumerator()));
+        degreesValue.setDenominator(BigInteger.valueOf(gpsLatitudeList.get(0).getDenominator()));
+        latitude.setDegrees(degreesValue);
+        RationalType minutesValue = new RationalType();
+        minutesValue.setUse("System");
+        minutesValue.setNumerator(BigInteger.valueOf(gpsLatitudeList.get(1).getNumerator()));
+        minutesValue.setDenominator(BigInteger.valueOf(gpsLatitudeList.get(1).getDenominator()));
+        latitude.setMinutes(minutesValue);
+        RationalType secondsValue = new RationalType();
+        secondsValue.setUse("System");
+        secondsValue.setNumerator(BigInteger.valueOf(gpsLatitudeList.get(2).getNumerator()));
+        secondsValue.setDenominator(BigInteger.valueOf(gpsLatitudeList.get(2).getDenominator()));
+        latitude.setSeconds(secondsValue);
+        gpsData.setGPSLatitude(latitude);
+      }
     }
     if (ir.getTiffModel().getMetadata().contains("GPSLongitudeRef") && GpsLongitudeRefType.verifyTag(ir.getTiffModel().getMetadata().get("GPSLongitudeRef").toString())) {
       TypeOfgpsLongitudeRefType gpsLongitudRefType = new TypeOfgpsLongitudeRefType();
@@ -689,160 +704,236 @@ public class MetsReport {
   private ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData createNisoImageData(IndividualReport ir, IFD ifd) {
     ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData imageData = new ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData();
     if (ir.getTiffModel().getMetadata() != null) {
-      if (ir.getTiffModel().getMetadata().contains("FNumber")) {
-        TypeOfNonNegativeRealType fnumber = new TypeOfNonNegativeRealType();
-        fnumber.setUse("Manager");
-        Rational fnumberValue = (Rational) ir.getTiffModel().getMetadata().get("FNumber");
-        fnumber.setValue(fnumberValue.getFloatValue());
-        imageData.setFNumber(fnumber);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("FNumber") && ir.getTiffModel().getMetadata().get("FNumber") instanceof Rational) {
+          TypeOfNonNegativeRealType fnumber = new TypeOfNonNegativeRealType();
+          fnumber.setUse("Manager");
+          Rational fnumberValue = (Rational) ir.getTiffModel().getMetadata().get("FNumber");
+          fnumber.setValue(fnumberValue.getFloatValue());
+          imageData.setFNumber(fnumber);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("ExposureTime")) {
-        TypeOfNonNegativeRealType exposureTime = new TypeOfNonNegativeRealType();
-        exposureTime.setUse("Manager");
-        Rational exposure = (Rational) ir.getTiffModel().getMetadata().get("ExposureTime");
-        exposureTime.setValue(exposure.getFloatValue());
-        imageData.setExposureTime(exposureTime);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("ExposureTime") && ir.getTiffModel().getMetadata().get("ExposureTime") instanceof Rational) {
+          TypeOfNonNegativeRealType exposureTime = new TypeOfNonNegativeRealType();
+          exposureTime.setUse("Manager");
+          Rational exposure = (Rational) ir.getTiffModel().getMetadata().get("ExposureTime");
+          exposureTime.setValue(exposure.getFloatValue());
+          imageData.setExposureTime(exposureTime);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("ExposureProgram") && ExposureProgramType.verifyTag(ir.getTiffModel().getMetadata().get("ExposureProgram").toString())) {
-        TypeOfExposureProgramType exposureProgram = new TypeOfExposureProgramType();
-        exposureProgram.setUse("Manager");
-        exposureProgram.setValue(ExposureProgramType.fromValue(ir.getTiffModel().getMetadata().get("ExposureProgram").toString()));
-        imageData.setExposureProgram(exposureProgram);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("ExposureProgram") && ExposureProgramType.verifyTag(ir.getTiffModel().getMetadata().get("ExposureProgram").toString())) {
+          TypeOfExposureProgramType exposureProgram = new TypeOfExposureProgramType();
+          exposureProgram.setUse("Manager");
+          exposureProgram.setValue(ExposureProgramType.fromValue(ir.getTiffModel().getMetadata().get("ExposureProgram").toString()));
+          imageData.setExposureProgram(exposureProgram);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("SpectralSensitivity")) {
-        StringType spectralSensivity = new StringType();
-        spectralSensivity.setUse("Manager");
-        spectralSensivity.setValue(ir.getTiffModel().getMetadata().get("SpectralSensitivity").toString());
-        imageData.setSpectralSensitivity(spectralSensivity);
-
+      try {
+        if (ir.getTiffModel().getMetadata().contains("SpectralSensitivity")) {
+          StringType spectralSensivity = new StringType();
+          spectralSensivity.setUse("Manager");
+          spectralSensivity.setValue(ir.getTiffModel().getMetadata().get("SpectralSensitivity").toString());
+          imageData.setSpectralSensitivity(spectralSensivity);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("ISOSpeedRatings")) {
-        PositiveIntegerType iosSpeed = new PositiveIntegerType();
-        iosSpeed.setUse("Manager");
-        Short speedRatingValue = (Short) ir.getTiffModel().getMetadata().get("ISOSpeedRatings");
-        iosSpeed.setValue(BigInteger.valueOf(speedRatingValue.getValue()));
-        imageData.setIsoSpeedRatings(iosSpeed);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("ISOSpeedRatings") && ir.getTiffModel().getMetadata().get("ISOSpeedRatings") instanceof  Short) {
+          PositiveIntegerType iosSpeed = new PositiveIntegerType();
+          iosSpeed.setUse("Manager");
+          Short speedRatingValue = (Short) ir.getTiffModel().getMetadata().get("ISOSpeedRatings");
+          iosSpeed.setValue(BigInteger.valueOf(speedRatingValue.getValue()));
+          imageData.setIsoSpeedRatings(iosSpeed);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      TypeOfExifVersionType exifVersion = new TypeOfExifVersionType();
-      exifVersion.setUse("System");
-      if (ifd.getMetadata().containsTagId(TiffTags.getTagId("ExifVersion"))) {
-        exifVersion.setValue(ifd.getMetadata().get("ExifVersion").getValue().toString());
-      } else if (ifd.containsTagId(34665)) { //If contains EXIF but version is not included
-        exifVersion.setValue("0220");
+      try {
+        TypeOfExifVersionType exifVersion = new TypeOfExifVersionType();
+        exifVersion.setUse("System");
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("ExifVersion"))) {
+          exifVersion.setValue(ifd.getMetadata().get("ExifVersion").getValue().toString());
+        } else if (ifd.containsTagId(34665)) { //If contains EXIF but version is not included
+          exifVersion.setValue("0220");
+        }
+        imageData.setExifVersion(exifVersion);
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      imageData.setExifVersion(exifVersion);
-      if (ir.getTiffModel().getMetadata().contains("ShutterSpeedValue")) {
-        RationalType shutterSpeedValue = new RationalType();
-        shutterSpeedValue.setUse("Manager");
-        SRational speedTagValue = (SRational) ir.getTiffModel().getMetadata().get("ShutterSpeedValue");
-        shutterSpeedValue.setDenominator(BigInteger.valueOf(speedTagValue.getDenominator()));
-        shutterSpeedValue.setNumerator(BigInteger.valueOf(speedTagValue.getNumerator()));
-        imageData.setShutterSpeedValue(shutterSpeedValue);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("ShutterSpeedValue") && ir.getTiffModel().getMetadata().get("ShutterSpeedValue") instanceof  SRational) {
+          RationalType shutterSpeedValue = new RationalType();
+          shutterSpeedValue.setUse("Manager");
+          SRational speedTagValue = (SRational) ir.getTiffModel().getMetadata().get("ShutterSpeedValue");
+          shutterSpeedValue.setDenominator(BigInteger.valueOf(speedTagValue.getDenominator()));
+          shutterSpeedValue.setNumerator(BigInteger.valueOf(speedTagValue.getNumerator()));
+          imageData.setShutterSpeedValue(shutterSpeedValue);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("ApertureValue")) {
-        RationalType apertureValue = new RationalType();
-        apertureValue.setUse("Manager");
-        Rational apertureTagValue = (Rational) ir.getTiffModel().getMetadata().get("ApertureValue");
-        apertureValue.setDenominator(BigInteger.valueOf(apertureTagValue.getDenominator()));
-        apertureValue.setNumerator(BigInteger.valueOf(apertureTagValue.getNumerator()));
-        imageData.setApertureValue(apertureValue);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("ApertureValue") && ir.getTiffModel().getMetadata().get("ApertureValue") instanceof Rational) {
+          RationalType apertureValue = new RationalType();
+          apertureValue.setUse("Manager");
+          if (ir.getTiffModel().getMetadata().get("ApertureValue") instanceof Rational) {
+            Rational apertureTagValue = (Rational) ir.getTiffModel().getMetadata().get("ApertureValue");
+            apertureValue.setDenominator(BigInteger.valueOf(apertureTagValue.getDenominator()));
+            apertureValue.setNumerator(BigInteger.valueOf(apertureTagValue.getNumerator()));
+            imageData.setApertureValue(apertureValue);
+          }
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("BrightnessValue")) {
-        RationalType bightnessValue = new RationalType();
-        bightnessValue.setUse("Manager");
-        try {
+      try {
+        if (ir.getTiffModel().getMetadata().contains("BrightnessValue") && ir.getTiffModel().getMetadata().get("BrightnessValue") instanceof SRational) {
+          RationalType bightnessValue = new RationalType();
+          bightnessValue.setUse("Manager");
           SRational brightnessTagValue = (SRational) ir.getTiffModel().getMetadata().get("BrightnessValue");
           bightnessValue.setDenominator(BigInteger.valueOf(brightnessTagValue.getDenominator()));
           bightnessValue.setNumerator(BigInteger.valueOf(brightnessTagValue.getNumerator()));
           imageData.setBrightnessValue(bightnessValue);
-        } catch (Exception e) {
-
         }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("ExposureBiasValue")) {
-        RationalType exposureBias = new RationalType();
-        exposureBias.setUse("Manager");
-        SRational exposureTagValue = (SRational) ir.getTiffModel().getMetadata().get("ExposureBiasValue");
-        exposureBias.setDenominator(BigInteger.valueOf(exposureTagValue.getDenominator()));
-        exposureBias.setNumerator(BigInteger.valueOf(exposureTagValue.getNumerator()));
-        imageData.setExposureBiasValue(exposureBias);
-      }
-      if (ir.getTiffModel().getMetadata().contains("MaxApertureValue")) {
-        RationalType maxAperture = new RationalType();
-        maxAperture.setUse("Manager");
-        SRational maxApertureTagValue = (SRational) ir.getTiffModel().getMetadata().get("MaxApertureValue");
-        maxAperture.setDenominator(BigInteger.valueOf(maxApertureTagValue.getDenominator()));
-        maxAperture.setNumerator(BigInteger.valueOf(maxApertureTagValue.getNumerator()));
-        imageData.setMaxApertureValue(maxAperture);
-      }
-      if (ir.getTiffModel().getMetadata().contains("SubjectDistance")) {
-        ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData.SubjectDistance subjectDistance = new ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData.SubjectDistance();
-        TypeOfNonNegativeDecimalType distance = new TypeOfNonNegativeDecimalType();
-        distance.setUse("Manager");
-        TiffObject to = ir.getTiffModel().getMetadata().get("SubjectDistance");
-        if (to instanceof Long) {
-          Long subjectLongValue = (Long) to;
-          distance.setValue(BigDecimal.valueOf(subjectLongValue.getValue()));
-          subjectDistance.setDistance(distance);
-          imageData.setSubjectDistance(subjectDistance);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("ExposureBiasValue") && ir.getTiffModel().getMetadata().get("ExposureBiasValue") instanceof SRational) {
+          RationalType exposureBias = new RationalType();
+          exposureBias.setUse("Manager");
+          SRational exposureTagValue = (SRational) ir.getTiffModel().getMetadata().get("ExposureBiasValue");
+          exposureBias.setDenominator(BigInteger.valueOf(exposureTagValue.getDenominator()));
+          exposureBias.setNumerator(BigInteger.valueOf(exposureTagValue.getNumerator()));
+          imageData.setExposureBiasValue(exposureBias);
         }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("MeteringMode") && MeteringModeType.verifyTag(ir.getTiffModel().getMetadata().get("MeteringMode").toString())) {
-        TypeOfMeteringModeType meteringModeType = new TypeOfMeteringModeType();
-        meteringModeType.setUse("Manager");
-        meteringModeType.setValue(MeteringModeType.fromValue(ir.getTiffModel().getMetadata().get("MeteringMode").toString()));
-        imageData.setMeteringMode(meteringModeType);
-      }
-      if (ir.getTiffModel().getMetadata().contains("LightSource") && LightSourceType.verifyTag(ir.getTiffModel().getMetadata().get("LightSource").toString())) {
-        TypeOfLightSourceType lightSourceType = new TypeOfLightSourceType();
-        lightSourceType.setUse("Manager");
-        lightSourceType.setValue(LightSourceType.fromValue(ir.getTiffModel().getMetadata().get("LightSource").toString()));
-        imageData.setLightSource(lightSourceType);
-      }
-      if (ir.getTiffModel().getMetadata().contains("Flash")) {
-        TypeOfFlashType flashType = new TypeOfFlashType();
-        flashType.setUse("Manager");
-        Integer hexFlashInt = Integer.parseInt(ir.getTiffModel().getMetadata().get("Flash").toString());
-        String hexFlash = String.format("%04X", hexFlashInt);
-        if (FlashType.verifyTag(hexFlash)) {
-          flashType.setValue(FlashType.fromValue(hexFlash));
-          imageData.setFlash(flashType);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("MaxApertureValue") && ir.getTiffModel().getMetadata().get("MaxApertureValue") instanceof SRational) {
+          RationalType maxAperture = new RationalType();
+          maxAperture.setUse("Manager");
+          if (ir.getTiffModel().getMetadata().get("MaxApertureValue") instanceof SRational) {
+            SRational maxApertureTagValue = (SRational) ir.getTiffModel().getMetadata().get("MaxApertureValue");
+            maxAperture.setDenominator(BigInteger.valueOf(maxApertureTagValue.getDenominator()));
+            maxAperture.setNumerator(BigInteger.valueOf(maxApertureTagValue.getNumerator()));
+            imageData.setMaxApertureValue(maxAperture);
+          }
         }
-
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("FlashEnergy")) {
-        RationalType flashEnergy = new RationalType();
-        flashEnergy.setUse("Manager");
-        Rational flashEnergyTagValue = (Rational) ir.getTiffModel().getMetadata().get("FlashEnergy");
-        flashEnergy.setDenominator(BigInteger.valueOf(flashEnergyTagValue.getDenominator()));
-        flashEnergy.setNumerator(BigInteger.valueOf(flashEnergyTagValue.getNumerator()));
-        imageData.setFlashEnergy(flashEnergy);
-      }
-      if (ir.getTiffModel().getMetadata().contains("ExposureIndex")) {
-        TypeOfPositiveRealType exposureIndex = new TypeOfPositiveRealType();
-        exposureIndex.setUse("Manager");
-        Rational exposureTagValue = (Rational) ir.getTiffModel().getMetadata().get("ExposureIndex");
-        exposureIndex.setValue(exposureTagValue.getFloatValue());
-        imageData.setExposureIndex(exposureIndex);
-      }
-      if (ir.getTiffModel().getMetadata().contains("SensingMethod")) {
-        TypeOfSensingMethodType exposureIndex = new TypeOfSensingMethodType();
-        exposureIndex.setUse("Manager");
-        Short exposureTagValue = (Short) ir.getTiffModel().getMetadata().get("SensingMethod");
-        if (SensingMethodType.verifyTag(exposureTagValue.toString())) {
-          exposureIndex.setValue(SensingMethodType.fromValue(exposureTagValue.toString()));
-          imageData.setSensingMethod(exposureIndex);
+      try {
+        if (ir.getTiffModel().getMetadata().contains("SubjectDistance")) {
+          ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData.SubjectDistance subjectDistance = new ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData.SubjectDistance();
+          TypeOfNonNegativeDecimalType distance = new TypeOfNonNegativeDecimalType();
+          distance.setUse("Manager");
+          TiffObject to = ir.getTiffModel().getMetadata().get("SubjectDistance");
+          if (to instanceof Long) {
+            Long subjectLongValue = (Long) to;
+            distance.setValue(BigDecimal.valueOf(subjectLongValue.getValue()));
+            subjectDistance.setDistance(distance);
+            imageData.setSubjectDistance(subjectDistance);
+          }
         }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ir.getTiffModel().getMetadata().contains("CFAPattern")) {
-        IntegerType cfaPattern = new IntegerType();
-        cfaPattern.setUse("Manager");
-        try {
-          cfaPattern.setValue(new BigInteger(ir.getTiffModel().getMetadata().get("CFAPattern").toString().replace("[", "").replace("]", "").replace(",", "")));
-          imageData.setCfaPattern(cfaPattern);
-        } catch (Exception ex) {
-          //ex.printStackTrace();
+      try {
+        if (ir.getTiffModel().getMetadata().contains("MeteringMode") && MeteringModeType.verifyTag(ir.getTiffModel().getMetadata().get("MeteringMode").toString())) {
+          TypeOfMeteringModeType meteringModeType = new TypeOfMeteringModeType();
+          meteringModeType.setUse("Manager");
+          meteringModeType.setValue(MeteringModeType.fromValue(ir.getTiffModel().getMetadata().get("MeteringMode").toString()));
+          imageData.setMeteringMode(meteringModeType);
         }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+      try {
+        if (ir.getTiffModel().getMetadata().contains("LightSource") && LightSourceType.verifyTag(ir.getTiffModel().getMetadata().get("LightSource").toString())) {
+          TypeOfLightSourceType lightSourceType = new TypeOfLightSourceType();
+          lightSourceType.setUse("Manager");
+          lightSourceType.setValue(LightSourceType.fromValue(ir.getTiffModel().getMetadata().get("LightSource").toString()));
+          imageData.setLightSource(lightSourceType);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+      try {
+        if (ir.getTiffModel().getMetadata().contains("Flash")) {
+          TypeOfFlashType flashType = new TypeOfFlashType();
+          flashType.setUse("Manager");
+          Integer hexFlashInt = Integer.parseInt(ir.getTiffModel().getMetadata().get("Flash").toString());
+          String hexFlash = String.format("%04X", hexFlashInt);
+          if (FlashType.verifyTag(hexFlash)) {
+            flashType.setValue(FlashType.fromValue(hexFlash));
+            imageData.setFlash(flashType);
+          }
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+      try {
+        if (ir.getTiffModel().getMetadata().contains("FlashEnergy")) {
+          RationalType flashEnergy = new RationalType();
+          flashEnergy.setUse("Manager");
+          Rational flashEnergyTagValue = (Rational) ir.getTiffModel().getMetadata().get("FlashEnergy");
+          flashEnergy.setDenominator(BigInteger.valueOf(flashEnergyTagValue.getDenominator()));
+          flashEnergy.setNumerator(BigInteger.valueOf(flashEnergyTagValue.getNumerator()));
+          imageData.setFlashEnergy(flashEnergy);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+      try {
+        if (ir.getTiffModel().getMetadata().contains("ExposureIndex")) {
+          TypeOfPositiveRealType exposureIndex = new TypeOfPositiveRealType();
+          exposureIndex.setUse("Manager");
+          Rational exposureTagValue = (Rational) ir.getTiffModel().getMetadata().get("ExposureIndex");
+          exposureIndex.setValue(exposureTagValue.getFloatValue());
+          imageData.setExposureIndex(exposureIndex);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+      try {
+        if (ir.getTiffModel().getMetadata().contains("SensingMethod")) {
+          TypeOfSensingMethodType exposureIndex = new TypeOfSensingMethodType();
+          exposureIndex.setUse("Manager");
+          Short exposureTagValue = (Short) ir.getTiffModel().getMetadata().get("SensingMethod");
+          if (SensingMethodType.verifyTag(exposureTagValue.toString())) {
+            exposureIndex.setValue(SensingMethodType.fromValue(exposureTagValue.toString()));
+            imageData.setSensingMethod(exposureIndex);
+          }
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+      try {
+        if (ir.getTiffModel().getMetadata().contains("CFAPattern")) {
+          IntegerType cfaPattern = new IntegerType();
+          cfaPattern.setUse("Manager");
+          String val = ir.getTiffModel().getMetadata().get("CFAPattern").toString().replace("[", "").replace("]", "").replace(",", "");
+          try {
+            BigInteger bi = new BigInteger(val);
+            cfaPattern.setValue(bi);
+            imageData.setCfaPattern(cfaPattern);
+          } catch (Exception ex) {
+            // Not an integer
+          }
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
     }
     return imageData;
@@ -867,16 +958,18 @@ public class MetsReport {
           ImageCaptureMetadataType.SourceInformation.SourceSize.SourceXDimension sourceXDimension = new ImageCaptureMetadataType.SourceInformation.SourceSize.SourceXDimension();
           TypeOfNonNegativeRealType xDValue = new TypeOfNonNegativeRealType();
           xDValue.setUse("System");
-          Rational xResolutionValue = (Rational) (ifd.getMetadata().get("XResolution").getValue().get(0));
-          xDValue.setValue(xResolutionValue.getFloatValue());
-          sourceXDimension.setSourceXDimensionValue(xDValue);
+          if (ifd.getMetadata().get("XResolution").getCardinality() > 0 && ifd.getMetadata().get("XResolution").getValue().get(0) instanceof Rational) {
+            Rational xResolutionValue = (Rational) (ifd.getMetadata().get("XResolution").getValue().get(0));
+            xDValue.setValue(xResolutionValue.getFloatValue());
+            sourceXDimension.setSourceXDimensionValue(xDValue);
+          }
           TypeOfsourceDimensionUnitType dimensionUnit = new TypeOfsourceDimensionUnitType();
           dimensionUnit.setUse("System");
           dimensionUnit.setValue(SourceDimensionUnitType.fromValue(ifd.getMetadata().get("ResolutionUnit").toString()));
           sourceXDimension.setSourceXDimensionUnit(dimensionUnit);
           sourceSize.setSourceXDimension(sourceXDimension);
-        }catch (Exception e) {
-
+        } catch (Exception e) {
+          e.printStackTrace();
         }
       }
       if (ifd.getMetadata().containsTagId(TiffTags.getTagId("YResolution")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("ResolutionUnit")) && SourceDimensionUnitType.verifyTag(ifd.getMetadata().get("ResolutionUnit").toString())) {
@@ -884,16 +977,18 @@ public class MetsReport {
           ImageCaptureMetadataType.SourceInformation.SourceSize.SourceYDimension sourceYDimension = new ImageCaptureMetadataType.SourceInformation.SourceSize.SourceYDimension();
           TypeOfNonNegativeRealType yDValue = new TypeOfNonNegativeRealType();
           yDValue.setUse("System");
-          Rational yResolutionValue = (Rational) (ifd.getMetadata().get("YResolution").getValue().get(0));
-          yDValue.setValue(yResolutionValue.getFloatValue());
-          sourceYDimension.setSourceYDimensionValue(yDValue);
+          if ((ifd.getMetadata().get("YResolution").getCardinality() > 0 && ifd.getMetadata().get("YResolution").getValue().get(0) instanceof Rational)) {
+            Rational yResolutionValue = (Rational) (ifd.getMetadata().get("YResolution").getValue().get(0));
+            yDValue.setValue(yResolutionValue.getFloatValue());
+            sourceYDimension.setSourceYDimensionValue(yDValue);
+          }
           TypeOfsourceDimensionUnitType dimensionUnit = new TypeOfsourceDimensionUnitType();
           dimensionUnit.setUse("System");
           dimensionUnit.setValue(SourceDimensionUnitType.fromValue(ifd.getMetadata().get("ResolutionUnit").toString()));
           sourceYDimension.setSourceYDimensionUnit(dimensionUnit);
           sourceSize.setSourceYDimension(sourceYDimension);
         } catch (Exception e) {
-
+          e.printStackTrace();
         }
       }
 
@@ -901,61 +996,89 @@ public class MetsReport {
       imageCapture.setSourceInformation(sourceInformation);
 
       //8.2 General capture information
-      ImageCaptureMetadataType.GeneralCaptureInformation generalCaptureInformation = new ImageCaptureMetadataType.GeneralCaptureInformation();
-      TypeOfDateType creationDate = new TypeOfDateType();
-      creationDate.setUse("Manager");
-      creationDate.setValue(getImageDate(ifd, ir.getFilePath()));
-      generalCaptureInformation.setDateTimeCreated(creationDate);
-      if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Artist"))) {
-        Ascii artist = (Ascii) ifd.getMetadata().get("Artist").getValue().get(0);
-        StringType producer = new StringType();
-        producer.setUse("Manager");
-        producer.setValue(artist.toString());
-        generalCaptureInformation.setImageProducer(producer);
+      try {
+        ImageCaptureMetadataType.GeneralCaptureInformation generalCaptureInformation = new ImageCaptureMetadataType.GeneralCaptureInformation();
+        TypeOfDateType creationDate = new TypeOfDateType();
+        creationDate.setUse("Manager");
+        creationDate.setValue(getImageDate(ifd, ir.getFilePath()));
+        generalCaptureInformation.setDateTimeCreated(creationDate);
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Artist")) && ifd.getMetadata().get("Artist").getCardinality() > 0) {
+          Ascii artist = (Ascii) ifd.getMetadata().get("Artist").getValue().get(0);
+          StringType producer = new StringType();
+          producer.setUse("Manager");
+          producer.setValue(artist.toString());
+          generalCaptureInformation.setImageProducer(producer);
+        }
+        imageCapture.setGeneralCaptureInformation(generalCaptureInformation);
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      imageCapture.setGeneralCaptureInformation(generalCaptureInformation);
 
       //8.4 Digital Camera Capture
       ImageCaptureMetadataType.DigitalCameraCapture digitalCameraCapture = new ImageCaptureMetadataType.DigitalCameraCapture();
-      if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Make"))) {
-        StringType manufacturer = new StringType();
-        manufacturer.setUse("Manager");
-        manufacturer.setValue(ifd.getMetadata().get("Make").toString());
-        digitalCameraCapture.setDigitalCameraManufacturer(manufacturer);
+      try {
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Make"))) {
+          StringType manufacturer = new StringType();
+          manufacturer.setUse("Manager");
+          manufacturer.setValue(ifd.getMetadata().get("Make").toString());
+          digitalCameraCapture.setDigitalCameraManufacturer(manufacturer);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Model"))) {
-        ImageCaptureMetadataType.DigitalCameraCapture.DigitalCameraModel cameraModel = new ImageCaptureMetadataType.DigitalCameraCapture.DigitalCameraModel();
-        StringType model = new StringType();
-        model.setUse("Manager");
-        model.setValue(ifd.getMetadata().get("Model").toString());
-        cameraModel.setDigitalCameraModelName(model);
-        digitalCameraCapture.setDigitalCameraModel(cameraModel);
+      try {
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Model"))) {
+          ImageCaptureMetadataType.DigitalCameraCapture.DigitalCameraModel cameraModel = new ImageCaptureMetadataType.DigitalCameraCapture.DigitalCameraModel();
+          StringType model = new StringType();
+          model.setUse("Manager");
+          model.setValue(ifd.getMetadata().get("Model").toString());
+          cameraModel.setDigitalCameraModelName(model);
+          digitalCameraCapture.setDigitalCameraModel(cameraModel);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
-      if (ifd.getMetadata().containsTagId(TiffTags.getTagId("SensingMethod")) && CameraSensorType.verifyTag(ifd.getMetadata().get("SensingMethod").getValue().toString())) {
-        TypeOfCameraSensorType cameraSensor = new TypeOfCameraSensorType();
-        cameraSensor.setUse("Manager");
-        cameraSensor.setValue(CameraSensorType.fromValue(ifd.getMetadata().get("SensingMethod").getValue().toString()));
-        digitalCameraCapture.setCameraSensor(cameraSensor);
+      try {
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("SensingMethod")) && CameraSensorType.verifyTag(ifd.getMetadata().get("SensingMethod").getValue().toString())) {
+          TypeOfCameraSensorType cameraSensor = new TypeOfCameraSensorType();
+          cameraSensor.setUse("Manager");
+          cameraSensor.setValue(CameraSensorType.fromValue(ifd.getMetadata().get("SensingMethod").getValue().toString()));
+          digitalCameraCapture.setCameraSensor(cameraSensor);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
 
       //8.4.4 Camera Capture Settings
       //8.4.4.1 Image Data
       ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings cameraSettings = new ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings();
-      ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData imageData = createNisoImageData(ir, ifd);
-      cameraSettings.setImageData(imageData);
+      try {
+        ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.ImageData imageData = createNisoImageData(ir, ifd);
+        cameraSettings.setImageData(imageData);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
 
       //8.4.4.2 GPSData
-      ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.GPSData gpsData = createNisoGPSData(ir);
-      cameraSettings.setGPSData(gpsData);
-      digitalCameraCapture.setCameraCaptureSettings(cameraSettings);
-      imageCapture.setDigitalCameraCapture(digitalCameraCapture);
+      try {
+        ImageCaptureMetadataType.DigitalCameraCapture.CameraCaptureSettings.GPSData gpsData = createNisoGPSData(ir);
+        cameraSettings.setGPSData(gpsData);
+        digitalCameraCapture.setCameraCaptureSettings(cameraSettings);
+        imageCapture.setDigitalCameraCapture(digitalCameraCapture);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
 
       //8.5 orientation
-      if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Orientation")) && OrientationType.verifyTag(ifd.getMetadata().get("Orientation").toString())) {
-        TypeOfOrientationType typeOfOrientationType = new TypeOfOrientationType();
-        typeOfOrientationType.setUse("System");
-        typeOfOrientationType.setValue(OrientationType.fromValue(ifd.getMetadata().get("Orientation").toString()));
-        imageCapture.setOrientation(typeOfOrientationType);
+      try {
+        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Orientation")) && OrientationType.verifyTag(ifd.getMetadata().get("Orientation").toString())) {
+          TypeOfOrientationType typeOfOrientationType = new TypeOfOrientationType();
+          typeOfOrientationType.setUse("System");
+          typeOfOrientationType.setValue(OrientationType.fromValue(ifd.getMetadata().get("Orientation").toString()));
+          imageCapture.setOrientation(typeOfOrientationType);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
     }
 
@@ -1033,7 +1156,7 @@ public class MetsReport {
         imageColorEncoding.setGrayResponse(grayResponse);
       }
     }
-    if (ifd.getMetadata().containsTagId(TiffTags.getTagId("WhitePoint"))) {
+    if (ifd.getMetadata().containsTagId(TiffTags.getTagId("WhitePoint")) && ifd.getMetadata().containsTagId(TiffTags.getTagId("GrayResponseUnit"))) {
       ImageAssessmentMetadataType.ImageColorEncoding.WhitePoint whitePoint = new ImageAssessmentMetadataType.ImageColorEncoding.WhitePoint();
       //x value
       RationalType whitePointXValue = new RationalType();
@@ -1196,7 +1319,6 @@ public class MetsReport {
     mdwrap.setMIMETYPE("text/xml");
 
     try {
-
       Date today = new Date();
       GregorianCalendar gregory = new GregorianCalendar();
       gregory.setTime(today);
@@ -1241,52 +1363,72 @@ public class MetsReport {
         objectId.setObjectIdentifierValue(objIddValue);
 
         //fileSize
-        NonNegativeIntegerType fileSize = new NonNegativeIntegerType();
-        fileSize.setUse("System");
-        fileSize.setValue(BigInteger.valueOf(2 + (ifd.getTags().getTags().size() * 12) + 4));
-        digitalObject.setFileSize(fileSize);
+        try {
+          NonNegativeIntegerType fileSize = new NonNegativeIntegerType();
+          fileSize.setUse("System");
+          fileSize.setValue(BigInteger.valueOf(2 + (ifd.getTags().getTags().size() * 12) + 4));
+          digitalObject.setFileSize(fileSize);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
 
         //formatDesignation
-        BasicDigitalObjectInformationType.FormatDesignation formatDesign = new BasicDigitalObjectInformationType.FormatDesignation();
         StringType formatType = new StringType();
-        formatType.setUse("System");
-        formatType.setValue("image/tiff");
-        StringType formatVersion = new StringType();
-        formatType.setUse("System");
-        formatType.setValue("6.0");
-        formatDesign.setFormatName(formatType);
-        formatDesign.setFormatVersion(formatVersion);
-        digitalObject.setFormatDesignation(formatDesign);
+        try {
+          BasicDigitalObjectInformationType.FormatDesignation formatDesign = new BasicDigitalObjectInformationType.FormatDesignation();
+          formatType.setUse("System");
+          formatType.setValue("image/tiff");
+          StringType formatVersion = new StringType();
+          formatType.setUse("System");
+          formatType.setValue("6.0");
+          formatDesign.setFormatName(formatType);
+          formatDesign.setFormatVersion(formatVersion);
+          digitalObject.setFormatDesignation(formatDesign);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
 
         //formatRegistry is optional
-        BasicDigitalObjectInformationType.FormatRegistry formatReg = new BasicDigitalObjectInformationType.FormatRegistry();
-        StringType formatReyKey = new StringType();
-        formatType.setUse("System");
-        formatType.setValue("TIFF/6.0");
-        formatReg.setFormatRegistryKey(formatReyKey);
-        digitalObject.setFormatRegistry(formatReg);
+        try {
+          BasicDigitalObjectInformationType.FormatRegistry formatReg = new BasicDigitalObjectInformationType.FormatRegistry();
+          StringType formatReyKey = new StringType();
+          formatType.setUse("System");
+          formatType.setValue("TIFF/6.0");
+          formatReg.setFormatRegistryKey(formatReyKey);
+          digitalObject.setFormatRegistry(formatReg);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
 
         //byteOrder
-        if (ByteOrderType.verifyTag(byteOrder)) {
-          TypeOfByteOrderType orderType = new TypeOfByteOrderType();
-          orderType.setUse("System");
-          orderType.setValue(ByteOrderType.fromValue(byteOrder));
-          digitalObject.setByteOrder(orderType);
+        try {
+          if (ByteOrderType.verifyTag(byteOrder)) {
+            TypeOfByteOrderType orderType = new TypeOfByteOrderType();
+            orderType.setUse("System");
+            orderType.setValue(ByteOrderType.fromValue(byteOrder));
+            digitalObject.setByteOrder(orderType);
+          }
+        } catch (Exception ex) {
+          ex.printStackTrace();
         }
 
         //compression
-        if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Compression"))) {
-          BasicDigitalObjectInformationType.Compression compression = new BasicDigitalObjectInformationType.Compression();
-          StringType comprScheme = new StringType();
-          comprScheme.setUse("System");
-          int icomp = 0;
-          try {
-            icomp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
-          } catch (Exception e) {
+        try {
+          if (ifd.getMetadata().containsTagId(TiffTags.getTagId("Compression"))) {
+            BasicDigitalObjectInformationType.Compression compression = new BasicDigitalObjectInformationType.Compression();
+            StringType comprScheme = new StringType();
+            comprScheme.setUse("System");
+            int icomp = 0;
+            try {
+              icomp = Integer.parseInt(ifd.getMetadata().get("Compression").toString());
+            } catch (Exception e) {
+            }
+            comprScheme.setValue(PolicyConstants.compressionName(icomp));
+            compression.setCompressionScheme(comprScheme);
+            digitalObject.setCompression(compression);
           }
-          comprScheme.setValue(PolicyConstants.compressionName(icomp));
-          compression.setCompressionScheme(comprScheme);
-          digitalObject.setCompression(compression);
+        } catch (Exception ex) {
+          ex.printStackTrace();
         }
 
         mix.setBasicDigitalObjectInformation(digitalObject);
@@ -1294,64 +1436,77 @@ public class MetsReport {
         /**
          * 7 Basic Image Information
          */
-
-        BasicImageInformationType basicImage = createNisoBasicImageInformation(ifd);
-        mix.setBasicImageInformation(basicImage);
+        try {
+          BasicImageInformationType basicImage = createNisoBasicImageInformation(ifd);
+          mix.setBasicImageInformation(basicImage);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
 
         /**
          * 8 Image Capture Metadata
          */
-        ImageCaptureMetadataType imageCapture = createNisoImageCaptureMetadata(ifd, ir);
-        if (imageCapture == null) {
-          return mdwrap;
+        try {
+          ImageCaptureMetadataType imageCapture = createNisoImageCaptureMetadata(ifd, ir);
+          if (imageCapture != null) {
+            mix.setImageCaptureMetadata(imageCapture);
+          }
+        } catch (Exception ex) {
+          ex.printStackTrace();
         }
-        mix.setImageCaptureMetadata(imageCapture);
 
         /**
          *  9 Image Assessment Metadata
          */
-        ImageAssessmentMetadataType imageAssessmentMetadata = createNisoImageAssessmentMetadata(ifd);
-        mix.setImageAssessmentMetadata(imageAssessmentMetadata);
+        try {
+          ImageAssessmentMetadataType imageAssessmentMetadata = createNisoImageAssessmentMetadata(ifd);
+          mix.setImageAssessmentMetadata(imageAssessmentMetadata);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
 
         /**
          *  10 Change history
          */
-        if (ifd.containsTagId(700)) { //XMP
-          ChangeHistoryType changeHistoryType = new ChangeHistoryType();
-          XMP xmp = (XMP) ifd.getTag("XMP").getValue().get(0);
-          List<Hashtable<String, String>> xmpHistoryList = xmp.getHistory();
-          if (xmpHistoryList != null) {
-            Iterator<Hashtable<String, String>> iteratorXmpHistory = xmpHistoryList.iterator();
-            while (iteratorXmpHistory.hasNext()) {
-              ChangeHistoryType.ImageProcessing imageProcessing = new ChangeHistoryType.ImageProcessing();
-              Hashtable<String, String> xmpHistory = iteratorXmpHistory.next();
-              if (xmpHistory.containsKey("when")) {
-                TypeOfDateType dateType = new TypeOfDateType();
-                dateType.setUse("Manager");
-                dateType.setValue(xmpHistory.get("when"));
-                imageProcessing.setDateTimeProcessed(dateType);
-              }
-              if (xmpHistory.containsKey("softwareAgent")) {
-                ChangeHistoryType.ImageProcessing.ProcessingSoftware processingSoftware = new ChangeHistoryType.ImageProcessing.ProcessingSoftware();
-                StringType softwareName = new StringType();
-                softwareName.setUse("Manager");
-                softwareName.setValue(xmpHistory.get("softwareAgent"));
-                processingSoftware.setProcessingSoftwareName(softwareName);
-                imageProcessing.setProcessingSoftware(processingSoftware);
-              }
-              if (xmpHistory.containsKey("action")) {
-                StringType action = new StringType();
-                action.setUse("Manager");
-                action.setValue(xmpHistory.get("action"));
-                imageProcessing.setProcessingActions(action);
-              }
+        try {
+          if (ifd.containsTagId(700) && ifd.getTag("XMP").getCardinality() > 0 && ifd.getTag("XMP").getValue().get(0) instanceof XMP) { //XMP
+            ChangeHistoryType changeHistoryType = new ChangeHistoryType();
+            XMP xmp = (XMP) ifd.getTag("XMP").getValue().get(0);
+            List<Hashtable<String, String>> xmpHistoryList = xmp.getHistory();
+            if (xmpHistoryList != null) {
+              Iterator<Hashtable<String, String>> iteratorXmpHistory = xmpHistoryList.iterator();
+              while (iteratorXmpHistory.hasNext()) {
+                ChangeHistoryType.ImageProcessing imageProcessing = new ChangeHistoryType.ImageProcessing();
+                Hashtable<String, String> xmpHistory = iteratorXmpHistory.next();
+                if (xmpHistory.containsKey("when")) {
+                  TypeOfDateType dateType = new TypeOfDateType();
+                  dateType.setUse("Manager");
+                  dateType.setValue(xmpHistory.get("when"));
+                  imageProcessing.setDateTimeProcessed(dateType);
+                }
+                if (xmpHistory.containsKey("softwareAgent")) {
+                  ChangeHistoryType.ImageProcessing.ProcessingSoftware processingSoftware = new ChangeHistoryType.ImageProcessing.ProcessingSoftware();
+                  StringType softwareName = new StringType();
+                  softwareName.setUse("Manager");
+                  softwareName.setValue(xmpHistory.get("softwareAgent"));
+                  processingSoftware.setProcessingSoftwareName(softwareName);
+                  imageProcessing.setProcessingSoftware(processingSoftware);
+                }
+                if (xmpHistory.containsKey("action")) {
+                  StringType action = new StringType();
+                  action.setUse("Manager");
+                  action.setValue(xmpHistory.get("action"));
+                  imageProcessing.setProcessingActions(action);
+                }
 
-              changeHistoryType.setImageProcessing(imageProcessing);
+                changeHistoryType.setImageProcessing(imageProcessing);
+              }
+              mix.setChangeHistory(changeHistoryType);
             }
-            mix.setChangeHistory(changeHistoryType);
           }
+        } catch (Exception ex) {
+          ex.printStackTrace();
         }
-
 
       }
       ifd = ifd.getNextIFD();
@@ -1581,12 +1736,15 @@ public class MetsReport {
 
 
       //mets dmdSec
-      MdSecType dmdSec = new MdSecType();
-      dmdSec.setID("D" + ir.hashCode());
-      dmdSec.setSTATUS("");
-      dmdSec.setMdWrap(constructDmdMdWrap(ir));
-      mets.setDmdSec(dmdSec);
+      try {
+        MdSecType dmdSec = new MdSecType();
+        dmdSec.setID("D" + ir.hashCode());
+        dmdSec.setSTATUS("");
+        dmdSec.setMdWrap(constructDmdMdWrap(ir));
+        mets.setDmdSec(dmdSec);
+      } catch (Exception ex) {
 
+      }
 
       //mets amdSec
       AmdSecType amdsec = new AmdSecType();
@@ -1668,12 +1826,12 @@ public class MetsReport {
     } catch (JAXBException e) {
       // TODO: Something
       //System.err.println("Error generating METS report");
-//      e.printStackTrace();
+      e.printStackTrace();
       return null;
     } catch (Exception e) {
       // TODO: Something
       //System.err.println("Error generating METS report");
-//      e.printStackTrace();
+      e.printStackTrace();
       return null;
     }
 

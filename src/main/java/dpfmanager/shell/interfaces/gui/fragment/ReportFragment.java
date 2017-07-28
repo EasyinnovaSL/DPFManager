@@ -22,9 +22,9 @@ package dpfmanager.shell.interfaces.gui.fragment;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
 import dpfmanager.shell.core.messages.ReportsMessage;
-import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
-import dpfmanager.shell.modules.report.core.GlobalReport;
+import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
 import dpfmanager.shell.modules.report.util.ReportGui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,10 +33,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -52,10 +49,6 @@ import org.jacpfx.rcp.context.Context;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -75,11 +68,15 @@ public class ReportFragment {
   @FXML
   private Label date;
   @FXML
-  private Label time;
+  private ImageView okImage;
+  @FXML
+  private ImageView koImage;
   @FXML
   private Label files;
   @FXML
   private Label input;
+  @FXML
+  private Label type;
   @FXML
   private Label errors;
   @FXML
@@ -96,28 +93,35 @@ public class ReportFragment {
   /* Report Row info */
   private ReportGui info;
 
+  private StackPane lastStack;
+
   public void init(ReportGui reportRow) {
     info = reportRow;
     loadReportRow();
   }
 
-  public void updateIcons(){
-    info.readFormats();
-    formatsBox.getChildren().clear();
-    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
-  }
-
   private void loadReportRow() {
     info.load();
-    date.setText(info.getDate());
-    time.setText(info.getTime());
+    date.setText(info.getDate() + " " + info.getTime());
     files.setText(info.getNfiles() + "");
     input.setText(info.getInput());
     errors.setText(bundle.getString("errors").replace("%1", info.getErrors() + ""));
-    warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
+    if (info.getErrors() == 0) {
+      NodeUtil.showNode(okImage);
+      NodeUtil.hideNode(koImage);
+    } else {
+      NodeUtil.hideNode(okImage);
+      NodeUtil.showNode(koImage);
+    }
+    if (info.getGlobalReport() != null && info.isQuick()) {
+      type.setText(bundle.getString("typeQuick"));
+      warnings.setText("");
+    } else {
+      type.setText(bundle.getString("typeFull"));
+      warnings.setText(bundle.getString("warnings").replace("%1", "" + info.getWarnings() + ""));
+    }
     passed.setText(bundle.getString("passed").replace("%1", "" + info.getPassed() + ""));
     addChartScore(info.getScore());
-    addFormatIcons(info.getFormats(), info.getReportVersion(), info.getGlobalReport());
     addActionsIcons(info.getDelete());
     addLastItem(info.isLast());
   }
@@ -135,63 +139,11 @@ public class ReportFragment {
     chart.setMinSize(22, 22);
     chart.setMaxSize(22, 22);
 
-    Label score_label = new Label(score + "%");
+    Label score_label = new Label(score.intValue() + "%");
     score_label.setTextFill(Color.LIGHTGRAY);
 
     scoreBox.getChildren().add(chart);
     scoreBox.getChildren().add(score_label);
-  }
-
-  private void addFormatIcons(Map<String, String> itemRead, Integer version, GlobalReport gr) {
-    List<String> sortedFormats = Arrays.asList("html","pdf","xml","mets", "json");
-    Map<String, String> item = new HashMap<>();
-    if (version > 0) {
-      // Transform reports
-      for (String format : sortedFormats){
-        if (!item.containsKey(format)) item.put(format, (itemRead.containsKey(format)) ? itemRead.get(format) : null);
-      }
-    } else {
-      item = itemRead;
-    }
-    for (String i : sortedFormats) {
-      if (!item.containsKey(i)) continue;
-      ImageView icon = new ImageView();
-      icon.setId("but" + i);
-      icon.setFitHeight(20);
-      icon.setFitWidth(20);
-      icon.setCursor(Cursor.HAND);
-      icon.setImage(new Image("images/formats/" + i + ".png"));
-      Tooltip.install(icon, new Tooltip(i.toUpperCase()));
-
-      String path = item.get(i);
-      ShowMessage sMessage = null;
-      if (path != null && new File(path).exists()){
-        // Show directly
-        sMessage = new ShowMessage(i, path);
-      } else if (gr.getVersion() > 1){
-        // Transformation need
-        icon.setOpacity(0.4);
-        icon.setOnMouseEntered(event -> icon.setOpacity(1.0));
-        icon.setOnMouseExited(event -> icon.setOpacity(0.4));
-        Long formatUuid = Long.parseLong(info.getUuid()+Character.getNumericValue(i.charAt(0)));
-        sMessage = new ShowMessage(formatUuid, i, gr, info.getInternalReportFolder());
-      }
-      if (sMessage != null){
-        final ShowMessage finalSMessage = sMessage;
-        icon.setOnMouseClicked(event -> {
-          ArrayMessage am = new ArrayMessage();
-          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
-          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
-          context.send(GuiConfig.PERSPECTIVE_SHOW, am);
-        });
-
-        ContextMenu contextMenu = new ContextMenu();
-        javafx.scene.control.MenuItem download = new javafx.scene.control.MenuItem("Download report");
-        contextMenu.getItems().add(download);
-        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
-        formatsBox.getChildren().add(icon);
-      }
-    }
   }
 
   public void addActionsIcons(String item) {
@@ -239,6 +191,8 @@ public class ReportFragment {
     icon.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
+        // Disable icon
+        icon.setDisable(true);
         // Send action to controller
         context.send(GuiConfig.COMPONENT_REPORTS, new ReportsMessage(ReportsMessage.Type.DELETE, getUuid()));
         // Delete report
@@ -246,25 +200,45 @@ public class ReportFragment {
         File dir = new File(file.getParent());
         try {
           FileUtils.deleteDirectory(dir);
+          icon.setDisable(false);
         } catch (IOException e) {
           e.printStackTrace();
         }
-
-        // TODO
-//        getModel().removeItem(item);
       }
     });
     actionsBox.getChildren().add(icon);
   }
 
-  public void addLastItem(boolean isLast){
-    if (isLast){
-      StackPane stack = new StackPane();
-      stack.setMaxWidth(0.0);
-      stack.setMaxHeight(0.0);
-      stack.setId("lastReportRow");
-      actionsBox.getChildren().add(stack);
+  public void addLastItem(boolean isLast) {
+    initLastStack();
+    if (isLast) {
+      if (!actionsBox.getChildren().contains(lastStack)) {
+        actionsBox.getChildren().add(lastStack);
+      }
+    } else {
+      actionsBox.getChildren().remove(lastStack);
     }
+  }
+
+  private void initLastStack() {
+    if (lastStack != null) return;
+    lastStack = new StackPane();
+    lastStack.setMaxWidth(0.0);
+    lastStack.setMaxHeight(0.0);
+    lastStack.setId("lastReportRow");
+  }
+
+  @FXML
+  protected void onGridPaneClicked(MouseEvent event) throws Exception {
+    ArrayMessage am = new ArrayMessage();
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
+    am.add(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_GLOBAL, new GuiGlobalMessage(GuiGlobalMessage.Type.INIT, info));
+    context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
+  }
+
+  public void setLast(boolean last) {
+    info.setLast(last);
+    addLastItem(last);
   }
 
   public String getUuid() {
