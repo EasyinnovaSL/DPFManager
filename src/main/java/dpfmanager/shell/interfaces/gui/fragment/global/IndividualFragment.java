@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.fragment.global;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
@@ -26,26 +27,34 @@ import dpfmanager.shell.core.messages.NavMessage;
 import dpfmanager.shell.core.messages.ShowMessage;
 import dpfmanager.shell.core.messages.UiMessage;
 import dpfmanager.shell.core.util.NodeUtil;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 
+import org.apache.commons.io.FileUtils;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +141,7 @@ public class IndividualFragment {
 
   private void loadReportRowQuick() {
     qInput.setText(info.getFilename());
-    qPath.setText(info.getFilePath());
+    qPath.setText(info.getShowFilePath());
 
     // Result
     if (info.getErrors() > 0) {
@@ -153,7 +162,7 @@ public class IndividualFragment {
 
   private void loadReportRowFull() {
     fInput.setText(info.getFilename());
-    fPath.setText(info.getFilePath());
+    fPath.setText(info.getShowFilePath());
 
     // Result
     NodeUtil.hideNode(fQuestionImage);
@@ -191,7 +200,7 @@ public class IndividualFragment {
 
   private void loadReportRowOld() {
     fInput.setText(info.getFilename());
-    fPath.setText(info.getFilePath());
+    fPath.setText(info.getShowFilePath());
 
     // Result
     NodeUtil.hideNode(fKoImage);
@@ -251,14 +260,80 @@ public class IndividualFragment {
       if (sMessage != null){
         final ShowMessage finalSMessage = sMessage;
         icon.setOnMouseClicked(event -> {
-          ArrayMessage am = new ArrayMessage();
-          am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
-          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
-          am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
-          context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+          if (event.getButton() == MouseButton.PRIMARY) {
+            ArrayMessage am = new ArrayMessage();
+            am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
+            context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+          }
         });
 
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem itemShow = new MenuItem(bundle.getString("showReport"));
+        itemShow.setOnAction(new EventHandler<ActionEvent>() {
+          public void handle(ActionEvent e) {
+            ArrayMessage am = new ArrayMessage();
+            am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
+            context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+          }
+        });
+        MenuItem itemGenerate = new MenuItem(bundle.getString("generateReport"));
+        itemGenerate.setOnAction(new EventHandler<ActionEvent>() {
+          public void handle(ActionEvent e) {
+            ArrayMessage am = new ArrayMessage();
+            am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
+            context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+          }
+        });
+        MenuItem itemDownload = new MenuItem(bundle.getString("downloadReport"));
+        itemDownload.setOnAction(new EventHandler<ActionEvent>() {
+          public void handle(ActionEvent e) {
+            downloadReport(path);
+          }
+        });
+
+        if (path == null) {
+          contextMenu.getItems().addAll(itemGenerate);
+        } else {
+          contextMenu.getItems().addAll(itemShow, itemDownload);
+        }
+
+        icon.setOnContextMenuRequested(e -> contextMenu.show(icon, e.getScreenX(), e.getScreenY()));
         formatsBox.getChildren().add(icon);
+      }
+    }
+  }
+
+  public void downloadReport(String path){
+    File src = new File(path);
+    if (!src.exists() || !src.isFile()) return;
+
+    String name = src.getName().substring(0, src.getName().indexOf("."));
+    String extension = src.getName().substring(src.getName().indexOf("."));
+
+    FileChooser fileChooser = new FileChooser();
+
+    //Set extension filter
+    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(extension.toLowerCase().substring(1, extension.length() -1) + " files (*"+extension+")", "*" + extension);
+    fileChooser.getExtensionFilters().add(extFilter);
+    fileChooser.setInitialFileName(name);
+
+    //Show save file dialog
+    File dest = fileChooser.showSaveDialog(GuiWorkbench.getMyStage());
+
+    if(dest != null){
+      try {
+        FileUtils.copyFile(src, dest);
+      } catch (Exception e) {
+        context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, bundle.getString("errorSavingReport")));
       }
     }
   }
@@ -266,10 +341,17 @@ public class IndividualFragment {
   @FXML
   protected void makeFullReport(ActionEvent event) throws Exception {
     String inputFile = info.getFilePath();
-    if (!new File(inputFile).exists()) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("filesNotFound"), inputFile));
+    String zipFile = info.getZipPath();
+    Configuration config = new Configuration(info.getConfig());
+    config.setQuick(false);
+    config.setFormats(new ArrayList<>(Arrays.asList("HTML")));
+    if (new File(inputFile).exists()) {
+      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(inputFile, config, 100, false, false));
+    } else if (new File(zipFile).exists()) {
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("filesAreZip")));
+      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(zipFile, config, 100, false, false));
     } else {
-      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(inputFile, info.getConfig(), 100, false, false));
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("filesNotFound"), inputFile));
     }
   }
 

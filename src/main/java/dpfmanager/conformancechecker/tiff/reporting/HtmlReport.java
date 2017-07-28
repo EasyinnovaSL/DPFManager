@@ -626,13 +626,7 @@ public class HtmlReport extends Report {
      * Generate divs
      */
     String finalResult = "";
-    String expertCheckTmpl = "<input type=\"checkbox\" id=\"checkSelected##INDEX##\" onchange=\"filterChanged('##INDEX##')\">" +
-          "<label for=\"checkSelected##INDEX##\"><span></span> Expert mode</label>";
-    String defaultCheckTmpl = "<input type=\"checkbox\" id=\"defaultSelected##INDEX##\" onchange=\"filterChanged('##INDEX##')\">" +
-        "<label for=\"defaultSelected##INDEX##\" style=\"margin-left: 10px;\"><span></span> Default values</label>";
-    String checkBoxTmpl = "<div class=\"clexpert\">##CHECK_EXPERT####CHECK_DEFAULT##</div>";
-    String genTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##CHECKBOXS##\n" +
+    String genTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs\" style='display: ##DISPLAY##'>\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  ##TITLE##</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -647,8 +641,7 @@ public class HtmlReport extends Report {
     String subTmpl = StringUtils.replace(genTmpl, "##TITLE##", "Sub IFD Tags");
     String ifdTmpl = StringUtils.replace(genTmpl, "##TITLE##", "IFD Tags");
     String exifTmpl = StringUtils.replace(genTmpl, "##TITLE##", "EXIF");
-    String iptcTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##CHECKBOXS##\n" +
+    String iptcTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs\" style='display: ##DISPLAY##'>\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  IPTC</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -658,8 +651,7 @@ public class HtmlReport extends Report {
         "\t\t\t\t        ##ROWS##\n" +
         "\t\t\t\t\t</table>\n" +
         "\t\t\t\t</div>";
-    String xmpTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs col-md-8\" style='display: ##DISPLAY##'>\n" +
-        "\t\t\t\t\t##CHECKBOXS##\n" +
+    String xmpTmpl = "<div id=\"div##INDEX##\" class=\"tags-divs\" style='display: ##DISPLAY##'>\n" +
         "\t\t\t\t\t<h4 class='bold'><i class=\"fa fa-tags\"></i>  XMP</h4>\n" +
         "\t\t\t\t\t<table class=\"CustomTable3\">\n" +
         "\t\t\t\t        <tr>\n" +
@@ -692,16 +684,9 @@ public class HtmlReport extends Report {
     for (String key : tagsMap.keySet()) {
       if (key.endsWith("h")) continue;
       String type = key.substring(0, 3);
-      String display = "none;", checkBoxs = "";
+      String display = "none;";
       if (key.equals("ifd0")) display = "block;";
-      String expert = (hasExpert.containsKey(key)) ? expertCheckTmpl : "";
-      String defaultCheck = (hasDefault.containsKey(key)) ? defaultCheckTmpl : "";
-      if (expert.length() > 0 || defaultCheck.length() > 0) {
-        checkBoxs = StringUtils.replace(checkBoxTmpl, "##CHECK_EXPERT##", expert);
-        checkBoxs = StringUtils.replace(checkBoxs, "##CHECK_DEFAULT##", defaultCheck);
-      }
       String tmpl = templates.get(type);
-      tmpl = StringUtils.replace(tmpl, "##CHECKBOXS##", checkBoxs);
       tmpl = StringUtils.replace(tmpl, "##INDEX##", key);
       tmpl = StringUtils.replace(tmpl, "##DISPLAY##", display);
       if (key.startsWith("ipt")) {

@@ -124,14 +124,14 @@ public class SmallIndividualReport implements Comparable, Serializable {
     if (nErrorsPolicy.containsKey(iso)) {
       return nErrorsPolicy.get(iso);
     }
-    return 0;
+    return -1;
   }
 
   public int getNWarningsPolicy(String iso){
     if (nWarningsPolicy.containsKey(iso)) {
       return nWarningsPolicy.get(iso);
     }
-    return 0;
+    return -1;
   }
 
   public int getAllNErrorsPolicy(){

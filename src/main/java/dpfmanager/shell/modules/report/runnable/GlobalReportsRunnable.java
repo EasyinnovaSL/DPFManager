@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adria Llorens on 13/04/2016.
@@ -55,6 +56,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
   private Configuration config;
   private Date start;
   private List<String> checkedIsos;
+  private Map<String, String> zipsPaths;
 
   public GlobalReportsRunnable(ReportGenerator g) {
     // No context yet
@@ -65,11 +67,12 @@ public class GlobalReportsRunnable extends DpfRunnable {
   public void handleContext(DpfContext context) {
   }
 
-  public void setParameters(List<SmallIndividualReport> i, Configuration c, Date s, List<String> ci) {
+  public void setParameters(List<SmallIndividualReport> i, Configuration c, Date s, List<String> ci, Map<String, String> z) {
     individuals = i;
     config = c;
     start = s;
     checkedIsos = ci;
+    zipsPaths = z;
   }
 
   @Override
@@ -79,7 +82,7 @@ public class GlobalReportsRunnable extends DpfRunnable {
 
     // Generate GlobalReport
     GlobalReport global = new GlobalReport();
-    global.init(config, checkedIsos);
+    global.init(config, checkedIsos, zipsPaths);
     for (SmallIndividualReport individual : individuals) {
       global.addIndividual(individual);
       if (individual != null) {

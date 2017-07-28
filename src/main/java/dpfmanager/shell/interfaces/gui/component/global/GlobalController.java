@@ -20,20 +20,26 @@
 package dpfmanager.shell.interfaces.gui.component.global;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
+import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.mvc.DpfController;
 import dpfmanager.shell.interfaces.gui.component.global.comparators.IndividualComparator;
 import dpfmanager.shell.interfaces.gui.component.global.messages.GuiGlobalMessage;
+import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
 import dpfmanager.shell.modules.conformancechecker.messages.ConformanceMessage;
 import dpfmanager.shell.modules.messages.messages.AlertMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 import dpfmanager.shell.modules.report.util.ReportGui;
 import dpfmanager.shell.modules.report.util.ReportIndividualGui;
+import javafx.stage.FileChooser;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -100,7 +106,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
         }
         File individualSer = new File(serPath);
         if (individualSer.exists() && individualSer.isFile() && individualSer.getName().endsWith(".ser")){
-          individuals.add(new ReportIndividualGui(sir, config, count));
+          individuals.add(new ReportIndividualGui(global, sir, config, count));
           count++;
         }
       }
@@ -110,7 +116,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
       if (serializedDirectory.exists() && serializedDirectory.isDirectory()) {
         for (File individualSer : serializedDirectory.listFiles()) {
           if (individualSer.exists() && individualSer.isFile() && individualSer.getName().endsWith(".ser")) {
-            individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), config, count));
+            individuals.add(new ReportIndividualGui(individualSer.getAbsolutePath(), global, count));
             count++;
           }
         }
@@ -151,13 +157,16 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
    */
   public boolean transformReport(){
     GlobalReport global = getView().getInfo().getGlobalReport();
-    if (global.getConfig().isQuick()){
-      List<String> inputFiles = getInputFiles(getView().isErrors(), getView().isWarnings(), getView().isCorrect(), true);
-      List<String> inputNotFound = getInputFiles(getView().isErrors(), getView().isWarnings(), getView().isCorrect(), false);
+    Configuration config = new Configuration(global.getConfig());
+    if (config.isQuick()){
+      config.setQuick(false);
+      config.setFormats(new ArrayList<>(Arrays.asList("HTML")));
+      List<String> inputFiles = getInputFiles(getView().isErrors(), getView().isCorrect(), true);
+      List<String> inputNotFound = getInputFiles(getView().isErrors(), getView().isCorrect(), false);
       if (inputFiles.size() == 0) {
         getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, getBundle().getString("filesEmpty")));
       } else {
-        getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(String.join(";", inputFiles), getView().getInfo().getGlobalReport().getConfig(), 100, false, false));
+        getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(String.join(";", inputFiles), config, 100, false, false));
         return true;
       }
       if (inputNotFound.size() > 0) {
@@ -167,7 +176,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
     return false;
   }
 
-  private List<String> getInputFiles(boolean err, boolean war, boolean pas, boolean found){
+  private List<String> getInputFiles(boolean err, boolean pas, boolean found){
     List<String> inputFiles = new ArrayList<>();
     GlobalReport global = getView().getInfo().getGlobalReport();
     for (SmallIndividualReport individual : global.getIndividualReports()){
@@ -177,18 +186,51 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
         if (err && individual.getNErrors(iso) > 0)  errors++;
         else if (individual.getNWarnings(iso) > 0) warnings++;
       }
-      if ((err && errors > 0) || (war && errors == 0 && warnings > 0) || (pas && errors == 0 && warnings == 0)) {
-        String filePath = individual.getFilePath();
+      if ((err && errors > 0) || (pas && errors == 0 && warnings == 0)) {
+        String filePath = readZipOrFilePath(global, individual.getFilePath());
         if (new File(filePath).exists() == found){
-          inputFiles.add(filePath);
+          if (!inputFiles.contains(filePath)){
+            inputFiles.add(filePath);
+          }
         }
       }
     }
     return inputFiles;
   }
 
+  private String readZipOrFilePath(GlobalReport global, String filePath){
+    for (String key : global.getZipsPaths().keySet()){
+      if (filePath.contains("/" + key + "/") || filePath.contains("\\" + key + "\\")) {
+        return global.getZipsPaths().get(key);
+      }
+    }
+    return filePath;
+  }
+
   public void downloadReport(String path){
-    // TODO
+    File src = new File(path);
+    if (!src.exists() || !src.isFile()) return;
+
+    String name = src.getName().substring(0, src.getName().indexOf("."));
+    String extension = src.getName().substring(src.getName().indexOf("."));
+
+    FileChooser fileChooser = new FileChooser();
+
+    //Set extension filter
+    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(extension.toLowerCase().substring(1, extension.length() -1) + " files (*"+extension+")", "*" + extension);
+    fileChooser.getExtensionFilters().add(extFilter);
+    fileChooser.setInitialFileName(name);
+
+    //Show save file dialog
+    File dest = fileChooser.showSaveDialog(GuiWorkbench.getMyStage());
+
+    if(dest != null){
+      try {
+        FileUtils.copyFile(src, dest);
+      } catch (Exception e) {
+        getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.ERROR, getBundle().getString("errorSavingReport")));
+      }
+    }
   }
 
 }

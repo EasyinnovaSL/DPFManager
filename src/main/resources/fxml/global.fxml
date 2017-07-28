@@ -365,11 +365,6 @@
                                                             <Insets />
                                                         </HBox.margin>
                                                     </CheckBox>
-                                                    <CheckBox fx:id="checkWarning" mnemonicParsing="false" styleClass="checkreport" text="%optionWarnings">
-                                                        <HBox.margin>
-                                                            <Insets />
-                                                        </HBox.margin>
-                                                    </CheckBox>
                                                     <CheckBox fx:id="checkCorrect" mnemonicParsing="false" styleClass="checkreport" text="%optionCorrect">
                                                         <HBox.margin>
                                                             <Insets />

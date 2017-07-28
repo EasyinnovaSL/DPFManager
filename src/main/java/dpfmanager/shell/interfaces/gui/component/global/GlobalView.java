@@ -113,8 +113,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   @FXML
   private CheckBox checkError;
   @FXML
-  private CheckBox checkWarning;
-  @FXML
   private CheckBox checkCorrect;
 
   /**
@@ -356,6 +354,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
             ArrayMessage am = new ArrayMessage();
             am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
             context.send(GuiConfig.PERSPECTIVE_SHOW, am);
           }
@@ -368,6 +367,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
             ArrayMessage am = new ArrayMessage();
             am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
             context.send(GuiConfig.PERSPECTIVE_SHOW, am);
           }
@@ -378,6 +378,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
             ArrayMessage am = new ArrayMessage();
             am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
             context.send(GuiConfig.PERSPECTIVE_SHOW, am);
           }
@@ -686,7 +687,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     showTransform();
     checkError.setSelected(true);
     checkCorrect.setSelected(false);
-    checkWarning.setSelected(false);
   }
 
   private void showGenerate() {
@@ -735,6 +735,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   @FXML
   protected void transformReports(ActionEvent event) throws Exception {
     if (getController().transformReport()) {
+      context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.RELOAD));
       hideTransforms();
     }
   }
@@ -796,10 +797,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   public boolean isErrors(){
     return checkError.isSelected();
-  }
-
-  public boolean isWarnings(){
-    return checkWarning.isSelected();
   }
 
   public boolean isCorrect(){

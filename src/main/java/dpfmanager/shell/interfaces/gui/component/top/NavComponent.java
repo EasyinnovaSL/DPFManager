@@ -65,13 +65,10 @@ public class NavComponent extends DpfSimpleView {
       NavMessage nm = message.getTypedMessage(NavMessage.class);
       if (nm.isTable()){
         handler.getController().setTable();
-        handler.getController().setReload(false);
       } else if (nm.isReport()){
         handler.getController().setReport();
-        handler.getController().setReload(false);
       } else if (nm.isSpecific()){
         handler.getController().setSpecific();
-        handler.getController().setReload(false);
       } else if (nm.isText()){
         String format = nm.getText().toUpperCase();
         handler.getController().setSpecificText(format);

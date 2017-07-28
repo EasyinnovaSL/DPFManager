@@ -62,7 +62,13 @@
 	<div class="main">
 		<div class="container">
 			<div class="row top30-sm top50">
-                ##TAGS_DIVS##
+				<div class="col-md-8">
+					<div class="clexpert">
+						<input type="checkbox" id="checkSelected" onchange="filterChanged()"><label for="checkSelected"><span></span> Expert mode</label>
+						<input type="checkbox" id="defaultSelected" onchange="filterChanged()"><label for="defaultSelected" style="margin-left: 10px;"><span></span> Default values</label>
+					</div>
+					##TAGS_DIVS##
+				</div>
 				<div class="col-md-4 top30-sm">
 					<h4 class="bold"><i class="fa fa-sitemap"></i>  File structure</h4>
                     <table class="CustomTable3 ">
@@ -148,18 +154,13 @@
 
 		filterChanged(id);
 	}
-	function filterChanged(sufix){
+	function filterChanged(){
 		$(".expert").hide();
 		$(".default-value").hide();
-		if ($('#checkSelected'+sufix).is(":checked") && $('#defaultSelected'+sufix).is(":checked")) {
-            $("."+sufix+".expert").show();
-            $("."+sufix+".default-value").show();
-		} else if ($('#checkSelected'+sufix).is(":checked")) {
-			$("."+sufix+".expert").show();
-            $("."+sufix+".default-value").hide();
-		} else if ($('#defaultSelected'+sufix).is(":checked")) {
-			$("."+sufix+".default-value").show();
-            $("."+sufix+".expert").hide();
+		if ($('#checkSelected').is(":checked")) {
+			$(".expert").show();
+		} else if ($('#defaultSelected').is(":checked")) {
+			$(".default-value").show();
 		}
 	}
 	function onChangeInfo(index){

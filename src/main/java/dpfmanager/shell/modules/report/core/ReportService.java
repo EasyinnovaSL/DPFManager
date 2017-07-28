@@ -43,6 +43,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -76,7 +77,7 @@ public class ReportService extends DpfService {
 
   // Main function
   public void tractGlobalMessage(GlobalReportMessage message) {
-    createGlobalReports(message.getUuid(), message.getIndividuals(), message.getConfig(), message.getStart(), message.getCheckedIsos());
+    createGlobalReports(message.getUuid(), message.getIndividuals(), message.getConfig(), message.getStart(), message.getCheckedIsos(), message.getZipsPaths());
     config = message.getConfig();
   }
 
@@ -87,10 +88,10 @@ public class ReportService extends DpfService {
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(ir.getUuid(), run));
   }
 
-  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config, Date start, List<String> checkedIsos) {
+  private void createGlobalReports(Long uuid, List<SmallIndividualReport> individuals, Configuration config, Date start, List<String> checkedIsos, Map<String, String> zipsPaths) {
     // Create global runnable
     GlobalReportsRunnable run = new GlobalReportsRunnable(generator);
-    run.setParameters(individuals, config, start, checkedIsos);
+    run.setParameters(individuals, config, start, checkedIsos, zipsPaths);
     context.send(BasicConfig.MODULE_THREADING, new RunnableMessage(uuid, run));
   }
 

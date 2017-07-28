@@ -93,6 +93,9 @@ public class OldReportsCompatibleTest extends ApplicationTest {
       // Go to main check files
       clickOnAndReloadTop("#butDessign", "#pane-design");
       waitUntilExists("#pane-design");
+
+      // Copy old report
+      deleteReport();
     }
   }
 
@@ -101,6 +104,11 @@ public class OldReportsCompatibleTest extends ApplicationTest {
     File newReportFolder = new File(reportDay + "/" + nextReportId);
     File oldReportFolder = new File("src/test/resources/OldReports/" + old);
     FileUtils.copyDirectory(oldReportFolder, newReportFolder);
+  }
+
+  private void deleteReport() throws Exception{
+    File toDelete = new File(reportDay + "/" + nextReportId);
+    FileUtils.deleteDirectory(toDelete);
   }
 
   private void checkValidRow(GridPane grid, String type) {

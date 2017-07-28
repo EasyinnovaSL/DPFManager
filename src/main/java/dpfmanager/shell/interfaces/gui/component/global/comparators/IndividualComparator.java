@@ -81,9 +81,9 @@ public class IndividualComparator implements Comparator<ReportIndividualGui> {
         break;
       case PATH:
         if (order.equals(Order.ASC)){
-          compare = o1.getFilePath().toLowerCase().compareTo(o2.getFilePath().toLowerCase());
+          compare = o1.getShowFilePath().toLowerCase().compareTo(o2.getShowFilePath().toLowerCase());
         } else {
-          compare = o2.getFilePath().toLowerCase().compareTo(o1.getFilePath().toLowerCase());
+          compare = o2.getShowFilePath().toLowerCase().compareTo(o1.getShowFilePath().toLowerCase());
         }
         break;
     }

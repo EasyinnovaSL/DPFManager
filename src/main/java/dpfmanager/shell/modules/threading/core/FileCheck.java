@@ -27,6 +27,7 @@ import dpfmanager.shell.modules.threading.runnable.DpfRunnable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adria Llorens on 14/04/2016.
@@ -41,6 +42,7 @@ public class FileCheck {
   private String internal;
   private String input;
   private Date start;
+  private Map<String, String> zipsPaths;
 
   private List<SmallIndividualReport> individuals;
 
@@ -58,11 +60,12 @@ public class FileCheck {
     start = new Date();
   }
 
-  public void init(int n, Configuration c, String i, String ri) {
+  public void init(int n, Configuration c, String i, String ri, Map<String, String> z) {
     total = n;
     config = c;
     internal = i;
     input = ri;
+    zipsPaths = z;
   }
 
   public void addIndividual(IndividualReport ir) {
@@ -127,4 +130,7 @@ public class FileCheck {
     return start;
   }
 
+  public Map<String, String> getZipsPaths() {
+    return zipsPaths;
+  }
 }

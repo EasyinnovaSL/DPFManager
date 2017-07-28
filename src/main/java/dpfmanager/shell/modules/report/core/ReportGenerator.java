@@ -432,7 +432,7 @@ public class ReportGenerator {
    *
    * @param name the name
    */
-  private void copyHtmlFolder(String name) {
+  synchronized private void copyHtmlFolder(String name) {
     // Get the target folder
     File nameFile = new File(name);
     String absolutePath = nameFile.getAbsolutePath();

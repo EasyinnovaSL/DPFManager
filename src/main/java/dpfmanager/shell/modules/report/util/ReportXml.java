@@ -99,10 +99,23 @@ public class ReportXml extends ReportGeneric {
             el.setTextContent(ir.getNErrors(iso) + "");
             isoEl.appendChild(el);
 
+            if (gr.hasModifiedIso(iso)){
+              el = doc.createElement("errors_policy");
+              el.setTextContent(ir.getNErrorsPolicy(iso) + "");
+              isoEl.appendChild(el);
+            }
+
             el = doc.createElement("warnings");
             el.setTextContent(ir.getNWarnings(iso) + "");
             isoEl.appendChild(el);
-            totalWarnings += ir.getNWarnings(iso);
+
+            if (gr.hasModifiedIso(iso)){
+              el = doc.createElement("warnings_policy");
+              el.setTextContent(ir.getNWarningsPolicy(iso) + "");
+              isoEl.appendChild(el);
+            }
+
+            totalWarnings += gr.hasModifiedIso(iso) ? ir.getNWarningsPolicy(iso) : ir.getNWarnings(iso);
 
             isos.appendChild(isoEl);
           }

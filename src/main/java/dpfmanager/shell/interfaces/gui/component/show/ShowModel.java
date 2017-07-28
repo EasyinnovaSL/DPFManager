@@ -20,13 +20,32 @@
 package dpfmanager.shell.interfaces.gui.component.show;
 
 import dpfmanager.shell.core.mvc.DpfModel;
+import javafx.collections.ObservableList;
 
 /**
  * Created by Adria Llorens on 17/03/2016.
  */
 public class ShowModel extends DpfModel<ShowView, ShowController> {
 
+  private ObservableList<String> comboChilds;
+  private String selectedChild;
+
   public ShowModel() {
   }
 
+  public ObservableList<String> getComboChilds() {
+    return comboChilds;
+  }
+
+  public void setComboChilds(ObservableList<String> comboChilds) {
+    this.comboChilds = comboChilds;
+  }
+
+  public String getSelectedChild() {
+    return selectedChild;
+  }
+
+  public void setSelectedChild(String selectedChild) {
+    this.selectedChild = selectedChild;
+  }
 }

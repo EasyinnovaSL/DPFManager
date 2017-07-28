@@ -169,6 +169,7 @@ public class ConformanceCheckerService extends DpfService {
     } else if (pim.isFile()){
       if (filesToCheck.containsKey(pim.getUuid())){
         filesToCheck.get(pim.getUuid()).add(pim.getFiles());
+        filesToCheck.get(pim.getUuid()).addZipsPath(pim.getZipsPath());
       }
     }
 
@@ -190,7 +191,7 @@ public class ConformanceCheckerService extends DpfService {
 
   public void startCheck(Long uuid, ProcessInputParameters pip) {
     // Init
-    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, pip.getFiles().size(), pip.getConfig(), pip.getInternalReportFolder(), pip.getInputStr()));
+    context.send(BasicConfig.MODULE_THREADING, new GlobalStatusMessage(GlobalStatusMessage.Type.INIT, uuid, pip.getFiles().size(), pip.getConfig(), pip.getInternalReportFolder(), pip.getInputStr(), pip.getZipsPath()));
 
     // Now process files
     ProcessFiles(uuid, pip.getFiles(), pip.getConfig(), pip.getInternalReportFolder(), pip.getInputStr());
