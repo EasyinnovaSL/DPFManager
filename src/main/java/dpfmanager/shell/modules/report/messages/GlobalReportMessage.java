@@ -25,6 +25,7 @@ import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adria Llorens on 24/03/2016.
@@ -36,13 +37,15 @@ public class GlobalReportMessage extends DpfMessage {
   private Configuration config;
   private Date start;
   private List<String> checkedIsos;
+  private Map<String, String> zipsPaths;
 
-  public GlobalReportMessage(Long u, List<SmallIndividualReport> i, Configuration c, Date s, List<String> ci) {
+  public GlobalReportMessage(Long u, List<SmallIndividualReport> i, Configuration c, Date s, List<String> ci, Map<String, String> z) {
     uuid = u;
     individuals = i;
     config = c;
     start = s;
     checkedIsos = ci;
+    zipsPaths = z;
   }
 
   public List<SmallIndividualReport> getIndividuals() {
@@ -64,4 +67,9 @@ public class GlobalReportMessage extends DpfMessage {
   public List<String> getCheckedIsos() {
     return checkedIsos;
   }
+
+  public Map<String, String> getZipsPaths() {
+    return zipsPaths;
+  }
+
 }

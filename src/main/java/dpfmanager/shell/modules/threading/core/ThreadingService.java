@@ -29,6 +29,7 @@ import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.core.messages.ReportsMessage;
 import dpfmanager.shell.interfaces.console.CheckController;
 import dpfmanager.shell.interfaces.gui.workbench.GuiWorkbench;
+import dpfmanager.shell.modules.conformancechecker.runnable.GetInputRunnable;
 import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.messages.messages.CloseMessage;
@@ -232,7 +233,7 @@ public class ThreadingService extends DpfService {
     } else if (gm.isInit()) {
       // Init file check
       FileCheck fc = checks.get(gm.getUuid());
-      fc.init(gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput());
+      fc.init(gm.getSize(), gm.getConfig(), gm.getInternal(), gm.getInput(), gm.getZipsPaths());
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("startingCheck").replace("%1", gm.getInput())));
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.INIT, fc.getUuid(), fc.getTotal(), fc.getInternal()));
     } else if (gm.isFinish() || gm.isCancel()) {
@@ -287,7 +288,7 @@ public class ThreadingService extends DpfService {
       // Check if all finished
       if (fc.allFinished()) {
         // Tell reports module
-        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig(), fc.getStart(), ir.getCheckedIsos()));
+        context.send(BasicConfig.MODULE_REPORT, new GlobalReportMessage(uuid, fc.getIndividuals(), fc.getConfig(), fc.getStart(), ir.getCheckedIsos(), fc.getZipsPaths()));
       }
       context.send(BasicConfig.MODULE_DATABASE, new JobsMessage(JobsMessage.Type.UPDATE, uuid));
     }
@@ -310,8 +311,9 @@ public class ThreadingService extends DpfService {
    * Remove functions
    */
   public void removeZipFolder(String internal) {
-    File zipFolder = new File(internal + "zip");
-    if (zipFolder.exists() && zipFolder.isDirectory()) {
+    int count = 0;
+    File zipFolder = new File(internal + GetInputRunnable.zipFolderPrefix);
+    while (zipFolder.exists()) {
       try {
         FileUtils.deleteDirectory(zipFolder);
       } catch (Exception e) {
@@ -322,6 +324,8 @@ public class ThreadingService extends DpfService {
           context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage(bundle.getString("excZip"), ex));
         }
       }
+      count++;
+      zipFolder = new File(internal + GetInputRunnable.zipFolderPrefix + count);
     }
   }
 

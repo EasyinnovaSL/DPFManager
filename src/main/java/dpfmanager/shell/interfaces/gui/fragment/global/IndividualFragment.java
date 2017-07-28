@@ -19,6 +19,7 @@
 
 package dpfmanager.shell.interfaces.gui.fragment.global;
 
+import dpfmanager.conformancechecker.configuration.Configuration;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.messages.ArrayMessage;
@@ -53,6 +54,7 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -139,7 +141,7 @@ public class IndividualFragment {
 
   private void loadReportRowQuick() {
     qInput.setText(info.getFilename());
-    qPath.setText(info.getFilePath());
+    qPath.setText(info.getShowFilePath());
 
     // Result
     if (info.getErrors() > 0) {
@@ -160,7 +162,7 @@ public class IndividualFragment {
 
   private void loadReportRowFull() {
     fInput.setText(info.getFilename());
-    fPath.setText(info.getFilePath());
+    fPath.setText(info.getShowFilePath());
 
     // Result
     NodeUtil.hideNode(fQuestionImage);
@@ -198,7 +200,7 @@ public class IndividualFragment {
 
   private void loadReportRowOld() {
     fInput.setText(info.getFilename());
-    fPath.setText(info.getFilePath());
+    fPath.setText(info.getShowFilePath());
 
     // Result
     NodeUtil.hideNode(fKoImage);
@@ -339,10 +341,16 @@ public class IndividualFragment {
   @FXML
   protected void makeFullReport(ActionEvent event) throws Exception {
     String inputFile = info.getFilePath();
-    if (!new File(inputFile).exists()) {
-      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("filesNotFound"), inputFile));
+    String zipFile = info.getZipPath();
+    Configuration config = info.getConfig();
+    config.setFormats(new ArrayList<>(Arrays.asList("HTML")));
+    if (new File(inputFile).exists()) {
+      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(inputFile, config, 100, false, false));
+    } else if (new File(zipFile).exists()) {
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("filesAreZip")));
+      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(zipFile, config, 100, false, false));
     } else {
-      context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(inputFile, info.getConfig(), 100, false, false));
+      context.send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, bundle.getString("filesNotFound"), inputFile));
     }
   }
 

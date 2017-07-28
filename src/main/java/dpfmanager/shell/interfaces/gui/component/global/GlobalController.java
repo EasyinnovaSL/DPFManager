@@ -157,8 +157,8 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
   public boolean transformReport(){
     GlobalReport global = getView().getInfo().getGlobalReport();
     if (global.getConfig().isQuick()){
-      List<String> inputFiles = getInputFiles(getView().isErrors(), getView().isWarnings(), getView().isCorrect(), true);
-      List<String> inputNotFound = getInputFiles(getView().isErrors(), getView().isWarnings(), getView().isCorrect(), false);
+      List<String> inputFiles = getInputFiles(getView().isErrors(), getView().isCorrect(), true);
+      List<String> inputNotFound = getInputFiles(getView().isErrors(), getView().isCorrect(), false);
       if (inputFiles.size() == 0) {
         getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, getBundle().getString("filesEmpty")));
       } else {
@@ -172,7 +172,7 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
     return false;
   }
 
-  private List<String> getInputFiles(boolean err, boolean war, boolean pas, boolean found){
+  private List<String> getInputFiles(boolean err, boolean pas, boolean found){
     List<String> inputFiles = new ArrayList<>();
     GlobalReport global = getView().getInfo().getGlobalReport();
     for (SmallIndividualReport individual : global.getIndividualReports()){
@@ -182,14 +182,25 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
         if (err && individual.getNErrors(iso) > 0)  errors++;
         else if (individual.getNWarnings(iso) > 0) warnings++;
       }
-      if ((err && errors > 0) || (war && errors == 0 && warnings > 0) || (pas && errors == 0 && warnings == 0)) {
-        String filePath = individual.getFilePath();
+      if ((err && errors > 0) || (pas && errors == 0 && warnings == 0)) {
+        String filePath = readZipOrFilePath(global, individual.getFilePath());
         if (new File(filePath).exists() == found){
-          inputFiles.add(filePath);
+          if (!inputFiles.contains(filePath)){
+            inputFiles.add(filePath);
+          }
         }
       }
     }
     return inputFiles;
+  }
+
+  private String readZipOrFilePath(GlobalReport global, String filePath){
+    for (String key : global.getZipsPaths().keySet()){
+      if (filePath.contains("/" + key + "/") || filePath.contains("\\" + key + "\\")) {
+        return global.getZipsPaths().get(key);
+      }
+    }
+    return filePath;
   }
 
   public void downloadReport(String path){

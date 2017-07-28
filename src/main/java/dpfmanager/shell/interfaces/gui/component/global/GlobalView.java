@@ -113,8 +113,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   @FXML
   private CheckBox checkError;
   @FXML
-  private CheckBox checkWarning;
-  @FXML
   private CheckBox checkCorrect;
 
   /**
@@ -689,7 +687,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     showTransform();
     checkError.setSelected(true);
     checkCorrect.setSelected(false);
-    checkWarning.setSelected(false);
   }
 
   private void showGenerate() {
@@ -799,10 +796,6 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   public boolean isErrors(){
     return checkError.isSelected();
-  }
-
-  public boolean isWarnings(){
-    return checkWarning.isSelected();
   }
 
   public boolean isCorrect(){

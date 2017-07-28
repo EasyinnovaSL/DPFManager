@@ -24,6 +24,7 @@ import dpfmanager.shell.core.messages.DpfMessage;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adria Llorens on 09/05/2016.
@@ -37,6 +38,7 @@ public class ProcessInputMessage extends DpfMessage {
   private String internalReportFolder;
   private String inputStr;
   private Integer toWait;
+  private Map<String,String> zipsPath;
 
   public enum Type {
     WAIT, FILE
@@ -53,11 +55,12 @@ public class ProcessInputMessage extends DpfMessage {
     this.toWait = toWait;
   }
 
-  public ProcessInputMessage(Type type, Long uuid, List<String> files){
+  public ProcessInputMessage(Type type, Long uuid, List<String> files, Map<String,String> zipsPath){
     // File
     this.type = type;
     this.uuid = uuid;
     this.files = files;
+    this.zipsPath = zipsPath;
   }
 
   public boolean isWait(){
@@ -90,5 +93,9 @@ public class ProcessInputMessage extends DpfMessage {
 
   public Integer getToWait() {
     return toWait;
+  }
+
+  public Map<String, String> getZipsPath() {
+    return zipsPath;
   }
 }

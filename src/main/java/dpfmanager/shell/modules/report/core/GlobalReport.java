@@ -96,6 +96,11 @@ public class GlobalReport extends ReportSerializable {
   private String inputStr;
 
   /**
+   * The paths where each zip was unzipped
+   */
+  private Map<String, String> zipsPaths;
+
+  /**
    * Instantiates a new global report.
    */
   public GlobalReport() {
@@ -107,7 +112,7 @@ public class GlobalReport extends ReportSerializable {
     errVal = 0;
   }
 
-  public void init(Configuration c, List<String> ci) {
+  public void init(Configuration c, List<String> ci, Map<String, String> z) {
     this.modifiedIsos = c.getModifiedIsos();
     this.selectedIsos = c.getIsos();
     if (c.hasRules()) {
@@ -115,6 +120,10 @@ public class GlobalReport extends ReportSerializable {
     }
     this.checkedIsos = ci;
     this.config = c;
+    this.zipsPaths = z;
+    if (zipsPaths == null) {
+      zipsPaths = new HashMap<>();
+    }
   }
 
   /**
@@ -334,6 +343,10 @@ public class GlobalReport extends ReportSerializable {
     }
     inputStr = name;
     return inputStr;
+  }
+
+  public Map<String, String> getZipsPaths() {
+    return zipsPaths;
   }
 
   public Configuration getConfig() {

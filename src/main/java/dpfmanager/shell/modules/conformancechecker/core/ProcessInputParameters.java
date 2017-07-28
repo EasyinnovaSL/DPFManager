@@ -21,7 +21,9 @@ package dpfmanager.shell.modules.conformancechecker.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adria Llorens on 10/05/2016.
@@ -33,6 +35,7 @@ public class ProcessInputParameters {
   private Configuration config;
   private int toWait;
   private List<String> files;
+  private Map<String,String> zipsPath;
 
   public ProcessInputParameters(String internalReportFolder, String inputStr, Configuration config, int toWait, List<String> files) {
     this.internalReportFolder = internalReportFolder;
@@ -40,6 +43,7 @@ public class ProcessInputParameters {
     this.config = config;
     this.toWait = toWait;
     this.files = files;
+    this.zipsPath = new HashMap<>();
   }
 
   public String getInternalReportFolder() {
@@ -66,4 +70,17 @@ public class ProcessInputParameters {
     files.addAll(files2);
     toWait--;
   }
+
+  public void addZipsPath(Map<String, String> zipsPath2) {
+    for (String key : zipsPath2.keySet()) {
+      if (!zipsPath.containsKey(key)) {
+        zipsPath.put(key, zipsPath2.get(key));
+      }
+    }
+  }
+
+  public Map<String, String> getZipsPath() {
+    return zipsPath;
+  }
+
 }
