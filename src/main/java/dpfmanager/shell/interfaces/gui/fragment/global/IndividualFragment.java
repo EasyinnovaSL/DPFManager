@@ -342,7 +342,8 @@ public class IndividualFragment {
   protected void makeFullReport(ActionEvent event) throws Exception {
     String inputFile = info.getFilePath();
     String zipFile = info.getZipPath();
-    Configuration config = info.getConfig();
+    Configuration config = new Configuration(info.getConfig());
+    config.setQuick(false);
     config.setFormats(new ArrayList<>(Arrays.asList("HTML")));
     if (new File(inputFile).exists()) {
       context.send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(inputFile, config, 100, false, false));

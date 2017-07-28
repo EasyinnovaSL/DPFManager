@@ -735,6 +735,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
   @FXML
   protected void transformReports(ActionEvent event) throws Exception {
     if (getController().transformReport()) {
+      context.send(GuiConfig.PERSPECTIVE_GLOBAL + "." + GuiConfig.COMPONENT_NAV, new NavMessage(NavMessage.Selected.RELOAD));
       hideTransforms();
     }
   }

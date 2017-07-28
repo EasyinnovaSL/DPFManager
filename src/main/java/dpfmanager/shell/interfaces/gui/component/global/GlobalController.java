@@ -39,6 +39,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -156,13 +157,16 @@ public class GlobalController extends DpfController<GlobalModel, GlobalView> {
    */
   public boolean transformReport(){
     GlobalReport global = getView().getInfo().getGlobalReport();
-    if (global.getConfig().isQuick()){
+    Configuration config = new Configuration(global.getConfig());
+    if (config.isQuick()){
+      config.setQuick(false);
+      config.setFormats(new ArrayList<>(Arrays.asList("HTML")));
       List<String> inputFiles = getInputFiles(getView().isErrors(), getView().isCorrect(), true);
       List<String> inputNotFound = getInputFiles(getView().isErrors(), getView().isCorrect(), false);
       if (inputFiles.size() == 0) {
         getContext().send(BasicConfig.MODULE_MESSAGE, new AlertMessage(AlertMessage.Type.INFO, getBundle().getString("filesEmpty")));
       } else {
-        getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(String.join(";", inputFiles), getView().getInfo().getGlobalReport().getConfig(), 100, false, false));
+        getContext().send(BasicConfig.MODULE_CONFORMANCE, new ConformanceMessage(String.join(";", inputFiles), config, 100, false, false));
         return true;
       }
       if (inputNotFound.size() > 0) {
