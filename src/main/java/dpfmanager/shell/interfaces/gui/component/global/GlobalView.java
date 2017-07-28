@@ -674,27 +674,29 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   @FXML
   protected void showGenerate(ActionEvent event) throws Exception {
-    showGenerate();
-    htmlCheck.setSelected(false);
-    xmlCheck.setSelected(false);
-    metsCheck.setSelected(false);
-    jsonCheck.setSelected(false);
-    pdfCheck.setSelected(false);
-  }
-
-  @FXML
-  protected void showTransform(ActionEvent event) throws Exception {
-    showTransform();
-    checkError.setSelected(true);
-    checkCorrect.setSelected(false);
-  }
-
-  private void showGenerate() {
+    boolean checked = getController().allReportsDone(info.getGlobalReport(), info.getInternalReportFolder(), "html");
+    htmlCheck.setSelected(checked);
+    htmlCheck.setDisable(checked);
+    checked = getController().allReportsDone(info.getGlobalReport(), info.getInternalReportFolder(), "xml");
+    xmlCheck.setSelected(checked);
+    xmlCheck.setDisable(checked);
+    checked = getController().allReportsDone(info.getGlobalReport(), info.getInternalReportFolder(), "mets");
+    metsCheck.setSelected(checked);
+    metsCheck.setDisable(checked);
+    checked = getController().allReportsDone(info.getGlobalReport(), info.getInternalReportFolder(), "json");
+    jsonCheck.setSelected(checked);
+    jsonCheck.setDisable(checked);
+    checked = getController().allReportsDone(info.getGlobalReport(), info.getInternalReportFolder(), "pdf");
+    pdfCheck.setSelected(checked);
+    pdfCheck.setDisable(checked);
     NodeUtil.showNode(vboxGenerators);
     NodeUtil.hideNode(buttonGenerate);
   }
 
-  private void showTransform() {
+  @FXML
+  protected void showTransform(ActionEvent event) throws Exception {
+    checkError.setSelected(true);
+    checkCorrect.setSelected(false);
     NodeUtil.showNode(vboxTransforms);
     NodeUtil.hideNode(buttonTransforms);
   }
@@ -730,6 +732,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
     am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage());
     am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, sMessage);
     context.send(GuiConfig.PERSPECTIVE_SHOW, am);
+    hideGenerate();
   }
 
   @FXML
@@ -752,7 +755,9 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
       if (info.getGlobalReport().getConfig().isQuick()){
         NodeUtil.showNode(buttonTransforms);
       }
-      NodeUtil.showNode(buttonGenerate);
+      if (!getController().allReportsDone(info.getGlobalReport(), info.getInternalReportFolder())) {
+        NodeUtil.showNode(buttonGenerate);
+      }
     }
   }
 
@@ -767,11 +772,11 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
 
   public List<String> getSelectedFormats() {
     List<String> formats = new ArrayList<>();
-    if (htmlCheck.isSelected()) formats.add("html");
-    if (xmlCheck.isSelected()) formats.add("xml");
-    if (metsCheck.isSelected()) formats.add("mets");
-    if (pdfCheck.isSelected()) formats.add("pdf");
-    if (jsonCheck.isSelected()) formats.add("json");
+    if (!htmlCheck.isDisable() && htmlCheck.isSelected()) formats.add("html");
+    if (!xmlCheck.isDisable() && xmlCheck.isSelected()) formats.add("xml");
+    if (!metsCheck.isDisable() && metsCheck.isSelected()) formats.add("mets");
+    if (!pdfCheck.isDisable() && pdfCheck.isSelected()) formats.add("pdf");
+    if (!jsonCheck.isDisable() && jsonCheck.isSelected()) formats.add("json");
     return formats;
   }
 
