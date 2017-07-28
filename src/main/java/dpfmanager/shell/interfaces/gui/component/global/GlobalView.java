@@ -356,6 +356,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
             ArrayMessage am = new ArrayMessage();
             am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
             context.send(GuiConfig.PERSPECTIVE_SHOW, am);
           }
@@ -368,6 +369,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
             ArrayMessage am = new ArrayMessage();
             am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
             context.send(GuiConfig.PERSPECTIVE_SHOW, am);
           }
@@ -378,6 +380,7 @@ public class GlobalView extends DpfView<GlobalModel, GlobalController> {
             ArrayMessage am = new ArrayMessage();
             am.add(GuiConfig.PERSPECTIVE_SHOW, new UiMessage(UiMessage.Type.SHOW));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_NAV, new NavMessage(i));
+            am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, new ShowMessage(ShowMessage.Type.LOAD));
             am.add(GuiConfig.PERSPECTIVE_SHOW + "." + GuiConfig.COMPONENT_SHOW, finalSMessage);
             context.send(GuiConfig.PERSPECTIVE_SHOW, am);
           }

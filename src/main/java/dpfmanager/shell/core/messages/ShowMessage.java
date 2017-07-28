@@ -32,7 +32,7 @@ import java.util.List;
 public class ShowMessage extends DpfMessage {
 
   public enum Type {
-    SHOW, GENERATE, UPDATE, INIT, INDIVIDUAL
+    SHOW, GENERATE, UPDATE, INIT, INDIVIDUAL, LOAD
   }
 
   private Type internalType;
@@ -48,6 +48,11 @@ public class ShowMessage extends DpfMessage {
   private boolean onlyGlobal;
   private Configuration config;
   private ReportGui info;
+
+  // Load
+  public ShowMessage(Type internalType) {
+    this.internalType = internalType;
+  }
 
   // Show
   public ShowMessage(Long u, String t, String p) {
@@ -184,5 +189,9 @@ public class ShowMessage extends DpfMessage {
 
   public List<String> getTypes() {
     return types;
+  }
+
+  public boolean isLoad(){
+    return internalType.equals(Type.LOAD);
   }
 }

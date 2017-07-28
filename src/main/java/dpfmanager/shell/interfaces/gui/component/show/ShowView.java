@@ -117,13 +117,31 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
 
   @Override
   public void handleMessageOnWorker(DpfMessage message) {
+    if (message != null && message.isTypeOf(ShowMessage.class)) {
+      ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
+      if (sMessage.isShow()) {
+        if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)) {
+          getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
+        }
+      } else if (sMessage.isGenerate()) {
+        if (showReports.containsKey(sMessage.getUuid())) {
+          ShowReport sr = showReports.get(sMessage.getUuid());
+          if (sr.finished) {
+            getController().showSingleReport(sMessage.getType(), sMessage.getInternal(), false);
+          }
+        }
+      }
+    }
   }
 
   @Override
   public Node handleMessageOnFX(DpfMessage message) {
     if (message != null && message.isTypeOf(ShowMessage.class)) {
       ShowMessage sMessage = message.getTypedMessage(ShowMessage.class);
-      if (sMessage.isShow()) {
+      if (sMessage.isLoad()) {
+        hideAll();
+        showLoading();
+      } else if (sMessage.isShow()) {
         if (sMessage.getInfo() != null && sMessage.getUuid().equals(currentReport)) {
           String currentId = context.getManagedFragmentHandler(TopFragment.class).getController().getCurrentId();
           if (currentId.equals(GuiConfig.PERSPECTIVE_SHOW)) {
@@ -133,8 +151,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
             context.send(GuiConfig.PERSPECTIVE_GLOBAL, am);
           }
         } else if (sMessage.getUuid() == null || sMessage.getUuid().equals(currentReport)) {
-          hideAll();
-          getController().showSingleReport(sMessage.getType(), sMessage.getPath(), true);
+          getController().showSingleReportFX(sMessage.getType(), sMessage.getPath(), true);
         }
       } else if (sMessage.isGenerate()) {
         if (showReports.containsKey(sMessage.getUuid())) {
@@ -143,9 +160,9 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
             // Transformation DONE, return to global report
             context.send(GuiConfig.PERSPECTIVE_GLOBAL, new UiMessage(UiMessage.Type.SHOW));
           } else if (sr.finished) {
-            // Transformation DONE, do nothing
+            // Transformation DONE, show
             hideAll();
-            getController().showSingleReport(sMessage.getType(), sMessage.getInternal(), false);
+            getController().showSingleReportFX(sMessage.getType(), sMessage.getInternal(), false);
           } else {
             // Already initiated
             hideAll();
@@ -212,7 +229,7 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     setModel(new ShowModel());
     setController(new ShowController());
     showReports = new HashMap<>();
-
+    indicator.setProgress(-1);
     hideAll();
 
     comboIndividuals.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -317,7 +334,6 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     NodeUtil.showNode(indicator);
     NodeUtil.hideNode(labelLoading);
     NodeUtil.hideNode(progressLoading);
-    indicator.setProgress(-1);
   }
 
   public void hideLoading() {
@@ -373,7 +389,6 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
   public void hideWebView() {
     NodeUtil.hideNode(webView);
     NodeUtil.hideNode(showVBox);
-    webView.getEngine().load("");
   }
 
   public void showPdfView(String path) {
