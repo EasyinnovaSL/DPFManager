@@ -89,7 +89,7 @@ public class RunsTest extends TestCase {
         if (rr.toString().contains("Tiles offsets are invalid") || rr.toString().contains("Inconsistent tile lengths")) classes.add(22);
         if (rr.toString().contains("must have the tag Tile") || rr.toString().contains("Missing required TileByteCounts tag for tiled images") || rr.toString().contains("Missing required TileOffsets tag for tiled images")) classes.add(23);
         if (rr.toString().contains("Invalid value for field TileWidth") || rr.toString().contains("Invalid value for field TileLength")) classes.add(24);
-        if (rr.toString().contains("Image width and image height do not match with tiles sizes") || rr.toString().contains("TileWidth greater than the ImageWidth") || rr.toString().contains("TileLength bigger than the ImageLength")) classes.add(25);
+        if (rr.toString().contains("Image width and image height do not match with tiles sizes") || rr.toString().contains("TileWidth greater than the ImageWidth") || rr.toString().contains("TileLength bigger than the ImageLength") || rr.toString().contains("tiles are too large")) classes.add(25);
         if ((rr.toString().contains("should only be used in")) && getPhotometric(tr) == 0) classes.add(26); //bilevel
         if (rr.toString().contains("Invalid Compression for Bilevel image")) classes.add(26); //bilevel
         if (rr.toString().contains("should only be used in") && getPhotometric(tr) == 1) classes.add(27);
