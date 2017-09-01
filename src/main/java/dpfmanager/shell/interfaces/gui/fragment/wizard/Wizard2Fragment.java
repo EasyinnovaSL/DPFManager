@@ -241,7 +241,7 @@ public class Wizard2Fragment {
     hbox.setId("ID" + getModel().getNextId());
     hbox.setSpacing(5);
 
-    // Checkboc
+    // Checkbox
     CheckBox warning = new CheckBox();
     warning.setText(bundle.getString("w2Warning"));
     warning.getStyleClass().add("checkreport");
@@ -356,13 +356,23 @@ public class Wizard2Fragment {
 
     // Value combo box or text field
     if (values == null || (operatorLoad != null && !operatorLoad.equals("="))) {
-      TextField value = new NumberTextField();
-      value.setId("textField");
-      value.getStyleClass().add("txtRule");
-      if (valueLoad != null) {
-        value.setText(valueLoad);
+      if (item.toLowerCase().startsWith("icc")) {
+        TextField value = new TextField();
+        value.setId("textField");
+        value.getStyleClass().add("txtRule");
+        if (valueLoad != null) {
+          value.setText(valueLoad);
+        }
+        hbox.getChildren().add(value);
+      } else {
+        TextField value = new NumberTextField();
+        value.setId("textField");
+        value.getStyleClass().add("txtRule");
+        if (valueLoad != null) {
+          value.setText(valueLoad);
+        }
+        hbox.getChildren().add(value);
       }
-      hbox.getChildren().add(value);
     } else {
       CheckComboBox comboVal = new CheckComboBox();
       comboVal.getStyleClass().addAll("combo-box-white", "dpf-bar");

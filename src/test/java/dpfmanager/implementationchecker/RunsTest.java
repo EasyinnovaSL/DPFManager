@@ -169,38 +169,53 @@ public class RunsTest extends TestCase {
     return s;
   }
 
+  String TresDigits(int i) {
+    String s = i+"";
+    while (s.length() < 3) s = "0" + s;
+    return s;
+  }
+
   void ClassifyAndScore(File dir, int policyClass, HashSet<Integer> tiaClasses, HashSet<Integer> epClasses, HashSet<Integer> itClasses, boolean onlyFinalResult) {
     int nCorrect = 0;
     int nIncorrect = 0;
-    if (dir.exists()) {
-      for (File dirClass : dir.listFiles()) {
-        if (dirClass.isDirectory()) {
-          String sClass = dirClass.getName();
-          int iClass = Integer.parseInt(sClass.substring(2));
-          for (File fileClass : dirClass.listFiles()) {
-            if (fileClass.getName().toLowerCase().contains("thumbs.db")) continue;
-            boolean policy = policyClass == iClass;
-            boolean tia = tiaClasses.contains(iClass);
-            boolean ep = epClasses.contains(iClass);
-            boolean it = itClasses.contains(iClass);
-            HashSet<Integer> classifiedClass = classify(fileClass.getPath(), policy, tia, ep, it, false);
-            assertEquals(classifiedClass != null, true);
-            if (!classifiedClass.contains(iClass)) {
-              if (!onlyFinalResult) {
-                System.out.println("File of class " + sClass + " bad classified as " + printClasses(classifiedClass) + " (" + fileClass.getName() + ")");
+    try {
+      PrintWriter writer = new PrintWriter("result"+dir.getName() + ".txt", "UTF-8");
+      if (dir.exists()) {
+        for (File dirClass : dir.listFiles()) {
+          if (dirClass.isDirectory()) {
+            String sClass = dirClass.getName();
+            int iClass = Integer.parseInt(sClass.substring(2));
+            for (File fileClass : dirClass.listFiles()) {
+              if (fileClass.getName().toLowerCase().contains("thumbs.db")) continue;
+              boolean policy = policyClass == iClass;
+              boolean tia = tiaClasses.contains(iClass);
+              boolean ep = epClasses.contains(iClass);
+              boolean it = itClasses.contains(iClass);
+              HashSet<Integer> classifiedClass = classify(fileClass.getPath(), policy, tia, ep, it, false);
+              for (Integer iclass : classifiedClass) {
+                writer.println("IC" + TresDigits(iclass) + "\t" + 0 + "\t" + fileClass.getName() + "\t" + 1);
               }
-              classifiedClass = classify(fileClass.getPath(), policy, tia, ep, it, true);
-              nIncorrect++;
-            } else {
-              nCorrect++;
+              assertEquals(classifiedClass != null, true);
+              if (!classifiedClass.contains(iClass)) {
+                if (!onlyFinalResult) {
+                  System.out.println("File of class " + sClass + " bad classified as " + printClasses(classifiedClass) + " (" + fileClass.getName() + ")");
+                }
+                classifiedClass = classify(fileClass.getPath(), policy, tia, ep, it, true);
+                nIncorrect++;
+              } else {
+                nCorrect++;
+              }
+              //assertEquals(classifiedClass.contains(iClass), true);
             }
-            //assertEquals(classifiedClass.contains(iClass), true);
           }
         }
+        System.out.println("Correctly classified files: " + nCorrect);
+        System.out.println("Incorrectly classified files: " + nIncorrect);
+        System.out.println("Score: " + nCorrect * 100 / (nCorrect + nIncorrect) + "%");
       }
-      System.out.println("Correctly classified files: " + nCorrect);
-      System.out.println("Incorrectly classified files: " + nIncorrect);
-      System.out.println("Score: " + nCorrect*100/(nCorrect+nIncorrect) + "%");
+      writer.close();
+    } catch (Exception ex ) {
+      ex.printStackTrace();
     }
   }
 
