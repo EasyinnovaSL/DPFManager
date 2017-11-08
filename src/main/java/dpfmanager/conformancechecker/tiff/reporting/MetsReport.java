@@ -496,10 +496,12 @@ public class MetsReport {
     if (ir.getTiffModel().getMetadata().contains("GPSAltitude")) {
       RationalType altitude = new RationalType();
       altitude.setUse("System");
-      Rational altitudeFromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSAltitude");
-      altitude.setNumerator(BigInteger.valueOf(altitudeFromTag.getNumerator()));
-      altitude.setDenominator(BigInteger.valueOf(altitudeFromTag.getDenominator()));
-      gpsData.setGpsAltitude(altitude);
+      if (ir.getTiffModel().getMetadata().get("GPSAltitude") instanceof Rational) {
+        Rational altitudeFromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSAltitude");
+        altitude.setNumerator(BigInteger.valueOf(altitudeFromTag.getNumerator()));
+        altitude.setDenominator(BigInteger.valueOf(altitudeFromTag.getDenominator()));
+        gpsData.setGpsAltitude(altitude);
+      }
     }
     if (ir.getTiffModel().getMetadata().contains("GPSTimeStamp")) {
       StringType timestamp = new StringType();
@@ -528,10 +530,12 @@ public class MetsReport {
     if (ir.getTiffModel().getMetadata().contains("GPSDOP")) {
       RationalType gpsDop = new RationalType();
       gpsDop.setUse("System");
-      Rational gpsDopFromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSDOP");
-      gpsDop.setDenominator(BigInteger.valueOf(gpsDopFromTag.getDenominator()));
-      gpsDop.setNumerator(BigInteger.valueOf(gpsDopFromTag.getNumerator()));
-      gpsData.setGpsDOP(gpsDop);
+      if (ir.getTiffModel().getMetadata().get("GPSDOP") instanceof Rational) {
+        Rational gpsDopFromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSDOP");
+        gpsDop.setDenominator(BigInteger.valueOf(gpsDopFromTag.getDenominator()));
+        gpsDop.setNumerator(BigInteger.valueOf(gpsDopFromTag.getNumerator()));
+        gpsData.setGpsDOP(gpsDop);
+      }
     }
     if (ir.getTiffModel().getMetadata().contains("GPSSpeedRef") && GpsSpeedRefType.verifyTag(ir.getTiffModel().getMetadata().get("GPSSpeedRef").toString())) {
       TypeOfgpsSpeedRefType typeOfgpsSpeedRefType = new TypeOfgpsSpeedRefType();
@@ -542,10 +546,12 @@ public class MetsReport {
     if (ir.getTiffModel().getMetadata().contains("GPSSpeed")) {
       RationalType gpsSpeed = new RationalType();
       gpsSpeed.setUse("System");
-      Rational gpsSpeedfromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSSpeed");
-      gpsSpeed.setDenominator(BigInteger.valueOf(gpsSpeedfromTag.getDenominator()));
-      gpsSpeed.setNumerator(BigInteger.valueOf(gpsSpeedfromTag.getNumerator()));
-      gpsData.setGpsSpeed(gpsSpeed);
+      if (ir.getTiffModel().getMetadata().get("GPSSpeed") instanceof Rational) {
+        Rational gpsSpeedfromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSSpeed");
+        gpsSpeed.setDenominator(BigInteger.valueOf(gpsSpeedfromTag.getDenominator()));
+        gpsSpeed.setNumerator(BigInteger.valueOf(gpsSpeedfromTag.getNumerator()));
+        gpsData.setGpsSpeed(gpsSpeed);
+      }
     }
     if (ir.getTiffModel().getMetadata().contains("GPSTrackRef") && GpsTrackRefType.verifyTag(ir.getTiffModel().getMetadata().get("GPSTrackRef").toString())) {
       TypeOfgpsTrackRefType typeOfgpsTrackRefType = new TypeOfgpsTrackRefType();
@@ -556,10 +562,12 @@ public class MetsReport {
     if (ir.getTiffModel().getMetadata().contains("GPSTrack")) {
       RationalType gpsTrack = new RationalType();
       gpsTrack.setUse("System");
-      Rational gpsTrackfromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSTrack");
-      gpsTrack.setDenominator(BigInteger.valueOf(gpsTrackfromTag.getDenominator()));
-      gpsTrack.setNumerator(BigInteger.valueOf(gpsTrackfromTag.getNumerator()));
-      gpsData.setGpsTrack(gpsTrack);
+      if (ir.getTiffModel().getMetadata().get("GPSTrack") instanceof Rational) {
+        Rational gpsTrackfromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSTrack");
+        gpsTrack.setDenominator(BigInteger.valueOf(gpsTrackfromTag.getDenominator()));
+        gpsTrack.setNumerator(BigInteger.valueOf(gpsTrackfromTag.getNumerator()));
+        gpsData.setGpsTrack(gpsTrack);
+      }
     }
     if (ir.getTiffModel().getMetadata().contains("GPSImgDirectionRef") && GpsImgDirectionRefType.verifyTag(ir.getTiffModel().getMetadata().get("GPSImgDirectionRef").toString())) {
       TypeOfgpsImgDirectionRefType typeOfgpsImgDirectionRefType = new TypeOfgpsImgDirectionRefType();
@@ -570,10 +578,12 @@ public class MetsReport {
     if (ir.getTiffModel().getMetadata().contains("GPSImgDirection")) {
       RationalType gpsImgDirection = new RationalType();
       gpsImgDirection.setUse("System");
-      Rational gpsImgDirectionfromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSImgDirection");
-      gpsImgDirection.setDenominator(BigInteger.valueOf(gpsImgDirectionfromTag.getDenominator()));
-      gpsImgDirection.setNumerator(BigInteger.valueOf(gpsImgDirectionfromTag.getNumerator()));
-      gpsData.setGpsImgDirection(gpsImgDirection);
+      if (ir.getTiffModel().getMetadata().get("GPSImgDirection") instanceof Rational) {
+        Rational gpsImgDirectionfromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSImgDirection");
+        gpsImgDirection.setDenominator(BigInteger.valueOf(gpsImgDirectionfromTag.getDenominator()));
+        gpsImgDirection.setNumerator(BigInteger.valueOf(gpsImgDirectionfromTag.getNumerator()));
+        gpsData.setGpsImgDirection(gpsImgDirection);
+      }
     }
     if (ir.getTiffModel().getMetadata().contains("GPSMapDatum")) {
       StringType mapDatum = new StringType();
@@ -642,10 +652,12 @@ public class MetsReport {
     if (ir.getTiffModel().getMetadata().contains("GPSDestBearing")) {
       RationalType gpsDestBearing = new RationalType();
       gpsDestBearing.setUse("System");
-      Rational gpsDopFromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSDestBearing");
-      gpsDestBearing.setDenominator(BigInteger.valueOf(gpsDopFromTag.getDenominator()));
-      gpsDestBearing.setNumerator(BigInteger.valueOf(gpsDopFromTag.getNumerator()));
-      gpsData.setGpsDestBearing(gpsDestBearing);
+      if (ir.getTiffModel().getMetadata().get("GPSDestBearing") instanceof Rational) {
+        Rational gpsDopFromTag = (Rational) ir.getTiffModel().getMetadata().get("GPSDestBearing");
+        gpsDestBearing.setDenominator(BigInteger.valueOf(gpsDopFromTag.getDenominator()));
+        gpsDestBearing.setNumerator(BigInteger.valueOf(gpsDopFromTag.getNumerator()));
+        gpsData.setGpsDestBearing(gpsDestBearing);
+      }
     }
     if (ir.getTiffModel().getMetadata().contains("GPSDestDistanceRef") && GpsDestDistanceRefType.verifyTag(ir.getTiffModel().getMetadata().get("GPSDestDistanceRef").toString())) {
       TypeOfgpsDestDistanceRefType typeOfgpsDestDistanceRefType = new TypeOfgpsDestDistanceRefType();

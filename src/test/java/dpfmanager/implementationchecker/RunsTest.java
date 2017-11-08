@@ -21,6 +21,9 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -135,6 +138,10 @@ public class RunsTest extends TestCase {
         }
       }
 
+      if (classes.contains(0) && classes.size() > 1) {
+        classes.remove(0);
+      }
+
       return classes;
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -178,13 +185,18 @@ public class RunsTest extends TestCase {
   void ClassifyAndScore(File dir, int policyClass, HashSet<Integer> tiaClasses, HashSet<Integer> epClasses, HashSet<Integer> itClasses, boolean onlyFinalResult) {
     int nCorrect = 0;
     int nIncorrect = 0;
+    int nRun = 3;
     try {
       PrintWriter writer = new PrintWriter("result"+dir.getName() + ".txt", "UTF-8");
+      PrintWriter writer2 = new PrintWriter("result-gt"+dir.getName() + ".txt", "UTF-8");
+      List<String> lkeys = new ArrayList<String>();
+      HashMap<String, HashSet<String>> dones = new HashMap<String, HashSet<String>>();
       if (dir.exists()) {
         for (File dirClass : dir.listFiles()) {
           if (dirClass.isDirectory()) {
             String sClass = dirClass.getName();
             int iClass = Integer.parseInt(sClass.substring(2));
+            lkeys.add(TresDigits(iClass));
             for (File fileClass : dirClass.listFiles()) {
               if (fileClass.getName().toLowerCase().contains("thumbs.db")) continue;
               boolean policy = policyClass == iClass;
@@ -193,7 +205,10 @@ public class RunsTest extends TestCase {
               boolean it = itClasses.contains(iClass);
               HashSet<Integer> classifiedClass = classify(fileClass.getPath(), policy, tia, ep, it, false);
               for (Integer iclass : classifiedClass) {
-                writer.println("IC" + TresDigits(iclass) + "\t" + 0 + "\t" + fileClass.getName() + "\t" + 1);
+                if (!dones.containsKey(fileClass.getName())) dones.put(fileClass.getName(), new HashSet<>());
+                if (!dones.get(fileClass.getName()).contains("IC" + TresDigits(iclass))) {
+                  dones.get(fileClass.getName()).add("IC" + TresDigits(iclass));
+                }
               }
               assertEquals(classifiedClass != null, true);
               if (!classifiedClass.contains(iClass)) {
@@ -212,8 +227,23 @@ public class RunsTest extends TestCase {
         System.out.println("Correctly classified files: " + nCorrect);
         System.out.println("Incorrectly classified files: " + nIncorrect);
         System.out.println("Score: " + nCorrect * 100 / (nCorrect + nIncorrect) + "%");
+
+        for (String sClass : lkeys) {
+          String linia = sClass;
+          for (String file : dones.keySet()) {
+            HashSet<String> classes = dones.get(file);
+            if (classes.contains("IC000") && classes.size() > 1) classes.remove("IC000");
+            String sc = "IC" + sClass;
+            if (classes.contains(sc)) {
+              linia += "\t" + file;
+              writer.println(sc + "\tQ0" + "\t" + file + "\t" + 0 + "\t" + 1 + "\trun-" + nRun);
+            }
+          }
+          writer2.println(linia);
+        }
       }
       writer.close();
+      writer2.close();
     } catch (Exception ex ) {
       ex.printStackTrace();
     }
@@ -268,7 +298,7 @@ public class RunsTest extends TestCase {
     HashSet<Integer> itClasses = new HashSet<Integer>();
     itClasses.add(39);
     CreatePolicy();
-    ClassifyAndScore(new File("Z:\\PROJECTES\\Projectes en desenvolupament\\201411 - PREFORMA\\TIFFs\\classes\\training"), policyClass, tiaClasses, epClasses, itClasses, onlyFinalResult);
+    //ClassifyAndScore(new File("Z:\\PROJECTES\\Projectes en desenvolupament\\201411 - PREFORMA\\TIFFs\\classes\\training"), policyClass, tiaClasses, epClasses, itClasses, onlyFinalResult);
     ClassifyAndScore(new File("Z:\\PROJECTES\\Projectes en desenvolupament\\201411 - PREFORMA\\TIFFs\\classes\\test"), policyClass, tiaClasses, epClasses, itClasses, onlyFinalResult);
     DeletePolicy();
   }
