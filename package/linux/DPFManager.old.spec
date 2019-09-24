@@ -1,6 +1,6 @@
 Summary: DPF Manager
 Name: dpf-manager
-Version: 3.4
+Version: 3.5.1
 Release: 1
 License: Unknown
 Vendor: DPF Manager

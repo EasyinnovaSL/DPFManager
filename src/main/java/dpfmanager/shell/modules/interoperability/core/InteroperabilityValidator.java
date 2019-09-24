@@ -23,12 +23,11 @@ import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -37,8 +36,8 @@ import java.util.ResourceBundle;
  */
 public class InteroperabilityValidator {
 
-  private DpfContext context;
-  private ResourceBundle bundle;
+  private final DpfContext context;
+  private final ResourceBundle bundle;
 
   public InteroperabilityValidator(DpfContext context, ResourceBundle bundle) {
     this.context = context;
@@ -57,12 +56,12 @@ public class InteroperabilityValidator {
   }
 
   public boolean validateAll(ConformanceConfig conformance) {
-    if (conformance.isBuiltIn()){
+    if (conformance.isBuiltIn()) {
       return validateConfiguration(conformance.isBuiltIn(), conformance.getConfiguration());
     } else {
       return validateParameters(conformance.getParameters())
-          && validatePath(conformance.getPath())
-          && validateConfiguration(conformance.isBuiltIn(), conformance.getConfiguration());
+        && validatePath(conformance.getPath())
+        && validateConfiguration(conformance.isBuiltIn(), conformance.getConfiguration());
     }
   }
 
@@ -113,10 +112,10 @@ public class InteroperabilityValidator {
     return false;
   }
 
-  public List<String> parseExtensions(String str){
+  public List<String> parseExtensions(String str) {
     List<String> extensions = new ArrayList<>();
     str = str.replaceAll(" ", "");
-    if (str.matches("[a-zA-Z1-9,]+")){
+    if (str.matches("[a-zA-Z1-9,]+")) {
       extensions.addAll(Arrays.asList(str.split(",")));
     } else {
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.DEBUG, bundle.getString("errorExtensions")));

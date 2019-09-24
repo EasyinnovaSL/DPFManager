@@ -20,7 +20,6 @@
 package dpfmanager.shell.modules.report.core;
 
 import dpfmanager.conformancechecker.configuration.Configuration;
-import dpfmanager.conformancechecker.tiff.metadata_fixer.Fixes;
 import dpfmanager.conformancechecker.tiff.reporting.HtmlReport;
 import dpfmanager.conformancechecker.tiff.reporting.MetsReport;
 import dpfmanager.conformancechecker.tiff.reporting.PdfReport;
@@ -34,32 +33,12 @@ import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.shell.modules.report.util.ReportJson;
 import dpfmanager.shell.modules.report.util.ReportPDF;
 import dpfmanager.shell.modules.report.util.ReportXml;
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.logging.log4j.Level;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.net.URI;
+import java.io.*;
 import java.net.URL;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,11 +56,11 @@ import java.util.zip.ZipInputStream;
 public class ReportGenerator {
 
   private DpfContext context;
-  private ReportXml reportXml;
-  private ReportJson reportJson;
-  private ReportPDF reportPdf;
-  private ReportHtml reportHtml;
-  private ResourceBundle bundle;
+  private final ReportXml reportXml;
+  private final ReportJson reportJson;
+  private final ReportPDF reportPdf;
+  private final ReportHtml reportHtml;
+  private final ResourceBundle bundle;
 
   public DpfContext getContext() {
     return context;
@@ -206,9 +185,9 @@ public class ReportGenerator {
       index++;
       String ext = getFileType(reportName);
       reportName =
-          internalReportFolder + idReport + "-"
-              + new File(realFilename.substring(0, realFilename.lastIndexOf(".")) + index + "." + ext)
-              .getName();
+        internalReportFolder + idReport + "-"
+          + new File(realFilename.substring(0, realFilename.lastIndexOf(".")) + index + "." + ext)
+          .getName();
       file = new File(reportName);
     }
     return reportName;
@@ -282,9 +261,9 @@ public class ReportGenerator {
       File output = new File(outputfile);
       output.getParentFile().mkdirs();
       Writer out = new BufferedWriter(new OutputStreamWriter(
-          new FileOutputStream(outputfile), "UTF-8"));
-        out.write(body);
-        out.close();
+        new FileOutputStream(outputfile), "UTF-8"));
+      out.write(body);
+      out.close();
     } catch (IOException e) {
       context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", e));
     }
@@ -295,7 +274,7 @@ public class ReportGenerator {
    *
    * @param file the file/folder
    */
-  public void deleteFileOrFolder(File file) {
+  public static void deleteFileOrFolder(File file) {
     File[] files = file.listFiles();
     if (files != null) {
       for (File f : files) {
@@ -417,7 +396,7 @@ public class ReportGenerator {
    * @param filePath the file path
    * @throws IOException exception
    */
-  private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+  private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
     byte[] bytesIn = new byte[4096];
     int read = 0;
@@ -444,7 +423,9 @@ public class ReportGenerator {
 
     // Already copied
     File testFile = new File(target.getPath() + "/js/bootstrap.min.js");
-    if (testFile.exists()) return;
+    if (testFile.exists()) {
+      return;
+    }
 
     // Copy the html folder to target
     String pathStr = "./src/main/resources/html";
@@ -519,7 +500,7 @@ public class ReportGenerator {
           ClassLoader cLoader = cls.getClassLoader();
           for (String filePath : arrayFiles) {
             InputStream in = cLoader.getResourceAsStream(filePath);
-            if(in == null) {
+            if (in == null) {
               //context.send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("IOException", "Cannot find file " + filePath, new Exception()));
             } else {
               int readBytes;
@@ -546,7 +527,9 @@ public class ReportGenerator {
    */
   public void writeProcomputedIndividual(String filename, String content) {
     try {
-      if (content == null) return;
+      if (content == null) {
+        return;
+      }
       Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
       out.write(content);
       out.close();
@@ -565,7 +548,9 @@ public class ReportGenerator {
   public void generateIndividualReport(String reportName, IndividualReport ir, Configuration config) throws OutOfMemoryError {
     ir.setReportPath(reportName);
     writeIndividualReport(ir, config.getFormats(), config, reportName, false);
-    if (!ir.containsData()) return;
+    if (!ir.containsData()) {
+      return;
+    }
 
     // Fixes -> New report
     IndividualReport ir2 = ir.getCompareReport();
@@ -584,7 +569,9 @@ public class ReportGenerator {
     List<String> formats = new ArrayList<>();
     formats.add(format.toUpperCase());
     writeIndividualReport(ir, formats, config, reportName, true);
-    if (!ir.containsData()) return;
+    if (!ir.containsData()) {
+      return;
+    }
 
     // Fixes -> New report
     IndividualReport ir2 = ir.getCompareReport();
@@ -594,7 +581,7 @@ public class ReportGenerator {
   }
 
   private void writeIndividualReport(IndividualReport ir, List<String> formats, Configuration config, String reportName, boolean explicit) {
-    if (ir.hasPrecomputedOutput()){
+    if (ir.hasPrecomputedOutput()) {
       // External CC precomputed output
       String xmlFileStr = reportName + ".xml";
       writeProcomputedIndividual(xmlFileStr, ir.getConformanceCheckerReport());
@@ -608,7 +595,7 @@ public class ReportGenerator {
         writeProcomputedIndividual(xmlFileStr, xmlOutput);
         MetsReport metsReport = new MetsReport();
         String metsOutput = metsReport.parseIndividual(ir, config);
-        if (metsOutput != null){
+        if (metsOutput != null) {
           String metsFileStr = reportName + ".mets.xml";
           writeProcomputedIndividual(metsFileStr, metsOutput);
         }
@@ -625,7 +612,7 @@ public class ReportGenerator {
       }
       if (formats.contains("JSON")) {
         String jsonFileStr = reportName + ".json";
-        if (xmlOutput.isEmpty()){
+        if (xmlOutput.isEmpty()) {
           xmlOutput = xmlReport.parseIndividual(ir, config.getRules());
         }
         reportJson.xmlToJson(xmlOutput, jsonFileStr, this);
@@ -673,7 +660,7 @@ public class ReportGenerator {
     if (format.equals("json")) {
       File xmlFile = new File(xmlFileStr);
       File xmlTempFile = new File(xmlTempFileStr);
-      if (xmlFile.exists()){
+      if (xmlFile.exists()) {
         reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
       } else {
         reportXml.parseGlobal(xmlTempFileStr, gr, reports);
@@ -721,12 +708,12 @@ public class ReportGenerator {
     }
     if (config.getFormats().contains("JSON")) {
       boolean toDelete = false;
-      if (!new File(xmlFileStr).exists()){
+      if (!new File(xmlFileStr).exists()) {
         reportXml.parseGlobal(xmlFileStr, gr, gr.getIndividualReports());
         toDelete = true;
       }
       reportJson.xmlToJsonFile(xmlFileStr, jsonFileStr, this);
-      if (toDelete){
+      if (toDelete) {
         new File(xmlFileStr).delete();
       }
     }

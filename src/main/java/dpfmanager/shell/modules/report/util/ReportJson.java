@@ -19,31 +19,18 @@
 
 package dpfmanager.shell.modules.report.util;
 
-import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
-import dpfmanager.shell.modules.report.core.GlobalReport;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
-import dpfmanager.shell.modules.report.core.ReportGeneric;
-import dpfmanager.shell.modules.report.core.SmallIndividualReport;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import dpfmanager.shell.core.config.BasicConfig;
+import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
+import dpfmanager.shell.modules.report.core.ReportGeneric;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
 
 /**
  * The Class ReportJson.
@@ -70,17 +57,17 @@ public class ReportJson extends ReportGeneric {
       /*JSONObject soapDatainJsonObject = XML.toJSONObject(xml);
       String json = soapDatainJsonObject.toString();*/
 
-      generator.deleteFileOrFolder(new File(jsonFilename));
+      ReportGenerator.deleteFileOrFolder(new File(jsonFilename));
       generator.writeToFile(jsonFilename, json);
     } catch (Exception e) {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON report " + jsonFilename,e));
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON report " + jsonFilename, e));
     }
   }
 
   /**
    * XML to JSON.
    *
-   * @param xmlFile          the XML File
+   * @param xmlFile      the XML File
    * @param jsonFilename the json filename
    */
   public void xmlToJsonFile(String xmlFile, String jsonFilename, ReportGenerator generator) {
@@ -97,10 +84,10 @@ public class ReportJson extends ReportGeneric {
       /*JSONObject soapDatainJsonObject = XML.toJSONObject(content);
       String json = soapDatainJsonObject.toString();*/
 
-      generator.deleteFileOrFolder(new File(jsonFilename));
+      ReportGenerator.deleteFileOrFolder(new File(jsonFilename));
       generator.writeToFile(jsonFilename, json);
     } catch (Exception e) {
-      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON",e));
+      getContext().send(BasicConfig.MODULE_MESSAGE, new ExceptionMessage("Exception converting to JSON", e));
     }
   }
 
@@ -110,7 +97,7 @@ public class ReportJson extends ReportGeneric {
    * @param folderPath the folder path
    * @return the JSON string
    */
-  private String getJsonString(String folderPath, ReportGenerator generator) {
+  private static String getJsonString(String folderPath, ReportGenerator generator) {
     String path = null;
     // First get the JSON file path
     File folder = new File(folderPath);
