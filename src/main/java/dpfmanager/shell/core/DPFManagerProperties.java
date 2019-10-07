@@ -20,23 +20,11 @@
 package dpfmanager.shell.core;
 
 import dpfmanager.shell.core.app.MainGuiApp;
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.io.*;
+import java.util.*;
 
 /**
  * Created by Adria Llorens on 15/02/2016.
@@ -45,7 +33,7 @@ public class DPFManagerProperties {
 
   private static boolean finished = false;
 
-  public static String getVersion(){
+  public static String getVersion() {
     String filename = "version.properties";
     InputStream input = MainGuiApp.class.getClassLoader().getResourceAsStream(filename);
 
@@ -54,8 +42,7 @@ public class DPFManagerProperties {
       Properties prop = new Properties();
       prop.load(input);
       return prop.getProperty("version");
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       return "";
     }
   }
@@ -132,10 +119,10 @@ public class DPFManagerProperties {
   public static Properties getPropertiesConfig() {
     Properties properties = null;
     try {
-      File configFile = new File(getConfigDir()+"/dpfmanager.properties");
-      File configFileNew = new File(getDataDir()+"/dpfmanager.properties");
+      File configFile = new File(getConfigDir() + "/dpfmanager.properties");
+      File configFileNew = new File(getDataDir() + "/dpfmanager.properties");
       // Config file
-      if (!configFileNew.exists()){
+      if (!configFileNew.exists()) {
         // No new file
         if (!configFile.exists()) {
           // No old file, create it
@@ -150,16 +137,15 @@ public class DPFManagerProperties {
       properties = new Properties();
       properties.load(is);
       is.close();
-    }
-    catch(IOException ex){
+    } catch (IOException ex) {
       ex.printStackTrace();
     }
     return properties;
   }
 
-  public static void setPropertiesConfig(Properties properties){
+  public static void setPropertiesConfig(Properties properties) {
     try {
-      File configFile = new File(getDataDir()+"/dpfmanager.properties");
+      File configFile = new File(getDataDir() + "/dpfmanager.properties");
       if (configFile.exists()) {
         OutputStream os = new FileOutputStream(configFile);
         properties.store(os, null);
@@ -184,7 +170,7 @@ public class DPFManagerProperties {
   public static String getReportsDir() {
     String dir = getConfigDir() + "/reports";
     File file = new File(dir);
-    if (!file.exists()){
+    if (!file.exists()) {
       file.mkdirs();
     }
     return dir;
@@ -193,7 +179,7 @@ public class DPFManagerProperties {
   public static String getIsosDir() {
     String dir = getConfigDir() + "/isos";
     File file = new File(dir);
-    if (!file.exists()){
+    if (!file.exists()) {
       file.mkdirs();
     }
     return dir;
@@ -202,7 +188,7 @@ public class DPFManagerProperties {
   public static String getDataDir() {
     String dataDir = getConfigDir() + "/data";
     File dataFile = new File(dataDir);
-    if (!dataFile.exists()){
+    if (!dataFile.exists()) {
       dataFile.mkdirs();
     }
     return dataDir;
@@ -211,7 +197,7 @@ public class DPFManagerProperties {
   public static String getServerDir() {
     String dataDir = getConfigDir() + "/server";
     File dataFile = new File(dataDir);
-    if (!dataFile.exists()){
+    if (!dataFile.exists()) {
       dataFile.mkdirs();
     }
     return dataDir;
@@ -229,11 +215,11 @@ public class DPFManagerProperties {
     setPropertiesValue("language", lang);
   }
 
-  public static ResourceBundle getBundle(){
+  public static ResourceBundle getBundle() {
     return ResourceBundle.getBundle("bundles.language");
   }
 
-  public static String getBuiltInDefinition(){
+  public static String getBuiltInDefinition() {
     try {
       return IOUtils.toString(DPFManagerProperties.class.getResourceAsStream("/builtin/Definition.xml"));
     } catch (IOException e) {
@@ -242,14 +228,14 @@ public class DPFManagerProperties {
     return "";
   }
 
-  public static InputStream getDefaultBuiltInConfig(){
+  public static InputStream getDefaultBuiltInConfig() {
     return DPFManagerProperties.class.getResourceAsStream("/builtin/Configuration.xml");
   }
 
   /**
    * Returns the common accepted extensions
    */
-  public static List<String> getCommonExtensions(){
+  public static List<String> getCommonExtensions() {
     List<String> extensions = new ArrayList<>();
     extensions.add("zip");
     extensions.add("rar");
