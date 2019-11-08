@@ -404,18 +404,10 @@ public class HtmlReport extends Report {
     int index = 0;
     TiffDocument td = ir.getTiffModel();
     IFD ifd = td.getFirstIFD();
-    boolean hasIFDList = false;
-    if (ifd != null && ifd.hasNextIFD()) {
-      hasIFDList = ifd.hasNextIFD();
-    }
-    int ifdIndex = 0;
     while (ifd != null) {
-      String typ = " - Main image";
-      if (ifd.isThumbnail()) {
-        typ = " - Thumbnail";
-      }
+      String typ = ifd.isThumbnail() ? " - Thumbnail" : " - Main image";
       String aIni = "";
-      String aBody = " " + ifd.toString() +  ifdIndex++ + typ;
+      String aBody = " " + ifd.toString() + (index + 1) + typ;
       String aEnd = "";
       String bold = "";
       if (index == 0) {
@@ -425,9 +417,7 @@ public class HtmlReport extends Report {
       aEnd = "</a>";
       ul += "<li><i class=\"fa fa-file-image-o\"></i>" + aIni + aBody + aEnd;
       if (ifd.getsubIFD() != null) {
-        typ = "";
-        if (!ifd.getsubIFD().isThumbnail()) typ = " - Main image";
-        else typ = " - Thumbnail";
+        typ = ifd.getsubIFD().isThumbnail() ? " - Thumbnail" : " - Main image";
         ul += "<ul><li><i class=\"fa fa-file-o\"></i> <a href='javascript:void(0)' onclick=\"showTagsDiv('sub" + index + "')\" id='lisub" + index + "'>SubIFD" + typ + "</a></li></ul>";
       }
       if (ifd.containsTagId(34665)) {
@@ -454,8 +444,8 @@ public class HtmlReport extends Report {
         }
       }
       ul += "</li>";
-      index++;
       ifd = ifd.getNextIFD();
+      index++;
     }
     ul += "</ul>";
     htmlBody = StringUtils.replace(htmlBody, "##UL##", ul);
