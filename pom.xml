@@ -40,7 +40,7 @@
     <maven.resources.plugin>3.1.0</maven.resources.plugin>
     <maven.checkstyle.plugin>3.1.0</maven.checkstyle.plugin>
     <maven.dependency.plugin>3.1.1</maven.dependency.plugin>
-    <maven.checkstyle.tool>8.24</maven.checkstyle.tool>
+    <maven.checkstyle.tool>8.29</maven.checkstyle.tool>
     <maven.pmd.plugin>3.12.0</maven.pmd.plugin>
     <maven.javadoc.plugin>3.1.1</maven.javadoc.plugin>
     <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
