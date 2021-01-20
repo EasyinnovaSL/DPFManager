@@ -24,7 +24,7 @@
     <runtime></runtime>
 
     <!-- Dependency versions -->
-    <jackson.version>2.9.10</jackson.version>
+    <jackson.version>2.12.1</jackson.version>
     <apache.ant.version>1.8.0</apache.ant.version>
     <apache.camel.version>2.15.6</apache.camel.version>
     <apache.pdfbox.version>1.8.16</apache.pdfbox.version>
