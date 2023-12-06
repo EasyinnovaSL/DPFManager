@@ -27,8 +27,9 @@ import javafx.collections.FXCollections;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -545,7 +546,7 @@ public class ReportGui implements Comparable<ReportGui>{
       String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".pdf");
 
       //Reads in pdf document
-      PDDocument document = PDDocument.load(file);
+      PDDocument document = Loader.loadPDF(file);
       PDFTextStripper pdfStripper = new PDFTextStripper();
       String text = pdfStripper.getText(document);
       int lastWarns = 0;

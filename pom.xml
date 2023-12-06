@@ -12,8 +12,8 @@
   <!--Properties-->
   <properties>
     <jacp.version>2.1</jacp.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!--Build properties-->
@@ -24,13 +24,14 @@
     <runtime></runtime>
 
     <!-- Dependency versions -->
-    <jackson.version>2.9.10</jackson.version>
-    <apache.ant.version>1.8.0</apache.ant.version>
-    <apache.camel.version>2.15.6</apache.camel.version>
-    <apache.pdfbox.version>1.8.16</apache.pdfbox.version>
+    <jackson.version>2.16.0</jackson.version>
+    <apache.ant.version>1.10.14</apache.ant.version>
+    <apache.camel.version>4.2.0</apache.camel.version>
+    <apache.pdfbox.version>3.0.1</apache.pdfbox.version>
     <gson.version>2.8.5</gson.version>
     <h2.version>1.4.199</h2.version>
     <imageio.tiff.version>3.4.2</imageio.tiff.version>
+    <openjfx.version>21.0.1</openjfx.version>
 
     <!-- Plugin Versions -->
     <maven.exec.plugin>1.6.0</maven.exec.plugin>
@@ -52,8 +53,9 @@
     <maven.source.plugin>3.1.0</maven.source.plugin>
     <maven.project.info.report.plugin>3.0.0</maven.project.info.report.plugin>
     <maven.nexus.stagin.plugin>1.6.8</maven.nexus.stagin.plugin>
-    <maven.launch4j.plugin>1.7.25</maven.launch4j.plugin>
+    <maven.launch4j.plugin>2.4.1</maven.launch4j.plugin>
     <maven.gpg.plugin>1.6</maven.gpg.plugin>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
   </properties>
 
   <!-- More Project Information -->
@@ -246,6 +248,42 @@
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
       <version>${apache.ant.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${openjfx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>${openjfx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-swing</artifactId>
+      <version>${openjfx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+      <version>${openjfx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>1.3.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>${jaxb-api.version}</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
@@ -561,6 +599,7 @@
         <finalName>DPF Manager</finalName>
         <plugins>
           <!-- Create Jar -->
+          <!--
           <plugin>
             <groupId>com.zenjava</groupId>
             <artifactId>javafx-maven-plugin</artifactId>
@@ -586,6 +625,7 @@
               </execution>
             </executions>
           </plugin>
+          -->
         </plugins>
       </build>
     </profile>
@@ -606,6 +646,7 @@
         <plugins>
 
           <!-- Create Jar -->
+          <!--
           <plugin>
             <groupId>com.zenjava</groupId>
             <artifactId>javafx-maven-plugin</artifactId>
@@ -631,8 +672,10 @@
               </execution>
             </executions>
           </plugin>
+          -->
 
           <!-- Build Command Line Exe -->
+          <!--
           <plugin>
             <groupId>com.akathist.maven.plugins.launch4j</groupId>
             <artifactId>launch4j-maven-plugin</artifactId>
@@ -663,6 +706,7 @@
               </execution>
             </executions>
           </plugin>
+          -->
 
           <!--Copy resources-->
           <plugin>
@@ -687,310 +731,6 @@
               </execution>
             </executions>
           </plugin>
-
-          <!-- Build Gui Exe and Installers -->
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${maven.exec.plugin}</version>
-            <executions>
-              <execution>
-                <id>read-version</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-                <configuration>
-                  <mainClass>${version.util.class}</mainClass>
-                  <arguments>
-                    <argument>${project.version}</argument>
-                    <argument>${project.basedir}</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-              <!--No JRE-->
-              <execution>
-                <id>package-exe</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>javapackager</executable>
-                  <arguments>
-                    <argument>-deploy</argument>
-                    <argument>-native</argument>
-                    <argument>exe</argument>
-                    <argument>-embedjnlp</argument>
-                    <argument>-v</argument>
-                    <argument>-appclass</argument>
-                    <argument>${main.class}</argument>
-                    <!--Customize params-->
-                    <argument>-name</argument>
-                    <argument>${project.name}</argument>
-                    <argument>-title</argument>
-                    <argument>${project.name}</argument>
-                    <argument>-vendor</argument>
-                    <argument>${project.name}</argument>
-                    <!--Input files params-->
-                    <argument>-srcdir</argument>
-                    <argument>${project.build.directory}/jfx/app</argument>
-                    <!--Output params-->
-                    <argument>-outdir</argument>
-                    <argument>${project.build.directory}/jfx/native</argument>
-                    <argument>-outfile</argument>
-                    <argument>${project.name}</argument>
-                    <!--Runtime-->
-                    <argument>-Bruntime=</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-              <!--OpenJRE-->
-              <execution>
-                <id>package-exe-java</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>javapackager</executable>
-                  <arguments>
-                    <argument>-deploy</argument>
-                    <argument>-native</argument>
-                    <argument>exe</argument>
-                    <argument>-embedjnlp</argument>
-                    <argument>-v</argument>
-                    <argument>-appclass</argument>
-                    <argument>${main.class}</argument>
-                    <!--Customize params-->
-                    <argument>-name</argument>
-                    <argument>${project.name}</argument>
-                    <argument>-title</argument>
-                    <argument>${project.name}</argument>
-                    <argument>-vendor</argument>
-                    <argument>${project.name}</argument>
-                    <!--Input files params-->
-                    <argument>-srcdir</argument>
-                    <argument>${project.build.directory}/jfx/app</argument>
-                    <!--Output params-->
-                    <argument>-outdir</argument>
-                    <argument>${project.build.directory}/jfx/java</argument>
-                    <argument>-outfile</argument>
-                    <argument>${project.name}</argument>
-                    <!--Runtime-->
-                    <argument>-Bruntime=${runtime}</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- NOT Windows Profile - Only Jar-->
-    <profile>
-      <id>not-win-deploy</id>
-      <activation>
-        <os>
-          <family>!Windows</family>
-        </os>
-        <property>
-          <name>!installers</name>
-        </property>
-      </activation>
-      <build>
-        <finalName>DPF Manager</finalName>
-        <plugins>
-
-          <!-- Update version -->
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${maven.exec.plugin}</version>
-            <executions>
-              <execution>
-                <id>read-version</id>
-                <phase>process-classes</phase>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-                <configuration>
-                  <mainClass>${version.util.class}</mainClass>
-                  <arguments>
-                    <argument>${project.version}</argument>
-                    <argument>${project.basedir}</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-          <!-- Create Jar and Installer -->
-          <plugin>
-            <groupId>com.zenjava</groupId>
-            <artifactId>javafx-maven-plugin</artifactId>
-            <version>${maven.javafx.plugin}</version>
-            <configuration>
-              <mainClass>${main.class}</mainClass>
-              <verbose>true</verbose>
-              <jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-              <jfxMainAppJarName>${project.build.finalName}-jfx.jar
-              </jfxMainAppJarName>
-              <deployDir>${project.basedir}</deployDir>
-              <vendor>${project.build.finalName}</vendor>
-              <nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
-              <bundler>ALL</bundler>
-              <nativeReleaseVersion>${project.version}</nativeReleaseVersion>
-              <needShortcut>true</needShortcut>
-              <needMenu>true</needMenu>
-              <appName>${project.name}</appName>
-              <additionalAppResources>${project.basedir}/package/resources
-              </additionalAppResources>
-            </configuration>
-            <executions>
-              <execution>
-                <id>create-jfxjar</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>build-jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- NOT Windows Profile - Installers -->
-    <profile>
-      <id>not-win-deploy-installers</id>
-      <activation>
-        <os>
-          <family>!Windows</family>
-        </os>
-        <property>
-          <name>installers</name>
-        </property>
-      </activation>
-      <build>
-        <finalName>DPF Manager</finalName>
-        <plugins>
-
-          <!-- Update version -->
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${maven.exec.plugin}</version>
-            <executions>
-              <execution>
-                <id>read-version</id>
-                <phase>process-classes</phase>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-                <configuration>
-                  <mainClass>${version.util.class}</mainClass>
-                  <arguments>
-                    <argument>${project.version}</argument>
-                    <argument>${project.basedir}</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-          <!-- Create Jar (No JRE) and Installer -->
-          <plugin>
-            <groupId>com.zenjava</groupId>
-            <artifactId>javafx-maven-plugin</artifactId>
-            <version>${maven.javafx.plugin}</version>
-            <executions>
-              <execution>
-                <!-- Create JAR -->
-                <id>create-jfxjar</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>build-jar</goal>
-                </goals>
-                <configuration>
-                  <mainClass>${main.class}</mainClass>
-                  <verbose>true</verbose>
-                  <jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-                  <jfxMainAppJarName>${project.build.finalName}-jfx.jar</jfxMainAppJarName>
-                  <deployDir>${project.basedir}</deployDir>
-                  <vendor>${project.build.finalName}</vendor>
-                  <nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
-                  <bundler>ALL</bundler>
-                  <nativeReleaseVersion>${project.version}</nativeReleaseVersion>
-                  <needShortcut>true</needShortcut>
-                  <needMenu>true</needMenu>
-                  <appName>${project.name}</appName>
-                  <additionalAppResources>${project.basedir}/package/resources
-                  </additionalAppResources>
-                </configuration>
-              </execution>
-              <execution>
-                <!--Create Light Version-->
-                <id>create-native</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>build-native</goal>
-                </goals>
-                <configuration>
-                  <mainClass>${main.class}</mainClass>
-                  <verbose>true</verbose>
-                  <jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-                  <jfxMainAppJarName>${project.build.finalName}-jfx.jar
-                  </jfxMainAppJarName>
-                  <deployDir>${project.basedir}</deployDir>
-                  <vendor>${project.build.finalName}</vendor>
-                  <nativeOutputDir>${project.build.directory}/jfx/native</nativeOutputDir>
-                  <bundler>ALL</bundler>
-                  <nativeReleaseVersion>${project.version}</nativeReleaseVersion>
-                  <needShortcut>true</needShortcut>
-                  <needMenu>true</needMenu>
-                  <appName>${project.name}</appName>
-                  <additionalAppResources>${project.basedir}/package/resources
-                  </additionalAppResources>
-                  <bundleArguments>
-                    <runtime/>
-                  </bundleArguments>
-                </configuration>
-              </execution>
-              <execution>
-                <!--Create Java Version-->
-                <id>create-native-java</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>build-native</goal>
-                </goals>
-                <configuration>
-                  <mainClass>${main.class}</mainClass>
-                  <verbose>true</verbose>
-                  <jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-                  <jfxMainAppJarName>${project.build.finalName}-jfx.jar
-                  </jfxMainAppJarName>
-                  <deployDir>${project.basedir}</deployDir>
-                  <vendor>${project.build.finalName}</vendor>
-                  <nativeOutputDir>${project.build.directory}/jfx/java</nativeOutputDir>
-                  <bundler>ALL</bundler>
-                  <nativeReleaseVersion>${project.version}</nativeReleaseVersion>
-                  <needShortcut>true</needShortcut>
-                  <needMenu>true</needMenu>
-                  <appName>${project.name}</appName>
-                  <additionalAppResources>${project.basedir}/package/resources
-                  </additionalAppResources>
-                  <bundleArguments>
-                    <runtime>${runtime}</runtime>
-                  </bundleArguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
         </plugins>
       </build>
     </profile>

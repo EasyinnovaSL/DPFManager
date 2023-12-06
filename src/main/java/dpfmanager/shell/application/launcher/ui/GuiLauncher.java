@@ -21,7 +21,7 @@ package dpfmanager.shell.application.launcher.ui;
 
 import javafx.stage.Stage;
 
-import org.jacpfx.api.annotations.workbench.Workbench;
+import org. jacpfx.api.annotations.workbench.Workbench;
 import org.jacpfx.api.exceptions.AnnotationNotFoundException;
 import org.jacpfx.api.exceptions.AttributeNotFoundException;
 import org.jacpfx.api.exceptions.ComponentNotFoundException;

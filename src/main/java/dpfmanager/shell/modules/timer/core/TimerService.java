@@ -22,17 +22,14 @@ package dpfmanager.shell.modules.timer.core;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
 import dpfmanager.shell.core.context.DpfContext;
-import dpfmanager.shell.core.messages.DpfMessage;
 import dpfmanager.shell.modules.timer.tasks.JobsStatusTask;
-
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 /**
  * Created by Adria Llorens on 07/04/2016.

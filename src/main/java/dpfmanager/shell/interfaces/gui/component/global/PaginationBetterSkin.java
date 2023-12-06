@@ -21,10 +21,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.skin.PaginationSkin;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-
-import com.sun.javafx.scene.control.skin.PaginationSkin;
 
 /**
  * Created by Adrià Llorens on 06/07/2017.

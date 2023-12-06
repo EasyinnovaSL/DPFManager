@@ -31,14 +31,17 @@ import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.pdmodel.graphics.color.PDGamma;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
-import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionURI;
+import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 
@@ -70,16 +73,16 @@ public class ReportPDF extends ReportGeneric {
   public void parseGlobal(String pdffile, GlobalReport gr, java.util.List<SmallIndividualReport> reports) {
     try {
       PDFParams pdfParams = new PDFParams();
-      pdfParams.init(PDPage.PAGE_SIZE_A4);
+      pdfParams.init(PDRectangle.A4);
 
-      PDFont font = PDType1Font.HELVETICA_BOLD;
+      PDFont font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
       int pos_x = 200;
       pdfParams.y = 700;
       int font_size = 18;
       // Logo
-      PDXObjectImage ximage = new PDJpeg(pdfParams.getDocument(), getFileStreamFromResources("images/logo.jpg"));
+      PDImageXObject ximage = PDImageXObject.createFromFile("images/logo.jpg", pdfParams.getDocument());
       float scale = 3;
-      pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
+      pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
 
       // Report Title
       pdfParams.y -= 30;
@@ -119,8 +122,8 @@ public class ReportPDF extends ReportGeneric {
       g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
       g2d.setColor(Color.red);
       g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
-      ximage = new PDJpeg(pdfParams.getDocument(), image);
-      pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, graph_size, graph_size);
+      ximage = JPEGFactory.createFromImage(pdfParams.getDocument(), image);
+      pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, graph_size, graph_size);
       pdfParams.y += graph_size - 10;
       font_size = 7;
       pdfParams = writeText(pdfParams, gr.getAllReportsOk() + " passed", pos_x + 50, font, font_size, Color.green);
@@ -169,8 +172,8 @@ public class ReportPDF extends ReportGeneric {
         pdfParams.y -= image_height;
         int maxy = pdfParams.y;
 
-        ximage = new PDJpeg(pdfParams.getDocument(), bimg);
-        pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
+        ximage = JPEGFactory.createFromImage(pdfParams.getDocument(), bimg);
+        pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, image_width, image_height);
         if (fis != null) fis.close();
 
         // Values
@@ -183,7 +186,9 @@ public class ReportPDF extends ReportGeneric {
         font_size = 6;
         pdfParams.y -= 10;
         pdfParams = writeText(pdfParams, "Conformance Checker", pos_x + image_width + 10, font, font_size, Color.black);
-        pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y - 5, pos_x + image_width + 170, pdfParams.y - 5);
+        pdfParams.getContentStream().moveTo(pos_x + image_width + 10, pdfParams.y - 5);
+        pdfParams.getContentStream().lineTo(pos_x + image_width + 170, pdfParams.y - 5);
+        pdfParams.getContentStream().stroke();
         int preChart = pdfParams.y;
 
         // Isos table
@@ -263,8 +268,8 @@ public class ReportPDF extends ReportGeneric {
         g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360, Arc2D.PIE));
         g2d.setColor(Color.red);
         g2d.fill(new Arc2D.Double(0, 0, graph_size * 10, graph_size * 10, 90, 360 - extent, Arc2D.PIE));
-        ximage = new PDJpeg(pdfParams.getDocument(), image);
-        pdfParams.getContentStream().drawXObject(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
+        ximage = JPEGFactory.createFromImage(pdfParams.getDocument(), image);
+        pdfParams.getContentStream().drawImage(ximage, pos_x + image_width + 180, pdfParams.y - graph_size, graph_size, graph_size);
         pdfParams.y += graph_size - 10;
         if (doub < 100) {
           pdfParams.y = pdfParams.y - 10 - graph_size / 2;
@@ -333,7 +338,7 @@ public class ReportPDF extends ReportGeneric {
    */
   PDPage newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
     contentStream.close();
-    PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
+    PDPage page = new PDPage(PDRectangle.A4);
     document.addPage(page);
     return page;
   }
@@ -376,8 +381,8 @@ public class ReportPDF extends ReportGeneric {
       contentStream.beginText();
       contentStream.setFont(font, font_size);
       contentStream.setNonStrokingColor(color);
-      contentStream.moveTextPositionByAmount(x, pdfParams.y);
-      contentStream.drawString(text);
+      contentStream.newLineAtOffset(x, pdfParams.y);
+      contentStream.showText(text);
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
@@ -388,15 +393,13 @@ public class ReportPDF extends ReportGeneric {
   }
 
   private PDFParams writeLink(PDFParams pdfParams, String text, String link, int pos_x, PDFont font, int font_size) throws Exception {
-    PDGamma blueColor = new PDGamma();
-    blueColor.setR(0.192156f);
-    blueColor.setG(0.290196f);
-    blueColor.setB(0.592157f);
     PDBorderStyleDictionary borderULine = new PDBorderStyleDictionary();
     borderULine.setStyle(PDBorderStyleDictionary.STYLE_UNDERLINE);
     PDAnnotationLink txtLink = new PDAnnotationLink();
     txtLink.setBorderStyle(borderULine);
-    txtLink.setColour(blueColor);
+    float[] rgbBlue = new float[] {0.192156f, 0.290196f, 0.592157f};
+    PDColor blueColor = new PDColor(rgbBlue, PDDeviceRGB.INSTANCE);
+    txtLink.setColor(blueColor);
 
     // add an action
     PDActionURI action = new PDActionURI();

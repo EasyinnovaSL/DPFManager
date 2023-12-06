@@ -19,46 +19,37 @@
 
 package dpfmanager.conformancechecker.tiff.reporting;
 
-import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import com.easyinnova.implementation_checker.rules.RuleResult;
-import dpfmanager.shell.modules.report.core.IndividualReport;
-import dpfmanager.shell.modules.report.util.PDFParams;
-
 import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
-
-import org.apache.commons.lang.StringUtils;
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.util.PDFParams;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
+import java.util.*;
 
 /**
  * Created by easy on 06/05/2016.
@@ -153,26 +144,26 @@ public class PdfReport extends Report {
   public PDDocument parseIndividual(IndividualReport ir, int id, String internalReportFolder) {
     try {
       PDFParams pdfParams = new PDFParams();
-      pdfParams.init(PDPage.PAGE_SIZE_A4);
-      PDFont font = PDType1Font.HELVETICA_BOLD;
+      pdfParams.init(PDRectangle.A4);
+      PDFont font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
 
       int pos_x = 200;
       pdfParams.y = 700;
       int font_size = 18;
 
       // Logo
-      PDXObjectImage ximage;
+      PDImageXObject ximage;
       float scale = 3;
       synchronized (this) {
         InputStream inputStream = getFileStreamFromResources("images/logo.jpg");
         ximage = null;
         try {
-          ximage = new PDJpeg(pdfParams.getDocument(), inputStream);
+          ximage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), inputStream.readAllBytes(), "images/logo.png");
         } catch (Exception ex) {
           //ex.printStackTrace();
         }
         if (ximage != null)
-          pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
+          pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
       }
 
       // Report Title
@@ -185,7 +176,7 @@ public class PdfReport extends Report {
       int max_image_width = 200;
       pdfParams.y -= (max_image_height + 30);
       int image_pos_y = pdfParams.y;
-      BufferedImage thumb = null;
+      BufferedImage thumb;
       FileInputStream fis = null;
 
       String fileName = getReportName("", ir.getFilePath(), id);
@@ -209,8 +200,8 @@ public class PdfReport extends Report {
         image_height = max_image_width * image_height / image_width;
         image_width = max_image_width;
       }
-      ximage = new PDJpeg(pdfParams.getDocument(), thumb);
-      pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, image_width, image_height);
+      ximage = JPEGFactory.createFromImage(pdfParams.getDocument(), thumb);
+      pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, image_width, image_height);
       image_width = max_image_width;
       if (fis != null) fis.close();
 
@@ -261,7 +252,9 @@ public class PdfReport extends Report {
           if (ir.hasValidation(iso) || ir.getNErrors(iso) == 0) {
             String name = iso.equals(TiffConformanceChecker.POLICY_ISO) ? TiffConformanceChecker.POLICY_ISO_NAME : ImplementationCheckerLoader.getIsoName(iso);
             pdfParams.y -= 15;
-            pdfParams.getContentStream().drawLine(pos_x + image_width + 10, pdfParams.y + 10, pos_x + image_width + 260, pdfParams.y + 10);
+            pdfParams.getContentStream().moveTo(pos_x + image_width + 10, pdfParams.y + 10);
+            pdfParams.getContentStream().lineTo(pos_x + image_width + 260, pdfParams.y + 10);
+            pdfParams.getContentStream().stroke();
             if (mode == 1) {
               // Standard
               pdfParams = writeText(pdfParams, name, pos_x + image_width + 10, font, font_size);
@@ -310,29 +303,29 @@ public class PdfReport extends Report {
         String typ = " - Main image";
         if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize())
           typ = " - Thumbnail";
-        ximage = new PDJpeg(pdfParams.getDocument(), getFileStreamFromResources("images/doc.jpg"));
-        pdfParams.getContentStream().drawXObject(ximage, pos_x, pdfParams.y, 5, 7);
-        pdfParams = writeText(pdfParams, ifd.toString() + typ, pos_x + 7, font, font_size);
+        ximage = PDImageXObject.createFromFile("images/doc.jpg", pdfParams.getDocument());
+        pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, 5, 7);
+        pdfParams = writeText(pdfParams, ifd + typ, pos_x + 7, font, font_size);
         if (ifd.getsubIFD() != null) {
           pdfParams.y -= 18;
           if (ifd.getImageSize() < ifd.getsubIFD().getImageSize()) typ = " - Main image";
           else typ = " - Thumbnail";
-          pdfParams.getContentStream().drawXObject(ximage, pos_x + 15, pdfParams.y, 5, 7);
+          pdfParams.getContentStream().drawImage(ximage, pos_x + 15, pdfParams.y, 5, 7);
           pdfParams = writeText(pdfParams, "SubIFD" + typ, pos_x + 15 + 7, font, font_size);
         }
         if (ifd.containsTagId(34665)) {
           pdfParams.y -= 18;
-          pdfParams.getContentStream().drawXObject(ximage, pos_x + 15, pdfParams.y, 5, 7);
+          pdfParams.getContentStream().drawImage(ximage, pos_x + 15, pdfParams.y, 5, 7);
           pdfParams = writeText(pdfParams, "EXIF", pos_x + 15 + 7, font, font_size);
         }
         if (ifd.containsTagId(700)) {
           pdfParams.y -= 18;
-          pdfParams.getContentStream().drawXObject(ximage, pos_x + 15, pdfParams.y, 5, 7);
+          pdfParams.getContentStream().drawImage(ximage, pos_x + 15, pdfParams.y, 5, 7);
           pdfParams = writeText(pdfParams, "XMP", pos_x + 15 + 7, font, font_size);
         }
         if (ifd.containsTagId(33723)) {
           pdfParams.y -= 18;
-          pdfParams.getContentStream().drawXObject(ximage, pos_x + 15, pdfParams.y, 5, 7);
+          pdfParams.getContentStream().drawImage(ximage, pos_x + 15, pdfParams.y, 5, 7);
           pdfParams = writeText(pdfParams, "IPTC", pos_x + 15 + 7, font, font_size);
         }
         ifd = ifd.getNextIFD();
@@ -504,8 +497,9 @@ public class PdfReport extends Report {
                   // TODO WORKARROUND
                   String hKey = kv.keySet().iterator().next();
                   if (hKey.equals("action") && nh != 0) {
-                    pdfParams.getContentStream().drawLine(pos_x, pdfParams.y - 5, pos_x + 490, pdfParams.y - 5);
-                  }
+                    pdfParams.getContentStream().moveTo(pos_x, pdfParams.y - 5);
+                    pdfParams.getContentStream().lineTo(pos_x + 490, pdfParams.y - 5);
+                    pdfParams.getContentStream().stroke();                  }
                   pdfParams.y -= 15;
                   pdfParams = writeText(pdfParams, hKey, pos_x + margins[0], font, font_size);
                   pdfParams = writeText(pdfParams, kv.get(hKey).toString().trim(), pos_x + margins[1], font, font_size);
@@ -535,14 +529,14 @@ public class PdfReport extends Report {
         }
         if (rows.isEmpty()) {
           pdfParams.y -= 15;
-          PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/check.png")));
-          pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
+          PDImageXObject titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/check.png")));
+          pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
           pdfParams = writeText(pdfParams, "No metadata incoherencies found", pos_x + margins[1], font, font_size);
         }
         for (String row : rows) {
           pdfParams.y -= 15;
           PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/error.png")));
-          pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
+          pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
           pdfParams = writeText(pdfParams, row, pos_x + margins[1], font, font_size);
         }
       }
@@ -670,7 +664,7 @@ public class PdfReport extends Report {
 
     //Type
     PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources(imgPath)));
-    pdfParams.getContentStream().drawXObject(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
+    pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
 
     if (!isPolicy) {
       // ID
@@ -827,7 +821,7 @@ public class PdfReport extends Report {
       contentStream = pdfParams.checkNewPage();
 
       if (image != null) {
-        contentStream.drawXObject(image, x - imgSize - 3, pdfParams.y - 1, imgSize, imgSize);
+        contentStream.drawImage(image, x - imgSize - 3, pdfParams.y - 1, imgSize, imgSize);
       }
     } catch (Exception e) {
       e.printStackTrace();

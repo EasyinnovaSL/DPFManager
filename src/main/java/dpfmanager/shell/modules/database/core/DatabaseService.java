@@ -28,16 +28,13 @@ import dpfmanager.shell.modules.database.messages.CheckTaskMessage;
 import dpfmanager.shell.modules.database.messages.JobsMessage;
 import dpfmanager.shell.modules.database.tables.Jobs;
 import dpfmanager.shell.modules.server.messages.StatusMessage;
-
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 
 /**
  * Created by Adria Llorens on 20/04/2016.

@@ -21,8 +21,8 @@ package dpfmanager.shell.modules.report.util;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 
 import java.awt.image.ImagingOpException;
 import java.io.IOException;
@@ -115,7 +115,7 @@ public class PDFParams {
    */
   PDPageContentStream newPage(PDPageContentStream contentStream, PDDocument document) throws Exception {
     contentStream.close();
-    PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
+    PDPage page = new PDPage(PDRectangle.A4);
     document.addPage(page);
     return new PDPageContentStream(document, page);
   }
