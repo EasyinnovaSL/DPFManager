@@ -19,19 +19,15 @@
 
 package dpfmanager.shell.modules.report.util;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -552,7 +548,7 @@ public class ReportRow {
       String input = parseInputFiles(file.getParentFile(), file.getAbsolutePath(), ".pdf");
 
       //Reads in pdf document
-      PDDocument document = PDDocument.load(file);
+      PDDocument document = Loader.loadPDF(file);
       PDFTextStripper pdfStripper = new PDFTextStripper();
       String text = pdfStripper.getText(document);
       int lastWarns = 0;

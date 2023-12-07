@@ -529,13 +529,13 @@ public class PdfReport extends Report {
         }
         if (rows.isEmpty()) {
           pdfParams.y -= 15;
-          PDImageXObject titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/check.png")));
+          PDImageXObject titleImage = PDImageXObject.createFromFile("images/pdf/check.png", pdfParams.getDocument());
           pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
           pdfParams = writeText(pdfParams, "No metadata incoherencies found", pos_x + margins[1], font, font_size);
         }
         for (String row : rows) {
           pdfParams.y -= 15;
-          PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources("images/pdf/error.png")));
+          PDImageXObject titleImage = PDImageXObject.createFromFile("images/pdf/error.png", pdfParams.getDocument());
           pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
           pdfParams = writeText(pdfParams, row, pos_x + margins[1], font, font_size);
         }
@@ -663,7 +663,7 @@ public class PdfReport extends Report {
     pdfParams.checkNewPage();
 
     //Type
-    PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources(imgPath)));
+    PDImageXObject titleImage = PDImageXObject.createFromFile(imgPath, pdfParams.getDocument());
     pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
 
     if (!isPolicy) {
@@ -814,7 +814,7 @@ public class PdfReport extends Report {
    * @param color     the color
    * @throws Exception the exception
    */
-  private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size, Color color, PDPixelMap image, int imgSize) throws Exception {
+  private PDFParams writeText(PDFParams pdfParams, String text, int x, int max_x, PDFont font, int font_size, Color color, PDImageXObject image, int imgSize) throws Exception {
     PDPageContentStream contentStream = pdfParams.getContentStream();
 
     try {
@@ -832,8 +832,8 @@ public class PdfReport extends Report {
       contentStream.beginText();
       contentStream.setFont(font, font_size);
       contentStream.setNonStrokingColor(color);
-      contentStream.moveTextPositionByAmount(x, pdfParams.y);
-      contentStream.drawString(stext);
+      contentStream.newLineAtOffset(x, pdfParams.y);
+      contentStream.showText(stext);
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
@@ -849,7 +849,7 @@ public class PdfReport extends Report {
 
   private PDFParams writeTitle(PDFParams pdfParams, String text, String imgPath, Color color, int x, PDFont font, int font_size, int imgSize) throws Exception {
     pdfParams.checkNewPage();
-    PDPixelMap titleImage = new PDPixelMap(pdfParams.getDocument(), ImageIO.read(getFileStreamFromResources(imgPath)));
+    PDImageXObject titleImage = PDImageXObject.createFromFile(imgPath, pdfParams.getDocument());
     return writeText(pdfParams, text, x + imgSize + 3, 99999, font, font_size, color, titleImage, imgSize);
   }
 
@@ -869,7 +869,8 @@ public class PdfReport extends Report {
     try {
       //draw rectangle
       contentStream.setNonStrokingColor(color);
-      contentStream.fillRect(x, pdfParams.y - 3, max, font_size + 5);
+      contentStream.addRect(x, pdfParams.y - 3, max, font_size + 5);
+      contentStream.fill();
     } catch (Exception e) {
       e.printStackTrace();
     } finally {

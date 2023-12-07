@@ -53,8 +53,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.component.DeclarativeView;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
@@ -429,12 +433,12 @@ public class ShowView extends DpfView<ShowModel, ShowController> {
     if (currentPdfPageMax != null && currentPdfPage > currentPdfPageMax) return;
     try {
       pdfPagesVBox.getChildren().add(getIndicatorPdf());
-      PDDocument document = PDDocument.load(currentPdfPath);
-      List<PDPage> pages = document.getDocumentCatalog().getAllPages();
-      currentPdfPageMax = pages.size();
+      PDDocument document = Loader.loadPDF(new File(currentPdfPath));
+      PDFRenderer renderer = new PDFRenderer(document);
+      PDPageTree pages = document.getPages();
+      currentPdfPageMax = pages.getCount();
       if (currentPdfPage < currentPdfPageMax) {
-        PDPage page = pages.get(currentPdfPage);
-        BufferedImage pageImage = page.convertToImage();
+        BufferedImage pageImage = renderer.renderImageWithDPI(currentPdfPage, 300, ImageType.RGB);
         ImageView imageView = new ImageView(SwingFXUtils.toFXImage(pageImage, null));
         pdfPagesVBox.getChildren().remove(pdfPagesVBox.getChildren().size() - 1);
         pdfPagesVBox.getChildren().add(imageView);
