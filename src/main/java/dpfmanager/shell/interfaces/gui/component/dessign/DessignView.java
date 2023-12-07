@@ -192,7 +192,7 @@ public class DessignView extends DpfView<DessignModel, DessignController> {
         Class.forName("com.easyinnova.policy_checker" + "." + className);
       }
     } catch (Exception e) {
-      //e.printStackTrace();
+      e.printStackTrace();
     }
 
     // Set model and controller

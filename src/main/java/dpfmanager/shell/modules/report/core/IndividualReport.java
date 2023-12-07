@@ -818,7 +818,7 @@ public class IndividualReport extends ReportSerializable {
           }
         }
       } catch (Exception ex) {
-        //ex.printStackTrace();
+        ex.printStackTrace();
       }
     } else if (tag.tv.getId() == 330) {
       // Sub IFD

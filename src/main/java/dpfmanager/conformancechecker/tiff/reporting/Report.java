@@ -166,6 +166,14 @@ public class Report {
     return fis;
   }
 
+  public byte[] getByteArrayFileStreamFromResources(String pathStr) {
+    try {
+      return getFileStreamFromResources(pathStr).readAllBytes();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   protected Map<String, List<ReportTag>> parseTags(IndividualReport ir) {
     /**
      * Parse Tags

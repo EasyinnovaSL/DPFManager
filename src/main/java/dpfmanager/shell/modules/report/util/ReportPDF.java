@@ -51,6 +51,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -80,7 +81,8 @@ public class ReportPDF extends ReportGeneric {
       pdfParams.y = 700;
       int font_size = 18;
       // Logo
-      PDImageXObject ximage = PDImageXObject.createFromFile("images/logo.jpg", pdfParams.getDocument());
+      InputStream imageInputStream = getFileStreamFromResources("images/logo.jpg");
+      PDImageXObject ximage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), imageInputStream.readAllBytes(), "images/logo.jpg");
       float scale = 3;
       pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
 

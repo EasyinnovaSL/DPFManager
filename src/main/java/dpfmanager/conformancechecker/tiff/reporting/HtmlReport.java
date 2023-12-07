@@ -539,7 +539,7 @@ public class HtmlReport extends Report {
           }
         } catch (Exception ex) {
           ex.toString();
-          //ex.printStackTrace();
+          ex.printStackTrace();
         }
         continue;
       }
@@ -578,7 +578,7 @@ public class HtmlReport extends Report {
             }
           } catch (Exception ex) {
             ex.toString();
-            //ex.printStackTrace();
+            ex.printStackTrace();
           }
         }
         continue;

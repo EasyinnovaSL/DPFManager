@@ -155,12 +155,12 @@ public class PdfReport extends Report {
       PDImageXObject ximage;
       float scale = 3;
       synchronized (this) {
-        InputStream inputStream = getFileStreamFromResources("images/logo.jpg");
+        byte[] logo = getByteArrayFileStreamFromResources("images/logo.jpg");
         ximage = null;
         try {
-          ximage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), inputStream.readAllBytes(), "images/logo.png");
+          ximage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), logo, "images/logo.jpg");
         } catch (Exception ex) {
-          //ex.printStackTrace();
+          ex.printStackTrace();
         }
         if (ximage != null)
           pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
@@ -303,7 +303,7 @@ public class PdfReport extends Report {
         String typ = " - Main image";
         if (ifd.hasSubIFD() && ifd.getImageSize() < ifd.getsubIFD().getImageSize())
           typ = " - Thumbnail";
-        ximage = PDImageXObject.createFromFile("images/doc.jpg", pdfParams.getDocument());
+        ximage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), getByteArrayFileStreamFromResources("images/doc.jpg"), "images/doc.jpg");
         pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, 5, 7);
         pdfParams = writeText(pdfParams, ifd + typ, pos_x + 7, font, font_size);
         if (ifd.getsubIFD() != null) {
@@ -529,13 +529,13 @@ public class PdfReport extends Report {
         }
         if (rows.isEmpty()) {
           pdfParams.y -= 15;
-          PDImageXObject titleImage = PDImageXObject.createFromFile("images/pdf/check.png", pdfParams.getDocument());
+          PDImageXObject titleImage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), getByteArrayFileStreamFromResources("images/pdf/check.png"), "images/pdf/check.png");
           pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
           pdfParams = writeText(pdfParams, "No metadata incoherencies found", pos_x + margins[1], font, font_size);
         }
         for (String row : rows) {
           pdfParams.y -= 15;
-          PDImageXObject titleImage = PDImageXObject.createFromFile("images/pdf/error.png", pdfParams.getDocument());
+          PDImageXObject titleImage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), getByteArrayFileStreamFromResources("images/pdf/error.png"), "images/pdf/error.png");
           pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
           pdfParams = writeText(pdfParams, row, pos_x + margins[1], font, font_size);
         }
@@ -663,7 +663,7 @@ public class PdfReport extends Report {
     pdfParams.checkNewPage();
 
     //Type
-    PDImageXObject titleImage = PDImageXObject.createFromFile(imgPath, pdfParams.getDocument());
+    PDImageXObject titleImage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), getByteArrayFileStreamFromResources(imgPath), "images/pdf/check.png");
     pdfParams.getContentStream().drawImage(titleImage, pos_x + 5, pdfParams.y - 1, 9, 9);
 
     if (!isPolicy) {
@@ -849,7 +849,7 @@ public class PdfReport extends Report {
 
   private PDFParams writeTitle(PDFParams pdfParams, String text, String imgPath, Color color, int x, PDFont font, int font_size, int imgSize) throws Exception {
     pdfParams.checkNewPage();
-    PDImageXObject titleImage = PDImageXObject.createFromFile(imgPath, pdfParams.getDocument());
+    PDImageXObject titleImage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), getByteArrayFileStreamFromResources("images/pdf/check.png"), "images/pdf/check.png");
     return writeText(pdfParams, text, x + imgSize + 3, 99999, font, font_size, color, titleImage, imgSize);
   }
 

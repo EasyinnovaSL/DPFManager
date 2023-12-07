@@ -30,8 +30,6 @@ import org.apache.logging.log4j.Level;
 
 import java.util.ResourceBundle;
 
-import javax.xml.bind.SchemaOutputResolver;
-
 /**
  * Created by Adria Llorens on 13/04/2016.
  */
