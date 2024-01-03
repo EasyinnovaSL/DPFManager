@@ -19,10 +19,6 @@
 
 package dpfmanager.conformancechecker.tiff.reporting;
 
-import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.shell.core.DPFManagerProperties;
-import dpfmanager.shell.modules.report.core.IndividualReport;
-
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import com.easyinnova.implementation_checker.rules.RuleResult;
 import com.easyinnova.policy_checker.PolicyConstants;
@@ -34,24 +30,13 @@ import com.easyinnova.tiff.model.TiffDocument;
 import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.Rational;
-import com.easyinnova.tiff.model.types.Text;
 import com.easyinnova.tiff.model.types.abstractTiffType;
-
-import org.apache.commons.lang.StringUtils;
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.shell.core.DPFManagerProperties;
+import dpfmanager.shell.modules.report.core.IndividualReport;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -65,6 +50,15 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by easy on 02/05/2016.

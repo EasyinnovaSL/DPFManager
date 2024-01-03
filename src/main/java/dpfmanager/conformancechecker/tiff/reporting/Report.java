@@ -19,51 +19,21 @@
 
 package dpfmanager.conformancechecker.tiff.reporting;
 
-import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.modules.messages.messages.ExceptionMessage;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
-import dpfmanager.shell.modules.report.util.ReportHtml;
-import dpfmanager.conformancechecker.tiff.reporting.ReportTag;
+import org.apache.commons.io.IOUtils;
 
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-
-import com.easyinnova.tiff.model.IfdTags;
-import com.easyinnova.tiff.model.TagValue;
-import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.types.IFD;
-
-import org.apache.maven.shared.utils.io.FileUtils;
-
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import javax.imageio.ImageIO;
 
 /**
  * Created by easy on 06/05/2016.
@@ -168,7 +138,7 @@ public class Report {
 
   public byte[] getByteArrayFileStreamFromResources(String pathStr) {
     try {
-      return getFileStreamFromResources(pathStr).readAllBytes();
+      return IOUtils.toByteArray(getFileStreamFromResources(pathStr));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

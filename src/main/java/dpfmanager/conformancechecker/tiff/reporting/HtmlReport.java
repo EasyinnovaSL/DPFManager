@@ -19,43 +19,28 @@
 
 package dpfmanager.conformancechecker.tiff.reporting;
 
-import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
-import dpfmanager.shell.modules.report.core.IndividualReport;
-import dpfmanager.shell.modules.report.core.ReportGenerator;
-
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 import com.easyinnova.implementation_checker.rules.RuleResult;
 import com.easyinnova.implementation_checker.rules.model.RuleType;
 import com.easyinnova.tiff.model.Metadata;
 import com.easyinnova.tiff.model.TagValue;
 import com.easyinnova.tiff.model.TiffDocument;
-import com.easyinnova.tiff.model.TiffTags;
 import com.easyinnova.tiff.model.types.IFD;
 import com.easyinnova.tiff.model.types.IPTC;
 import com.easyinnova.tiff.model.types.XMP;
 import com.easyinnova.tiff.model.types.abstractTiffType;
+import dpfmanager.conformancechecker.tiff.TiffConformanceChecker;
+import dpfmanager.shell.modules.report.core.IndividualReport;
+import dpfmanager.shell.modules.report.core.ReportGenerator;
+import org.apache.commons.lang3.StringUtils;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.maven.shared.utils.io.FileUtils;
-
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 /**
  * Created by easy on 05/05/2016.

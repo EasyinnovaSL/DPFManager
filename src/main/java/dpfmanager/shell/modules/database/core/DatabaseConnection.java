@@ -75,6 +75,7 @@ public class DatabaseConnection {
       dbUrl = "jdbc:h2:" + filename + ";AUTO_SERVER=TRUE";
       createFirstTable();
     } catch (Exception e) {
+      e.printStackTrace();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB2").replace("%1", filename)));
     }
   }
@@ -99,6 +100,7 @@ public class DatabaseConnection {
     try {
       connection = DriverManager.getConnection(dbUrl);
     } catch (SQLException e) {
+      e.printStackTrace();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
     }
     return connection;
@@ -432,12 +434,14 @@ public class DatabaseConnection {
       stmt.execute(Jobs.indexIdSql);
       stmt.execute(Jobs.indexPidSql);
     } catch (Exception e){
+      e.printStackTrace();
       context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
     } finally {
       try {
         if (stmt != null) stmt.close();
         if (connection != null) connection.close();
       } catch (SQLException e){
+        e.printStackTrace();
         context.send(BasicConfig.MODULE_MESSAGE, new LogMessage(getClass(), Level.ERROR, bundle.getString("cannotConnectDB")));
       }
       releaseConnection();

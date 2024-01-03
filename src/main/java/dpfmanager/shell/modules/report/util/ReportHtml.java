@@ -26,8 +26,8 @@ import dpfmanager.shell.modules.report.core.ReportGeneric;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
+import org.apache.commons.lang3.StringUtils;
 
-import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.Collections;

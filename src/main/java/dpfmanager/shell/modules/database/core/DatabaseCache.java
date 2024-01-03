@@ -19,15 +19,10 @@
 
 package dpfmanager.shell.modules.database.core;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.database.tables.Jobs;
-
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Collection;
 import java.util.HashMap;

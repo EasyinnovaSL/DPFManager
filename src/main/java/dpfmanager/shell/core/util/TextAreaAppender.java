@@ -22,7 +22,7 @@ package dpfmanager.shell.core.util;
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;

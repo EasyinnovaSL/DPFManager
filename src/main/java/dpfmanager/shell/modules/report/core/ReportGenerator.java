@@ -33,7 +33,7 @@ import dpfmanager.shell.modules.report.util.ReportHtml;
 import dpfmanager.shell.modules.report.util.ReportJson;
 import dpfmanager.shell.modules.report.util.ReportPDF;
 import dpfmanager.shell.modules.report.util.ReportXml;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.logging.log4j.Level;
 import org.apache.pdfbox.pdmodel.PDDocument;
 

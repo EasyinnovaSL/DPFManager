@@ -29,6 +29,7 @@ import dpfmanager.shell.modules.report.core.SmallIndividualReport;
 
 import com.easyinnova.implementation_checker.ImplementationCheckerLoader;
 
+import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -82,7 +83,7 @@ public class ReportPDF extends ReportGeneric {
       int font_size = 18;
       // Logo
       InputStream imageInputStream = getFileStreamFromResources("images/logo.jpg");
-      PDImageXObject ximage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), imageInputStream.readAllBytes(), "images/logo.jpg");
+      PDImageXObject ximage = PDImageXObject.createFromByteArray(pdfParams.getDocument(), IOUtils.toByteArray(imageInputStream), "images/logo.jpg");
       float scale = 3;
       pdfParams.getContentStream().drawImage(ximage, pos_x, pdfParams.y, 645 / scale, 300 / scale);
 

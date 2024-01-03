@@ -1,69 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.easyinnova</groupId>
   <artifactId>dpf_manager</artifactId>
-  <packaging>jar</packaging>
   <version>3.5.1</version>
-
-  <!--Properties-->
-  <properties>
-    <jacp.version>2.1</jacp.version>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <!--Build properties-->
-    <main.class>dpfmanager.shell.core.app.MainApp</main.class>
-    <gui.class>dpfmanager.shell.core.app.MainGuiApp</gui.class>
-    <console.class>dpfmanager.shell.core.app.MainConsoleApp</console.class>
-    <version.util.class>dpfmanager.shell.core.util.VersionUtil</version.util.class>
-    <runtime></runtime>
-
-    <!-- Dependency versions -->
-    <jackson.version>2.16.0</jackson.version>
-    <apache.ant.version>1.10.14</apache.ant.version>
-    <apache.camel.version>4.2.0</apache.camel.version>
-    <apache.pdfbox.version>3.0.1</apache.pdfbox.version>
-    <gson.version>2.8.5</gson.version>
-    <h2.version>1.4.199</h2.version>
-    <imageio.tiff.version>3.4.2</imageio.tiff.version>
-    <openjfx.version>21.0.1</openjfx.version>
-
-    <!-- Plugin Versions -->
-    <maven.exec.plugin>1.6.0</maven.exec.plugin>
-    <maven.javafx.plugin>8.8.3</maven.javafx.plugin>
-    <maven.surefire.plugin>3.0.0-M3</maven.surefire.plugin>
-    <maven.assembly.plugin>3.1.1</maven.assembly.plugin>
-    <maven.resources.plugin>3.1.0</maven.resources.plugin>
-    <maven.checkstyle.plugin>3.1.0</maven.checkstyle.plugin>
-    <maven.dependency.plugin>3.1.1</maven.dependency.plugin>
-    <maven.checkstyle.tool>8.24</maven.checkstyle.tool>
-    <maven.pmd.plugin>3.12.0</maven.pmd.plugin>
-    <maven.javadoc.plugin>3.1.1</maven.javadoc.plugin>
-    <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
-    <maven.deploy.plugin>3.0.0-M1</maven.deploy.plugin>
-    <maven.jar.plugin>3.1.2</maven.jar.plugin>
-    <maven.jxr.plugin>3.0.0</maven.jxr.plugin>
-    <maven.install.plugin>3.0.0-M1</maven.install.plugin>
-    <maven.site.plugin>3.8.2</maven.site.plugin>
-    <maven.source.plugin>3.1.0</maven.source.plugin>
-    <maven.project.info.report.plugin>3.0.0</maven.project.info.report.plugin>
-    <maven.nexus.stagin.plugin>1.6.8</maven.nexus.stagin.plugin>
-    <maven.launch4j.plugin>2.4.1</maven.launch4j.plugin>
-    <maven.gpg.plugin>1.6</maven.gpg.plugin>
-    <jaxb-api.version>2.3.1</jaxb-api.version>
-  </properties>
-
-  <!-- More Project Information -->
   <name>DPF Manager</name>
   <description>Dpf manager</description>
   <url>http://www.dpfmanager.org</url>
   <inceptionYear>2015</inceptionYear>
-
+  <organization>
+    <name>easyinnova</name>
+    <url>http://www.easyinnova.com/</url>
+  </organization>
   <licenses>
     <license>
       <name>GNU General Public License, Version 3.0</name>
@@ -76,17 +25,13 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <organization>
-    <name>easyinnova</name>
-    <url>http://www.easyinnova.com/</url>
-  </organization>
   <developers>
     <developer>
+      <id>XaviTarres</id>
       <name>Xavier Tarres Bonet</name>
       <email>xavitarres@easyinnova.com</email>
-      <organization>Easy Innova</organization>
       <url>https://github.com/XaviTarres</url>
-      <id>XaviTarres</id>
+      <organization>Easy Innova</organization>
     </developer>
     <developer>
       <name>Víctor Muñoz Sola</name>
@@ -97,14 +42,14 @@
     <developer>
       <name>Adria Llorens Martinez</name>
       <email>adriallorens@easyinnova.com</email>
-      <organization>Easy Innova</organization>
       <url>https://github.com/Adri7</url>
+      <organization>Easy Innova</organization>
     </developer>
     <developer>
       <name>Carlos Garcia Rubio</name>
       <email>carlosgarcia@easyinnova.com</email>
-      <organization>Easy Innova</organization>
       <url>https://github.com/SteinerX</url>
+      <organization>Easy Innova</organization>
       <organizationUrl>http://www.easyinnova.com</organizationUrl>
     </developer>
   </developers>
@@ -113,74 +58,86 @@
     <developerConnection>scm:git:git@github.com:easyinnova/DPFManager.git</developerConnection>
     <url>git@github.com:easyinnova/DPFManager.git</url>
   </scm>
-  <contributors>
-
-  </contributors>
-
   <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
     <repository>
       <id>ossrh</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
   </distributionManagement>
-
-  <repositories>
-    <repository>
-      <id>maven-central-repo</id>
-      <url>https://repo.maven.apache.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>geosolutions</id>
-      <name>GeoSolutions Repository</name>
-      <url>http://maven.geo-solutions.it</url>
-    </repository>
-    <repository>
-      <id>jcenter</id>
-      <name>JCenter</name>
-      <url>http://jcenter.bintray.com</url>
-    </repository>
-    <repository>
-      <id>com.springsource.repository.bundles.external</id>
-      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-      <url>http://repository.springsource.com/maven/bundles/external</url>
-    </repository>
-  </repositories>
-
+  <properties>
+    <gui.class>dpfmanager.shell.core.app.MainGuiApp</gui.class>
+    <maven.resources.plugin>3.3.1</maven.resources.plugin>
+    <maven.jxr.plugin>3.3.1</maven.jxr.plugin>
+    <maven.pmd.plugin>3.21.2</maven.pmd.plugin>
+    <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+    <maven.compiler.plugin>3.11.0</maven.compiler.plugin>
+    <maven.checkstyle.tool>10.12.5</maven.checkstyle.tool>
+    <gluonfx-maven-plugin.version>1.0.22</gluonfx-maven-plugin.version>
+    <jackson.version>2.16.0</jackson.version>
+    <javafx-maven-plugin.version>0.0.8</javafx-maven-plugin.version>
+    <maven.gpg.plugin>3.1.0</maven.gpg.plugin>
+    <version.util.class>dpfmanager.shell.core.util.VersionUtil</version.util.class>
+    <gson.version>2.10.1</gson.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.site.plugin>3.12.1</maven.site.plugin>
+    <commons-lang3.version>3.14.0</commons-lang3.version>
+    <log4j.version>2.22.0</log4j.version>
+    <maven.exec.plugin>3.1.1</maven.exec.plugin>
+    <maven.surefire.plugin>3.2.2</maven.surefire.plugin>
+    <commons-io.version>2.15.1</commons-io.version>
+    <controlsfx.version>11.1.2</controlsfx.version>
+    <maven.source.plugin>3.3.0</maven.source.plugin>
+    <apache.ant.version>1.10.14</apache.ant.version>
+    <apache.camel.version>4.2.0</apache.camel.version>
+    <main.class>dpfmanager.shell.core.app.MainApp</main.class>
+    <maven.compiler.source>17</maven.compiler.source>
+    <imageio.tiff.version>3.10.1</imageio.tiff.version>
+    <runtime></runtime>
+    <h2.version>2.2.224</h2.version>
+    <maven.checkstyle.plugin>3.3.1</maven.checkstyle.plugin>
+    <maven.deploy.plugin>3.1.1</maven.deploy.plugin>
+    <maven.launch4j.plugin>2.4.1</maven.launch4j.plugin>
+    <netty-all.version>4.1.68.Final</netty-all.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.dependency.plugin>3.6.1</maven.dependency.plugin>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.jar.plugin>3.3.0</maven.jar.plugin>
+    <jacp.version>2.1</jacp.version>
+    <maven.install.plugin>3.1.1</maven.install.plugin>
+    <maven.project.info.report.plugin>3.5.0</maven.project.info.report.plugin>
+    <console.class>dpfmanager.shell.core.app.MainConsoleApp</console.class>
+    <apache.pdfbox.version>3.0.1</apache.pdfbox.version>
+    <openjfx.version>17.0.9</openjfx.version>
+    <maven.assembly.plugin>3.6.0</maven.assembly.plugin>
+    <maven.javadoc.plugin>3.6.3</maven.javadoc.plugin>
+    <maven.nexus.staging.plugin>1.6.13</maven.nexus.staging.plugin>
+  </properties>
   <dependencies>
-
     <dependency>
       <groupId>com.twelvemonkeys.imageio</groupId>
       <artifactId>imageio-tiff</artifactId>
       <version>${imageio.tiff.version}</version>
     </dependency>
-
     <dependency>
-      <!--LOG4J2 Api-->
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>2.5</version>
+      <version>${log4j.version}</version>
     </dependency>
-
     <dependency>
-      <!--LOG4J2 Core-->
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.5</version>
+      <version>${log4j.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.controlsfx</groupId>
       <artifactId>controlsfx</artifactId>
-      <version>8.40.15</version>
+      <version>${controlsfx.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
@@ -201,99 +158,81 @@
       <artifactId>jackson-dataformat-xml</artifactId>
       <version>${jackson.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <version>${apache.camel.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ftp</artifactId>
       <version>${apache.camel.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>${gson.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.easyinnova</groupId>
       <artifactId>tifflibrary4java</artifactId>
       <version>1.9.7</version>
     </dependency>
-
     <dependency>
       <groupId>com.easyinnova</groupId>
       <artifactId>tiffimplementationchecker</artifactId>
       <version>1.2.8</version>
     </dependency>
-
     <dependency>
       <groupId>com.easyinnova</groupId>
       <artifactId>tiffpolicychecker</artifactId>
       <version>1.1.6</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
       <version>${apache.pdfbox.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
       <version>${apache.ant.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>${openjfx.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>${openjfx.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-swing</artifactId>
       <version>${openjfx.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-web</artifactId>
       <version>${openjfx.version}</version>
     </dependency>
-
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.2</version>
+      <version>${javax.annotation-api.version}</version>
     </dependency>
-
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>${jaxb-api.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
       <version>2.3.9</version>
     </dependency>
-
-
-    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
@@ -305,7 +244,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>listenablefuture</artifactId>
@@ -317,20 +255,12 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-
-    <!--Test Gui Dependencies-->
     <dependency>
       <groupId>org.testfx</groupId>
       <artifactId>testfx-core</artifactId>
       <version>4.0.16-alpha</version>
-      <type>jar</type>
       <scope>test</scope>
     </dependency>
-
-    <!--End Test Gui dependencies-->
-
-    <!--JacpFX-->
     <dependency>
       <groupId>org.jacpfx</groupId>
       <artifactId>jacpfx.API</artifactId>
@@ -361,80 +291,123 @@
       <version>${jacp.version}</version>
       <scope>compile</scope>
     </dependency>
-    <!--End JacpFX-->
-
-    <!--H2 Driver-->
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <version>${h2.version}</version>
     </dependency>
-
-    <!--Netty-->
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
-      <version>4.1.41.Final</version>
+      <version>${netty-all.version}</version>
     </dependency>
-
-    <!--Codec Sha256-->
-    <!--<dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>1.4</version>
-    </dependency>-->
-
-    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-project-info-reports-plugin -->
     <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-project-info-reports-plugin</artifactId>
-      <version>${maven.project.info.report.plugin}</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>2.0.9</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.9</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.9</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>6.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>6.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>6.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>6.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>6.1.2</version>
+    </dependency>
   </dependencies>
-
-  <!--Common Build Plugins-->
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>maven-central-repo</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>geosolutions</id>
+      <name>GeoSolutions Repository</name>
+      <url>https://maven.geo-solutions.it</url>
+    </repository>
+    <repository>
+      <id>jcenter</id>
+      <name>JCenter</name>
+      <url>https://jcenter.bintray.com</url>
+    </repository>
+    <repository>
+      <id>com.springsource.repository.bundles.external</id>
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+      <url>https://repository.springsource.com/maven/bundles/external</url>
+    </repository>
+  </repositories>
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>${maven.source.plugin}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven.compiler.plugin}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven.deploy.plugin}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
           <version>${maven.install.plugin}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven.surefire.plugin}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>${maven.assembly.plugin}</version>
         </plugin>
       </plugins>
     </pluginManagement>
-
-
     <plugins>
-      <!-- Resources -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <version>${maven.resources.plugin}</version>
         <configuration>
@@ -449,10 +422,7 @@
           </nonFilteredFileExtensions>
         </configuration>
       </plugin>
-
-      <!--Checkstyle-->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven.checkstyle.plugin}</version>
         <dependencies>
@@ -463,20 +433,9 @@
           </dependency>
         </dependencies>
       </plugin>
-
-      <!--Java Doc-->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven.javadoc.plugin}</version>
-        <configuration>
-          <stylesheetfile>${basedir}/src/main/resources/stylesheet.css</stylesheetfile>
-          <docfilessubdirs>true</docfilessubdirs>
-          <links>
-            <link>https://docs.oracle.com/javase/8/docs/api/</link>
-          </links>
-          <sourcepath>${basedir}/src</sourcepath>
-        </configuration>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -490,27 +449,86 @@
             </configuration>
           </execution>
         </executions>
+        <configuration>
+          <stylesheetfile>${basedir}/src/main/resources/stylesheet.css</stylesheetfile>
+          <docfilessubdirs>true</docfilessubdirs>
+          <links>
+            <link>https://docs.oracle.com/javase/8/docs/api/</link>
+          </links>
+          <sourcepath>${basedir}/src</sourcepath>
+        </configuration>
       </plugin>
-
-      <!--Tests plugin -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven.surefire.plugin}</version>
         <configuration>
           <reuseForks>false</reuseForks>
           <additionalClasspathElements>
-            <additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar
-            </additionalClasspathElement>
+            <additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>
-
-      <!--Maven repository -->
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>${main.class}</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>17</source>
+          <target>17</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>${javafx-maven-plugin.version}</version>
+        <configuration>
+          <options>
+            <option>--add-opens</option>
+            <option>javafx.graphics/javafx.scene=ALL-UNNAMED</option>
+          </options>
+          <mainClass>${main.class}</mainClass>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.gluonhq</groupId>
+        <artifactId>gluonfx-maven-plugin</artifactId>
+        <version>${gluonfx-maven-plugin.version}</version>
+        <configuration>
+          <verbose>true</verbose>
+          <linkerArgs>
+            <arg>-ljaas</arg>
+          </linkerArgs>
+          <nativeImageArgs>
+            <nativeImageArg>--initialize-at-build-time=org.slf4j.simple.SimpleLogger</nativeImageArg>
+            <nativeImageArg>--initialize-at-build-time=org.slf4j.LoggerFactory</nativeImageArg>
+            <nativeImageArg>--initialize-at-build-time=org.apache.commons.logging.LogFactory</nativeImageArg>
+            <nativeImageArg>--initialize-at-build-time=org.apache.logging.log4j.message.ReusableMessageFactory</nativeImageArg>
+          </nativeImageArgs>
+          <mainClass>${main.class}</mainClass>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>${maven.nexus.stagin.plugin}</version>
+        <version>${maven.nexus.staging.plugin}</version>
         <extensions>true</extensions>
         <configuration>
           <serverId>ossrh</serverId>
@@ -519,7 +537,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>${maven.source.plugin}</version>
         <executions>
@@ -531,35 +548,7 @@
           </execution>
         </executions>
       </plugin>
-
-      <!--Report -->
-      <!--<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>${maven.site.plugin}</version>
-        <configuration>
-          <reportPlugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-project-info-reports-plugin</artifactId>
-              <version>${maven.project.info.report.plugin}</version>
-              <reports>
-                <report>cim</report>
-                <report>issue-tracking</report>
-              </reports>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <version>${maven.javadoc.plugin}</version>
-            </plugin>
-          </reportPlugins>
-        </configuration>
-      </plugin>-->
-
-      <!-- Download dependencies source -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>${maven.dependency.plugin}</version>
         <executions>
@@ -567,31 +556,78 @@
             <id>sources-dependencies</id>
             <phase>package</phase>
             <goals>
-              <!-- use copy-dependencies instead if you don't want to explode
-                the sources -->
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
               <classifier>sources</classifier>
               <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
-              <outputDirectory>${project.build.directory}/sources/src/main/java
-              </outputDirectory>
-              <excludeArtifactIds>
-                xercesImpl,jsr305,ant-launcher,dom4j,cvsclient,classworlds,plexus-i18n,velocity-tools,ant,velocity,json-lib,listenablefuture
-              </excludeArtifactIds>
+              <outputDirectory>${project.build.directory}/sources/src/main/java</outputDirectory>
+              <excludeArtifactIds>xercesImpl,jsr305,ant-launcher,dom4j,cvsclient,classworlds,plexus-i18n,velocity-tools,ant,velocity,json-lib,listenablefuture</excludeArtifactIds>
               <includes>**/*.java</includes>
               <excludes>**/*Test.java, **/test/**/*.java</excludes>
             </configuration>
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
-
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin}</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>${maven.jxr.plugin}</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${maven.pmd.plugin}</version>
+        <configuration>
+          <sourceEncoding>utf-8</sourceEncoding>
+          <rulesets>
+            <ruleset>/rulesets/java/basic.xml</ruleset>
+            <ruleset>/rulesets/java/braces.xml</ruleset>
+            <ruleset>/rulesets/java/clone.xml</ruleset>
+            <ruleset>/rulesets/java/codesize.xml</ruleset>
+            <ruleset>/rulesets/java/comments.xml</ruleset>
+            <ruleset>/rulesets/java/controversial.xml</ruleset>
+            <ruleset>/rulesets/java/coupling.xml</ruleset>
+            <ruleset>/rulesets/java/design.xml</ruleset>
+            <ruleset>/rulesets/java/empty.xml</ruleset>
+            <ruleset>/rulesets/java/finalizers.xml</ruleset>
+            <ruleset>/rulesets/java/imports.xml</ruleset>
+            <ruleset>/rulesets/java/junit.xml</ruleset>
+            <ruleset>/rulesets/java/naming.xml</ruleset>
+            <ruleset>/rulesets/java/optimizations.xml</ruleset>
+            <ruleset>/rulesets/java/strictexception.xml</ruleset>
+            <ruleset>/rulesets/java/strings.xml</ruleset>
+            <ruleset>/rulesets/java/sunsecure.xml</ruleset>
+            <ruleset>/rulesets/java/typeresolution.xml</ruleset>
+            <ruleset>/rulesets/java/unnecessary.xml</ruleset>
+            <ruleset>/rulesets/java/unusedcode.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven.checkstyle.plugin}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>checkstyle</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
   <profiles>
-
-    <!-- Windows Profile  - Only Jar-->
     <profile>
       <id>windows</id>
       <activation>
@@ -604,40 +640,8 @@
       </activation>
       <build>
         <finalName>DPF Manager</finalName>
-        <plugins>
-          <!-- Create Jar -->
-          <!--
-          <plugin>
-            <groupId>com.zenjava</groupId>
-            <artifactId>javafx-maven-plugin</artifactId>
-            <version>${maven.javafx.plugin}</version>
-            <configuration>
-              <mainClass>${main.class}</mainClass>
-              <verbose>true</verbose>
-              <jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-              <jfxMainAppJarName>${project.name}-jfx.jar</jfxMainAppJarName>
-              <vendor>${project.name}</vendor>
-              <bundler>ALL</bundler>
-              <needShortcut>true</needShortcut>
-              <needMenu>true</needMenu>
-              <appName>${project.name}</appName>
-            </configuration>
-            <executions>
-              <execution>
-                <id>create-jfxjar</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>build-jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          -->
-        </plugins>
       </build>
     </profile>
-
-    <!-- Windows Profile - Installers -->
     <profile>
       <id>windows-installers</id>
       <activation>
@@ -651,38 +655,6 @@
       <build>
         <finalName>DPF Manager</finalName>
         <plugins>
-
-          <!-- Create Jar -->
-          <!--
-          <plugin>
-            <groupId>com.zenjava</groupId>
-            <artifactId>javafx-maven-plugin</artifactId>
-            <version>${maven.javafx.plugin}</version>
-            <configuration>
-              <mainClass>${main.class}</mainClass>
-              <verbose>true</verbose>
-              <jfxAppOutputDir>${project.build.directory}/jfx/app</jfxAppOutputDir>
-              <jfxMainAppJarName>${project.name}-jfx.jar</jfxMainAppJarName>
-              <vendor>${project.name}</vendor>
-              <bundler>ALL</bundler>
-              <needShortcut>true</needShortcut>
-              <needMenu>true</needMenu>
-              <appName>${project.name}</appName>
-            </configuration>
-            <executions>
-              <execution>
-                <id>create-jfxjar</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>build-jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          -->
-
-          <!-- Build Command Line Exe -->
-          <!--
           <plugin>
             <groupId>com.akathist.maven.plugins.launch4j</groupId>
             <artifactId>launch4j-maven-plugin</artifactId>
@@ -713,9 +685,6 @@
               </execution>
             </executions>
           </plugin>
-          -->
-
-          <!--Copy resources-->
           <plugin>
             <artifactId>maven-resources-plugin</artifactId>
             <version>${maven.resources.plugin}</version>
@@ -741,7 +710,6 @@
         </plugins>
       </build>
     </profile>
-
     <profile>
       <id>release-sign-artifacts</id>
       <activation>
@@ -753,7 +721,6 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
             <version>${maven.gpg.plugin}</version>
             <executions>
@@ -770,69 +737,4 @@
       </build>
     </profile>
   </profiles>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.compiler.plugin}</version>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>${maven.jxr.plugin}</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${maven.pmd.plugin}</version>
-        <configuration>
-          <sourceEncoding>utf-8</sourceEncoding>
-          <rulesets>
-            <ruleset>/rulesets/java/basic.xml</ruleset>
-            <ruleset>/rulesets/java/braces.xml</ruleset>
-            <ruleset>/rulesets/java/clone.xml</ruleset>
-            <ruleset>/rulesets/java/codesize.xml</ruleset>
-            <ruleset>/rulesets/java/comments.xml</ruleset>
-            <ruleset>/rulesets/java/controversial.xml</ruleset>
-            <ruleset>/rulesets/java/coupling.xml</ruleset>
-            <ruleset>/rulesets/java/design.xml</ruleset>
-            <ruleset>/rulesets/java/empty.xml</ruleset>
-            <ruleset>/rulesets/java/finalizers.xml</ruleset>
-            <ruleset>/rulesets/java/imports.xml</ruleset>
-            <ruleset>/rulesets/java/junit.xml</ruleset>
-            <ruleset>/rulesets/java/naming.xml</ruleset>
-            <ruleset>/rulesets/java/optimizations.xml</ruleset>
-            <ruleset>/rulesets/java/strictexception.xml</ruleset>
-            <ruleset>/rulesets/java/strings.xml</ruleset>
-            <ruleset>/rulesets/java/sunsecure.xml</ruleset>
-            <ruleset>/rulesets/java/typeresolution.xml</ruleset>
-            <ruleset>/rulesets/java/unnecessary.xml</ruleset>
-            <ruleset>/rulesets/java/unusedcode.xml</ruleset>
-          </rulesets>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven.checkstyle.plugin}</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>checkstyle</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-
-    </plugins>
-  </reporting>
 </project>
