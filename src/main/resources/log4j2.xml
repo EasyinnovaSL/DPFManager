@@ -17,7 +17,7 @@
             </MarkerPatternSelector>
         </PatternLayout>
     </TextAreaAppender>
-    <File name="File" fileName="${sys:app.home}/data/DpfManager.log" immediateFlush="true" append="true">
+    <File name="File" fileName="${sys:user.home}/data/DpfManager.log" immediateFlush="true" append="true">
         <PatternLayout>
             <MarkerPatternSelector defaultPattern="%d{dd/MM HH:mm} %-5p - %msg%n">
                 <PatternMatch key="EXCEPTION" pattern="%msg%n"/>
