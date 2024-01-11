@@ -708,46 +708,9 @@
                   </arguments>
                 </configuration>
               </execution>
-              <!--No JRE-->
-              <execution>
-                <id>package-exe</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>javapackager</executable>
-                  <arguments>
-                    <argument>-deploy</argument>
-                    <argument>-native</argument>
-                    <argument>exe</argument>
-                    <argument>-embedjnlp</argument>
-                    <argument>-v</argument>
-                    <argument>-appclass</argument>
-                    <argument>${main.class}</argument>
-                    <!--Customize params-->
-                    <argument>-name</argument>
-                    <argument>${project.name}</argument>
-                    <argument>-title</argument>
-                    <argument>${project.name}</argument>
-                    <argument>-vendor</argument>
-                    <argument>${project.name}</argument>
-                    <!--Input files params-->
-                    <argument>-srcdir</argument>
-                    <argument>${project.build.directory}/jfx/app</argument>
-                    <!--Output params-->
-                    <argument>-outdir</argument>
-                    <argument>${project.build.directory}/jfx/native</argument>
-                    <argument>-outfile</argument>
-                    <argument>${project.name}</argument>
-                    <!--Runtime-->
-                    <argument>-Bruntime=</argument>
-                  </arguments>
-                </configuration>
-              </execution>
               <!--OpenJRE-->
               <execution>
-                <id>package-exe-java</id>
+                <id>package-exe</id>
                 <phase>package</phase>
                 <goals>
                   <goal>exec</goal>
