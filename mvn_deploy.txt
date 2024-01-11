@@ -9,7 +9,7 @@ Windows 64:
     mvn clean install -Dinstallers -Druntime="C:\Program Files\Zulu\zulu-8\jre"
 
 Mac OS 64:
-    mvn clean install -Dinstallers -Druntime=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home
+    mvn clean install -Dinstallers -Druntime=/Users/yolanv/Library/Java/JavaVirtualMachines/zulu8-jdk/zulu-8.jdk/Contents/Home
 
 Ubuntu 64:
     mvn clean install -Dinstallers -Druntime=/usr/lib/jvm/java-8-openjdk-amd64/jre
