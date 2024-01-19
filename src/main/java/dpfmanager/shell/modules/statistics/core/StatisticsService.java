@@ -22,24 +22,21 @@ package dpfmanager.shell.modules.statistics.core;
 import dpfmanager.shell.core.DPFManagerProperties;
 import dpfmanager.shell.core.adapter.DpfService;
 import dpfmanager.shell.core.config.BasicConfig;
-import dpfmanager.shell.core.config.GuiConfig;
 import dpfmanager.shell.core.context.DpfContext;
 import dpfmanager.shell.modules.messages.messages.LogMessage;
 import dpfmanager.shell.modules.report.core.GlobalReport;
 import dpfmanager.shell.modules.report.core.IndividualReport;
 import dpfmanager.shell.modules.report.core.ReportGenerator;
 import dpfmanager.shell.modules.report.core.SmallIndividualReport;
-import dpfmanager.shell.modules.statistics.messages.StatisticsMessage;
 import dpfmanager.shell.modules.statistics.model.HistogramTag;
 import dpfmanager.shell.modules.statistics.model.StatisticsIso;
 import dpfmanager.shell.modules.statistics.model.StatisticsRule;
-
 import org.apache.logging.log4j.Level;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -49,11 +46,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Created by Adria Llorens on 07/04/2016.
