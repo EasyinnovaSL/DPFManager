@@ -50,6 +50,16 @@ git clone https://github.com/EasyinnovaSL/DPFManager.git
 ```
 or download the latest release from [GitHub] (https://github.com/EasyinnovaSL/DPFManager/releases).
 
+#### Build local TIFF dependencies
+The newest versions of three dependencies are not pushed to Maven Repository. This means that they have to be built locally.
+The dependencies are available in the following repositories:
+* [TIFF Implementation Checker](https://github.com/viaacode/TIFF-Implementation-Checker)
+* [TIFF Policy Checker](https://github.com/viaacode/TIFF-Policy-Checker)
+* [TIFF Library 4J](https://github.com/viaacode/Tiff-Library-4J)
+
+Simply clone and run `mvn clean install` on all repositories.
+Alternatively, if you don't want to build these dependencies locally, you can choose to downgrade each version of these dependencies in this repository's pom.xml.
+
 #### Use Maven to compile the source
 Move to the downloaded project directory and call Maven install:
 

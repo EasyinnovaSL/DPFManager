@@ -553,7 +553,7 @@
                             <outputDirectory>${project.build.directory}/sources/src/main/java
                             </outputDirectory>
                             <excludeArtifactIds>
-                                xercesImpl,jsr305,ant-launcher,dom4j,tools,cvsclient,classworlds,plexus-i18n,velocity-tools,ant,camel-core,velocity,json-lib,listenablefuture
+                                xercesImpl,jsr305,ant-launcher,dom4j,xmpcore,tools,cvsclient,classworlds,plexus-i18n,velocity-tools,ant,camel-core,velocity,json-lib,listenablefuture
                             </excludeArtifactIds>
                             <includes>**/*.java</includes>
                             <excludes>**/*Test.java, **/test/**/*.java</excludes>
